@@ -33,10 +33,10 @@ class DPDController extends Controller
             ->get('doctrine')
             ->getManagerForClass('OroDPDBundle:ShippingService')
             ->getRepository('OroDPDBundle:ShippingService');
-        $shippingServices = $repository->getAllShippingServices();
+        $shippingServiceCodes = $repository->getAllShippingServiceCodes();
 
         $response = new StreamedResponse();
-        $response->setCallback(function () use ($transport, $shippingServices) {
+        $response->setCallback(function () use ($transport, $shippingServiceCodes) {
             $handle = fopen('php://output', 'rb+');
 
             // Add BOM to fix UTF-8 in Excel
@@ -44,7 +44,7 @@ class DPDController extends Controller
 
             // Add the header of the CSV file
             $header = [
-                'Shipping Service Code ('.implode('/', array_keys($shippingServices)).')',
+                'Shipping Service Code ('.implode('/', $shippingServiceCodes).')',
                 'Country Code (ISO 3166-1 alpha-2)',
                 'Region Code (ISO 3166-2)',
                 'Weight Value ('.$transport->getUnitOfWeight().')',

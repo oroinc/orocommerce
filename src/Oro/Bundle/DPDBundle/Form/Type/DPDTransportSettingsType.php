@@ -8,10 +8,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -43,9 +41,6 @@ class DPDTransportSettingsType extends AbstractType
      */
     protected $doctrineHelper;
 
-    /** @var SymmetricCrypterInterface */
-    protected $symmetricCrypter;
-
     /**
      * @var RoundingServiceInterface
      */
@@ -56,18 +51,15 @@ class DPDTransportSettingsType extends AbstractType
      *
      * @param TransportInterface        $transport
      * @param DoctrineHelper            $doctrineHelper
-     * @param SymmetricCrypterInterface $symmetricCrypter
      * @param RoundingServiceInterface  $roundingService
      */
     public function __construct(
         TransportInterface $transport,
         DoctrineHelper $doctrineHelper,
-        SymmetricCrypterInterface $symmetricCrypter,
         RoundingServiceInterface $roundingService
     ) {
         $this->transport = $transport;
         $this->doctrineHelper = $doctrineHelper;
-        $this->symmetricCrypter = $symmetricCrypter;
         $this->roundingService = $roundingService;
     }
 
@@ -115,15 +107,6 @@ class DPDTransportSettingsType extends AbstractType
                 'required' => true,
             ]
         );
-        $builder->get('cloudUserToken')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($password) {
-                    return $password;
-                },
-                function ($password) {
-                    return $this->symmetricCrypter->encryptData($password);
-                }
-            ));
         $builder->add(
             'applicableShippingServices',
             'entity',

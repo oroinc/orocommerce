@@ -15,7 +15,7 @@ Oro\Bundle\DPDBundle\Entity\DPDTransport:
         rates:
             - Valid: ~
         ratesCsv:
-            - Oro\Bundle\DPDBundle\Validator\Constraints\RatesCsvFile: ~
+            - Oro\Bundle\DPDBundle\Validator\Constraints\RatesCsvFileConstraint: ~
         labelSize:
             - NotBlank: ~
         labelStartPosition:

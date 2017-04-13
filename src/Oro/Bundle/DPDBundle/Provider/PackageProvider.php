@@ -25,6 +25,11 @@ class PackageProvider
     /** @var LocalizationHelper */
     protected $localizationHelper;
 
+    /**
+     * @param ManagerRegistry       $registry
+     * @param MeasureUnitConversion $measureUnitConversion
+     * @param LocalizationHelper    $localizationHelper
+     */
     public function __construct(
         ManagerRegistry $registry,
         MeasureUnitConversion $measureUnitConversion,
@@ -90,31 +95,15 @@ class PackageProvider
     {
         $productsInfoByUnit = [];
 
-        $productsInfo = [];
-        /** @var ShippingLineItemInterface $lineItem */
-        foreach ($lineItems as $lineItem) {
-            if (null === $lineItem->getProduct()) {
-                return [];
-            }
+        $productsInfo = $this->convertLineItemsToProductInfoArray($lineItems);
 
-            $productsInfo[$lineItem->getProduct()->getId()] = [
-                'product' => $lineItem->getProduct(),
-                'productUnit' => $lineItem->getProductUnit(),
-                'quantity' => $lineItem->getQuantity(),
-            ];
+        if (count($productsInfo) === 0) {
+            return [];
         }
 
-        $allProductsShippingOptions = $this->registry
-            ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
-            ->getRepository('OroShippingBundle:ProductShippingOptions')
-            ->findBy([
-                'product' => array_column($productsInfo, 'product'),
-                'productUnit' => array_column($productsInfo, 'productUnit'),
-            ]);
+        $allProductsShippingOptions = $this->getProductsShippingOptions($productsInfo);
 
-        if (!$allProductsShippingOptions ||
-            count(array_column($productsInfo, 'product')) !== count($allProductsShippingOptions)
-        ) {
+        if (count($allProductsShippingOptions) === 0) {
             return [];
         }
 
@@ -153,5 +142,55 @@ class PackageProvider
         }
 
         return $productsInfoByUnit;
+    }
+
+    /**
+     * @param ShippingLineItemCollectionInterface $lineItems
+     *
+     * @return array
+     */
+    private function convertLineItemsToProductInfoArray(ShippingLineItemCollectionInterface $lineItems)
+    {
+        $productsInfo = [];
+
+        /** @var ShippingLineItemInterface $lineItem */
+        foreach ($lineItems as $lineItem) {
+            $product = $lineItem->getProduct();
+            if (null === $product) {
+                return [];
+            }
+
+            $productsInfo[$product->getId()] = [
+                'product' => $product,
+                'productUnit' => $lineItem->getProductUnit(),
+                'quantity' => $lineItem->getQuantity(),
+            ];
+        }
+        return $productsInfo;
+    }
+
+    /**
+     * @param array $productsInfo
+     *
+     * @return ProductShippingOptions[]
+     */
+    private function getProductsShippingOptions(array $productsInfo)
+    {
+        $requiredProducts = array_column($productsInfo, 'product');
+
+        $productsShippingOptions = $this->registry
+            ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
+            ->getRepository('OroShippingBundle:ProductShippingOptions')
+            ->findBy([
+                'product' => $requiredProducts,
+                'productUnit' => array_column($productsInfo, 'productUnit'),
+            ]);
+
+        /** ProductShippingOptions has unique key on product and unit, so this check is valid */
+        if (count($requiredProducts) !== count($productsShippingOptions)) {
+            return [];
+        }
+
+        return $productsShippingOptions;
     }
 }
