@@ -157,6 +157,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_collection_validator }
 
+    oro_product.validator.not_empty_configurable_attributes:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator'
+        public: true
+        arguments:
+            - '@oro_product.provider.variant_field_provider'
+        tags:
+            - { name: validator.constraint_validator, alias: not_empty_configurable_attributes }
+
     oro_product.component_processor.filter:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false
