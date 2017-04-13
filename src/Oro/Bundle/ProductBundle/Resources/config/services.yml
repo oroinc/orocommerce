@@ -838,3 +838,9 @@ services:
             - '@oro_segment.segment_manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
+
+    oro_product.provider.segment_with_relations_provider:
+        class: Oro\Bundle\ProductBundle\Provider\SegmentWithRelationsProvider
+        public: false
+        arguments:
+            - '@oro_product.provider.content_variant_segment_provider'
