@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
@@ -77,7 +78,6 @@ class DPDTransportSettingsTypeTest extends FormIntegrationTestCase
         $this->formType = new DPDTransportSettingsType(
             $this->transport,
             $this->doctrineHelper,
-            $this->symmetricCrypter,
             $roundingService
         );
 
@@ -137,6 +137,8 @@ class DPDTransportSettingsTypeTest extends FormIntegrationTestCase
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
+                    OroEncodedPlaceholderPasswordType::class
+                        => new OroEncodedPlaceholderPasswordType($this->symmetricCrypter),
                 ],
                 []
             ),

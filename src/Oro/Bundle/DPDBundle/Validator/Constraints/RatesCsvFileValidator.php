@@ -38,10 +38,10 @@ class RatesCsvFileValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if ($value instanceof File) {
-            $shippingServices = $this
+            $shippingServiceCodes = $this
                 ->doctrineHelper
                 ->getEntityRepository('OroDPDBundle:ShippingService')
-                ->getAllShippingServices();
+                ->getAllShippingServiceCodes();
             /** @var Country[] $countries */
             $countries = $this
                 ->doctrineHelper
@@ -67,7 +67,7 @@ class RatesCsvFileValidator extends ConstraintValidator
                 list($shippingServiceCode, $countryCode, $regionCode, $weightValue, $priceValue) = $row;
 
                 // shippingService not set or unknown
-                if (empty($shippingServiceCode) || !array_key_exists($shippingServiceCode, $shippingServices)) {
+                if (empty($shippingServiceCode) || !in_array($shippingServiceCode, $shippingServiceCodes, true)) {
                     $this->context->addViolation($constraint->message, ['{{ row_count }}' => $rowCounter]);
                     continue;
                 }

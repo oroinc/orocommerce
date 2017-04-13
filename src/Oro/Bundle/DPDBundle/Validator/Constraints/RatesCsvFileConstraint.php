@@ -4,7 +4,7 @@ namespace Oro\Bundle\DPDBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class RatesCsvFile extends Constraint
+class RatesCsvFileConstraint extends Constraint
 {
     /**
      * @var string

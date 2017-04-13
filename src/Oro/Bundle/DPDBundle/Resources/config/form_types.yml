@@ -4,7 +4,6 @@ services:
         arguments:
             - '@oro_dpd.provider.transport'
             - '@oro_entity.doctrine_helper'
-            - '@oro_security.encoder.mcrypt'
             - '@oro_currency.rounding.price_rounding_service'
         tags:
             - { name: form.type, alias: oro_dpd_transport_settings_type }

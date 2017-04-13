@@ -60,47 +60,72 @@ class ZipCodeRulesResponse extends DPDResponse
         parent::parse($data);
         $this->noPickupDays = [];
         if ($this->isSuccessful()) {
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_KEY, $data)) {
-                throw new \InvalidArgumentException('No ZipCodeRules parameter found in response data');
-            }
-            $zipCodeRules = $data[self::DPD_ZIP_CODE_RULES_KEY];
+            $zipCodeRules = $this->getKeyFromArray(
+                $data,
+                self::DPD_ZIP_CODE_RULES_KEY,
+                'No ZipCodeRules parameter found in response data'
+            );
 
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_COUNTRY_KEY, $zipCodeRules)) {
-                throw new \InvalidArgumentException('No Country parameter found in response data');
-            }
-            $this->country = $zipCodeRules[self::DPD_ZIP_CODE_RULES_COUNTRY_KEY];
+            $this->country = $this->getKeyFromArray(
+                $zipCodeRules,
+                self::DPD_ZIP_CODE_RULES_COUNTRY_KEY,
+                'No Country parameter found in response data'
+            );
 
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_ZIPCODE_KEY, $zipCodeRules)) {
-                throw new \InvalidArgumentException('No ZipCode parameter found in response data');
-            }
-            $this->zipCode = $zipCodeRules[self::DPD_ZIP_CODE_RULES_ZIPCODE_KEY];
+            $this->zipCode = $this->getKeyFromArray(
+                $zipCodeRules,
+                self::DPD_ZIP_CODE_RULES_ZIPCODE_KEY,
+                'No ZipCode parameter found in response data'
+            );
 
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_NO_PICKUP_DAYS_KEY, $zipCodeRules)) {
-                throw new \InvalidArgumentException('No NoPickupDays parameter found in response data');
-            }
-            $noPickupDaysTmp = explode(',', $zipCodeRules[self::DPD_ZIP_CODE_RULES_NO_PICKUP_DAYS_KEY]);
-            $this->noPickupDays = array_flip($noPickupDaysTmp);
+            $noPickupDaysAsString = $this->getKeyFromArray(
+                $zipCodeRules,
+                self::DPD_ZIP_CODE_RULES_NO_PICKUP_DAYS_KEY,
+                'No NoPickupDays parameter found in response data'
+            );
+            $noPickupDays = explode(',', $noPickupDaysAsString);
+            $this->noPickupDays = array_flip($noPickupDays);
 
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_EXPRESS_CUT_OFF_KEY, $zipCodeRules)) {
-                throw new \InvalidArgumentException('No ExpressCutOff parameter found in response data');
-            }
-            $this->expressCutOff = $zipCodeRules[self::DPD_ZIP_CODE_RULES_EXPRESS_CUT_OFF_KEY];
+            $this->expressCutOff = $this->getKeyFromArray(
+                $zipCodeRules,
+                self::DPD_ZIP_CODE_RULES_EXPRESS_CUT_OFF_KEY,
+                'No ExpressCutOff parameter found in response data'
+            );
 
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_CLASSIC_CUT_OFF_KEY, $zipCodeRules)) {
-                throw new \InvalidArgumentException('No ClassicCutOff parameter found in response data');
-            }
-            $this->classicCutOff = $zipCodeRules[self::DPD_ZIP_CODE_RULES_CLASSIC_CUT_OFF_KEY];
+            $this->classicCutOff = $this->getKeyFromArray(
+                $zipCodeRules,
+                self::DPD_ZIP_CODE_RULES_CLASSIC_CUT_OFF_KEY,
+                'No ClassicCutOff parameter found in response data'
+            );
 
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_PICKUP_DEPOT_KEY, $zipCodeRules)) {
-                throw new \InvalidArgumentException('No PickupDepot parameter found in response data');
-            }
-            $this->pickupDepot = $zipCodeRules[self::DPD_ZIP_CODE_RULES_PICKUP_DEPOT_KEY];
+            $this->pickupDepot = $this->getKeyFromArray(
+                $zipCodeRules,
+                self::DPD_ZIP_CODE_RULES_PICKUP_DEPOT_KEY,
+                'No PickupDepot parameter found in response data'
+            );
 
-            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_STATE_KEY, $zipCodeRules)) {
-                throw new \InvalidArgumentException('No State parameter found in response data');
-            }
-            $this->state = $zipCodeRules[self::DPD_ZIP_CODE_RULES_STATE_KEY];
+            $this->state = $this->getKeyFromArray(
+                $zipCodeRules,
+                self::DPD_ZIP_CODE_RULES_STATE_KEY,
+                'No State parameter found in response data'
+            );
         }
+    }
+
+    /**
+     * @param array  $data
+     * @param string $key
+     * @param string $errorIfKeyMissed
+     *
+     * @return mixed
+     */
+    private function getKeyFromArray(array $data, $key, $errorIfKeyMissed)
+    {
+        if (!array_key_exists($key, $data)) {
+            throw new \InvalidArgumentException($errorIfKeyMissed);
+        }
+
+        return $data[$key];
     }
 
     /**
