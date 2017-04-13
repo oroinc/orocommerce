@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\Method\Factory;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
 use Oro\Bundle\AuthorizeNetBundle\Method\Factory\AuthorizeNetPaymentMethodFactory;
 use Oro\Bundle\AuthorizeNetBundle\Method\AuthorizeNetPaymentMethod;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Gateway;
-use Psr\Log\LoggerInterface;
 
 class AuthorizeNetPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,6 +21,9 @@ class AuthorizeNetPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected $logger;
 
+    /** @var  RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    protected $requestStack;
+
     /**
      * @var AuthorizeNetPaymentMethodFactory
      */
@@ -29,7 +33,8 @@ class AuthorizeNetPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->gateway = $this->createMock(Gateway::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->factory = new AuthorizeNetPaymentMethodFactory($this->gateway);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->factory = new AuthorizeNetPaymentMethodFactory($this->gateway, $this->requestStack);
         $this->factory->setLogger($this->logger);
     }
 
@@ -38,7 +43,7 @@ class AuthorizeNetPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var AuthorizeNetConfigInterface; $config */
         $config = $this->createMock(AuthorizeNetConfigInterface::class);
 
-        $method = new AuthorizeNetPaymentMethod($this->gateway, $config);
+        $method = new AuthorizeNetPaymentMethod($this->gateway, $config, $this->requestStack);
         $method->setLogger($this->logger);
 
         $this->assertEquals($method, $this->factory->create($config));

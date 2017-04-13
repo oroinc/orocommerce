@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\Method;
 
+use JMS\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use net\authorize\api\contract\v1\CreateTransactionResponse;
 use net\authorize\api\contract\v1\MessagesType;
 use net\authorize\api\contract\v1\TransactionResponseType;
@@ -13,7 +16,6 @@ use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option\Transaction;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Gateway;
 use Oro\Bundle\AuthorizeNetBundle\Method\AuthorizeNetPaymentMethod;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
-use JMS\Serializer\Serializer;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -36,14 +38,18 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
     /** @var  CreateTransactionResponse|\PHPUnit_Framework_MockObject_MockObject */
     protected $apiResponse;
 
+    /** @var  RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    protected $requestStack;
+
     protected function setUp()
     {
         $this->gateway = $this->createMock(Gateway::class);
 
-        $this->paymentConfig =
-            $this->createMock(AuthorizeNetConfigInterface::class);
+        $this->paymentConfig = $this->createMock(AuthorizeNetConfigInterface::class);
 
-        $this->method = new AuthorizeNetPaymentMethod($this->gateway, $this->paymentConfig);
+        $this->requestStack = $this->createMock(RequestStack::class);
+
+        $this->method = new AuthorizeNetPaymentMethod($this->gateway, $this->paymentConfig, $this->requestStack);
 
         $this->serializer = $this->createMock(Serializer::class);
 
@@ -177,8 +183,22 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->method->supports($actionName));
     }
 
-    public function testIsApplicable()
+    public function testIsApplicableWithValidRequest()
     {
+        $isConnectionSecure = true;
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())->method('isSecure')->willReturn($isConnectionSecure);
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $this->assertSame($isConnectionSecure, $this->method->isApplicable($context));
+    }
+
+    public function testIsApplicableWithoutCurrentRequest()
+    {
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
+
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
         $this->assertTrue($this->method->isApplicable($context));

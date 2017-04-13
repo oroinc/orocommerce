@@ -771,6 +771,7 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                                     additionalData: $additional_data
+                                    checkoutId: $checkout.id
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -973,6 +974,7 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                                     failedShippingAddressUrl: $.result.failedShippingAddressUrl
+                                    checkoutId: $checkout.id
                             - '@assign_value': [$payment_in_progress, true]
                     - '@extendable':
                         events: [extendable_action.finish_checkout]

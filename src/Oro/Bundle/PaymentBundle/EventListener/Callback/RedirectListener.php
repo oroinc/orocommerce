@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 
 class RedirectListener
 {
@@ -18,12 +19,17 @@ class RedirectListener
     /** @var Session */
     protected $session;
 
+    /** @var PaymentMethodProvider */
+    protected $paymentMethodProvider;
+
     /**
      * @param Session $session
+     * @param PaymentMethodProvider $paymentMethodProvider
      */
-    public function __construct(Session $session)
+    public function __construct(Session $session, PaymentMethodProvider $paymentMethodProvider)
     {
         $this->session = $session;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -40,7 +46,14 @@ class RedirectListener
     public function onError(CallbackErrorEvent $event)
     {
         $this->handleEvent($event, self::FAILURE_URL_KEY);
-        $this->setErrorMessage('oro.payment.result.error');
+        $applicablePaymentMethods = $this->paymentMethodProvider
+            ->getApplicablePaymentMethodsForTransaction($event->getPaymentTransaction());
+
+        if (!$applicablePaymentMethods || count($applicablePaymentMethods) < 2) {
+            $this->setErrorMessage('oro.payment.result.error_single_method');
+        } else {
+            $this->setErrorMessage('oro.payment.result.error_multiple_methods');
+        }
     }
 
     /**

@@ -38,7 +38,8 @@ oro:
                 selected_countries.label: 'Select Allowed Countries'
 
         result:
-            error: Payment failed
+            error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
+            error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'
 
         security.transaction: Work with payments
         capture: Capture

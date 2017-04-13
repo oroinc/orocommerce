@@ -116,15 +116,18 @@ class AuthorizeNetSettingsType extends AbstractType
                 [
                     'label' => 'oro.authorize_net.settings.api_login.label',
                     'required' => true,
+                    'attr' => ['autocomplete' => 'off'],
                 ]
             )
             ->add('transactionKey', TextType::class, [
                 'label' => 'oro.authorize_net.settings.transaction_key.label',
                 'required' => true,
+                'attr' => ['autocomplete' => 'off'],
             ])
             ->add('clientKey', TextType::class, [
                 'label' => 'oro.authorize_net.settings.client_key.label',
                 'required' => true,
+                'attr' => ['autocomplete' => 'off'],
             ])
             ->add(
                 'authNetRequireCVVEntry',

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\AuthorizeNetBundle\Method;
 
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Gateway;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
@@ -25,14 +26,19 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     /** @var AuthorizeNetConfigInterface */
     protected $config;
 
+    /** @var RequestStack */
+    protected $requestStack;
+
     /**
      * @param Gateway $gateway
      * @param AuthorizeNetConfigInterface $config
+     * @param RequestStack $requestStack
      */
-    public function __construct(Gateway $gateway, AuthorizeNetConfigInterface $config)
+    public function __construct(Gateway $gateway, AuthorizeNetConfigInterface $config, RequestStack $requestStack)
     {
         $this->gateway = $gateway;
         $this->config = $config;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -48,7 +54,8 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return true;
+        $request = $this->requestStack->getCurrentRequest();
+        return !$request || $request->isSecure();
     }
 
     /**

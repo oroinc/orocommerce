@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
@@ -22,15 +26,31 @@ class PaymentMethodProvider
     private $paymentMethodsConfigsRulesProvider;
 
     /**
+     * @var CheckoutPaymentContextFactory
+     */
+    private $contextFactory;
+
+    /**
+     * @var CheckoutRepository
+     */
+    private $checkoutRepository;
+
+    /**
      * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
      * @param PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
+     * @param CheckoutPaymentContextFactory $contextFactory
+     * @param CheckoutRepository $checkoutRepository
      */
     public function __construct(
         PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
-        PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
+        PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider,
+        CheckoutPaymentContextFactory $contextFactory,
+        CheckoutRepository $checkoutRepository
     ) {
         $this->paymentMethodRegistry = $paymentMethodRegistry;
         $this->paymentMethodsConfigsRulesProvider = $paymentMethodsConfigsRulesProvider;
+        $this->contextFactory = $contextFactory;
+        $this->checkoutRepository = $checkoutRepository;
     }
 
     /**
@@ -53,6 +73,28 @@ class PaymentMethodProvider
         }
 
         return $paymentMethods;
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return null|PaymentMethodInterface[]
+     */
+    public function getApplicablePaymentMethodsForTransaction(PaymentTransaction $paymentTransaction)
+    {
+        $transactionOptions = $paymentTransaction->getTransactionOptions();
+        if (empty($transactionOptions['checkoutId'])) {
+            return null;
+        }
+        /** @var Checkout|null $checkout */
+        $checkout = $this->checkoutRepository->find($transactionOptions['checkoutId']);
+        if (!$checkout) {
+            return null;
+        }
+        $context = $this->contextFactory->create($checkout);
+        if (!$context) {
+            return null;
+        }
+        return $this->getApplicablePaymentMethods($context);
     }
 
     /**

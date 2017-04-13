@@ -15,6 +15,7 @@ services:
         public: false
         arguments:
             - '@oro_authorize_net.gateway'
+            - '@request_stack'
         calls:
             - [ setLogger, [ '@logger' ] ]
         tags:
