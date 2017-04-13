@@ -144,3 +144,4 @@ operations:
                 message: oro.action.delete_confirm
                 message_parameters:
                     entityLabel: $name
+                component: oroui/js/delete-confirmation
