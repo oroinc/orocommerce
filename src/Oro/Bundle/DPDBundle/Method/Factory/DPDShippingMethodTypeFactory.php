@@ -5,12 +5,12 @@ namespace Oro\Bundle\DPDBundle\Method\Factory;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
 use Oro\Bundle\DPDBundle\Provider\RateProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Method\Identifier\DPDMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethodType;
 use Oro\Bundle\DPDBundle\Provider\DPDTransport;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 
 class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterface
 {
@@ -20,7 +20,7 @@ class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterf
     private $typeIdentifierGenerator;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
     private $methodIdentifierGenerator;
 
@@ -41,14 +41,14 @@ class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterf
 
     /**
      * @param DPDMethodTypeIdentifierGeneratorInterface     $typeIdentifierGenerator
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
+     * @param IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param DPDTransport                                  $transport
      * @param PackageProvider                               $packageProvider
      * @param RateProvider                                  $rateProvider
      */
     public function __construct(
         DPDMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
+        IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
         DPDTransport $transport,
         PackageProvider $packageProvider,
         RateProvider $rateProvider

@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\DPDBundle\Method\DPDHandlerInterface;
 use Oro\Bundle\DPDBundle\Method\Factory\DPDHandlerFactoryInterface;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Method\Factory\DPDShippingMethodFactory;
@@ -23,7 +23,7 @@ class DPDShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
     private $localizationHelper;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $methodIdentifierGenerator;
 
@@ -43,7 +43,7 @@ class DPDShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
-        $this->methodIdentifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
+        $this->methodIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->methodTypeFactory = $this->createMock(DPDShippingMethodTypeFactoryInterface::class);
         $this->handlerFactory = $this->createMock(DPDHandlerFactoryInterface::class);
 

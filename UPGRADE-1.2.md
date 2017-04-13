@@ -67,6 +67,7 @@ ShippingBundle
 - If you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface` and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example.
 - The `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` was created,
 - The `Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener` was created, and can be used for providing template of a shipping method on a shipping rule view page. 
+- The `Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface` was deprecated, the `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` should be used instead. 
 
 FlatRateShippingBundle
 --------------

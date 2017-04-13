@@ -4,9 +4,9 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDeleteEvent;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRemovalEventDispatcherInterface;
 use Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class IntegrationRemovalListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class IntegrationRemovalListenerTest extends \PHPUnit_Framework_TestCase
     private $channelType;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $identifierGenerator;
 
@@ -33,7 +33,7 @@ class IntegrationRemovalListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->channelType = 'shipping_method';
-        $this->identifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
+        $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->dispatcher = $this->createMock(MethodRemovalEventDispatcherInterface::class);
 
         $this->listener = new IntegrationRemovalListener(

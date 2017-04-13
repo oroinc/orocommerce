@@ -42,8 +42,9 @@ services:
             - '@oro_dpd.provider.package'
 
     oro_dpd.method.identifier_generator.method:
-        class: 'Oro\Bundle\DPDBundle\Method\Identifier\DPDMethodIdentifierGenerator'
-        public: false
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_dpd.integration.channel.type%'
 
     oro_dpd.method.identifier_generator.type:
         class: 'Oro\Bundle\DPDBundle\Method\Identifier\DPDMethodTypeIdentifierGenerator'
@@ -96,33 +97,6 @@ services:
             - '@doctrine'
             - '@oro_attachment.file_manager'
             - '@oro_dpd.shipping_method_provider.dpd'
-
-    oro_dpd.entity_listener.channel:
-        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener'
-        arguments:
-            - '%oro_dpd.integration.channel.type%'
-            - '@oro_dpd.method.identifier_generator.method'
-            - '@oro_shipping.method.event.dispatcher.method_removal'
-        tags:
-            - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
-
-    oro_dpd.entity_listener.transport:
-        class: 'Oro\Bundle\DPDBundle\EventListener\DPDTransportEntityListener'
-        arguments:
-            - '@oro_dpd.method.identifier_generator.method'
-            - '@oro_dpd.method.identifier_generator.type'
-            - '@oro_shipping.method.event.dispatcher.type_removal'
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\DPDBundle\Entity\DPDTransport', event: postUpdate }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\DPDBundle\Entity\DPDTransport', event: preFlush }
-
-    oro_dpd.event_listener.shipping_method_config_data:
-        parent: oro_shipping.admin_view.method_template.listener
-        arguments:
-            - '%oro_dpd.admin_view.method_template%'
-            - '@oro_dpd.shipping_method_provider.dpd'
-        tags:
-            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
 
     oro_dpd.validator.remove_used_shipping_service:
         class: 'Oro\Bundle\DPDBundle\Validator\Constraints\RemoveUsedShippingServiceValidator'

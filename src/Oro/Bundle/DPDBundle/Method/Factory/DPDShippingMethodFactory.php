@@ -3,9 +3,9 @@
 namespace Oro\Bundle\DPDBundle\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
@@ -18,7 +18,7 @@ class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $localizationHelper;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
     private $methodIdentifierGenerator;
 
@@ -34,13 +34,13 @@ class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
 
     /**
      * @param LocalizationHelper                            $localizationHelper
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
+     * @param IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param DPDShippingMethodTypeFactoryInterface         $methodTypeFactory
      * @param DPDHandlerFactoryInterface                    $handlerFactory
      */
     public function __construct(
         LocalizationHelper $localizationHelper,
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
+        IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
         DPDShippingMethodTypeFactoryInterface $methodTypeFactory,
         DPDHandlerFactoryInterface $handlerFactory
     ) {

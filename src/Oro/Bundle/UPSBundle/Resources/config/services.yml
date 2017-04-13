@@ -70,7 +70,7 @@ services:
             - { name: validator.constraint_validator, alias: oro_ups_remove_used_shipping_service_validator }
 
     oro_ups.entity_listener.channel:
-        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener'
+        parent: oro_shipping.remove_integration_listener
         arguments:
             - '%oro_ups.integration.channel.type%'
             - '@oro_ups.method.identifier_generator.method'
@@ -127,7 +127,7 @@ services:
         parent: oro.cache.abstract
 
     oro_ups.disable_integration_listener:
-        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener'
+        parent: oro_shipping.disable_integration_listener
         arguments:
             - '%oro_ups.integration.channel.type%'
             - '@oro_ups.method.identifier_generator.method'

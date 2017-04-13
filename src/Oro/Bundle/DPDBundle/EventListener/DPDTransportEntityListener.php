@@ -9,14 +9,14 @@ use Oro\Bundle\DPDBundle\Entity\Rate;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Method\Identifier\DPDMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Provider\ChannelType;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEventDispatcherInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class DPDTransportEntityListener
 {
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
     private $methodIdentifierGenerator;
 
@@ -31,12 +31,12 @@ class DPDTransportEntityListener
     private $typeRemovalEventDispatcher;
 
     /**
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
+     * @param IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param DPDMethodTypeIdentifierGeneratorInterface     $typeIdentifierGenerator
      * @param MethodTypeRemovalEventDispatcherInterface     $typeRemovalEventDispatcher
      */
     public function __construct(
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
+        IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
         DPDMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
         MethodTypeRemovalEventDispatcherInterface $typeRemovalEventDispatcher
     ) {
