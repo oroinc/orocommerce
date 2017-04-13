@@ -3,7 +3,6 @@
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -72,7 +71,7 @@ class TestContentVariant
     }
 
     /**
-     * @return Product
+     * @return Category
      */
     public function getCategoryPageCategory()
     {
@@ -88,13 +87,18 @@ class TestContentVariant
     }
 
     /**
-     * @param Segment|null $segment
-     * @return $this
+     * @return Segment
      */
-    public function setProductCollectionSegment(Segment $segment = null)
+    public function getProductCollectionSegment()
     {
-        $this->product_collection_segment = $segment;
+        return $this->product_collection_segment;
+    }
 
-        return $this;
+    /**
+     * @param Segment|null $product_collection_segment
+     */
+    public function setProductCollectionSegment(Segment $product_collection_segment = null)
+    {
+        $this->product_collection_segment = $product_collection_segment;
     }
 }

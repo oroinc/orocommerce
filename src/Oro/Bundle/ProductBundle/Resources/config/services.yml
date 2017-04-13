@@ -637,6 +637,13 @@ services:
 
     oro_product.provider.product_content_variant_provider:
         class: Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider
+        public: false
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }
+
+    oro_product.provider.product_collection_content_variant_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductCollectionContentVariantProvider
+        public: false
         tags:
             - { name: oro_web_catalog.content_variant_provider }
 

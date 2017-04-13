@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadSegmentContentVariants;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductCollectionContentVariants;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ContentVariantSegmentProviderTest extends WebTestCase
@@ -17,7 +17,7 @@ class ContentVariantSegmentProviderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures([LoadSegmentContentVariants::class]);
+        $this->loadFixtures([LoadProductCollectionContentVariants::class]);
 
         $this->provider = new ContentVariantSegmentProvider(
             static::getContainer()->get('oro_entity.doctrine_helper'),
@@ -36,7 +36,8 @@ class ContentVariantSegmentProviderTest extends WebTestCase
     {
         $segments = [
             $this->getReference('segment_dynamic'),
-            $this->getReference('segment_static')
+            $this->getReference('segment_static'),
+            $this->getReference('product_static_segment')
         ];
 
         $this->assertEquals($segments, iterator_to_array($this->provider->getContentVariantSegments()));
