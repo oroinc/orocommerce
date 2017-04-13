@@ -24,6 +24,11 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     const MERCHANT_ORDER_ID = 'merchant_order_id';
     const TAX_CENTS = 'tax_cents';
     const SHIPPING_CENTS = 'shipping_cents';
+    const EXPIRE_AT = 'expire_at';
+    const AUTO_ESCALATE = 'auto_escalate';
+    const PO_NUMBER = 'po_number';
+    const PAYMENT_TERM_PARAMS = 'payment_term_params';
+    const _CORPORATE_ACCOUNT_ID = 'corporate_account_id';
     const FINALIZE_ON_CREATE = 'finalize_on_create';
     const INVOICE_ON_CREATE = 'invoice_on_create';
 
@@ -138,6 +143,46 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     public function setMerchantOrderId($id)
     {
         $this->data[self::MERCHANT_ORDER_ID] = (string) $id;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCorporateAccountId($id)
+    {
+        $this->data[self::PAYMENT_TERM_PARAMS][self::_CORPORATE_ACCOUNT_ID] = (string) $id;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExpireAt(\DateTime $dateTime)
+    {
+        $this->data[self::EXPIRE_AT] = (string) $dateTime->format(\DateTime::ATOM);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAutoEscalate($bool)
+    {
+        $this->data[self::AUTO_ESCALATE] = (bool) $bool;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPoNumber($poNumber)
+    {
+        $this->data[self::PO_NUMBER] = (string) $poNumber;
 
         return $this;
     }

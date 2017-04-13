@@ -52,4 +52,32 @@ interface ApruveOrderBuilderInterface
      * @return self
      */
     public function setMerchantOrderId($id);
+
+    /**
+     * @param string $id
+     *
+     * @return self
+     */
+    public function setCorporateAccountId($id);
+
+    /**
+     * @param \DateTime $dateTime
+     *
+     * @return ApruveOrderBuilderInterface
+     */
+    public function setExpireAt(\DateTime $dateTime);
+
+    /**
+     * @param bool $bool
+     *
+     * @return self
+     */
+    public function setAutoEscalate($bool);
+
+    /**
+     * @param string $poNumber
+     *
+     * @return ApruveOrderBuilderInterface
+     */
+    public function setPoNumber($poNumber);
 }

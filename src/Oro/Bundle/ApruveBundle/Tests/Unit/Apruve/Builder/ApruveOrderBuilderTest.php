@@ -32,6 +32,10 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
     const TAX_AMOUNT = 4.12;
     const TAX_AMOUNT_CENTS = 412;
     const SHOPPER_ID = 'sampleShopperId';
+    const CORPORATE_ACCOUNT_ID = 'sampleAccountId';
+    const PO_NUMBER = '69000';
+    const AUTO_ESCALATE = true;
+    const EXPIRE_AT_STRING = '2027-04-15T10:12:27-05:00';
 
     /**
      * @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -173,6 +177,10 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
         $this->builder->setShippingAmount(self::SHIPPING_AMOUNT);
         $this->builder->setTaxAmount(self::TAX_AMOUNT);
         $this->builder->setShopperId(self::SHOPPER_ID);
+        $this->builder->setCorporateAccountId(self::CORPORATE_ACCOUNT_ID);
+        $this->builder->setPoNumber(self::PO_NUMBER);
+        $this->builder->setAutoEscalate(self::AUTO_ESCALATE);
+        $this->builder->setExpireAt(\DateTime::createFromFormat(\DateTime::ATOM, self::EXPIRE_AT_STRING));
 
         $actual = $this->builder->getResult();
 
@@ -187,6 +195,12 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
             ApruveOrderBuilder::TAX_CENTS => self::TAX_AMOUNT_CENTS,
             ApruveOrderBuilder::FINALIZE_ON_CREATE => self::FINALIZE_ON_CREATE,
             ApruveOrderBuilder::INVOICE_ON_CREATE => self::INVOICE_ON_CREATE,
+            ApruveOrderBuilder::PO_NUMBER => self::PO_NUMBER,
+            ApruveOrderBuilder::AUTO_ESCALATE => self::AUTO_ESCALATE,
+            ApruveOrderBuilder::EXPIRE_AT => self::EXPIRE_AT_STRING,
+            ApruveOrderBuilder::PAYMENT_TERM_PARAMS => [
+                ApruveOrderBuilder::_CORPORATE_ACCOUNT_ID => self::CORPORATE_ACCOUNT_ID,
+            ],
         ];
         static::assertEquals($expected, $actual->getData());
     }
