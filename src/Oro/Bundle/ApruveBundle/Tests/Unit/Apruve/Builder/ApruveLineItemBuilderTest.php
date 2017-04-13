@@ -69,7 +69,7 @@ class ApruveLineItemBuilderTest extends \PHPUnit_Framework_TestCase
         $this->router = $this->createMock(RouterInterface::class);
         $this->router
             ->method('generate')
-            ->with('oro_product_view', ['id' => self::PRODUCT_ID], UrlGeneratorInterface::ABSOLUTE_URL)
+            ->with('oro_product_frontend_product_view', ['id' => self::PRODUCT_ID], UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn(self::VIEW_PRODUCT_URL);
 
         $this->product = $this->getMockBuilder(Product::class)

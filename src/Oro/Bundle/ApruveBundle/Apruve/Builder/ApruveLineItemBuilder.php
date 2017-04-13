@@ -66,7 +66,7 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
             self::CURRENCY => (string)$this->lineItem->getPrice()->getCurrency(),
             self::SKU => (string)$this->lineItem->getProductSku(),
             self::TITLE => (string)$product->getName(),
-            self::DESCRIPTION => (string)$product->getDescription(),
+            self::DESCRIPTION => (string)$this->getDescription($product),
             self::VIEW_PRODUCT_URL => (string)$this->getViewProductUrl($product),
         ];
 
@@ -121,9 +121,22 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
     protected function getViewProductUrl(Product $product)
     {
         return $this->router->generate(
-            'oro_product_view',
+            'oro_product_frontend_product_view',
             ['id' => $product->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return string
+     */
+    protected function getDescription(Product $product)
+    {
+        $description = (string) $product->getDescription();
+        $description = strip_tags($description);
+
+        return str_replace(PHP_EOL, ' ', $description);
     }
 }
