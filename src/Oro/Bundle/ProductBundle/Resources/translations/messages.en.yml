@@ -47,6 +47,9 @@ oro:
 
         content_variant:
             product_page.label: Product Page
+            product_collection.label: Product Collection
+            field:
+                product_collection.label: Filters
 
         type:
             simple: Simple

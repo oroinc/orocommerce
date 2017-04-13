@@ -239,6 +239,10 @@
     {{ form_row(form.productPageProduct) }}
 {% endblock %}
 
+{% block oro_product_collection_variant_widget %}
+    {{ form_row(form.productCollectionSegment) }}
+{% endblock %}
+
 {% block oro_product_custom_variant_fields_collection_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     <div class="enum-value-collection" {{ UI.renderPageComponentAttributes({

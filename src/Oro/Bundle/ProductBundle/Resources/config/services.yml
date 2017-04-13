@@ -620,6 +620,14 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_type }
 
+    oro_product.content_variant_type.product_collection:
+        class: Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType
+        public: false
+        arguments:
+            - '@oro_security.security_facade'
+        tags:
+            - { name: oro_web_catalog.content_variant_type }
+
     oro_product.provider.routing_information_provider:
         class: Oro\Bundle\ProductBundle\Provider\ProductRoutingInformationProvider
         arguments:
