@@ -3,10 +3,10 @@
 namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client;
 
 use JMS\Serializer\Serializer;
-use net\authorize\api\contract\v1 as AnetAPI;
-use net\authorize\api\controller as AnetController;
 use net\authorize\api\contract\v1\CreateTransactionResponse;
+use net\authorize\api\contract\v1 as AnetAPI;
 
+use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\Factory\AnetSDKRequestFactory;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Response\AuthorizeNetSDKResponse;
 
@@ -18,11 +18,18 @@ class AuthorizeNetSDKClient implements ClientInterface
     protected $serializer;
 
     /**
-     * @param Serializer $serializer
+     * @var AnetSDKRequestFactory
      */
-    public function __construct(Serializer $serializer)
+    protected $factory;
+
+    /**
+     * @param Serializer $serializer
+     * @param AnetSDKRequestFactory $factory
+     */
+    public function __construct(Serializer $serializer, AnetSDKRequestFactory $factory)
     {
         $this->serializer = $serializer;
+        $this->factory = $factory;
     }
 
     /**
@@ -30,7 +37,7 @@ class AuthorizeNetSDKClient implements ClientInterface
      */
     public function send(array $options)
     {
-        $request = new AnetAPI\CreateTransactionRequest();
+        $request = $this->factory->createRequest();
         $request->setMerchantAuthentication(
             (new AnetAPI\MerchantAuthenticationType)
                 ->setName($options[Option\ApiLoginId::API_LOGIN_ID])
@@ -38,7 +45,7 @@ class AuthorizeNetSDKClient implements ClientInterface
         );
         $request->setTransactionRequest($this->getTransactionRequest($options));
 
-        $controller = new AnetController\CreateTransactionController($request);
+        $controller = $this->factory->createController($request);
 
         $apiResponse = $controller->executeWithApiResponse($options[Option\Environment::ENVIRONMENT]);
         if (!$apiResponse instanceof CreateTransactionResponse) {

@@ -11,6 +11,7 @@ services:
         public: false
         arguments:
             - '@jms_serializer.serializer'
+            - '@oro_authorize_net.sdk.request.factory'
 
     oro_authorize_net.request.registry:
         class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\RequestRegistry'
@@ -30,4 +31,8 @@ services:
 
     oro_authorize_net.request.capture:
         class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\CaptureRequest'
+        public: false
+
+    oro_authorize_net.sdk.request.factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\Factory\AnetSDKRequestFactory'
         public: false
