@@ -61,7 +61,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}" class="view-product">
-            <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="fa-angle-right"></i>
+            {{ 'oro.product.frontend.index.view_details'|trans }}<i class="fa-angle-right fa--link-r"></i>
         </a>
     </div>
 {% endblock %}
