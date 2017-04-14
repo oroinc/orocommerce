@@ -6,6 +6,8 @@ use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilder;
 use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveLineItemBuilderFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveOrderBuilderFactory;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
+use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
+use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 class ApruveOrderBuilderFactoryTest extends \PHPUnit_Framework_TestCase
@@ -26,6 +28,16 @@ class ApruveOrderBuilderFactoryTest extends \PHPUnit_Framework_TestCase
     private $apruveLineItemBuilderFactory;
 
     /**
+     * @var ShippingAmountProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $shippingAmountProvider;
+
+    /**
+     * @var TaxAmountProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $taxAmountProvider;
+
+    /**
      * @var ApruveOrderBuilderFactory
      */
     private $factory;
@@ -38,14 +50,26 @@ class ApruveOrderBuilderFactoryTest extends \PHPUnit_Framework_TestCase
         $this->paymentContext = $this->createMock(PaymentContextInterface::class);
         $this->config = $this->createMock(ApruveConfigInterface::class);
         $this->apruveLineItemBuilderFactory = $this->createMock(ApruveLineItemBuilderFactoryInterface::class);
+        $this->shippingAmountProvider = $this->createMock(ShippingAmountProviderInterface::class);
+        $this->taxAmountProvider = $this->createMock(TaxAmountProviderInterface::class);
 
-        $this->factory = new ApruveOrderBuilderFactory($this->apruveLineItemBuilderFactory);
+        $this->factory = new ApruveOrderBuilderFactory(
+            $this->apruveLineItemBuilderFactory,
+            $this->shippingAmountProvider,
+            $this->taxAmountProvider
+        );
     }
 
     public function testCreate()
     {
         $actual = $this->factory->create($this->paymentContext, $this->config);
-        $expected = new ApruveOrderBuilder($this->paymentContext, $this->config, $this->apruveLineItemBuilderFactory);
+        $expected = new ApruveOrderBuilder(
+            $this->paymentContext,
+            $this->config,
+            $this->apruveLineItemBuilderFactory,
+            $this->shippingAmountProvider,
+            $this->taxAmountProvider
+        );
 
         static::assertEquals($expected, $actual);
     }

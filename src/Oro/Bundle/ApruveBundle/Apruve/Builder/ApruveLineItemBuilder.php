@@ -14,6 +14,11 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
      * Mandatory
      */
     const PRICE_TOTAL_CENTS = 'price_total_cents';
+    /**
+     * Property 'price_total_cents' is not respected by Apruve when secure hash is generated,
+     * hence use 'amount_cents' instead.
+     */
+    const AMOUNT_CENTS = 'amount_cents';
     const QUANTITY = 'quantity';
     const CURRENCY = 'currency';
     const SKU = 'sku';
@@ -59,16 +64,22 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
      */
     public function getResult()
     {
-        $product = $this->lineItem->getProduct();
         $this->data += [
-            self::PRICE_TOTAL_CENTS => (int)$this->normalizePrice($this->lineItem->getPrice()),
+            self::TITLE => (string)$this->getTitle($this->lineItem),
+            self::SKU => (string)$this->getSku($this->lineItem),
+            self::AMOUNT_CENTS => (int)$this->normalizePrice($this->lineItem->getPrice()),
+            self::PRICE_EA_CENTS => (int)$this->getPriceEaCents($this->lineItem),
             self::QUANTITY => (int)$this->lineItem->getQuantity(),
             self::CURRENCY => (string)$this->lineItem->getPrice()->getCurrency(),
-            self::SKU => (string)$this->lineItem->getProductSku(),
-            self::TITLE => (string)$product->getName(),
-            self::DESCRIPTION => (string)$this->getDescription($product),
-            self::VIEW_PRODUCT_URL => (string)$this->getViewProductUrl($product),
         ];
+
+        $product = $this->lineItem->getProduct();
+        if ($product instanceof Product) {
+            $this->data += [
+                self::DESCRIPTION => (string)$this->getDescription($product),
+                self::VIEW_PRODUCT_URL => (string)$this->getViewProductUrl($product),
+            ];
+        }
 
         return new ApruveLineItemRequestData($this->data);
     }
@@ -104,11 +115,37 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
     }
 
     /**
-     * {@inheritDoc}
+     * @param string $title
+     *
+     * @return self
      */
-    public function setAmountEa($amount)
+    public function setTitle($title)
     {
-        $this->data[self::PRICE_EA_CENTS] = $this->normalizeAmount($amount);
+        $this->data[self::TITLE] = (string)$title;
+
+        return $this;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return self
+     */
+    public function setDescription($description)
+    {
+        $this->data[self::DESCRIPTION] = $this->sanitizeDescription($description);
+
+        return $this;
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return self
+     */
+    public function setViewProductUrl($url)
+    {
+        $this->data[self::VIEW_PRODUCT_URL] = (string)$url;
 
         return $this;
     }
@@ -134,7 +171,72 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
      */
     protected function getDescription(Product $product)
     {
-        $description = (string) $product->getDescription();
+        $description = (string)$product->getDescription();
+
+        return $this->sanitizeDescription($description);
+    }
+
+    /**
+     * @param PaymentLineItemInterface $lineItem
+     *
+     * @return int
+     */
+    protected function getPriceEaCents(PaymentLineItemInterface $lineItem)
+    {
+        $amount = (float)$lineItem->getPrice()->getValue();
+        $quantity = $lineItem->getQuantity();
+
+        return $this->normalizeAmount($amount / $quantity);
+    }
+
+    /**
+     * @param PaymentLineItemInterface $lineItem
+     *
+     * @return string
+     */
+    protected function getSku(PaymentLineItemInterface $lineItem)
+    {
+        $sku = $lineItem->getProductSku();
+
+        // Product sku is optional, and will be null is not provided to builder.
+        if ($sku === null) {
+            // Try to fetch it directly from product.
+            $product = $lineItem->getProduct();
+            // ... though it is optional as well.
+            if ($product !== null) {
+                $sku = $product->getSku();
+            }
+        }
+
+        return (string) $sku;
+    }
+
+    /**
+     * @param PaymentLineItemInterface $lineItem
+     *
+     * @return string
+     */
+    protected function getTitle(PaymentLineItemInterface $lineItem)
+    {
+        $product = $lineItem->getProduct();
+        // Product is optional PaymentLineItemBuilderInterface.
+        if ($product !== null) {
+            $title = $product->getName();
+        } else {
+            // ... though title is required by Apruve, so use SKU when no product is available.
+            $title = $this->getSku($lineItem);
+        }
+
+        return (string) $title;
+    }
+
+    /**
+     * @param string $description
+     *
+     * @return string
+     */
+    protected function sanitizeDescription($description)
+    {
         $description = strip_tags($description);
 
         return str_replace(PHP_EOL, ' ', $description);

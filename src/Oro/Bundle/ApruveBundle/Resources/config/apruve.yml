@@ -10,6 +10,8 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveOrderBuilderFactory'
         arguments:
             - '@oro_apruve.apruve.builder.factory.line_item'
+            - '@oro_apruve.provider.shipping_amount'
+            - '@oro_apruve.provider.tax_amount'
         lazy: true
 
     oro_apruve.apruve.builder.factory.line_item:
