@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Method\Factory;
 
+use Oro\Bundle\ApruveBundle\Apruve\Provider\SupportedCurrenciesProviderInterface;
 use Oro\Bundle\ApruveBundle\Method\ApruvePaymentMethod;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Method\Factory\ApruvePaymentMethodFactory;
@@ -16,6 +17,11 @@ class ApruvePaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
     private $paymentActionExecutor;
 
     /**
+     * @var SupportedCurrenciesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $supportedCurrenciesProvider;
+
+    /**
      * @var ApruvePaymentMethodFactoryInterface
      */
     private $factory;
@@ -25,8 +31,12 @@ class ApruvePaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->supportedCurrenciesProvider = $this->createMock(SupportedCurrenciesProviderInterface::class);
         $this->paymentActionExecutor = $this->createMock(PaymentActionExecutor::class);
-        $this->factory = new ApruvePaymentMethodFactory($this->paymentActionExecutor);
+        $this->factory = new ApruvePaymentMethodFactory(
+            $this->paymentActionExecutor,
+            $this->supportedCurrenciesProvider
+        );
     }
 
     public function testCreate()
@@ -34,7 +44,11 @@ class ApruvePaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var ApruveConfigInterface|\PHPUnit_Framework_MockObject_MockObject $config */
         $config = $this->createMock(ApruveConfigInterface::class);
 
-        $paymentMethod = new ApruvePaymentMethod($config, $this->paymentActionExecutor);
+        $paymentMethod = new ApruvePaymentMethod(
+            $config,
+            $this->supportedCurrenciesProvider,
+            $this->paymentActionExecutor
+        );
 
         static::assertEquals($paymentMethod, $this->factory->create($config));
     }

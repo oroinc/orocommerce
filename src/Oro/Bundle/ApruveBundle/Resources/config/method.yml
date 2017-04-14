@@ -27,7 +27,8 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Method\Factory\ApruvePaymentMethodFactory'
         public: false
         arguments:
-            - '@oro_apruve.method.payment_action.strategy'
+            - '@oro_apruve.method.executor.payment_action'
+            - '@oro_apruve.apruve.provider.supported_currencies'
 
     oro_apruve.method.apruve.provider:
         class: 'Oro\Bundle\ApruveBundle\Method\Provider\ApruvePaymentMethodProvider'

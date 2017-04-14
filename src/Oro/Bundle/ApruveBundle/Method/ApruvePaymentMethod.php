@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ApruveBundle\Method;
 
+use Oro\Bundle\ApruveBundle\Apruve\Provider\SupportedCurrenciesProviderInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Method\PaymentAction\Executor\PaymentActionExecutor;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
@@ -26,13 +27,23 @@ class ApruvePaymentMethod implements PaymentMethodInterface
     protected $paymentActionExecutor;
 
     /**
+     * @var SupportedCurrenciesProviderInterface
+     */
+    protected $supportedCurrenciesProvider;
+
+    /**
      * @param ApruveConfigInterface $config
+     * @param SupportedCurrenciesProviderInterface $supportedCurrenciesProvider
      * @param PaymentActionExecutor $paymentActionExecutor
      */
-    public function __construct(ApruveConfigInterface $config, PaymentActionExecutor $paymentActionExecutor)
-    {
+    public function __construct(
+        ApruveConfigInterface $config,
+        SupportedCurrenciesProviderInterface $supportedCurrenciesProvider,
+        PaymentActionExecutor $paymentActionExecutor
+    ) {
         $this->config = $config;
         $this->paymentActionExecutor = $paymentActionExecutor;
+        $this->supportedCurrenciesProvider = $supportedCurrenciesProvider;
     }
 
     /**
@@ -56,7 +67,7 @@ class ApruvePaymentMethod implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return true;
+        return $this->supportedCurrenciesProvider->isSupported($context->getCurrency());
     }
 
     /**

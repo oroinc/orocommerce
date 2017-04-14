@@ -55,7 +55,7 @@ class PaymentActionExecutorTest extends \PHPUnit_Framework_TestCase
         $paymentAction
             ->expects($this->once())
             ->method('getName')
-            ->willReturn('authorize');
+            ->willReturn('purchase');
 
         $return = $this->paymentActionExecutor->addPaymentAction($paymentAction);
         static::assertSame($return, $this->paymentActionExecutor);
@@ -64,7 +64,7 @@ class PaymentActionExecutorTest extends \PHPUnit_Framework_TestCase
         $actionsProp->setAccessible(true);
         $actions = $actionsProp->getValue($this->paymentActionExecutor);
 
-        static::assertArraySubset(['authorize' => $paymentAction], $actions);
+        static::assertArraySubset(['purchase' => $paymentAction], $actions);
     }
 
     public function testExecuteWithSupportedAction()
