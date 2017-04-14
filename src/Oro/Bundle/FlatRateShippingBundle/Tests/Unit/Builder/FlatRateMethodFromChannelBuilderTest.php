@@ -3,23 +3,16 @@
 namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Builder;
 
 use Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder;
-use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
-use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
 class FlatRateMethodFromChannelBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $identifierGenerator;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LocalizationHelper
-     */
-    private $localizationHelper;
+    private $factory;
 
     /**
      * @var FlatRateMethodFromChannelBuilder
@@ -28,49 +21,30 @@ class FlatRateMethodFromChannelBuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->identifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
+        $this->factory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
 
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->builder = new FlatRateMethodFromChannelBuilder($this->identifierGenerator, $this->localizationHelper);
+        $this->builder = new FlatRateMethodFromChannelBuilder($this->factory);
     }
 
     public function testBuildReturnsCorrectObjectWithLabel()
     {
-        $label = 'test';
-        $channel = $this->getChannel();
-        $identifier = 'flat_rate_1';
+        $expectedMethod = $this->createMock(ShippingMethodInterface::class);
 
-        $this->localizationHelper->expects(static::once())
-            ->method('getLocalizedValue')
-            ->willReturn($label);
+        $channel = $this->getChannelMock();
 
-        $this->identifierGenerator->expects($this->once())
-            ->method('generateIdentifier')
+        $this->factory->expects($this->once())
+            ->method('create')
             ->with($channel)
-            ->willReturn($identifier);
+            ->willReturn($expectedMethod);
 
-        $method = $this->builder->build($channel);
-
-        static::assertInstanceOf(FlatRateMethod::class, $method);
-        static::assertSame($identifier, $method->getIdentifier());
-        static::assertSame($label, $method->getLabel());
-        static::assertTrue($method->isEnabled());
+        static::assertSame($expectedMethod, $this->builder->build($channel));
     }
 
     /**
-     * @return Channel
+     * @return Channel|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getChannel()
+    private function getChannelMock()
     {
-        $settings = new FlatRateSettings();
-
-        $channel = new Channel();
-        $channel->setTransport($settings);
-        $channel->setEnabled(true);
-
-        return $channel;
+        return $this->createMock(Channel::class);
     }
 }

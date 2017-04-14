@@ -3,9 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
@@ -17,16 +20,30 @@ use Symfony\Component\Form\FormEvents;
 class ProductFormExtension extends AbstractTypeExtension
 {
     /**
+     * @var PriceManager
+     */
+    protected $priceManager;
+
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
+    /**
      * @var ManagerRegistry
      */
     protected $registry;
 
     /**
      * @param ManagerRegistry $registry
+     * @param ShardManager $shardManager
+     * @param PriceManager $priceManager
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ShardManager $shardManager, PriceManager $priceManager)
     {
         $this->registry = $registry;
+        $this->shardManager = $shardManager;
+        $this->priceManager = $priceManager;
     }
 
     /**
@@ -67,7 +84,7 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $prices = $this->getProductPriceRepository()->getPricesByProduct($product);
+        $prices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $product);
 
         $event->getForm()->get('prices')->setData($prices);
     }
@@ -92,7 +109,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
             if ($product->getId()) {
                 $replacedPrices = [];
-                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $product);
                 foreach ($submittedPrices as $key => $submittedPrice) {
                     foreach ($existingPrices as $k => $existingPrice) {
                         if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
@@ -130,10 +147,10 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $entityManager = $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
-
+        $repository = $this->getProductPriceRepository();
         // persist existing prices
         $persistedPriceIds = [];
+
         foreach ($prices as $price) {
             $priceId = $price->getId();
             if ($priceId) {
@@ -141,15 +158,15 @@ class ProductFormExtension extends AbstractTypeExtension
             }
 
             $price->setProduct($product);
-            $entityManager->persist($price);
+            $this->priceManager->persist($price);
         }
 
         // remove deleted prices
         if ($product->getId()) {
-            $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+            $existingPrices = $repository->getPricesByProduct($this->shardManager, $product);
             foreach ($existingPrices as $price) {
                 if (!in_array($price->getId(), $persistedPriceIds, true)) {
-                    $entityManager->remove($price);
+                    $this->priceManager->remove($price);
                 }
             }
         }
@@ -168,8 +185,16 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     protected function getProductPriceRepository()
     {
-        return $this->registry->getManagerForClass('OroPricingBundle:ProductPrice')
+        return $this->getManager()
             ->getRepository('OroPricingBundle:ProductPrice');
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getManager()
+    {
+        return $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
     }
 
     /**

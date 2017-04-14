@@ -37,7 +37,7 @@ Feature: Shipping Method Configurations disappear when removing integration
     And I click on "Deactivate Integration Confirm Button"
     And I go to System/ Shipping Rules
     And I should see New Shipping Rule in grid with following data:
-      |Configurations|Flat Rate New (Price: $25.00)             Disabled|
+      |Configurations|Flat Rate New (Price: $25.00) Disabled|
     And I click edit New Shipping Rule in grid
     And I should see Disabled Shipping Method Configuration
     And I click Logout in user menu

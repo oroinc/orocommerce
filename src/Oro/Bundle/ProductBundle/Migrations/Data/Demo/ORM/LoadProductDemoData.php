@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -19,6 +20,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
@@ -119,6 +121,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addShortDescription($shortDescription)
                 ->setType($row['type'])
                 ->setFeatured($row['featured']);
+
+            $this->setPageTemplate($product, $row);
 
             $slugPrototype = new LocalizedFallbackValue();
             $slugPrototype->setString($slugGenerator->slugify($row['name']));
@@ -304,5 +308,22 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $dimensions;
+    }
+
+    /**
+     * @param Product $product
+     * @param array   $row
+     * @return LoadProductDemoData
+     */
+    private function setPageTemplate(Product $product, array $row)
+    {
+        if (!empty($row['page_template'])) {
+            $entityFallbackValue = new EntityFieldFallbackValue();
+            $entityFallbackValue->setArrayValue([ProductType::PAGE_TEMPLATE_ROUTE_NAME => $row['page_template']]);
+
+            $product->setPageTemplate($entityFallbackValue);
+        }
+
+        return $this;
     }
 }

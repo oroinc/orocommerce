@@ -117,8 +117,8 @@ class AjaxLineItemControllerTest extends WebTestCase
             [
                 'product' => LoadProductData::PRODUCT_2,
                 'unit' => 'product_unit.liter',
-                'quantity' => 14,
-                'expectedSubtotals' => ['EUR' => 1573, 'USD' => 1611.8],
+                'quantity' => 15,
+                'expectedSubtotals' => ['EUR' => 1573, 'USD' => 1456.25],
             ],
             [
                 'product' => LoadProductData::PRODUCT_1,

@@ -101,12 +101,12 @@
                     {% endif %}
                 </span>
             </span>
-            <span class="shopping-list-dropdown__desc">
+            <span class="shopping-list-dropdown__products">
                 {% for product in shoppingListProducts[shoppingList.id]|default([]) %}
                     {% if loop.index == 3 %}
                         <span class="shopping-list-dropdown__ellipsis">...</span>
                     {% else %}
-                        {{ product.name }}
+                        <span class="shopping-list-dropdown__products__item">{{ product.name }}</span>
                     {% endif %}
                 {% endfor %}
             </span>
