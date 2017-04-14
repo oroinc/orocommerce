@@ -1,8 +1,21 @@
 // @theme: default
 @include breakpoint('desktop') {
-    .product-view {
-        .product-price {
-            display: none;
+    .product-view__specification {
+        &--colored {
+            position: $product-view-specification-colored-position;
+            display: $product-view-specification-colored-display;
+
+            width: $product-view-specification-colored-width;
+            padding: $product-view-specification-colored-inner-offset;
+
+            background: $product-view-specification-colored-background;
+            border-radius: $product-view-specification-colored-border-radius;
+        }
+    }
+
+    .product-view__description {
+        &--short {
+            width: $product-view-description-short-width;
         }
     }
 }
@@ -10,31 +23,39 @@
 @include breakpoint('tablet') {
     .product-view {
         &__primary-wrapper {
-            display: flex;
-            flex-direction: column-reverse;
+            display: $product-view-primary-wrapper-display-tablet;
+            flex-direction: $product-view-primary-wrapper-flex-direction-tablet;
 
-            margin-top: -15px;
+            margin-top: $product-view-primary-wrapper-margin-top-tablet;
         }
 
         &__primary {
-            margin-top: 0;
+            margin-top: $product-view-primary-margin-top-tablet;
 
-            text-align: center;
+            text-align: $product-view-primary-text-align-tablet;
 
             .page-title {
-                font-size: $base-font-size--l - 1;
-                line-height: 1.2;
+                font-size: $product-view-primary-page-title-font-size-tablet;
+                line-height: $product-view-primary-page-title-line-height-tablet;
+            }
+        }
+
+        &__description {
+            &--short {
+                width: $product-view-description-short-width-tablet;
             }
         }
 
         .line-item-form {
-            padding-top: 15px;
+            padding-top: $product-view-line-item-form-padding-top-tablet;
 
-            border-top: 1px solid get-color('additional', 'light');
+            border-top: $product-view-line-item-form-border-top-tablet;
         }
 
-        .product-prices {
-            display: none;
+        .shopping-lists {
+            &__content {
+                min-height: $product-view-shopping-lists-content-min-height-tablet;
+            }
         }
     }
 }

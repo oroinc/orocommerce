@@ -1,0 +1,31 @@
+// @theme: default;
+// @productTheme: two-columns-theme;
+
+@include breakpoint('desktop') {
+    .two-columns-theme.product-view {
+        .product-view {
+            &-quantity {
+                flex-direction: $two-columns-theme-product-view-quantity-flex-direction-desktop;
+            }
+
+            &-quantity__unit {
+                margin-right: $two-columns-theme-product-view-quantity-unit-margin-right-desktop;
+            }
+
+            &-quantity__value {
+                margin-right: $two-columns-theme-product-view-quantity-value-margin-right-desktop;
+            }
+        }
+
+        .product-price {
+            &__hint {
+                display: $two-columns-theme-product-price-hint-display-desktop;
+                flex-direction: $two-columns-theme-product-price-hint-flex-direction-desktop;
+            }
+
+            &__label {
+                font-weight: $two-columns-theme-product-price-label-font-weight-desktop;
+            }
+        }
+    }
+}

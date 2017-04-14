@@ -27,4 +27,3 @@ layout:
                             categories_main_menu_first_level_item:
                                 categories_main_menu_second_level:
                                     categories_main_menu_third_level: ~
-    conditions: 'context["web_catalog_id"] == null'

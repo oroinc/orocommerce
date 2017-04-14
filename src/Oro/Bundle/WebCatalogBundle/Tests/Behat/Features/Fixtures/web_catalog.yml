@@ -1,0 +1,51 @@
+Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
+    nodeDefaultWebCatalog:
+        addTitle: ['@localValueDefaultWebCatalog']
+        webCatalog: '@webCatalog'
+
+    nodeProducts:
+        addTitle: ['@localValueProducts']
+        addSlugPrototype: ['@localValueProductsSlug']
+        ParentNode: '@nodeDefaultWebCatalog'
+        webCatalog: '@webCatalog'
+
+    nodeNewArrivals:
+        addTitle: ['@localValueNewArrivals']
+        addSlugPrototype: ['@localValueNewArrivalsSlug']
+        ParentNode: '@nodeDefaultWebCatalog'
+        webCatalog: '@webCatalog'
+
+    nodeClearance:
+        addTitle: ['@localValueClearance']
+        addSlugPrototype: ['@localValueClearanceSlug']
+        ParentNode: '@nodeDefaultWebCatalog'
+        webCatalog: '@webCatalog'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueDefaultWebCatalog:
+        string: 'Default Web Catalog'
+
+    localValueProducts:
+        string: 'Products'
+
+    localValueProductsSlug:
+        string: 'products'
+
+    localValueNewArrivals:
+        string: 'New Arrivals'
+
+    localValueNewArrivalsSlug:
+        string: 'new-arrivals'
+
+    localValueClearance:
+        string: 'Clearance'
+
+    localValueClearanceSlug:
+        string: 'clearance'
+
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    webCatalog:
+        name: 'Default Web Catalog'
+        description: 'Default Web Catalog description'
+        organization: '@organization'
+        owner: '@business_unit'

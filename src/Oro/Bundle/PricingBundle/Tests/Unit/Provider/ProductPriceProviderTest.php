@@ -3,18 +3,23 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
     const CLASS_NAME = '\stdClass';
+
+    /**
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shardManager;
 
     /**
      * @var ProductPriceProvider
@@ -29,8 +34,8 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $this->provider = new ProductPriceProvider($this->registry);
+        $this->shardManager = $this->createMock(ShardManager::class);
+        $this->provider = new ProductPriceProvider($this->registry, $this->shardManager);
         $this->provider->setClassName('\stdClass');
     }
 
@@ -54,7 +59,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
-            ->with($priceListId, $productIds, true, null)
+            ->with($this->shardManager, $priceListId, $productIds, true, null)
             ->willReturn($prices);
 
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
@@ -207,19 +212,18 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     public function getMatchedPricesDataProvider()
     {
         $currency = 'USD';
-        $prodUnitQty1 = $this->getProductPriceCriteria(1, $currency);
-        $prodUnitQty105 = $this->getProductPriceCriteria(10.5, $currency);
-        $prodUnitQty50 = $this->getProductPriceCriteria(50, $currency);
-
-        $repositoryData = $this->getRepositoryData($prodUnitQty50);
+        $prodUnitQty1 = $this->getProductPriceCriteria(1, $currency, 0);
+        $prodUnitQty105 = $this->getProductPriceCriteria(10.5, $currency, 0);
+        $prodUnitQty50 = $this->getProductPriceCriteria(50, $currency, 3);
 
         return [
             [
-                'productPriceCriteria' => [$prodUnitQty1, $prodUnitQty105],
-                'repositoryData' => $repositoryData,
+                'productPriceCriteria' => [$prodUnitQty1, $prodUnitQty105, $prodUnitQty50],
+                'repositoryData' => $this->getRepositoryData($prodUnitQty50),
                 'expectedData' => [
                     $prodUnitQty1->getIdentifier() => null,
                     $prodUnitQty105->getIdentifier() => Price::create(15, $currency),
+                    $prodUnitQty50->getIdentifier() => Price::create(6, $currency),
                 ]
             ],
         ];
@@ -230,12 +234,13 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $currency
      * @return ProductPriceCriteria
      */
-    protected function getProductPriceCriteria($quantity, $currency)
+    protected function getProductPriceCriteria($quantity, $currency, $precision)
     {
         /** @var Product $product */
         $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 42);
 
         $productUnit = new ProductUnit();
+        $productUnit->setDefaultPrecision($precision);
         $productUnit->setCode('kg');
 
         return new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
@@ -269,7 +274,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => $product->getId(),
                 'code' => $productUnit->getCode(),
                 'quantity' => 20,
-                'value' => 300,
+                'value' => 120,
                 'currency' => 'USD'
             ],
             [

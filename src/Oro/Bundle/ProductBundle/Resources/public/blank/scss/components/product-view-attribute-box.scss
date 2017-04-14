@@ -1,0 +1,31 @@
+// @theme: blank;
+
+.product-view {
+    &__attribute-box {
+        padding: $product-view-attributes-box-inner-offset;
+        margin-right: $product-view-attributes-box-offset-right;
+
+        @include mosaic-grid-break-inside();
+
+        &-wrapper {
+            @include mosaic-grid($mosaic-grid-columns: 2);
+        }
+
+        &-title {
+            margin-bottom: $product-view-attributes-box-title-offset-bottom;
+
+            font-size: $base-font-size--m - 2;
+            text-transform: $product-view-attributes-box-title-text-transform;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .product-view {
+        &__attribute-box {
+            &-wrapper {
+                @include mosaic-grid($mosaic-grid-columns: 1);
+            }
+        }
+    }
+}

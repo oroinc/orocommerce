@@ -100,9 +100,10 @@ class PriceListRepositoryTest extends WebTestCase
 
     public function testGetInvalidCurrenciesByPriceList()
     {
+        $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
-        $currencies = $this->getRepository()->getInvalidCurrenciesByPriceList($priceList);
+        $currencies = $this->getRepository()->getInvalidCurrenciesByPriceList($shardManager, $priceList);
 
         $this->assertEquals(['EUR'], $currencies);
     }
