@@ -3,13 +3,12 @@
 namespace Oro\Bundle\ApruveBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\ApruveBundle\DependencyInjection\OroApruveExtension;
 
 class OroApruveBundle extends Bundle
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getContainerExtension()
     {
