@@ -8,6 +8,8 @@ use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -64,5 +66,14 @@ class ProductCollectionVariantType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('content_variant_type', ProductCollectionContentVariantType::TYPE);
+        $resolver->setDefault('results_grid', 'product-collection-grid');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['results_grid'] = $options['results_grid'];
     }
 }

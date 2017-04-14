@@ -11,6 +11,8 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\Manager;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -92,6 +94,7 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
             ProductCollectionContentVariantType::TYPE,
             $form->getConfig()->getOption('content_variant_type')
         );
+        $this->assertEquals('product-collection-grid', $form->getConfig()->getOption('results_grid'));
     }
 
     public function testGetName()
@@ -102,5 +105,16 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefix()
     {
         $this->assertEquals(ProductCollectionVariantType::NAME, $this->type->getBlockPrefix());
+    }
+
+    public function testFinishView()
+    {
+        $view = new FormView();
+        /** @var FormInterface $form */
+        $form = $this->createMock(FormInterface::class);
+        $options = ['results_grid' => 'test'];
+
+        $this->type->finishView($view, $form, $options);
+        $this->assertEquals('test', $view->vars['results_grid']);
     }
 }

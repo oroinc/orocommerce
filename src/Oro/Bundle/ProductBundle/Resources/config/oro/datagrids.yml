@@ -109,6 +109,10 @@ datagrids:
 
     product-collection-grid:
         extends: products-select-grid-base
+        options:
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
 
     products-grid:
         extends: products-select-grid-base
