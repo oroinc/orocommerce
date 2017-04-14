@@ -23,7 +23,7 @@ define(function(require) {
             lensOpacity: 0.22
         },
 
-        _create: function() {
+        _init: function() {
             this.options.onZoomedImageLoaded = _.bind(this._resetImageProperty, this);
 
             //Bind activeImage event of slick gallery

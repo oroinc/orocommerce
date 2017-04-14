@@ -172,7 +172,7 @@ class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture impleme
                         'handling_fee' => null,
                         'type' => $typeConfigData['options']['type'],
                     ]);
-                $typeConfig->setEnabled(true);
+                $typeConfig->setEnabled($typeConfigData['enabled']);
                 $methodConfig->addTypeConfig($typeConfig);
             }
 

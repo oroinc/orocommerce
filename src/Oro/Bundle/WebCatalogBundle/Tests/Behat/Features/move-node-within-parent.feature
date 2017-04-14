@@ -12,7 +12,6 @@ Feature: Move node within parent
 
     When I drag and drop "Products" before "Clearance"
     Then I should not see "Changing Page URLs"
-    And have to wait for ajax
     And I should see a "Clearance after Products" element
 
     Then I reload the page

@@ -142,6 +142,7 @@ workflows:
                 frontend_options:
                     icon: 'fa-clock-o'
                     confirmation:
+                        title: oro.sale.quote.actions.quote_expire_title
                         message: oro.sale.quote.actions.quote_expire_confirm
                         okText: oro.sale.quote.actions.mark_as_expired
             create_new_quote_transition:
