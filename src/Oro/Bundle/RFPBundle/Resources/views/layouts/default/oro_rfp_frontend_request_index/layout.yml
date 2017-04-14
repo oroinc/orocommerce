@@ -24,10 +24,3 @@ layout:
             id: datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
-
-        - '@add':
-            id: create_request_button
-            parentId: datagrid_toolbar_button_container
-            blockType: combined_buttons
-            options:
-                buttons: '=data["buttons"].getAll()'
