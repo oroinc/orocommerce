@@ -20,6 +20,7 @@ PricingBundle
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
 - Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
+- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now. 
 
 ShoppingBundle
 -------------
