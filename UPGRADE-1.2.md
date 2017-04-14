@@ -61,11 +61,34 @@ RuleBundle
     - `getBaseSlug`
     - `getSlugByLocalization`
 
+CustomerBundle
+--------------
+- Class `Oro\Bundle\CustomerBundle\Audit\DiscriminatorMapListener` moved to `Oro\Bundle\EntityBundle\ORM\DiscriminatorMapListener`
+- `Oro\Bundle\CustomerBundle\Controller\Frontend\Api\Rest\GridViewController`
+    - added api controller based on `Oro\Bundle\DataGridBundle\Controller\Api\Rest\GridViewController ` and override methods:
+        postAction(), putAction(), deleteAction(), defaultAction()
+- `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtension`
+    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension`
+- `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtensionComposite`
+    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension` and override methods:
+        isApplicable(), getPriority(), visitMetadata(), setParameters()
+- `Oro\Bundle\CustomerBundle\Entity\GridView`
+    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_owner_id`
+- `Oro\Bundle\CustomerBundle\Entity\GridViewUser`
+    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_id`
+- `Oro\Bundle\CustomerBundle\Entity\Manager\GridViewManagerComposite`
+    - added class based on `Oro\Bundle\DataGridBundle\Entity\Manager\GridViewManager` and override methods:
+        setDefaultGridView(), getSystemViews(), getAllGridViews(), getDefaultView(), getView()
+- `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewRepository`
+    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewRepository` with replaced getOwnerFieldName() and getUserFieldName() to `customerUserOwner` and `customerUser`
+- `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewUserRepository`
+    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewUserRepository` with replaced getUserFieldName() to `customerUser`
+
 ShippingBundle
 --------------
 - `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method deprecated because it completely duplicate `getEnabledRulesByMethod`
 - If you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface` and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example.
-- The `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` was created, 
+- The `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` was created,
 
 FlatRateShippingBundle
 --------------
