@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Entity;
 
 use Brick\Math\BigDecimal;
+use Brick\Math\Exception\ArithmeticException;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
@@ -447,7 +448,14 @@ class OrderLineItem extends ExtendOrderLineItem implements
      */
     public function getValue()
     {
-        return BigDecimal::of($this->value)->toFloat();
+        if ($this->value !== null) {
+            try {
+                return BigDecimal::of($this->value)->toFloat();
+            } catch (ArithmeticException $e) {
+            }
+        }
+
+        return $this->value;
     }
 
     /**
