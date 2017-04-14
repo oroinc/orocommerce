@@ -12,6 +12,16 @@ services:
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
 
-    oro_apruve.apruve.provider.supported_currencies:
-        class: Oro\Bundle\ApruveBundle\Apruve\Provider\SupportedCurrenciesProvider
+    oro_apruve.provider.shipping_amount:
+        class: 'Oro\Bundle\ApruveBundle\Provider\ShippingAmountProvider'
+        arguments:
+            - '@oro_payment.provider.surcharge'
         lazy: true
+        public: false
+
+    oro_apruve.provider.tax_amount:
+        class: 'Oro\Bundle\ApruveBundle\Provider\TaxAmountProvider'
+        arguments:
+            - '@oro_tax.manager.tax_manager'
+        lazy: true
+        public: false

@@ -12,6 +12,27 @@ interface ApruveLineItemBuilderInterface
     public function getResult();
 
     /**
+     * @param string $title
+     *
+     * @return self
+     */
+    public function setTitle($title);
+
+    /**
+     * @param string $description
+     *
+     * @return self
+     */
+    public function setDescription($description);
+
+    /**
+     * @param string $url
+     *
+     * @return self
+     */
+    public function setViewProductUrl($url);
+
+    /**
      * @param string $notes
      *
      * @return self
@@ -24,13 +45,6 @@ interface ApruveLineItemBuilderInterface
      * @return self
      */
     public function setVendor($vendor);
-
-    /**
-     * @param int|float|string $amount
-     *
-     * @return self
-     */
-    public function setAmountEa($amount);
 
     /**
      * @param string $info

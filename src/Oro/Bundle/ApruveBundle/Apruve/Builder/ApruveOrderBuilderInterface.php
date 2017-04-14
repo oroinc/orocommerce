@@ -26,32 +26,11 @@ interface ApruveOrderBuilderInterface
     public function setFinalizeOnCreate($bool);
 
     /**
-     * @param int|float|string $amount
-     *
-     * @return self
-     */
-    public function setShippingAmount($amount);
-
-    /**
-     * @param int|float|string $amount
-     *
-     * @return self
-     */
-    public function setTaxAmount($amount);
-
-    /**
      * @param string $id
      *
      * @return self
      */
     public function setShopperId($id);
-
-    /**
-     * @param int $id
-     *
-     * @return self
-     */
-    public function setMerchantOrderId($id);
 
     /**
      * @param string $id

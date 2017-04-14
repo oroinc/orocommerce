@@ -7,6 +7,8 @@ use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilder;
 use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveLineItemBuilderFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Request\Order\ApruveOrderRequestDataInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
+use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
+use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
@@ -17,20 +19,20 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
      * Mandatory
      */
     const MERCHANT_ID = 'sampleMerchantId';
-    const AMOUNT = '123.45';
-    const AMOUNT_CENTS = 12345;
+    const AMOUNT = '100.1';
+    const AMOUNT_CENTS = 11130;
+    const SHIPPING_AMOUNT = 10.1;
+    const SHIPPING_AMOUNT_CENTS = 1010;
+    const TAX_AMOUNT = 1.1;
+    const TAX_AMOUNT_CENTS = 110;
     const CURRENCY = 'USD';
+    const MERCHANT_ORDER_ID = '123';
 
     /**
      * Optional
      */
     const FINALIZE_ON_CREATE = true;
     const INVOICE_ON_CREATE = true;
-    const MERCHANT_ORDER_ID = '123';
-    const SHIPPING_AMOUNT = 12.45;
-    const SHIPPING_AMOUNT_CENTS = 1245;
-    const TAX_AMOUNT = 4.12;
-    const TAX_AMOUNT_CENTS = 412;
     const SHOPPER_ID = 'sampleShopperId';
     const CORPORATE_ACCOUNT_ID = 'sampleAccountId';
     const PO_NUMBER = '69000';
@@ -51,6 +53,16 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
      * @var ApruveLineItemBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $apruveLineItemBuilderFactory;
+
+    /**
+     * @var ShippingAmountProviderInterface
+     */
+    private $shippingAmountProvider;
+
+    /**
+     * @var TaxAmountProviderInterface
+     */
+    private $taxAmountProvider;
 
     /**
      * @var ApruveOrderBuilder
@@ -92,6 +104,17 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
         $this->paymentContext
             ->method('getCurrency')
             ->willReturn(self::CURRENCY);
+        $this->paymentContext
+            ->method('getSourceEntityIdentifier')
+            ->willReturn(self::MERCHANT_ORDER_ID);
+
+        $sourceEntity = $this->getMockBuilder(\stdClass::class)
+            ->setMethods(['getId'])
+            ->getMock();
+
+        $this->paymentContext
+            ->method('getSourceEntity')
+            ->willReturn($sourceEntity);
 
         $this->config = $this->createMock(ApruveConfigInterface::class);
         $this->config
@@ -100,10 +123,24 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->apruveLineItemBuilderFactory = $this->createMock(ApruveLineItemBuilderFactoryInterface::class);
 
+        $this->shippingAmountProvider = $this->createMock(ShippingAmountProviderInterface::class);
+        $this->shippingAmountProvider
+            ->method('getShippingAmount')
+            ->with($this->paymentContext)
+            ->willReturn(self::SHIPPING_AMOUNT);
+
+        $this->taxAmountProvider = $this->createMock(TaxAmountProviderInterface::class);
+        $this->taxAmountProvider
+            ->method('getTaxAmount')
+            ->with($this->paymentContext)
+            ->willReturn(self::TAX_AMOUNT);
+
         $this->builder = new ApruveOrderBuilder(
             $this->paymentContext,
             $this->config,
-            $this->apruveLineItemBuilderFactory
+            $this->apruveLineItemBuilderFactory,
+            $this->shippingAmountProvider,
+            $this->taxAmountProvider
         );
     }
 
@@ -129,9 +166,12 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
             ApruveOrderBuilder::MERCHANT_ID => self::MERCHANT_ID,
             ApruveOrderBuilder::AMOUNT_CENTS => self::AMOUNT_CENTS,
             ApruveOrderBuilder::CURRENCY => self::CURRENCY,
+            ApruveOrderBuilder::MERCHANT_ORDER_ID => self::MERCHANT_ORDER_ID,
+            ApruveOrderBuilder::SHIPPING_CENTS => self::SHIPPING_AMOUNT_CENTS,
+            ApruveOrderBuilder::TAX_CENTS => self::TAX_AMOUNT_CENTS,
             ApruveOrderBuilder::LINE_ITEMS => array_values($this->apruveLineItems),
         ];
-        static::assertSame($expected, $actual->getData());
+        static::assertEquals($expected, $actual->getData());
     }
 
     public function testGetResultWithoutLineItems()
@@ -150,9 +190,12 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
             ApruveOrderBuilder::MERCHANT_ID => self::MERCHANT_ID,
             ApruveOrderBuilder::AMOUNT_CENTS => self::AMOUNT_CENTS,
             ApruveOrderBuilder::CURRENCY => self::CURRENCY,
+            ApruveOrderBuilder::MERCHANT_ORDER_ID => self::MERCHANT_ORDER_ID,
+            ApruveOrderBuilder::SHIPPING_CENTS => self::SHIPPING_AMOUNT_CENTS,
+            ApruveOrderBuilder::TAX_CENTS => self::TAX_AMOUNT_CENTS,
             ApruveOrderBuilder::LINE_ITEMS => [],
         ];
-        static::assertSame($expected, $actual->getData());
+        static::assertEquals($expected, $actual->getData());
     }
 
     public function testGetResultWithOptionalParams()
@@ -173,9 +216,6 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->builder->setFinalizeOnCreate(self::FINALIZE_ON_CREATE);
         $this->builder->setInvoiceOnCreate(self::INVOICE_ON_CREATE);
-        $this->builder->setMerchantOrderId(self::MERCHANT_ORDER_ID);
-        $this->builder->setShippingAmount(self::SHIPPING_AMOUNT);
-        $this->builder->setTaxAmount(self::TAX_AMOUNT);
         $this->builder->setShopperId(self::SHOPPER_ID);
         $this->builder->setCorporateAccountId(self::CORPORATE_ACCOUNT_ID);
         $this->builder->setPoNumber(self::PO_NUMBER);
