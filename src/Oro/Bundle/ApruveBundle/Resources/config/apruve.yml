@@ -1,5 +1,8 @@
 services:
 
+    oro_apruve.apruve.generator.order_secure_hash:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator'
+
     oro_apruve.apruve.provider.supported_currencies:
         class: 'Oro\Bundle\ApruveBundle\Apruve\Provider\SupportedCurrenciesProvider'
 
