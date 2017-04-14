@@ -5,3 +5,4 @@ oro:
                 quote_expire_title: "Action Confirmation"
                 quote_expire_confirm: Are you sure you want to expire this Quote?
                 mark_as_expired: Mark as Expired
+            label: Quotes

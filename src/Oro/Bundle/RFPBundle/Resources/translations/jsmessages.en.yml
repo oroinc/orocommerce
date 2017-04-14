@@ -6,3 +6,4 @@ oro:
             btn:
                 delete.label: 'Delete'
                 cancel.label: 'Cancel'
+            label: "Requests For Quote"
