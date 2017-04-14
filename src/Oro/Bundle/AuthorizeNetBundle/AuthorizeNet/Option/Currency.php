@@ -13,10 +13,7 @@ class Currency implements OptionsDependentInterface
     const BRITISH_POUND = 'GBP';
     const NEW_ZEALAND_DOLLAR = 'NZD';
 
-    /**
-     * @var array
-     */
-    public static $currencies = [
+    const ALL_CURRENCIES = [
         Currency::AUSTRALIAN_DOLLAR,
         Currency::US_DOLLAR,
         Currency::CANADIAN_DOLLAR,
@@ -30,7 +27,7 @@ class Currency implements OptionsDependentInterface
     {
         $resolver
             ->setDefined(Currency::CURRENCY)
-            ->addAllowedValues(Currency::CURRENCY, Currency::$currencies);
+            ->addAllowedValues(Currency::CURRENCY, Currency::ALL_CURRENCIES);
     }
 
     /**
@@ -54,6 +51,8 @@ class Currency implements OptionsDependentInterface
      */
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
-        $this->configureOption($resolver);
+        $resolver
+            ->setRequired(Currency::CURRENCY)
+            ->addAllowedValues(Currency::CURRENCY, Currency::ALL_CURRENCIES);
     }
 }

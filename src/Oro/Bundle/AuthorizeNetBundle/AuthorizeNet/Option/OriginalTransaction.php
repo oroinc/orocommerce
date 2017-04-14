@@ -31,6 +31,8 @@ class OriginalTransaction implements OptionsDependentInterface
      */
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
-        $this->configureOption($resolver);
+        $resolver
+            ->setRequired(OriginalTransaction::ORIGINAL_TRANSACTION)
+            ->addAllowedTypes(OriginalTransaction::ORIGINAL_TRANSACTION, ['integer', 'string']);
     }
 }

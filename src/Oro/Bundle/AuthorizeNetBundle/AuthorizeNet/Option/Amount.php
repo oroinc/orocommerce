@@ -34,6 +34,7 @@ class Amount implements OptionsDependentInterface
      */
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
-        $this->configureOption($resolver);
+        $resolver->setRequired(Amount::AMOUNT)
+            ->addAllowedTypes(Amount::AMOUNT, ['float', 'integer']);
     }
 }

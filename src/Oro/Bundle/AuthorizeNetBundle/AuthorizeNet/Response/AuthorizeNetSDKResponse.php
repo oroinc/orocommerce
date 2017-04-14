@@ -75,7 +75,8 @@ class AuthorizeNetSDKResponse implements ResponseInterface
                 $messages[] = "({$message->getCode()}) {$message->getDescription()}";
             }
         }
-        return empty($messages) ? null : implode('  ', $messages);
+
+        return empty($messages) ? null : implode(';  ', $messages);
     }
 
     /**
@@ -95,7 +96,8 @@ class AuthorizeNetSDKResponse implements ResponseInterface
                 $errorMessages[] = "({$error->getErrorCode()}) {$error->getErrorText()}";
             }
         }
-        return empty($errorMessages) ? null : implode('  ', $errorMessages);
+
+        return empty($errorMessages) ? null : implode(';  ', $errorMessages);
     }
 
     /**
