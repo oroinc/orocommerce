@@ -3,3 +3,9 @@ layout:
         - '@setBlockTheme':
             themes:
                 - 'layout.html.twig'
+        - '@appendOption':
+            id: 'payment_additional_data'
+            optionName: options
+            optionValue:
+                apruvejs_uri: '=data["oro_apruve_apruvejs_uri_provider"].getUri(data["checkout"].getPaymentMethod())'
+    conditions: 'context["is_apruve"] == true'

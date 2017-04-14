@@ -1,0 +1,11 @@
+services:
+
+    oro_apruve.event_listener.callback.apruve:
+        class: 'Oro\Bundle\ApruveBundle\EventListener\Callback\PaymentCallbackListener'
+        lazy: true
+        arguments:
+            - '@oro_apruve.method.apruve.provider'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn }

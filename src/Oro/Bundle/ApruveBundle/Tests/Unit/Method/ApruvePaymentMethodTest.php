@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Method;
 
+use Oro\Bundle\ApruveBundle\Apruve\Provider\SupportedCurrenciesProviderInterface;
 use Oro\Bundle\ApruveBundle\Method\ApruvePaymentMethod;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Method\PaymentAction\Executor\PaymentActionExecutor;
@@ -14,6 +15,11 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
      * @var ApruvePaymentMethod
      */
     private $method;
+
+    /**
+     * @var SupportedCurrenciesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $supportedCurrenciesProvider;
 
     /**
      * @var PaymentActionExecutor|\PHPUnit_Framework_MockObject_MockObject
@@ -31,9 +37,14 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->config = $this->createMock(ApruveConfigInterface::class);
+        $this->supportedCurrenciesProvider = $this->createMock(SupportedCurrenciesProviderInterface::class);
         $this->paymentActionExecutor = $this->createMock(PaymentActionExecutor::class);
 
-        $this->method = new ApruvePaymentMethod($this->config, $this->paymentActionExecutor);
+        $this->method = new ApruvePaymentMethod(
+            $this->config,
+            $this->supportedCurrenciesProvider,
+            $this->paymentActionExecutor
+        );
     }
 
     public function testExecute()
@@ -104,10 +115,38 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testIsApplicable()
+    /**
+     * @dataProvider isApplicableDataProvider
+     *
+     * @param string $currency
+     * @param bool $isSupported
+     * @param bool $expectedResult
+     */
+    public function testIsApplicable($currency, $isSupported, $expectedResult)
     {
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        static::assertTrue($this->method->isApplicable($context));
+        $context
+            ->method('getCurrency')
+            ->willReturn($currency);
+
+        $this->supportedCurrenciesProvider
+            ->method('isSupported')
+            ->with($currency)
+            ->willReturn($isSupported);
+
+        $actual = $this->method->isApplicable($context);
+        static::assertSame($expectedResult, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function isApplicableDataProvider()
+    {
+        return [
+            'should be applicable if currency is supported' => ['USD', true, true],
+            'should be inapplicable if currency is not supported' => ['EUR', false, false],
+        ];
     }
 }

@@ -14,9 +14,15 @@ class AuthorizePaymentAction extends AbstractPaymentAction
      */
     public function execute(ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
-        // Stub for authorize action.
-        // todo@webevt: make proper implementation once Client is ready.
-        $paymentTransaction->setSuccessful(true);
+        $transactionOptions = $paymentTransaction->getTransactionOptions();
+        $response = $paymentTransaction->getResponse();
+        $transactionOptions['apruveOrderId'] = $response['apruveOrderId'];
+        $paymentTransaction->setTransactionOptions($transactionOptions);
+
+        // Transaction is still not finished, payment should be captured.
+        $paymentTransaction->setSuccessful(false);
+        // Transaction is awaiting for payment capture.
+        $paymentTransaction->setActive(true);
 
         return [];
     }
