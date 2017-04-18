@@ -10,7 +10,7 @@ class ApruveChannelType implements ChannelInterface, IconAwareIntegrationInterfa
     const TYPE = 'apruve';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {
@@ -18,7 +18,7 @@ class ApruveChannelType implements ChannelInterface, IconAwareIntegrationInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIcon()
     {

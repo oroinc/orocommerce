@@ -22,7 +22,7 @@ class WebhookTokenTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

@@ -25,7 +25,7 @@ class WebhookTokenType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -45,7 +45,7 @@ class WebhookTokenType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getParent()
     {

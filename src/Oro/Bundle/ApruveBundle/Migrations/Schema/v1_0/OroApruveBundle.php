@@ -9,7 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroApruveBundle implements Migration
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {

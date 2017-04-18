@@ -22,7 +22,7 @@ class ApruveTransport implements TransportInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSettingsFormType()
     {
@@ -30,7 +30,7 @@ class ApruveTransport implements TransportInterface
     }
 
      /**
-      * {@inheritdoc}
+      * {@inheritDoc}
       */
     public function getSettingsEntityFQCN()
     {
@@ -38,7 +38,7 @@ class ApruveTransport implements TransportInterface
     }
 
      /**
-      * {@inheritdoc}
+      * {@inheritDoc}
       */
     public function getLabel()
     {

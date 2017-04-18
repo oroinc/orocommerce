@@ -34,7 +34,7 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

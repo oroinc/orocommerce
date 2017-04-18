@@ -12,7 +12,7 @@ class ApruveTransportTest extends \PHPUnit_Framework_TestCase
     private $transport;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

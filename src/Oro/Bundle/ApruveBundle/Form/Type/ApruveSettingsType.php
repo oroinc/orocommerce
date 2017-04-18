@@ -36,7 +36,7 @@ class ApruveSettingsType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -78,7 +78,7 @@ class ApruveSettingsType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
