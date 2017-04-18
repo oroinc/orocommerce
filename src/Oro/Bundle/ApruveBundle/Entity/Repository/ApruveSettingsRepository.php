@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ApruveBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 

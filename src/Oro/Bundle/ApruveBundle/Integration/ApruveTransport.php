@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ApruveBundle\Integration;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
-
-use Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType;
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
+use Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ApruveTransport implements TransportInterface
 {
@@ -19,7 +18,7 @@ class ApruveTransport implements TransportInterface
      */
     public function init(Transport $transportEntity)
     {
-         $this->settings = $transportEntity->getSettingsBag();
+        $this->settings = $transportEntity->getSettingsBag();
     }
 
     /**
