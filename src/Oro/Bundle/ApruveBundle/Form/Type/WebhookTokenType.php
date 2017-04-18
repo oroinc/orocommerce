@@ -14,7 +14,7 @@ class WebhookTokenType extends AbstractType
     /**
      * @var TokenGeneratorInterface
      */
-    protected $generator;
+    private $generator;
 
     /**
      * @param TokenGeneratorInterface $tokenGenerator

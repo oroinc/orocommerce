@@ -71,7 +71,6 @@ class OroApruveBundleInstaller implements Installation
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_2068304BEB576E89');
-        $table->addIndex(['transport_id'], 'IDX_2068304B9909C13F', []);
     }
 
     /**

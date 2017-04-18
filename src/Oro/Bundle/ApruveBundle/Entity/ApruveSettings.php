@@ -182,7 +182,7 @@ class ApruveSettings extends Transport
     }
 
     /**
-     * @return ParameterBag
+     * {@inheritDoc}
      */
     public function getSettingsBag()
     {
