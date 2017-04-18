@@ -28,10 +28,36 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->factory = new TransactionPaymentContextFactory($this->compositeFactory);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function testCreate()
+    {
+        $entityClass = \stdClass::class;
+        $entityId = 1;
+
+        $transaction = $this->createMock(PaymentTransaction::class);
+        $transaction
+            ->expects(static::exactly(2))
+            ->method('getEntityClass')
+            ->willReturn($entityClass);
+        $transaction
+            ->expects(static::exactly(2))
+            ->method('getEntityIdentifier')
+            ->willReturn($entityId);
+
+        $this->compositeFactory
+            ->expects(static::once())
+            ->method('supports')
+            ->with($entityClass, $entityId)
+            ->willReturn(true);
+
+        $this->compositeFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($entityClass, $entityId);
+
+        $this->factory->create($transaction);
+    }
+
+    public function testCreateWhenNotSupported()
     {
         $entityClass = \stdClass::class;
         $entityId = 1;
@@ -48,9 +74,16 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->compositeFactory
             ->expects(static::once())
-            ->method('create')
-            ->with($entityClass, $entityId);
+            ->method('supports')
+            ->with($entityClass, $entityId)
+            ->willReturn(false);
 
-        return $this->factory->create($transaction);
+        $this->compositeFactory
+            ->expects(static::never())
+            ->method('create');
+
+        $actual = $this->factory->create($transaction);
+
+        static::assertSame(null, $actual);
     }
 }
