@@ -43,7 +43,7 @@ class PaymentCallbackListener
 
         $eventData = $event->getData();
 
-        if (!array_key_exists('apruveOrderId', $eventData)) {
+        if (!array_key_exists(ApruvePaymentMethod::PARAM_ORDER_ID, $eventData)) {
             return;
         }
 

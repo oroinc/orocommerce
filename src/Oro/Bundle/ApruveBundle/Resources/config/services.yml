@@ -27,3 +27,17 @@ services:
             - ['setLogger', ['@logger']]
         lazy: true
         public: false
+
+    oro_apruve.layout.provider.apruvejs_uri:
+        class: 'Oro\Bundle\ApruveBundle\Layout\Provider\ApruveJsUriProvider'
+        arguments:
+            - '@oro_apruve.method.config.provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_apruve_apruvejs_uri_provider }
+
+    oro_apruve.layout.context_configurator.apruve:
+        class: 'Oro\Bundle\ApruveBundle\Layout\ContextConfigurator\ApruveContextConfigurator'
+        arguments:
+            - '@oro_apruve.method.config.provider'
+        tags:
+            - { name: layout.context_configurator }

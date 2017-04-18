@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Tests\Unit\PaymentAction;
+namespace Oro\Bundle\ApruveBundle\Tests\Unit\PaymentAction\Executor;
 
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Method\PaymentAction\Executor\PaymentActionExecutor;
@@ -12,7 +12,7 @@ class PaymentActionExecutorTest extends \PHPUnit_Framework_TestCase
     /**
      * @var PaymentActionInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentAction;
+    private $paymentAction;
 
     /**
      * @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject

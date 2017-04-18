@@ -16,6 +16,8 @@ class ApruvePaymentMethod implements PaymentMethodInterface
     const COMPLETE = 'complete';
     const CANCEL = 'cancel';
 
+    const PARAM_ORDER_ID = 'apruveOrderId';
+
     /**
      * @var ApruveConfigInterface
      */
@@ -48,6 +50,7 @@ class ApruvePaymentMethod implements PaymentMethodInterface
 
     /**
      * {@inheritdoc}
+     * @throws \InvalidArgumentException
      */
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
