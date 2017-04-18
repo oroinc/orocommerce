@@ -24,6 +24,10 @@ class TransactionPaymentContextFactory implements TransactionPaymentContextFacto
      */
     public function create(PaymentTransaction $transaction)
     {
-        return $this->compositeFactory->create($transaction->getEntityClass(), $transaction->getEntityIdentifier());
+        if ($this->compositeFactory->supports($transaction->getEntityClass(), $transaction->getEntityIdentifier())) {
+            return $this->compositeFactory->create($transaction->getEntityClass(), $transaction->getEntityIdentifier());
+        }
+
+        return null;
     }
 }

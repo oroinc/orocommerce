@@ -10,7 +10,7 @@ interface TransactionPaymentContextFactoryInterface
     /**
      * @param PaymentTransaction $transaction
      *
-     * @return PaymentContextInterface
+     * @return PaymentContextInterface|null
      */
     public function create(PaymentTransaction $transaction);
 }
