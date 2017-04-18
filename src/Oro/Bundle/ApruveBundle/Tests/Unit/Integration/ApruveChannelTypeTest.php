@@ -10,7 +10,7 @@ class ApruveChannelTypeTest extends \PHPUnit_Framework_TestCase
     private $channel;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

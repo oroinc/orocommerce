@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ApruveBundle\Controller;
 
-use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,7 +20,6 @@ class ApruveSettingsController extends Controller
      */
     public function generateTokenAction(Request $request)
     {
-        /** @var TokenGeneratorInterface $tokenGenerator */
         $tokenGenerator = $this->get('oro_apruve.token_generator');
 
         return new JsonResponse([

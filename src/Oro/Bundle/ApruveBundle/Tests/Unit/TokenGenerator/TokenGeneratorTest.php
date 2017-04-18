@@ -10,7 +10,7 @@ class TokenGeneratorTest extends \PHPUnit_Framework_TestCase
     private $generator;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

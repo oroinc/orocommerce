@@ -5,7 +5,7 @@ namespace Oro\Bundle\ApruveBundle\TokenGenerator;
 class TokenGenerator implements TokenGeneratorInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function generateToken()
     {
