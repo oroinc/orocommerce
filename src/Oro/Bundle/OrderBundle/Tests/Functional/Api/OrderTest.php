@@ -55,7 +55,6 @@ class OrderTest extends RestJsonApiTestCase
     {
         $order = $this->getFirstOrder();
 
-        $this->assertGetSubResource($order->getId(), 'website', $order->getWebsite()->getId());
         $this->assertGetSubResource($order->getId(), 'owner', $order->getOwner()->getId());
         $this->assertGetSubResource($order->getId(), 'organization', $order->getOrganization()->getId());
         $this->assertGetSubResource($order->getId(), 'customerUser', $order->getCustomerUser()->getId());
@@ -66,7 +65,6 @@ class OrderTest extends RestJsonApiTestCase
     {
         $order = $this->getFirstOrder();
 
-        $this->assertGetRelationship($order->getId(), 'website', Website::class, $order->getWebsite()->getId());
         $this->assertGetRelationship($order->getId(), 'owner', User::class, $order->getOwner()->getId());
         $this->assertGetRelationship($order->getId(), 'customer', Customer::class, $order->getCustomer()->getId());
         $this->assertGetRelationship(
@@ -101,25 +99,6 @@ class OrderTest extends RestJsonApiTestCase
         static::assertNotEmpty($order->getOwner()->getId());
         static::assertEquals($createdOrder->getOrganization()->getId(), $order->getOrganization()->getId());
 
-
-        $this->removeOrder($order);
-    }
-
-    public function testCreateWithoutWebsite()
-    {
-        $this->post(
-            ['entity' => $this->getEntityType(Order::class)],
-            __DIR__.'/responses/order/create_order_without_website.yml'
-        );
-
-        $createdOrder = $this->getFirstOrder();
-
-        /** @var Order $order */
-        $order = $this->getManager()
-            ->getRepository(Order::class)
-            ->findOneBy(['identifier' => 'order_without_website']);
-
-        static::assertEquals($createdOrder->getWebsite()->getId(), $order->getWebsite()->getId());
 
         $this->removeOrder($order);
     }

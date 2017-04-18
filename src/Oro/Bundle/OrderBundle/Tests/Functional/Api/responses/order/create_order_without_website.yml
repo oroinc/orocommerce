@@ -20,8 +20,6 @@ data:
               data: null
           shippingAddress:
               data: null
-          website:
-              data: null
           lineItems:
               data:
                   -
@@ -43,5 +41,3 @@ data:
               data:
                    type: customers
                    id: '<toString(@simple_order->customer->id)>'
-          warehouse:
-              data: null

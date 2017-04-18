@@ -24,10 +24,6 @@ data:
               data: null
           shippingAddress:
               data: null
-          website:
-              data:
-                  type: websites
-                  id: '<toString(@simple_order->website->id)>'
           lineItems:
               data: []
           discounts:
@@ -50,5 +46,3 @@ data:
               data:
                    type: customers
                    id: '<toString(@simple_order->customer->id)>'
-          warehouse:
-              data: null
