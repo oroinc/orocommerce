@@ -178,6 +178,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
 
     public function testProvideMoreInformationTransition()
     {
+        $this->markTestSkipped('Skipped due to crawler bug. Covered by behat.');
         $this->request = $this->getReference(LoadRequestData::REQUEST7);
 
         $this->transitSystem(
@@ -225,7 +226,6 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
      * @param Crawler $link
      * @param array $formValues
      * @param string $submitButton
-     *
      * @return string
      */
     protected function transitWeb(Crawler $link, $formValues = [], $submitButton = 'Submit')
