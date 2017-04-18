@@ -37,7 +37,8 @@ class LoadCategoryContentVariants extends AbstractFixture implements DependentFi
         );
         $this->createTestContentVariant(
             $manager,
-            'test_category_variant.4'
+            'test_category_variant.4',
+            $this->getReference(LoadCategoryData::FOURTH_LEVEL1)
         );
         $this->createTestContentVariant(
             $manager,

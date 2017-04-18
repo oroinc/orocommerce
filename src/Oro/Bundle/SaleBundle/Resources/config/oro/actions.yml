@@ -14,6 +14,7 @@ operations:
             confirmation:
                 message: oro.sale.quote.actions.quote_expire_confirm
                 okText: oro.sale.quote.actions.mark_as_expired
+                component: oroui/js/delete-confirmation
         preconditions:
             '@equal': [$expired, false]
         actions:
