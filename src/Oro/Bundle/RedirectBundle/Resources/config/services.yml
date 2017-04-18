@@ -135,7 +135,7 @@ services:
             - { name: 'oro_message_queue.client.message_processor' }
 
     oro_redirect.async.direct_url_processor.job_runner:
-        class: Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor
+        class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
         arguments:
             - '@oro_message_queue.job.runner'
             - '@oro_redirect.async.direct_url_processor'
@@ -191,7 +191,7 @@ services:
             - { name: 'oro_message_queue.client.message_processor' }
 
     oro_redirect.async.url_cache_job_processor.job_runner:
-        class: Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor
+        class: Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor
         arguments:
             - '@oro_message_queue.job.runner'
             - '@oro_redirect.async.url_cache_job_processor'

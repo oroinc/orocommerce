@@ -94,3 +94,6 @@ FlatRateShippingBundle
 --------------
 - The `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` was deprecated, the `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` was created instead.
 
+RedirectBundle
+--------------
+- Class `Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor` moved to `Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor`
