@@ -7,7 +7,6 @@ use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ApruveSettingsTest extends \PHPUnit_Framework_TestCase
 {
@@ -75,7 +74,6 @@ class ApruveSettingsTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        /** @var ParameterBag $settings */
         $settings = $entity->getSettingsBag();
 
         static::assertEquals('7b97ea0172e18cbd4d3bf21e2b525b2d', $settings->get(ApruveSettings::MERCHANT_ID_KEY));

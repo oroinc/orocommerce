@@ -10,7 +10,9 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ApruveTransport implements TransportInterface
 {
-    /** @var ParameterBag */
+    /**
+     * @var ParameterBag
+     */
     protected $settings;
 
     /**

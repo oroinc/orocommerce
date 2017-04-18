@@ -6,7 +6,9 @@ use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGenerator;
 
 class TokenGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var TokenGenerator */
+    /**
+     * @var TokenGenerator
+     */
     private $generator;
 
     /**

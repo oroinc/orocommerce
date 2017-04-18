@@ -8,7 +8,9 @@ use Oro\Bundle\ApruveBundle\Integration\ApruveTransport;
 
 class ApruveTransportTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ApruveTransport */
+    /**
+     * @var ApruveTransport
+     */
     private $transport;
 
     /**
