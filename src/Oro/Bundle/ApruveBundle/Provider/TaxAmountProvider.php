@@ -6,9 +6,12 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
+use Psr\Log\LoggerAwareTrait;
 
 class TaxAmountProvider implements TaxAmountProviderInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var TaxManager
      */
@@ -30,15 +33,20 @@ class TaxAmountProvider implements TaxAmountProviderInterface
         try {
             $result = $this->taxManager->loadTax($paymentContext->getSourceEntity());
             $taxAmount = $result->getTotal()->getTaxAmount();
-        } catch (TaxationDisabledException $ex) {
+        } catch (TaxationDisabledException $e) {
             $taxAmount = 0;
-        } catch (UnmappableArgumentException $ex) {
-            // TODO@webevt: log exception
+        } catch (UnmappableArgumentException $e) {
+            if ($this->logger) {
+                $this->logger->warning($e->getMessage());
+            }
 
             // There are no tax mapper for given source entity.
             $taxAmount = 0;
-        } catch (\InvalidArgumentException $ex) {
-            // TODO@webevt: log exception
+        } catch (\InvalidArgumentException $e) {
+            if ($this->logger) {
+                $this->logger->warning($e->getMessage());
+            }
+
             $taxAmount = 0;
         }
 

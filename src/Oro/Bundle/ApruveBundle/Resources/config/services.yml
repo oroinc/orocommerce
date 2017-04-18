@@ -23,5 +23,7 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Provider\TaxAmountProvider'
         arguments:
             - '@oro_tax.manager.tax_manager'
+        calls:
+            - ['setLogger', ['@logger']]
         lazy: true
         public: false
