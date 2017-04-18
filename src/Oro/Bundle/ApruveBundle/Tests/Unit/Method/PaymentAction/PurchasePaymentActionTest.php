@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\PaymentAction;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveLineItemBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilderInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveOrderBuilderFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Request\Order\ApruveOrderRequestDataInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrderInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Method\PaymentAction\PurchasePaymentAction;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
@@ -47,9 +47,9 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
     private $logger;
 
     /**
-     * @var ApruveOrderRequestDataInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ApruveOrderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $apruveOrderRequestData;
+    private $apruveOrder;
 
     /**
      * @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -95,7 +95,7 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransaction = $this->createMock(PaymentTransaction::class);
         $this->paymentContext = $this->createMock(PaymentContextInterface::class);
         $this->paymentContextFactory = $this->createMock(TransactionPaymentContextFactoryInterface::class);
-        $this->apruveOrderRequestData = $this->createMock(ApruveOrderRequestDataInterface::class);
+        $this->apruveOrder = $this->createMock(ApruveOrderInterface::class);
         $this->apruveOrderBuilderFactory = $this->createMock(ApruveOrderBuilderFactoryInterface::class);
         $this->orderSecureHashGenerator = $this->createMock(OrderSecureHashGeneratorInterface::class);
         $this->config = $this->createMock(ApruveConfigInterface::class);
@@ -117,7 +117,7 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
             ->with($this->paymentTransaction)
             ->willReturn($this->paymentContext);
 
-        $this->apruveOrderRequestData
+        $this->apruveOrder
             ->expects(static::once())
             ->method('getData')
             ->willReturn(self::APRUVE_ORDER);
@@ -131,7 +131,7 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
         $this->orderSecureHashGenerator
             ->expects(static::once())
             ->method('generate')
-            ->with($this->apruveOrderRequestData, $this->config)
+            ->with($this->apruveOrder, $this->config)
             ->willReturn(self::SECURE_HASH);
 
         $this->paymentTransaction
@@ -217,7 +217,7 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
         $apruveOrderBuilder
             ->expects(static::once())
             ->method('getResult')
-            ->willReturn($this->apruveOrderRequestData);
+            ->willReturn($this->apruveOrder);
 
         return $apruveOrderBuilder;
     }
