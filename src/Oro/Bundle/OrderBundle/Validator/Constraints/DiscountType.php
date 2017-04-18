@@ -4,18 +4,18 @@ namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class Discounts extends Constraint
+class DiscountType extends Constraint
 {
     /**
      * @var string
      */
-    public $errorMessage = 'oro.order.discounts.sum.error.label';
+    public $errorMessage = 'oro.order.discounts.type.error.label';
 
     /**
      * {@inheritdoc}
      */
     public function getTargets()
     {
-        return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];
+        return self::CLASS_CONSTRAINT;
     }
 }

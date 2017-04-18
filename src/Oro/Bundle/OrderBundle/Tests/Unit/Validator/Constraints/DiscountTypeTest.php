@@ -2,37 +2,35 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType;
+use Oro\Bundle\OrderBundle\Validator\Constraints\DiscountTypeValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Validator\Constraints\Discounts;
-use Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProductValidator;
-
-class DiscountsTest extends \PHPUnit_Framework_TestCase
+class DiscountTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Discounts
+     * @var DiscountType
      */
     protected $constraint;
 
     protected function setUp()
     {
-        $this->constraint = new Discounts();
+        $this->constraint = new DiscountType();
     }
 
     public function testGetTargets()
     {
         $this->assertEquals(
-            [Constraint::CLASS_CONSTRAINT, Constraint::PROPERTY_CONSTRAINT],
+            Constraint::CLASS_CONSTRAINT,
             $this->constraint->getTargets()
         );
     }
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Value must be instance of "Oro\Bundle\OrderBundle\Entity\Order"
+     * @expectedExceptionMessage Value must be instance of "Oro\Bundle\OrderBundle\Entity\OrderDiscount"
      */
     public function testValidateException()
     {
@@ -45,38 +43,43 @@ class DiscountsTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider validateDataProvider
-     * @param Order|null $value
-     * @param array|null|string $expectedViolationMessages
+     * @param OrderDiscount|null $value
+     * @param null|string $expectedViolationMessage
      */
-    public function testValidate($value, $expectedViolationMessages = null)
+    public function testValidate($value, $expectedViolationMessage = null)
     {
-        if ($expectedViolationMessages && !is_array($expectedViolationMessages)) {
-            $expectedViolationMessages = [$expectedViolationMessages];
-        }
-
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $validator = $this->getValidator();
         $validator->initialize($context);
 
-        if (!$expectedViolationMessages) {
+        if (null === $expectedViolationMessage) {
             $context->expects($this->never())
-                ->method($this->anything());
+                ->method(static::anything());
         } else {
             $violation = $this->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
-            $violation->expects($this->any())
+            $violation->expects(static::any())
                 ->method('atPath')
-                ->with('totalDiscountsAmount')
+                ->with('type')
                 ->will($this->returnSelf());
 
-            $context->expects($this->exactly(count($expectedViolationMessages)))
+            $violation->expects(static::any())
+                ->method('atPath')
+                ->with('type')
+                ->will($this->returnSelf());
+
+            $violation->expects(static::any())
+                ->method('setParameter')
+                ->with('%valid_types%', implode(',', [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT]))
+                ->will($this->returnSelf());
+
+            $context->expects(static::once())
                 ->method('buildViolation')
                 ->will($this->returnValue($violation));
-            for ($i = 0; $i < count($expectedViolationMessages); $i++) {
-                $context->expects($this->at($i))
-                    ->method('buildViolation')
-                    ->with($expectedViolationMessages[$i]);
-            }
+
+            $context->expects(static::any())
+                ->method('buildViolation')
+                ->with($expectedViolationMessage);
         }
 
         $validator->validate($value, $this->constraint);
@@ -89,22 +92,24 @@ class DiscountsTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                new Order(),
-                []
+                new OrderDiscount(),
+                'oro.order.discounts.type.error.label'
             ],
             [
-                (new Order())->setSubtotal(10)->setTotalDiscounts(Price::create(1, 'USD')),
-                []
+                (new OrderDiscount())->setType(OrderDiscount::TYPE_AMOUNT),
             ],
             [
-                (new Order())->setSubtotal(10)->setTotalDiscounts(Price::create(15, 'USD')),
-                ['oro.order.discounts.sum.error.label']
+                (new OrderDiscount())->setType(OrderDiscount::TYPE_PERCENT),
+            ],
+            [
+                (new OrderDiscount())->setType('someType'),
+                'oro.order.discounts.type.error.label'
             ]
         ];
     }
 
     /**
-     * @return LineItemProductValidator
+     * @return DiscountTypeValidator
      */
     protected function getValidator()
     {
