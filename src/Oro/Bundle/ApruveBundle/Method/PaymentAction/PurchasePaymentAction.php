@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ApruveBundle\Method\PaymentAction;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveOrderBuilderFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;

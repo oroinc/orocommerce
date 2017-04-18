@@ -39,7 +39,7 @@ define(function(require) {
         /**
          * @param {Apruve} apruve
          */
-        initializeApruve: function (apruve) {
+        initializeApruve: function(apruve) {
             this.apruve = apruve;
 
             this.apruve
@@ -79,12 +79,12 @@ define(function(require) {
         /**
          * @param {String} orderId
          */
-        handleApruveComplete: function (orderId) {
+        handleApruveComplete: function(orderId) {
             mediator.execute('showLoading');
             mediator.execute('redirectTo', {url: this.returnUrl + '?' + this.options.orderIdParamName + '=' + orderId}, {redirect: true});
         },
 
-        handleApruveClose: function () {
+        handleApruveClose: function() {
             mediator.execute('showLoading');
             mediator.execute('redirectTo', {url: this.errorUrl}, {redirect: true});
         },
