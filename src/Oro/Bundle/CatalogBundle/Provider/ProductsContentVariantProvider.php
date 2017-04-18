@@ -25,19 +25,42 @@ class ProductsContentVariantProvider implements ContentVariantProviderInterface
      */
     public function modifyNodeQueryBuilderByEntities(QueryBuilder $queryBuilder, $entityClass, array $entities)
     {
+        $categoryIdentity = 'IDENTITY(variant.category_page_category)';
+        $expr = $queryBuilder->expr();
         $queryBuilder->leftJoin(
             Category::class,
             'category',
             Join::WITH,
-            $queryBuilder->expr()->eq('variant.category_page_category', 'category')
+            $expr->orX(
+                $expr->eq(
+                    'category.id',
+                    $categoryIdentity
+                ),
+                $expr->like(
+                    'category.materializedPath',
+                    $expr->concat($categoryIdentity, ':rightDelimiter')
+                ),
+                $expr->like(
+                    'category.materializedPath',
+                    $expr->concat(
+                        ':leftDelimiter',
+                        $expr->concat($categoryIdentity, ':rightDelimiter')
+                    )
+                )
+            )
         )
         ->leftJoin(
             Product::class,
             'categoryProduct',
             Join::WITH,
-            'categoryProduct MEMBER OF category.products AND categoryProduct IN (:categoryProducts)'
+            $expr->andX(
+                $expr->isMemberOf('categoryProduct', 'category.products'),
+                $expr->in('categoryProduct', ':categoryProducts')
+            )
         )
         ->setParameter('categoryProducts', $entities)
+        ->setParameter('rightDelimiter', '\_%')
+        ->setParameter('leftDelimiter', '%\_')
         ->addSelect('categoryProduct.id as categoryProductId');
     }
 
