@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\ApruveBundle\Method\PaymentAction;
 
-use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory;
+use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
 
 abstract class AbstractPaymentAction implements PaymentActionInterface
 {
     /**
-     * @var TransactionPaymentContextFactory
+     * @var TransactionPaymentContextFactoryInterface
      */
     protected $paymentContextFactory;
 
     /**
-     * @param TransactionPaymentContextFactory $paymentContextFactory
+     * @param TransactionPaymentContextFactoryInterface $paymentContextFactory
      */
-    public function __construct(TransactionPaymentContextFactory $paymentContextFactory)
+    public function __construct(TransactionPaymentContextFactoryInterface $paymentContextFactory)
     {
         $this->paymentContextFactory = $paymentContextFactory;
     }

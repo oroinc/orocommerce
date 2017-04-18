@@ -5,11 +5,14 @@ namespace Oro\Bundle\ApruveBundle\Method\PaymentAction;
 use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveOrderBuilderFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
-use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory;
+use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Psr\Log\LoggerAwareTrait;
 
 class PurchasePaymentAction extends AbstractPaymentAction
 {
+    use LoggerAwareTrait;
+
     const NAME = 'purchase';
 
     /**
@@ -23,12 +26,12 @@ class PurchasePaymentAction extends AbstractPaymentAction
     private $orderSecureHashGenerator;
 
     /**
-     * @param TransactionPaymentContextFactory $paymentContextFactory
+     * @param TransactionPaymentContextFactoryInterface $paymentContextFactory
      * @param ApruveOrderBuilderFactoryInterface $apruveOrderBuilderFactory
      * @param OrderSecureHashGeneratorInterface $orderSecureHashGenerator
      */
     public function __construct(
-        TransactionPaymentContextFactory $paymentContextFactory,
+        TransactionPaymentContextFactoryInterface $paymentContextFactory,
         ApruveOrderBuilderFactoryInterface $apruveOrderBuilderFactory,
         OrderSecureHashGeneratorInterface $orderSecureHashGenerator
     ) {
@@ -44,6 +47,11 @@ class PurchasePaymentAction extends AbstractPaymentAction
     public function execute(ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
         $paymentContext = $this->paymentContextFactory->create($paymentTransaction);
+        if ($paymentContext === null) {
+            $this->logNoPaymentContext($paymentTransaction->getId());
+
+            return [];
+        }
 
         $apruveOrderBuilder = $this->apruveOrderBuilderFactory->create($paymentContext, $apruveConfig);
         $apruveOrderBuilder
@@ -77,5 +85,19 @@ class PurchasePaymentAction extends AbstractPaymentAction
     public function getName()
     {
         return static::NAME;
+    }
+
+    /**
+     * @param int $transactionId
+     */
+    protected function logNoPaymentContext($transactionId)
+    {
+        if ($this->logger) {
+            $msg = sprintf(
+                'Payment context was not created from given transaction (%d)',
+                $transactionId
+            );
+            $this->logger->error($msg);
+        }
     }
 }

@@ -21,6 +21,8 @@ interface PaymentActionExecutorInterface
      * @param PaymentTransaction $paymentTransaction
      *
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
     public function execute($action, ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction);
 

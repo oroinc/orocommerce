@@ -4,6 +4,7 @@ define(function(require) {
     var PaymentMethodComponent;
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
+    var tools = require('oroui/js/tools');
     var BaseComponent = require('oropayment/js/app/components/payment-method-component');
 
     PaymentMethodComponent = BaseComponent.extend({
@@ -11,7 +12,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            orderIdParamName: 'apruveOrderId',
+            orderIdParamName: '',
             apruvejsUri: '',
             paymentMethod: null
         },
@@ -26,12 +27,27 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.apruve = require(this.options.apruvejsUri);
 
-            this.apruve.registerApruveCallback(this.apruve.APRUVE_COMPLETE_EVENT, _.bind(this.handleApruveComplete, this));
-            this.apruve.registerApruveCallback(this.apruve.APRUVE_CLOSED_EVENT, _.bind(this.handleApruveClose, this));
+            var initializeApruve = _.bind(this.initializeApruve, this);
+
+            this._deferredInit();
+            tools.loadModules(this.options.apruvejsUri, initializeApruve);
 
             mediator.on('checkout:place-order:response', this.handleSubmit, this);
+        },
+
+        /**
+         * @param {Apruve} apruve
+         */
+        initializeApruve: function (apruve) {
+            this.apruve = apruve;
+
+            this.apruve
+                .registerApruveCallback(this.apruve.APRUVE_COMPLETE_EVENT, _.bind(this.handleApruveComplete, this));
+            this.apruve
+                .registerApruveCallback(this.apruve.APRUVE_CLOSED_EVENT, _.bind(this.handleApruveClose, this));
+
+            this._resolveDeferredInit();
         },
 
         /**
@@ -44,10 +60,10 @@ define(function(require) {
                 var responseData = _.extend({successUrl: this.getSuccessUrl()}, eventData.responseData);
 
                 if (!responseData.apruveOrder) {
+                    mediator.execute('redirectTo', {url: this.errorUrl}, {redirect: true});
+
                     return;
                 }
-
-                console.log(responseData);
 
                 this.returnUrl = responseData.returnUrl;
                 this.errorUrl = responseData.errorUrl;

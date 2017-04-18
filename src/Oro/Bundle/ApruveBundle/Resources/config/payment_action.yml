@@ -22,6 +22,8 @@ services:
         arguments:
             - '@oro_apruve.apruve.builder.factory.order'
             - '@oro_apruve.apruve.generator.order_secure_hash'
+        calls:
+            - [setLogger, ['@logger']]
         public: false
         lazy: true
 
