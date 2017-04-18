@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType;
 use Oro\Bundle\ApruveBundle\Form\Type\WebhookTokenType;
 use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
-use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ApruveSettingsTypeTest extends FormIntegrationTestCase
 {

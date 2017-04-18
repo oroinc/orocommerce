@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ApruveBundle\Form\Type;
 
+use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 
 class WebhookTokenType extends AbstractType
 {

@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
+use Oro\Bundle\ApruveBundle\Form\Type\WebhookTokenType;
+use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\ApruveBundle\Form\Type\WebhookTokenType;
-use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
-use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 
 class WebhookTokenTypeTest extends FormIntegrationTestCase
 {

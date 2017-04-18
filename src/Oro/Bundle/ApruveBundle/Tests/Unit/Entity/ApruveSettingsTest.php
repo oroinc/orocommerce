@@ -3,12 +3,11 @@
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\ParameterBag;
-
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ApruveSettingsTest extends \PHPUnit_Framework_TestCase
 {

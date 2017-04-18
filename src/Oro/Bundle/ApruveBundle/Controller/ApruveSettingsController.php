@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\ApruveBundle\Controller;
 
+use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 
 class ApruveSettingsController extends Controller
 {

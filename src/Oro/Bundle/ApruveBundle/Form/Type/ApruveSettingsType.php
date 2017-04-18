@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ApruveBundle\Form\Type;
 
+use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 
 class ApruveSettingsType extends AbstractType
 {
