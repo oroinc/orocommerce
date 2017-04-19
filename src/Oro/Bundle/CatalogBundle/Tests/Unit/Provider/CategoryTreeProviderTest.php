@@ -58,7 +58,7 @@ class CategoryTreeProviderTest extends \PHPUnit_Framework_TestCase
         $visibleCategories = [$rootCategory, $mainCategory, $childCategory];
 
         $this->categoryRepository->expects($this->once())
-            ->method('getChildrenWithTitles')
+            ->method('getChildren')
             ->willReturn($categories);
 
         $event = new CategoryTreeCreateAfterEvent($categories);
