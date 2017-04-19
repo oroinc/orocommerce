@@ -50,6 +50,8 @@ oro:
             product_collection.label: Product Collection
             field:
                 product_collection.label: Filters
+            ui:
+                apply_query: Apply the Query
 
         type:
             simple: Simple

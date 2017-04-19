@@ -242,12 +242,48 @@
 {% block oro_product_collection_variant_widget %}
     {{ form_row(form.productCollectionSegment) }}
 
-    {{ oro_widget_render({
-        'widgetType': 'block',
-        'url': path('oro_datagrid_widget', {'gridName': form.vars.results_grid}),
-        'title': '',
-        'alias': 'product-collection-products-grid'
-    }) }}
+    {% set gridWidgetContainerClass = 'product-collection-grid-widget-container-' ~ form.vars.name %}
+    {% set gridWidgetAlias = 'product-collection-products-grid-' ~ form.vars.name %}
+    {% set controlsBlockAlias = 'product-collection-grid-control-' ~ form.vars.name %}
+    {% set gridVisibilityState = form.vars.segmentDefinition is empty ? 'hide' : ''%}
+
+    {% set widgetRouteParameters = {
+        'gridName': oro_datagrid_build_fullname(form.vars.results_grid, form.vars.name),
+        'segmentDefinition': form.vars.segmentDefinition
+    } %}
+
+    {% set gridSidebarComponentOptions = {
+        'sidebarAlias': controlsBlockAlias,
+        'widgetAlias': gridWidgetAlias,
+        'widgetRouteParameters': widgetRouteParameters
+    } %}
+
+    {% set productCollectionApplyQueryComponentOptions = {
+        'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
+        'gridWidgetContainerSelector': '.' ~ gridWidgetContainerClass,
+        'controlsBlockAlias': controlsBlockAlias
+    } %}
+
+    <div class="{{ controlsBlockAlias }} control-group"
+         data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+         data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
+    >
+        <div data-page-component-module="oroproduct/js/app/components/product-collection-apply-query-component"
+             data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}">
+            <a class="btn btn-primary pull-right">
+                {{ 'oro.product.content_variant.ui.apply_query'|trans }}
+            </a>
+        </div>
+    </div>
+
+    <div class="{{ gridWidgetContainerClass }} {{ gridVisibilityState }}">
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('oro_datagrid_widget', widgetRouteParameters),
+            'title': '',
+            'alias': gridWidgetAlias
+        }) }}
+    </div>
 {% endblock %}
 
 {% block oro_product_custom_variant_fields_collection_widget %}

@@ -110,11 +110,21 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
     public function testFinishView()
     {
         $view = new FormView();
+        $segmentDefinition = '
+            {"filters":[{"columnName":"id","criterion":{"filter":"number","data":{"value":3,"type":"3"}}}]}
+        ';
+        $segmentDefinitionFieldName = 'segment-definition-field-name';
         /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
         $options = ['results_grid' => 'test'];
+        $view->children['productCollectionSegment']
+            ->children['definition']->vars['full_name'] = $segmentDefinitionFieldName;
+        $view->children['productCollectionSegment']
+            ->children['definition']->vars['value'] = $segmentDefinition;
 
         $this->type->finishView($view, $form, $options);
         $this->assertEquals('test', $view->vars['results_grid']);
+        $this->assertEquals($segmentDefinition, $view->vars['segmentDefinition']);
+        $this->assertEquals($segmentDefinitionFieldName, $view->vars['segmentDefinitionFieldName']);
     }
 }

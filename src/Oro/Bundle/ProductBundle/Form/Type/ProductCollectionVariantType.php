@@ -75,5 +75,9 @@ class ProductCollectionVariantType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['results_grid'] = $options['results_grid'];
+        $view->vars['segmentDefinitionFieldName'] = $view->children['productCollectionSegment']
+            ->children['definition']->vars['full_name'];
+        $view->vars['segmentDefinition'] = $view->children['productCollectionSegment']
+            ->children['definition']->vars['value'];
     }
 }
