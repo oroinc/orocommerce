@@ -4,12 +4,13 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType'
         arguments:
             - '@oro_apruve.integration.transport'
+            - '@oro_security.encoder.mcrypt'
         tags:
             - { name: form.type }
 
     oro_apruve.form.type.webhook_token:
         class: 'Oro\Bundle\ApruveBundle\Form\Type\WebhookTokenType'
         arguments:
-            - '@oro_apruve.token_generator'
+            - '@oro_security.generator.random_token'
         tags:
             - { name: form.type }

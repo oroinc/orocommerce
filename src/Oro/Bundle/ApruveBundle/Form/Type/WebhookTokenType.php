@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ApruveBundle\Form\Type;
 
-use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
+use Oro\Bundle\SecurityBundle\Generator\RandomTokenGeneratorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,16 +12,16 @@ class WebhookTokenType extends AbstractType
     const BLOCK_PREFIX = 'oro_apruve_webhook_token';
 
     /**
-     * @var TokenGeneratorInterface
+     * @var RandomTokenGeneratorInterface
      */
     private $generator;
 
     /**
-     * @param TokenGeneratorInterface $tokenGenerator
+     * @param RandomTokenGeneratorInterface $randomTokenGenerator
      */
-    public function __construct(TokenGeneratorInterface $tokenGenerator)
+    public function __construct(RandomTokenGeneratorInterface $randomTokenGenerator)
     {
-        $this->generator = $tokenGenerator;
+        $this->generator = $randomTokenGenerator;
     }
 
     /**

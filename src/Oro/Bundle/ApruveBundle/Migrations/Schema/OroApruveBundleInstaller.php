@@ -38,6 +38,7 @@ class OroApruveBundleInstaller implements Installation
     public function updateOroIntegrationTransportTable(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
+        $table->addColumn('apruve_test_mode', 'boolean', ['notnull' => false, 'default' => false]);
         $table->addColumn('apruve_merchant_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('apruve_api_key', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('apruve_webhook_token', 'string', ['notnull' => false, 'length' => 255]);

@@ -1,9 +1,5 @@
 services:
 
-    oro_apruve.token_generator:
-        class: 'Oro\Bundle\ApruveBundle\TokenGenerator\TokenGenerator'
-        lazy: true
-
     oro_apruve.repository.apruve_settings:
         class: 'Oro\Bundle\ApruveBundle\Entity\Repository\ApruveSettingsRepository'
         parent: oro_entity.abstract_repository

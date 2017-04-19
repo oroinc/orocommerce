@@ -4,7 +4,7 @@ namespace Oro\Bundle\ApruveBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Bundle\ApruveBundle\Form\Type\WebhookTokenType;
-use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
+use Oro\Bundle\SecurityBundle\Generator\RandomTokenGeneratorInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class WebhookTokenTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var TokenGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var RandomTokenGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $tokenGenerator;
 
@@ -26,9 +26,10 @@ class WebhookTokenTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->tokenGenerator = $this->createMock(TokenGeneratorInterface::class);
+        $this->tokenGenerator = $this->createMock(RandomTokenGeneratorInterface::class);
         $this->tokenGenerator
             ->method('generateToken')
+            ->with(256)
             ->willReturn('webhookTokenSample');
 
         $this->formType = new WebhookTokenType($this->tokenGenerator);
