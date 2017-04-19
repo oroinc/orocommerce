@@ -58,6 +58,19 @@ class EncryptedDataTransformerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testTransformWithException()
+    {
+        $this->crypter
+            ->method('decryptData')
+            ->willThrowException(new \Exception());
+
+        $transformer = new EncryptedDataTransformer($this->crypter, true);
+
+        $actual = $transformer->transform(self::ENCRYPTED_STRING);
+
+        static::assertNull($actual);
+    }
+
     /**
      * @dataProvider reverseTransformDataProvider
      *
