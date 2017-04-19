@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -70,36 +71,36 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
         return [
             'test' => [
                 'existing' => [
-                    (new PriceListToWebsite())->setPriority(100)->setPriceList($pl1)->setMergeAllowed(true),
-                    (new PriceListToWebsite())->setPriority(200)->setPriceList($pl2)->setMergeAllowed(false),
-                    (new PriceListToWebsite())->setPriority(300)->setPriceList($pl3)->setMergeAllowed(true)
+                    (new PriceListToWebsite())->setSortOrder(100)->setPriceList($pl1)->setMergeAllowed(true),
+                    (new PriceListToWebsite())->setSortOrder(200)->setPriceList($pl2)->setMergeAllowed(false),
+                    (new PriceListToWebsite())->setSortOrder(300)->setPriceList($pl3)->setMergeAllowed(true)
                 ],
                 'submitted' => [
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '3',
-                        PriceListSelectWithPriorityType::PRIORITY_FIELD => '500',
+                        SortableExtension::POSITION_FIELD_NAME => '500',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                     ],
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '1',
-                        PriceListSelectWithPriorityType::PRIORITY_FIELD => '400',
+                        SortableExtension::POSITION_FIELD_NAME => '400',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false
                     ],
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '2',
-                        PriceListSelectWithPriorityType::PRIORITY_FIELD => '600',
+                        SortableExtension::POSITION_FIELD_NAME => '600',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                     ],
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '',
-                        PriceListSelectWithPriorityType::PRIORITY_FIELD => '',
+                        SortableExtension::POSITION_FIELD_NAME => '',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                     ]
                 ],
                 'expected' => [
-                    (new PriceListToWebsite())->setPriority(400)->setPriceList($pl1)->setMergeAllowed(false),
-                    (new PriceListToWebsite())->setPriority(600)->setPriceList($pl2)->setMergeAllowed(true),
-                    (new PriceListToWebsite())->setPriority(500)->setPriceList($pl3)->setMergeAllowed(true)
+                    (new PriceListToWebsite())->setSortOrder(400)->setPriceList($pl1)->setMergeAllowed(false),
+                    (new PriceListToWebsite())->setSortOrder(600)->setPriceList($pl2)->setMergeAllowed(true),
+                    (new PriceListToWebsite())->setSortOrder(500)->setPriceList($pl3)->setMergeAllowed(true)
                 ]
             ]
         ];

@@ -74,12 +74,6 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->saveDefaultConfigValue();
     }
 
-    protected function tearDown()
-    {
-        $this->restoreConfigValue();
-        parent::tearDown();
-    }
-
     /**
      * @dataProvider CPLSwitchingDataProvider
      * @param array $cplRelationsExpected
@@ -261,12 +255,5 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     {
         $this->defaultPriceListId = $this->configManager->get(Configuration::getConfigKeyToPriceList());
         $this->defaultFullPriceListId = $this->configManager->get(Configuration::getConfigKeyToFullPriceList());
-    }
-
-    protected function restoreConfigValue()
-    {
-        $this->configManager->set(Configuration::getConfigKeyToPriceList(), $this->defaultPriceListId);
-        $this->configManager->set(Configuration::getConfigKeyToFullPriceList(), $this->defaultFullPriceListId);
-        $this->configManager->flush();
     }
 }

@@ -5,24 +5,29 @@ namespace Oro\Bundle\PaymentTermBundle\Method\View;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentTermView implements PaymentMethodViewInterface
 {
-    /** @var PaymentTermProvider */
+    /**
+     * @var PaymentTermProvider
+     */
     protected $paymentTermProvider;
 
-    /**  @var TranslatorInterface */
+    /**
+     * @var TranslatorInterface
+     */
     protected $translator;
 
-    /** @var PaymentTermConfigInterface */
+    /**
+     * @var PaymentTermConfigInterface
+     */
     protected $config;
 
     /**
-     * @param PaymentTermProvider $paymentTermProvider
-     * @param TranslatorInterface $translator
+     * @param PaymentTermProvider        $paymentTermProvider
+     * @param TranslatorInterface        $translator
      * @param PaymentTermConfigInterface $config
      */
     public function __construct(
@@ -35,7 +40,9 @@ class PaymentTermView implements PaymentMethodViewInterface
         $this->config = $config;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getOptions(PaymentContextInterface $context)
     {
         $paymentTerm = null;
@@ -55,40 +62,43 @@ class PaymentTermView implements PaymentMethodViewInterface
         return [];
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getBlock()
     {
         return '_payment_methods_payment_term_widget';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getLabel()
     {
         return $this->config->getLabel();
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getShortLabel()
     {
         return $this->config->getShortLabel();
     }
 
-
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getAdminLabel()
     {
         return $this->config->getAdminLabel();
     }
 
-    /** {@inheritdoc} */
-    public function getPaymentMethodType()
-    {
-        return PaymentTermMethod::TYPE;
-    }
-
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getPaymentMethodIdentifier()
     {
-        return $this->getPaymentMethodType();
+        return $this->config->getPaymentMethodIdentifier();
     }
 }

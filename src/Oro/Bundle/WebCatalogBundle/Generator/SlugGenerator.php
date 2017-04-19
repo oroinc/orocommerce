@@ -10,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
+use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -35,18 +36,26 @@ class SlugGenerator
     protected $redirectGenerator;
 
     /**
+     * @var SlugUrlDiffer
+     */
+    protected $slugUrlDiffer;
+
+    /**
      * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
      * @param RedirectGenerator $redirectGenerator
      * @param LocalizationHelper $localizationHelper
+     * @param SlugUrlDiffer $slugUrlDiffer
      */
     public function __construct(
         ContentVariantTypeRegistry $contentVariantTypeRegistry,
         RedirectGenerator $redirectGenerator,
-        LocalizationHelper $localizationHelper
+        LocalizationHelper $localizationHelper,
+        SlugUrlDiffer $slugUrlDiffer
     ) {
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
         $this->redirectGenerator = $redirectGenerator;
         $this->localizationHelper = $localizationHelper;
+        $this->slugUrlDiffer = $slugUrlDiffer;
     }
 
     /**
@@ -192,6 +201,24 @@ class SlugGenerator
         }
 
         return $slugUrls;
+    }
+
+    /**
+     * Get slugs URL for moved node
+     *
+     * @param ContentNode $targetContentNode
+     * @param ContentNode $sourceContentNode
+     *
+     * @return array
+     */
+    public function getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode)
+    {
+        $urlsBeforeMove = $this->prepareSlugUrls($sourceContentNode);
+
+        $sourceContentNode->setParentNode($targetContentNode);
+        $urlsAfterMove = $this->prepareSlugUrls($sourceContentNode);
+
+        return $this->slugUrlDiffer->getSlugUrlsChanges($urlsBeforeMove, $urlsAfterMove);
     }
 
     /**

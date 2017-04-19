@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Command;
 
+use Oro\Bundle\LayoutBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
@@ -21,6 +22,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
     const PRODUCT_LARGE_FILTER = 'product_large';
     const PRODUCT_SMALL_FILTER = 'product_small';
     const PRODUCT_ORIGINAL_FILTER = 'product_original';
+    const PRODUCT_GALLERY_MAIN = 'product_gallery_main';
 
     /** @var ImageResizeMessageProcessor */
     protected $processor;
@@ -48,6 +50,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
         $this->assertValidImage($productImage, self::PRODUCT_LARGE_FILTER);
         $this->assertValidImage($productImage, self::PRODUCT_SMALL_FILTER);
         $this->assertValidImage($productImage, self::PRODUCT_ORIGINAL_FILTER);
+        $this->assertValidImage($productImage, self::PRODUCT_GALLERY_MAIN);
     }
 
     /**
@@ -92,15 +95,24 @@ class ImageResizeMessageProcessorTest extends WebTestCase
         /** @var ThemeImageTypeDimension $dimension */
         $dimension = $dimensions[$filterName];
 
+        $expectedWidth = $dimension->getWidth() ?: $originalImageSize->getWidth();
+        $expectedHeight = $dimension->getHeight() ?: $originalImageSize->getHeight();
+
+        if (Configuration::AUTO === $expectedWidth) {
+            $expectedWidth = round(
+                $originalImageSize->getWidth() * $dimension->getHeight() / $originalImageSize->getHeight()
+            );
+        }
+
+        if (Configuration::AUTO === $expectedHeight) {
+            $expectedHeight = round(
+                $originalImageSize->getHeight() * $dimension->getWidth() / $originalImageSize->getWidth()
+            );
+        }
+
         $this->assertEquals(
-            [
-                $dimension->getWidth() ? : $originalImageSize->getWidth(),
-                $dimension->getHeight() ? : $originalImageSize->getHeight()
-            ],
-            [
-                $imageSize->getWidth(),
-                $imageSize->getHeight()
-            ]
+            [$expectedWidth, $expectedHeight],
+            [$imageSize->getWidth(), $imageSize->getHeight()]
         );
     }
 

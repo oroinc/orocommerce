@@ -15,16 +15,6 @@ layout:
             blockType: container
             siblingId: page_title_container
 
-        - '@add':
-            id: checkouts_title
-            parentId: checkouts_container
-            blockType: text
-            siblingId: ~
-            prepend: true
-            options:
-                text: 'oro.checkout.open_order.plural_label'
-                visible: '=data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'
-
         - '@setOption':
             id: page_title
             optionName: defaultValue

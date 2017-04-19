@@ -17,7 +17,6 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
     protected $transportData = [
         [
             'reference' => 'ups:transport_1',
-            'baseUrl' => 'url_1',
             'apiUser' => 'user_1',
             'apiPassword' => 'password_1',
             'apiKey' => 'key_1',
@@ -30,7 +29,6 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
         ],
         [
             'reference' => 'ups:transport_2',
-            'baseUrl' => 'url_2',
             'apiUser' => 'user_2',
             'apiPassword' => 'password_2',
             'apiKey' => 'key_2',

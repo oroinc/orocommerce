@@ -35,6 +35,8 @@ class ContentNodeController extends Controller
             $rootNode->setWebCatalog($webCatalog);
         }
 
+        $rootNode->setUpdatedAt(new \DateTime());
+
         return $this->updateTreeNode($rootNode);
     }
 
@@ -110,15 +112,7 @@ class ContentNodeController extends Controller
     {
         $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
 
-        $urlsBeforeMove = $slugGenerator->prepareSlugUrls($contentNode);
-        $contentNode->setParentNode($newParentContentNode);
-        $urlsAfterMove = $slugGenerator->prepareSlugUrls($contentNode);
-
-        $slugUrlDiffer = $this->get('oro_redirect.generator.slug_url_differ');
-
-        $urlChanges = $slugUrlDiffer->getSlugUrlsChanges($urlsBeforeMove, $urlsAfterMove);
-
-        return new JsonResponse($urlChanges);
+        return new JsonResponse($slugGenerator->getSlugsUrlForMovedNode($newParentContentNode, $contentNode));
     }
 
     /**

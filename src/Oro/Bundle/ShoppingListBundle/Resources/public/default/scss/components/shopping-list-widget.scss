@@ -68,6 +68,8 @@
     [class^="fa-"] {
       margin-right: 5px;
 
+      vertical-align: middle;
+
       &:before {
         font-size: 18px;
         color: get-color('ui', 'normal');
@@ -146,8 +148,10 @@
   left: 0;
   z-index: 1;
 
-  [class^="cf-"] {
-    font-size: 18px;
+  [class^="fa-"] {
+    &:before{
+      font-size: $base-font-icon-button;
+    }
   }
 
   @include breakpoint('mobile-landscape') {

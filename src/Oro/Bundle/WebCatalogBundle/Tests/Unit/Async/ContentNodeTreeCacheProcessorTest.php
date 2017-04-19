@@ -70,18 +70,17 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testShouldRejectMessageIfScopeIsEmpty()
+    /**
+     * @dataProvider invalidMessageDataProvider
+     * @param array $messageData
+     */
+    public function testShouldRejectOnInvalidMessage(array $messageData)
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
-            ->willReturn(
-                JSON::encode([
-                    'jobId' => 12345,
-                    'contentNode' => 1,
-                ])
-            );
+            ->willReturn(JSON::encode($messageData));
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
@@ -89,65 +88,71 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('error')
             ->with(
-                'Message is invalid. Key "scope" was not found.',
-                ['message' => $message->getBody()]
+                'Unexpected exception occurred during queue message processing'
             );
 
-        $this->jobRunner
-            ->expects($this->once())
-            ->method('runDelayed')
-            ->with(12345)
-            ->will($this->returnCallback(function ($name, $callback) {
-                return $callback($this->jobRunner);
-            }));
-
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
-    }
-
-    public function testShouldRejectMessageIfContentNodeIsEmpty()
-    {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn(
-                JSON::encode([
-                    'jobId' => 12345,
-                    'scope' => 12345
-                ])
-            );
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $this->logger
-            ->expects($this->once())
-            ->method('error')
-            ->with(
-                'Message is invalid. Key "contentNode" was not found.',
-                ['message' => $message->getBody()]
-            );
-
-        $this->jobRunner
-            ->expects($this->once())
-            ->method('runDelayed')
-            ->with(12345)
-            ->will($this->returnCallback(function ($name, $callback) {
-                return $callback($this->jobRunner);
-            }));
-
-        $scope = new Scope();
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('find')
-            ->with(Scope::class, 12345)
-            ->willReturn($scope);
+            ->willReturn(new \stdClass());
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with(Scope::class)
             ->willReturn($em);
 
+        $this->jobRunner
+            ->expects($this->never())
+            ->method('runDelayed');
+
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidMessageDataProvider()
+    {
+        return [
+            'no scope' => [
+                [
+                    'jobId' => 2,
+                    'contentNode' => 1,
+                ]
+            ],
+            'no content node' => [
+                [
+                    'jobId' => 1,
+                    'scope' => 2
+                ]
+            ],
+            'no jobId' => [
+                [
+                    'contentNode' => 1,
+                    'scope' => 2
+                ]
+            ],
+            'incorrect job id type' => [
+                [
+                    'jobId' => 'a',
+                    'contentNode' => 1,
+                    'scope' => 2
+                ]
+            ],
+            'incorrect scope type' => [
+                [
+                    'jobId' => 1,
+                    'contentNode' => 2,
+                    'scope' => 'a'
+                ]
+            ],
+            'incorrect contentNode type' => [
+                [
+                    'jobId' => 1,
+                    'contentNode' => 'a',
+                    'scope' => 3
+                ]
+            ]
+        ];
     }
 
     public function testShouldProcessMessageIfAllRequiredInfoAvailable()
@@ -158,9 +163,9 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getBody')
             ->willReturn(
                 JSON::encode([
-                    'jobId' => 12345,
-                    'scope' => 12345,
-                    'contentNode' => 12345
+                    'jobId' => 1,
+                    'scope' => 2,
+                    'contentNode' => 3
                 ])
             );
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
@@ -170,39 +175,16 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('error');
 
-        $this->jobRunner
-            ->expects($this->once())
+        $this->jobRunner->expects($this->once())
             ->method('runDelayed')
-            ->with(12345)
-            ->will($this->returnCallback(function ($name, $callback) {
+            ->willReturnCallback(function ($jobId, $callback) {
+                $this->assertEquals(1, $jobId);
                 return $callback($this->jobRunner);
-            }));
+            });
 
         $scope = new Scope();
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $scopeObjectManager */
-        $scopeObjectManager = $this->createMock(EntityManagerInterface::class);
-        $scopeObjectManager->expects($this->any())
-            ->method('find')
-            ->with(Scope::class, 12345)
-            ->willReturn($scope);
-
         $node = new ContentNode();
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $nodeObjectManager */
-        $nodeObjectManager = $this->createMock(EntityManagerInterface::class);
-        $nodeObjectManager->expects($this->any())
-            ->method('find')
-            ->with(ContentNode::class, 12345)
-            ->willReturn($node);
-
-        $this->registry->method('getManagerForClass')
-            ->withConsecutive(
-                [Scope::class],
-                [ContentNode::class]
-            )
-            ->willReturnOnConsecutiveCalls(
-                $scopeObjectManager,
-                $nodeObjectManager
-            );
+        $this->configureEntityManager($scope, 2, $node, 3);
 
         $this->dumper->expects($this->once())
             ->method('dump')
@@ -213,52 +195,75 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCatchAndLogException()
     {
-        $exception = new \Exception('Some error');
-
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn(
                 JSON::encode([
-                    'jobId' => 12345,
-                    'scope' => 12345,
-                    'contentNode' => 12345
+                    'jobId' => 1,
+                    'scope' => 2,
+                    'contentNode' => 3
                 ])
             );
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $this->logger
-            ->expects($this->once())
+        $this->jobRunner->expects($this->once())
+            ->method('runDelayed')
+            ->willReturnCallback(function ($jobId, $callback) {
+                $this->assertEquals(1, $jobId);
+                return $callback($this->jobRunner);
+            });
+
+        $scope = new Scope();
+        $node = new ContentNode();
+        $this->configureEntityManager($scope, 2, $node, 3);
+
+        $this->dumper->expects($this->once())
+            ->method('dump')
+            ->willThrowException(new \Exception('Test exception'));
+
+        $this->logger->expects($this->once())
             ->method('error')
             ->with(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'message' => $message->getBody(),
-                    'topic' => Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
-                    'exception' => $exception
-                ]
+                'Unexpected exception occurred during queue message processing'
             );
 
-        $this->jobRunner
-            ->expects($this->once())
-            ->method('runDelayed')
-            ->with(12345)
-            ->will($this->returnCallback(function ($name, $callback) {
-                return $callback($this->jobRunner);
-            }));
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+    }
 
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->any())
+    /**
+     * @param Scope $scope
+     * @param int $scopeId
+     * @param ContentNode $node
+     * @param int $nodeId
+     */
+    protected function configureEntityManager(Scope $scope, $scopeId, ContentNode $node, $nodeId)
+    {
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $scopeObjectManager */
+        $scopeObjectManager = $this->createMock(EntityManagerInterface::class);
+        $scopeObjectManager->expects($this->any())
             ->method('find')
-            ->will($this->throwException($exception));
+            ->with(Scope::class, $scopeId)
+            ->willReturn($scope);
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $nodeObjectManager */
+        $nodeObjectManager = $this->createMock(EntityManagerInterface::class);
+        $nodeObjectManager->expects($this->any())
+            ->method('find')
+            ->with(ContentNode::class, $nodeId)
+            ->willReturn($node);
+
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with(Scope::class)
-            ->willReturn($em);
-
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+            ->withConsecutive(
+                [Scope::class],
+                [ContentNode::class]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $scopeObjectManager,
+                $nodeObjectManager
+            );
     }
 }

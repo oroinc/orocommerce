@@ -57,6 +57,30 @@ class CategoryProvider
     }
 
     /**
+     * @deprecated use CategoryBreadcrumbProvider::getItems() instead
+     * @return Category[]
+     */
+    public function getBreadcrumbs()
+    {
+        $categories = array_merge($this->getParentCategories(), [$this->getCurrentCategory()]);
+        $breadcrumbs = [];
+
+        /* @var Category $category */
+        foreach ($categories as $category) {
+            $breadcrumbs[] = [
+                'label_localized' => $category->getTitles(),
+                'route' => 'oro_product_frontend_product_index',
+                'routeParams' => [
+                    'categoryId' => $category->getId(),
+                    'includeSubcategories' => $this->requestProductHandler->getIncludeSubcategoriesChoice()
+                ]
+            ];
+        }
+
+        return $breadcrumbs;
+    }
+
+    /**
      * @param CustomerUser|null $user
      *
      * @return Category[]
@@ -108,5 +132,13 @@ class CategoryProvider
         }
 
         return $this->categories[$categoryId];
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIncludeSubcategoriesChoice()
+    {
+        return $this->requestProductHandler->getIncludeSubcategoriesChoice();
     }
 }

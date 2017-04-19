@@ -59,8 +59,6 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('frontend-orders-grid', $crawler->html());
-        $this->assertContains('Open Orders', $crawler->filter('h2.user-page-title')->first()->html());
-        $this->assertContains('Past Orders', $crawler->filter('h2.user-page-title')->last()->html());
     }
 
     public function testOrdersGrid()

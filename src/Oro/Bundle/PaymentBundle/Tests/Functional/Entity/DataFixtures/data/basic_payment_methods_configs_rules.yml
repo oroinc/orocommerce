@@ -7,7 +7,7 @@ payment.payment_methods_configs_rule.2:
     rule_reference: 'rule.2'
 
 payment.payment_methods_configs_rule.3:
-    currency: 'USD'
+    currency: 'UAH'
     rule_reference: 'rule.3'
 
 payment.payment_methods_configs_rule.4:
@@ -15,9 +15,9 @@ payment.payment_methods_configs_rule.4:
     rule_reference: 'rule.3'
 
 payment.payment_methods_configs_rule.5:
-    currency: 'USD'
+    currency: 'UAH'
     rule_reference: 'rule.3'
 
 payment.payment_methods_configs_rule.6:
-    currency: 'USD'
+    currency: 'UAH'
     rule_reference: 'rule.3'

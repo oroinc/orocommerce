@@ -1,4 +1,4 @@
-customer,priceList,priority,mergeAllowed
+customer,priceList,sort_order,mergeAllowed
 Company A,Default Price List,100,1
 Company A,Wholesale Price List,200,1
 Wholesaler B,Wholesale Price List,100,1

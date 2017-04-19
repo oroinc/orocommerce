@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
 class ShippingMethodsConfigsRuleTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,6 +21,7 @@ class ShippingMethodsConfigsRuleTest extends \PHPUnit_Framework_TestCase
             ['id', '123'],
             ['rule', new Rule()],
             ['currency', 'USD'],
+            ['organization', new Organization()]
         ];
 
         $rule = new ShippingMethodsConfigsRule();

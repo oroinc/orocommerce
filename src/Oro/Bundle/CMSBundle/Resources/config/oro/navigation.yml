@@ -42,13 +42,13 @@ navigation:
 
     titles:
         oro_cms_page_index:  ~
-        oro_cms_page_view:   '%%title%%'
-        oro_cms_page_update: '%%title%% - oro.ui.edit'
+        oro_cms_page_view:   '%title%'
+        oro_cms_page_update: '%title% - oro.ui.edit'
         oro_cms_page_create: 'oro.ui.create_entity'
 
         oro_cms_loginpage_index:  ~
-        oro_cms_loginpage_view:   '%%title%%'
+        oro_cms_loginpage_view:   '%title%'
         oro_cms_loginpage_update: 'oro.ui.edit'
         oro_cms_loginpage_create: 'oro.ui.create'
 
-        oro_cms_frontend_page_view: '%%title%%'
+        oro_cms_frontend_page_view: '%title%'

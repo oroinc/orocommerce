@@ -1,24 +1,29 @@
+parameters:
+    oro_flat_rate_shipping.integration.channel.type: 'flat_rate'
+    oro_flat_rate_shipping.integration.transport.type: 'flat_rate'
+
 services:
     oro_flat_rate_shipping.integration.channel:
         class: 'Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType'
         public: false
         tags:
-            - { name: oro_integration.channel, type: flat_rate }
+            - { name: oro_integration.channel, type: '%oro_flat_rate_shipping.integration.channel.type%' }
 
     oro_flat_rate_shipping.integration.transport:
         class: 'Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateTransport'
         public: false
         tags:
-            - { name: oro_integration.transport, type: flat_rate, channel_type: flat_rate }
+            - { name: oro_integration.transport, type: '%oro_flat_rate_shipping.integration.transport.type%', channel_type: '%oro_flat_rate_shipping.integration.channel.type%' }
 
     oro_flat_rate_shipping.method.provider:
         class: 'Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider'
-        public: false
         arguments:
+            - '%oro_flat_rate_shipping.integration.channel.type%'
             - '@oro_entity.doctrine_helper'
-            - '@oro_flat_rate_shipping.builder.flat_rate_method_from_channel'
+            - '@oro_flat_rate_shipping.factory.method'
         tags:
             - { name: oro_shipping_method_provider }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
 
     oro_flat_rate_shipping.method.identifier_generator.method:
         class: 'Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator'

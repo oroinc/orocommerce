@@ -30,7 +30,7 @@ class CombinedPriceListToWebsiteRepositoryTest extends AbstractCombinedPriceList
         $priceListToWebsite->setWebsite($combinedPriceListToWebsite->getWebsite());
         $priceListToWebsite->setMergeAllowed(false);
         $priceListToWebsite->setPriceList($priceList);
-        $priceListToWebsite->setPriority(4);
+        $priceListToWebsite->setSortOrder(4);
         $em->persist($priceListToWebsite);
         $em->flush();
         $repo->deleteInvalidRelations();

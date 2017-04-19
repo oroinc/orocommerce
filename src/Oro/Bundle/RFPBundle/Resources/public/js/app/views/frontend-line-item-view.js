@@ -42,6 +42,10 @@ define(function(require) {
             this.template = _.template(this.getElement('template').text());
 
             this.listenTo(mediator, 'line-items:show:before', this.onShowBefore);
+
+            if (_.isEmpty(this.getProduct())) {
+                this.createInputWidget();
+            }
         },
 
         onInit: function() {
@@ -55,6 +59,10 @@ define(function(require) {
             if (!_.isEmpty(this.getProduct())) {
                 this.viewMode();
             }
+        },
+
+        createInputWidget: function() {
+            this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
         },
 
         render: function() {
@@ -82,7 +90,7 @@ define(function(require) {
         },
 
         editMode: function() {
-            this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
+            this.createInputWidget();
             this.toggleEditMode('enable');
         },
 
@@ -139,8 +147,8 @@ define(function(require) {
 
         getProduct: function() {
             var $fieldProduct = this.getElement('fieldProduct');
-            var selectedData = $fieldProduct.data('selectedData') || [];
-            return $fieldProduct.inputWidget('data') || selectedData[0] || null;
+            var selectedData = $fieldProduct.data('selected-data') || {};
+            return $fieldProduct.inputWidget('data') || selectedData || null;
         },
 
         validate: function() {

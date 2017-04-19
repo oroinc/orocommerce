@@ -260,43 +260,7 @@ class CategoryControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @depends testEditCategory
-     *
-     * @param int $id
-     */
-    public function testDelete($id)
-    {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_category', ['id' => $id]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
-        );
 
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-
-        $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
-    }
-
-    public function testDeleteRoot()
-    {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_category', ['id' => $this->masterCatalog->getId()]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
-        );
-
-        $result = $this->client->getResponse();
-        self::assertResponseStatusCodeEquals($result, 500);
-    }
 
     public function testGetChangedUrlsWhenNoSlugChanged()
     {
@@ -356,6 +320,34 @@ class CategoryControllerTest extends WebTestCase
             ->getRepository('OroCatalogBundle:Category');
         $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
         $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
+    }
+
+    public function testValidationForLocalizedFallbackValues()
+    {
+        $rootId = $this->masterCatalog->getId();
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_create', ['id' => $rootId]));
+        $form = $crawler->selectButton('Save')->form();
+
+        $bigStringValue = str_repeat('a', 256);
+        $formValues = $form->getPhpValues();
+        $formValues['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
+        $formValues['oro_catalog_category']['titles']['values']['default'] = $bigStringValue;
+        $formValues['oro_catalog_category']['slugPrototypesWithRedirect']['slugPrototypes'] = [
+            'values' => ['default' => $bigStringValue]
+        ];
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertEquals(
+            2,
+            $crawler->filterXPath(
+                "//li[contains(text(),'This value is too long. It should have 255 characters or less.')]"
+            )->count()
+        );
     }
 
     /**

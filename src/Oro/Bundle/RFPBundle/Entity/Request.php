@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -61,6 +62,7 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  */
 class Request extends ExtendRequest implements
     CustomerOwnerAwareInterface,
+    EmailHolderInterface,
     SoftDeleteableInterface,
     OrganizationAwareInterface
 {
@@ -244,7 +246,7 @@ class Request extends ExtendRequest implements
      * @ORM\JoinTable(
      *      name="oro_rfp_assigned_users",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
@@ -260,7 +262,7 @@ class Request extends ExtendRequest implements
      * @ORM\JoinTable(
      *      name="oro_rfp_assigned_cus_users",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")

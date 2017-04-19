@@ -22,7 +22,9 @@
                 'data-dropdown-trigger': true,
                 'data-page-component-module': 'oroui/js/app/components/viewport-component',
                 '~data-page-component-options': {
-                    screenType: 'tablet',
+                    viewport: {
+                        maxScreenType: 'tablet',
+                    },
                     component: 'oroui/js/app/components/jquery-widget-component',
                     widgetModule: 'oroui/js/widget/collapse-widget',
                     trigger: '[data-collapse-trigger-second]',
@@ -198,7 +200,9 @@
 
 {% block _web_catalog_menu_second_level_column %}
     {% set collapseView =  layout_attr_defaults(attr, {
-        screenType: 'tablet',
+        viewport: {
+            maxScreenType: 'tablet',
+        },
         component: 'oroui/js/app/components/jquery-widget-component',
         widgetModule: 'oroui/js/widget/collapse-widget',
         trigger: '[data-collapse-trigger-third]',

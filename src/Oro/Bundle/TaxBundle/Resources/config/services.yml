@@ -12,6 +12,7 @@ parameters:
     oro_tax.model.address.class: Oro\Bundle\TaxBundle\Model\Address
 
     oro_tax.event.resolver_event_connector.common_class: Oro\Bundle\TaxBundle\Event\ResolverEventConnector
+    oro_tax.event_subscriber.import_export_tax_subscriber.class: Oro\Bundle\TaxBundle\EventSubscriber\CustomerTaxCodeImportExportSubscriber
 
 services:
     oro_tax.form.autocomplete.product_tax_code.search_handler:
@@ -22,6 +23,15 @@ services:
             - ["code"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
+
+    oro_tax.form.autocomplete.product_tax_code.entity_search_handler:
+        class: Oro\Bundle\TaxBundle\Autocomplete\SearchHandler
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %oro_tax.entity.product_tax_code.class%
+            - ["code"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code_entity_search }
 
     oro_tax.form.autocomplete.customer_tax_code.search_handler:
         public: false
@@ -133,7 +143,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.product_grid:
-        class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\ProductTaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.product_tax_code.class%'
@@ -148,7 +158,7 @@ services:
             - "@oro_tax.factory.address_model_factory"
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.origin_address, method: beforeSave }
 
     oro_tax.event_listener.config.digital_products_eu:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
@@ -158,7 +168,7 @@ services:
             - 'digital_products_eu'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.digital_products_eu, method: beforeSave }
 
     oro_tax.event_listener.config.digital_products_us:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
@@ -168,7 +178,7 @@ services:
             - 'digital_products_us'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.digital_products_us, method: beforeSave }
 
     oro_tax.event_listener.config.shipping_tax_code:
         class: 'Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener'
@@ -178,7 +188,7 @@ services:
             - 'shipping_tax_code'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_tax.shipping_tax_code, method: beforeSave }
 
     oro_tax.event_listener.grid.order_line_item:
         class: 'Oro\Bundle\TaxBundle\EventListener\Order\OrderLineItemGridListener'
@@ -552,3 +562,17 @@ services:
         parent: doctrine_cache.abstract.array
         calls:
             - [ setNamespace, [ 'oro_tax_tax_codes' ] ]
+
+    oro_tax.manager.oro.customer_tax_code_manager:
+        public: false:
+        class: 'Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+
+    oro_tax.event_listener.import_export_tax_subscriber:
+        class: %oro_tax.event_subscriber.import_export_tax_subscriber.class%
+        arguments:
+            - '@oro_tax.manager.oro.customer_tax_code_manager'
+            - '%oro_customer.entity.customer.class%'
+        tags:
+            - { name: kernel.event_subscriber }

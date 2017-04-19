@@ -2,141 +2,53 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\RFPBundle\EventListener\AbstractCustomerViewListener;
+use Oro\Bundle\RFPBundle\Tests\Unit\EventListener\AbstractCustomerViewListenerTest;
 use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener;
 
-class CustomerViewListenerTest extends FormViewListenerTestCase
+class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
 {
-    const RENDER_HTML = 'test';
-
-    const CUSTOMER_VIEW_TEMPLATE = CustomerViewListener::CUSTOMER_VIEW_TEMPLATE;
-    const CUSTOMER_USER_VIEW_TEMPLATE = CustomerViewListener::CUSTOMER_USER_VIEW_TEMPLATE;
-
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
-    protected $requestStack;
-
-    /** * @var CustomerViewListener */
-    protected $customerViewListener;
-
-    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
-    protected $request;
-
-    /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject */
-    protected $env;
-
-    /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject */
-    protected $event;
-
-    protected function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function createListenerToTest()
     {
-        parent::setUp();
-        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-        $this->env = $this->getMockBuilder('\Twig_Environment')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->event = $this->getBeforeListRenderEventMock();
-        $this->event->expects($this->any())
-            ->method('getEnvironment')
-            ->willReturn($this->env);
-
-        $this->env->expects($this->any())
-            ->method('render')
-            ->willReturn(self::RENDER_HTML);
-
-        $this->customerViewListener = new CustomerViewListener(
+        return new CustomerViewListener(
             $this->translator,
             $this->doctrineHelper,
             $this->requestStack
         );
     }
 
-    public function testOnCustomerViewGetsIgnoredIfNoRequest()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerViewTemplate()
     {
-        $this->requestStack->expects($this->any())
-            ->method('getCurrentRequest')
-            ->willReturn(null);
-
-        $this->event->expects($this->never())
-            ->method('getEnvironment');
-        $this->customerViewListener->onCustomerView($this->event);
+        return 'OroSaleBundle:Customer:quote_view.html.twig';
     }
 
-    public function testOnCustomerViewGetsIgnoredIfNoRequestId()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerLabel()
     {
-        $this->event->expects($this->never())
-            ->method('getEnvironment');
-        $this->customerViewListener->onCustomerView($this->event);
+        return 'oro.sale.quote.datagrid.customer.label';
     }
 
-    public function testOnCustomerViewGetsIgnoredIfNoEntityFound()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerUserViewTemplate()
     {
-        $this->request->expects($this->once())
-            ->method('get')
-            ->willReturn(1);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->willReturn(null);
-
-        $this->event->expects($this->never())
-            ->method('getEnvironment');
-        $this->customerViewListener->onCustomerView($this->event);
+        return 'OroSaleBundle:CustomerUser:quote_view.html.twig';
     }
 
-    public function testOnCustomerViewCreatesScrollBlock()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerUserLabel()
     {
-        $this->request->expects($this->once())
-            ->method('get')
-            ->willReturn(1);
-        $customer = new Customer();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->willReturn($customer);
-        $this->event->expects($this->once())
-            ->method('getEnvironment');
-        $this->env->expects($this->once())
-            ->method('render')
-            ->with(static::CUSTOMER_VIEW_TEMPLATE, ['entity' => $customer]);
-        $scrollData = $this->getScrollData();
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData')
-            ->with(null, null, self::RENDER_HTML);
-        $this->event->expects($this->any())
-            ->method('getScrollData')
-            ->willReturn($scrollData);
-        $this->customerViewListener->onCustomerView($this->event);
-    }
-
-    public function testOnCustomerUserViewCreatesScrollBlock()
-    {
-        $this->request->expects($this->once())
-            ->method('get')
-            ->willReturn(1);
-        $customerUser = new CustomerUser();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->willReturn($customerUser);
-        $this->event->expects($this->once())
-            ->method('getEnvironment');
-        $this->env->expects($this->once())
-            ->method('render')
-            ->with(static::CUSTOMER_USER_VIEW_TEMPLATE, ['entity' => $customerUser]);
-        $scrollData = $this->getScrollData();
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData')
-            ->with(null, null, self::RENDER_HTML);
-        $this->event->expects($this->any())
-            ->method('getScrollData')
-            ->willReturn($scrollData);
-        $this->customerViewListener->onCustomerUserView($this->event);
+        return 'oro.sale.quote.datagrid.customer_user.label';
     }
 }

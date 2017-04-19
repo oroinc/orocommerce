@@ -91,6 +91,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
                     $this->assertEquals(SlugPrototypesWithRedirect::class, $options['data_class']);
                     $this->assertTrue($options['slug_suggestion_enabled']);
                     $this->assertTrue($options['create_redirect_enabled']);
+                    $this->assertEquals('oro.redirect.slug_prototypes.tooltip', $options['tooltip']);
 
                     return true;
                 }

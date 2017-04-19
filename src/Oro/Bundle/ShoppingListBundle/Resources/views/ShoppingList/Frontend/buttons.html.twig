@@ -29,7 +29,7 @@
 {% endmacro %}
 
 {% macro buttonTemplate(options) %}
-    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
     {% import _self as buttons %}
     {{ utils.underscoreRaw(buttons.addToCurrentButton({
         shoppingList: {

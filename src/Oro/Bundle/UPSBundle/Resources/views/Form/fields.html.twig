@@ -2,4 +2,19 @@
     <div data-page-component-module="oroups/js/app/components/ups-transport-settings-component">
         {{ form_widget(form) }}
     </div>
+
+    <div class="control-group control-group-text">
+        <div class="controls">
+            <button type="button"
+                    class="btn btn-primary"
+                    data-page-component-module="oroups/js/app/components/ups-connection-validator-component"
+                    data-page-component-options="{{ {
+                        'formSelector': '[name="oro_integration_channel_form"]',
+                        'backendUrl': path('oro_ups_validate_connection', {'channelId': form.vars.value.id|default(0) })
+                    }|json_encode }}"
+            >
+                {{ 'oro.ups.connection_validation.button.text'|trans }}
+            </button>
+        </div>
+    </div>
 {% endblock %}

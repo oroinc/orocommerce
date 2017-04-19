@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 
 class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 {
@@ -59,14 +60,17 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         $priceListWithPriorityType = new PriceListSelectWithPriorityType();
 
         return [
-            new PreloadedExtension([
-                $oroCollectionType::NAME => $oroCollectionType,
-                $priceListCollectionType::NAME => $priceListCollectionType,
-                $priceListWithPriorityType::NAME => $priceListWithPriorityType,
-                PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                $entityType->getName() => $entityType,
-            ], []),
-            new ValidatorExtension(Validation::createValidator())
+            new PreloadedExtension(
+                [
+                    $oroCollectionType::NAME => $oroCollectionType,
+                    $priceListCollectionType::NAME => $priceListCollectionType,
+                    $priceListWithPriorityType::NAME => $priceListWithPriorityType,
+                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
+                    $entityType->getName() => $entityType,
+                ],
+                ['form' => [new SortableExtension()]]
+            ),
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
@@ -77,18 +81,20 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($defaultData, $form->getData());
 
-        $form->submit([
+        $form->submit(
             [
-                'priceList' => 1,
-                'priority' => 100,
-                'mergeAllowed' => true
-            ],
-            [
-                'priceList' => 2,
-                'priority' => 200,
-                'mergeAllowed' => false
+                [
+                    'priceList' => 1,
+                    '_position' => 100,
+                    'mergeAllowed' => true,
+                ],
+                [
+                    'priceList' => 2,
+                    '_position' => 200,
+                    'mergeAllowed' => false,
+                ],
             ]
-        ]);
+        );
         $this->assertTrue($form->isValid());
 
         $this->assertEquals($this->testPriceListConfigs, $form->getData());

@@ -6,8 +6,6 @@
   align-items: center;
   margin: 0 !important; //override platform mobile styles
   padding: 10px 0 !important; //override platform mobile styles
-  border-bottom: 1px solid get-color('additional', 'light');
-  border-top: 1px solid get-color('additional', 'light');
 
   font-size: 0;
 
@@ -33,7 +31,6 @@
 
     &.sorting {
       flex-grow: 0;
-      flex-basis: 315px;
     }
 
     &.oro-pagination {
@@ -128,24 +125,20 @@
 
 @include breakpoint('mobile') {
   .catalog__filter-controls {
-      .action-selectbox_custom_in-pager {
-          display: inline-block;
+    &__item {
+      margin-right: 0;
+    }
 
-          .select2-container {
-              a.select2-choice {
-                  max-width: 60px;
+    .action-selectbox_custom_in-pager {
+      display: inline-block;
 
-                  padding: 8px 4px !important;
-              }
-          }
+      .select2-container {
+        a.select2-choice {
+            max-width: 60px;
+
+            padding: 8px 4px !important;
+        }
       }
     }
-}
-
-@include breakpoint('mobile-landscape') {
-    .catalog__filter-controls {
-        &__item {
-            margin-right: 0;
-        }
-    }
+  }
 }

@@ -9,6 +9,12 @@ layout:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_index/layout.html.twig'
 
+        - '@appendOption':
+            id: orders_datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.orders'
+
         - '@setOption':
             id: page_content
             optionName: class_prefix
@@ -18,12 +24,3 @@ layout:
             id: orders_container
             parentId: page_content
             blockType: container
-
-        - '@add':
-            id: orders_title
-            parentId: orders_container
-            siblingId: orders_datagrid
-            prepend: true
-            blockType: text
-            options:
-                text: 'oro.frontend.order.past_orders.label'

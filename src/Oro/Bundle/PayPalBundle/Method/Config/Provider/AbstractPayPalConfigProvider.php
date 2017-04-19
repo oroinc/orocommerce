@@ -36,10 +36,10 @@ abstract class AbstractPayPalConfigProvider
     abstract public function getPaymentConfigs();
 
     /**
-     * @param ManagerRegistry $doctrine
-     * @param LoggerInterface $logger
+     * @param ManagerRegistry              $doctrine
+     * @param LoggerInterface              $logger
      * @param PayPalConfigFactoryInterface $factory
-     * @param string $type
+     * @param string                       $type
      */
     public function __construct(
         ManagerRegistry $doctrine,
@@ -55,6 +55,7 @@ abstract class AbstractPayPalConfigProvider
 
     /**
      * @param string $identifier
+     *
      * @return bool
      */
     public function hasPaymentConfig($identifier)
@@ -73,7 +74,7 @@ abstract class AbstractPayPalConfigProvider
     }
 
     /**
-     * @return array|PayPalSettings[]
+     * @return PayPalSettings[]
      */
     protected function getEnabledIntegrationSettings()
     {

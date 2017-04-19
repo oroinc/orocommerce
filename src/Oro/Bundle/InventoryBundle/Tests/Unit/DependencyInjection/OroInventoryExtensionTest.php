@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
-use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
 
 class OroInventoryExtensionTest extends ExtensionTestCase
 {
@@ -15,7 +15,6 @@ class OroInventoryExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroInventoryExtension());
 
         $expectedDefinitions = [
-            'oro_inventory.inventory_level.manager.api',
             'oro_inventory.api.processor.product_id.normalize_input',
             'oro_inventory.api.processor.entity_id.load_data',
             'oro_inventory.api.processor.update_inventory_level.build_query',

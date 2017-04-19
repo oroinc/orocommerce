@@ -129,6 +129,96 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    public function getVariantFieldsDataProvider()
+    {
+        return [
+            'all_fields' => [
+                'fields' => [
+                    'size' => [
+                        'owner' => 'Custom',
+                        'label' => 'Size Label',
+                        'type' => 'boolean',
+                        'state' => 'Active',
+                        'is_serialized' => false,
+                    ],
+                    'color' => [
+                        'owner' => 'Custom',
+                        'label' => 'Color Label',
+                        'type' => 'enum',
+                        'state' => 'Requires update',
+                        'is_serialized' => false,
+                    ],
+                    'weight' => [
+                        'owner' => 'Custom',
+                        'label' => 'Weight Label',
+                        'type' => 'string',
+                        'state' => 'New',
+                        'is_serialized' => true
+                    ],
+                    'id' => [
+                        'owner' => 'System',
+                        'label' => 'Id Label',
+                        'type' => 'string',
+                    ],
+                ],
+
+                'expectedResult' => [
+                    'size' => [
+                        'name' => 'size',
+                        'label' => 'Size Label',
+                        'type' => 'boolean',
+                        'is_serialized' => false
+                    ],
+                    'color' => [
+                        'name' => 'color',
+                        'label' => 'Color Label',
+                        'type' => 'enum',
+                        'is_serialized' => false,
+                    ],
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * @param array $fields
+     * @param array $expectedResult
+     * @dataProvider getVariantFieldsDataProvider
+     */
+    public function testGetVariantFields($fields, $expectedResult)
+    {
+        $extendsConfigs = [];
+        foreach ($fields as $fieldName => $fieldData) {
+            $extendsConfigs[$fieldName] = $this->createConfigByScope('extend', $fieldName, $fieldData);
+        }
+
+        $entityConfigs = [];
+        foreach ($fields as $fieldName => $fieldData) {
+            $entityConfigs[$fieldName] =  $this->createConfigByScope('entity', $fieldName, $fieldData);
+        }
+
+        $this->extendConfigProvider
+            ->expects($this->once())
+            ->method('getConfigs')
+            ->with($this->className)
+            ->willReturn($extendsConfigs);
+
+        $this->entityConfigProvider
+            ->expects($this->any())
+            ->method('getConfigById')
+            ->willReturnCallback(
+                function (FieldConfigId $configId) use ($entityConfigs) {
+                    return $entityConfigs[$configId->getFieldName()];
+                }
+            );
+
+        $result = $this->provider->getVariantFields($this->className);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
      * @param string $className
      * @return \PHPUnit_Framework_MockObject_MockObject
      */

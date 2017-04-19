@@ -59,6 +59,7 @@ oro:
             address.label: Address
             method_configs.label: Configurations
             currency.label: Currency
+            organization.label: Organization
         shippingmethodconfig:
             entity_label: Shipping Rule Method Config
             entity_plural_label: Shipping Rule Methods Configs
@@ -87,6 +88,7 @@ oro:
         method_type:
             shipping_methods_widget:
                 label: '%translatedMethodType%: <strong>%price%</strong>'
+            used.error: 'The following types "%types%" are used in Shipping Rules. Please disable them before removal.'
 
         methods:
             label: "Shipping Method"
@@ -111,6 +113,16 @@ oro:
 
         controller:
             rule.saved.message: 'Shipping rule has been saved'
+
+        integration:
+            deactivate:
+                message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">the following</a> shipping rules depend on the integration that is being disabled. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
+                title: Deactivate integration.
+                button.okText: Deactivate
+            delete:
+                message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">the following</a> shipping rules depend on the integration that is being deleted. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
+                title: Delete integration.
+                button.okText: Delete
 
     weight_unit.lbs:
         label:

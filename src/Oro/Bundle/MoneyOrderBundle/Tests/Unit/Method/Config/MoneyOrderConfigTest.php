@@ -2,60 +2,35 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
 
-class MoneyOrderConfigTest extends AbstractPaymentSystemConfigTestCase
+class MoneyOrderConfigTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var MoneyOrderConfigInterface
-     */
-    protected $config;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPaymentConfig(ConfigManager $configManager)
+    public function testGetters()
     {
-        return new MoneyOrderConfig($configManager);
-    }
+        $adminLabel = 'someAdminLabel';
+        $label = 'someLabel';
+        $shortLabel = 'someShortLabel';
+        $paymentMethodIdentifier = 'someMethodIdentifier';
+        $payTo = 'payTo';
+        $sendTo = 'sendTo';
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getConfigPrefix()
-    {
-        return 'money_order_';
-    }
+        $parameterBag = new MoneyOrderConfig(
+            [
+                MoneyOrderConfig::ADMIN_LABEL_KEY => $adminLabel,
+                MoneyOrderConfig::LABEL_KEY => $label,
+                MoneyOrderConfig::SHORT_LABEL_KEY => $shortLabel,
+                MoneyOrderConfig::PAYMENT_METHOD_IDENTIFIER_KEY => $paymentMethodIdentifier,
+                MoneyOrderConfig::PAY_TO_KEY => $payTo,
+                MoneyOrderConfig::SEND_TO_KEY => $sendTo
+            ]
+        );
 
-    public function testGetPayToKey()
-    {
-        $returnValue = 'pay_to';
-        $this->setConfig($this->once(), Configuration::MONEY_ORDER_PAY_TO_KEY, $returnValue);
-        $this->assertSame($returnValue, $this->config->getPayTo());
-    }
-
-    public function testGetSendToKey()
-    {
-        $returnValue = 'send_to';
-        $this->setConfig($this->once(), Configuration::MONEY_ORDER_SEND_TO_KEY, $returnValue);
-        $this->assertSame($returnValue, $this->config->getSendTo());
-    }
-
-    public function testGetPaymentMethodIdentifier()
-    {
-        $this->assertSame('money_order', $this->config->getPaymentMethodIdentifier());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensionAlias()
-    {
-        return OroMoneyOrderExtension::ALIAS;
+        static::assertEquals($adminLabel, $parameterBag->getAdminLabel());
+        static::assertEquals($label, $parameterBag->getLabel());
+        static::assertEquals($shortLabel, $parameterBag->getShortLabel());
+        static::assertEquals($paymentMethodIdentifier, $parameterBag->getPaymentMethodIdentifier());
+        static::assertEquals($payTo, $parameterBag->getPayTo());
+        static::assertEquals($sendTo, $parameterBag->getSendTo());
     }
 }

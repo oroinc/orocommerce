@@ -92,6 +92,20 @@ oro:
             name.label: Name
             destination.label: Destination
 
+        paymenttransaction:
+            id.label: Id
+            paymentMethod.label: Payment Method
+            action.label: Type
+            amount.label: Amount
+            active.label: Active
+            successful.label: Successful
+            types:
+                authorize.label: Authorize
+                charge.label: Charge
+                validate.label: Validate
+                capture.label: Capture
+                purchase.label: Purchase
+
         sections:
             general: 'General Information'
             destination: 'Destinations'

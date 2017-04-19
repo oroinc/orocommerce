@@ -10,11 +10,17 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilder
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var ManagerRegistry
      */
@@ -40,17 +46,20 @@ class PriceListProductAssignmentBuilder
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param ProductAssignmentRuleCompiler $ruleCompiler
      * @param EventDispatcherInterface $eventDispatcher
+     * @param ShardManager $shardManager
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         ProductAssignmentRuleCompiler $ruleCompiler,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ShardManager $shardManager
     ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
         $this->eventDispatcher = $eventDispatcher;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -69,7 +78,7 @@ class PriceListProductAssignmentBuilder
         }
         $this->registry->getManagerForClass(ProductPrice::class)
             ->getRepository(ProductPrice::class)
-            ->deleteInvalidPrices($priceList);
+            ->deleteInvalidPrices($this->shardManager, $priceList);
 
         $event = new AssignmentBuilderBuildEvent($priceList, $product);
         $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);

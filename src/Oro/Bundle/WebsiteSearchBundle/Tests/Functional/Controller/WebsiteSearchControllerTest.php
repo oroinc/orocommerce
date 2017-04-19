@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
+use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -44,9 +46,9 @@ class WebsiteSearchControllerTest extends WebTestCase
      */
     private function assertProductPageWithFilters($searchString)
     {
-        $urlParams = ['frontend-product-search-grid' => [
-            '_filter' => ['all_text' => ['value' => $searchString, 'type' => 1]]
-        ]];
+        $urlParams['grid'] = [
+            'frontend-product-search-grid' => "f%5Ball_text%5D%5Bvalue%5D={$searchString}&f%5Ball_text%5D%5Btype%5D=1"
+        ];
         $expectedUrl = $this->getContainer()->get('router')->generate('oro_product_frontend_product_index', $urlParams);
         $this->assertEquals($expectedUrl, $this->client->getRequest()->getRequestUri());
     }

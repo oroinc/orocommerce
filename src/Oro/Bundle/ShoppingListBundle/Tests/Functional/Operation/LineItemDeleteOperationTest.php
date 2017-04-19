@@ -44,7 +44,8 @@ class LineItemDeleteOperationTest extends ActionTestCase
                 ],
                 'flashMessages' => [
                     'success' => ['Shopping List Line Item deleted']
-                ]
+                ],
+                'pageReload' => true
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );

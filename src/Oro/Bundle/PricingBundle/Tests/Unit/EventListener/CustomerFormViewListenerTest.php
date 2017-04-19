@@ -37,7 +37,7 @@ class CustomerFormViewListenerTest extends AbstractCustomerFormViewListenerTest
 
         $priceListToCustomer1 = new PriceListToCustomer();
         $priceListToCustomer1->setCustomer($customer);
-        $priceListToCustomer1->setPriority(3);
+        $priceListToCustomer1->setSortOrder(3);
         $priceListToCustomer2 = clone $priceListToCustomer1;
         $priceListsToCustomer = [$priceListToCustomer1, $priceListToCustomer2];
 

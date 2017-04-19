@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\ORM\Query\Expr;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -15,10 +12,18 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceDatagridListener
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var TranslatorInterface
      */
@@ -43,15 +48,18 @@ class ProductPriceDatagridListener
      * @param TranslatorInterface $translator
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param DoctrineHelper $doctrineHelper
+     * @param ShardManager $shardManager
      */
     public function __construct(
         TranslatorInterface $translator,
         PriceListRequestHandler $priceListRequestHandler,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        ShardManager $shardManager
     ) {
         $this->translator = $translator;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->doctrineHelper = $doctrineHelper;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -77,6 +85,7 @@ class ProductPriceDatagridListener
                 $this->addProductPriceCurrencyColumn($config, $currencyIsoCode, $unit);
             }
         }
+        $config->getOrmQuery()->addHint(PriceShardWalker::HINT_PRICE_SHARD);
     }
 
     /**
@@ -261,7 +270,12 @@ class ProductPriceDatagridListener
         }, $records);
 
         $priceList = $this->getPriceList();
-        return $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds, $showTierPrices);
+        return $priceRepository->findByPriceListIdAndProductIds(
+            $this->shardManager,
+            $priceList->getId(),
+            $productIds,
+            $showTierPrices
+        );
     }
 
     /**

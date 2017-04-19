@@ -15,14 +15,6 @@ services:
         tags:
             - { name: layout.block_type, alias: category_list }
 
-    oro_catalog.layout.block_type.navigation:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            - [setOptionsConfig, [{parentCategories: {required: true}, currentCategory: {required: true}}]]
-            - [setName, ['category_breadcrumbs']]
-        tags:
-             - { name: layout.block_type, alias: category_breadcrumbs }
-
     oro_catalog.layout.data_provider.category:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider'
         public: true
@@ -32,6 +24,16 @@ services:
             - '@oro_catalog.provider.category_tree_provider'
         tags:
             - { name: layout.data_provider, alias: category }
+
+    oro_catalog.layout.data_provider.category_breadcrumb:
+        class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider'
+        public: true
+        arguments:
+            - "@oro_catalog.layout.data_provider.category"
+            - '@oro_locale.helper.localization'
+            - '@router'
+        tags:
+            - { name: layout.data_provider, alias: category_breadcrumbs }
 
     oro_catalog.layout.data_provider.featured_categories:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider'

@@ -11,13 +11,19 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 
 class CategoryProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $requestProductHandler;
 
-    /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $categoryRepository;
 
-    /** @var CategoryTreeProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var CategoryTreeProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $categoryTreeProvider;
 
     /**
@@ -120,5 +126,42 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $actual = $this->categoryProvider->getCategoryTree($user);
 
         $this->assertEquals([$mainCategory], $actual);
+    }
+
+    public function testGetBreadcrumbs()
+    {
+        $category = new Category();
+        $categoryId = 1;
+
+        $this->requestProductHandler
+            ->expects($this->exactly(2))
+            ->method('getCategoryId')
+            ->willReturn($categoryId);
+
+        $this->categoryRepository
+            ->expects($this->once())
+            ->method('find')
+            ->with($categoryId)
+            ->willReturn($category);
+
+        $result = $this->categoryProvider->getBreadcrumbs();
+        $breadcrumb = [
+            'label_localized' => $category->getTitles(),
+            'route' => 'oro_product_frontend_product_index',
+            'routeParams' => [
+                'categoryId' => null,
+                'includeSubcategories' => null,
+            ]
+        ];
+        $this->assertSame([$breadcrumb], $result);
+    }
+
+    public function testGetIncludeSubcategoriesChoice()
+    {
+        $this->requestProductHandler
+            ->method('getIncludeSubcategoriesChoice')
+            ->willReturnOnConsecutiveCalls(true, false);
+        $this->assertEquals(true, $this->categoryProvider->getIncludeSubcategoriesChoice());
+        $this->assertEquals(false, $this->categoryProvider->getIncludeSubcategoriesChoice());
     }
 }

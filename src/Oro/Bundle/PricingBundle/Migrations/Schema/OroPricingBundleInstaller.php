@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -32,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_9';
     }
 
     /**
@@ -138,7 +138,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('customer_group_id', 'integer', []);
-        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['customer_group_id', 'price_list_id', 'website_id']);
     }
@@ -154,7 +154,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('customer_id', 'integer', []);
-        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['customer_id', 'price_list_id', 'website_id']);
     }
@@ -169,7 +169,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table = $schema->createTable('oro_price_list_to_website');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['price_list_id', 'website_id']);
     }
@@ -182,7 +182,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     protected function createOroPriceProductTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_product');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('id', 'guid', ['notnull' => false]);
         $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_id', 'integer', []);

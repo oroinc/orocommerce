@@ -33,7 +33,7 @@ class CombinedPriceListToCustomerGroupRepositoryTest extends AbstractCombinedPri
         $priceListToCustomer->setCustomerGroup($combinedPriceListToCustomerGroup->getCustomerGroup());
         $priceListToCustomer->setMergeAllowed(false);
         $priceListToCustomer->setPriceList($priceList);
-        $priceListToCustomer->setPriority(4);
+        $priceListToCustomer->setSortOrder(4);
         $priceListToCustomer->setWebsite($combinedPriceListToCustomerGroup->getWebsite());
         $em->persist($priceListToCustomer);
         $em->flush();

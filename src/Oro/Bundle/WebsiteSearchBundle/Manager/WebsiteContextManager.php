@@ -24,6 +24,10 @@ class WebsiteContextManager
     /**
      * Returns website id from context if according website exists
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @return int|null
      */
     public function getWebsiteId(array $context)

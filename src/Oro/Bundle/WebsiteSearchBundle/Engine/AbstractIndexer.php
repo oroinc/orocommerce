@@ -91,6 +91,13 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'websiteIds' int[] Array of websites ids to reindex
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
      */
     public function reindex($classOrClasses = null, array $context = [])
     {
@@ -123,6 +130,8 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context Not used here, only to comply with the interface
      */
     public function getClassesForReindex($class = null, array $context = [])
     {
@@ -131,6 +140,12 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'websiteIds' int[] Array of websites ids to index
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
      */
     public function save($entityOrEntities, array $context = [])
     {
@@ -170,6 +185,11 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param string $entityClass
      * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @return int
      */
     protected function reindexEntityClass($entityClass, array $context)
@@ -186,13 +206,8 @@ abstract class AbstractIndexer implements IndexerInterface
         $contextEntityIds = $this->getContextEntityIds($context);
 
         if ($contextEntityIds) {
-            //Remove certain entities from index before reindexation
-            $entities = [];
-            foreach ($contextEntityIds as $id) {
-                $entities[$id] = $entityManager->getReference($entityClass, $id);
-            }
-            $this->delete($entities, $context);
-
+            // Remove certain entities from index before reindexation
+            $this->deleteEntities($entityClass, $contextEntityIds, $context);
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
         }
 
@@ -229,6 +244,28 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $entityClass
      * @param array $entityIds
      * @param array $context
+     */
+    protected function deleteEntities($entityClass, array $entityIds, array $context)
+    {
+        $entityManager = $this->doctrineHelper->getEntityManager($entityClass);
+
+        $entities = [];
+        foreach ($entityIds as $id) {
+            $entities[$id] = $entityManager->getReference($entityClass, $id);
+        }
+
+        $this->delete($entities, $context);
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array $entityIds
+     * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     *     'entityIds' int[] Array of entities ids to index
+     * ]
+     *
      * @param string $aliasToSave
      * @return int
      */
@@ -254,6 +291,10 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param array $entityIds
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @param string $entityClass
      * @return array
      */
@@ -281,6 +322,10 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param string $entityClass
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @return string|null
      */
     protected function getEntityAlias($entityClass, array $context)

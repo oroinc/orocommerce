@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Context;
 
+use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -25,6 +26,24 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
 
         $this->visitPath($this->getUrl('oro_shopping_list_frontend_view', $shoppingList->getId()));
         $this->waitForAjax();
+    }
+
+    /**
+     * @Given /^(?:|I )request a quote from shopping list "(?P<shoppingListLabel>[^"]+)" with data:$/
+     *
+     * @param string $shoppingListLabel
+     * @param TableNode $table
+     */
+    public function iRequestAQuoteFromShoppingListWithData($shoppingListLabel, TableNode $table)
+    {
+        $this->openShoppingList($shoppingListLabel);
+
+        $this->getPage()->findLink('Request Quote')->click();
+        $this->waitForAjax();
+
+        $form = $this->createElement('OroForm');
+        $form->fill($table);
+        $this->getPage()->pressButton('Submit Request');
     }
 
     /**

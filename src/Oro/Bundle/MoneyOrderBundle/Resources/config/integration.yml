@@ -1,0 +1,12 @@
+services:
+    oro_money_order.integration.channel:
+        class: 'Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType'
+        public: true
+        tags:
+            - { name: oro_integration.channel, type: money_order }
+
+    oro_money_order.integration.transport:
+        class: 'Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderTransport'
+        public: false
+        tags:
+            - { name: oro_integration.transport, type: money_order, channel_type: money_order }

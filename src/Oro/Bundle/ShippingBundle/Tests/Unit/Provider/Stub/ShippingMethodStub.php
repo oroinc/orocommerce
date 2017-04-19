@@ -35,8 +35,13 @@ class ShippingMethodStub implements ShippingMethodInterface
     /**
      * @var bool
      */
-    protected $isGrouped = false;
+    protected $isEnabled = true;
 
+    /**
+     * @var bool
+     */
+    protected $isGrouped = false;
+    
     /**
      * @return ShippingMethodTypeStub[]
      */
@@ -52,6 +57,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     public function setTypes($types)
     {
         $this->types = $types;
+
         return $this;
     }
 
@@ -74,6 +80,7 @@ class ShippingMethodStub implements ShippingMethodInterface
                 return $type;
             }
         }
+
         return null;
     }
 
@@ -84,6 +91,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+
         return $this;
     }
 
@@ -102,6 +110,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     public function setLabel($label)
     {
         $this->label = $label;
+
         return $this;
     }
 
@@ -120,6 +129,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     public function setSortOrder($sortOrder)
     {
         $this->sortOrder = $sortOrder;
+
         return $this;
     }
 
@@ -138,6 +148,7 @@ class ShippingMethodStub implements ShippingMethodInterface
     public function setOptionsConfigurationFormType($optionsConfigurationFormType)
     {
         $this->optionsConfigurationFormType = $optionsConfigurationFormType;
+
         return $this;
     }
 
@@ -150,12 +161,21 @@ class ShippingMethodStub implements ShippingMethodInterface
     }
 
     /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->isEnabled;
+    }
+
+    /**
      * @param boolean $isGrouped
      * @return $this
      */
     public function setIsGrouped($isGrouped)
     {
         $this->isGrouped = $isGrouped;
+
         return $this;
     }
 }

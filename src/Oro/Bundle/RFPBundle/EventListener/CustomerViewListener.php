@@ -4,19 +4,11 @@ namespace Oro\Bundle\RFPBundle\EventListener;
 
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
-use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener as BaseCustomerViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
-class CustomerViewListener extends BaseCustomerViewListener implements FeatureToggleableInterface
+class CustomerViewListener extends AbstractCustomerViewListener implements FeatureToggleableInterface
 {
     use FeatureCheckerHolderTrait;
-
-    const CUSTOMER_VIEW_TEMPLATE = 'OroRFPBundle:Customer:rfp_view.html.twig';
-    const CUSTOMER_LABEL = 'oro.rfp.datagrid.customer.label';
-
-    const CUSTOMER_USER_VIEW_TEMPLATE = 'OroRFPBundle:CustomerUser:rfp_view.html.twig';
-    const CUSTOMER_USER_LABEL = 'oro.rfp.datagrid.customer_user.label';
-
 
     /**
      * {@inheritdoc}
@@ -38,5 +30,37 @@ class CustomerViewListener extends BaseCustomerViewListener implements FeatureTo
             return;
         }
         parent::onCustomerUserView($event);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerViewTemplate()
+    {
+        return 'OroRFPBundle:Customer:rfp_view.html.twig';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerLabel()
+    {
+        return 'oro.rfp.datagrid.customer.label';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerUserViewTemplate()
+    {
+        return 'OroRFPBundle:CustomerUser:rfp_view.html.twig';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCustomerUserLabel()
+    {
+        return 'oro.rfp.datagrid.customer_user.label';
     }
 }

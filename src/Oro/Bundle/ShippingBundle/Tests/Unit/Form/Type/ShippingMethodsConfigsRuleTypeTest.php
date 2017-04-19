@@ -22,12 +22,15 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationTyp
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodTypeConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodProviderStub;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -61,6 +64,11 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
      */
     protected $methodRegistry;
 
+    /**
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $choicesProvider;
+
     protected function setUp()
     {
         $this->methodRegistry = new ShippingMethodRegistry();
@@ -75,6 +83,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
 
+        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
@@ -82,7 +91,12 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                 return $message.'_translated';
             }));
 
-        $this->formType = new ShippingMethodsConfigsRuleType($this->methodRegistry, $translator);
+        $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+
+        $this->formType = new ShippingMethodsConfigsRuleType(
+            $this->choicesProvider,
+            $translator
+        );
     }
 
     public function testGetBlockPrefix()
@@ -180,6 +194,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 
         return [
             $constraint->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
+            (new ShippingRuleEnable())->validatedBy() => $this->createMock(ShippingRuleEnableValidator::class),
         ];
     }
 

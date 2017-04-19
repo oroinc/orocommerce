@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
@@ -41,7 +41,7 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
             ->getEntityRepository('OroPricingBundle:PriceListToCustomerGroup')
             ->findBy(
                 ['customerGroup' => $customerGroup, 'website' => $this->websiteProvider->getWebsites()],
-                ['priority' => Criteria::ASC]
+                ['sortOrder' => PriceListCollectionType::DEFAULT_ORDER]
             );
         
         /** @var PriceListCustomerGroupFallback $fallbackEntity */

@@ -212,7 +212,6 @@ class QuoteProductType extends AbstractType
             'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product',
             'compact_units' => false,
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => ['view' => 'orosale/js/app/views/line-item-view'],
         ]);

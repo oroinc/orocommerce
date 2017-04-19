@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;

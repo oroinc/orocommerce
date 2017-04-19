@@ -56,7 +56,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
         }
         $manager->setCurrent($this->getUser(), $shoppingList);
 
-        return$this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'success' => $isProcessed]);
+        return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'success' => $isProcessed]);
     }
 
     /**
@@ -92,27 +92,6 @@ class ShoppingListController extends RestController implements ClassResourceInte
         }
 
         return new JsonResponse($data, $status);
-    }
-
-    /**
-     * @ApiDoc(
-     *      description="Delete Shopping List",
-     *      resource=true
-     * )
-     * @Acl(
-     *      id="oro_shopping_list_frontend_delete",
-     *      type="entity",
-     *      class="OroShoppingListBundle:ShoppingList",
-     *      permission="DELETE",
-     *      group_name="commerce"
-     * )
-     *
-     * @param int $id
-     * @return Response
-     */
-    public function deleteAction($id)
-    {
-        return $this->handleDeleteRequest($id);
     }
 
     /**

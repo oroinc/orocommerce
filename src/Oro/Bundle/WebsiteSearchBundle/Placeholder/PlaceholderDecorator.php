@@ -7,7 +7,7 @@ class PlaceholderDecorator implements PlaceholderInterface
     /**
      * @var PlaceholderRegistry
      */
-    private $placeholderRegistry;
+    protected $placeholderRegistry;
 
     /**
      * @param PlaceholderRegistry $registry

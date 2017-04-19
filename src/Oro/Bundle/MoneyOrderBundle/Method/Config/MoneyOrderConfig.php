@@ -2,52 +2,66 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
-use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
-class MoneyOrderConfig extends AbstractPaymentSystemConfig implements MoneyOrderConfigInterface
+class MoneyOrderConfig extends ParameterBag implements MoneyOrderConfigInterface
 {
-    /** {@inheritdoc} */
-    protected function getPaymentExtensionAlias()
+    const LABEL_KEY = 'label';
+    const SHORT_LABEL_KEY = 'short_label';
+    const ADMIN_LABEL_KEY = 'admin_label';
+    const PAYMENT_METHOD_IDENTIFIER_KEY = 'payment_method_identifier';
+    const PAY_TO_KEY = 'pay_to';
+    const SEND_TO_KEY = 'send_to';
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(array $parameters)
     {
-        return OroMoneyOrderExtension::ALIAS;
+        parent::__construct($parameters);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getLabel()
     {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_LABEL_KEY);
+        return (string)$this->get(self::LABEL_KEY);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getShortLabel()
     {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_SHORT_LABEL_KEY);
+        return (string)$this->get(self::SHORT_LABEL_KEY);
     }
 
     /** {@inheritdoc} */
     public function getAdminLabel()
     {
-        return (string)$this->getLabel();
-    }
-
-    /** {@inheritdoc} */
-    public function getPayTo()
-    {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_PAY_TO_KEY);
-    }
-
-    /** {@inheritdoc} */
-    public function getSendTo()
-    {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_SEND_TO_KEY);
+        return (string)$this->get(self::ADMIN_LABEL_KEY);
     }
 
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return (string)MoneyOrder::TYPE;
+        return (string)$this->get(self::PAYMENT_METHOD_IDENTIFIER_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPayTo()
+    {
+        return (string)$this->get(self::PAY_TO_KEY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getSendTo()
+    {
+        return (string)$this->get(self::SEND_TO_KEY);
     }
 }

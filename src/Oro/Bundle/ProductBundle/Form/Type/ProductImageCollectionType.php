@@ -38,7 +38,6 @@ class ProductImageCollectionType extends AbstractType
                 'image_types' => $this->imageTypeProvider->getImageTypes()
             ],
             'error_bubbling' => false,
-            'cascade_validation' => true,
             'show_form_when_empty' => false,
             'row_count_initial' => 0
 

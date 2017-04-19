@@ -22,6 +22,7 @@ oro.pricing:
         entity_description: Represents price list information
         id.label: Id
         name.label: Name
+        sortOrder.label: Sort Order
         default.label: Is Default
         active.label: Active
         currencies.label: Currencies
@@ -35,7 +36,6 @@ oro.pricing:
         customers.label: Customers
         websites.label: Websites
         prices.label: Prices
-        priority.label: Priority
         merge_allowed.label: Merge Allowed
         merge_allowed.yes.label: Yes
         merge_allowed.no.label: No
@@ -43,6 +43,7 @@ oro.pricing:
         owner.label: 'Owner'
         organization.label: 'Organization'
         assigned_products.label: 'Assigned Products'
+        options.label: Options
         form:
             pricelist_required: Please select a price list first...
         status:

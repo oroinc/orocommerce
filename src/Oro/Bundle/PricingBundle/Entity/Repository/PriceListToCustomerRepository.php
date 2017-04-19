@@ -50,7 +50,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->where($qb->expr()->eq('relation.customer', ':customer'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.priority', $sortOrder)
+            ->orderBy('relation.sortOrder', $sortOrder)
             ->setParameters(['customer' => $customer, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
@@ -225,7 +225,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->where($qb->expr()->in('relation.customer', ':customers'))
             ->orderBy('relation.customer')
             ->addOrderBy('relation.website')
-            ->addOrderBy('relation.priority')
+            ->addOrderBy('relation.sortOrder')
             ->setParameter('customers', $holdersIds);
 
         return $qb->getQuery()->getResult();

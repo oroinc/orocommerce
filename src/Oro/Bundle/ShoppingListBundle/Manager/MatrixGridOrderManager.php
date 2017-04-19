@@ -138,7 +138,11 @@ class MatrixGridOrderManager
 
             $values = [];
             foreach ($variantFields as $field) {
-                $values[] = '['.$this->variantAvailability->getVariantFieldScalarValue($variant, $field['name']).']';
+                $value = $this->variantAvailability->getVariantFieldScalarValue($variant, $field['name']);
+                if (is_bool($value)) {
+                    $value = ($value) ? '1' : '0';
+                }
+                $values[] = "[$value]";
             }
             $values[] = '[_product]';
 
@@ -166,10 +170,11 @@ class MatrixGridOrderManager
 
     /**
      * @param MatrixCollection $collection
+     * @param Product          $product
      *
      * @return array|LineItem[]
      */
-    public function convertMatrixIntoLineItems(MatrixCollection $collection)
+    public function convertMatrixIntoLineItems(MatrixCollection $collection, Product $product)
     {
         $lineItems = [];
 
@@ -178,10 +183,16 @@ class MatrixGridOrderManager
             /** @var MatrixCollectionColumn $column */
             foreach ($row->columns as $column) {
                 if ($column->product && $column->quantity) {
-                    $lineItems[] = (new LineItem())
-                        ->setProduct($column->product)
-                        ->setQuantity($column->quantity)
-                        ->setUnit($collection->unit);
+                    $lineItem = new LineItem();
+                    $lineItem->setProduct($column->product);
+                    $lineItem->setQuantity($column->quantity);
+                    $lineItem->setUnit($collection->unit);
+
+                    if ($product->isConfigurable()) {
+                        $lineItem->setParentProduct($product);
+                    }
+
+                    $lineItems[] = $lineItem;
                 }
             }
         }

@@ -1,0 +1,3 @@
+oro_tax_product_tax_code_api:
+    resource: '@OroTaxBundle/Controller/Api/Rest/ProductTaxCodeController.php'
+    type: rest

@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 
 class PriceListCollectionTypeExtensionsProvider
 {
@@ -23,13 +24,16 @@ class PriceListCollectionTypeExtensionsProvider
         $entityType = new EntityType([]);
 
         return [
-            new PreloadedExtension([
-                CollectionType::NAME => new CollectionType(),
-                PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityType(),
-                PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                PriceListCollectionType::NAME => new PriceListCollectionType(),
-                $entityType->getName() => $entityType,
-            ], []),
+            new PreloadedExtension(
+                [
+                    CollectionType::NAME => new CollectionType(),
+                    PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityType(),
+                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
+                    PriceListCollectionType::NAME => new PriceListCollectionType(),
+                    $entityType->getName() => $entityType,
+                ],
+                ['form' => [new SortableExtension()]]
+            ),
             new ValidatorExtension(Validation::createValidator())
         ];
     }

@@ -10,6 +10,13 @@ layout:
             optionName: grid_name
             optionValue: frontend-checkouts-grid
 
-        - '@move':
+        - '@appendOption':
             id: __datagrid
-            siblingId: checkouts_title
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.orders'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.gridViewsOptions.text
+            optionValue: 'oro.checkout.open_order.plural_label'

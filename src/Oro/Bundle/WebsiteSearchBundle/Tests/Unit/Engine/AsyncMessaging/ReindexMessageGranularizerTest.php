@@ -2,10 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\AsyncMessaging;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
@@ -14,24 +10,10 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
 {
     use ContextTrait;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
-    private $doctrineHelper;
-
-    /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $entityManager;
-
-    /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject */
-    private $queryBuilder;
-
     /**
      * @var array
      */
     private $tenIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-    /**
-     * @var array
-     */
-    private $hundredsIds;
 
     /**
      * @var ReindexMessageGranularizer
@@ -40,44 +22,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)
-            ->setMethods(['getResult', 'getQuery', 'select', 'from'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->queryBuilder->expects($this->any())
-            ->method('select')
-            ->willReturnSelf();
-
-        $this->queryBuilder->expects($this->any())
-            ->method('from')
-            ->willReturnSelf();
-
-        $this->queryBuilder->expects($this->any())
-            ->method('getQuery')
-            ->willReturnSelf();
-
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
-        $this->entityManager->expects($this->any())
-            ->method('createQueryBuilder')
-            ->willReturn($this->queryBuilder);
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($this->entityManager);
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getSingleEntityIdentifierFieldName')
-            ->willReturn('id');
-
-        $this->testable = new ReindexMessageGranularizer(
-            $this->doctrineHelper
-        );
-
-        $this->hundredsIds = range(1, 500);
+        $this->testable = new ReindexMessageGranularizer();
     }
 
     /**
@@ -87,11 +32,6 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGranulationSmall($input, $output)
     {
-        $this->queryBuilder
-            ->expects($this->any())
-            ->method('getResult')
-            ->willReturn($this->tenIds);
-
         $context = [];
         $context = $this->setContextEntityIds($context, $input['ids']);
 
@@ -119,11 +59,6 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->queryBuilder
-            ->expects($this->any())
-            ->method('getResult')
-            ->willReturn($data);
-
         $context = [];
         $context = $this->setContextEntityIds($context, $input['ids']);
 
@@ -143,13 +78,8 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGranulation($input, $output)
     {
-        $this->queryBuilder
-            ->expects($this->any())
-            ->method('getResult')
-            ->willReturn($this->hundredsIds);
-
         $context = [];
-        $context = $this->setContextEntityIds($context, $input['ids']);
+        $context = $this->setContextEntityIds($context, range(1, 500));
 
         $result = $this->testable->process(
             $input['entities'],
@@ -161,6 +91,8 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @return array
      */
     public function smallDataProvider()
@@ -176,8 +108,22 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2, 3],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $this->tenIds,
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [3],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                         ]
                     ]
                 ]
@@ -192,7 +138,21 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2, 3],
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4, 5],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4, 5],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [3],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4, 5],
                         ]
                     ]
@@ -209,28 +169,28 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
                         'class'   => ['Product1'],
                         'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $this->tenIds,
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                         ]
                     ],
                     [
                         'class'   => ['Product2'],
                         'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $this->tenIds,
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                         ]
                     ],
                     [
                         'class'   => ['Product1'],
                         'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $this->tenIds,
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                         ]
                     ],
                     [
                         'class'   => ['Product2'],
                         'context' => [
                             AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
-                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => $this->tenIds,
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                         ]
                     ]
                 ]
@@ -248,7 +208,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
                 'input'  => [
                     'entities' => ['Product'],
                     'websites' => [1, 2],
-                    'ids'      => []
+                    'ids'      => null, // will be filled in method
                 ],
                 'output' => [
                     [

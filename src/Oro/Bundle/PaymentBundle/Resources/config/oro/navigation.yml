@@ -27,6 +27,6 @@ navigation:
 
     titles:
         oro_payment_methods_configs_rule_index: ~
-        oro_payment_methods_configs_rule_view:  '%%label%%'
-        oro_payment_methods_configs_rule_update: 'Payment Rule %%id%% - Edit'
+        oro_payment_methods_configs_rule_view:  '%label%'
+        oro_payment_methods_configs_rule_update: 'Payment Rule %id% - Edit'
         oro_payment_methods_configs_rule_create: 'Create Payment Rule'

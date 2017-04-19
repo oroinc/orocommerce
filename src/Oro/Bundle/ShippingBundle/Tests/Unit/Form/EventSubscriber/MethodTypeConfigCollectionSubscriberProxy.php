@@ -6,7 +6,8 @@ use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodTypeConfigCollectionSub
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\FormFactoryInterface;
 
-class MethodTypeConfigCollectionSubscriberProxy extends MethodTypeConfigCollectionSubscriber
+class MethodTypeConfigCollectionSubscriberProxy extends MethodTypeConfigCollectionSubscriber implements
+    ConfigSubscriberProxyInterface
 {
     /**
      * @var FormFactoryInterface
@@ -18,16 +19,12 @@ class MethodTypeConfigCollectionSubscriberProxy extends MethodTypeConfigCollecti
      */
     protected $methodRegistry;
 
-    /**
-     * MethodTypeConfigCollectionSubscriberProxy constructor.
-     */
     public function __construct()
     {
     }
 
     /**
-     * @param FormFactoryInterface $factory
-     * @return $this
+     * {@inheritDoc}
      */
     public function setFactory(FormFactoryInterface$factory)
     {
@@ -36,8 +33,7 @@ class MethodTypeConfigCollectionSubscriberProxy extends MethodTypeConfigCollecti
     }
 
     /**
-     * @param ShippingMethodRegistry $methodRegistry
-     * @return $this
+     * {@inheritDoc}
      */
     public function setMethodRegistry(ShippingMethodRegistry $methodRegistry)
     {

@@ -9,12 +9,16 @@ product1:
     names:
         - { reference: product-1.names.default, string: product-1.names.default }
         - { reference: product-1.names.en_US, string: product-1.names.en_US, fallback: system, localization: en_US }
+    slugPrototypes:
+        - { reference: product-1.slugPrototypes.default, string: product-1.slugPrototypes.default }
+        - { reference: product-1.slugPrototypes.en_US, string: product-1.slugPrototypes.en_US, fallback: system, localization: en_US }
     descriptions:
         - { reference: product-1.descriptions.default, text: product-1.descriptions.default }
         - { reference: product-1.descriptions.en_US, text: product-1.descriptions.en_US, fallback: system, localization: en_US }
     shortDescriptions:
         - { reference: product-1.shortDescriptions.default, text: product-1.shortDescriptions.default }
         - { reference: product-1.shortDescriptions.en_US, text: product-1.shortDescriptions.en_US, fallback: system, localization: en_US }
+    featured: true
 product2:
     productCode: product-2
     inventoryStatus: in_stock
@@ -25,10 +29,13 @@ product2:
         precision: 0
     names:
         - { reference: product-2.names.default, string: product-2.names.default }
+    slugPrototypes:
+        - { reference: product-2.slugPrototypes.default, string: product-2.slugPrototypes.default }
     descriptions:
         - { reference: product-2.descriptions.default, text: product-2.descriptions.default }
     shortDescriptions:
         - { reference: product-2.shortDescriptions.default, text: product-2.shortDescriptions.default }
+    featured: true
 product3:
     productCode: product-3
     inventoryStatus: out_of_stock
@@ -39,10 +46,13 @@ product3:
         precision: 0
     names:
         - { reference: product-3.names.default, string: product-3.names.default }
+    slugPrototypes:
+        - { reference: product-3.slugPrototypes.default, string: product-3.slugPrototypes.default }
     descriptions:
         - { reference: product-3.descriptions.default, text: product-3.descriptions.default }
     shortDescriptions:
         - { reference: product-3.shortDescriptions.default, text: product-3.shortDescriptions.default }
+    featured: true
 product4:
     productCode: product-4
     inventoryStatus: discontinued
@@ -53,10 +63,13 @@ product4:
         precision: 0
     names:
         - { reference: product-4.names.default, string: product-4.names.default }
+    slugPrototypes:
+        - { reference: product-4.slugPrototypes.default, string: product-4.slugPrototypes.default }
     descriptions:
         - { reference: product-4.descriptions.default, text: product-4.descriptions.default }
     shortDescriptions:
         - { reference: product-4.shortDescriptions.default, text: product-4.shortDescriptions.default }
+    featured: true
 product5:
     productCode: product-5
     inventoryStatus: in_stock
@@ -67,10 +80,13 @@ product5:
         precision: 0
     names:
         - { reference: product-5.names.default, string: product-5.names.default }
+    slugPrototypes:
+        - { reference: product-5.slugPrototypes.default, string: product-5.slugPrototypes.default }
     descriptions:
         - { reference: product-5.descriptions.default, text: product-5.descriptions.default }
     shortDescriptions:
         - { reference: product-5.shortDescriptions.default, text: product-5.shortDescriptions.default }
+    featured: false
 product6:
     productCode: product-6
     inventoryStatus: in_stock
@@ -81,10 +97,13 @@ product6:
         precision: 0
     names:
         - { reference: product-6.names.default, string: product-6.names.default }
+    slugPrototypes:
+        - { reference: product-6.slugPrototypes.default, string: product-6.slugPrototypes.default }
     descriptions:
         - { reference: product-6.descriptions.default, text: product-6.descriptions.default }
     shortDescriptions:
         - { reference: product-6.shortDescriptions.default, text: product-6.shortDescriptions.default }
+    featured: false
 product7:
     productCode: product-7
     inventoryStatus: in_stock
@@ -95,10 +114,13 @@ product7:
         precision: 0
     names:
         - { reference: product-7.names.default, string: product-7.names.default }
+    slugPrototypes:
+        - { reference: product-7.slugPrototypes.default, string: product-7.slugPrototypes.default }
     descriptions:
         - { reference: product-7.descriptions.default, text: product-7.descriptions.default }
     shortDescriptions:
         - { reference: product-7.shortDescriptions.default, text: product-7.shortDescriptions.default }
+    featured: false
 product8:
     productCode: product-8
     inventoryStatus: in_stock
@@ -109,7 +131,10 @@ product8:
         precision: 0
     names:
         - { reference: product-8.names.default, string: product-8.names.default }
+    slugPrototypes:
+        - { reference: product-8.slugPrototypes.default, string: product-8.slugPrototypes.default }
     descriptions:
         - { reference: product-8.descriptions.default, text: product-8.descriptions.default }
     shortDescriptions:
         - { reference: product-8.shortDescriptions.default, text: product-8.shortDescriptions.default }
+    featured: false

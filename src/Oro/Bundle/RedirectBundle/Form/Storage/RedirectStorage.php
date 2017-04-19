@@ -7,9 +7,9 @@ use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
 class RedirectStorage
 {
     /**
-     * @var PrefixWithRedirect
+     * @var PrefixWithRedirect[]|array
      */
-    protected $prefix;
+    protected $storage = [];
 
     /**
      * @param string $key
@@ -18,17 +18,21 @@ class RedirectStorage
      */
     public function addPrefix($key, PrefixWithRedirect $prefix)
     {
-        $this->prefix[$key] = $prefix;
+        $this->storage[$key] = $prefix;
 
         return $this;
     }
 
     /**
      * @param string $key
-     * @return PrefixWithRedirect
+     * @return PrefixWithRedirect|null
      */
     public function getPrefixByKey($key)
     {
-        return $this->prefix[$key];
+        if (array_key_exists($key, $this->storage)) {
+            return $this->storage[$key];
+        }
+
+        return null;
     }
 }

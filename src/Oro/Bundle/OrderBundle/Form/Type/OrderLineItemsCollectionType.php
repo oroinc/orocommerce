@@ -29,7 +29,6 @@ class OrderLineItemsCollectionType extends AbstractType
                 'type' => OrderLineItemType::NAME,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
-                'cascade_validation' => true,
                 'prototype_name' => '__nameorderlineitem__',
                 'prototype' => true,
                 'handle_primary' => false

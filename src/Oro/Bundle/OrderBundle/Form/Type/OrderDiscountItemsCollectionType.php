@@ -29,7 +29,6 @@ class OrderDiscountItemsCollectionType extends AbstractType
                 'type' => OrderDiscountItemType::NAME,
                 'show_form_when_empty' => false,
                 'error_bubbling' => false,
-                'cascade_validation' => true,
                 'prototype_name' => '__nameorderdiscountitem__',
                 'prototype' => true,
                 'handle_primary' => false
