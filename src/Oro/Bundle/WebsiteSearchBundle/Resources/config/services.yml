@@ -244,3 +244,15 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
+
+    oro_website_search.placeholder.assign_id_placeholder:
+        class:  Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignIdPlaceholder
+        public: false
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_website_search.placeholder.assign_type_placeholder:
+        class:  Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignTypePlaceholder
+        public: false
+        tags:
+            - { name: website_search.placeholder }
