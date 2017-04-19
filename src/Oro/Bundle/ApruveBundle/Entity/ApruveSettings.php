@@ -36,23 +36,23 @@ class ApruveSettings extends Transport
     /**
      * @var bool
      *
-     * @ORM\Column(name="apruve_test_mode", type="boolean", nullable=false, options={"default"=false})
+     * @ORM\Column(name="apruve_test_mode", type="boolean", options={"default"=false})
      */
-    private $testMode = false;
+    private $apruveTestMode = false;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="apruve_merchant_id", type="string", length=255, nullable=false)
+     * @ORM\Column(name="apruve_merchant_id", type="string", length=255)
      */
-    private $merchantId;
+    private $apruveMerchantId;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="apruve_api_key", type="string", length=255, nullable=false)
+     * @ORM\Column(name="apruve_api_key", type="string", length=255)
      */
-    private $apiKey;
+    private $apruveApiKey;
 
     /**
      * @var string
@@ -61,7 +61,7 @@ class ApruveSettings extends Transport
      *
      * @ORM\Column(name="apruve_webhook_token", type="string", length=255)
      */
-    private $webhookToken;
+    private $apruveWebhookToken;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -191,10 +191,10 @@ class ApruveSettings extends Transport
                 [
                     self::LABELS_KEY => $this->getLabels()->toArray(),
                     self::SHORT_LABELS_KEY => $this->getShortLabels()->toArray(),
-                    self::MERCHANT_ID_KEY => $this->getMerchantId(),
-                    self::API_KEY_KEY => $this->getApiKey(),
-                    self::TEST_MODE_KEY => $this->getTestMode(),
-                    self::WEBHOOK_TOKEN_KEY => $this->getWebhookToken(),
+                    self::MERCHANT_ID_KEY => $this->getApruveMerchantId(),
+                    self::API_KEY_KEY => $this->getApruveApiKey(),
+                    self::TEST_MODE_KEY => $this->getApruveTestMode(),
+                    self::WEBHOOK_TOKEN_KEY => $this->getApruveWebhookToken(),
                 ]
             );
         }
@@ -205,9 +205,9 @@ class ApruveSettings extends Transport
     /**
      * @return bool
      */
-    public function getTestMode()
+    public function getApruveTestMode()
     {
-        return $this->testMode;
+        return $this->apruveTestMode;
     }
 
     /**
@@ -215,9 +215,9 @@ class ApruveSettings extends Transport
      *
      * @return ApruveSettings
      */
-    public function setTestMode($testMode)
+    public function setApruveTestMode($testMode)
     {
-        $this->testMode = $testMode;
+        $this->apruveTestMode = $testMode;
 
         return $this;
     }
@@ -225,9 +225,9 @@ class ApruveSettings extends Transport
     /**
      * @return string
      */
-    public function getMerchantId()
+    public function getApruveMerchantId()
     {
-        return $this->merchantId;
+        return $this->apruveMerchantId;
     }
 
     /**
@@ -235,9 +235,9 @@ class ApruveSettings extends Transport
      *
      * @return ApruveSettings
      */
-    public function setMerchantId($merchantId)
+    public function setApruveMerchantId($merchantId)
     {
-        $this->merchantId = $merchantId;
+        $this->apruveMerchantId = $merchantId;
 
         return $this;
     }
@@ -245,9 +245,9 @@ class ApruveSettings extends Transport
     /**
      * @return string
      */
-    public function getApiKey()
+    public function getApruveApiKey()
     {
-        return $this->apiKey;
+        return $this->apruveApiKey;
     }
 
     /**
@@ -255,9 +255,9 @@ class ApruveSettings extends Transport
      *
      * @return ApruveSettings
      */
-    public function setApiKey($apiKey)
+    public function setApruveApiKey($apiKey)
     {
-        $this->apiKey = $apiKey;
+        $this->apruveApiKey = $apiKey;
 
         return $this;
     }
@@ -265,9 +265,9 @@ class ApruveSettings extends Transport
     /**
      * @return string
      */
-    public function getWebhookToken()
+    public function getApruveWebhookToken()
     {
-        return $this->webhookToken;
+        return $this->apruveWebhookToken;
     }
 
     /**
@@ -275,9 +275,9 @@ class ApruveSettings extends Transport
      *
      * @return ApruveSettings
      */
-    public function setWebhookToken($webhookToken)
+    public function setApruveWebhookToken($webhookToken)
     {
-        $this->webhookToken = $webhookToken;
+        $this->apruveWebhookToken = $webhookToken;
 
         return $this;
     }

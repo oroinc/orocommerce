@@ -44,10 +44,10 @@ class ApruveSettingsTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         static::assertPropertyAccessors(new ApruveSettings(), [
-            ['merchantId', '7b97ea0172e18cbd4d3bf21e2b525b2d'],
-            ['apiKey', '213a9079914f3b5163c6190f31444528'],
-            ['testMode', false],
-            ['webhookToken', '8c02aef5-68df-4458-bad3-e2da636cee90'],
+            ['apruveMerchantId', '7b97ea0172e18cbd4d3bf21e2b525b2d'],
+            ['apruveApiKey', '213a9079914f3b5163c6190f31444528'],
+            ['apruveTestMode', false],
+            ['apruveWebhookToken', '8c02aef5-68df-4458-bad3-e2da636cee90'],
         ]);
 
         static::assertPropertyCollections(new ApruveSettings(), [
@@ -65,10 +65,10 @@ class ApruveSettingsTest extends \PHPUnit_Framework_TestCase
         $entity = $this->getEntity(
             ApruveSettings::class,
             [
-                'merchantId' => '7b97ea0172e18cbd4d3bf21e2b525b2d',
-                'apiKey' => '213a9079914f3b5163c6190f31444528',
-                'testMode' => false,
-                'webhookToken' => '8c02aef5-68df-4458-bad3-e2da636cee90',
+                'apruveMerchantId' => '7b97ea0172e18cbd4d3bf21e2b525b2d',
+                'apruveApiKey' => '213a9079914f3b5163c6190f31444528',
+                'apruveTestMode' => false,
+                'apruveWebhookToken' => '8c02aef5-68df-4458-bad3-e2da636cee90',
                 'labels' => [$label],
                 'shortLabels' => [$shortLabel],
             ]

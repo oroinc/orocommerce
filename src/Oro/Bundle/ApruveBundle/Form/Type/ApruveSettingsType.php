@@ -61,25 +61,25 @@ class ApruveSettingsType extends AbstractType
                     'options' => ['constraints' => [new NotBlank()]],
                 ]
             )
-            ->add('merchantId', TextType::class, [
+            ->add('apruveMerchantId', TextType::class, [
                 'label' => 'oro.apruve.settings.merchant_id.label',
                 'required' => true,
             ])
-            ->add('apiKey', TextType::class, [
+            ->add('apruveApiKey', TextType::class, [
                 'label' => 'oro.apruve.settings.api_key.label',
                 'required' => true,
             ])
-            ->add('testMode', CheckboxType::class, [
+            ->add('apruveTestMode', CheckboxType::class, [
                 'label' => 'oro.apruve.settings.test_mode.label',
                 'required' => false,
             ])
-            ->add('webhookToken', WebhookTokenType::class, [
+            ->add('apruveWebhookToken', WebhookTokenType::class, [
                 'label' => 'oro.apruve.settings.webhook_url.label',
                 'required' => false,
             ]);
 
-        $this->enableEncryption($builder, 'apiKey');
-        $this->enableEncryption($builder, 'merchantId');
+        $this->enableEncryption($builder, 'apruveApiKey');
+        $this->enableEncryption($builder, 'apruveMerchantId');
     }
 
     /**
