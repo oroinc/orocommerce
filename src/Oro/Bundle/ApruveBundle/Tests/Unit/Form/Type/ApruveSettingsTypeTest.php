@@ -136,26 +136,26 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
                 'submittedData' => [],
                 'isValid' => true,
                 'expectedData' => (new ApruveSettings())
-                    ->setWebhookToken(self::WEBHOOK_TOKEN)
+                    ->setApruveWebhookToken(self::WEBHOOK_TOKEN)
             ],
             'not empty form' => [
                 'defaultData' => new ApruveSettings(),
                 'submittedData' => [
                     'labels' => [['string' => self::LABEL]],
                     'shortLabels' => [['string' => self::SHORT_LABEL]],
-                    'testMode' => self::TEST_MODE,
-                    'merchantId' => self::DECRYPTED_MERCHANT_ID,
-                    'apiKey' => self::DECRYPTED_API_KEY,
-                    'webhookToken' => self::WEBHOOK_TOKEN,
+                    'apruveTestMode' => self::TEST_MODE,
+                    'apruveMerchantId' => self::DECRYPTED_MERCHANT_ID,
+                    'apruveApiKey' => self::DECRYPTED_API_KEY,
+                    'apruveWebhookToken' => self::WEBHOOK_TOKEN,
                 ],
                 'isValid' => true,
                 'expectedData' => (new ApruveSettings())
                     ->addLabel($label)
                     ->addShortLabel($shortLabel)
-                    ->setTestMode(self::TEST_MODE)
-                    ->setMerchantId(self::ENCRYPTED_MERCHANT_ID)
-                    ->setApiKey(self::ENCRYPTED_API_KEY)
-                    ->setWebhookToken(self::WEBHOOK_TOKEN)
+                    ->setApruveTestMode(self::TEST_MODE)
+                    ->setApruveMerchantId(self::ENCRYPTED_MERCHANT_ID)
+                    ->setApruveApiKey(self::ENCRYPTED_API_KEY)
+                    ->setApruveWebhookToken(self::WEBHOOK_TOKEN)
             ]
         ];
     }
