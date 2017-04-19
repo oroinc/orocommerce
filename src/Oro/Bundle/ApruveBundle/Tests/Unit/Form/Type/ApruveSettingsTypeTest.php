@@ -5,21 +5,40 @@ namespace Oro\Bundle\ApruveBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType;
 use Oro\Bundle\ApruveBundle\Form\Type\WebhookTokenType;
-use Oro\Bundle\ApruveBundle\TokenGenerator\TokenGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\SecurityBundle\Generator\RandomTokenGeneratorInterface;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Validation;
 
 class ApruveSettingsTypeTest extends FormIntegrationTestCase
 {
+    const ENCRYPTED_API_KEY = 'encryptedApiKeySample';
+    const DECRYPTED_API_KEY = 'apiKeySample';
+
+    const ENCRYPTED_MERCHANT_ID = 'encryptedMerchantIdSample';
+    const DECRYPTED_MERCHANT_ID = 'merchantIdSample';
+
+    const LABEL = 'Apruve';
+    const SHORT_LABEL = 'Apruve (short)';
+    const TEST_MODE = true;
+    const WEBHOOK_TOKEN = 'webhookTokenSample';
+
     const DATA_CLASS = ApruveSettings::class;
 
     /**
-     * @var TokenGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $crypter;
+
+    /**
+     * @var RandomTokenGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $tokenGenerator;
 
@@ -38,17 +57,19 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
+        $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
+
         $this->transport = $this->createMock(TransportInterface::class);
         $this->transport->expects(static::any())
             ->method('getSettingsEntityFQCN')
             ->willReturn(static::DATA_CLASS);
 
-        $this->tokenGenerator = $this->createMock(TokenGeneratorInterface::class);
+        $this->tokenGenerator = $this->createMock(RandomTokenGeneratorInterface::class);
         $this->tokenGenerator
             ->method('generateToken')
             ->willReturn('webhookTokenSample');
 
-        $this->formType = new ApruveSettingsType($this->transport);
+        $this->formType = new ApruveSettingsType($this->transport, $this->crypter);
 
         parent::setUp();
     }
@@ -65,23 +86,13 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
                     WebhookTokenType::class => new WebhookTokenType($this->tokenGenerator),
                 ],
                 []
-            )
+            ),
+            new ValidatorExtension(Validation::createValidator())
         ];
     }
 
-    public function testConstructor()
-    {
-        $formType = new ApruveSettingsType($this->transport);
-
-        $reflection = new \ReflectionProperty(ApruveSettingsType::class, 'transport');
-        $reflection->setAccessible(true);
-        $transport = $reflection->getValue($formType);
-
-        static::assertEquals($this->transport, $transport);
-    }
-
     /**
-     * @dataProvider submitProvider
+     * @dataProvider submitDataProvider
      *
      * @param ApruveSettings $defaultData
      * @param array $submittedData
@@ -94,6 +105,13 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
         $isValid,
         ApruveSettings $expectedData
     ) {
+        $this->crypter
+            ->method('encryptData')
+            ->willReturnMap([
+                [self::DECRYPTED_API_KEY, self::ENCRYPTED_API_KEY],
+                [self::DECRYPTED_MERCHANT_ID, self::ENCRYPTED_MERCHANT_ID],
+            ]);
+
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         static::assertEquals($defaultData, $form->getData());
@@ -107,10 +125,10 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
     /**
      * @return array
      */
-    public function submitProvider()
+    public function submitDataProvider()
     {
-        $label = (new LocalizedFallbackValue())->setString('Apruve');
-        $shortLabel = (new LocalizedFallbackValue())->setString('Apruve (short)');
+        $label = (new LocalizedFallbackValue())->setString(self::LABEL);
+        $shortLabel = (new LocalizedFallbackValue())->setString(self::SHORT_LABEL);
 
         return [
             'empty form' => [
@@ -118,26 +136,26 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
                 'submittedData' => [],
                 'isValid' => true,
                 'expectedData' => (new ApruveSettings())
-                    ->setWebhookToken('webhookTokenSample')
+                    ->setWebhookToken(self::WEBHOOK_TOKEN)
             ],
             'not empty form' => [
                 'defaultData' => new ApruveSettings(),
                 'submittedData' => [
-                    'labels' => [['string' => 'Apruve']],
-                    'shortLabels' => [['string' => 'Apruve (short)']],
-                    'testMode' => true,
-                    'merchantId' => 'merchantIdSample',
-                    'apiKey' => 'apiKeySample',
-                    'webhookToken' => 'webhookTokenSample',
+                    'labels' => [['string' => self::LABEL]],
+                    'shortLabels' => [['string' => self::SHORT_LABEL]],
+                    'testMode' => self::TEST_MODE,
+                    'merchantId' => self::DECRYPTED_MERCHANT_ID,
+                    'apiKey' => self::DECRYPTED_API_KEY,
+                    'webhookToken' => self::WEBHOOK_TOKEN,
                 ],
                 'isValid' => true,
                 'expectedData' => (new ApruveSettings())
                     ->addLabel($label)
                     ->addShortLabel($shortLabel)
-                    ->setTestMode(true)
-                    ->setMerchantId('merchantIdSample')
-                    ->setApiKey('apiKeySample')
-                    ->setWebhookToken('webhookTokenSample')
+                    ->setTestMode(self::TEST_MODE)
+                    ->setMerchantId(self::ENCRYPTED_MERCHANT_ID)
+                    ->setApiKey(self::ENCRYPTED_API_KEY)
+                    ->setWebhookToken(self::WEBHOOK_TOKEN)
             ]
         ];
     }

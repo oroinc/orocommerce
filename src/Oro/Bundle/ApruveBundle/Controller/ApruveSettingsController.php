@@ -20,7 +20,7 @@ class ApruveSettingsController extends Controller
      */
     public function generateTokenAction(Request $request)
     {
-        $tokenGenerator = $this->get('oro_apruve.token_generator');
+        $tokenGenerator = $this->get('oro_security.generator.random_token');
 
         return new JsonResponse([
             'success' => true,

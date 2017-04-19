@@ -31,28 +31,28 @@ class ApruveSettings extends Transport
     /**
      * @var ParameterBag
      */
-    protected $settings;
+    private $settings;
 
     /**
      * @var bool
      *
-     * @ORM\Column(name="ups_test_mode", type="boolean", nullable=false, options={"default"=false})
+     * @ORM\Column(name="apruve_test_mode", type="boolean", nullable=false, options={"default"=false})
      */
-    protected $testMode = false;
+    private $testMode = false;
 
     /**
      * @var string
      *
      * @ORM\Column(name="apruve_merchant_id", type="string", length=255, nullable=false)
      */
-    protected $merchantId;
+    private $merchantId;
 
     /**
      * @var string
      *
      * @ORM\Column(name="apruve_api_key", type="string", length=255, nullable=false)
      */
-    protected $apiKey;
+    private $apiKey;
 
     /**
      * @var string
@@ -61,7 +61,7 @@ class ApruveSettings extends Transport
      *
      * @ORM\Column(name="apruve_webhook_token", type="string", length=255)
      */
-    protected $webhookToken;
+    private $webhookToken;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
