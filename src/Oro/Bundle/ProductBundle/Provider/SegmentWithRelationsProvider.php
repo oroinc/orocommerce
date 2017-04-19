@@ -33,15 +33,36 @@ class SegmentWithRelationsProvider
         $segmentIterator = $this->contentVariantSegmentProvider->getContentVariantSegments();
         foreach ($segmentIterator as $segment) {
             $definition = json_decode($segment->getDefinition(), JSON_OBJECT_AS_ARRAY);
-            if (isset($definition['filters']) && is_array($definition['filters'])) {
-                foreach ($definition['filters'] as $filter) {
-                    $joinParts = $joinIdentifierHelper->explodeJoinIdentifier($filter['columnName']);
-                    if (count($joinParts) > 1) {
-                        yield $segment;
-                        break;
-                    }
-                }
+            if (isset($definition['filters'])
+                && is_array($definition['filters'])
+                && $this->hasRelationInFilters($definition['filters'], $joinIdentifierHelper)
+            ) {
+                yield $segment;
             }
         }
+    }
+
+    /**
+     * @param array $filters
+     * @param JoinIdentifierHelper $joinIdentifierHelper
+     * @return bool
+     */
+    private function hasRelationInFilters(array $filters, JoinIdentifierHelper $joinIdentifierHelper): bool
+    {
+        foreach ($filters as $filter) {
+            if (!is_array($filter)) {
+                continue;
+            }
+            if (array_key_exists('columnName', $filter)) {
+                $joinParts = $joinIdentifierHelper->explodeJoinIdentifier($filter['columnName']);
+                if (count($joinParts) > 1) {
+                    return true;
+                }
+            } elseif ($this->hasRelationInFilters($filter, $joinIdentifierHelper)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

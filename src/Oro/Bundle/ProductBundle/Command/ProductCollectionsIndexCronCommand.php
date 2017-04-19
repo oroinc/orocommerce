@@ -96,7 +96,7 @@ DESC;
             }
             $output->writeln(
                 sprintf(
-                    '<info>Scheduling indexation for segment id %d, websites: %s</info>',
+                    '<info>Scheduling indexation of segment id %d for websites: %s</info>',
                     $segment->getId(),
                     implode(', ', $websiteIds)
                 )

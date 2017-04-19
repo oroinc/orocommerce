@@ -41,16 +41,33 @@ class SegmentWithRelationsProviderTest extends \PHPUnit_Framework_TestCase
         $segmentWithRelation2->setDefinition(json_encode([
             'filters' => [
                 ['columnName' => 'column+SomeClass::id'],
+                'AND',
                 ['columnName' => 'newColumn+SomeOtherClass::id'],
+            ],
+        ]));
+        $segmentWithRelation3 = new Segment();
+        $segmentWithRelation3->setDefinition(json_encode([
+            'filters' => [
+                [
+                    ['columnName' => 'column+SomeClass::id'],
+                    'AND',
+                    ['columnName' => 'newColumn+SomeOtherClass::id'],
+                ]
             ],
         ]));
         $this->contentVariantSegmentProvider->expects($this->once())
             ->method('getContentVariantSegments')
-            ->willReturn([$emptySegment, $simpleSegment, $segmentWithRelation1, $segmentWithRelation2]);
+            ->willReturn([
+                $emptySegment,
+                $simpleSegment,
+                $segmentWithRelation1,
+                $segmentWithRelation2,
+                $segmentWithRelation3
+            ]);
 
         $generator = $this->provider->getSegmentsWithRelations();
         $actual = iterator_to_array($generator);
-        $this->assertCount(2, $actual);
-        $this->assertEquals([$segmentWithRelation1, $segmentWithRelation2], $actual);
+        $this->assertCount(3, $actual);
+        $this->assertEquals([$segmentWithRelation1, $segmentWithRelation2, $segmentWithRelation3], $actual);
     }
 }
