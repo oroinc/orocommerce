@@ -844,7 +844,6 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@=container.hasParameter("oro_web_catalog.entity.content_variant.class") ? parameter("oro_web_catalog.entity.content_variant.class") : null'
 
     oro_product.event_listener.product_collection_datagrid:
         class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener
@@ -877,3 +876,27 @@ services:
             - '@oro_segment.provider.segment_snapshot_delta_provider'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_product.event_listener.product_collections_schedule_configuration:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionsScheduleConfigurationListener
+        arguments:
+            - '@oro_cron.deferred_scheduler'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_product.helper.product_collection_segment:
+        class: Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper
+        public: false
+        arguments:
+            - '@oro_product.provider.content_variant_segment_provider'
+            - '@?oro_web_catalog.provider.web_catalog_usage_provider'
+
+    oro_product.command.product_collections_index_cron_command:
+        class: Oro\Bundle\ProductBundle\Command\ProductCollectionsIndexCronCommand
+        calls:
+            - ['setMessageProducer', ['@oro_message_queue.client.message_producer']]
+            - ['setMessageFactory', ['@oro_product.model.segment_message_factory']]
+            - ['setSegmentProvider', ['@oro_product.provider.segment_with_relations_provider']]
+            - ['setProductCollectionHelper', ['@oro_product.helper.product_collection_segment']]
+        tags:
+            - { name: console.command }

@@ -19,16 +19,11 @@ class ContentVariantSegmentProvider
     private $doctrineHelper;
 
     /**
-     * @var string
+     * @param DoctrineHelper $doctrineHelper
      */
-    private $contentVariantClass;
-
-    public function __construct(
-        DoctrineHelper $doctrineHelper,
-        $contentVariantClass = null
-    ) {
+    public function __construct(DoctrineHelper $doctrineHelper)
+    {
         $this->doctrineHelper = $doctrineHelper;
-        $this->contentVariantClass = $contentVariantClass;
     }
 
     /**
@@ -36,7 +31,7 @@ class ContentVariantSegmentProvider
      */
     public function getContentVariantSegments()
     {
-        if (!$this->contentVariantClass) {
+        if (!$this->getContentVariantClass()) {
             return new \EmptyIterator();
         }
 
@@ -64,7 +59,7 @@ class ContentVariantSegmentProvider
      */
     public function getContentVariants(Segment $segment)
     {
-        if (!$this->contentVariantClass) {
+        if (!$this->getContentVariantClass()) {
             return new \EmptyIterator();
         }
 
@@ -85,7 +80,7 @@ class ContentVariantSegmentProvider
      */
     public function hasContentVariant(Segment $segment)
     {
-        if (!$this->contentVariantClass) {
+        if (!$this->getContentVariantClass()) {
             return false;
         }
 
@@ -114,6 +109,21 @@ class ContentVariantSegmentProvider
      */
     private function getContentVariantRepository()
     {
-        return $this->doctrineHelper->getEntityRepositoryForClass($this->contentVariantClass);
+        return $this->doctrineHelper->getEntityRepositoryForClass($this->getContentVariantClass());
+    }
+
+    /**
+     * @return null|string
+     */
+    private function getContentVariantClass()
+    {
+
+        $em = $this->doctrineHelper->getEntityManager(Segment::class);
+        $metadata = $em->getClassMetadata(ContentVariantInterface::class);
+        if ($metadata) {
+            return $metadata->getName();
+        }
+
+        return null;
     }
 }

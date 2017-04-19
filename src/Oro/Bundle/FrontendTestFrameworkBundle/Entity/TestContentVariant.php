@@ -47,6 +47,14 @@ class TestContentVariant
     private $product_collection_segment;
 
     /**
+     * @var TestContentNode
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode")
+     * @ORM\JoinColumn(name="node", referencedColumnName="id", nullable=true)
+     */
+    private $node;
+
+    /**
      * @return integer
      */
     public function getId()
@@ -100,5 +108,24 @@ class TestContentVariant
     public function setProductCollectionSegment(Segment $product_collection_segment = null)
     {
         $this->product_collection_segment = $product_collection_segment;
+    }
+
+    /**
+     * @param TestContentNode|null $node
+     * @return $this
+     */
+    public function setNode(TestContentNode $node = null)
+    {
+        $this->node = $node;
+
+        return $this;
+    }
+
+    /**
+     * @return TestContentNode
+     */
+    public function getNode()
+    {
+        return $this->node;
     }
 }

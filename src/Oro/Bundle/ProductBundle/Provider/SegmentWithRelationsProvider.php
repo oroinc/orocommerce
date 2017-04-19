@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\JoinIdentifierHelper;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
  * Provides segments that attached to some content variants and uses relations in filter conditions.
@@ -24,7 +25,7 @@ class SegmentWithRelationsProvider
     }
 
     /**
-     * @return \Generator
+     * @return \Generator|Segment[]
      */
     public function getSegmentsWithRelations()
     {
