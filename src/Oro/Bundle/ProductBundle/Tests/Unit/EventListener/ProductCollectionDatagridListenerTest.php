@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
@@ -28,6 +30,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $segmentManager;
 
     /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
      * @var ProductCollectionDatagridListener
      */
     protected $listener;
@@ -38,7 +45,12 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->segmentManager = $this->getMockBuilder(SegmentManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->listener = new ProductCollectionDatagridListener($this->requestStack, $this->segmentManager);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->listener = new ProductCollectionDatagridListener(
+            $this->requestStack,
+            $this->segmentManager,
+            $this->registry
+        );
     }
 
     public function testOnBuildAfterWithoutRequest()
@@ -102,6 +114,19 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildAfter()
     {
+        $segmentType = new SegmentType(SegmentType::TYPE_DYNAMIC);
+
+        $em  = $this->createMock(EntityManager::class);
+        $em->expects($this->once())
+            ->method('getReference')
+            ->with(SegmentType::class, SegmentType::TYPE_DYNAMIC)
+            ->willReturn($segmentType);
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(SegmentType::class)
+            ->willReturn($em);
+
         $segmentDefinition = 'definition';
         $qb = $this->createMock(QueryBuilder::class);
 
@@ -125,7 +150,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $createdSegment = new Segment();
         $createdSegment->setDefinition($segmentDefinition)
             ->setEntity(Product::class)
-            ->setType(new SegmentType(SegmentType::TYPE_DYNAMIC));
+            ->setType($segmentType);
 
         $this->segmentManager->expects($this->once())
             ->method('filterBySegment')

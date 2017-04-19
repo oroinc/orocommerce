@@ -850,6 +850,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_segment.segment_manager'
+            - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
 

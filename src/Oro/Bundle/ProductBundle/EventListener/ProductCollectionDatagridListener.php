@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
@@ -27,13 +29,20 @@ class ProductCollectionDatagridListener
     private $segmentManager;
 
     /**
+     * @var ManagerRegistry
+     */
+    private $registry;
+
+    /**
      * @param RequestStack $requestStack
      * @param SegmentManager $segmentManager
+     * @param ManagerRegistry $registry
      */
-    public function __construct(RequestStack $requestStack, SegmentManager $segmentManager)
+    public function __construct(RequestStack $requestStack, SegmentManager $segmentManager, ManagerRegistry $registry)
     {
         $this->requestStack = $requestStack;
         $this->segmentManager = $segmentManager;
+        $this->registry = $registry;
     }
 
     /**
@@ -63,10 +72,14 @@ class ProductCollectionDatagridListener
      */
     protected function addFilterBySegment(QueryBuilder $dataGridQueryBuilder, $segmentDefinition)
     {
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass(SegmentType::class);
+        $dynamicSegmentType = $em->getReference(SegmentType::class, SegmentType::TYPE_DYNAMIC);
+
         $productSegment = new Segment();
         $productSegment->setDefinition($segmentDefinition)
             ->setEntity(Product::class)
-            ->setType(new SegmentType(SegmentType::TYPE_DYNAMIC));
+            ->setType($dynamicSegmentType);
 
         $this->segmentManager->filterBySegment($dataGridQueryBuilder, $productSegment);
     }

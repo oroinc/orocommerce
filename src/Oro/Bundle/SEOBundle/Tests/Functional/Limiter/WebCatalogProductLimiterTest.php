@@ -10,6 +10,7 @@ use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadWebCatalogProductLimi
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogCategoryData;
+use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogProductCollectionData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogProductData;
 
 /**
@@ -32,7 +33,9 @@ class WebCatalogProductLimiterTest extends WebTestCase
     public function testProductLimitationEntriesPrepared()
     {
         $this->loadFixtures([
+            LoadProductData::class,
             LoadWebCatalogProductData::class,
+            LoadWebCatalogProductCollectionData::class,
             LoadWebCatalogCategoryData::class,
             LoadCategoryProductData::class
         ]);
@@ -53,6 +56,9 @@ class WebCatalogProductLimiterTest extends WebTestCase
         $expected = [
             // Direct web catalog products
             LoadProductData::PRODUCT_1,
+            // Web catalog product collection products
+            LoadProductData::PRODUCT_3,
+            LoadProductData::PRODUCT_5,
             // Web catalog categories with subcategories products
             LoadProductData::PRODUCT_1,
             LoadProductData::PRODUCT_2,
@@ -64,10 +70,12 @@ class WebCatalogProductLimiterTest extends WebTestCase
             LoadProductData::PRODUCT_8,
         ];
 
+        $expectedProductIds = [];
         foreach ($expected as $productReference) {
-            $product = $this->getReference($productReference);
-            $this->assertContains($product->getId(), $actualProductIds);
+            $expectedProductIds[] = $this->getReference($productReference)->getId();
         }
+
+        $this->assertEquals(sort($expectedProductIds), sort($actualProductIds));
     }
 
     public function testProductLimitationEntriesErased()
