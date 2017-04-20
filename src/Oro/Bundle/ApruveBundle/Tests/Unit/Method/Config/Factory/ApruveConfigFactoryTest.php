@@ -181,17 +181,17 @@ class ApruveConfigFactoryTest extends \PHPUnit_Framework_TestCase
 
         $apruveSettings
             ->expects(static::once())
-            ->method('getApiKey')
+            ->method('getApruveApiKey')
             ->willReturn(self::API_KEY);
 
         $apruveSettings
             ->expects(static::once())
-            ->method('getMerchantId')
+            ->method('getApruveMerchantId')
             ->willReturn(self::MERCHANT_ID);
 
         $apruveSettings
             ->expects(static::once())
-            ->method('getTestMode')
+            ->method('getApruveTestMode')
             ->willReturn(self::TEST_MODE);
 
         return $apruveSettings;
