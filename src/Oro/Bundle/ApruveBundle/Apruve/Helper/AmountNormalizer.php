@@ -13,6 +13,6 @@ class AmountNormalizer
     {
         $amountCents = ((float) $amount) * 100;
 
-        return (int) $amountCents;
+        return (int) round($amountCents, 0, PHP_ROUND_HALF_UP);
     }
 }

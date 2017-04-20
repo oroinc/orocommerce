@@ -6,9 +6,10 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
-class TaxAmountProvider implements TaxAmountProviderInterface
+class TaxAmountProvider implements TaxAmountProviderInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

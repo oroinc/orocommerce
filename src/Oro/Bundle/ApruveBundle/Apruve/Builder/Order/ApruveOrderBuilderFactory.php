@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Factory;
+namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactoryInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
 use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;

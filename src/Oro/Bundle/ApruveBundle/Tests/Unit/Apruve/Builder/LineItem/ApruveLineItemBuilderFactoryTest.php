@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder\Factory;
+namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder\LineItem;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveLineItemBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveLineItemBuilderFactory;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactory;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -26,7 +26,7 @@ class ApruveLineItemBuilderFactoryTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setUp()
     {

@@ -1,9 +1,10 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Builder;
+namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveLineItemBuilderFactoryInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Request\Order\ApruveOrderRequestData;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\AbstractApruveEntityBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrder;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
 use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
@@ -105,7 +106,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
             self::TAX_CENTS => (int) $this->getTaxCents($this->paymentContext),
         ];
 
-        return new ApruveOrderRequestData($this->data);
+        return new ApruveOrder($this->data);
     }
 
     /**
@@ -139,7 +140,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setCorporateAccountId($id)
     {
@@ -149,7 +150,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setExpireAt(\DateTime $dateTime)
     {
@@ -159,7 +160,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setAutoEscalate($bool)
     {
@@ -169,7 +170,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setPoNumber($poNumber)
     {

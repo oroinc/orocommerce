@@ -12,7 +12,7 @@ class ShippingAmountProvider implements ShippingAmountProviderInterface
      */
     private $surchargeProvider;
 
-    /**.
+    /**
      * @param SurchargeProvider $surchargeProvider
      */
     public function __construct(SurchargeProvider $surchargeProvider)

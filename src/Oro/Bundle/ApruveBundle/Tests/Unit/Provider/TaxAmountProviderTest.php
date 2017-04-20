@@ -7,10 +7,13 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Psr\Log\LoggerInterface;
 
 class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use LoggerAwareTraitTestTrait;
+
     const AMOUNT = 10.0;
     const AMOUNT_NEGLIGIBLE = 0.000001;
 
@@ -35,11 +38,6 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $logger;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -52,10 +50,10 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->sourceEntity);
 
         $this->taxManager = $this->createMock(TaxManager::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->provider = new TaxAmountProvider($this->taxManager);
-        $this->provider->setLogger($this->logger);
+
+        $this->setUpLoggerMock($this->provider);
     }
 
     /**
@@ -121,16 +119,7 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->sourceEntity)
             ->willThrowException(new UnmappableArgumentException());
 
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with(
-                $this->isType('string'),
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->isEmpty()
-                )
-            );
+        $this->assertLoggerWarningMethodCalled();
 
         $actual = $this->provider->getTaxAmount($this->paymentContext);
         static::assertSame(0.0, $actual);
@@ -143,16 +132,7 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->sourceEntity)
             ->willThrowException(new \InvalidArgumentException());
 
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with(
-                $this->isType('string'),
-                $this->logicalAnd(
-                    $this->isType('array'),
-                    $this->isEmpty()
-                )
-            );
+        $this->assertLoggerWarningMethodCalled();
 
         $actual = $this->provider->getTaxAmount($this->paymentContext);
         static::assertSame(0.0, $actual);

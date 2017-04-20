@@ -1,8 +1,9 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Builder;
+namespace Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem;
 
-use Oro\Bundle\ApruveBundle\Apruve\Request\LineItem\ApruveLineItemRequestData;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\AbstractApruveEntityBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Model\LineItem\ApruveLineItem;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -81,7 +82,7 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
             ];
         }
 
-        return new ApruveLineItemRequestData($this->data);
+        return new ApruveLineItem($this->data);
     }
 
     /**

@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Builder;
+namespace Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem;
 
-use Oro\Bundle\ApruveBundle\Apruve\Request\LineItem\ApruveLineItemRequestDataInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\LineItem\ApruveLineItemInterface;
 
 interface ApruveLineItemBuilderInterface
 {
     /**
-     * @return ApruveLineItemRequestDataInterface
+     * @return ApruveLineItemInterface
      */
     public function getResult();
 

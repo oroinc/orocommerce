@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder;
+namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveLineItemBuilderInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveLineItemBuilderFactoryInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Request\Order\ApruveOrderRequestDataInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrderInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
 use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
@@ -88,7 +88,7 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setUp()
     {
@@ -251,15 +251,15 @@ class ApruveOrderBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected function createApruveLineItemBuilder($apruveLineItem)
     {
-        $apruveRequestDataOne = $this->createMock(ApruveOrderRequestDataInterface::class);
-        $apruveRequestDataOne
+        $apruveOrderOne = $this->createMock(ApruveOrderInterface::class);
+        $apruveOrderOne
             ->method('getData')
             ->willReturn($apruveLineItem);
 
         $apruveLineItemBuilder = $this->createMock(ApruveLineItemBuilderInterface::class);
         $apruveLineItemBuilder
             ->method('getResult')
-            ->willReturn($apruveRequestDataOne);
+            ->willReturn($apruveOrderOne);
 
         return $apruveLineItemBuilder;
     }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder;
+namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder\LineItem;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveLineItemBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilder;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -55,7 +55,7 @@ class ApruveLineItemBuilderTest extends \PHPUnit_Framework_TestCase
     private $builder;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setUp()
     {

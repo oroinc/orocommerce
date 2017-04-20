@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Request;
+namespace Oro\Bundle\ApruveBundle\Apruve\Model;
 
-class ApruveRequestData implements ApruveRequestDataInterface
+abstract class AbstractApruveEntity implements ApruveEntityInterface
 {
     /**
      * @var array
      */
-    private $data;
+    protected $data;
 
     /**
      * @param array $data
