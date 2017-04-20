@@ -25,7 +25,7 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
     protected $factory;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
@@ -91,6 +91,6 @@ class SupportsOrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
     public function testSupportsWithUnsupportedClass()
     {
         $actual = $this->factory->supports(\stdClass::class, 1);
-        static::assertSame(false, $actual);
+        static::assertFalse($actual);
     }
 }

@@ -19,7 +19,7 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
     protected $factory;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
