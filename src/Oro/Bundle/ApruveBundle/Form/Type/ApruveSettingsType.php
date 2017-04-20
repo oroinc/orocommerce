@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ApruveBundle\Form\Type;
 
-use Oro\Bundle\ApruveBundle\Form\DataTransformer\EncryptedDataTransformer;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\SecurityBundle\Form\DataTransformer\Factory\CryptedDataTransformerFactoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -23,18 +22,20 @@ class ApruveSettingsType extends AbstractType
     private $transport;
 
     /**
-     * @var SymmetricCrypterInterface
+     * @var CryptedDataTransformerFactoryInterface
      */
-    private $crypter;
+    private $cryptedDataTransformerFactory;
 
     /**
      * @param TransportInterface $transport
-     * @param SymmetricCrypterInterface $crypter
+     * @param CryptedDataTransformerFactoryInterface $cryptedDataTransformerFactory
      */
-    public function __construct(TransportInterface $transport, SymmetricCrypterInterface $crypter)
-    {
+    public function __construct(
+        TransportInterface $transport,
+        CryptedDataTransformerFactoryInterface $cryptedDataTransformerFactory
+    ) {
         $this->transport = $transport;
-        $this->crypter = $crypter;
+        $this->cryptedDataTransformerFactory = $cryptedDataTransformerFactory;
     }
 
     /**
@@ -102,8 +103,8 @@ class ApruveSettingsType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param string $fieldName
      */
-    protected function enableEncryption(FormBuilderInterface $builder, $fieldName)
+    private function enableEncryption(FormBuilderInterface $builder, $fieldName)
     {
-        $builder->get($fieldName)->addModelTransformer(new EncryptedDataTransformer($this->crypter, true));
+        $builder->get($fieldName)->addModelTransformer($this->cryptedDataTransformerFactory->create());
     }
 }
