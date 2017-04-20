@@ -32,7 +32,7 @@ class ApruvePaymentMethodFactory implements ApruvePaymentMethodFactoryInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function create(ApruveConfigInterface $config)
     {
