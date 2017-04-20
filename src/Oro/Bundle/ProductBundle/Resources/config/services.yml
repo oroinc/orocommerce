@@ -782,3 +782,8 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    oro_product.validator.product_unit_precision:
+        class: 'Oro\Bundle\ProductBundle\Validator\ProductUnitPrecisionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_unit_precision_validator }
