@@ -94,6 +94,7 @@ oro:
             zero_representation: ""
             unit_precision_required: Please select a unit precision first...
             of: '# of'
+            duplicate_units_import_error: 'Each product unit code should be unique'
 
         productvariantlink:
             entity_label: Product Variant Link

@@ -696,3 +696,9 @@ services:
             - '@property_accessor'
         tags:
             - { name: layout.data_provider, alias: oro_product_configurable_products }
+
+    oro_product.validator.product_unit_precision:
+        class: 'Oro\Bundle\ProductBundle\Validator\ProductUnitPrecisionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_unit_precision_validator }
+
