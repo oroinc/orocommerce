@@ -10,7 +10,7 @@ class CancelPaymentAction extends AbstractPaymentAction
     const NAME = 'cancel';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function execute(ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
@@ -22,7 +22,7 @@ class CancelPaymentAction extends AbstractPaymentAction
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName()
     {

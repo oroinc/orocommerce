@@ -11,7 +11,7 @@ class AuthorizePaymentAction extends AbstractPaymentAction
     const NAME = 'authorize';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function execute(ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
@@ -29,7 +29,7 @@ class AuthorizePaymentAction extends AbstractPaymentAction
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName()
     {

@@ -19,12 +19,12 @@ class ApruvePaymentMethod implements PaymentMethodInterface
     /**
      * @var ApruveConfigInterface
      */
-    protected $config;
+    private $config;
 
     /**
      * @var PaymentActionExecutor
      */
-    protected $paymentActionExecutor;
+    private $paymentActionExecutor;
 
     /**
      * @var SupportedCurrenciesProviderInterface

@@ -8,11 +8,13 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 class PaymentActionExecutor implements PaymentActionExecutorInterface
 {
-    /** @var PaymentActionInterface[] */
-    protected $actions = [];
+    /**
+     * @var PaymentActionInterface[]
+     */
+    private $actions = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function addPaymentAction(PaymentActionInterface $paymentAction)
     {
@@ -22,7 +24,7 @@ class PaymentActionExecutor implements PaymentActionExecutorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function execute($action, ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
@@ -32,7 +34,7 @@ class PaymentActionExecutor implements PaymentActionExecutorInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function supports($name)
     {
