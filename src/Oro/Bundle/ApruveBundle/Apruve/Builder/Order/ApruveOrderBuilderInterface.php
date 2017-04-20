@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Builder;
+namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Request\Order\ApruveOrderRequestDataInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrderInterface;
 
 interface ApruveOrderBuilderInterface
 {
     /**
-     * @return ApruveOrderRequestDataInterface
+     * @return ApruveOrderInterface
      */
     public function getResult();
 

@@ -1,8 +1,7 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Factory;
+namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilderInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 

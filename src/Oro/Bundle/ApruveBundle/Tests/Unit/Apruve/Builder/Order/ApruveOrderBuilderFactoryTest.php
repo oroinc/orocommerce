@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder\Factory;
+namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveOrderBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveLineItemBuilderFactoryInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveOrderBuilderFactory;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilder;
+use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderFactory;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
 use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
@@ -43,7 +43,7 @@ class ApruveOrderBuilderFactoryTest extends \PHPUnit_Framework_TestCase
     private $factory;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setUp()
     {

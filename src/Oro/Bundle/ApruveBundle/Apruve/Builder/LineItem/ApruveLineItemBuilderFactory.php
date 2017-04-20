@@ -1,8 +1,7 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Factory;
+namespace Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\ApruveLineItemBuilder;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Symfony\Component\Routing\RouterInterface;
 
