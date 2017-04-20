@@ -65,9 +65,9 @@ class ApruveConfigFactory implements ApruveConfigFactoryInterface
         $params[ApruveConfig::LABEL_KEY] = $this->getLocalizedValue($settings->getLabels());
         $params[ApruveConfig::SHORT_LABEL_KEY] = $this->getLocalizedValue($settings->getShortLabels());
 
-        $params[ApruveConfig::API_KEY_KEY] = $this->decryptData($settings->getApiKey());
-        $params[ApruveConfig::MERCHANT_ID_KEY] = $this->decryptData($settings->getMerchantId());
-        $params[ApruveConfig::TEST_MODE_KEY] = $settings->getTestMode();
+        $params[ApruveConfig::API_KEY_KEY] = $this->decryptData($settings->getApruveApiKey());
+        $params[ApruveConfig::MERCHANT_ID_KEY] = $this->decryptData($settings->getApruveMerchantId());
+        $params[ApruveConfig::TEST_MODE_KEY] = $settings->getApruveTestMode();
 
         return new ApruveConfig($params);
     }
