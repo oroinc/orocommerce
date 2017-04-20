@@ -514,6 +514,14 @@ services:
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_product.entity.product.class%'}
 
+    oro_product.event_listener.website_search_segment:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchSegmentListener'
+        arguments:
+            - '@oro_product.provider.content_variant_segment_provider'
+            - '@oro_segment.static_segment_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
+
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
         arguments:
