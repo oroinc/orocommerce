@@ -9,8 +9,9 @@ use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\SecurityBundle\Form\DataTransformer\Factory\CryptedDataTransformerFactoryInterface;
 use Oro\Bundle\SecurityBundle\Generator\RandomTokenGeneratorInterface;
+use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -33,9 +34,14 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
     const DATA_CLASS = ApruveSettings::class;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DataTransformerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $crypter;
+    private $dataTransformer;
+
+    /**
+     * @var CryptedDataTransformerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $cryptedDataTransformerFactory;
 
     /**
      * @var RandomTokenGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -57,7 +63,11 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
+        $this->dataTransformer = $this->createMock(DataTransformerInterface::class);
+        $this->cryptedDataTransformerFactory = $this->createMock(CryptedDataTransformerFactoryInterface::class);
+        $this->cryptedDataTransformerFactory
+            ->method('create')
+            ->willReturn($this->dataTransformer);
 
         $this->transport = $this->createMock(TransportInterface::class);
         $this->transport->expects(static::any())
@@ -69,7 +79,7 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
             ->method('generateToken')
             ->willReturn('webhookTokenSample');
 
-        $this->formType = new ApruveSettingsType($this->transport, $this->crypter);
+        $this->formType = new ApruveSettingsType($this->transport, $this->cryptedDataTransformerFactory);
 
         parent::setUp();
     }
@@ -105,11 +115,12 @@ class ApruveSettingsTypeTest extends FormIntegrationTestCase
         $isValid,
         ApruveSettings $expectedData
     ) {
-        $this->crypter
-            ->method('encryptData')
+        $this->dataTransformer
+            ->method('reverseTransform')
             ->willReturnMap([
-                [self::DECRYPTED_API_KEY, self::ENCRYPTED_API_KEY],
+                [null, null],
                 [self::DECRYPTED_MERCHANT_ID, self::ENCRYPTED_MERCHANT_ID],
+                [self::DECRYPTED_API_KEY, self::ENCRYPTED_API_KEY],
             ]);
 
         $form = $this->factory->create($this->formType, $defaultData, []);

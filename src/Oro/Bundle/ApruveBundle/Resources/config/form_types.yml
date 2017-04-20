@@ -4,7 +4,7 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType'
         arguments:
             - '@oro_apruve.integration.transport'
-            - '@oro_security.encoder.mcrypt'
+            - '@oro_security.form.data_transformer.factory.crypted_data'
         tags:
             - { name: form.type }
 
