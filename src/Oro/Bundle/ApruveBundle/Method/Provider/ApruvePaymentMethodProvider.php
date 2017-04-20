@@ -12,7 +12,7 @@ class ApruvePaymentMethodProvider extends AbstractPaymentMethodProvider
     /**
      * @var ApruvePaymentMethodFactoryInterface
      */
-    protected $factory;
+    private $factory;
 
     /**
      * @var ApruveConfigProviderInterface

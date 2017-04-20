@@ -31,7 +31,7 @@ class PaymentActionExecutorTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
