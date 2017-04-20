@@ -34,7 +34,7 @@ class ApruvePaymentMethodProvider extends AbstractPaymentMethodProvider
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function collectMethods()
     {
