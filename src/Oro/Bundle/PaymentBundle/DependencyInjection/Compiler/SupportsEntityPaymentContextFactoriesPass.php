@@ -12,7 +12,7 @@ class SupportsEntityPaymentContextFactoriesPass implements CompilerPassInterface
     const TAG = 'oro_payment.supports_entity_payment_context_factory';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {

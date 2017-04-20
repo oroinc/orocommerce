@@ -21,7 +21,7 @@ class SupportsEntityPaymentContextFactoriesPassTest extends \PHPUnit_Framework_T
     protected $containerBuilder;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setUp()
     {

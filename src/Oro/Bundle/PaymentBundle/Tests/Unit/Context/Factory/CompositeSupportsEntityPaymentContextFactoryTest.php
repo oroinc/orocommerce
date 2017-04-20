@@ -23,7 +23,7 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit_Framewor
     protected $results;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

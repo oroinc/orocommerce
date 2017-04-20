@@ -20,7 +20,7 @@ class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaym
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function create($entityClass, $entityId)
     {
@@ -28,7 +28,7 @@ class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaym
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function supports($entityClass, $entityId)
     {

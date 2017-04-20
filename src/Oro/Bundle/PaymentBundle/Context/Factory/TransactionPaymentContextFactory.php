@@ -20,7 +20,7 @@ class TransactionPaymentContextFactory implements TransactionPaymentContextFacto
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function create(PaymentTransaction $transaction)
     {
