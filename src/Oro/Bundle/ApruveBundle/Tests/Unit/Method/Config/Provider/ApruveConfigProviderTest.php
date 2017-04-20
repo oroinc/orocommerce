@@ -4,14 +4,13 @@ namespace Oro\Bundle\ApruveBundle\Tests\Unit\Method\Config\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Bundle\ApruveBundle\Entity\Repository\ApruveSettingsRepository;
-use Oro\Bundle\ApruveBundle\Method\Config\Factory\ApruveConfigFactoryInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
+use Oro\Bundle\ApruveBundle\Method\Config\Factory\ApruveConfigFactoryInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\Provider\ApruveConfigProvider;
 use Oro\Bundle\ApruveBundle\Method\Config\Provider\ApruveConfigProviderInterface;
+use Psr\Log\LoggerInterface;
 
 class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,12 +26,12 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $doctrine;
+    private $doctrine;
 
     /**
      * @var ApruveSettingsRepository|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $settingsRepository;
+    private $settingsRepository;
 
     /**
      * @var array
@@ -43,6 +42,11 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
      * @var ApruveConfigProviderInterface
      */
     private $testedProvider;
+
+    /**
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $logger;
 
     /**
      * {@inheritDoc}
@@ -61,12 +65,10 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
         $settingsMocks = [$settingsOneMock, $settingsTwoMock];
 
         $configOneMock
-            ->expects(static::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn(self::IDENTIFIER1);
 
         $configTwoMock
-            ->expects(static::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn(self::IDENTIFIER2);
 
@@ -83,8 +85,7 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
-        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
-        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->configFactory
             ->method('create')
@@ -101,7 +102,7 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
             self::IDENTIFIER2 => $configTwoMock
         ];
 
-        $this->testedProvider = new ApruveConfigProvider($this->doctrine, $logger, $this->configFactory);
+        $this->testedProvider = new ApruveConfigProvider($this->doctrine, $this->logger, $this->configFactory);
     }
 
     /**
@@ -124,7 +125,7 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         $actualResult = $this->testedProvider->getPaymentConfigs();
 
-        static::assertEquals($this->configs, $actualResult);
+        static::assertSame($this->configs, $actualResult);
     }
 
     public function testGetPaymentConfig()
@@ -132,7 +133,7 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
         $expectedResult = $this->configs[self::IDENTIFIER1];
         $actualResult = $this->testedProvider->getPaymentConfig(self::IDENTIFIER1);
 
-        static::assertEquals($expectedResult, $actualResult);
+        static::assertSame($expectedResult, $actualResult);
     }
 
     public function testGetPaymentConfigWhenNoSettings()
@@ -144,7 +145,7 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
 
         $actualResult = $this->testedProvider->getPaymentConfig(self::WRONG_IDENTIFIER);
 
-        static::assertEquals(null, $actualResult);
+        static::assertNull($actualResult);
     }
 
     public function testHasPaymentConfig()
@@ -164,6 +165,22 @@ class ApruveConfigProviderTest extends \PHPUnit_Framework_TestCase
 
         $actualResult = $this->testedProvider->hasPaymentConfig('somePaymentMethodId');
 
-        static::assertEquals(null, $actualResult);
+        static::assertFalse($actualResult);
+    }
+
+    public function testHasPaymentConfigWithException()
+    {
+        $this->settingsRepository
+            ->expects(static::once())
+            ->method('findEnabledSettings')
+            ->willThrowException(new \UnexpectedValueException());
+
+        $this->logger
+            ->expects(static::once())
+            ->method('error');
+
+        $actualResult = $this->testedProvider->hasPaymentConfig('somePaymentMethodId');
+
+        static::assertFalse($actualResult);
     }
 }

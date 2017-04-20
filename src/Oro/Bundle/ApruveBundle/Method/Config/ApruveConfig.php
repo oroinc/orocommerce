@@ -6,8 +6,6 @@ use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaym
 
 class ApruveConfig extends AbstractParameterBagPaymentConfig implements ApruveConfigInterface
 {
-    const TYPE = 'apruve';
-
     /**
      * General parameters keys.
      */
@@ -24,7 +22,7 @@ class ApruveConfig extends AbstractParameterBagPaymentConfig implements ApruveCo
     const MERCHANT_ID_KEY  = 'merchant_id';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isTestMode()
     {
@@ -32,7 +30,7 @@ class ApruveConfig extends AbstractParameterBagPaymentConfig implements ApruveCo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getApiKey()
     {
@@ -40,7 +38,7 @@ class ApruveConfig extends AbstractParameterBagPaymentConfig implements ApruveCo
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getMerchantId()
     {

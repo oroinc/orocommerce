@@ -3,11 +3,10 @@
 namespace Oro\Bundle\ApruveBundle\Method\Config\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
-use Oro\Bundle\ApruveBundle\Method\Config\Factory\ApruveConfigFactoryInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
+use Oro\Bundle\ApruveBundle\Method\Config\Factory\ApruveConfigFactoryInterface;
+use Psr\Log\LoggerInterface;
 
 class ApruveConfigProvider implements ApruveConfigProviderInterface
 {
@@ -94,7 +93,7 @@ class ApruveConfigProvider implements ApruveConfigProviderInterface
                 ->getRepository(ApruveSettings::class)
                 ->findEnabledSettings();
         } catch (\UnexpectedValueException $e) {
-            $this->logger->critical($e->getMessage());
+            $this->logger->error($e->getMessage());
 
             return [];
         }
