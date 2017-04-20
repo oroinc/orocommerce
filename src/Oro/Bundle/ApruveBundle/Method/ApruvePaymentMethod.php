@@ -11,8 +11,6 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class ApruvePaymentMethod implements PaymentMethodInterface
 {
-    const TYPE = 'apruve';
-
     const COMPLETE = 'complete';
     const CANCEL = 'cancel';
 
@@ -49,7 +47,7 @@ class ApruvePaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      * @throws \InvalidArgumentException
      */
     public function execute($action, PaymentTransaction $paymentTransaction)
@@ -58,7 +56,7 @@ class ApruvePaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIdentifier()
     {
@@ -66,7 +64,7 @@ class ApruvePaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isApplicable(PaymentContextInterface $context)
     {
@@ -74,7 +72,7 @@ class ApruvePaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function supports($actionName)
     {
