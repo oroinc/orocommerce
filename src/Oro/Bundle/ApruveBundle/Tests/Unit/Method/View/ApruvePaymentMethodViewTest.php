@@ -8,14 +8,18 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 class ApruveViewTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ApruvePaymentMethodView */
-    protected $methodView;
-
-    /** @var ApruveConfig|\PHPUnit_Framework_MockObject_MockObject */
-    protected $config;
+    /**
+     * @var ApruvePaymentMethodView
+     */
+    private $methodView;
 
     /**
-     * {@inheritdoc}
+     * @var ApruveConfig|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $config;
+
+    /**
+     * {@inheritDoc}
      */
     protected function setUp()
     {

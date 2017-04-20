@@ -11,7 +11,17 @@ use Oro\Bundle\PaymentBundle\Tests\Unit\Method\View\Provider\AbstractMethodViewP
 class ApruveMethodViewProviderTest extends AbstractMethodViewProviderTest
 {
     /**
-     * {@inheritdoc}
+     * @var ApruvePaymentMethodViewFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $factory;
+
+    /**
+     * @var ApruveConfigProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $configProvider;
+
+    /**
+     * {@inheritDoc}
      */
     public function setUp()
     {

@@ -11,7 +11,7 @@ class ApruvePaymentMethodView implements PaymentMethodViewInterface
     /**
      * @var ApruveConfigInterface
      */
-    protected $config;
+    private $config;
 
     /**
      * @param ApruveConfigInterface $config
@@ -30,7 +30,7 @@ class ApruvePaymentMethodView implements PaymentMethodViewInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getBlock()
     {
@@ -38,7 +38,7 @@ class ApruvePaymentMethodView implements PaymentMethodViewInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {
@@ -46,7 +46,7 @@ class ApruvePaymentMethodView implements PaymentMethodViewInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getShortLabel()
     {
@@ -54,14 +54,16 @@ class ApruvePaymentMethodView implements PaymentMethodViewInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getAdminLabel()
     {
         return $this->config->getAdminLabel();
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getPaymentMethodIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();

@@ -9,14 +9,18 @@ use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
 
 class ApruvePaymentMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
-    /** @var ApruvePaymentMethodViewFactoryInterface */
+    /**
+     * @var ApruvePaymentMethodViewFactoryInterface
+     */
     private $factory;
 
-    /** @var ApruveConfigProviderInterface */
+    /**
+     * @var ApruveConfigProviderInterface
+     */
     private $configProvider;
 
     /**
-     * @param ApruveConfigProviderInterface $configProvider
+     * @param ApruveConfigProviderInterface           $configProvider
      * @param ApruvePaymentMethodViewFactoryInterface $factory
      */
     public function __construct(
@@ -30,7 +34,7 @@ class ApruvePaymentMethodViewProvider extends AbstractPaymentMethodViewProvider
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function buildViews()
     {

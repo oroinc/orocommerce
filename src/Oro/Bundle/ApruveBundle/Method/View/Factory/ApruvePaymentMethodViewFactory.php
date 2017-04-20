@@ -8,7 +8,7 @@ use Oro\Bundle\ApruveBundle\Method\View\ApruvePaymentMethodView;
 class ApruvePaymentMethodViewFactory implements ApruvePaymentMethodViewFactoryInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function create(ApruveConfigInterface $config)
     {
