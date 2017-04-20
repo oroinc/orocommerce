@@ -23,8 +23,8 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
     const ORDER_4 = 'simple_order4';
     const MY_ORDER = 'my_order';
     const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
-    const SUBTOTAL = '789';
-    const TOTAL = '1234';
+    const SUBTOTAL = '789.0000';
+    const TOTAL = '1234.0000';
 
     /**
      * @var array
@@ -76,12 +76,12 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'poNumber' => 'PO_NUM',
             'customerNotes' => 'Test customer user notes',
             'currency' => 'EUR',
-            'subtotal' => '1500',
-            'total' => '1700',
+            'subtotal' => '1500.0000',
+            'total' => '1700.0000',
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
             'shippingMethod' => 'flat_rate',
             'shippingMethodType' => 'primary',
-            'shippingCostAmount' => 10,
+            'shippingCostAmount' => '10.0000',
         ],
     ];
 

@@ -20,6 +20,7 @@ PricingBundle
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
 - Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
+- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now. 
 
 ShoppingBundle
 -------------
@@ -61,6 +62,15 @@ RuleBundle
     - `getBaseSlug`
     - `getSlugByLocalization`
 
+OrderBundle
+-----------
+- Added API for:
+    - `Oro\Bundle\OrderBundle\Entity\Order`
+    - `Oro\Bundle\OrderBundle\Entity\OrderDiscount`
+    - `Oro\Bundle\OrderBundle\Entity\OrderLineItem`
+    - `Oro\Bundle\OrderBundle\Entity\OrderAddress`
+    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
+
 CustomerBundle
 --------------
 - Class `Oro\Bundle\CustomerBundle\Audit\DiscriminatorMapListener` moved to `Oro\Bundle\EntityBundle\ORM\DiscriminatorMapListener`
@@ -96,3 +106,6 @@ FlatRateShippingBundle
 --------------
 - The `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` was deprecated, the `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` was created instead.
 
+CatalogBundle
+--------------
+- The `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles` was deprecated, the `\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren` was created instead.
