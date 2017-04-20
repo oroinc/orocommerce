@@ -15,7 +15,7 @@ class ApruvePaymentMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
     private $factory;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
