@@ -520,7 +520,7 @@ services:
             - '@oro_product.provider.content_variant_segment_provider'
             - '@oro_segment.static_segment_manager'
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex, priority: -255 }
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex, priority: 255 }
 
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'

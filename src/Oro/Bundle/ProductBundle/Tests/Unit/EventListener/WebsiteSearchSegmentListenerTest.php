@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\StaticSegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -52,6 +53,21 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getContentVariantSegments')
             ->willReturn([]);
+
+        $this->staticSegmentManager
+            ->expects($this->never())
+            ->method('run');
+
+        $this->websiteSearchSegmentListener->onWebsiteSearchIndex($event);
+    }
+
+    public function testOnWebsiteSearchIndexWithUnsupportedEntity()
+    {
+        $event = new IndexEntityEvent(ProductImage::class, [$this->getEntity(ProductImage::class, ['id' => 1])], []);
+
+        $this->contentVariantSegmentProvider
+            ->expects($this->never())
+            ->method('getContentVariantSegments');
 
         $this->staticSegmentManager
             ->expects($this->never())

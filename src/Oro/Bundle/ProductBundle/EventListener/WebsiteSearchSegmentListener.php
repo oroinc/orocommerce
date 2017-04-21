@@ -40,6 +40,10 @@ class WebsiteSearchSegmentListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        if ($event->getEntityClass() !== Product::class) {
+            return;
+        }
+
         foreach ($this->contentVariantSegmentProvider->getContentVariantSegments() as $segment) {
             $this->staticSegmentManager->run($segment, $this->getEntityIds($event));
         }
