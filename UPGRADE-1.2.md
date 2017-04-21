@@ -62,6 +62,15 @@ RuleBundle
     - `getBaseSlug`
     - `getSlugByLocalization`
 
+OrderBundle
+-----------
+- Added API for:
+    - `Oro\Bundle\OrderBundle\Entity\Order`
+    - `Oro\Bundle\OrderBundle\Entity\OrderDiscount`
+    - `Oro\Bundle\OrderBundle\Entity\OrderLineItem`
+    - `Oro\Bundle\OrderBundle\Entity\OrderAddress`
+    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
+
 CustomerBundle
 --------------
 - Class `Oro\Bundle\CustomerBundle\Audit\DiscriminatorMapListener` moved to `Oro\Bundle\EntityBundle\ORM\DiscriminatorMapListener`

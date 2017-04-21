@@ -44,8 +44,10 @@ $eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationEv
 Alternatively, you may trigger reindexation from the CLI using the `oro:website-search:reindex` command with the following
 optional parameters:
 
-* **website-id** (optional) - identifier of the website this reindex is applicable to;
-* **class** (optional) - names of the entities that have to be reindexed.
+* **website-id** (optional) - identifier of the website the reindexing applies to;
+* **class** (optional) - names of the entities that have to be reindexed;
+* **scheduled** (optional) - enables indexation via the message consumers;
+* **product-id** (optional) - allows entering range of product IDs to process incl. splitting. Note, that it is only possible to index `Product` entities when using this parameter!
 
 Below is an example of the reindex triggered via CLI:
 
@@ -150,9 +152,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: all_text_LOCALIZATION_ID
             type: text
+            store: false
         -
             name: all_text
             type: text
+            store: false
 ```
 
 Below is an example of the index listener for the index structure above:

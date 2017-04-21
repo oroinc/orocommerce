@@ -73,6 +73,7 @@ services:
         arguments:
             - '@oro_order.order.total.total_helper'
             - '@oro_order.pricing.price_matcher'
+            - '@oro_website.manager'
 
     oro_order.form.type.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType'
@@ -90,3 +91,14 @@ services:
         class: 'Oro\Bundle\OrderBundle\Form\Type\SelectSwitchInputType'
         tags:
             - { name: form.type }
+
+    oro_order.form_event_subscriber.discount:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\EventListener\DiscountSubscriber'
+        arguments:
+            - '@oro_order.order.total.total_helper'
+
+    oro_order.form_event_subscriber.default_website:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\EventListener\DefaultWebsiteSubscriber'
+        arguments:
+            - '@oro_website.manager'
+

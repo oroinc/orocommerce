@@ -88,7 +88,7 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
         $region = $manager->getReference('OroAddressBundle:Region', $address['region']);
         if (!$region) {
             throw new \RuntimeException(
-                sprintf('Can\'t find region with code %s', $address['country'])
+                sprintf('Can\'t find region with code %s', $address['region'])
             );
         }
 
