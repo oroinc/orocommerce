@@ -62,7 +62,10 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
         $contentVariant = new ContentVariantStub();
 
         $this->assertEquals(
-            new RouteData('oro_product_frontend_product_index'),
+            new RouteData(
+                ProductCollectionContentVariantType::PRODUCT_COLLECTION_ROUTE_NAME,
+                [ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => $contentVariant->getId()]
+            ),
             $this->type->getRouteData($contentVariant)
         );
     }

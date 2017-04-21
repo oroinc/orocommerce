@@ -11,6 +11,8 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 class ProductCollectionContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'product_collection';
+    const PRODUCT_COLLECTION_ROUTE_NAME = 'oro_product_frontend_product_index';
+    const CONTENT_VARIANT_ID_KEY = 'contentVariantId';
 
     /**
      * @var SecurityFacade
@@ -62,6 +64,11 @@ class ProductCollectionContentVariantType implements ContentVariantTypeInterface
      */
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
-        return new RouteData('oro_product_frontend_product_index');
+        return new RouteData(
+            self::PRODUCT_COLLECTION_ROUTE_NAME,
+            [
+                self::CONTENT_VARIANT_ID_KEY => $contentVariant->getId(),
+            ]
+        );
     }
 }
