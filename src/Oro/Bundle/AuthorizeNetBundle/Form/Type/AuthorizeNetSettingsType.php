@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
 use Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\CardTypesDataProviderInterface;
@@ -119,10 +120,10 @@ class AuthorizeNetSettingsType extends AbstractType
                     'attr' => ['autocomplete' => 'off'],
                 ]
             )
-            ->add('transactionKey', TextType::class, [
+            ->add('transactionKey', OroEncodedPlaceholderPasswordType::class, [
                 'label' => 'oro.authorize_net.settings.transaction_key.label',
                 'required' => true,
-                'attr' => ['autocomplete' => 'off'],
+                'attr' => ['autocomplete' => 'new-password'],
             ])
             ->add('clientKey', TextType::class, [
                 'label' => 'oro.authorize_net.settings.client_key.label',
@@ -146,7 +147,6 @@ class AuthorizeNetSettingsType extends AbstractType
                 ]
             );
         $this->transformWithEncodedValue($builder, 'apiLoginId');
-        $this->transformWithEncodedValue($builder, 'transactionKey');
         $this->transformWithEncodedValue($builder, 'clientKey');
     }
 
@@ -181,11 +181,7 @@ class AuthorizeNetSettingsType extends AbstractType
     {
         $builder->get($field)->addModelTransformer(new CallbackTransformer(
             function ($value) use ($decrypt) {
-                if ($decrypt === true) {
-                    return $this->encoder->decryptData($value);
-                }
-
-                return $value;
+                return $decrypt ? $this->encoder->decryptData($value) : $value;
             },
             function ($value) {
                 return $this->encoder->encryptData($value);

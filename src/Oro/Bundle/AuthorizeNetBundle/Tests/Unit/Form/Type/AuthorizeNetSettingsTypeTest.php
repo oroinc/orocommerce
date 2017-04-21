@@ -4,6 +4,7 @@ namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\CardTypesDataProviderInterface;
 use Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
 use Oro\Bundle\AuthorizeNetBundle\Form\Type\AuthorizeNetSettingsType;
@@ -35,8 +36,8 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
 
     public function setUp()
     {
-        parent::setUp();
         $this->prepareForm();
+        parent::setUp();
     }
 
     protected function prepareForm()
@@ -80,6 +81,7 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $localizedType->getName() => $localizedType,
+                    new OroEncodedPlaceholderPasswordType($this->encoder),
                 ],
                 []
             ),
