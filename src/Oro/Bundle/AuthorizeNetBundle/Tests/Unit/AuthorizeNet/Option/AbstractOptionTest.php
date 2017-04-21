@@ -9,18 +9,11 @@ abstract class AbstractOptionTest extends \PHPUnit_Framework_TestCase
     /** @var Option\OptionInterface[] */
     protected $options;
 
+    /** @return array */
+    abstract public function configureOptionDataProvider();
+
     /** @return Option\OptionInterface[] */
     abstract protected function getOptions();
-
-    protected function setUp()
-    {
-        $this->options = $this->getOptions();
-    }
-
-    protected function tearDown()
-    {
-        unset($this->options);
-    }
 
     /**
      * @param array $options
@@ -53,8 +46,13 @@ abstract class AbstractOptionTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    abstract public function configureOptionDataProvider();
+    protected function setUp()
+    {
+        $this->options = $this->getOptions();
+    }
+
+    protected function tearDown()
+    {
+        unset($this->options);
+    }
 }

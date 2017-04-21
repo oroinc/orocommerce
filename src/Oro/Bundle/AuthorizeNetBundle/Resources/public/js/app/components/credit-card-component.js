@@ -215,8 +215,8 @@ define(function(require) {
          * @param {Object} response
          * @param {Object} eventData
          */
-        acceptJsResponse: function (response, eventData) {
-            if (response.messages.resultCode === 'Error' || !response.opaqueData ||
+        acceptJsResponse: function(response, eventData) {
+            if (response.messages.resultCode !== 'Ok' || !response.opaqueData ||
                 !response.opaqueData.dataDescriptor || !response.opaqueData.dataValue
             ) {
                 mediator.execute('showFlashMessage', 'error', __(this.options.messages.communication_err));

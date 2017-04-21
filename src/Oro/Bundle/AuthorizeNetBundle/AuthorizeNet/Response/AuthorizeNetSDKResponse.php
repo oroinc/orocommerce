@@ -69,10 +69,12 @@ class AuthorizeNetSDKResponse implements ResponseInterface
         }
         $transactionResponse = $this->apiResponse->getTransactionResponse();
         if ($transactionResponse) {
-            /** @var MessageAType[] $transactionMessages */
+            /** @var MessageAType[]|null $transactionMessages */
             $transactionMessages = $transactionResponse->getMessages();
-            foreach ($transactionMessages as $message) {
-                $messages[] = "({$message->getCode()}) {$message->getDescription()}";
+            if ($transactionMessages) { // $transactionResponse->getMessages() can return null sometimes
+                foreach ($transactionMessages as $message) {
+                    $messages[] = "({$message->getCode()}) {$message->getDescription()}";
+                }
             }
         }
 
@@ -90,10 +92,12 @@ class AuthorizeNetSDKResponse implements ResponseInterface
         }
         $transactionResponse = $this->apiResponse->getTransactionResponse();
         if ($transactionResponse) {
-            /** @var ErrorAType[] $transactionErrors */
+            /** @var ErrorAType[]|null $transactionErrors */
             $transactionErrors = $transactionResponse->getErrors();
-            foreach ($transactionErrors as $error) {
-                $errorMessages[] = "({$error->getErrorCode()}) {$error->getErrorText()}";
+            if ($transactionErrors) { // $transactionResponse->getErrors() can return null sometimes
+                foreach ($transactionErrors as $error) {
+                    $errorMessages[] = "({$error->getErrorCode()}) {$error->getErrorText()}";
+                }
             }
         }
 

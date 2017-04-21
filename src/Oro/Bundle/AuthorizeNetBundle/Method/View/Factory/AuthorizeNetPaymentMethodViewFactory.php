@@ -11,7 +11,7 @@ class AuthorizeNetPaymentMethodViewFactory implements AuthorizeNetPaymentMethodV
     /**
      * @var FormFactoryInterface
      */
-    private $formFactory;
+    protected $formFactory;
 
     /**
      * @param FormFactoryInterface $formFactory
