@@ -31,8 +31,9 @@ class ApruveSettingsRepository extends EntityRepository
         $qb = $this->createQueryBuilder('settings');
         $qb
             ->innerJoin('settings.channel', 'channel')
-            ->andWhere($qb->expr()->eq('channel.enabled', true))
+            ->andWhere($qb->expr()->eq('channel.enabled', ':channelEnabled'))
             ->andWhere($qb->expr()->eq('channel.type', ':type'))
+            ->setParameter('channelEnabled', true)
             ->setParameter('type', $type);
 
         return $this->aclHelper->apply($qb)->getResult();
