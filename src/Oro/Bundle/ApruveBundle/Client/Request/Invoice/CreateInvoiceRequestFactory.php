@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Client\Request\Invoice;
+namespace Oro\Bundle\ApruveBundle\Client\Request\Invoice;
 
-use Oro\Bundle\ApruveBundle\Apruve\Client\Request\ApruveRequest;
 use Oro\Bundle\ApruveBundle\Apruve\Model\Invoice\ApruveInvoiceInterface;
+use Oro\Bundle\ApruveBundle\Client\Request\ApruveRequest;
 
 class CreateInvoiceRequestFactory implements CreateInvoiceRequestFactoryInterface
 {

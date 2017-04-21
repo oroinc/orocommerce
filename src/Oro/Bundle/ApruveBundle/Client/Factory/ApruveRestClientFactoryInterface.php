@@ -3,14 +3,14 @@
 namespace Oro\Bundle\ApruveBundle\Client\Factory;
 
 use Oro\Bundle\ApruveBundle\Client\ApruveRestClientInterface;
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfig;
+use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 
 interface ApruveRestClientFactoryInterface
 {
     /**
-     * @param ApruveConfig $apruveConfig
+     * @param ApruveConfigInterface $apruveConfig
      *
      * @return ApruveRestClientInterface
      */
-    public function create(ApruveConfig $apruveConfig);
+    public function create(ApruveConfigInterface $apruveConfig);
 }

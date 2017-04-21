@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Client\Request;
+namespace Oro\Bundle\ApruveBundle\Client\Request;
 
 interface ApruveRequestInterface
 {

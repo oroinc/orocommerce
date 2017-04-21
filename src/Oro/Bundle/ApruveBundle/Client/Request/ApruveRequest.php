@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Apruve\Client\Request;
+namespace Oro\Bundle\ApruveBundle\Client\Request;
 
 use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveEntityInterface;
 
@@ -54,6 +54,6 @@ class ApruveRequest implements ApruveRequestInterface
      */
     public function getData()
     {
-        return $this->requestData->getData();
+        return $this->requestData ? $this->requestData->getData() : [];
     }
 }
