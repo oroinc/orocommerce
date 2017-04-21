@@ -1,0 +1,7 @@
+services:
+
+    oro_apruve.client.factory.rest:
+        class: 'Oro\Bundle\ApruveBundle\Client\Factory\ApruveRestClientFactory'
+        arguments:
+            - '@oro_integration.transport.rest.client_factory'
+        lazy: true
