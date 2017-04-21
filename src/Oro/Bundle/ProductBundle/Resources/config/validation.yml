@@ -20,7 +20,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Count:
                 min: 1
                 minMessage: 'oro.product.unit_precisions_items.blank'
-            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionConstraint: ~
         primaryUnitPrecision:
             - NotBlank: ~
         status:

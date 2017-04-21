@@ -812,8 +812,3 @@ services:
         arguments: []
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.entity.attribute.before_save, method: onBeforeSave }
-
-    oro_product.validator.product_unit_precision:
-        class: 'Oro\Bundle\ProductBundle\Validator\ProductUnitPrecisionValidator'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_product_unit_precision_validator }
