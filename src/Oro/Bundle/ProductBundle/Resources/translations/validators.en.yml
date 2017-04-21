@@ -45,6 +45,3 @@ oro:
         product_image:
             not_blank: 'The file cannot be blank'
             type_restriction: 'You cannot choose more than %maxNumber% images with type "%type%"'
-
-        unit_precision:
-            duplicate_units: 'Each product unit code should be unique'
