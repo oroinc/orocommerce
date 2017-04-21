@@ -4,4 +4,5 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Client\Factory\ApruveRestClientFactory'
         arguments:
             - '@oro_integration.transport.rest.client_factory'
+            - '@logger'
         lazy: true

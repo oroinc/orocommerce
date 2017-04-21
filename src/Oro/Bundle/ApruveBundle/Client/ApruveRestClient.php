@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\ApruveBundle\Client;
 
-use Oro\Bundle\ApruveBundle\Apruve\Client\Request\ApruveRequestInterface;
 use Oro\Bundle\ApruveBundle\Client\Exception\UnsupportedMethodException;
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfig;
+use Oro\Bundle\ApruveBundle\Client\Request\ApruveRequestInterface;
+use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 class ApruveRestClient implements ApruveRestClientInterface
 {
-    use LoggerAwareTrait;
-
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
     const METHOD_PUT = 'PUT';
@@ -24,6 +22,11 @@ class ApruveRestClient implements ApruveRestClientInterface
 
     const BASE_URL_PROD = 'https://app.apruve.com/api/v4/';
     const BASE_URL_TEST = 'https://test.apruve.com/api/v4/';
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @var RestClientFactoryInterface
@@ -36,18 +39,24 @@ class ApruveRestClient implements ApruveRestClientInterface
     private $restClient;
 
     /**
-     * @var ApruveConfig
+     * @var ApruveConfigInterface
      */
     private $apruveConfig;
 
     /**
-     * @param ApruveConfig $apruveConfig
+     * @param ApruveConfigInterface $apruveConfig
      * @param RestClientFactoryInterface $restClientFactory
+     * @param LoggerInterface $logger
      */
-    public function __construct(ApruveConfig $apruveConfig, RestClientFactoryInterface $restClientFactory)
+    public function __construct(
+        ApruveConfigInterface $apruveConfig,
+        RestClientFactoryInterface $restClientFactory,
+        LoggerInterface $logger
+    )
     {
         $this->restClientFactory = $restClientFactory;
         $this->apruveConfig = $apruveConfig;
+        $this->logger = $logger;
     }
 
     /**
@@ -120,9 +129,7 @@ class ApruveRestClient implements ApruveRestClientInterface
         try {
             $response = call_user_func_array([$restClient, $method], $arguments);
         } catch (RestException $e) {
-            if ($this->logger) {
-                $this->logger->error($e->getMessage());
-            }
+            $this->logger->error($e->getMessage());
         }
 
         return $response;
