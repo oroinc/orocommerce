@@ -5,6 +5,7 @@ namespace Oro\Bundle\ApruveBundle\Method\PaymentAction;
 use Oro\Bundle\ApruveBundle\Method\ApruvePaymentMethod;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class AuthorizePaymentAction extends AbstractPaymentAction
 {
@@ -20,8 +21,9 @@ class AuthorizePaymentAction extends AbstractPaymentAction
         $transactionOptions[ApruvePaymentMethod::PARAM_ORDER_ID] = $response[ApruvePaymentMethod::PARAM_ORDER_ID];
         $paymentTransaction->setTransactionOptions($transactionOptions);
 
-        // Transaction is still not finished, payment should be captured.
-        $paymentTransaction->setSuccessful(false);
+        $paymentTransaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $paymentTransaction->setSuccessful(true);
         // Transaction is awaiting for payment capture.
         $paymentTransaction->setActive(true);
 

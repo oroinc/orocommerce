@@ -1,6 +1,6 @@
 Oro\Bundle\ApruveBundle\Entity\ApruveSettings:
     properties:
-        merchantId:
+        apruveMerchantId:
             - NotBlank: ~
-        apiKey:
+        apruveApiKey:
             - NotBlank: ~
