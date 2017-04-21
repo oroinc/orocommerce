@@ -54,6 +54,10 @@ class ApruveRequest implements ApruveRequestInterface
      */
     public function getData()
     {
-        return $this->requestData ? $this->requestData->getData() : [];
+        if ($this->requestData) {
+            return $this->requestData->getData();
+        }
+
+        return [];
     }
 }
