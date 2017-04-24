@@ -1,0 +1,20 @@
+services:
+    oro_authorize_net.method_view_factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Tests\Behat\Mock\Method\View\Factory\AuthorizeNetPaymentMethodViewFactoryMock'
+        arguments:
+            - '@form.factory'
+
+    oro_authorize_net.sdk.request.factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Tests\Behat\Mock\AuthorizeNet\Client\Factory\AnetSDKRequestFactoryMock'
+        public: false
+
+    oro_authorize_net.method.factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Tests\Behat\Mock\Method\Factory\AuthorizeNetPaymentMethodFactoryMock'
+        public: false
+        arguments:
+            - '@oro_authorize_net.gateway'
+            - '@request_stack'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_authorize_net }
