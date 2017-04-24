@@ -366,6 +366,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
         return 0 !== count($notEmptyValues)
             ? array_merge($notEmptyValues, $nullRequiredValues)
-               : null;
+            : null;
     }
 }
