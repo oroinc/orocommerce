@@ -33,8 +33,13 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation
         $table->setPrimaryKey(['id']);
         $table->addForeignKeyConstraint('oro_product', ['product_page_product'], ['id']);
         $table->addForeignKeyConstraint('oro_catalog_category', ['category_page_category'], ['id']);
-        $table->addForeignKeyConstraint('oro_segment', ['product_collection_segment'], ['id']);
-        $table->addForeignKeyConstraint('oro_test_content_node', ['node'], ['id']);
+        $table->addForeignKeyConstraint(
+            'oro_segment',
+            ['product_collection_segment'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint('oro_test_content_node', ['node'], ['id'], ['onDelete' => 'CASCADE']);
     }
 
     /**

@@ -50,7 +50,7 @@ class ProductCollectionSegmentHelper
      */
     public function getWebsiteIdsBySegment(Segment $segment): array
     {
-        if (!$this->webCatalogUsageProvider) {
+        if (!$this->isEnabled()) {
             return [];
         }
 
@@ -84,5 +84,13 @@ class ProductCollectionSegmentHelper
         }
 
         return $this->websiteIdsByWebCatalog[$webCatalog->getId()] ?? [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return (bool) $this->webCatalogUsageProvider;
     }
 }

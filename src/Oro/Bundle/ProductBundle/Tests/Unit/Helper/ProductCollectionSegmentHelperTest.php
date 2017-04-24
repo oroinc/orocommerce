@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Helper;
 
-use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
@@ -161,5 +161,17 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit_Framework_TestCase
         $contentVariant->setNode($contentNode);
 
         return $contentVariant;
+    }
+
+    public function testIsWebCatalogEnabledWhenFalse()
+    {
+        $this->helper = new ProductCollectionSegmentHelper($this->contentVariantSegmentProvider);
+
+        $this->assertFalse($this->helper->isEnabled());
+    }
+
+    public function testIsWebCatalogEnabledWhenTrue()
+    {
+        $this->assertTrue($this->helper->isEnabled());
     }
 }

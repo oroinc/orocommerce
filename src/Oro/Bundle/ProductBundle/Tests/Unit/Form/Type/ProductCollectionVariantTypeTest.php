@@ -69,8 +69,6 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
             ->willReturn($em);
 
         $segmentFilterBuilderType = new SegmentFilterBuilderType(
-            $this->entityProvider,
-            $this->queryDesignerManager,
             $this->doctrineHelper,
             $this->tokenStorage
         );

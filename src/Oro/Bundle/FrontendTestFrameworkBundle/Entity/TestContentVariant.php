@@ -41,8 +41,8 @@ class TestContentVariant
     /**
      * @var Segment
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment")
-     * @ORM\JoinColumn(name="product_collection_segment", referencedColumnName="id", nullable=true)
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="product_collection_segment", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     private $product_collection_segment;
 
@@ -50,7 +50,7 @@ class TestContentVariant
      * @var TestContentNode
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode")
-     * @ORM\JoinColumn(name="node", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="node", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     private $node;
 
