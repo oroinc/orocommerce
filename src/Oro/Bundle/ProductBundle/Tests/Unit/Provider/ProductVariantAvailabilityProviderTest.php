@@ -12,6 +12,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
+use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
+use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler;
+use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
@@ -19,7 +22,6 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,17 +37,11 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject */
     protected $query;
 
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
-
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrineHelper;
-
-    /** @var EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $enumValueProvider;
-
     /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $customFieldProvider;
+
+    /** @var EnumVariantFieldValueHandler|\PHPUnit_Framework_MockObject_MockObject */
+    protected $enumHandler;
 
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcher;
@@ -59,18 +55,19 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->any())
+        $doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->productRepository);
 
-        $this->doctrineHelper->expects($this->any())
+        $doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->willReturnCallback(
-                function (StubEnumValue $variantValue) {
+                function ($variantValue) {
                     return $variantValue->getId();
                 }
             );
@@ -79,11 +76,21 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->enumValueProvider = $this->getMockBuilder(EnumValueProvider::class)
+        /** @var EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject $enumValueProvider */
+        $enumValueProvider = $this->getMockBuilder(EnumValueProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $variantFieldValueHandlerRegistry = new ProductVariantFieldValueHandlerRegistry();
+        $boolHandler = new BooleanVariantFieldValueHandler();
+        $this->enumHandler = $this->getMockBuilder(EnumVariantFieldValueHandler::class)
+            ->setConstructorArgs([$doctrineHelper, $enumValueProvider])
+            ->setMethods(['getPossibleValues'])
+            ->getMock();
+        $variantFieldValueHandlerRegistry->addHandler($boolHandler);
+        $variantFieldValueHandlerRegistry->addHandler($this->enumHandler);
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
 
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
@@ -101,11 +108,27 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->query);
 
         $this->availabilityProvider = new ProductVariantAvailabilityProvider(
-            $this->doctrineHelper,
-            $this->enumValueProvider,
+            $doctrineHelper,
             $this->customFieldProvider,
-            $this->propertyAccessor,
-            $this->dispatcher
+            $propertyAccessor,
+            $this->dispatcher,
+            $variantFieldValueHandlerRegistry
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tearDown()
+    {
+        unset(
+            $availabilityProvider,
+            $productRepository,
+            $qb,
+            $query,
+            $customFieldProvider,
+            $enumHandler,
+            $dispatcher
         );
     }
 
@@ -336,6 +359,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'slim_fit' => [
                         'type' => 'boolean',
+                        'values' => [0 => false, 1 => true]
                     ],
                     'extended_field' => [
                         'type' => 'string',
@@ -391,87 +415,6 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                             'blue' => 'Blue',
                         ]
                     ],
-                    'size' => [
-                        'type' => 'enum',
-                        'values' => [
-                            's' => 'S',
-                            'm' => 'M',
-                            'l' => 'L',
-                            'xl' => 'XL',
-                        ]
-                    ],
-                    'slim_fit' => [
-                        'type' => 'boolean',
-                    ],
-                    'extended_field' => [
-                        'type' => 'string',
-                    ],
-                ],
-                'productData' => [
-                    'product1' => [
-                        'color' => 'red',
-                        'size' => 's',
-                        'slim_fit' => true,
-                    ],
-                    'product2' => [
-                        'color' => 'green',
-                        'size' => 's',
-                        'slim_fit' => true,
-                    ],
-                    'product3' => [
-                        'color' => 'green',
-                        'size' => 'm',
-                        'slim_fit' => true,
-                    ],
-                    'product4' => [
-                        'color' => 'green',
-                        'size' => 'm',
-                        'slim_fit' => false,
-                    ],
-                    'product5' => [
-                        'color' => 'red',
-                        'size' => 'xl',
-                        'slim_fit' => false,
-                    ],
-                ],
-                'variantParameters' => [
-                    'size' => 'm',
-                    'color' => 'green',
-                    'slim_fit' => false
-                ],
-                'variantFields' => [
-                    'color',
-                    'size',
-                    'slim_fit',
-                ],
-                'expected' => [
-                    'size' => [
-                        's' => false,
-                        'm' => true,
-                        'l' => false,
-                        'xl' => false,
-                    ],
-                    'color' => [
-                        'red' => false,
-                        'green' => true,
-                        'blue' => false,
-                    ],
-                    'slim_fit' => [
-                        0 => true,
-                        1 => false
-                    ]
-                ],
-            ],
-            'variant 3' => [
-                'variantsData' => [
-                    'color' => [
-                        'type' => 'enum',
-                        'values' => [
-                            'red' => 'Red',
-                            'green' => 'Green',
-                            'blue' => 'Blue',
-                        ]
-                    ],
                     'extended_field' => [
                         'type' => 'string',
                     ],
@@ -510,22 +453,18 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function configureMocks(array $variantsData, array $productData)
     {
-        $this->enumValueProvider->expects($this->any())
-            ->method('getEnumChoicesByCode')
-            ->willReturnCallback(
-                function ($enumCode) use ($variantsData) {
-                    $matches = [];
-                    preg_match('/(?<=product_).+(?=_\w+)/', $enumCode, $matches);
-                    $fieldName = $matches[0];
-
-                    return isset($variantsData[$fieldName]['values']) ? $variantsData[$fieldName]['values'] : [];
-                }
-            );
-
         $this->customFieldProvider->expects($this->any())
             ->method('getEntityCustomFields')
             ->with(Product::class)
             ->willReturn($variantsData);
+
+        $this->enumHandler->expects($this->any())
+            ->method('getPossibleValues')
+            ->willReturnCallback(
+                function ($fieldName) use ($variantsData) {
+                    return isset($variantsData[$fieldName]['values']) ? $variantsData[$fieldName]['values'] : [];
+                }
+            );
 
         $this->configureRepositoryMock($variantsData, $productData);
     }

@@ -73,6 +73,8 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     }
 
     /**
+     * @deprecated since 1.2 will be removed in 1.3. Use getEnabledRulesByMethod instead.
+     *
      * @param string $methodId
      *
      * @return ShippingMethodsConfigsRule[]

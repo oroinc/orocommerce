@@ -60,8 +60,9 @@ class ProductTaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                 ]
                             ],
                             'autocomplete_api_accessor' => [
-                                'entity_name' => 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
-                                'field_name' => 'code'
+                                'class' => 'oroui/js/tools/search-api-accessor',
+                                'label_field_name' => 'code',
+                                'search_handler_name' => 'oro_product_tax_code_entity_search'
                             ],
                             'save_api_accessor' => [
                                 'route' => 'oro_api_patch_product_tax_code',

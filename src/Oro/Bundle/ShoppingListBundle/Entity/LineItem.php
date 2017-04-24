@@ -78,7 +78,7 @@ class LineItem extends ExtendLineItem implements
     protected $product;
 
     /**
-     * @var Product
+     * @var Product|null
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
@@ -198,7 +198,7 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @return Product
+     * @return Product|null
      */
     public function getParentProduct()
     {

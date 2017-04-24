@@ -42,6 +42,15 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_7_DEFAULT_NAME = 'product-7.names.default';
     const PRODUCT_8_DEFAULT_NAME = 'product-8.names.default';
 
+    const PRODUCT_1_DEFAULT_SLUG_PROTOTYPE = 'product-1.slugPrototypes.default';
+    const PRODUCT_2_DEFAULT_SLUG_PROTOTYPE = 'product-2.slugPrototypes.default';
+    const PRODUCT_3_DEFAULT_SLUG_PROTOTYPE = 'product-3.slugPrototypes.default';
+    const PRODUCT_4_DEFAULT_SLUG_PROTOTYPE = 'product-4.slugPrototypes.default';
+    const PRODUCT_5_DEFAULT_SLUG_PROTOTYPE = 'product-5.slugPrototypes.default';
+    const PRODUCT_6_DEFAULT_SLUG_PROTOTYPE = 'product-6.slugPrototypes.default';
+    const PRODUCT_7_DEFAULT_SLUG_PROTOTYPE = 'product-7.slugPrototypes.default';
+    const PRODUCT_8_DEFAULT_SLUG_PROTOTYPE = 'product-8.slugPrototypes.default';
+
     /**
      * {@inheritdoc}
      */
@@ -95,25 +104,10 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']])
                 ->setStatus($item['status'])
                 ->setPrimaryUnitPrecision($unitPrecision)
-                ->setType($item['type']);
+                ->setType($item['type'])
+                ->setFeatured($item['featured']);
 
-            if (!empty($item['names'])) {
-                foreach ($item['names'] as $name) {
-                    $product->addName($this->createValue($name));
-                }
-            }
-
-            if (!empty($item['descriptions'])) {
-                foreach ($item['descriptions'] as $name) {
-                    $product->addDescription($this->createValue($name));
-                }
-            }
-
-            if (!empty($item['shortDescriptions'])) {
-                foreach ($item['shortDescriptions'] as $name) {
-                    $product->addShortDescription($this->createValue($name));
-                }
-            }
+            $this->addAdvancedValue($item, $product);
 
             $manager->persist($product);
             $this->addReference($product->getSku(), $product);
@@ -182,5 +176,36 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $familyRepository = $manager->getRepository(AttributeFamily::class);
 
         return $familyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+    }
+
+    /**
+     * @param array $item
+     * @param Product $product
+     */
+    private function addAdvancedValue(array $item, Product $product)
+    {
+        if (!empty($item['names'])) {
+            foreach ($item['names'] as $slugPrototype) {
+                $product->addName($this->createValue($slugPrototype));
+            }
+        }
+
+        if (!empty($item['slugPrototypes'])) {
+            foreach ($item['slugPrototypes'] as $slugPrototype) {
+                $product->addSlugPrototype($this->createValue($slugPrototype));
+            }
+        }
+
+        if (!empty($item['descriptions'])) {
+            foreach ($item['descriptions'] as $slugPrototype) {
+                $product->addDescription($this->createValue($slugPrototype));
+            }
+        }
+
+        if (!empty($item['shortDescriptions'])) {
+            foreach ($item['shortDescriptions'] as $slugPrototype) {
+                $product->addShortDescription($this->createValue($slugPrototype));
+            }
+        }
     }
 }

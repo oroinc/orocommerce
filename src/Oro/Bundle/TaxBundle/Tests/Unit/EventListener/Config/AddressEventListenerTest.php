@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\TaxBundle\EventListener\Config\AddressEventListener;
 use Oro\Bundle\TaxBundle\Factory\AddressModelFactory;
@@ -14,53 +15,42 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
     /** @var AddressEventListener */
     protected $listener;
 
-    /** @var  \PHPUnit_Framework_MockObject_MockObject|AddressModelFactory */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AddressModelFactory */
     protected $addressModelFactory;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+    protected $configManager;
 
     protected function setUp()
     {
-        $this->addressModelFactory = $this->getMockBuilder('Oro\Bundle\TaxBundle\Factory\AddressModelFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressModelFactory = $this->createMock(AddressModelFactory::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->listener = new AddressEventListener($this->addressModelFactory);
     }
 
     public function testFormPreSetWithoutKey()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
-
-        $event->expects($this->once())->method('getSettings')->willReturn([]);
-        $this->addressModelFactory->expects($this->never())->method($this->anything());
-        $event->expects($this->never())->method('setSettings');
+        $event = new ConfigSettingsUpdateEvent($this->configManager, []);
 
         $this->listener->formPreSet($event);
+        $this->assertEquals([], $event->getSettings());
     }
 
     public function testFormPreSet()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this
-            ->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $settings = [
+            'oro_tax___origin_address' => [
+                'value' => [
+                    'region_text' => 'Alabama',
+                    'postal_code' => '35004',
+                    'country' => 'US',
+                    'region' => 'US-AL',
+                ],
+            ],
+        ];
 
-        $event->expects($this->once())
-            ->method('getSettings')
-            ->willReturn(
-                [
-                    'oro_tax___origin_address' => [
-                        'value' => [
-                            'region_text' => 'Alabama',
-                            'postal_code' => '35004',
-                            'country' => 'US',
-                            'region' => 'US-AL',
-                        ],
-                    ],
-                ]
-            );
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
         $address = (new Address(['region_text' => 'Alabama', 'postal_code' => '35004']))
             ->setCountry(new Country('US'))
@@ -71,116 +61,64 @@ class AddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->willReturn($address);
 
-        $event
-            ->expects($this->once())
-            ->method('setSettings')
-            ->with(
-                $this->callback(
-                    function ($settings) use ($address) {
-                        $this->assertInternalType('array', $settings);
-                        $this->assertArrayHasKey('oro_tax___origin_address', $settings);
-                        $this->assertInternalType('array', $settings['oro_tax___origin_address']);
-                        $this->assertArrayHasKey('value', $settings['oro_tax___origin_address']);
-                        $value = $settings['oro_tax___origin_address']['value'];
-                        $this->assertInstanceOf('Oro\Bundle\TaxBundle\Model\Address', $value);
-                        $this->assertEquals($address, $value);
-
-                        return true;
-                    }
-                )
-            );
-
         $this->listener->formPreSet($event);
+
+        $this->assertEquals(['oro_tax___origin_address' => ['value' => $address]], $event->getSettings());
     }
 
     public function testBeforeSaveWithoutKey()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
+        $event = new ConfigSettingsUpdateEvent($this->configManager, []);
 
-        $event->expects($this->once())->method('getSettings')->willReturn([]);
         $this->addressModelFactory->expects($this->never())->method($this->anything());
-        $event->expects($this->never())->method('setSettings');
 
         $this->listener->beforeSave($event);
+        $this->assertEquals([], $event->getSettings());
     }
 
     public function testBeforeSaveNotModel()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
-
-        $event->expects($this->once())->method('getSettings')
-            ->willReturn(['oro_tax.origin_address' => ['value' => null]]);
+        $settings = ['value' => null];
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
-        $event->expects($this->never())->method('setSettings');
 
         $this->listener->beforeSave($event);
+        $this->assertEquals($settings, $event->getSettings());
     }
 
     public function testBeforeSave()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
-
         $country = new Country('US');
         $region = new Region('US-AL');
         $address = new Address(['region_text' => 'Alabama', 'postal_code' => '35004']);
         $address->setCountry($country);
         $address->setRegion($region);
 
-        $event->expects($this->once())->method('getSettings')
-            ->willReturn(['oro_tax.origin_address' => ['value' => $address]]);
+        $event = new ConfigSettingsUpdateEvent($this->configManager, ['value' => $address]);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 
-        $event->expects($this->once())->method('setSettings')->with(
-            $this->callback(
-                function ($settings) {
-                    $this->assertInternalType('array', $settings);
-                    $this->assertArrayHasKey('oro_tax.origin_address', $settings);
-                    $this->assertInternalType('array', $settings['oro_tax.origin_address']);
-                    $this->assertArrayHasKey('value', $settings['oro_tax.origin_address']);
-                    $this->assertInternalType('array', $settings['oro_tax.origin_address']['value']);
-                    $this->assertArrayHasKey('country', $settings['oro_tax.origin_address']['value']);
-                    $this->assertEquals('US', $settings['oro_tax.origin_address']['value']['country']);
-
-                    $this->assertArrayHasKey('region', $settings['oro_tax.origin_address']['value']);
-                    $this->assertEquals('US-AL', $settings['oro_tax.origin_address']['value']['region']);
-
-                    $this->assertArrayHasKey('region_text', $settings['oro_tax.origin_address']['value']);
-                    $this->assertEquals('Alabama', $settings['oro_tax.origin_address']['value']['region_text']);
-
-                    $this->assertArrayHasKey('postal_code', $settings['oro_tax.origin_address']['value']);
-                    $this->assertEquals('35004', $settings['oro_tax.origin_address']['value']['postal_code']);
-
-                    return true;
-                }
-            )
-        );
-
         $this->listener->beforeSave($event);
+
+        $this->assertEquals(['value' => [
+            'country' => 'US',
+            'region' => 'US-AL',
+            'region_text' => 'Alabama',
+            'postal_code' => '35004'
+        ]], $event->getSettings());
     }
 
     public function testBeforeSaveNoAddress()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
-
         $address ='some_value';
-
-        $event->expects($this->once())->method('getSettings')
-            ->willReturn(['oro_tax.origin_address' => ['value' => $address]]);
+        $settings = ['value' => $address];
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
         $this->addressModelFactory->expects($this->never())->method($this->anything());
 
-        $event->expects($this->never())->method('setSettings');
-
         $this->listener->beforeSave($event);
+
+        $this->assertEquals($settings, $event->getSettings());
     }
 }

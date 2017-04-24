@@ -2,231 +2,181 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\UPSBundle\Entity\ShippingService;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error;
+use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
-use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService;
+use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
-    
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $doctrine;
+    private $integrationShippingMethodFactory;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    private $shippingMethodValidator;
 
     /**
-     * @var RemoveUsedShippingService
+     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $constraint;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
-     */
-    protected $context;
+    private $context;
 
     /**
      * @var RemoveUsedShippingServiceValidator
      */
-    protected $validator;
+    private $validator;
+
+    /**
+     * @var RemoveUsedShippingServiceConstraint
+     */
+    private $constraint;
 
     protected function setUp()
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->registry = $this->createMock(ShippingMethodRegistry::class);
-
-        $this->constraint = new RemoveUsedShippingService();
+        $this->integrationShippingMethodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
+        $this->shippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);
 
-        $this->validator =
-            new RemoveUsedShippingServiceValidator($this->doctrine, $this->registry);
-        $this->validator->initialize($this->context);
-    }
-
-    public function testConfiguration()
-    {
-        static::assertEquals(
-            RemoveUsedShippingServiceValidator::ALIAS,
-            $this->constraint->validatedBy()
+        $this->validator = new RemoveUsedShippingServiceValidator(
+            $this->integrationShippingMethodFactory,
+            $this->shippingMethodValidator
         );
-        static::assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
+        $this->validator->initialize($this->context);
+
+        $this->constraint = new RemoveUsedShippingServiceConstraint();
     }
 
-    /**
-     * @param array $configured
-     * @param array $submitted
-     * @param int $violations
-     *
-     * @dataProvider validateDataProvider
-     */
-    public function testValidate($configured, $submitted, $violations)
+    public function testValidateNotUPSSettings()
     {
-        $value = $this->createShippingServices($submitted);
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint **/
-        $constraint = $this->getMockBuilder(Constraint::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context->expects(static::never())
+            ->method('buildViolation');
+        $this->validator->validate(new \stdClass(), $this->constraint);
+    }
 
-        $country = new Country('US');
-        $transport = (new UPSTransport())->setCountry($country);
-        $transportForm = $this->createForm($transport, 'upstransport');
-        $channel = $this->getEntity(Channel::class, ['id' => 1]);
-        $channelForm = $this->createForm($channel, 'upstransport');
-        
-        $transportForm->expects(static::once())
-            ->method('getParent')
-            ->willReturn($channelForm);
+    public function testValidateNoChannel()
+    {
+        $transport = $this->createUPSSettingsMock();
+        $this->context->expects(static::never())
+            ->method('buildViolation');
+        $this->validator->validate($transport, $this->constraint);
+    }
 
-        $this->context->expects(static::any())
-            ->method('getPropertyPath')
-            ->willReturn('[upstransport]');
-        $this->context->expects(static::any())
-            ->method('getRoot')
-            ->willReturn($transportForm);
+    public function testValidateNoErrors()
+    {
+        $channel = $this->createMock(Channel::class);
 
-        $upsShippingMethod = $this
-            ->getMockBuilder(UPSShippingMethod::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $transport = $this->createUPSSettingsMock();
+        $transport->expects(static::any())
+            ->method('getChannel')
+            ->willReturn($channel);
 
-        $this->registry->expects(static::once())
-            ->method('getShippingMethod')
+        $upsShippingMethod = $this->createMock(UPSShippingMethod::class);
+
+        $this->integrationShippingMethodFactory->expects(static::once())
+            ->method('create')
+            ->with($channel)
             ->willReturn($upsShippingMethod);
 
-        $repository1 = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository1->expects(static::any())
-            ->method('findBy')
-            ->willReturn([$this->createShippingMethodsConfigsRule($configured)]);
-
-        $enabledTypes = [];
-        foreach ($configured as $v) {
-            if ($v['enabled'] === true) {
-                $enabledTypes[] = $v['code'];
-            }
-        }
-        $repository2 = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository2->expects(static::any())
-            ->method('findBy')
-            ->willReturn($this->createShippingServices(array_diff($enabledTypes, $submitted), true));
-
-        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
-        $manager->expects(static::any())
-            ->method('getRepository')
-            ->willReturnMap([
-                ['OroShippingBundle:ShippingMethodConfig', $repository1],
-                ['OroUPSBundle:ShippingService', $repository2],
-            ]);
-
-        $this->doctrine->expects(static::any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-        
-        $this->context->expects(static::exactly($violations))
-            ->method('addViolation');
-
-        $this->validator->validate($value, $constraint);
-    }
-
-    /**
-     * @return array
-     */
-    public function validateDataProvider()
-    {
-        return [
-            'NotValid' => [
-                'configured' => [
-                    ['code' => '01', 'enabled' =>false],
-                    ['code' => '02', 'enabled' =>true],
-                    ['code' => '03', 'enabled' =>true],
-                ],
-                'submitted' => ['01', '02'],
-                'violations' => 1,
-            ],
-            'Valid' => [
-                'configured' => [
-                    ['code' => '01', 'enabled' =>false],
-                    ['code' => '02', 'enabled' =>true],
-                    ['code' => '03', 'enabled' =>true],
-                ],
-                'submitted' => ['02', '03'],
-                'violations' => 0
-            ]
-        ];
-    }
-
-    /**
-     * @param array $codes
-     * @param bool $toArray
-     * @return ArrayCollection
-     */
-    protected function createShippingServices($codes, $toArray = false)
-    {
-        $collection = new ArrayCollection();
-        foreach ($codes as $code) {
-            $service = (new ShippingService())->setCode($code);
-            $collection->add($service);
-        }
-        if ($toArray) {
-            return $collection->toArray();
-        } else {
-            return $collection;
-        }
-    }
-
-    /**
-     * @param array $codes
-     * @return ShippingMethodConfig
-     */
-    protected function createShippingMethodsConfigsRule($codes)
-    {
-        $method = new ShippingMethodConfig();
-        foreach ($codes as $code) {
-            $type = (new ShippingMethodTypeConfig())->setType($code['code'])->setEnabled($code['enabled']);
-            $method->addTypeConfig($type);
-        }
-        return $method;
-    }
-
-    /**
-     * @param object $data
-     * @param string $path
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createForm($data, $path)
-    {
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects(static::any())
-            ->method('offsetExists')
-            ->with($path)
+        $errorsCollection = $this->createMock(
+            Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface::class
+        );
+        $errorsCollection->expects(static::once())
+            ->method('isEmpty')
             ->willReturn(true);
 
-        $form->expects(static::any())
-            ->method('offsetGet')
-            ->with($path)
-            ->willReturn($form);
-        $form->expects(static::any())->method('getData')->willReturn($data);
-        return $form;
+        $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
+        $result->expects(static::any())
+            ->method('getErrors')
+            ->willReturn($errorsCollection);
+
+        $this->shippingMethodValidator->expects(static::once())
+            ->method('validate')
+            ->with($upsShippingMethod)
+            ->willReturn($result);
+
+        $this->context->expects(static::never())
+            ->method('buildViolation');
+
+        $this->validator->validate($transport, $this->constraint);
+    }
+
+    public function testValidateWithErrors()
+    {
+        $channel = $this->createMock(Channel::class);
+
+        $transport = $this->createUPSSettingsMock();
+        $transport->expects(static::any())
+            ->method('getChannel')
+            ->willReturn($channel);
+
+        $upsShippingMethod = $this->createMock(UPSShippingMethod::class);
+
+        $this->integrationShippingMethodFactory->expects(static::once())
+            ->method('create')
+            ->with($channel)
+            ->willReturn($upsShippingMethod);
+
+        $errorMessage = 'Error message about types';
+
+        $error = $this->createErrorMock();
+        $error->expects(static::once())
+            ->method('getMessage')
+            ->willReturn($errorMessage);
+
+        $errorsCollection = new Error\Collection\Doctrine\DoctrineShippingMethodValidatorResultErrorCollection();
+        $errorsCollection = $errorsCollection->createCommonBuilder()
+            ->addError($error)->getCollection();
+
+        $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
+        $result->expects(static::any())
+            ->method('getErrors')
+            ->willReturn($errorsCollection);
+
+        $this->shippingMethodValidator->expects(static::once())
+            ->method('validate')
+            ->with($upsShippingMethod)
+            ->willReturn($result);
+
+        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $violationBuilder->expects(static::once())
+            ->method('setTranslationDomain')
+            ->willReturn($violationBuilder);
+        $violationBuilder->expects(static::once())
+            ->method('atPath')
+            ->with('applicableShippingServices')
+            ->willReturn($violationBuilder);
+
+        $this->context->expects(static::once())
+            ->method('buildViolation')
+            ->with($errorMessage)
+            ->willReturn($violationBuilder);
+
+        $this->validator->validate($transport, $this->constraint);
+    }
+
+    /**
+     * @return UPSTransport|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createUPSSettingsMock()
+    {
+        return $this->createMock(UPSTransport::class);
+    }
+
+    /**
+     * @return Error\ShippingMethodValidatorResultErrorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createErrorMock()
+    {
+        return $this->createMock(Error\ShippingMethodValidatorResultErrorInterface::class);
     }
 }

@@ -122,3 +122,10 @@ services:
             index_2: 'OroProductBundle:ProductUnit:Datagrid/decimalQuantity.html.twig'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.inventory-grid, method: onBuildBefore }
+
+    oro_inventory.event_listener.product_flush:
+        class: Oro\Bundle\InventoryBundle\EventListener\ProductFlushEventListener
+        arguments:
+            - "@oro_inventory.manager.inventory_manager"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush, method: onFlush }

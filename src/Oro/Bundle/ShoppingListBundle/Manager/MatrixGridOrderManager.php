@@ -138,7 +138,11 @@ class MatrixGridOrderManager
 
             $values = [];
             foreach ($variantFields as $field) {
-                $values[] = '['.$this->variantAvailability->getVariantFieldScalarValue($variant, $field['name']).']';
+                $value = $this->variantAvailability->getVariantFieldScalarValue($variant, $field['name']);
+                if (is_bool($value)) {
+                    $value = ($value) ? '1' : '0';
+                }
+                $values[] = "[$value]";
             }
             $values[] = '[_product]';
 

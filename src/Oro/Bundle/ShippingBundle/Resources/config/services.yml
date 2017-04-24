@@ -31,7 +31,7 @@ services:
             - '@oro_shipping.factory.shipping_origin_model_factory'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_shipping.shipping_origin, method: beforeSave }
 
     oro_shipping.event_listener.form_view:
         class: Oro\Bundle\ShippingBundle\EventListener\FormViewListener
@@ -113,6 +113,12 @@ services:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+
+    oro_shipping.repository.shipping_method_type_config:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig'
 
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
@@ -462,3 +468,42 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
         arguments:
             - '@event_dispatcher'
+
+    oro_shipping.method_validator.result_factory_common_parameter_bag:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory'
+
+    oro_shipping.method_validator.result_error_factory_common_parameter_bag:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultErrorFactory'
+
+    oro_shipping.method_validator_result_error_collection_builder_common:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection\Builder\Common\Doctrine\DoctrineCommonShippingMethodValidatorResultErrorCollectionBuilder'
+
+    oro_shipping.method_validator.main:
+        parent: oro_shipping.method_validator.basic
+
+    oro_shipping.method_validator.basic:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Basic\BasicShippingMethodValidator'
+        arguments:
+            - '@oro_shipping.method_validator.result_factory_common_parameter_bag'
+
+    oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\EnabledShippingMethodsByRules\EnabledShippingMethodsByRulesShippingMethodValidatorDecorator'
+        public: false
+        decorates: oro_shipping.method_validator.main
+        arguments:
+            - '@oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules.inner'
+            - '@oro_shipping.method_validator.result_error_factory_common_parameter_bag'
+            - '@oro_shipping.method.provider.type.non_deletable.shipping_rules_method_type_identifier_provider'
+            - '@oro_shipping.method.provider.type.label.provider'
+            - '@translator'
+            - '@logger'
+
+    oro_shipping.method.provider.type.label.provider:
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Label\Type\BasicMethodTypeLabelsProvider'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.method.provider.type.non_deletable.shipping_rules_method_type_identifier_provider:
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\ShippingRulesNonDeletableMethodTypeIdentifiersProvider'
+        arguments:
+            - '@oro_shipping.repository.shipping_method_type_config'

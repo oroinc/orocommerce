@@ -41,6 +41,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE],
             ['attributeFamily', new AttributeFamily()],
             ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
+            ['featured', true, false],
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);

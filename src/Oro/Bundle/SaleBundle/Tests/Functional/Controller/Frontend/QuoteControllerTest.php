@@ -114,6 +114,12 @@ class QuoteControllerTest extends WebTestCase
                 'expected' => [
                     'data' => [
                         [
+                            'qid' => LoadQuoteData::QUOTE12,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE13,
+                        ],
+                        [
                             'qid' => LoadQuoteData::QUOTE2,
                         ],
                         [
@@ -142,6 +148,12 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'data' => [
+                        [
+                            'qid' => LoadQuoteData::QUOTE12,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE13,
+                        ],
                         [
                             'qid' => LoadQuoteData::QUOTE2,
                         ],
@@ -190,6 +202,12 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE11,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE12,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE13,
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE2,
@@ -474,6 +492,38 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
+            'customer1 user3 (CustomerUser:DEEP) not acceptable' => [
+                'input' => [
+                    'qid' => LoadQuoteData::QUOTE12,
+                    'login' => LoadUserData::ACCOUNT1_USER3,
+                    'password' => LoadUserData::ACCOUNT1_USER3,
+                ],
+                'expected' => [
+                    'createOrderButton' => false,
+                    'columns' => [
+                        [
+                            'label' => 'oro.frontend.sale.quote.qid.label',
+                            'property' => 'qid',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.po_number.label',
+                            'property' => 'po_number',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.ship_until.label',
+                            'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.paymentterm.entity_label',
+                            'property' => 'payment_term_7c4f1e8e.label',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -579,5 +629,49 @@ class QuoteControllerTest extends WebTestCase
 
         $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
         $this->assertSame($response->getStatusCode(), 302);
+    }
+
+    public function testActualQuantityNotEqualToOfferedValidation()
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER2);
+        /* @var $quote Quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE13);
+
+        $url = $this->getUrl(
+            'oro_frontend_action_operation_execute',
+            array_merge([
+                'operationName' => 'oro_checkout_frontend_quote_submit_to_order',
+                'entityId' => $quote->getId(),
+                'entityClass' => Quote::class,
+            ], ['route' => 'oro_sale_quote_frontend_view'])
+        );
+        $this->client->request('GET', $url, [], [], ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']);
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('redirectUrl', $data);
+        $this->assertTrue($data['success']);
+
+        $crawler = $this->client->request('POST', $data['redirectUrl']);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit(
+            $crawler->selectButton('Submit')->form(),
+            [
+                'oro_sale_quote_demand[demandProducts][0][quantity]'  => 50,
+                'oro_sale_quote_demand[demandProducts][1][quantity]'  => 50
+            ]
+        );
+
+        $this->assertCount(
+            1,
+            $crawler->filter('.notification__text:contains("Quantity should be equal to offered quantity")')
+        );
+        $this->assertCount(
+            1,
+            $crawler->filter(
+                '.notification__text:contains("Quantity should be grater than or equal to offered quantity")'
+            )
+        );
     }
 }

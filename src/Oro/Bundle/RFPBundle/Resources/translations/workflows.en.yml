@@ -23,26 +23,40 @@ oro:
             transition:
                 __start__:
                     label: 'Open'
+                    warning_message: ''
                 process_transition:
                     label: 'Mark as Processed'
+                    warning_message: ''
                 request_more_information_transition:
                     label: 'Request More Information'
+                    warning_message: ''
+                    attribute:
+                        notes:
+                            label: 'Notes'
                 decline_transition:
                     label: 'Decline'
+                    warning_message: ''
                 delete_transition:
                     label: 'Delete'
+                    warning_message: ''
                 cancel_transition:
                     label: 'Cancel'
+                    warning_message: ''
                 info_provided_transition:
                     label: 'Info Provided'
+                    warning_message: ''
                 reprocess_transition:
                     label: 'Reprocess'
+                    warning_message: ''
                 undelete_to_cancelled_transition:
                     label: 'Undelete'
+                    warning_message: ''
                 undelete_to_open_transition:
                     label: 'Undelete'
+                    warning_message: ''
                 undelete_to_more_information_requested_transition:
                     label: 'Undelete'
+                    warning_message: ''
 
         b2b_rfq_frontoffice_default:
             label: 'RFQ Frontoffice'
@@ -59,15 +73,25 @@ oro:
             transition:
                 __start__:
                     label: 'Submit'
+                    warning_message: ''
                 more_information_requested_transition:
                     label: 'Request More Information'
+                    warning_message: ''
                 provide_more_information_transition:
                     label: 'Provide More Information'
+                    warning_message: ''
+                    attribute:
+                        notes:
+                            label: 'Notes'
                 cancel_transition:
                     label: 'Cancel'
+                    warning_message: ''
                 decline_transition:
                     label: 'Decline'
+                    warning_message: ''
                 resubmit_transition:
                     label: 'Resubmit'
+                    warning_message: ''
                 reopen_transition:
                     label: 'Reopen'
+                    warning_message: ''

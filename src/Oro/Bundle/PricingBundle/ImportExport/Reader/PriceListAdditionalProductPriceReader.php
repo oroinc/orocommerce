@@ -11,9 +11,15 @@ use Oro\Bundle\ImportExportBundle\Reader\IteratorBasedReader;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\ImportExport\Reader\Iterator\AdditionalProductPricesIterator;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class PriceListAdditionalProductPriceReader extends IteratorBasedReader
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var int
      */
@@ -27,14 +33,17 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
     /**
      * @param ContextRegistry $contextRegistry
      * @param ManagerRegistry $registry
+     * @param ShardManager $shardManager
      */
     public function __construct(
         ContextRegistry $contextRegistry,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        ShardManager $shardManager
     ) {
         parent::__construct($contextRegistry);
 
         $this->registry = $registry;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -68,7 +77,7 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
             $priceList = $em->getReference('OroPricingBundle:PriceList', $this->priceListId);
 
             return new AdditionalProductPricesIterator(
-                $repository->getProductsWithoutPrices($priceList),
+                $repository->getProductsWithoutPrices($this->shardManager, $priceList),
                 $priceList
             );
         } else {

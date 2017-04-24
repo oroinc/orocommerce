@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@setOption':
+            id: breadcrumbs
+            optionName: breadcrumbs
+            optionValue: '=data["web_catalog_breadcrumbs"].getItems()'
+    conditions: 'context["web_catalog_id"] != null'

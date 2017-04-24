@@ -7,6 +7,9 @@ use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPayPalMethodsConfi
 use Oro\Bundle\PayPalBundle\Tests\Functional\Stub\Method\ExpressCheckoutMethodStub;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
+/**
+ * @group CommunityEdition
+ */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
     /**

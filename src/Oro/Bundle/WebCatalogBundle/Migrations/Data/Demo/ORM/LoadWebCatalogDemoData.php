@@ -6,6 +6,11 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Yaml\Yaml;
+
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
@@ -19,11 +24,10 @@ use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Yaml\Yaml;
 
 class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -60,7 +64,7 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
     {
         $webCatalog = $this->loadWebCatalogData($manager);
         $this->enableWebCatalog($webCatalog);
-        $this->scheduleCacheCalculation($webCatalog);
+        $this->generateCache($webCatalog);
     }
 
     /**
@@ -265,6 +269,29 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
                 }
             }
             $node->addContentVariant($variant);
+        }
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     */
+    protected function generateCache(WebCatalog $webCatalog)
+    {
+        $registry = $this->container->get('doctrine');
+        $scopeMatcher = $this->container->get('oro_web_catalog.scope_matcher');
+        $dumper = $this->container->get('oro_web_catalog.cache.dumper.content_node_tree_dumper');
+
+        /** @var ContentNodeRepository $contentNodeRepo */
+        $contentNodeRepo = $registry
+            ->getManagerForClass(ContentNode::class)
+            ->getRepository(ContentNode::class);
+
+        $rootContentNode = $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);
+
+        $scopes = $scopeMatcher->getUsedScopes($webCatalog);
+
+        foreach ($scopes as $scope) {
+            $dumper->dump($rootContentNode, $scope);
         }
     }
 }

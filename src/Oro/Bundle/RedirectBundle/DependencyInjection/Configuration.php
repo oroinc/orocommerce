@@ -19,6 +19,10 @@ class Configuration implements ConfigurationInterface
     const STRATEGY_NEVER = 'never';
     const STRATEGY_ASK = 'ask';
 
+    const CANONICAL_URL_SECURITY_TYPE = 'canonical_url_security_type';
+    const INSECURE = 'insecure';
+    const SECURE = 'secure';
+
     /**
      * {@inheritDoc}
      */
@@ -33,7 +37,8 @@ class Configuration implements ConfigurationInterface
             [
                 self::ENABLE_DIRECT_URL => ['value' => true],
                 self::CANONICAL_URL_TYPE => ['value' => self::SYSTEM_URL],
-                self::REDIRECT_GENERATION_STRATEGY => ['value' => self::STRATEGY_ASK]
+                self::REDIRECT_GENERATION_STRATEGY => ['value' => self::STRATEGY_ASK],
+                self::CANONICAL_URL_SECURITY_TYPE => ['value' => self::SECURE]
             ]
         );
 

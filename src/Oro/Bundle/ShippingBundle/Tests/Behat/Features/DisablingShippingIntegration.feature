@@ -1,4 +1,4 @@
-@fixture-../../../../../FlatRateShippingBundle/Tests/Behat/Features/Fixtures/FlatRateIntegration.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-ShippingMethodsConfigsRule.yml
 Feature: Shipping Method Configurations disappear when removing integration
   #If integration will be disabled, then during saving we need to inform (show pop-up) admin about existing shipping rules which will be disabled/modified after this integration will be disabled. We also have to provide link to the grid with list of such rules in this pop-up.
@@ -37,7 +37,7 @@ Feature: Shipping Method Configurations disappear when removing integration
     And I click on "Deactivate Integration Confirm Button"
     And I go to System/ Shipping Rules
     And I should see New Shipping Rule in grid with following data:
-      |Configurations|Flat Rate New (Price: $25.00)             Disabled|
+      |Configurations|Flat Rate New (Price: $25.00) Disabled|
     And I click edit New Shipping Rule in grid
     And I should see Disabled Shipping Method Configuration
     And I click Logout in user menu

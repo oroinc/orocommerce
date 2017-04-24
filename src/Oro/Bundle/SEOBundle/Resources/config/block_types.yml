@@ -1,0 +1,8 @@
+services:
+    oro_seo.block_type.localized_links_container:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - ['setOptionsConfig', [{linkItems: {required: true}}]]
+            - [setName, ['seo_localized_links_container']]
+        tags:
+             - { name: layout.block_type, alias: seo_localized_links_container }

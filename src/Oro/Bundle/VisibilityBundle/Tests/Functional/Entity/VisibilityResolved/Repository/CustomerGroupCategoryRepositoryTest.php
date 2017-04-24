@@ -282,6 +282,8 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function getParentCategoryVisibilitiesDataProvider()
     {
@@ -355,6 +357,14 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
                     'visibility_id' => 'category_1_2_3_4.visibility.customer_group.group1',
                     'parent_visibility_id' => 'category_1_2_3.visibility.customer_group.group1',
                     'parent_visibility' => CustomerGroupCategoryVisibility::PARENT_CATEGORY,
+                    'category_id' => 'category_1_2_3_4',
+                    'parent_category_id' => 'category_1_2_3',
+                    'parent_category_resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                ],
+                [
+                    'visibility_id' => 'category_1_2_3_4.visibility.customer_group.anonymous',
+                    'parent_visibility_id' => 'category_1_2_3.visibility.customer_group.anonymous',
+                    'parent_visibility' => CustomerGroupCategoryVisibility::HIDDEN,
                     'category_id' => 'category_1_2_3_4',
                     'parent_category_id' => 'category_1_2_3',
                     'parent_category_resolved_visibility' => CategoryVisibilityResolved::VISIBILITY_VISIBLE,
