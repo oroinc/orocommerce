@@ -30,6 +30,7 @@ class ProductCollectionVariantType extends AbstractType
                     'label' => 'oro.product.content_variant.field.product_collection.label',
                     'segment_entity' => Product::class,
                     'segment_columns' => ['id', 'sku'],
+                    'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
                     'required' => true,
                     'constraints' => [new NotBlank()]
                 ]

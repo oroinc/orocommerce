@@ -49,9 +49,12 @@ oro:
             product_page.label: Product Page
             product_collection.label: Product Collection
             field:
-                product_collection.label: Filters
+                product_collection:
+                    label: Filter
+                    tooltip: Use Filter for Adding Products to the Variant
             ui:
                 apply_query: Apply the Query
+                filtered_products: Filtered Products
 
         type:
             simple: Simple
