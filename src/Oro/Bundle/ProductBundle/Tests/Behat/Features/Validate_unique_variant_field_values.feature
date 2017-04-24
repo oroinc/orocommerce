@@ -205,7 +205,6 @@ Feature: Validate unique variant field values when changing simple products or e
     And I click Remove Brand in grid
     Then I should see "Are you sure you want to delete this field?"
     And I click "Yes"
-    And I have to wait for ajax
     Then I should see "Cannot remove field because it's used as a variant field in the following configurable products: shirt_101" error message
     Then I should see Brand in grid
 

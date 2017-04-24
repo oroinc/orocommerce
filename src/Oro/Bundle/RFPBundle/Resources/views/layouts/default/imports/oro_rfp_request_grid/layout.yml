@@ -14,8 +14,23 @@ layout:
             optionValue: frontend-requests-grid
 
         - '@add':
+            id: __additional_views_container
+            parentId: __datagrid_views_toolbar
+            blockType: container
+
+        - '@add':
             id: __button_container_create_new_quote
-            parentId: page_title_container
+            parentId: __additional_views_container
             blockType: combined_buttons
             options:
                 buttons: '=data["buttons"].getAll()'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.gridViewsOptions.text
+            optionValue: 'oro.rfp.request.label'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.gridViewsOptions.hideTitle
+            optionValue: '.page-title-wrapper'

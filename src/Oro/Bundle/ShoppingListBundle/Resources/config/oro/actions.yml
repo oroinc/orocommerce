@@ -215,6 +215,7 @@ operations:
         frontend_options:
             confirmation:
                 title: oro.frontend.shoppinglist.messages.delete_title
+                component: oroui/js/delete-confirmation
 
     oro_shoppinglist_delete_line_item:
         extends: DELETE

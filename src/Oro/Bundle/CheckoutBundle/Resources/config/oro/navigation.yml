@@ -1,4 +1,21 @@
 navigation:
+    menu_config:
+        items:
+            oro_checkout_frontend_open_orders:
+                label: 'oro.checkout.open_order.plural_label'
+                route: 'oro_checkout_frontend_open_orders'
+                position: 65
+                extras:
+                    condition: 'config_value("oro_checkout.frontend_open_orders_separate_page")'
+        tree:
+            frontend_menu:
+                children:
+                    oro_customer_menu_customer_user_index:
+                        children:
+                            oro_checkout_frontend_open_orders: ~
+            oro_customer_menu:
+                children:
+                    oro_checkout_frontend_open_orders: ~
     titles:
         oro_checkout_frontend_checkout: '%step_label% - oro.checkout.open_order.label'
         oro_checkout_frontend_open_orders: 'oro.checkout.open_order.plural_label'
