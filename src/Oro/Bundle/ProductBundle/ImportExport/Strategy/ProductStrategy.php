@@ -251,7 +251,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         return parent::processEntity($entity, $isFullData, $isPersistNew, $itemData, $searchContext, $entityIsRelation);
     }
 
-
     /**
      * Get additional search parameter name to find only related entities
      *
@@ -273,50 +272,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     }
 
     /**
-     * Combines identity values for entity search on local new entities storage
-     * (which are not yet saved in db)
-     * from search context and not empty identity fields or required identity fields
-     * which could be null if configured.
-     * At least one not null and not empty value must be present for search
-     *
-     * @param       $entity
-     * @param       $entityClass
-     * @param array $searchContext
-     *
-     * @return array|null
-     */
-    protected function combineIdentityValues($entity, $entityClass, array $searchContext)
-    {
-        if (is_a($entityClass, $this->localizedFallbackValueClass, true)) {
-            return null;
-        }
-
-        $identityValues = $searchContext;
-        $identityValues += $this->fieldHelper->getIdentityValues($entity);
-        $notEmptyValues     = [];
-        $nullRequiredValues = [];
-        foreach ($identityValues as $fieldName => $value) {
-            if (null !== $value) {
-                if ('' !== $value) {
-                    if ($value instanceof Product) {
-                        $notEmptyValues[$fieldName] = $value->getSku();
-                    } elseif (is_object($value)) {
-                        $notEmptyValues[$fieldName] = $this->databaseHelper->getIdentifier($value);
-                    } else {
-                        $notEmptyValues[$fieldName] = $value;
-                    }
-                }
-            } elseif ($this->fieldHelper->isRequiredIdentityField($entityClass, $fieldName)) {
-                $nullRequiredValues[$fieldName] = null;
-            }
-        }
-
-        return 0 !== count($notEmptyValues)
-            ? array_merge($notEmptyValues, $nullRequiredValues)
-            : null;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function importExistingEntity($entity, $existingEntity, $itemData = null, array $excludedFields = [])
@@ -326,5 +281,47 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);
+    }
+
+    /**
+     * Validate unitPrecisions array data before model validation because model merges same codes
+     * {@inheritdoc}
+     */
+    protected function validateAndUpdateContext($entity)
+    {
+        $itemData = $this->context->getValue('itemData');
+        $unitPrecisions = [];
+
+        if (isset($itemData['unitPrecisions'])) {
+            $unitPrecisions = $itemData['unitPrecisions'];
+        }
+
+        if (isset($itemData['primaryUnitPrecision'])) {
+            $unitPrecisions[] = $itemData['primaryUnitPrecision'];
+        }
+
+        $usedCodes = [];
+
+        foreach ($unitPrecisions as $unitPrecision) {
+            if (!isset($unitPrecision['unit']['code'])) {
+                continue;
+            }
+
+            $code = $unitPrecision['unit']['code'];
+
+            if (in_array($code, $usedCodes, true)) {
+                $error = $this->translator->trans('oro.product.productunitprecision.duplicate_units_import_error');
+                $this->context->incrementErrorEntriesCount();
+                $this->strategyHelper->addValidationErrors([$error], $this->context);
+
+                $this->doctrineHelper->getEntityManager($entity)->detach($entity);
+
+                return null;
+            }
+
+            $usedCodes[] = $code;
+        }
+
+        return parent::validateAndUpdateContext($entity);
     }
 }

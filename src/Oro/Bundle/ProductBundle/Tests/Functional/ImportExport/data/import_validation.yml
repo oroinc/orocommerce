@@ -47,3 +47,8 @@ type:
     contextErrors:
         - "Error in row #2. Type: The value you selected is not a valid choice."
         - "Error in row #3. Type: This value should not be blank."
+
+precision_unit_with_duplicate_code:
+    fileName: precision_unit_with_duplicate_code.csv
+    contextErrors:
+        - "Error in row #1. Each product unit code should be unique"
