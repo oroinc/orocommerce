@@ -4,7 +4,35 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-price'
     }) %}
-    {{ block('product_price_container') }}
+    {% if product.prices is defined %}
+        {% set productPrices = product.prices %}
+    {% endif %}
+    {% do block|merge_context({
+        productPrices: productPrices
+    }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oropricing/js/app/views/base-product-prices-view',
+            changeQuantity: true,
+            modelAttr: {
+                prices: productPrices
+            }
+        },
+        '~class': ' product-price'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="product-price__hint"
+             data-name="prices-hint"
+             data-placement="bottom"
+             data-close="false"
+             data-trigger="hover"
+             data-container="body"
+             data-class="prices-hint-content">
+            {{ block_widget(block) }}
+        </div>
+    </div>
 {% endblock %}
 
 {% block __oro_product_price__product_price_widget %}

@@ -165,6 +165,7 @@ workflows:
                                 isEditEnabled: true
                                 addressType: 'billing'
                                 required: true
+                                translation_domain: messages
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
@@ -201,6 +202,7 @@ workflows:
                                 addressType: 'shipping'
                                 required: true
                                 disabled: $disallow_shipping_address_edit
+                                translation_domain: messages
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~

@@ -72,7 +72,7 @@ $shopping-list-dropdown-radio-width: 20px;
         display: block;
         margin-top: 4px;
 
-        color: get-color('additional', 'dark');
+        color: darken(get-color('additional', 'middle'),20%);
 
         &__item {
             display: block;

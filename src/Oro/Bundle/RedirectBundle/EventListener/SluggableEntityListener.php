@@ -30,6 +30,11 @@ class SluggableEntityListener
     private $configManager;
 
     /**
+     * @var array
+     */
+    private $messages = [];
+
+    /**
      * @param MessageFactoryInterface $messageFactory
      * @param MessageProducerInterface $messageProducer
      * @param ConfigManager $configManager
@@ -64,6 +69,15 @@ class SluggableEntityListener
         foreach ($this->getChangedSluggableEntities($unitOfWork) as $changedSluggableEntity) {
             $this->scheduleEntitySlugCalculation($changedSluggableEntity);
         }
+    }
+
+    public function postFlush()
+    {
+        foreach ($this->messages as $message) {
+            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+        }
+
+        $this->messages = [];
     }
 
     /**
@@ -129,8 +143,7 @@ class SluggableEntityListener
     protected function scheduleEntitySlugCalculation(SluggableInterface $entity)
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
-            $message = $this->messageFactory->createMessage($entity);
-            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
+            $this->messages[] = $this->messageFactory->createMessage($entity);
         }
     }
 }

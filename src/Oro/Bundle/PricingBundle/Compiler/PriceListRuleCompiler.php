@@ -22,6 +22,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      * @var array
      */
     protected static $fieldsOrder = [
+        'id',
         'product',
         'priceList',
         'unit',
@@ -173,6 +174,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         }
 
         $this->qbSelectPart = [
+            'id' => 'UUID()',
             'product' => $rootAlias.'.id',
             'productSku' => $rootAlias.'.sku',
             'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),

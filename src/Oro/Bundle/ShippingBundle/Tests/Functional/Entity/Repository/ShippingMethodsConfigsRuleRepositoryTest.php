@@ -113,12 +113,6 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $this->assertEquals($this->getEntitiesIds($expectedRules), $this->getEntitiesIds($actualRules));
     }
 
-    public function testConfigsWithEnabledRuleAndMethod()
-    {
-        $rulesWithMethod = $this->repository->getConfigsWithEnabledRuleAndMethod($this->getFlatRateIdentifier());
-        static::assertCount(8, $rulesWithMethod);
-    }
-
     public function testGetRulesWithoutShippingMethods()
     {
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
@@ -142,28 +136,74 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     public function testGetRulesByMethod()
     {
         $rulesByExistingMethod = $this->repository->getRulesByMethod($this->getFlatRateIdentifier());
-        $rulesByNotExistingMethod = $this->repository->getRulesByMethod('not_existing_method');
-
-        static::assertCount(9, $rulesByExistingMethod);
-        static::assertCount(0, $rulesByNotExistingMethod);
-    }
-
-    public function testGetEnabledRulesByMethod()
-    {
-        $actualRules = $this->repository->getEnabledRulesByMethod($this->getFlatRateIdentifier());
 
         $expectedRuleReferences = [
             'shipping_rule.1',
             'shipping_rule.2',
+            'shipping_rule.3',
             'shipping_rule.4',
             'shipping_rule.5',
             'shipping_rule.6',
             'shipping_rule.7',
             'shipping_rule.9',
+            'shipping_rule_without_type_configs',
+            'shipping_rule_with_disabled_type_configs',
         ];
+        foreach ($expectedRuleReferences as $expectedRuleReference) {
+            static::assertContains($this->getReference($expectedRuleReference), $rulesByExistingMethod);
+        }
+
+        $rulesByNotExistingMethod = $this->repository->getRulesByMethod('not_existing_method');
+        static::assertCount(0, $rulesByNotExistingMethod);
+    }
+
+    /**
+     * @dataProvider getEnabledRulesByMethodDataProvider
+     *
+     * @param string[] $expectedRuleReferences
+     */
+    public function testGetEnabledRulesByMethod(array $expectedRuleReferences)
+    {
+        $actualRules = $this->repository->getEnabledRulesByMethod($this->getFlatRateIdentifier());
+
         foreach ($expectedRuleReferences as $expectedRuleReference) {
             static::assertContains($this->getReference($expectedRuleReference), $actualRules);
         }
+    }
+
+    /**
+     * @dataProvider getEnabledRulesByMethodDataProvider
+     *
+     * @param string[] $expectedRuleReferences
+     */
+    public function testConfigsWithEnabledRuleAndMethod(array $expectedRuleReferences)
+    {
+        $actualRules = $this->repository->getConfigsWithEnabledRuleAndMethod($this->getFlatRateIdentifier());
+        foreach ($expectedRuleReferences as $expectedRuleReference) {
+            static::assertContains($this->getReference($expectedRuleReference), $actualRules);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getEnabledRulesByMethodDataProvider()
+    {
+        return [
+            [
+                'expectedRuleReferences' => [
+                    'shipping_rule.1',
+                    'shipping_rule.2',
+                    'shipping_rule.4',
+                    'shipping_rule.5',
+                    'shipping_rule.6',
+                    'shipping_rule.7',
+                    'shipping_rule.9',
+                    'shipping_rule_without_type_configs',
+                    'shipping_rule_with_disabled_type_configs',
+                ]
+            ]
+        ];
     }
 
     /**
