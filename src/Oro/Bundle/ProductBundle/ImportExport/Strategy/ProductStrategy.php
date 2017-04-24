@@ -13,6 +13,10 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * After restoring method complexity raised, class already refactored in master
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements ClosableInterface
 {
     /**
@@ -105,6 +109,12 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
         /** @var Product $entity */
         $entity = parent::afterProcessEntity($entity);
+        //Clear unitPrecision collection items with unit null
+        foreach ($entity->getUnitPrecisions() as $unitPrecision) {
+            if (!$unitPrecision->getProductUnitCode()) {
+                $entity->getUnitPrecisions()->removeElement($unitPrecision);
+            }
+        }
         $this->processedProducts[$entity->getSku()] = $entity;
 
         return $entity;
@@ -323,5 +333,39 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         return parent::validateAndUpdateContext($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function combineIdentityValues($entity, $entityClass, array $searchContext)
+    {
+        if (is_a($entityClass, $this->localizedFallbackValueClass, true)) {
+            return null;
+        }
+
+        $identityValues = $searchContext;
+        $identityValues += $this->fieldHelper->getIdentityValues($entity);
+        $notEmptyValues = [];
+        $nullRequiredValues = [];
+        foreach ($identityValues as $fieldName => $value) {
+            if (null !== $value) {
+                if ('' !== $value) {
+                    if ($value instanceof Product) {
+                        $notEmptyValues[$fieldName] = $value->getSku();
+                    } elseif (is_object($value)) {
+                        $notEmptyValues[$fieldName] = $this->databaseHelper->getIdentifier($value);
+                    } else {
+                        $notEmptyValues[$fieldName] = $value;
+                    }
+                }
+            } elseif ($this->fieldHelper->isRequiredIdentityField($entityClass, $fieldName)) {
+                $nullRequiredValues[$fieldName] = null;
+            }
+        }
+
+        return 0 !== count($notEmptyValues)
+            ? array_merge($notEmptyValues, $nullRequiredValues)
+               : null;
     }
 }
