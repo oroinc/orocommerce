@@ -157,7 +157,8 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($segment)
             ->willReturn($this->createGenerator($removedProductIds));
 
-        $expectedJobName = Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT . ':2:' . md5(implode([1, 777]));
+        $expectedJobName = Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT
+            . ':' . md5($segment->getDefinition()) . ':' . md5(implode([1, 777]));
         $message->expects($this->any())
             ->method('getMessageId')
             ->willReturn('msg-001');

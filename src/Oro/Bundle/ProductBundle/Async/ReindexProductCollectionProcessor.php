@@ -175,7 +175,7 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
         $jobKey = sprintf(
             '%s:%s',
             Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
-            $segment->getId() . ':' . md5(implode($websiteIds))
+            md5($segment->getDefinition()) . ':' . md5(implode($websiteIds))
         );
 
         return $jobKey;

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
@@ -42,11 +43,12 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $segment = $this->getEntity(Segment::class, ['id' => $segmentId]);
         $websiteIds = [333];
 
-        $message = $this->factory->createMessage($segment, $websiteIds);
+        $message = $this->factory->createMessage($websiteIds, $segment);
         $this->assertEquals(
             [
                 SegmentMessageFactory::ID => $segmentId,
-                SegmentMessageFactory::WEBSITE_IDS => $websiteIds
+                SegmentMessageFactory::WEBSITE_IDS => $websiteIds,
+                SegmentMessageFactory::DEFINITION => null
             ],
             $message
         );
@@ -68,6 +70,35 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
             SegmentMessageFactory::WEBSITE_IDS => [333],
         ]);
         $this->assertSame($expectedSegment, $segment);
+    }
+
+    public function testGetSegmentFromMessageWithDefinition()
+    {
+        $expectedSegment = new Segment();
+        $expectedSegment->setEntity(Product::class);
+        $expectedSegment->setDefinition('segment definition');
+
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+
+        $segment = $this->factory->getSegmentFromMessage([
+            SegmentMessageFactory::ID => null,
+            SegmentMessageFactory::WEBSITE_IDS => [333],
+            SegmentMessageFactory::DEFINITION => 'segment definition'
+        ]);
+
+        $this->assertEquals($expectedSegment, $segment);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Segment Id or Segment Definition should be present in message.
+     */
+    public function testGetSegmentFromMessageWithoutSegmentAndDefinition()
+    {
+        $this->factory->getSegmentFromMessage([
+            SegmentMessageFactory::WEBSITE_IDS => [888]
+        ]);
     }
 
     public function testGetWebsiteIdsFromMessage()
@@ -123,28 +154,41 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         return [
             'without required data' => [
                 'data' => [],
-                'message' => 'The required options "id", "website_ids" are missing.',
+                'message' => 'The required option "website_ids" is missing.',
             ],
             'with extra data' => [
                 'data' => [
                     SegmentMessageFactory::ID => 777,
                     SegmentMessageFactory::WEBSITE_IDS => [888],
+                    SegmentMessageFactory::DEFINITION => 'segment definition',
                     'someExtraData' => 888,
                 ],
-                'message' => 'The option "someExtraData" does not exist. Defined options are: "id", "website_ids".',
+                'message' => 'The option "someExtraData" does not exist.'
+                    . ' Defined options are: "definition", "id", "website_ids".'
             ],
             'wrong data type for id' => [
                 'data' => [
                     SegmentMessageFactory::ID => 'someString',
                     SegmentMessageFactory::WEBSITE_IDS => [888],
+                    SegmentMessageFactory::DEFINITION => 'segment definition'
                 ],
-                'message' => 'The option "id" with value "someString" is expected to be of type "int",'
+                'message' => 'The option "id" with value "someString" is expected to be of type "null" or "int",'
                     .' but is of type "string".',
+            ],
+            'wrong data type for definition' => [
+                'data' => [
+                    SegmentMessageFactory::ID => 42,
+                    SegmentMessageFactory::WEBSITE_IDS => [888],
+                    SegmentMessageFactory::DEFINITION => true
+                ],
+                'message' => 'The option "definition" with value true is expected to be of type "null" or "string",'
+                    .' but is of type "boolean".',
             ],
             'wrong data type for website_id' => [
                 'data' => [
-                    SegmentMessageFactory::ID => 777,
+                    SegmentMessageFactory::ID => null,
                     SegmentMessageFactory::WEBSITE_IDS => 'someString',
+                    SegmentMessageFactory::DEFINITION => 'segment definition'
                 ],
                 'message' => 'The option "website_ids" with value "someString" is expected to be of type "array",'
                     .' but is of type "string".',

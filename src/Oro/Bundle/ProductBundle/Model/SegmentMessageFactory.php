@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Model;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SegmentBundle\Entity\Repository\SegmentRepository;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -16,6 +17,7 @@ class SegmentMessageFactory
 {
     const ID = 'id';
     const WEBSITE_IDS = 'website_ids';
+    const DEFINITION = 'definition';
 
     /**
      * @var OptionsResolver
@@ -41,15 +43,17 @@ class SegmentMessageFactory
     }
 
     /**
-     * @param Segment $segment
      * @param array $websiteIds
+     * @param string|null $definition
+     * @param Segment|null $segment
      * @return array
      */
-    public function createMessage(Segment $segment, array $websiteIds)
+    public function createMessage(array $websiteIds, Segment $segment = null, $definition = null)
     {
         return $this->getResolvedData([
-            self::ID => $segment->getId(),
+            self::ID => $segment ? $segment->getId() : null,
             self::WEBSITE_IDS => $websiteIds,
+            self::DEFINITION => $definition
         ]);
     }
 
@@ -62,15 +66,27 @@ class SegmentMessageFactory
     {
         $data = $this->getResolvedData($data);
 
-        $segment = $this->getSegmentRepository()->find($data[self::ID]);
-        if (!$segment) {
-            throw new InvalidArgumentException(sprintf('No segment exists with id "%d"', $data[self::ID]));
+        if (!empty($data[self::ID])) {
+            $segment = $this->getSegmentRepository()->find($data[self::ID]);
+            if (!$segment) {
+                throw new InvalidArgumentException(sprintf('No segment exists with id "%d"', $data[self::ID]));
+            }
+        } elseif (array_key_exists(self::DEFINITION, $data) && $data[self::DEFINITION]) {
+            $segment = new Segment();
+            $segment->setEntity(Product::class);
+            $segment->setDefinition($data[self::DEFINITION]);
+        } else {
+            throw new InvalidArgumentException('Segment Id or Segment Definition should be present in message.');
         }
 
         return $segment;
     }
 
-    public function getWebsiteIdsFromMessage($data)
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function getWebsiteIdsFromMessage(array $data)
     {
         $data = $this->getResolvedData($data);
 
@@ -84,13 +100,19 @@ class SegmentMessageFactory
     {
         if (null === $this->resolver) {
             $resolver = new OptionsResolver();
+
             $resolver->setRequired([
-                self::ID,
-                self::WEBSITE_IDS,
+                self::WEBSITE_IDS
             ]);
 
-            $resolver->setAllowedTypes(self::ID, 'int');
+            $resolver->setDefined([
+                self::ID,
+                self::DEFINITION
+            ]);
+
             $resolver->setAllowedTypes(self::WEBSITE_IDS, 'array');
+            $resolver->setAllowedTypes(self::ID, ['null','int']);
+            $resolver->setAllowedTypes(self::DEFINITION, ['null', 'string']);
 
             $this->resolver = $resolver;
         }
@@ -103,7 +125,7 @@ class SegmentMessageFactory
      * @return array
      * @throws InvalidArgumentException
      */
-    private function getResolvedData($data)
+    private function getResolvedData(array $data)
     {
         try {
             return $this->getOptionsResolver()->resolve($data);

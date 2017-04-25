@@ -20,7 +20,7 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 /**
  * @dbIsolationPerTest
  */
-class ContentVariantSegmentListenerTest extends WebTestCase
+class ContentVariantSegmentEntityListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
@@ -33,20 +33,53 @@ class ContentVariantSegmentListenerTest extends WebTestCase
     public function testListenerWhenNewSegmentCreated()
     {
         $this->setWebCatalogForWebsite();
-        $segment = $this->createNewContentVariantWithSegment();
+        $segment = $this->createNewContentVariantWithSegment()[0];
 
         $expectedMessages = [
             [
                 'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
                 'message' => [
                     'id' => $segment->getId(),
-                    'website_ids' => [$this->getDefaultWebsite()->getId()]
+                    'website_ids' => [$this->getDefaultWebsite()->getId()],
+                    'definition' => null
                 ]
             ]
         ];
         $this->assertEquals(
             $expectedMessages,
             self::getMessageCollector()->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT)
+        );
+    }
+
+    public function testListenerWhenSegmentRemoved()
+    {
+        $this->setWebCatalogForWebsite();
+        /**
+         * @var Segment $segment
+         * @var ContentVariantInterface $contentVariant
+         */
+        list($segment, $contentVariant) = $this->createNewContentVariantWithSegment();
+        $messageCollector = self::getMessageCollector();
+        $messageCollector->clear();
+
+        $this->assertEmpty($messageCollector->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT));
+        $em = $this->getEntityManager();
+        $em->remove($contentVariant);
+        $em->flush();
+
+        $expectedMessages = [
+            [
+                'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                'message' => [
+                    'id' => null,
+                    'website_ids' => [$this->getDefaultWebsite()->getId()],
+                    'definition' => $segment->getDefinition()
+                ]
+            ]
+        ];
+        $this->assertEquals(
+            $expectedMessages,
+            $messageCollector->getTopicSentMessages(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT)
         );
     }
 
@@ -82,7 +115,7 @@ class ContentVariantSegmentListenerTest extends WebTestCase
 
         /** @var Segment $segment */
         $segment = $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT);
-        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Segment::class);
+        $entityManager = $this->getEntityManager();
 
         $segment->setName('Other name');
         $entityManager->persist($segment);
@@ -101,7 +134,7 @@ class ContentVariantSegmentListenerTest extends WebTestCase
 
         /** @var Segment $segment */
         $segment = $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT);
-        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Segment::class);
+        $entityManager = $this->getEntityManager();
 
         $segment->setDefinition(json_encode(['columns' => ['columnName' => 'newColumn']]));
 
@@ -113,7 +146,8 @@ class ContentVariantSegmentListenerTest extends WebTestCase
                 'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
                 'message' => [
                     'id' => $segment->getId(),
-                    'website_ids' => [$this->getDefaultWebsite()->getId()]
+                    'website_ids' => [$this->getDefaultWebsite()->getId()],
+                    'definition' => null
                 ]
             ]
         ];
@@ -124,12 +158,12 @@ class ContentVariantSegmentListenerTest extends WebTestCase
     }
 
     /**
-     * @return Segment
+     * @return array
      */
     private function createNewContentVariantWithSegment()
     {
         $this->setTestContentVariantMetadata();
-        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Segment::class);
+        $entityManager = $this->getEntityManager();
 
         $segment = new Segment();
         $segment->setType($this->getSegmentType());
@@ -148,7 +182,7 @@ class ContentVariantSegmentListenerTest extends WebTestCase
         $entityManager->persist($contentVariant);
         $entityManager->flush();
 
-        return $segment;
+        return [$segment, $contentVariant];
     }
 
     /**
@@ -166,7 +200,7 @@ class ContentVariantSegmentListenerTest extends WebTestCase
 
     private function setTestContentVariantMetadata()
     {
-        $entityManager = self::getContainer()->get('doctrine')->getManagerForClass(Segment::class);
+        $entityManager = $this->getEntityManager();
         $metadata = $entityManager->getClassMetadata(ContentVariantInterface::class);
         $metadata->name = TestContentVariant::class;
     }
@@ -191,5 +225,13 @@ class ContentVariantSegmentListenerTest extends WebTestCase
         $websiteManager = self::getContainer()->get('oro_website.manager');
 
         return $websiteManager->getDefaultWebsite();
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager|null|object
+     */
+    private function getEntityManager()
+    {
+        return self::getContainer()->get('doctrine')->getManagerForClass(Segment::class);
     }
 }

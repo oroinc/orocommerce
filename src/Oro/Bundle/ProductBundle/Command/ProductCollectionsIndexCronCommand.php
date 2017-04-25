@@ -105,7 +105,7 @@ DESC;
             $hasSchedules = true;
             $this->messageProducer->send(
                 Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
-                $this->messageFactory->createMessage($segment, $websiteIds)
+                $this->messageFactory->createMessage($websiteIds, $segment)
             );
         }
 

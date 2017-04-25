@@ -64,14 +64,16 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                 'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
                 'message' => [
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
-                    'website_ids' => [$defaultWebsite->getId()]
+                    'website_ids' => [$defaultWebsite->getId()],
+                    'definition' => null
                 ]
             ],
             [
                 'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
                 'message' => [
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
-                    'website_ids' => [$defaultWebsite->getId()]
+                    'website_ids' => [$defaultWebsite->getId()],
+                    'definition' => null
                 ]
             ],
         ];

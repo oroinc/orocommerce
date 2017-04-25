@@ -352,6 +352,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
 
+    oro_product.entity.event_listener.product_collection_variant_reindex_message_send_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_product.helper.product_collection_segment'
+            - '@oro_product.model.segment_message_factory'
+        tags:
+            - { name: doctrine.event_listener, event: postFlush }
+
     oro_product.event_listener.product_content_variant_reindex:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener'
         arguments:
@@ -910,25 +919,15 @@ services:
         tags:
             - { name: console.command }
 
-    oro_product.event_listener.content_variant_segment_listener:
+    oro_product.event_listener.product_collection_aware_content_variant_entity_listener:
         public: false
-        class: 'Oro\Bundle\ProductBundle\EventListener\ContentVariantSegmentListener'
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionAwareContentVariantEntityListener
         arguments:
-            - '@oro_message_queue.client.message_producer'
-            - '@oro_product.model.segment_message_factory'
-            - '@oro_product.helper.product_collection_segment'
-        tags:
-            - { name: doctrine.event_listener, event: postFlush }
-
-    oro_product.event_listener.segment_entity_listener:
-        public: false
-        class: 'Oro\Bundle\ProductBundle\EventListener\ContentVariantSegmentEntityListener'
-        arguments:
-            - '@oro_product.event_listener.content_variant_segment_listener'
-            - '@?oro_web_catalog.provider.web_catalog_usage_provider'
+            - '@oro_product.entity.event_listener.product_collection_variant_reindex_message_send_listener'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_segment.segment.entity.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_segment.segment.entity.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_segment.segment.entity.class%', event: preRemove }
 
     oro_product.handler.request_content_variant:
         class: Oro\Bundle\ProductBundle\Handler\RequestContentVariantHandler

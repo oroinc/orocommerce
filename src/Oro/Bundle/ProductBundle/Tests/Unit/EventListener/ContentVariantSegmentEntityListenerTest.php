@@ -3,56 +3,32 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\ProductBundle\EventListener\ContentVariantSegmentEntityListener;
-use Oro\Bundle\ProductBundle\EventListener\ContentVariantSegmentListener;
+use Oro\Bundle\ProductBundle\EventListener\ProductCollectionAwareContentVariantEntityListener;
+use Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
 class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /**
-     * @var ContentVariantSegmentListener|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductCollectionVariantReindexMessageSendListener|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $contentVariantSegmentListener;
+    private $reindexEventListener;
 
     /**
-     * @var WebCatalogUsageProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $webCatalogUsageProvider;
-
-    /**
-     * @var ContentVariantSegmentEntityListener
+     * @var ProductCollectionAwareContentVariantEntityListener
      */
     private $segmentEntityListener;
 
     protected function setUp()
     {
-        $this->contentVariantSegmentListener = $this->getMockBuilder(ContentVariantSegmentListener::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->webCatalogUsageProvider = $this->createMock(WebCatalogUsageProviderInterface::class);
+        $this->reindexEventListener = $this->createMock(ProductCollectionVariantReindexMessageSendListener::class);
 
-        $this->segmentEntityListener = new ContentVariantSegmentEntityListener(
-            $this->contentVariantSegmentListener,
-            $this->webCatalogUsageProvider
+        $this->segmentEntityListener = new ProductCollectionAwareContentVariantEntityListener(
+            $this->reindexEventListener
         );
-    }
-
-    public function testPostPersistWhenWebCatalogIsOff()
-    {
-        $this->segmentEntityListener = new ContentVariantSegmentEntityListener($this->contentVariantSegmentListener);
-
-        /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class);
-
-        $this->contentVariantSegmentListener
-            ->expects($this->never())
-            ->method('scheduleSegment');
-
-        $this->segmentEntityListener->postPersist($segment);
     }
 
     public function testPostPersistWhenWebCatalogIsOn()
@@ -60,7 +36,7 @@ class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCas
         /** @var Segment $segment */
         $segment = $this->getEntity(Segment::class);
 
-        $this->contentVariantSegmentListener
+        $this->reindexEventListener
             ->expects($this->once())
             ->method('scheduleSegment')
             ->with($segment);
@@ -68,28 +44,12 @@ class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCas
         $this->segmentEntityListener->postPersist($segment);
     }
 
-    public function testPostUpdateWhenWebCatalogIsOff()
-    {
-        $this->segmentEntityListener = new ContentVariantSegmentEntityListener($this->contentVariantSegmentListener);
-
-        /** @var Segment $segment */
-        $segment = $this->getEntity(Segment::class);
-
-        $this->contentVariantSegmentListener
-            ->expects($this->never())
-            ->method('scheduleSegment');
-        /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->createMock(PreUpdateEventArgs::class);
-
-        $this->segmentEntityListener->preUpdate($segment, $event);
-    }
-
-    public function testPostUpdateWhenWebCatalogIsOnAndDefinitionNotChanged()
+    public function testPostUpdateDefinitionNotChanged()
     {
         /** @var Segment $segment */
         $segment = $this->getEntity(Segment::class);
 
-        $this->contentVariantSegmentListener
+        $this->reindexEventListener
             ->expects($this->never())
             ->method('scheduleSegment');
         /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
@@ -102,12 +62,12 @@ class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCas
         $this->segmentEntityListener->preUpdate($segment, $event);
     }
 
-    public function testPostUpdateWhenWebCatalogIsOnAndDefinitionChanged()
+    public function testPostUpdateDefinitionChanged()
     {
         /** @var Segment $segment */
         $segment = $this->getEntity(Segment::class);
 
-        $this->contentVariantSegmentListener
+        $this->reindexEventListener
             ->expects($this->once())
             ->method('scheduleSegment')
             ->with($segment);
@@ -119,5 +79,18 @@ class ContentVariantSegmentEntityListenerTest extends \PHPUnit_Framework_TestCas
             ->willReturn(true);
 
         $this->segmentEntityListener->preUpdate($segment, $event);
+    }
+
+    public function testPreRemove()
+    {
+        /** @var Segment $segment */
+        $segment = $this->getEntity(Segment::class);
+
+        $this->reindexEventListener
+            ->expects($this->once())
+            ->method('scheduleMessageBySegmentDefinition')
+            ->with($segment);
+
+        $this->segmentEntityListener->preRemove($segment);
     }
 }
