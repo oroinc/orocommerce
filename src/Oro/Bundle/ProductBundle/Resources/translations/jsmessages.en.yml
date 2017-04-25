@@ -139,3 +139,6 @@ oro:
                     title: Import From File
                 import_validation:
                     title: Import Validation
+        product_collection:
+            filter_query:
+                confirmation_modal_content: Product collection filter has changed without applying. Are you sure to proceed?

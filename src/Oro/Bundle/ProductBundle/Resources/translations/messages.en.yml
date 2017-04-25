@@ -54,6 +54,7 @@ oro:
                     tooltip: Use Filter for Adding Products to the Variant
             ui:
                 apply_query: Apply the Query
+                reset: Reset
                 filtered_products: Filtered Products
 
         type:
