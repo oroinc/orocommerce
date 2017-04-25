@@ -453,7 +453,7 @@
 {% endblock %}
 
 {% block _shopping_list_checkout_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget order-checkout-widget_block text-right mb4-md"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget text-right"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

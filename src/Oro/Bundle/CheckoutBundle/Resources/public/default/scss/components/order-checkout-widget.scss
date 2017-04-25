@@ -1,0 +1,88 @@
+// @theme: default
+
+.order-checkout-widget {
+    position: relative;
+    margin-top: $offset-y;
+
+    @include clearfix();
+
+    &__container-wrapper {
+        margin-bottom: ($offset-y-m*2);
+
+        @include clearfix();
+    }
+
+    &__container {
+        float: right;
+
+        padding: $offset-y;
+
+        border-radius: 3px;
+        background: get-color('additional', 'base');
+
+        &__lg {
+            width: 280px;
+        }
+    }
+
+    &__table {
+        width: 100%;
+
+        td {
+            text-align: left;
+
+            &:last-child {
+                text-align: right;
+            }
+        }
+    }
+
+    &__total {
+        padding-top: $offset-y-s + 1px;
+
+        font-size: $base-font-size + 4px;
+    }
+
+    &__col {
+        float: right;
+
+        min-width: 280px;
+    }
+
+    &__quote {
+        float: right;
+
+        width: 320px;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .order-checkout-widget {
+        &__container-wrapper {
+            margin: ($offset-y-m*2) 0;
+        }
+
+        &__container {
+            &__lg {
+                width: 100%;
+                padding: $offset-y ($offset-x*2);
+            }
+        }
+
+        .widget-content {
+            .btn-group {
+                margin: 0 0 $offset-y-m;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .order-checkout-widget {
+        &__col,
+        &__container {
+            width: 100%;
+            clear: both;
+        }
+    }
+}

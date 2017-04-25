@@ -38,7 +38,7 @@
 
 {% block order_total_widget %}
     <div class="order-checkout-widget__container-wrapper">
-        <div class="order-checkout-widget__container order-checkout-widget__container_lg">
+        <div class="order-checkout-widget__container order-checkout-widget__container__lg">
             <table class="order-checkout-widget__table pull-right">
                 {% for subtotal in subtotals %}
                 <tr>
@@ -56,7 +56,7 @@
 {% endblock %}
 
 {% block _order_after_line_items_grid_widget %}
-    <div class="order-checkout-widget order-checkout-widget_block text-right">
+    <div class="order-checkout-widget text-right">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
