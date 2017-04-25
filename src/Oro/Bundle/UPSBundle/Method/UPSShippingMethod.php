@@ -5,6 +5,7 @@ namespace Oro\Bundle\UPSBundle\Method;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
@@ -16,6 +17,7 @@ use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
 class UPSShippingMethod implements
     ShippingMethodInterface,
+    ShippingMethodIconAwareInterface,
     PricesAwareShippingMethodInterface,
     ShippingTrackingAwareInterface
 {
@@ -61,6 +63,11 @@ class UPSShippingMethod implements
     private $label;
 
     /**
+     * @var string
+     */
+    private $icon;
+
+    /**
      * @var array
      */
     private $types;
@@ -78,6 +85,7 @@ class UPSShippingMethod implements
     /**
      * @param string               $identifier
      * @param string               $label
+     * @param string               $icon
      * @param array                $types
      * @param UPSSettings          $transport
      * @param UPSTransportProvider $transportProvider
@@ -88,6 +96,7 @@ class UPSShippingMethod implements
     public function __construct(
         $identifier,
         $label,
+        $icon,
         array $types,
         UPSSettings $transport,
         UPSTransportProvider $transportProvider,
@@ -97,6 +106,7 @@ class UPSShippingMethod implements
     ) {
         $this->identifier = $identifier;
         $this->label = $label;
+        $this->icon = $icon;
         $this->types = $types;
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
@@ -135,6 +145,14 @@ class UPSShippingMethod implements
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
     }
 
     /**

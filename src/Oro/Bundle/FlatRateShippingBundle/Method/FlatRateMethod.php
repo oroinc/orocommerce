@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\FlatRateShippingBundle\Method;
 
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class FlatRateMethod implements ShippingMethodInterface
+class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
     /**
      * @var FlatRateMethodType
@@ -20,6 +21,11 @@ class FlatRateMethod implements ShippingMethodInterface
     /**
      * @var string
      */
+    protected $icon;
+
+    /**
+     * @var string
+     */
     protected $identifier;
 
     /**
@@ -30,12 +36,14 @@ class FlatRateMethod implements ShippingMethodInterface
     /**
      * @param string $identifier
      * @param string $label
+     * @param string $icon
      * @param bool   $enabled
      */
-    public function __construct($identifier, $label, $enabled)
+    public function __construct($identifier, $label, $icon, $enabled)
     {
         $this->identifier = $identifier;
         $this->label = $label;
+        $this->icon = $icon;
         $this->type = new FlatRateMethodType($label);
         $this->enabled = $enabled;
     }
@@ -70,6 +78,14 @@ class FlatRateMethod implements ShippingMethodInterface
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
     }
 
     /**

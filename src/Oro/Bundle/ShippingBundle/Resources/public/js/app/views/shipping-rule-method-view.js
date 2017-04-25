@@ -13,7 +13,7 @@ define([
      */
     return Backbone.View.extend({
 
-        requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag', 'methods'],
+        requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag'],
 
         /**
          * @param options Object
@@ -31,7 +31,8 @@ define([
                 throw new TypeError('Form not found');
             }
             this.form = $(this.form);
-            this.methodSelect = $(this.el).find(this.options.methodSelectSelector);
+            this.methodSelect = $(this.el).find(this.options.methodSelectSelector).data().inputWidget.$el;
+            this.allMethodsOptions = this.methodSelect.find('option[value][value!=""]').clone();
             this.button = $(this.el).find(options.buttonSelector);
 
             this.button.on('click', _.bind(this.changeHandler, this));
@@ -57,7 +58,7 @@ define([
             var $form = this.form;
             var data = $form.serializeArray();
             var url = $form.attr('action');
-            var value = $(this.el).find(this.options.methodSelectSelector).val();
+            var value = this.methodSelect.val();
             data.push({
                 'name': 'oro_shipping_methods_configs_rule[methodConfigs][' + this.methodCount + '][method]',
                 'value': value
@@ -87,14 +88,15 @@ define([
                 }
                 methods.push($(element).find('input[data-name="field__method"]').val());
             });
-            if (methods.length >= Object.keys(this.options.methods).length) {
+            if (methods.length >= this.allMethodsOptions.length) {
                 $(this.el).hide();
                 return;
             }
             this.methodSelect.empty(); // remove old options
-            $.each(self.options.methods, function(value, label) {
+            this.allMethodsOptions.each(function(i, option) {
+                var value = $(option).val();
                 if ($.inArray(value, methods) === -1) {
-                    self.methodSelect.append($('<option></option>').attr('value', value).text(label));
+                    self.methodSelect.append(self.createOption(value));
                 }
             });
 
@@ -104,6 +106,15 @@ define([
 
         getMethod: function(element) {
             return $(element).find('input[data-name="field__method"]').val();
+        },
+
+        /**
+         * @param {String} value
+         *
+         * @return {jQuery}
+         */
+        createOption: function(value) {
+            return this.allMethodsOptions.filter('[value="'+value+'"]').clone();
         }
     });
 });
