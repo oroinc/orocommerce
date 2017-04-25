@@ -41,7 +41,7 @@ class CategoryTreeProvider
      */
     public function getCategories($user, $root = null, $includeRoot = true)
     {
-        $categories = $this->categoryRepository->getChildrenWithTitles($root, false, 'left', 'ASC', $includeRoot);
+        $categories = $this->categoryRepository->getChildren($root, false, 'left', 'ASC', $includeRoot);
 
         $event = new CategoryTreeCreateAfterEvent($categories);
         $event->setUser($user);

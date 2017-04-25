@@ -13,6 +13,8 @@ oro:
 
         continue_editing: Continue Editing
 
+        past_orders:
+            label: Past orders
         payment_transaction:
             capture:
                 title: Charge The Customer
