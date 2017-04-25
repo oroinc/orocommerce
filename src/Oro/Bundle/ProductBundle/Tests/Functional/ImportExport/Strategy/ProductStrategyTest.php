@@ -155,6 +155,7 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->process($newProduct);
         $this->assertEquals(['Error in row #. Each product unit code should be unique'], $context->getErrors());
     }
+
     /**
      * @return AbstractEnumValue
      */
@@ -169,6 +170,7 @@ class ProductStrategyTest extends WebTestCase
 
         return $inventoryStatus;
     }
+
     /**
      * @param string $sku
      * @param AttributeFamily $attributeFamily
