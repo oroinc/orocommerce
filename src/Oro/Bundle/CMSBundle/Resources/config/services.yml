@@ -49,16 +49,42 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
 
-    oro_cms.twig.email_security_policy:
+    oro_cms.twig.content_security_policy:
         class: 'Twig_Sandbox_SecurityPolicy'
         public: false
+        arguments:
+            # tags
+            - []
+            # filters
+            - ['escape']
+            # methods
+            - []
+            # properties
+            - []
+            # functions
+            - ['widget']
 
     oro_cms.twig.sandbox_extension:
         class: 'Twig_Extension_Sandbox'
         arguments:
-            - '@oro_cms.twig.email_security_policy'
+            - '@oro_cms.twig.content_security_policy'
             - true # use sandbox globally in instance
         public: false
+
+    oro_cms.twig.widget_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
+        public: false
+        arguments:
+            - '@oro_cms.widget_registry'
+
+    oro_cms.widget_registry:
+        class: 'Oro\Bundle\CMSBundle\Widget\WidgetRegistry'
+        public: false
+        arguments:
+            - '@logger'
+            - []
+        tags:
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.twig.array_loader:
         class: 'Twig_Loader_Array'
@@ -68,4 +94,12 @@ services:
         arguments:
             - '@oro_cms.twig.array_loader'
         calls:
+            - [addExtension, ['@oro_cms.twig.widget_extension']]
             - [addExtension, ['@oro_cms.twig.sandbox_extension']]
+
+    oro_crm.twig.twig_in_variables_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension'
+        arguments:
+            - '@oro_cms.twig.renderer'
+        tags:
+            - { name: twig.extension }
