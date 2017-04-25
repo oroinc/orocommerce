@@ -18,7 +18,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class ProductStrategyTest extends WebTestCase
 {
@@ -158,8 +158,8 @@ class ProductStrategyTest extends WebTestCase
 
         // Prepare new product that is imported in same batch and will be used later as variant link
         $newProduct = $this->createProduct($newProductSku, $attributeFamily, $unit, $this->getInventoryStatus());
-        //Add invalid ProductUnitPrecision without unit
-        $newProduct->getUnitPrecisions()->add((new ProductUnitPrecision()));
+        /** @var Product $processedNewProduct */
+        $this->strategy->process($newProduct);
 
         $this->assertEquals(['Error in row #. Each product unit code should be unique'], $context->getErrors());
     }
