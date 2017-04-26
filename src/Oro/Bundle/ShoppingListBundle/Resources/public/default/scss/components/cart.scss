@@ -1,0 +1,27 @@
+// @theme: default
+
+@include breakpoint('mobile-landscape') {
+    .cart-table {
+        thead {
+            display: none;
+        }
+
+        table,
+        tbody,
+        tr,
+        td:first-child {
+            display: block;
+        }
+
+        td {
+            &:not(:first-child) {
+                padding-top: 0;
+                white-space: nowrap;
+            }
+        }
+
+        &__form {
+            margin-left: -12px;
+        }
+    }
+}

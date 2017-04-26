@@ -830,11 +830,6 @@
     &.expanded {
       transform: rotate(90deg);
     }
-
-    .shopping-lists-button {
-      width: calc(100% - 20px);
-      margin-left: 20px;
-    }
   }
 
   &.within-fixed-checkout {
