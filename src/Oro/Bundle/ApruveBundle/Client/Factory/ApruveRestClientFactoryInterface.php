@@ -3,14 +3,14 @@
 namespace Oro\Bundle\ApruveBundle\Client\Factory;
 
 use Oro\Bundle\ApruveBundle\Client\ApruveRestClientInterface;
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 
 interface ApruveRestClientFactoryInterface
 {
     /**
-     * @param ApruveConfigInterface $apruveConfig
+     * @param string $apiKey
+     * @param bool $isTestMode
      *
      * @return ApruveRestClientInterface
      */
-    public function create(ApruveConfigInterface $apruveConfig);
+    public function create($apiKey, $isTestMode);
 }

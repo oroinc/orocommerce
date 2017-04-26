@@ -1,8 +1,28 @@
 services:
-
-    oro_apruve.client.factory.rest:
-        class: 'Oro\Bundle\ApruveBundle\Client\Factory\ApruveRestClientFactory'
+    oro_apruve.client.factory.basic:
+        class: 'Oro\Bundle\ApruveBundle\Client\Factory\Basic\BasicApruveRestClientFactory'
         arguments:
-            - '@oro_integration.transport.rest.client_factory'
-            - '@logger'
-        lazy: true
+            - '@oro_apruve.client.url.provider'
+            - '@oro_integration.transport.rest.guzzle.client_factory'
+        public: false
+
+    oro_apruve.client.config.factory.basic:
+        class: 'Oro\Bundle\ApruveBundle\Client\Factory\Config\Basic\ApruveConfigRestClientFactory'
+        arguments:
+            - '@oro_apruve.client.factory.basic'
+        public: false
+
+    oro_apruve.client.settings.factory.basic:
+        class: 'Oro\Bundle\ApruveBundle\Client\Factory\Settings\Basic\ApruveSettingsRestClientFactory'
+        arguments:
+            - '@oro_apruve.client.factory.basic'
+            - '@oro_security.encoder.mcrypt'
+        public: false
+
+    oro_apruve.client.request.merchant.factory:
+        class: 'Oro\Bundle\ApruveBundle\Client\Request\Merchant\Factory\BasicGetMerchantRequestFactory'
+        public: false
+
+    oro_apruve.client.url.provider:
+        class: 'Oro\Bundle\ApruveBundle\Client\Url\Provider\Basic\BasicApruveClientUrlProvider'
+        public: false
