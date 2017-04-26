@@ -33,14 +33,16 @@ define(function(require) {
 
                 var responseData = _.extend({successUrl: this.getSuccessUrl()}, eventData.responseData);
 
+                if (responseData.successUrl) {
+                    mediator.execute('redirectTo', {url: responseData.successUrl}, {redirect: true});
+
+                    return;
+                }
+
                 if (responseData.purchaseSuccessful) {
                     mediator.execute('redirectTo', {url: responseData.returnUrl}, {redirect: true});
                 } else {
                     mediator.execute('redirectTo', {url: responseData.errorUrl}, {redirect: true});
-                }
-
-                if (responseData.successUrl) {
-                    mediator.execute('redirectTo', {url: responseData.successUrl}, {redirect: true});
                 }
             }
         },

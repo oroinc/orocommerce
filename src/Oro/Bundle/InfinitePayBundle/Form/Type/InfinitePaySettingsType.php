@@ -77,10 +77,6 @@ class InfinitePaySettingsType extends AbstractType
                 'label' => 'oro.infinite_pay.settings.username.label',
                 'required' => true,
             ])
-            ->add('usernameToken', TextType::class, [
-                'label' => 'oro.infinite_pay.settings.username_token.label',
-                'required' => true,
-            ])
             ->add('password', PasswordType::class, [
                 'label' => 'oro.infinite_pay.settings.password.label',
                 'required' => true,

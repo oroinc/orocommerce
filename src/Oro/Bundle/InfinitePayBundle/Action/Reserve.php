@@ -63,8 +63,6 @@ class Reserve extends ActionAbstract
         $response = ['success' => $paymentTransaction->isActive()];
         if (!$paymentTransaction->isActive()) {
             $response['successUrl'] = null;
-
-            return $response;
         }
 
         return $response;
