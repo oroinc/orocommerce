@@ -24,11 +24,6 @@ interface InfinitePayConfigInterface extends PaymentConfigInterface
     /**
      * @return string
      */
-    public function getUsernameToken();
-
-    /**
-     * @return string
-     */
     public function getUsername();
 
     /**

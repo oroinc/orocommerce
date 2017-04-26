@@ -58,7 +58,6 @@ class InfinitePayConfigFactory implements InfinitePayConfigFactoryInterface
 
         $params[InfinitePayConfig::CLIENT_REF_KEY] = $settings->getClientRef();
         $params[InfinitePayConfig::USERNAME_KEY] = $settings->getUsername();
-        $params[InfinitePayConfig::USERNAME_TOKEN_KEY] = $settings->getUsernameToken();
         $params[InfinitePayConfig::PASSWORD_KEY] = $this->getDecryptedValue($settings->getPassword());
         $params[InfinitePayConfig::SECRET_KEY] = $this->getDecryptedValue($settings->getSecret());
         $params[InfinitePayConfig::AUTO_CAPTURE_KEY] = $settings->isAutoCapture();

@@ -20,8 +20,7 @@ class InfinitePaySettings extends Transport
     const CLIENT_REF_KEY = 'client_ref';
     const USERNAME_KEY = 'username';
     const PASSWORD_KEY = 'password';
-    const USERNAME_TOKEN_KEY = 'username_token'; //FIXME: where is this used??
-    const SECRET_KEY = 'secret'; //FIXME: where is this used??
+    const SECRET_KEY = 'secret';
 
     const AUTO_CAPTURE_KEY = 'auto_capture';
     const AUTO_ACTIVATE_KEY = 'auto_activate';
@@ -93,14 +92,6 @@ class InfinitePaySettings extends Transport
      * @ORM\Column(name="ipay_username", type="string", length=255, nullable=false)
      */
     protected $username;
-
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ipay_username_token", type="string", length=255, nullable=false)
-     */
-    protected $usernameToken;
 
     /**
      * @var string
@@ -177,7 +168,6 @@ class InfinitePaySettings extends Transport
                     self::CLIENT_REF_KEY => $this->getClientRef(),
                     self::USERNAME_KEY => $this->getUsername(),
                     self::PASSWORD_KEY => $this->getPassword(),
-                    self::USERNAME_TOKEN_KEY => $this->getUsernameToken(),
                     self::SECRET_KEY => $this->getSecret(),
                     self::AUTO_CAPTURE_KEY => $this->isAutoCapture(),
                     self::AUTO_ACTIVATE_KEY => $this->isAutoActivate(),
@@ -307,24 +297,6 @@ class InfinitePaySettings extends Transport
     public function setUsername($username)
     {
         $this->username = $username;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUsernameToken()
-    {
-        return $this->usernameToken;
-    }
-
-    /**
-     * @param string $usernameToken
-     * @return InfinitePaySettings
-     */
-    public function setUsernameToken($usernameToken)
-    {
-        $this->usernameToken = $usernameToken;
         return $this;
     }
 

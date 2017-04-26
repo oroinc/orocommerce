@@ -9,7 +9,6 @@ class InfinitePayConfig extends AbstractParameterBagPaymentConfig implements Inf
     const CLIENT_REF_KEY = 'client_ref';
     const USERNAME_KEY = 'username';
     const PASSWORD_KEY = 'password';
-    const USERNAME_TOKEN_KEY = 'username_token';
     const SECRET_KEY = 'secret';
 
     const AUTO_CAPTURE_KEY = 'auto_capture';
@@ -60,14 +59,6 @@ class InfinitePayConfig extends AbstractParameterBagPaymentConfig implements Inf
     public function getClientRef()
     {
         return (string) $this->get(self::CLIENT_REF_KEY);
-    }
-
-    /**
-     * @return string
-     */
-    public function getUsernameToken()
-    {
-        return (string) $this->get(self::USERNAME_TOKEN_KEY);
     }
 
     /**

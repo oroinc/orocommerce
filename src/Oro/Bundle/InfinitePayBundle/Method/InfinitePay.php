@@ -77,7 +77,7 @@ class InfinitePay implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return true;
+        return !empty($context->getCustomer()->getVatId());
     }
 
     /**

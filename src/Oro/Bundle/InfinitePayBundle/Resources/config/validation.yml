@@ -17,8 +17,6 @@ Oro\Bundle\InfinitePayBundle\Entity\InfinitePaySettings:
             - NotBlank: ~
         username:
             - NotBlank: ~
-        usernameToken:
-            - NotBlank: ~
         password:
             - NotBlank: ~
         secret:
