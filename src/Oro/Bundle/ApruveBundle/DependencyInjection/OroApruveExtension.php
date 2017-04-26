@@ -25,6 +25,7 @@ class OroApruveExtension extends Extension
         $loader->load('apruve.yml');
         $loader->load('listeners.yml');
         $loader->load('client.yml');
+        $loader->load('connection.yml');
     }
 
     /**

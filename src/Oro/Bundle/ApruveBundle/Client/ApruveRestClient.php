@@ -4,12 +4,8 @@ namespace Oro\Bundle\ApruveBundle\Client;
 
 use Oro\Bundle\ApruveBundle\Client\Exception\UnsupportedMethodException;
 use Oro\Bundle\ApruveBundle\Client\Request\ApruveRequestInterface;
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
-use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
-use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
-use Psr\Log\LoggerInterface;
 
 class ApruveRestClient implements ApruveRestClientInterface
 {
@@ -18,45 +14,17 @@ class ApruveRestClient implements ApruveRestClientInterface
     const METHOD_PUT = 'PUT';
     const METHOD_DELETE = 'DELETE';
 
-    const HEADER_APRUVE_API_KEY = 'Apruve-Api-Key';
-
-    const BASE_URL_PROD = 'https://app.apruve.com/api/v4/';
-    const BASE_URL_TEST = 'https://test.apruve.com/api/v4/';
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var RestClientFactoryInterface
-     */
-    private $restClientFactory;
-
     /**
      * @var RestClientInterface
      */
     private $restClient;
 
     /**
-     * @var ApruveConfigInterface
+     * @param RestClientInterface $restClient
      */
-    private $apruveConfig;
-
-    /**
-     * @param ApruveConfigInterface $apruveConfig
-     * @param RestClientFactoryInterface $restClientFactory
-     * @param LoggerInterface $logger
-     */
-    public function __construct(
-        ApruveConfigInterface $apruveConfig,
-        RestClientFactoryInterface $restClientFactory,
-        LoggerInterface $logger
-    )
+    public function __construct(RestClientInterface $restClient)
     {
-        $this->restClientFactory = $restClientFactory;
-        $this->apruveConfig = $apruveConfig;
-        $this->logger = $logger;
+        $this->restClient = $restClient;
     }
 
     /**
@@ -71,68 +39,14 @@ class ApruveRestClient implements ApruveRestClientInterface
     }
 
     /**
-     * @return RestClientInterface
-     */
-    private function getRestClient()
-    {
-        if ($this->restClient === null) {
-            $this->restClient = $this
-                ->restClientFactory
-                ->createRestClient($this->getBaseUrl(), ['headers' => $this->getHeaders()]);
-        }
-
-        return $this->restClient;
-    }
-
-    /**
-     * @return array
-     */
-    private function getHeaders()
-    {
-        $headers = ['Accept' => 'application/json'];
-        $headers += $this->getAuthHeaders();
-
-        return $headers;
-    }
-
-    /**
-     * @return array
-     */
-    private function getAuthHeaders()
-    {
-        return [self::HEADER_APRUVE_API_KEY => $this->apruveConfig->getApiKey()];
-    }
-
-    /**
-     * @return string
-     */
-    private function getBaseUrl()
-    {
-        if ($this->apruveConfig->isTestMode()) {
-            return self::BASE_URL_TEST;
-        }
-
-        return self::BASE_URL_PROD;
-    }
-
-    /**
      * @param string $method
-     * @param array $arguments
+     * @param array  $arguments
      *
      * @return RestResponseInterface|null
      */
     private function performRequest($method, $arguments)
     {
-        $restClient = $this->getRestClient();
-
-        $response = null;
-        try {
-            $response = call_user_func_array([$restClient, $method], $arguments);
-        } catch (RestException $e) {
-            $this->logger->error($e->getMessage());
-        }
-
-        return $response;
+        return call_user_func_array([$this->restClient, $method], $arguments);
     }
 
     /**

@@ -28,10 +28,24 @@
             <span>{{ 'oro.apruve.settings.form.groups.integration.title'|trans }}</span>
         </h5>
         {{ form_row(form.apruveTestMode) }}
+        {{ form_row(form.apruveWebhookToken) }}
         {{ form_row(form.apruveApiKey) }}
         {{ form_row(form.apruveMerchantId) }}
-        {{ form_row(form.apruveWebhookToken) }}
     </fieldset>
+    <div class="control-group control-group-text">
+        <div class="controls">
+            <button type="button"
+                    class="btn btn-primary"
+                    data-page-component-module="orointegration/js/app/components/integration-connection-checker-component"
+                    data-page-component-options="{{ {
+                        'formSelector': '[name="oro_integration_channel_form"]',
+                        'backendUrl': path('oro_apruve_validate_connection', {'channelId': form.vars.value.id|default(0) })
+                    }|json_encode }}"
+            >
+                {{ 'oro.apruve.check_connection.button.text'|trans }}
+            </button>
+        </div>
+    </div>
     <fieldset class="form-horizontal">
         <h5 class="user-fieldset">
             <span>{{ 'oro.apruve.settings.form.groups.other.title'|trans }}</span>
@@ -39,7 +53,6 @@
         {{ form_rest(form) }}
     </fieldset>
 {% endblock %}
-
 
 {% block oro_apruve_webhook_token_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
