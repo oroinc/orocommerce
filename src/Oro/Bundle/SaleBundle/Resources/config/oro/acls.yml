@@ -43,3 +43,18 @@ acls:
     oro_quote_payment_term_customer_can_override:
         label: oro.sale.security.permission.payment_term_customer_can_override
         type: action
+
+    # Override quote prices
+    oro_quote_prices_override:
+        label: oro.sale.security.permission.quote_prices_override
+        type: action
+
+    # Review and approve quotes
+    oro_quote_review_and_approve:
+        label: oro.sale.security.permission.quote_review_and_approve
+        type: action
+
+    # Add free-form items
+    oro_quote_add_free_form_items:
+        label: oro.sale.security.permission.add_free_form_items
+        type: action
