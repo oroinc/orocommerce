@@ -65,7 +65,8 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                 'message' => [
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::FIRST_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
-                    'definition' => null
+                    'definition' => null,
+                    'is_full' => true,
                 ]
             ],
             [
@@ -73,7 +74,8 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                 'message' => [
                     'id' => $this->getReference(LoadSegmentsWithRelationsData::SECOND_SEGMENT)->getId(),
                     'website_ids' => [$defaultWebsite->getId()],
-                    'definition' => null
+                    'definition' => null,
+                    'is_full' => true,
                 ]
             ],
         ];

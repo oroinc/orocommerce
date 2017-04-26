@@ -41,7 +41,8 @@ class ContentVariantSegmentEntityListenerTest extends WebTestCase
                 'message' => [
                     'id' => $segment->getId(),
                     'website_ids' => [$this->getDefaultWebsite()->getId()],
-                    'definition' => null
+                    'definition' => null,
+                    'is_full' => false,
                 ]
             ]
         ];
@@ -73,7 +74,8 @@ class ContentVariantSegmentEntityListenerTest extends WebTestCase
                 'message' => [
                     'id' => null,
                     'website_ids' => [$this->getDefaultWebsite()->getId()],
-                    'definition' => $segment->getDefinition()
+                    'definition' => $segment->getDefinition(),
+                    'is_full' => true,
                 ]
             ]
         ];
@@ -147,7 +149,8 @@ class ContentVariantSegmentEntityListenerTest extends WebTestCase
                 'message' => [
                     'id' => $segment->getId(),
                     'website_ids' => [$this->getDefaultWebsite()->getId()],
-                    'definition' => null
+                    'definition' => null,
+                    'is_full' => false,
                 ]
             ]
         ];

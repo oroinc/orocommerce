@@ -18,6 +18,7 @@ class SegmentMessageFactory
     const ID = 'id';
     const WEBSITE_IDS = 'website_ids';
     const DEFINITION = 'definition';
+    const IS_FULL = 'is_full';
 
     /**
      * @var OptionsResolver
@@ -44,16 +45,18 @@ class SegmentMessageFactory
 
     /**
      * @param array $websiteIds
-     * @param string|null $definition
      * @param Segment|null $segment
+     * @param string|null $definition
+     * @param bool $isFull
      * @return array
      */
-    public function createMessage(array $websiteIds, Segment $segment = null, $definition = null)
+    public function createMessage(array $websiteIds, Segment $segment = null, $definition = null, $isFull = true)
     {
         return $this->getResolvedData([
             self::ID => $segment ? $segment->getId() : null,
             self::WEBSITE_IDS => $websiteIds,
-            self::DEFINITION => $definition
+            self::DEFINITION => $definition,
+            self::IS_FULL => $isFull,
         ]);
     }
 
@@ -94,6 +97,17 @@ class SegmentMessageFactory
     }
 
     /**
+     * @param array $data
+     * @return bool
+     */
+    public function getIsFull(array $data)
+    {
+        $data = $this->getResolvedData($data);
+
+        return $data[self::IS_FULL];
+    }
+
+    /**
      * @return OptionsResolver
      */
     private function getOptionsResolver()
@@ -102,7 +116,8 @@ class SegmentMessageFactory
             $resolver = new OptionsResolver();
 
             $resolver->setRequired([
-                self::WEBSITE_IDS
+                self::WEBSITE_IDS,
+                self::IS_FULL,
             ]);
 
             $resolver->setDefined([
@@ -113,6 +128,7 @@ class SegmentMessageFactory
             $resolver->setAllowedTypes(self::WEBSITE_IDS, 'array');
             $resolver->setAllowedTypes(self::ID, ['null','int']);
             $resolver->setAllowedTypes(self::DEFINITION, ['null', 'string']);
+            $resolver->setAllowedTypes(self::IS_FULL, ['boolean']);
 
             $this->resolver = $resolver;
         }

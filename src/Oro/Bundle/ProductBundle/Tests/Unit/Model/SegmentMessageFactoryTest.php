@@ -42,13 +42,15 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var Segment $segment */
         $segment = $this->getEntity(Segment::class, ['id' => $segmentId]);
         $websiteIds = [333];
+        $isFull = false;
 
-        $message = $this->factory->createMessage($websiteIds, $segment);
+        $message = $this->factory->createMessage($websiteIds, $segment, null, $isFull);
         $this->assertEquals(
             [
                 SegmentMessageFactory::ID => $segmentId,
                 SegmentMessageFactory::WEBSITE_IDS => $websiteIds,
-                SegmentMessageFactory::DEFINITION => null
+                SegmentMessageFactory::DEFINITION => null,
+                SegmentMessageFactory::IS_FULL => $isFull,
             ],
             $message
         );
@@ -68,6 +70,7 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $segment = $this->factory->getSegmentFromMessage([
             SegmentMessageFactory::ID => $segmentId,
             SegmentMessageFactory::WEBSITE_IDS => [333],
+            SegmentMessageFactory::IS_FULL => true,
         ]);
         $this->assertSame($expectedSegment, $segment);
     }
@@ -84,20 +87,20 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $segment = $this->factory->getSegmentFromMessage([
             SegmentMessageFactory::ID => null,
             SegmentMessageFactory::WEBSITE_IDS => [333],
-            SegmentMessageFactory::DEFINITION => 'segment definition'
+            SegmentMessageFactory::DEFINITION => 'segment definition',
+            SegmentMessageFactory::IS_FULL => true,
         ]);
 
         $this->assertEquals($expectedSegment, $segment);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionMessage Segment Id or Segment Definition should be present in message.
-     */
     public function testGetSegmentFromMessageWithoutSegmentAndDefinition()
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Segment Id or Segment Definition should be present in message.');
         $this->factory->getSegmentFromMessage([
-            SegmentMessageFactory::WEBSITE_IDS => [888]
+            SegmentMessageFactory::WEBSITE_IDS => [888],
+            SegmentMessageFactory::IS_FULL => true,
         ]);
     }
 
@@ -110,6 +113,7 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $segment = $this->factory->getWebsiteIdsFromMessage([
             SegmentMessageFactory::ID => $segmentId,
             SegmentMessageFactory::WEBSITE_IDS => $websiteIds,
+            SegmentMessageFactory::IS_FULL => true,
         ]);
         $this->assertSame($websiteIds, $segment);
     }
@@ -128,6 +132,7 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $this->factory->getSegmentFromMessage([
             SegmentMessageFactory::ID => $id,
             SegmentMessageFactory::WEBSITE_IDS => [888],
+            SegmentMessageFactory::IS_FULL => true,
         ]);
     }
 
@@ -154,23 +159,25 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
         return [
             'without required data' => [
                 'data' => [],
-                'message' => 'The required option "website_ids" is missing.',
+                'message' => 'The required options "is_full", "website_ids" are missing.',
             ],
             'with extra data' => [
                 'data' => [
                     SegmentMessageFactory::ID => 777,
                     SegmentMessageFactory::WEBSITE_IDS => [888],
                     SegmentMessageFactory::DEFINITION => 'segment definition',
+                    SegmentMessageFactory::IS_FULL => true,
                     'someExtraData' => 888,
                 ],
                 'message' => 'The option "someExtraData" does not exist.'
-                    . ' Defined options are: "definition", "id", "website_ids".'
+                    . ' Defined options are: "definition", "id", "is_full", "website_ids".'
             ],
             'wrong data type for id' => [
                 'data' => [
                     SegmentMessageFactory::ID => 'someString',
                     SegmentMessageFactory::WEBSITE_IDS => [888],
-                    SegmentMessageFactory::DEFINITION => 'segment definition'
+                    SegmentMessageFactory::DEFINITION => 'segment definition',
+                    SegmentMessageFactory::IS_FULL => true,
                 ],
                 'message' => 'The option "id" with value "someString" is expected to be of type "null" or "int",'
                     .' but is of type "string".',
@@ -179,7 +186,8 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'data' => [
                     SegmentMessageFactory::ID => 42,
                     SegmentMessageFactory::WEBSITE_IDS => [888],
-                    SegmentMessageFactory::DEFINITION => true
+                    SegmentMessageFactory::DEFINITION => true,
+                    SegmentMessageFactory::IS_FULL => true,
                 ],
                 'message' => 'The option "definition" with value true is expected to be of type "null" or "string",'
                     .' but is of type "boolean".',
@@ -188,10 +196,55 @@ class SegmentMessageFactoryTest extends \PHPUnit_Framework_TestCase
                 'data' => [
                     SegmentMessageFactory::ID => null,
                     SegmentMessageFactory::WEBSITE_IDS => 'someString',
-                    SegmentMessageFactory::DEFINITION => 'segment definition'
+                    SegmentMessageFactory::DEFINITION => 'segment definition',
+                    SegmentMessageFactory::IS_FULL => true,
                 ],
                 'message' => 'The option "website_ids" with value "someString" is expected to be of type "array",'
                     .' but is of type "string".',
+            ],
+            'wrong data type for is_full' => [
+                'data' => [
+                    SegmentMessageFactory::ID => null,
+                    SegmentMessageFactory::WEBSITE_IDS => [777],
+                    SegmentMessageFactory::DEFINITION => 'segment definition',
+                    SegmentMessageFactory::IS_FULL => 'someString',
+                ],
+                'message' => 'The option "is_full" with value "someString" is expected to be of type "boolean",'
+                    .' but is of type "string".',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getIsFullProvider
+     * @param bool $isFull
+     * @param bool $expectedIsFull
+     */
+    public function testGetIsFull($isFull, $expectedIsFull)
+    {
+        $this->expectsRegistryGetRepository();
+
+        $segment = $this->factory->getIsFull([
+            SegmentMessageFactory::ID => 777,
+            SegmentMessageFactory::WEBSITE_IDS => [333],
+            SegmentMessageFactory::IS_FULL => $isFull,
+        ]);
+        $this->assertSame($expectedIsFull, $segment);
+    }
+
+    /**
+     * @return array
+     */
+    public function getIsFullProvider()
+    {
+        return [
+            'is full true' => [
+                'isFull' => true,
+                'expectedIsFull' => true,
+            ],
+            'is full false' => [
+                'isFull' => false,
+                'expectedIsFull' => false,
             ],
         ];
     }

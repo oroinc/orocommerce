@@ -10,6 +10,9 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ProductCollectionVariantReindexMessageSendListener
 {
+    const SEGMENT = 'segment';
+    const IS_FULL = 'is_full';
+
     /**
      * @var MessageProducerInterface
      */
@@ -31,7 +34,7 @@ class ProductCollectionVariantReindexMessageSendListener
     private $scheduledMessages = [];
 
     /**
-     * @var Segment[]
+     * @var array
      */
     private $segments = [];
 
@@ -60,10 +63,20 @@ class ProductCollectionVariantReindexMessageSendListener
 
     /**
      * @param Segment $segment
+     * @param bool $isFull
      */
-    public function scheduleSegment(Segment $segment)
+    public function scheduleSegment(Segment $segment, $isFull = false)
     {
-        $this->segments[$segment->getId()] = $segment;
+        if (!array_key_exists($segment->getId(), $this->segments)) {
+            $this->segments[$segment->getId()] = [
+                self::SEGMENT => $segment,
+                self::IS_FULL => $isFull
+            ];
+        }
+
+        if ($isFull) {
+            $this->segments[$segment->getId()][self::IS_FULL] = true;
+        }
     }
 
     /**
@@ -74,18 +87,24 @@ class ProductCollectionVariantReindexMessageSendListener
         $websiteIds = $this->productCollectionSegmentHelper->getWebsiteIdsBySegment($segment);
 
         if (count($websiteIds) > 0) {
-            $message = $this->messageFactory->createMessage($websiteIds, null, $segment->getDefinition());
+            $message = $this->messageFactory->createMessage($websiteIds, null, $segment->getDefinition(), true);
             $this->scheduledMessages[$this->getMessageKey($message)] = $message;
         }
     }
 
     private function addSegmentsMessages()
     {
-        while ($segment = array_pop($this->segments)) {
+        while ($segmentData = array_pop($this->segments)) {
+            $segment = $segmentData[self::SEGMENT];
             $websiteIds = $this->productCollectionSegmentHelper->getWebsiteIdsBySegment($segment);
 
             if (count($websiteIds) > 0) {
-                $message = $this->messageFactory->createMessage($websiteIds, $segment);
+                $message = $this->messageFactory->createMessage(
+                    $websiteIds,
+                    $segment,
+                    null,
+                    $segmentData[self::IS_FULL]
+                );
                 $this->scheduledMessages[$this->getMessageKey($message)] = $message;
             }
         }

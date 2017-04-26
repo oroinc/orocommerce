@@ -115,3 +115,7 @@ RedirectBundle
 CatalogBundle
 --------------
 - The `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles` was deprecated, the `\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren` was created instead.
+
+ProductBundle
+--------------
+- The method [`ProductContentVariantReindexEventListener::__construct`](https://github.com/orocommerce/orocommerce/blob/1.1.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener") has been updated. Pass `Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener` as a third argument of the method.

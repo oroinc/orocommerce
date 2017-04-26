@@ -63,14 +63,16 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit_Fr
         /** @var Segment $segmentWithoutWebsites */
         $segmentWithoutWebsites = $this->getEntity(Segment::class, ['id' => 41, 'definition' => $definition]);
 
+        $isFull = true;
         $message = [
             SegmentMessageFactory::WEBSITE_IDS => $websiteIds,
             SegmentMessageFactory::ID => 42,
-            SegmentMessageFactory::DEFINITION => null
+            SegmentMessageFactory::DEFINITION => null,
+            SegmentMessageFactory::IS_FULL => $isFull,
         ];
         $this->messageFactory->expects($this->exactly(2))
             ->method('createMessage')
-            ->with($websiteIds, null, $definition)
+            ->with($websiteIds, null, $definition, $isFull)
             ->willReturn($message);
         $this->productCollectionSegmentHelper->expects($this->exactly(3))
             ->method('getWebsiteIdsBySegment')
@@ -102,28 +104,41 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit_Fr
         $segmentWithWebsite = $this->getEntity(Segment::class, ['id' => 1]);
         /** @var Segment $segmentWithoutWebsite */
         $segmentWithoutWebsite = $this->getEntity(Segment::class, ['id' => 2]);
+        /** @var Segment $segmentWithWebsiteWithIsFull */
+        $segmentWithWebsiteWithIsFull = $this->getEntity(Segment::class, ['id' => 3]);
 
         $this->listener->scheduleSegment($segmentWithWebsite);
         $this->listener->scheduleSegment($segmentWithoutWebsite);
+        $isFull = true;
+        $this->listener->scheduleSegment($segmentWithWebsiteWithIsFull, $isFull);
+        $this->listener->scheduleSegment($segmentWithWebsiteWithIsFull, false);
 
         $websiteIds = [1, 3];
 
-        $this->productCollectionSegmentHelper->expects($this->exactly(2))
+        $this->productCollectionSegmentHelper->expects($this->exactly(3))
             ->method('getWebsiteIdsBySegment')
             ->willReturnMap(
                 [
                     [$segmentWithWebsite, $websiteIds],
-                    [$segmentWithoutWebsite, []]
+                    [$segmentWithoutWebsite, []],
+                    [$segmentWithWebsiteWithIsFull, $websiteIds],
                 ]
             );
-        $message = ['id' => 1, 'website_ids' => $websiteIds];
-        $this->messageFactory->expects($this->once())
+        $messageForSegmentWithWebsiteWithIsFull = ['id' => 3, 'website_ids' => $websiteIds, 'is_full' => $isFull];
+        $messageForSegmentWithWebsite = ['id' => 1, 'website_ids' => $websiteIds, 'is_full' => false];
+        $this->messageFactory->expects($this->exactly(2))
             ->method('createMessage')
-            ->with($websiteIds, $segmentWithWebsite)
-            ->willReturn($message);
-        $this->messageProducer->expects($this->once())
+            ->withConsecutive(
+                [$websiteIds, $segmentWithWebsiteWithIsFull, null, $isFull],
+                [$websiteIds, $segmentWithWebsite]
+            )
+            ->willReturnOnConsecutiveCalls($messageForSegmentWithWebsiteWithIsFull, $messageForSegmentWithWebsite);
+        $this->messageProducer->expects($this->exactly(2))
             ->method('send')
-            ->with(Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT, $message);
+            ->withConsecutive(
+                [Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT, $messageForSegmentWithWebsite],
+                [Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT, $messageForSegmentWithWebsiteWithIsFull]
+            );
 
         $this->listener->postFlush();
     }

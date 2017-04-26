@@ -88,13 +88,14 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
             $body = JSON::decode($message->getBody());
             $segment = $this->messageFactory->getSegmentFromMessage($body);
             $websiteIds = $this->messageFactory->getWebsiteIdsFromMessage($body);
+            $isFull = $this->messageFactory->getIsFull($body);
             $jobName = $this->getUniqueJobName($segment, $websiteIds);
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 $jobName,
-                function (JobRunner $jobRunner, Job $job) use ($segment, $websiteIds) {
+                function (JobRunner $jobRunner, Job $job) use ($segment, $websiteIds, $isFull) {
                     $i = 0;
-                    foreach ($this->getAllProductIdsForReindex($segment) as $batch) {
+                    foreach ($this->getAllProductIdsForReindex($segment, $isFull) as $batch) {
                         $reindexMsgData = $this->reindexMessageGranularizer->process(
                             [Product::class],
                             $websiteIds,
@@ -151,16 +152,25 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
 
     /**
      * @param Segment $segment
+     * @param bool $isFull
      * @return \Generator
      */
-    private function getAllProductIdsForReindex(Segment $segment)
+    private function getAllProductIdsForReindex(Segment $segment, $isFull)
     {
-        foreach ($this->segmentSnapshotDeltaProvider->getAddedEntityIds($segment) as $batch) {
-            yield array_map('reset', $batch);
+        if ($isFull) {
+            foreach ($this->segmentSnapshotDeltaProvider->getAllEntityIds($segment) as $batch) {
+                yield array_map('reset', $batch);
+            }
+        } else {
+            foreach ($this->segmentSnapshotDeltaProvider->getAddedEntityIds($segment) as $batch) {
+                yield array_map('reset', $batch);
+            }
         }
 
-        foreach ($this->segmentSnapshotDeltaProvider->getRemovedEntityIds($segment) as $batch) {
-            yield array_map('reset', $batch);
+        if ($segment->getId()) {
+            foreach ($this->segmentSnapshotDeltaProvider->getRemovedEntityIds($segment) as $batch) {
+                yield array_map('reset', $batch);
+            }
         }
     }
 
