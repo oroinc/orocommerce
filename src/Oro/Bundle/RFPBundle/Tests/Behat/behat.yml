@@ -6,6 +6,7 @@ oro_behat_extension:
                 - OroDataGridBundle::GridContext
                 - OroWorkflowBundle::FeatureContext
                 - OroApplicationBundle::CommerceMainContext
+                - OroRFPBundle::FeatureContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 
