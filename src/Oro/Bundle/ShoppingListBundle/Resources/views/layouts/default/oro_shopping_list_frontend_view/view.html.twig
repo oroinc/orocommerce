@@ -107,8 +107,8 @@
         </span>
         <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}</a>
 
-        <div class="collapse-view__container" data-collapse-container>
-            <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
+        <div class="shopping-list-view-options collapse-view__container" data-collapse-container
+            {{ UI.renderPageComponentAttributes({
                 module: 'orofrontend/js/app/components/switchable-editable-view-component',
                 options: {
                     frontend_type: 'multilineText',
@@ -130,25 +130,24 @@
                     }
                 }
             }) }}>
-                <label for="addANote"
-                       data-checkbox
-                       class="custom-checkbox {% if notes is not empty %}checked{% endif %}"
+            <label for="addANote"
+                   data-checkbox
+                   class="custom-checkbox {% if notes is not empty %}checked{% endif %}"
+            >
+                <input id="addANote"
+                       name="addANote"
+                       type="checkbox"
+                       data-role="start-editing"
+                       class="custom-checkbox__input"
+                       {% if notes is not empty %}checked="checked"{% endif %}
                 >
-                    <input id="addANote"
-                           name="addANote"
-                           type="checkbox"
-                           data-role="start-editing"
-                           class="custom-checkbox__input"
-                           {% if notes is not empty %}checked="checked"{% endif %}
-                    >
-                    <span class="custom-checkbox__icon"></span>
-                    <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
-                </label>
-                <div data-role="editor">
-                <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
-                          rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                          class="textarea textarea--full">{{ notes }}</textarea>
-                </div>
+                <span class="custom-checkbox__icon"></span>
+                <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+            </label>
+            <div data-role="editor">
+            <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                      rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
+                      class="textarea textarea--full">{{ notes }}</textarea>
             </div>
         </div>
     </div>

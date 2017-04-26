@@ -74,7 +74,7 @@
                     </div>
                     <h3 class="checkout-order-summary__title">{{ 'oro.checkout.order_summary.label'|trans }}</h3>
                     <div class="checkout-order-summary__desc">
-                        <span class="mr1-md mr1-sm"><strong>{{ lineItemsWithTotals|length }}</strong> {{ 'oro.checkout.order_summary.items'|trans }}</span>
+                        <span class="checkout-order-summary__total-items"><strong>{{ lineItemsWithTotals|length }}</strong> {{ 'oro.checkout.order_summary.items'|trans }}</span>
                         <span>{{ 'oro.checkout.order_summary.subtotal'|trans }}: <strong>{{ total.amount|oro_format_currency({'currency': total.currency}) }}</strong></span>
                     </div>
                 </div>

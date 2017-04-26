@@ -1,5 +1,9 @@
 // @theme: default
 
+.cart-table {
+    margin-top: 10px;
+}
+
 @include breakpoint('mobile-landscape') {
     .cart-table {
         thead {
