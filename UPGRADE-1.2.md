@@ -1,5 +1,9 @@
 UPGRADE FROM 1.1 to 1.2
-=======================
+
+MoneyOrderBundle
+----------------
+- `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`
+    - removed constant `const TYPE = 'money_order'`
 
 OrderBundle
 -------------
@@ -61,6 +65,15 @@ RuleBundle
 - Following methods were added to `\Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface`:
     - `getBaseSlug`
     - `getSlugByLocalization`
+
+OrderBundle
+-----------
+- Added API for:
+    - `Oro\Bundle\OrderBundle\Entity\Order`
+    - `Oro\Bundle\OrderBundle\Entity\OrderDiscount`
+    - `Oro\Bundle\OrderBundle\Entity\OrderLineItem`
+    - `Oro\Bundle\OrderBundle\Entity\OrderAddress`
+    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
 
 CustomerBundle
 --------------
