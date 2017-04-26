@@ -10,8 +10,7 @@ interface InfinitePayClientFactoryInterface
     /**
      * @param InfinitePayConfigInterface $config
      * @param array $options
-     * @param null $wsdl
      * @return InfinitePayClientInterface
      */
-    public function create(InfinitePayConfigInterface $config, array $options = [], $wsdl = null);
+    public function create(InfinitePayConfigInterface $config, array $options = []);
 }

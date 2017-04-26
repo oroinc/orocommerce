@@ -20,7 +20,7 @@ class OroInfinitePayExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'oro_infinite_pay.soap_client_wrapper',
+            'oro_infinite_pay.client.factory',
             'oro_infinite_pay.soap.gateway',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);

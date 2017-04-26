@@ -3,6 +3,7 @@ define(function(require) {
     'use strict';
 
     var PaymentUserInputComponent;
+    var _ = require('underscore');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
 
@@ -28,7 +29,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            paymentMethod: 'infinite_pay',
+            paymentMethod: null,
             selectors: {
                 fieldEmail: '[name$="oro_infinite_pay_debtor_data[email]"]',
                 fieldLegalform: '[name$="oro_infinite_pay_debtor_data[legal_form]"]',
@@ -41,6 +42,8 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
+            this.options = _.extend({}, this.options, options);
+
             this.$el = $(options._sourceElement);
             this.$userInput = this.getUserInputElement();
             mediator.on('checkout:payment:before-form-serialization', this.beforeTransit, this);
@@ -58,7 +61,7 @@ define(function(require) {
          * @param {Object} eventData
          */
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod) {
+            if (eventData.paymentMethod === this.options.paymentMethod) {
 
                 var email = this.getEmailElement().val();
                 var legalForm = this.getLegalFormElement().val();

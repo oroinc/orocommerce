@@ -7,10 +7,12 @@ use Oro\Bundle\InfinitePayBundle\Action\Provider\ClientDataProvider;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceDataProvider;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceDataProviderInterface;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\OrderTotalProviderInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\ActivateOrder;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\ClientData;
 use Oro\Bundle\InfinitePayBundle\Tests\Unit\Action\Mapper\Helper\OrderTotalProviderHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * {@inheritdoc}
@@ -57,9 +59,13 @@ class ActivationRequestMapperTest extends \PHPUnit_Framework_TestCase
             $this->orderTotalProvider,
             $this->invoiceDataProvider
         );
+
+        /** @var InfinitePayConfigInterface|PHPUnit_Framework_MockObject_MockObject $config */
+        $config = $this->createMock(InfinitePayConfigInterface::class);
+
         $order = new Order();
         $order->setIdentifier($this->orderId);
-        $activateOrder = $activateRequestMapper->createRequestFromOrder($order, []);
+        $activateOrder = $activateRequestMapper->createRequestFromOrder($order, $config, []);
         $this->assertInstanceOf(ActivateOrder::class, $activateOrder);
         $requestCapture = $activateOrder->getRequest();
         $this->assertEquals($this->orderId, $requestCapture->getOrderData()->getOrderId());

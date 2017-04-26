@@ -15,10 +15,12 @@ class Activate extends ActionAbstract
      */
     public function execute(PaymentTransaction $paymentTransaction, Order $order)
     {
-        $activationRequest = $this->requestMapper->createRequestFromOrder($order, []);
+        $paymentMethodConfig = $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod());
+
+        $activationRequest = $this->requestMapper->createRequestFromOrder($order, $paymentMethodConfig, []);
         $activationResponse = $this->gateway->activate(
             $activationRequest,
-            $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod())
+            $paymentMethodConfig
         );
 
         $paymentTransaction = $this

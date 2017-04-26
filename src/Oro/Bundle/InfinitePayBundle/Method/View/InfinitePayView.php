@@ -38,7 +38,10 @@ class InfinitePayView implements PaymentMethodViewInterface
     {
         $formView = $this->formFactory->create(DebtorDataType::class)->createView();
 
-        return ['formView' => $formView];
+        return [
+            'formView' => $formView,
+            'paymentMethod' => $this->config->getPaymentMethodIdentifier(),
+        ];
     }
 
     /**

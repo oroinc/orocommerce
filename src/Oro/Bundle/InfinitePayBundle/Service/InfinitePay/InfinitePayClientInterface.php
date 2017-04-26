@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Service\InfinitePay;
 
-
 interface InfinitePayClientInterface
 {
     /**

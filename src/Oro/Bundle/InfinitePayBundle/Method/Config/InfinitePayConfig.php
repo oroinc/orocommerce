@@ -15,6 +15,7 @@ class InfinitePayConfig extends AbstractParameterBagPaymentConfig implements Inf
     const AUTO_CAPTURE_KEY = 'auto_capture';
     const AUTO_ACTIVATE_KEY = 'auto_activate';
 
+    const TEST_MODE_KEY = 'test_mode';
     const DEBUG_MODE_KEY = 'debug_mode';
 
     const INVOICE_DUE_PERIOD_KEY = 'invoice_due_period';
@@ -35,6 +36,14 @@ class InfinitePayConfig extends AbstractParameterBagPaymentConfig implements Inf
     public function isAutoActivateEnabled()
     {
         return (bool) $this->get(self::AUTO_ACTIVATE_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTestModeEnabled()
+    {
+        return (bool) $this->get(self::TEST_MODE_KEY);
     }
 
     /**

@@ -10,6 +10,7 @@ oro:
             auto_capture.label: 'Auto-Capture'
             auto_activate.label: 'Auto-Activation'
             debug_mode.label: 'Debug Mode'
+            test_mode.label: 'Test Mode'
             client_ref.label: 'Client Reference'
             username_token.label: 'Username Token'
             username.label: 'Username'

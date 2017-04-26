@@ -5,6 +5,7 @@ namespace Oro\Bundle\InfinitePayBundle\Action\Mapper;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\ClientDataProvider;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\OrderTotalProviderInterface;
 use Oro\Bundle\InfinitePayBundle\Action\RequestMapperInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\CaptureOrder;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\RequestCapture;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -31,11 +32,11 @@ class CaptureRequestMapper implements RequestMapperInterface
 
     /**
      * @param Order $order
+     * @param InfinitePayConfigInterface $config
      * @param array $userInput
-     *
      * @return CaptureOrder
      */
-    public function createRequestFromOrder(Order $order, array $userInput = [])
+    public function createRequestFromOrder(Order $order, InfinitePayConfigInterface $config, array $userInput = [])
     {
         $captureRequest = new RequestCapture();
         $orderId = $order->getIdentifier();
@@ -43,7 +44,7 @@ class CaptureRequestMapper implements RequestMapperInterface
         $orderTotal = $this->orderTotalProvider->getOrderTotal($order);
         $orderTotal->setOrderId($orderId);
 
-        $captureRequest->setClientData($this->clientDataProvider->getClientData($orderId));
+        $captureRequest->setClientData($this->clientDataProvider->getClientData($orderId, $config));
         $captureRequest->setOrderData($orderTotal);
 
         $request = new CaptureOrder();

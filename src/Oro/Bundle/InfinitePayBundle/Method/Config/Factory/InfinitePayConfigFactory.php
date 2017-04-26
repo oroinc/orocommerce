@@ -52,7 +52,8 @@ class InfinitePayConfigFactory implements InfinitePayConfigFactoryInterface
 
         $params[InfinitePayConfig::FIELD_PAYMENT_METHOD_IDENTIFIER] = $this->getPaymentMethodIdentifier($channel);
         $params[InfinitePayConfig::FIELD_LABEL] = $this->getLocalizedValue($settings->getInfinitePayLabels());
-        $params[InfinitePayConfig::FIELD_SHORT_LABEL] = $this->getLocalizedValue($settings->getInfinitePayShortLabels());
+        $params[InfinitePayConfig::FIELD_SHORT_LABEL] =
+            $this->getLocalizedValue($settings->getInfinitePayShortLabels());
         $params[InfinitePayConfig::FIELD_ADMIN_LABEL] = $channel->getName();
 
         $params[InfinitePayConfig::CLIENT_REF_KEY] = $settings->getClientRef();
@@ -62,6 +63,7 @@ class InfinitePayConfigFactory implements InfinitePayConfigFactoryInterface
         $params[InfinitePayConfig::SECRET_KEY] = $this->getDecryptedValue($settings->getSecret());
         $params[InfinitePayConfig::AUTO_CAPTURE_KEY] = $settings->isAutoCapture();
         $params[InfinitePayConfig::AUTO_ACTIVATE_KEY] = $settings->isAutoActivate();
+        $params[InfinitePayConfig::TEST_MODE_KEY] = $settings->isTestMode();
         $params[InfinitePayConfig::DEBUG_MODE_KEY] = $settings->isDebugMode();
         $params[InfinitePayConfig::INVOICE_DUE_PERIOD_KEY] = $settings->getInvoiceDuePeriod();
         $params[InfinitePayConfig::INVOICE_SHIPPING_DURATION_KEY] = $settings->getInvoiceShippingDuration();

@@ -26,6 +26,7 @@ class InfinitePaySettings extends Transport
     const AUTO_CAPTURE_KEY = 'auto_capture';
     const AUTO_ACTIVATE_KEY = 'auto_activate';
 
+    const TEST_MODE_KEY = 'test_mode';
     const API_DEBUG_MODE_KEY = 'debug_mode';
 
     const INVOICE_DUE_PERIOD_KEY = 'invoice_due_period';
@@ -132,6 +133,13 @@ class InfinitePaySettings extends Transport
     /**
      * @var boolean
      *
+     * @ORM\Column(name="ipay_test_mode", type="boolean", options={"default"=false})
+     */
+    protected $testMode = false;
+
+    /**
+     * @var boolean
+     *
      * @ORM\Column(name="ipay_debug_mode", type="boolean", options={"default"=false})
      */
     protected $debugMode = false;
@@ -175,7 +183,8 @@ class InfinitePaySettings extends Transport
                     self::AUTO_ACTIVATE_KEY => $this->isAutoActivate(),
                     self::API_DEBUG_MODE_KEY => $this->isDebugMode(),
                     self::INVOICE_DUE_PERIOD_KEY => $this->getInvoiceDuePeriod(),
-                    self::INVOICE_SHIPPING_DURATION_KEY => $this->getInvoiceShippingDuration()
+                    self::INVOICE_SHIPPING_DURATION_KEY => $this->getInvoiceShippingDuration(),
+                    self::TEST_MODE_KEY => $this->isTestMode()
                 ]
             );
         }
@@ -390,6 +399,25 @@ class InfinitePaySettings extends Transport
         $this->autoActivate = $autoActivate;
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isTestMode()
+    {
+        return $this->testMode;
+    }
+
+    /**
+     * @param bool $testMode
+     * @return InfinitePaySettings
+     */
+    public function setTestMode($testMode)
+    {
+        $this->testMode = $testMode;
+        return $this;
+    }
+
 
     /**
      * @return bool

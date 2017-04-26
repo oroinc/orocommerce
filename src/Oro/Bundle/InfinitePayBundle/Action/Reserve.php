@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InfinitePayBundle\Action;
 
 use Oro\Bundle\InfinitePayBundle\Action\Provider\AutomationProviderInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
@@ -28,18 +29,26 @@ class Reserve extends ActionAbstract
     {
         $additionalOptions = $this->getAdditionalOptionsFromPaymentTransaction($paymentTransaction);
 
-        $reserveOrder = $this->requestMapper->createRequestFromOrder($order, $additionalOptions);
-        $reserveOrder = $this->automationProvider->setAutomation($reserveOrder, $order);
+        $paymentMethodConfig = $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod());
+
+        $reserveOrder = $this->requestMapper->createRequestFromOrder($order, $paymentMethodConfig, $additionalOptions);
+        $reserveOrder = $this->automationProvider->setAutomation(
+            $reserveOrder,
+            $order,
+            $paymentMethodConfig
+        );
         $paymentResponse = $this->gateway->reserve(
             $reserveOrder,
-            $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod())
+            $paymentMethodConfig
         );
 
         $paymentTransaction = $this->responseMapper->mapResponseToPaymentTransaction(
             $paymentTransaction,
             $paymentResponse
         );
-        $paymentTransaction->setSuccessful($this->isSuccessfulAutoActivation($paymentTransaction));
+        $paymentTransaction->setSuccessful(
+            $this->isSuccessfulAutoActivation($paymentTransaction, $paymentMethodConfig)
+        );
 
         return $this->createResponseFromPaymentTransaction($paymentTransaction);
     }
@@ -75,12 +84,13 @@ class Reserve extends ActionAbstract
 
     /**
      * @param PaymentTransaction $paymentTransaction
-     *
+     * @param InfinitePayConfigInterface $config
      * @return bool
      */
-    private function isSuccessfulAutoActivation(PaymentTransaction $paymentTransaction)
-    {
-        $config = $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod());
+    private function isSuccessfulAutoActivation(
+        PaymentTransaction $paymentTransaction,
+        InfinitePayConfigInterface $config
+    ) {
         return $config !== null && $config->isAutoActivateEnabled() && $paymentTransaction->isActive();
     }
 }

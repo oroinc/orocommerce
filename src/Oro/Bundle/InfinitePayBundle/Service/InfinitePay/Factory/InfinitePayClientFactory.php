@@ -21,8 +21,8 @@ class InfinitePayClientFactory implements InfinitePayClientFactoryInterface
     /**
      * @inheritDoc
      */
-    public function create(InfinitePayConfigInterface $config, array $options = [], $wsdl = null)
+    public function create(InfinitePayConfigInterface $config, array $options = [])
     {
-        return new InfinitePayClient($config, $this->logger, $options, $wsdl);
+        return new InfinitePayClient($config, $this->logger, $options);
     }
 }

@@ -7,9 +7,11 @@ use BeSimple\SoapClient\WsSecurityFilter;
 use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\Logger\InfinitePayAPILoggerInterface;
 
-
 class InfinitePayClient extends SoapClient implements InfinitePayClientInterface
 {
+    const TEST_WSDL = 'https://test.infinitepay.de/ws/InfinitePayAPI?wsdl';
+    const LIVE_WSDL = 'https://app.infinitepay.de/ws/InfinitePayAPI?wsdl';
+
     /** @var InfinitePayConfigInterface */
     protected $config;
 
@@ -76,13 +78,11 @@ class InfinitePayClient extends SoapClient implements InfinitePayClientInterface
      * @param InfinitePayConfigInterface    $config
      * @param InfinitePayAPILoggerInterface $logger
      * @param array                         $options
-     * @param string|null                   $wsdl
      */
     public function __construct(
         InfinitePayConfigInterface $config,
         InfinitePayAPILoggerInterface $logger,
-        array $options = [],
-        $wsdl = null
+        array $options = []
     ) {
         $this->config = $config;
         $this->logger = $logger;
@@ -90,10 +90,10 @@ class InfinitePayClient extends SoapClient implements InfinitePayClientInterface
         $options = $this->populateClassMap($options);
         $options = $this->setOptions($options);
 
-        if (!$wsdl) {
-            $wsdl = 'https://test.infinitepay.de/ws/InfinitePayAPI?wsdl';
-        }
-        parent::__construct($wsdl, $options);
+        parent::__construct(
+            $this->config->isTestModeEnabled()?static::TEST_WSDL:static::LIVE_WSDL,
+            $options
+        );
 
         $this->setWsseHeader();
     }
@@ -232,7 +232,7 @@ class InfinitePayClient extends SoapClient implements InfinitePayClientInterface
     }
 
     /**
-     * @param $response
+     * @param GenericResponseInterface $response
      *
      * @return bool
      */
@@ -242,11 +242,11 @@ class InfinitePayClient extends SoapClient implements InfinitePayClientInterface
     }
 
     /**
-     * @param $response
+     * @param ResponseBodyInterface $response
      *
      * @return bool
      */
-    private function hasErrorsInDebugMode($response)
+    private function hasErrorsInDebugMode(ResponseBodyInterface $response)
     {
         return $this->config->isDebugModeEnabled() && $this->responseHasErrors($response->getResponse());
     }

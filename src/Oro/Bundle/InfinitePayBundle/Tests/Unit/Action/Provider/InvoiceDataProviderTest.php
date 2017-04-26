@@ -3,7 +3,7 @@
 namespace Oro\Bundle\InfinitePayBundle\Tests\Unit\Action\Mapper;
 
 use Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceDataProvider;
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfig;
 use Oro\Bundle\InfinitePayBundle\Method\Provider\InvoiceNumberGenerator;
 use Oro\Bundle\InfinitePayBundle\Method\Provider\InvoiceNumberGeneratorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -19,7 +19,7 @@ class InvoiceDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var InvoiceNumberGeneratorInterface */
     protected $invoiceNumberGenerator;
 
-    /** @var InfinitePayConfigInterface */
+    /** @var InfinitePayConfig */
     protected $config;
 
     /**
@@ -28,20 +28,20 @@ class InvoiceDataProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->invoiceNumberGenerator = new InvoiceNumberGenerator();
-        $this->config = $this
-            ->getMockBuilder('Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfig')
-            ->disableOriginalConstructor()
-            ->getMock();
 
-        $this->config->method('getInvoiceDuePeriod')->willReturn($this->duePeriod);
-        $this->config->method('getShippingDuration')->willReturn($this->shippingDuration);
+        $this->config = new InfinitePayConfig(
+            [
+                InfinitePayConfig::INVOICE_DUE_PERIOD_KEY => $this->duePeriod,
+                InfinitePayConfig::INVOICE_SHIPPING_DURATION_KEY => $this->shippingDuration
+            ]
+        );
     }
 
     public function testGetInvoiceData()
     {
-        $invoiceData = new InvoiceDataProvider($this->config, $this->invoiceNumberGenerator);
+        $invoiceData = new InvoiceDataProvider($this->invoiceNumberGenerator);
         $order = (new Order())->setIdentifier($this->identifier);
-        $invoiceData = $invoiceData->getInvoiceData($order);
+        $invoiceData = $invoiceData->getInvoiceData($order, $this->config);
         $this->assertEquals($this->identifier, $invoiceData->getInvoiceId());
         $this->assertEquals(0, $invoiceData->getDelayInDays());
 
