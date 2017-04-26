@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Tests\Unit\Method;
 
-use Oro\Bundle\InfinitePayBundle\Action\Registry\ActionRegistry;
+use Oro\Bundle\InfinitePayBundle\Action\ActionInterface;
 use Oro\Bundle\InfinitePayBundle\Action\Registry\ActionRegistryInterface;
-use Oro\Bundle\InfinitePayBundle\Action\Reserve;
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfig;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Method\InfinitePay;
-use Oro\Bundle\InfinitePayBundle\Method\Provider\CheckoutOrderProvider;
 use Oro\Bundle\InfinitePayBundle\Method\Provider\OrderProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * {@inheritdoc}
@@ -17,17 +17,17 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 class InfinitePayTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var InfinitePayConfig
+     * @var InfinitePayConfigInterface|PHPUnit_Framework_MockObject_MockObject
      */
     protected $config;
 
     /**
-     * @var ActionRegistryInterface
+     * @var ActionRegistryInterface|PHPUnit_Framework_MockObject_MockObject
      */
     protected $actionRegistry;
 
     /**
-     * @var OrderProviderInterface
+     * @var OrderProviderInterface|PHPUnit_Framework_MockObject_MockObject
      */
     protected $orderProvider;
 
@@ -36,13 +36,9 @@ class InfinitePayTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->config = $this->getMockBuilder(InfinitePayConfig::class)->disableOriginalConstructor()->getMock();
-        $this->actionRegistry = $this->getMockBuilder(ActionRegistry::class)->disableOriginalConstructor()->getMock();
-        $reserveAction = $this->getMockBuilder(Reserve::class)->disableOriginalConstructor()->getMock();
-        $this->actionRegistry->method('getActionByType')->with('purchase')->willReturn($reserveAction);
-        $this->orderProvider = $this
-            ->getMockBuilder(CheckoutOrderProvider::class)->disableOriginalConstructor()->getMock();
-        $this->orderProvider->method('getDataObjectFromPaymentTransaction')->willReturn(new Order());
+        $this->config = $this->createMock(InfinitePayConfigInterface::class);
+        $this->actionRegistry = $this->createMock(ActionRegistryInterface::class);
+        $this->orderProvider = $this->createMock(OrderProviderInterface::class);
     }
 
     public function testSupports()
@@ -50,5 +46,28 @@ class InfinitePayTest extends \PHPUnit_Framework_TestCase
         $infinitePay = new InfinitePay($this->config, $this->actionRegistry, $this->orderProvider);
         $this->assertTrue($infinitePay->supports('purchase'));
         $this->assertFalse($infinitePay->supports('unknown_method'));
+    }
+
+    public function testExecute()
+    {
+        /** @var ActionInterface|PHPUnit_Framework_MockObject_MockObject  $action */
+        $action = $this->createMock(ActionInterface::class);
+        $action
+            ->expects(static::once())
+            ->method('execute')
+            ->willReturn(['action return value']);
+        $this->actionRegistry
+            ->expects(static::once())
+            ->method('getActionByType')
+            ->with('purchase')
+            ->willReturn($action);
+        $this->orderProvider = $this->createMock(OrderProviderInterface::class);
+        $this->orderProvider
+            ->expects(static::once())
+            ->method('getDataObjectFromPaymentTransaction')
+            ->willReturn(new Order());
+
+        $infinitePay = new InfinitePay($this->config, $this->actionRegistry, $this->orderProvider);
+        $this->assertEquals(['action return value'], $infinitePay->execute('purchase', new PaymentTransaction()));
     }
 }

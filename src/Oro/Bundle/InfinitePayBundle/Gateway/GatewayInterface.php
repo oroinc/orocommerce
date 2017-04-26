@@ -37,5 +37,8 @@ interface GatewayInterface
      * @param InfinitePayConfigInterface $config
      * @return SOAP\ApplyTransactionResponse
      */
-    public function applyTransaction(SOAP\ApplyTransaction $applyTransactionRequest, InfinitePayConfigInterface $config);
+    public function applyTransaction(
+        SOAP\ApplyTransaction $applyTransactionRequest,
+        InfinitePayConfigInterface $config
+    );
 }

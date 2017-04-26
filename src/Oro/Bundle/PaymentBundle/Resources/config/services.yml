@@ -154,16 +154,6 @@ services:
         arguments:
             - '@property_accessor'
 
-    oro_payment.provider.abstract_extractor:
-        class: 'Oro\Bundle\PaymentBundle\Provider\AbstractPropertyExtractor'
-        abstract: true
-        arguments:
-            - '@property_accessor'
-
-    oro_payment.provider.account_user_extractor:
-        class: 'Oro\Bundle\PaymentBundle\Provider\AccountUserExtractor'
-        parent: oro_payment.provider.abstract_extractor
-
     oro_payment.condition.payment_method_supports:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
         arguments:

@@ -27,7 +27,7 @@ class AutomationProvider implements AutomationProviderInterface
         $reserveOrder->getREQUEST()->getOrderData()->setAutoCapture('1');
 
         if ($config->isAutoActivateEnabled()) {
-            $reserveOrder = $this->enableAutoActivation($reserveOrder, $order);
+            $reserveOrder = $this->enableAutoActivation($reserveOrder, $order, $config);
         }
 
         return $reserveOrder;
@@ -35,13 +35,14 @@ class AutomationProvider implements AutomationProviderInterface
 
     /**
      * @param ReserveOrder $reservation
-     * @param Order        $order
+     * @param Order $order
      *
+     * @param InfinitePayConfigInterface $config
      * @return ReserveOrder
      */
-    private function enableAutoActivation(ReserveOrder $reservation, Order $order)
+    private function enableAutoActivation(ReserveOrder $reservation, Order $order, InfinitePayConfigInterface $config)
     {
-        $invoiceData = $this->invoiceDataProvider->getInvoiceData($order);
+        $invoiceData = $this->invoiceDataProvider->getInvoiceData($order, $config);
         $reservation->getRequest()->getOrderData()->setAutoActivate('1');
         $reservation->getRequest()->setInvoiceData($invoiceData);
 

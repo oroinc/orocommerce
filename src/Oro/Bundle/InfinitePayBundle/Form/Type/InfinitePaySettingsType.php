@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
@@ -80,11 +81,11 @@ class InfinitePaySettingsType extends AbstractType
                 'label' => 'oro.infinite_pay.settings.username_token.label',
                 'required' => true,
             ])
-            ->add('password', TextType::class, [
+            ->add('password', PasswordType::class, [
                 'label' => 'oro.infinite_pay.settings.password.label',
                 'required' => true,
             ])
-            ->add('secret', TextType::class, [
+            ->add('secret', PasswordType::class, [
                 'label' => 'oro.infinite_pay.settings.secret.label',
                 'required' => true,
             ])
@@ -93,6 +94,9 @@ class InfinitePaySettingsType extends AbstractType
             ])
             ->add('autoActivate', CheckboxType::class, [
                 'label' => 'oro.infinite_pay.settings.auto_activate.label'
+            ])
+            ->add('testMode', CheckboxType::class, [
+                'label' => 'oro.infinite_pay.settings.test_mode.label'
             ])
             ->add('debugMode', CheckboxType::class, [
                 'label' => 'oro.infinite_pay.settings.debug_mode.label'

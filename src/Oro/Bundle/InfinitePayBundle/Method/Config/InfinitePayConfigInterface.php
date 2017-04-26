@@ -9,6 +9,11 @@ interface InfinitePayConfigInterface extends PaymentConfigInterface
     /**
      * @return bool
      */
+    public function isTestModeEnabled();
+
+    /**
+     * @return bool
+     */
     public function isDebugModeEnabled();
 
     /**
@@ -30,6 +35,11 @@ interface InfinitePayConfigInterface extends PaymentConfigInterface
      * @return string
      */
     public function getPassword();
+
+    /**
+     * @return string
+     */
+    public function getSecret();
 
     /**
      * @return bool

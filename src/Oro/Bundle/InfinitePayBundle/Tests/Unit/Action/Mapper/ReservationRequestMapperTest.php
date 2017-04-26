@@ -11,12 +11,14 @@ use Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceDataProvider;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceDataProviderInterface;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceTotalsProviderInterface;
 use Oro\Bundle\InfinitePayBundle\Action\Provider\OrderTotalProviderInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\ClientData;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\ReserveOrder;
 use Oro\Bundle\InfinitePayBundle\Tests\Unit\Action\Mapper\Helper\ArticleListProviderHelper;
 use Oro\Bundle\InfinitePayBundle\Tests\Unit\Action\Mapper\Helper\DebtorDataProviderHelper;
 use Oro\Bundle\InfinitePayBundle\Tests\Unit\Action\Mapper\Helper\OrderTotalProviderHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use PHPUnit_Framework_MockObject_MockObject;
 
 /**
  * {@inheritdoc}
@@ -76,6 +78,9 @@ class ReservationRequestMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateRequestFromOrder()
     {
+        /** @var InfinitePayConfigInterface|PHPUnit_Framework_MockObject_MockObject $config */
+        $config = $this->createMock(InfinitePayConfigInterface::class);
+
         $order = new Order();
         $order->setCurrency('EUR');
         $order->setIdentifier($this->orderId);
@@ -88,7 +93,7 @@ class ReservationRequestMapperTest extends \PHPUnit_Framework_TestCase
         );
 
         $userInput = ['email' => $this->userInputEmail, 'legalForm' => $this->userInputLegalForm];
-        $actualResult = $reservationRequestMapper->createRequestFromOrder($order, $userInput);
+        $actualResult = $reservationRequestMapper->createRequestFromOrder($order, $config, $userInput);
         $this->assertInstanceOf(ReserveOrder::class, $actualResult);
         $actualRequest = $actualResult->getREQUEST();
         $this->assertEquals($this->userInputEmail, $actualRequest->getDebtorData()->getBdEmail());

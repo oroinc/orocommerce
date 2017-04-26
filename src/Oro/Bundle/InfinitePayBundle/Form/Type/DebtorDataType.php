@@ -73,9 +73,6 @@ class DebtorDataType extends AbstractType
         $resolver->setDefaults([
             'label' => 'oro.infinite_pay.methods.debtor_data.label',
             'csrf_protection' => false,
-            'attr' => [
-                'data-page-component-module' => 'oroinfinitepay/js/app/components/payment-user-input-component',
-            ],
         ]);
     }
 
