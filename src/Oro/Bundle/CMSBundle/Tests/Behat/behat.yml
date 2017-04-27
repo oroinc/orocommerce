@@ -22,8 +22,3 @@ oro_behat_extension:
 
         PageTitle:
             selector: "title"
-
-        Modal Cancel Button:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-            selector: 'div.modal-footer a.cancel'
-

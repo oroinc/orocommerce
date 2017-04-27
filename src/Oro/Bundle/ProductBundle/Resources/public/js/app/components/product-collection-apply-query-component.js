@@ -216,7 +216,8 @@ define(function(require) {
                     this.$form.data(
                         'productCollectionApplyQueryModal',
                         new StandardConfirmation({
-                            content: __('oro.product.product_collection.filter_query.confirmation_modal_content')
+                            content: __('oro.product.product_collection.filter_query.confirmation_modal_content'),
+                            okText: __('oro.product.product_collection.filter_query.continue')
                         })
                     );
                 }
