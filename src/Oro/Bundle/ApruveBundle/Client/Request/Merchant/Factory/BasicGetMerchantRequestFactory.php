@@ -8,6 +8,11 @@ use Oro\Bundle\ApruveBundle\Client\Request\ApruveRequest;
 class BasicGetMerchantRequestFactory implements GetMerchantRequestFactoryInterface
 {
     /**
+     * @internal
+     */
+    const URL_PATTERN = '/merchants/%s';
+
+    /**
      * {@inheritDoc}
      */
     public function createByMerchantId($merchantId)
@@ -22,6 +27,6 @@ class BasicGetMerchantRequestFactory implements GetMerchantRequestFactoryInterfa
      */
     private function getUri($merchantId)
     {
-        return sprintf('/merchants/%s', $merchantId);
+        return sprintf(self::URL_PATTERN, $merchantId);
     }
 }

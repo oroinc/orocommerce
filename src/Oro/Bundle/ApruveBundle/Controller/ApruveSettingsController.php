@@ -84,10 +84,10 @@ class ApruveSettingsController extends Controller
             '%error_message%' => trim($result->getErrorMessage(), '.')
         ];
         switch ($result->getErrorSeverity()) {
-            case Merchant\GetMerchantRequestApruveConnectionValidatorResultFactory::INVALID_API_KEY_SEVERITY:
+            case Merchant\GetMerchantRequestApruveConnectionValidatorResultFactoryTest::INVALID_API_KEY_SEVERITY:
                 $message = 'oro.apruve.check_connection.result.invalid_api_key.message';
                 break;
-            case Merchant\GetMerchantRequestApruveConnectionValidatorResultFactory::MERCHANT_NOT_FOUND_SEVERITY:
+            case Merchant\GetMerchantRequestApruveConnectionValidatorResultFactoryTest::MERCHANT_NOT_FOUND_SEVERITY:
                 $message = 'oro.apruve.check_connection.result.merchant_not_found.message';
                 break;
         }

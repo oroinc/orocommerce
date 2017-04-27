@@ -8,7 +8,7 @@ interface ApruveRestClientFactoryInterface
 {
     /**
      * @param string $apiKey
-     * @param bool $isTestMode
+     * @param bool   $isTestMode
      *
      * @return ApruveRestClientInterface
      */

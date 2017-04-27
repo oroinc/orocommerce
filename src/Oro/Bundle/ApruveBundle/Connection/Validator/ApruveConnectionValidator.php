@@ -6,7 +6,6 @@ use Oro\Bundle\ApruveBundle\Client\Factory\Settings\ApruveSettingsRestClientFact
 use Oro\Bundle\ApruveBundle\Connection\Validator\Request\Factory\ApruveConnectionValidatorRequestFactoryInterface;
 use Oro\Bundle\ApruveBundle\Connection\Validator\Result\Factory\ApruveConnectionValidatorResultFactoryInterface;
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
-use Oro\Bundle\ApruveBundle\Method\Config\Factory\ApruveConfigFactoryInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Psr\Log\LoggerInterface;
 
@@ -33,26 +32,18 @@ class ApruveConnectionValidator implements ApruveConnectionValidatorInterface
     private $logger;
 
     /**
-     * @var ApruveConfigFactoryInterface
-     */
-    private $apruveConfigFactory;
-
-    /**
      * @param ApruveSettingsRestClientFactoryInterface         $clientFactory
-     * @param ApruveConfigFactoryInterface                     $apruveConfigFactory
      * @param ApruveConnectionValidatorRequestFactoryInterface $requestFactory
      * @param ApruveConnectionValidatorResultFactoryInterface  $resultFactory
      * @param LoggerInterface                                  $logger
      */
     public function __construct(
         ApruveSettingsRestClientFactoryInterface $clientFactory,
-        ApruveConfigFactoryInterface $apruveConfigFactory,
         ApruveConnectionValidatorRequestFactoryInterface $requestFactory,
         ApruveConnectionValidatorResultFactoryInterface $resultFactory,
         LoggerInterface $logger
     ) {
         $this->clientFactory = $clientFactory;
-        $this->apruveConfigFactory = $apruveConfigFactory;
         $this->requestFactory = $requestFactory;
         $this->resultFactory = $resultFactory;
         $this->logger = $logger;

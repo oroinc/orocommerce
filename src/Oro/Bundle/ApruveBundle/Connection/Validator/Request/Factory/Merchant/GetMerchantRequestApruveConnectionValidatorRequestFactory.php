@@ -11,11 +11,6 @@ class GetMerchantRequestApruveConnectionValidatorRequestFactory implements
     ApruveConnectionValidatorRequestFactoryInterface
 {
     /**
-     * @internal
-     */
-    const REQUEST_URL = 'Rate';
-
-    /**
      * @var GetMerchantRequestFactoryInterface
      */
     private $merchantRequestFactory;
@@ -33,8 +28,8 @@ class GetMerchantRequestApruveConnectionValidatorRequestFactory implements
         GetMerchantRequestFactoryInterface $merchantRequestFactory,
         SymmetricCrypterInterface $symmetricCrypter
     ) {
-        $this->symmetricCrypter = $symmetricCrypter;
         $this->merchantRequestFactory = $merchantRequestFactory;
+        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**

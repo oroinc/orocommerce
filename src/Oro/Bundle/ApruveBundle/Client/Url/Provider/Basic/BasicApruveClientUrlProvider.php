@@ -24,6 +24,7 @@ class BasicApruveClientUrlProvider implements ApruveClientUrlProviderInterface
         if ($isTestMode) {
             return self::BASE_URL_TEST;
         }
+
         return self::BASE_URL_PROD;
     }
 }
