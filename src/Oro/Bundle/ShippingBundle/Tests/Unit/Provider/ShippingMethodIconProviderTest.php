@@ -53,7 +53,7 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
         $shippingMethod = $this->createMock(ShippingMethodInterface::class);
         $this->configureShippingMethodRegistry(self::SHIPPING_METHOD, $shippingMethod);
 
-        static::assertSame('', $this->provider->getIcon(self::SHIPPING_METHOD));
+        static::assertNull($this->provider->getIcon(self::SHIPPING_METHOD));
     }
 
     public function testGetIconIfNoShippingMethod()
@@ -65,11 +65,11 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertLoggerWarningMethodCalled();
 
-        static::assertSame('', $this->provider->getIcon(self::SHIPPING_METHOD));
+        static::assertNull($this->provider->getIcon(self::SHIPPING_METHOD));
     }
 
     /**
-     * @param string $identifier
+     * @param string                                   $identifier
      * @param \PHPUnit_Framework_MockObject_MockObject $shippingMethod
      *
      * @return ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject

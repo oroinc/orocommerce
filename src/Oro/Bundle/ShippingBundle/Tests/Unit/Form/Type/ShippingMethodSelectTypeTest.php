@@ -82,7 +82,7 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
         $resolved = $resolver->resolve();
 
         $expected = [
-            'empty_value' => '',
+            'empty_value' => null,
             'choices' => self::METHODS,
             'choice_attr' => function () {
             },

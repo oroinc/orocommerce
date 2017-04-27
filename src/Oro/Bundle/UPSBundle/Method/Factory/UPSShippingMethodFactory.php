@@ -52,13 +52,13 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $integrationIconProvider;
 
     /**
-     * @param UPSTransport $transport
-     * @param PriceRequestFactory $priceRequestFactory
-     * @param LocalizationHelper $localizationHelper
-     * @param IntegrationIconProviderInterface $integrationIconProvider
-     * @param ShippingPriceCache $shippingPriceCache
+     * @param UPSTransport                                  $transport
+     * @param PriceRequestFactory                           $priceRequestFactory
+     * @param LocalizationHelper                            $localizationHelper
+     * @param IntegrationIconProviderInterface              $integrationIconProvider
+     * @param ShippingPriceCache                            $shippingPriceCache
      * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
-     * @param UPSShippingMethodTypeFactoryInterface $methodTypeFactory
+     * @param UPSShippingMethodTypeFactoryInterface         $methodTypeFactory
      */
     public function __construct(
         UPSTransport $transport,
@@ -141,7 +141,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     /**
      * @param Channel $channel
      *
-     * @return string
+     * @return string|null
      */
     private function getIcon(Channel $channel)
     {

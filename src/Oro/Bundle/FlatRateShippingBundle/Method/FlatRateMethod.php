@@ -19,7 +19,7 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     protected $label;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $icon;
 
@@ -34,10 +34,10 @@ class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAware
     private $enabled;
 
     /**
-     * @param string $identifier
-     * @param string $label
-     * @param string $icon
-     * @param bool   $enabled
+     * @param string      $identifier
+     * @param string      $label
+     * @param string|null $icon
+     * @param bool        $enabled
      */
     public function __construct($identifier, $label, $icon, $enabled)
     {

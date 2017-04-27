@@ -29,8 +29,8 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
 
     /**
      * @param IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
-     * @param LocalizationHelper $localizationHelper
-     * @param IntegrationIconProviderInterface $integrationIconProvider
+     * @param LocalizationHelper                            $localizationHelper
+     * @param IntegrationIconProviderInterface              $integrationIconProvider
      */
     public function __construct(
         IntegrationMethodIdentifierGeneratorInterface $identifierGenerator,
@@ -72,7 +72,7 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
     /**
      * @param Channel $channel
      *
-     * @return string
+     * @return string|null
      */
     private function getIcon(Channel $channel)
     {

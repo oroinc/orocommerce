@@ -14,10 +14,10 @@ class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface,
     /**
      * @var ShippingMethodRegistry
      */
-    protected $methodRegistry;
+    private $methodRegistry;
 
     /**
-     * @param ShippingMethodRegistry                 $methodRegistry
+     * @param ShippingMethodRegistry $methodRegistry
      */
     public function __construct(ShippingMethodRegistry $methodRegistry)
     {
@@ -42,6 +42,6 @@ class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface,
             }
         }
 
-        return '';
+        return null;
     }
 }

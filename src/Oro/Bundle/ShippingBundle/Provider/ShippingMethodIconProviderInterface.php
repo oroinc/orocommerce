@@ -7,7 +7,7 @@ interface ShippingMethodIconProviderInterface
     /**
      * @param string $identifier
      *
-     * @return string
+     * @return string|null
      */
     public function getIcon($identifier);
 }

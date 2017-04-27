@@ -63,7 +63,7 @@ class UPSShippingMethod implements
     private $label;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $icon;
 
@@ -85,7 +85,7 @@ class UPSShippingMethod implements
     /**
      * @param string               $identifier
      * @param string               $label
-     * @param string               $icon
+     * @param string|null          $icon
      * @param array                $types
      * @param UPSSettings          $transport
      * @param UPSTransportProvider $transportProvider

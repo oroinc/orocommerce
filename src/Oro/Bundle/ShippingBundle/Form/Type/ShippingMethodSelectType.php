@@ -30,8 +30,8 @@ class ShippingMethodSelectType extends AbstractType
 
     /**
      * @param ShippingMethodChoicesProviderInterface $provider
-     * @param ShippingMethodIconProviderInterface $iconProvider
-     * @param AssetHelper $assetHelper
+     * @param ShippingMethodIconProviderInterface    $iconProvider
+     * @param AssetHelper                            $assetHelper
      */
     public function __construct(
         ShippingMethodChoicesProviderInterface $provider,
@@ -44,12 +44,12 @@ class ShippingMethodSelectType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'empty_value' => '',
+            'empty_value' => null,
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {
                 return $this->getChoiceAttributes($choice);
@@ -62,7 +62,7 @@ class ShippingMethodSelectType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getParent()
     {
@@ -70,7 +70,7 @@ class ShippingMethodSelectType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName()
     {
@@ -78,7 +78,7 @@ class ShippingMethodSelectType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getBlockPrefix()
     {
