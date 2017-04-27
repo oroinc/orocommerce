@@ -63,4 +63,4 @@ RuleBundle
 
 PayPalBundle
 ------------
-- Form type `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, to be removed in v1.3
+- Form type `\Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `\Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
