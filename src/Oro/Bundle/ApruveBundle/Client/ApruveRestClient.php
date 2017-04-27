@@ -5,7 +5,6 @@ namespace Oro\Bundle\ApruveBundle\Client;
 use Oro\Bundle\ApruveBundle\Client\Exception\UnsupportedMethodException;
 use Oro\Bundle\ApruveBundle\Client\Request\ApruveRequestInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientInterface;
-use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 
 class ApruveRestClient implements ApruveRestClientInterface
 {
@@ -29,65 +28,60 @@ class ApruveRestClient implements ApruveRestClientInterface
 
     /**
      * {@inheritDoc}
-     * @throws \Oro\Bundle\ApruveBundle\Client\Exception\UnsupportedMethodException
      */
     public function execute(ApruveRequestInterface $apruveRequest)
     {
-        list($method, $arguments) = $this->getRequestComponents($apruveRequest);
+        $classMethod = $this->getClientClassMethodByRequest($apruveRequest);
 
-        return $this->performRequest($method, $arguments);
+        $classMethodArguments = $this->getClientArgumentsByRequest($apruveRequest);
+
+        return call_user_func_array([$this->restClient, $classMethod], $classMethodArguments);
     }
 
     /**
-     * @param string $method
-     * @param array  $arguments
+     * @param ApruveRequestInterface $apruveRequest
      *
-     * @return RestResponseInterface|null
+     * @return string
      */
-    private function performRequest($method, $arguments)
+    private function getClientClassMethodByRequest(ApruveRequestInterface $apruveRequest)
     {
-        return call_user_func_array([$this->restClient, $method], $arguments);
+        $httpMethod = $apruveRequest->getMethod();
+
+        $clientMethodsByHttpMethodArray = $this->getClientClassMethodsByHttpMethodsArray();
+
+        if (!array_key_exists($httpMethod, $clientMethodsByHttpMethodArray)) {
+            $msg = sprintf('Rest client does not support method "%s"', $httpMethod);
+
+            throw new UnsupportedMethodException($msg);
+        }
+
+        return $clientMethodsByHttpMethodArray[$httpMethod];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getClientClassMethodsByHttpMethodsArray()
+    {
+        return [
+            self::METHOD_GET => 'get',
+            self::METHOD_POST => 'post',
+            self::METHOD_PUT => 'put',
+            self::METHOD_DELETE => 'delete',
+        ];
     }
 
     /**
      * @param ApruveRequestInterface $apruveRequest
      *
      * @return array
-     *
-     * @throws \Oro\Bundle\ApruveBundle\Client\Exception\UnsupportedMethodException
      */
-    private function getRequestComponents(ApruveRequestInterface $apruveRequest)
+    private function getClientArgumentsByRequest(ApruveRequestInterface $apruveRequest)
     {
-        $uri = $apruveRequest->getUri();
-        $data = $apruveRequest->getData();
-
-        switch ($apruveRequest->getMethod()) {
-            case self::METHOD_GET:
-                $method = 'get';
-                $arguments = [$uri];
-                break;
-
-            case self::METHOD_POST:
-                $method = 'post';
-                $arguments = [$uri, $data];
-                break;
-
-            case self::METHOD_PUT:
-                $method = 'put';
-                $arguments = [$uri, $data];
-                break;
-
-            case self::METHOD_DELETE:
-                $method = 'delete';
-                $arguments = [$uri];
-                break;
-
-            default:
-                $msg = sprintf('Rest client does not support method "%s"', $apruveRequest->getMethod());
-
-                throw new UnsupportedMethodException($msg);
+        if ($apruveRequest->getMethod() === self::METHOD_DELETE) {
+            return [$apruveRequest->getUri()];
         }
 
-        return [$method, $arguments];
+        return [$apruveRequest->getUri(), $apruveRequest->getData()];
     }
 }

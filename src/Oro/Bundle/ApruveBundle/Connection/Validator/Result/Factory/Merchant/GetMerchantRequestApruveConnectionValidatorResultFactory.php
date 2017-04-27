@@ -19,10 +19,6 @@ class GetMerchantRequestApruveConnectionValidatorResultFactory implements
 
     /**
      * {@inheritDoc}
-     *
-     * @throws RestException
-     * @throws \InvalidArgumentException
-     * @throws \LogicException
      */
     public function createResultByApruveClientResponse(RestResponseInterface $response)
     {
@@ -31,6 +27,7 @@ class GetMerchantRequestApruveConnectionValidatorResultFactory implements
             ApruveConnectionValidatorResult::ERROR_SEVERITY_KEY => null,
             ApruveConnectionValidatorResult::ERROR_MESSAGE_KEY => null,
         ];
+
         return new ApruveConnectionValidatorResult($resultParams);
     }
 
@@ -48,6 +45,7 @@ class GetMerchantRequestApruveConnectionValidatorResultFactory implements
                 $severity = self::MERCHANT_NOT_FOUND_SEVERITY;
                 break;
         }
+
         return new ApruveConnectionValidatorResult([
             ApruveConnectionValidatorResult::STATUS_KEY => false,
             ApruveConnectionValidatorResult::ERROR_SEVERITY_KEY => $severity,

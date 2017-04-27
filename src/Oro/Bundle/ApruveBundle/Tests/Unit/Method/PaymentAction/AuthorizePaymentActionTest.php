@@ -37,7 +37,6 @@ class AuthorizePaymentActionTest extends \PHPUnit_Framework_TestCase
      */
     private $config;
 
-
     /**
      * {@inheritdoc}
      */
@@ -67,11 +66,15 @@ class AuthorizePaymentActionTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransaction
             ->expects(static::once())
             ->method('setSuccessful')
-            ->with(false);
+            ->with(true);
         $this->paymentTransaction
             ->expects(static::once())
             ->method('setActive')
             ->with(true);
+        $this->paymentTransaction
+            ->expects(static::once())
+            ->method('setAction')
+            ->with('authorize');
         $actual = $this->paymentAction->execute($this->config, $this->paymentTransaction);
 
         static::assertSame([], $actual);

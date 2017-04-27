@@ -14,7 +14,6 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Connection\Validator\ApruveConnectionValidator'
         arguments:
             - '@oro_apruve.client.settings.factory.basic'
-            - '@oro_apruve.method.config.factory'
             - '@oro_apruve.connection.validator.request.factory.get_merchant_request'
             - '@oro_apruve.connection.validator.result.factory.get_merchant_request'
             - '@logger'

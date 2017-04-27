@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ApruveBundle\Connection\Validator\Result\Factory;
 
+use Oro\Bundle\ApruveBundle\Connection\Validator\Result\ApruveConnectionValidatorResultInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
-use Oro\Bundle\ApruveBundle\Connection\Validator\Result\ApruveConnectionValidatorResultInterface;
 
 interface ApruveConnectionValidatorResultFactoryInterface
 {
