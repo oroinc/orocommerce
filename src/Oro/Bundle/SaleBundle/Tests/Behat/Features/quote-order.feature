@@ -1,3 +1,5 @@
+@ticket-BB-7459
+@automatically-ticket-tagged
 @fixture-QuoteOrder.yml
 Feature: Start checkout for a quote
   In order to provide customers with ability to quote products

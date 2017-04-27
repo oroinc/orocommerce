@@ -28,3 +28,6 @@ oro_behat_extension:
 
     EntityConfigForm:
       selector: "form[name='oro_entity_config_type']"
+
+    AttributeGroupCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection

@@ -1,3 +1,5 @@
+@ticket-BB-7802
+@automatically-ticket-tagged
 @fixture-QuoteBackofficeDefaultFixture.yml
 Feature: Quote Backoffice Default
 
