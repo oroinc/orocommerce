@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Form\EventSubscriber;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -13,16 +13,16 @@ use Symfony\Component\Form\FormEvents;
 class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var PaymentMethodProvidersRegistryInterface
+     * @var PaymentMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $paymentMethodProvider;
 
     /**
-     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
-    public function __construct(PaymentMethodProvidersRegistryInterface $methodRegistry)
+    public function __construct(PaymentMethodProviderInterface $paymentMethodProvider)
     {
-        $this->methodRegistry = $methodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -85,19 +85,20 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
 
     /**
      * @param string $methodConfigType
+     *
      * @return PaymentMethodInterface|null
      */
     protected function getPaymentMethodForConfig($methodConfigType)
     {
+        $paymentMethod = null;
         try {
-            foreach ($this->methodRegistry->getPaymentMethodProviders() as $provider) {
-                if ($provider->hasPaymentMethod($methodConfigType)) {
-                    return $provider->getPaymentMethod($methodConfigType);
-                }
+            if ($this->paymentMethodProvider->hasPaymentMethod($methodConfigType)) {
+                $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($methodConfigType);
             }
-            return null;
         } catch (\InvalidArgumentException $e) {
-            return null;
+            // TODO: log exception?
         }
+
+        return $paymentMethod;
     }
 }

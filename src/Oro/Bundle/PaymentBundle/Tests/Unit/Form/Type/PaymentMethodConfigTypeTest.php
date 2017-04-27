@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -16,9 +16,9 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentMethodProvidersRegistry;
+    protected $paymentMethodProvider;
 
     /**
      * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -27,10 +27,10 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->paymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
         $this->formType = new PaymentMethodConfigType(
-            $this->paymentMethodProvidersRegistry,
+            $this->paymentMethodProvider,
             $this->paymentMethodViewProvider
         );
 

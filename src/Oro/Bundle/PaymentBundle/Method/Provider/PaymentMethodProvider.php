@@ -6,15 +6,14 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
 
 class PaymentMethodProvider
 {
     /**
-     * @var PaymentMethodProvidersRegistryInterface
+     * @var PaymentMethodProviderInterface
      */
-    private $paymentMethodRegistry;
+    private $paymentMethodProvider;
 
     /**
      * @var PaymentMethodsConfigsRulesProviderInterface
@@ -22,14 +21,14 @@ class PaymentMethodProvider
     private $paymentMethodsConfigsRulesProvider;
 
     /**
-     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      * @param PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
      */
     public function __construct(
-        PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
     ) {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentMethodsConfigsRulesProvider = $paymentMethodsConfigsRulesProvider;
     }
 
@@ -66,7 +65,10 @@ class PaymentMethodProvider
     ) {
         $paymentMethods = [];
         foreach ($paymentMethodsConfigsRule->getMethodConfigs() as $methodConfig) {
-            $paymentMethods = array_merge($paymentMethods, $this->getPaymentMethodsForConfig($methodConfig, $context));
+            $paymentMethod = $this->getPaymentMethodForConfig($methodConfig, $context);
+            if ($paymentMethod) {
+                $paymentMethods[$methodConfig->getType()] = $paymentMethod;
+            }
         }
 
         return $paymentMethods;
@@ -75,18 +77,19 @@ class PaymentMethodProvider
     /**
      * @param PaymentMethodConfig $methodConfig
      * @param PaymentContextInterface $context
-     * @return array
+     * @return PaymentMethodInterface|null
      */
-    protected function getPaymentMethodsForConfig(PaymentMethodConfig $methodConfig, PaymentContextInterface $context)
+    protected function getPaymentMethodForConfig(PaymentMethodConfig $methodConfig, PaymentContextInterface $context)
     {
-        $paymentMethods = [];
-        foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
-            $paymentMethod = $provider
-                ->getPaymentMethod($methodConfig->getType());
-            if ($paymentMethod && $paymentMethod->isApplicable($context)) {
-                $paymentMethods[$methodConfig->getType()] = $paymentMethod;
+        $identifier = $methodConfig->getType();
+        if ($this->paymentMethodProvider->hasPaymentMethod($identifier)) {
+            $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($identifier);
+
+            if ($paymentMethod->isApplicable($context)) {
+                return $paymentMethod;
             }
         }
-        return $paymentMethods;
+
+        return null;
     }
 }
