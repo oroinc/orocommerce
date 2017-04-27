@@ -8,6 +8,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes:
+            groups: [product_create_step_one]
     properties:
         sku:
             - NotBlank:
