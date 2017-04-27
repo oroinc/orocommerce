@@ -4,7 +4,6 @@ define(function(require) {
     var ProductCollectionApplyQueryComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var StandardConfirmation = require('oroui/js/standart-confirmation');
-    var SingletonService = require('oroui/js/singleton-service');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
@@ -19,17 +18,20 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            segmentDefinitionSelectorTemplate: 'input[name="%s"]'
+            segmentDefinitionSelectorTemplate: 'input[name="%s"]',
+            selectors: {
+                reset: null,
+                apply: null,
+                gridWidgetContainer: null,
+                conditionBuilder: null
+            }
         },
 
         /**
          * @property {Object}
          */
         requiredOptions: [
-            'variantFormId',
-            'conditionBuilderId',
             'segmentDefinitionFieldName',
-            'gridWidgetContainerSelector',
             'controlsBlockAlias'
         ],
 
@@ -49,24 +51,9 @@ define(function(require) {
         confirmed: false,
 
         /**
-         * @property {Object}
+         * @property {Boolean}
          */
-        confirmModal: null,
-
-        /**
-         * @property {jQuery.Element}
-         */
-        $applyBtn: null,
-
-        /**
-         * @property {jQuery.Element}
-         */
-        $resetBtn: null,
-
-        /**
-         * @property {jQuery.Element}
-         */
-        $applyQueryFilter: null,
+        confirmModalInitialized: false,
 
         /**
          * @property {jQuery.Element}
@@ -74,25 +61,43 @@ define(function(require) {
         $conditionBuilder: null,
 
         /**
+         * @property {jQuery.Element}
+         */
+        $form: null,
+
+        /**
+         * @property {String}
+         */
+        namespace: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
-            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
-                return _.isUndefined(this.options[option]);
-            }, this));
-            if (requiredMissed.length) {
-                throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
-            }
-            this.$conditionBuilder = $('#' + this.options.variantFormId).find('#' + this.options.conditionBuilderId);
-            this.$applyBtn = this.options._sourceElement.find('.filter-apply');
-            this.$resetBtn = this.options._sourceElement.find('.filter-reset');
+            this.options = $.extend(true, {}, this.options, options || {});
 
-            this.$applyBtn.on('click', _.bind(this.onApplyQuery, this));
-            this.$resetBtn.on('click', _.bind(this.onReset, this));
+            this._checkOptions();
+
+            this.$conditionBuilder = this.options._sourceElement.find(this.options.selectors.conditionBuilder);
+            this.$form = this.options._sourceElement.closest('form');
+
+            this.options._sourceElement
+                .on('click', this.options.selectors.apply, _.bind(this.onApplyQuery, this))
+                .on('click', this.options.selectors.reset, _.bind(this.onReset, this));
 
             this.initialDefinitionState = this.currentDefinitionState = this._getSegmentDefinition();
-            this._getForm().on('submit', $.proxy(this.onSubmit, this));
+            this.$form.on('submit' + this.eventNamespace(), _.bind(this.onSubmit, this));
+        },
+
+        /**
+         * @return {String}
+         */
+        eventNamespace: function() {
+            if (this.namespace === null) {
+                this.namespace = _.uniqueId('.applyQuery');
+            }
+
+            return this.namespace;
         },
 
         /**
@@ -123,7 +128,45 @@ define(function(require) {
          */
         onApplyQuery: function(e) {
             e.preventDefault();
-            $(this.options.gridWidgetContainerSelector).removeClass('hide');
+            this._applyQuery();
+        },
+
+        onConfirmModalOk: function() {
+            this._setConfirmed();
+            this.$form.trigger('submit');
+        },
+
+        onReset: function() {
+            var filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
+            this.$conditionBuilder.conditionBuilder('setValue', filters);
+            this.currentDefinitionState = this.initialDefinitionState;
+            this._applyQuery();
+        },
+
+        _checkOptions: function() {
+            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+                return _.isUndefined(this.options[option]);
+            }, this));
+            if (requiredMissed.length) {
+                throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
+            }
+
+            var requiredSelectors = [];
+            _.each(this.options.selectors, function(selector, selectorName) {
+                if (!selector) {
+                    requiredSelectors.push(selectorName);
+                }
+            });
+            if (requiredSelectors.length) {
+                throw new TypeError('Missing required selectors(s): ' + requiredSelectors.join(', '));
+            }
+        },
+
+        /**
+         * @private
+         */
+        _applyQuery: function() {
+            $(this.options.selectors.gridWidgetContainer).removeClass('hide');
             var segmentDefinition = this._getSegmentDefinition();
             mediator.trigger('grid-sidebar:change:' + this.options.controlsBlockAlias, {
                 params: {segmentDefinition: segmentDefinition}
@@ -131,31 +174,8 @@ define(function(require) {
             this.currentDefinitionState = segmentDefinition;
         },
 
-        onConfirmModalOk: function() {
-            this._setConfirmed();
-            this._getForm().trigger('submit');
-        },
-
-        onReset: function() {
-            var filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
-            this.$conditionBuilder.conditionBuilder('setValue', filters);
-            this.currentDefinitionState = this.initialDefinitionState;
-        },
-
         /**
-         * @return {jQuery.Element}
-         * @private
-         */
-        _getForm: function() {
-            if (!this.$form) {
-                this.$form = this.options._sourceElement.closest('form');
-            }
-
-            return this.$form;
-        },
-
-        /**
-         * @return string
+         * @return {String}
          * @private
          */
         _getSegmentDefinition: function() {
@@ -165,7 +185,7 @@ define(function(require) {
         },
 
         /**
-         * @return boolean
+         * @return {Boolean}
          * @private
          */
         _isCurrentDefinitionStateChange: function() {
@@ -176,33 +196,35 @@ define(function(require) {
          * @private
          */
         _setConfirmed: function() {
-            this._getForm().data('apply-query-confirmed', true);
+            this.$form.data('apply-query-confirmed', true);
         },
 
         /**
-         * @return boolean
+         * @return {Boolean}
          * @private
          */
         _isConfirmed: function() {
-            return this._getForm().data('apply-query-confirmed');
+            return this.$form.data('apply-query-confirmed');
         },
 
         /**
          * @private
          */
         _showConfirmModal: function() {
-            if (!this.confirmModal) {
-                var modalOptions = {
-                    content: __('oro.product.product_collection.filter_query.confirmation_modal_content')
-                };
-                this.confirmModal = SingletonService.getInstance(
-                    'productCollectionApplyQueryModal',
-                    StandardConfirmation,
-                    modalOptions
-                )
-                    .on('ok', $.proxy(this.onConfirmModalOk, this));
+            if (!this.confirmModalInitialized) {
+                if (!this.$form.data('productCollectionApplyQueryModal')) {
+                    this.$form.data(
+                        'productCollectionApplyQueryModal',
+                        new StandardConfirmation({
+                            content: __('oro.product.product_collection.filter_query.confirmation_modal_content')
+                        })
+                    );
+                }
+                this.$form.data('productCollectionApplyQueryModal').on('ok', _.bind(this.onConfirmModalOk, this));
+                this.confirmModalInitialized = true;
             }
-            this.confirmModal.open();
+
+            this.$form.data('productCollectionApplyQueryModal').open();
         },
 
         dispose: function() {
@@ -210,14 +232,10 @@ define(function(require) {
                 return;
             }
 
-            this.$applyBtn.off();
-            this.$resetBtn.off();
-            if (this.confirmModal) {
-                this.confirmModal.off('ok');
-                delete this.confirmModal;
+            if (this.$form.data('productCollectionApplyQueryModal')) {
+                this.$form.data('productCollectionApplyQueryModal').off('ok', _.bind(this.onConfirmModalOk, this));
             }
-
-            this._getForm().off('submit', $.proxy(this.onSubmit, this));
+            this.$form.off(this.eventNamespace());
 
             ProductCollectionApplyQueryComponent.__super__.dispose.call(this);
         }

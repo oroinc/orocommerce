@@ -257,32 +257,35 @@
     } %}
 
     {% set productCollectionApplyQueryComponentOptions = {
-        'variantFormId': form.vars.id,
-        'conditionBuilderId': form.productCollectionSegment.vars.id ~ '-condition-builder',
+        'selectors': {
+            'conditionBuilder': '#' ~ form.productCollectionSegment.vars.id ~ '-condition-builder',
+            'gridWidgetContainer': '.' ~ gridWidgetContainerClass,
+            'reset': '.filter-reset',
+            'apply': '.filter-apply'
+        },
         'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
-        'gridWidgetContainerSelector': '.' ~ gridWidgetContainerClass,
         'controlsBlockAlias': controlsBlockAlias
     } %}
 
-    <div id="{{ form.vars.id }}">
+    <div id="{{ form.vars.id }}"
+         data-page-component-module="oroproduct/js/app/components/product-collection-apply-query-component"
+         data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}"
+    >
         {{ form_row(form.productCollectionSegment) }}
         <div class="{{ controlsBlockAlias }} control-group"
              data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
              data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
         >
-            <div data-page-component-module="oroproduct/js/app/components/product-collection-apply-query-component"
-                 data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}">
-                <div class="pull-right">
-                    <div class="btn-group">
-                        <a class="btn filter-reset">
-                            {{ 'oro.product.content_variant.ui.reset'|trans }}
-                        </a>
-                    </div>
-                    <div class="btn-group">
-                        <a class="btn btn-primary filter-apply">
-                            {{ 'oro.product.content_variant.ui.apply_query'|trans }}
-                        </a>
-                    </div>
+            <div class="pull-right">
+                <div class="btn-group">
+                    <a class="btn filter-reset">
+                        {{ 'oro.product.content_variant.ui.reset'|trans }}
+                    </a>
+                </div>
+                <div class="btn-group">
+                    <a class="btn btn-primary filter-apply">
+                        {{ 'oro.product.content_variant.ui.apply_query'|trans }}
+                    </a>
                 </div>
             </div>
         </div>

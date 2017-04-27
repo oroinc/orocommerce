@@ -55,6 +55,7 @@ define(function(require) {
         onRemove: function(e) {
             e.preventDefault();
             var item = $(e.target).closest('*[data-content]');
+            item.trigger('content:remove');
             item.remove();
 
             mediator.trigger('webcatalog:content-variant-collection:remove', this.$el);
