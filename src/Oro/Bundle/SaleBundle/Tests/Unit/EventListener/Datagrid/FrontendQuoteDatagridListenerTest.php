@@ -29,7 +29,7 @@ class FrontendQuoteDatagridListenerTest extends OrmTestCase
         $this->listener = new FrontendQuoteDatagridListener();
     }
 
-    public function testOnResultBefore()
+    public function testOnResultBeforeQuery()
     {
         $em = $this->getTestEntityManager();
         $qb = $em->createQueryBuilder()

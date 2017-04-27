@@ -141,7 +141,7 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit_Framework_TestCase
      * @param string $status
      * @return Quote
      */
-    protected function getQuoteWithInternalStatus(string $status)
+    protected function getQuoteWithInternalStatus(string $status) : Quote
     {
         $quote = new Quote();
         $quote->setInternalStatus(new StubEnumValue($status, $status));
