@@ -20,14 +20,14 @@ workflows:
         force_autostart: true
         steps:
             draft:
-                order: 10
+                order: 100
                 allowed_transitions:
                     - edit_transition
                     - clone_transition
                     - delete_transition
                     - send_to_customer_transition
             sent_to_customer:
-                order: 20
+                order: 200
                 allowed_transitions:
                     - cancel_transition
                     - expire_transition
@@ -37,11 +37,11 @@ workflows:
                     - decline_transition
                     - decline_by_customer_transition
             closed:
-                order: 30
+                order: 300
                 allowed_transitions:
                     - reopen_transition
             deleted:
-                order: 40
+                order: 400
                 allowed_transitions:
                     - undelete_transition
 
@@ -317,7 +317,7 @@ workflows:
                                     data:
                                         original_quote: $quote
                                         expire_quote: $expire_quote
-                                    
+
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.create.success
                         type: 'info'
