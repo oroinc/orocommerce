@@ -51,3 +51,4 @@ operations:
                 message: oro.paymentterm.delete.message.placeholder
                 message_parameters:
                     confirmationMessage: $.confirmationMessage
+                component: oroui/js/delete-confirmation

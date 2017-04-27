@@ -806,3 +806,9 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    oro_product.event_listener.product_datagrid_attribute_save:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductAttributeSaveListener'
+        arguments: []
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.entity.attribute.before_save, method: onBeforeSave }

@@ -3,18 +3,23 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
     const CLASS_NAME = '\stdClass';
+
+    /**
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shardManager;
 
     /**
      * @var ProductPriceProvider
@@ -29,8 +34,8 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $this->provider = new ProductPriceProvider($this->registry);
+        $this->shardManager = $this->createMock(ShardManager::class);
+        $this->provider = new ProductPriceProvider($this->registry, $this->shardManager);
         $this->provider->setClassName('\stdClass');
     }
 
@@ -54,7 +59,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
-            ->with($priceListId, $productIds, true, null)
+            ->with($this->shardManager, $priceListId, $productIds, true, null)
             ->willReturn($prices);
 
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
