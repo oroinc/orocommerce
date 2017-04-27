@@ -206,6 +206,20 @@ class Quote extends ExtendQuote implements
     protected $expired = false;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="prices_changed", type="boolean", options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $pricesChanged = false;
+
+    /**
      * @var QuoteAddress
      *
      * @ORM\OneToOne(targetEntity="QuoteAddress", cascade={"persist"})
@@ -485,6 +499,26 @@ class Quote extends ExtendQuote implements
     public function setExpired($expired)
     {
         $this->expired = (bool)$expired;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPricesChanged(): bool
+    {
+        return $this->pricesChanged;
+    }
+
+    /**
+     * @param bool $pricesChanged
+     *
+     * @return Quote
+     */
+    public function setPricesChanged(bool $pricesChanged): Quote
+    {
+        $this->pricesChanged = (bool)$pricesChanged;
 
         return $this;
     }

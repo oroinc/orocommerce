@@ -21,6 +21,7 @@ oro:
             shipping_method_locked.label: 'Shipping Method Locked'
             allow_unlisted_shipping_method.label: 'Allow Unlisted Shipping Method'
             expired.label: 'Expired'
+            prices_changed.label: 'Prices Changed'
             not_expired.label: 'Not Expired'
             po_number.label: 'PO Number'
             ship_until.label: 'Do Not Ship Later Than'
