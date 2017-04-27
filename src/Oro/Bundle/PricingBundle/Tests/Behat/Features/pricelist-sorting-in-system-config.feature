@@ -1,3 +1,5 @@
+@ticket-BB-7811
+@automatically-ticket-tagged
 @fixture-Pricelists.yml
 Feature: Price lists must be sortable in system configuration
 
