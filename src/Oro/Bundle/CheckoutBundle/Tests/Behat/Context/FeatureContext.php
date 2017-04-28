@@ -24,7 +24,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /** @var array */
     protected static $valueMapping = [
         'Flat Rate' => 'shippingMethodType',
-        'Payment Terms' => 'paymentMethod',
+//        'Payment Terms' => 'paymentMethod',
+        'Value'=> 'paymentMethod',
         'Delete the shopping list' => 'oro_workflow_transition[remove_source]'
     ];
 
@@ -63,6 +64,21 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
         self::assertTrue($element->isChecked(), sprintf('Option "%s" is not checked', $value));
 
+        $page->pressButton($button);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/
+     *
+     * @param string $value
+     * @param string $step
+     * @param string $button
+     */
+    public function OnCheckoutStepAndPressButton( $step, $button)
+    {
+        $this->assertTitle($step);
+        $page = $this->getSession()->getPage();
         $page->pressButton($button);
         $this->waitForAjax();
     }
