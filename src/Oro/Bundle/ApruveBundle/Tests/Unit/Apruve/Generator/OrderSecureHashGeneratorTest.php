@@ -4,122 +4,15 @@ namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder;
 
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator;
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrderInterface;
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveLineItem;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveOrder;
 
 class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     const API_KEY = 'sampleApiKey';
 
-    const DATA = [
-        // Properly ordered data array with all possible parameters.
-        'variant1' => [
-            OrderSecureHashGenerator::ORDER_MERCHANT_ID => 'sampleId',
-            OrderSecureHashGenerator::ORDER_AMOUNT_CENTS => 10000,
-            OrderSecureHashGenerator::ORDER_CURRENCY => 'USD',
-            OrderSecureHashGenerator::ORDER_MERCHANT_ORDER_ID => '10',
-            OrderSecureHashGenerator::ORDER_TAX_CENTS => '100',
-            OrderSecureHashGenerator::ORDER_SHIPPING_CENTS => '500',
-            OrderSecureHashGenerator::ORDER_EXPIRE_AT => '2017-07-15T10:12:27-05:00',
-            OrderSecureHashGenerator::ORDER_ACCEPTS_PT => true,
-            OrderSecureHashGenerator::ORDER_FINALIZE_ON_CREATE => true,
-            OrderSecureHashGenerator::ORDER_INVOICE_ON_CREATE => false,
-            OrderSecureHashGenerator::ORDER_LINE_ITEMS => [
-                [
-                    OrderSecureHashGenerator::LINE_ITEM_TITLE => 'Sample title',
-                    OrderSecureHashGenerator::LINE_ITEM_PRICE_TOTAL_CENTS => 10000,
-                    OrderSecureHashGenerator::LINE_ITEM_PRICE_EA_CENTS => 1000,
-                    OrderSecureHashGenerator::LINE_ITEM_QUANTITY => 10,
-                    OrderSecureHashGenerator::LINE_ITEM_MERCHANT_NOTES => "Merchant".PHP_EOL."notes",
-                    OrderSecureHashGenerator::LINE_ITEM_DESCRIPTION => "Sample".PHP_EOL."description with line break",
-                    OrderSecureHashGenerator::LINE_ITEM_VARIANT_INFO => 'yellow',
-                    OrderSecureHashGenerator::LINE_ITEM_SKU => 'sku1',
-                    OrderSecureHashGenerator::LINE_ITEM_VENDOR => 'ORO',
-                    OrderSecureHashGenerator::LINE_ITEM_VIEW_PRODUCT_URL => 'http://example.com/product/view/1'
-                ],
-            ],
-        ],
-        // Unordered data array with all possible parameters.
-        'variant2' => [
-            OrderSecureHashGenerator::ORDER_CURRENCY => 'USD',
-            OrderSecureHashGenerator::ORDER_MERCHANT_ID => 'sampleId',
-            OrderSecureHashGenerator::ORDER_EXPIRE_AT => '2017-07-15T10:12:27-05:00',
-            OrderSecureHashGenerator::ORDER_AMOUNT_CENTS => 10000,
-            OrderSecureHashGenerator::ORDER_MERCHANT_ORDER_ID => '10',
-            OrderSecureHashGenerator::ORDER_TAX_CENTS => '100',
-            OrderSecureHashGenerator::ORDER_SHIPPING_CENTS => '500',
-            OrderSecureHashGenerator::ORDER_ACCEPTS_PT => true,
-            OrderSecureHashGenerator::ORDER_INVOICE_ON_CREATE => false,
-            OrderSecureHashGenerator::ORDER_FINALIZE_ON_CREATE => true,
-            OrderSecureHashGenerator::ORDER_LINE_ITEMS => [
-                [
-                    OrderSecureHashGenerator::LINE_ITEM_QUANTITY => 10,
-                    OrderSecureHashGenerator::LINE_ITEM_PRICE_TOTAL_CENTS => 10000,
-                    OrderSecureHashGenerator::LINE_ITEM_PRICE_EA_CENTS => 1000,
-                    OrderSecureHashGenerator::LINE_ITEM_SKU => 'sku1',
-                    OrderSecureHashGenerator::LINE_ITEM_DESCRIPTION => "Sample".PHP_EOL."description with line break",
-                    OrderSecureHashGenerator::LINE_ITEM_VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
-                    OrderSecureHashGenerator::LINE_ITEM_TITLE => 'Sample title',
-                    OrderSecureHashGenerator::LINE_ITEM_MERCHANT_NOTES => "Merchant".PHP_EOL."notes",
-                    OrderSecureHashGenerator::LINE_ITEM_VARIANT_INFO => 'yellow',
-                    OrderSecureHashGenerator::LINE_ITEM_VENDOR => 'ORO',
-                ],
-            ],
-        ],
-        // Properly ordered data array with missing parameters.
-        'variant3' => [
-            OrderSecureHashGenerator::ORDER_MERCHANT_ID => 'sampleId',
-            OrderSecureHashGenerator::ORDER_AMOUNT_CENTS => 10000,
-            OrderSecureHashGenerator::ORDER_CURRENCY => 'USD',
-            OrderSecureHashGenerator::ORDER_SHIPPING_CENTS => '500',
-            OrderSecureHashGenerator::ORDER_FINALIZE_ON_CREATE => true,
-            OrderSecureHashGenerator::ORDER_INVOICE_ON_CREATE => false,
-            OrderSecureHashGenerator::ORDER_LINE_ITEMS => [
-                [
-                    OrderSecureHashGenerator::LINE_ITEM_TITLE => 'Sample title',
-                    OrderSecureHashGenerator::LINE_ITEM_PRICE_TOTAL_CENTS => 10000,
-                    OrderSecureHashGenerator::LINE_ITEM_QUANTITY => 10,
-                    OrderSecureHashGenerator::LINE_ITEM_DESCRIPTION => "Sample".PHP_EOL."description with line break",
-                    OrderSecureHashGenerator::LINE_ITEM_SKU => 'sku1',
-                    OrderSecureHashGenerator::LINE_ITEM_VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
-                ],
-            ],
-        ],
-        // Unordered data array with missing parameters.
-        'variant4' => [
-            OrderSecureHashGenerator::ORDER_FINALIZE_ON_CREATE => true,
-            OrderSecureHashGenerator::ORDER_SHIPPING_CENTS => '500',
-            OrderSecureHashGenerator::ORDER_MERCHANT_ID => 'sampleId',
-            OrderSecureHashGenerator::ORDER_AMOUNT_CENTS => 10000,
-            OrderSecureHashGenerator::ORDER_CURRENCY => 'USD',
-            OrderSecureHashGenerator::ORDER_INVOICE_ON_CREATE => false,
-            OrderSecureHashGenerator::ORDER_LINE_ITEMS => [
-                [
-                    OrderSecureHashGenerator::LINE_ITEM_VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
-                    OrderSecureHashGenerator::LINE_ITEM_PRICE_TOTAL_CENTS => 10000,
-                    OrderSecureHashGenerator::LINE_ITEM_SKU => 'sku1',
-                    OrderSecureHashGenerator::LINE_ITEM_QUANTITY => 10,
-                    OrderSecureHashGenerator::LINE_ITEM_TITLE => 'Sample title',
-                    OrderSecureHashGenerator::LINE_ITEM_DESCRIPTION => "Sample".PHP_EOL."description with line break",
-                ],
-            ],
-        ],
-    ];
-
-    const HASH = [
-        'variant1' => 'b6543804da744868433f5d991e77e618136a3a66397e69bfd8043af41aa37388',
-        'variant2' => 'b6543804da744868433f5d991e77e618136a3a66397e69bfd8043af41aa37388',
-        'variant3' => '6c6b4a10f9afc452a065051ff42da575264d937f77888b4397fd85d0c12d2109',
-        'variant4' => '6c6b4a10f9afc452a065051ff42da575264d937f77888b4397fd85d0c12d2109',
-    ];
-
     /**
-     * @var ApruveConfigInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $apruveConfig;
-
-    /**
-     * @var ApruveOrderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ApruveOrder|\PHPUnit_Framework_MockObject_MockObject
      */
     private $apruveOrder;
 
@@ -133,12 +26,7 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->apruveOrder = $this->createMock(ApruveOrderInterface::class);
-        $this->apruveConfig = $this->createMock(ApruveConfigInterface::class);
-        $this->apruveConfig
-            ->method('getApiKey')
-            ->willReturn(self::API_KEY);
-
+        $this->apruveOrder = $this->createMock(ApruveOrder::class);
         $this->generator = new OrderSecureHashGenerator();
     }
 
@@ -150,9 +38,11 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
     public function testGenerate($data, $expectedHash)
     {
         $this->apruveOrder
+            ->expects(static::once())
             ->method('getData')
             ->willReturn($data);
-        $actual = $this->generator->generate($this->apruveOrder, $this->apruveConfig);
+
+        $actual = $this->generator->generate($this->apruveOrder, self::API_KEY);
 
         static::assertSame($expectedHash, $actual);
     }
@@ -163,13 +53,106 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
     public function generateDataProvider()
     {
         return [
-            // Must generate the same hash.
-            'properly ordered data array with all possible parameters' => [self::DATA['variant1'], self::HASH['variant1']],
-            'unordered data array with all possible parameters' =>  [self::DATA['variant2'], self::HASH['variant2']],
-
-            // Must generate the same hash.
-            'properly ordered data array with missing parameters' => [self::DATA['variant3'], self::HASH['variant3']],
-            'unordered data array with missing parameters' => [self::DATA['variant4'], self::HASH['variant4']],
+            'properly ordered data array with all possible parameters' => [
+                [
+                    ApruveOrder::MERCHANT_ID => 'sampleId',
+                    ApruveOrder::AMOUNT_CENTS => 10000,
+                    ApruveOrder::CURRENCY => 'USD',
+                    ApruveOrder::MERCHANT_ORDER_ID => '10',
+                    ApruveOrder::TAX_CENTS => '100',
+                    ApruveOrder::SHIPPING_CENTS => '500',
+                    ApruveOrder::EXPIRE_AT => '2017-07-15T10:12:27-05:00',
+                    ApruveOrder::ACCEPTS_PAYMENT_TERMS => true,
+                    ApruveOrder::FINALIZE_ON_CREATE => true,
+                    ApruveOrder::INVOICE_ON_CREATE => false,
+                    ApruveOrder::LINE_ITEMS => [
+                        [
+                            ApruveLineItem::TITLE => 'Sample title',
+                            ApruveLineItem::AMOUNT_CENTS => 10000,
+                            ApruveLineItem::PRICE_EA_CENTS => 1000,
+                            ApruveLineItem::QUANTITY => 10,
+                            ApruveLineItem::MERCHANT_NOTES => "Merchant" . PHP_EOL . "notes",
+                            ApruveLineItem::DESCRIPTION => "Sample" . PHP_EOL . "description with line break",
+                            ApruveLineItem::VARIANT_INFO => 'yellow',
+                            ApruveLineItem::SKU => 'sku1',
+                            ApruveLineItem::VENDOR => 'ORO',
+                            ApruveLineItem::VIEW_PRODUCT_URL => 'http://example.com/product/view/1'
+                        ],
+                    ],
+                ],
+                '03009e34c1430d46a6b6016d389201389a76d4a7d680225a8979ac920bce6f9a',
+            ],
+            'unordered data array with all possible parameters' => [
+                [
+                    ApruveOrder::CURRENCY => 'USD',
+                    ApruveOrder::MERCHANT_ID => 'sampleId',
+                    ApruveOrder::EXPIRE_AT => '2017-07-15T10:12:27-05:00',
+                    ApruveOrder::AMOUNT_CENTS => 10000,
+                    ApruveOrder::MERCHANT_ORDER_ID => '10',
+                    ApruveOrder::TAX_CENTS => '100',
+                    ApruveOrder::SHIPPING_CENTS => '500',
+                    ApruveOrder::ACCEPTS_PAYMENT_TERMS => true,
+                    ApruveOrder::INVOICE_ON_CREATE => false,
+                    ApruveOrder::FINALIZE_ON_CREATE => true,
+                    ApruveOrder::LINE_ITEMS => [
+                        [
+                            ApruveLineItem::QUANTITY => 10,
+                            ApruveLineItem::AMOUNT_CENTS => 10000,
+                            ApruveLineItem::PRICE_EA_CENTS => 1000,
+                            ApruveLineItem::SKU => 'sku1',
+                            ApruveLineItem::DESCRIPTION => "Sample" . PHP_EOL . "description with line break",
+                            ApruveLineItem::VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
+                            ApruveLineItem::TITLE => 'Sample title',
+                            ApruveLineItem::MERCHANT_NOTES => "Merchant" . PHP_EOL . "notes",
+                            ApruveLineItem::VARIANT_INFO => 'yellow',
+                            ApruveLineItem::VENDOR => 'ORO',
+                        ],
+                    ],
+                ],
+                '03009e34c1430d46a6b6016d389201389a76d4a7d680225a8979ac920bce6f9a',
+            ],
+            'properly ordered data array with missing parameters' => [
+                [
+                    ApruveOrder::MERCHANT_ID => 'sampleId',
+                    ApruveOrder::AMOUNT_CENTS => 10000,
+                    ApruveOrder::CURRENCY => 'USD',
+                    ApruveOrder::SHIPPING_CENTS => '500',
+                    ApruveOrder::FINALIZE_ON_CREATE => true,
+                    ApruveOrder::INVOICE_ON_CREATE => false,
+                    ApruveOrder::LINE_ITEMS => [
+                        [
+                            ApruveLineItem::TITLE => 'Sample title',
+                            ApruveLineItem::AMOUNT_CENTS => 10000,
+                            ApruveLineItem::QUANTITY => 10,
+                            ApruveLineItem::DESCRIPTION => "Sample" . PHP_EOL . "description with line break",
+                            ApruveLineItem::SKU => 'sku1',
+                            ApruveLineItem::VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
+                        ],
+                    ],
+                ],
+                '2f67c8b892ad54beec33c630bd2bac5f69e08d0efb244f6998b55b19fded5da1',
+            ],
+            'unordered data array with missing parameters' => [
+                [
+                    ApruveOrder::FINALIZE_ON_CREATE => true,
+                    ApruveOrder::SHIPPING_CENTS => '500',
+                    ApruveOrder::MERCHANT_ID => 'sampleId',
+                    ApruveOrder::AMOUNT_CENTS => 10000,
+                    ApruveOrder::CURRENCY => 'USD',
+                    ApruveOrder::INVOICE_ON_CREATE => false,
+                    ApruveOrder::LINE_ITEMS => [
+                        [
+                            ApruveLineItem::VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
+                            ApruveLineItem::AMOUNT_CENTS => 10000,
+                            ApruveLineItem::SKU => 'sku1',
+                            ApruveLineItem::QUANTITY => 10,
+                            ApruveLineItem::TITLE => 'Sample title',
+                            ApruveLineItem::DESCRIPTION => "Sample" . PHP_EOL . "description with line break",
+                        ],
+                    ],
+                ],
+                '2f67c8b892ad54beec33c630bd2bac5f69e08d0efb244f6998b55b19fded5da1',
+            ],
         ];
     }
 }
