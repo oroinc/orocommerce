@@ -78,6 +78,15 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
                     'is_full' => true,
                 ]
             ],
+            [
+                'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
+                'message' => [
+                    'id' => $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)->getId(),
+                    'website_ids' => [$defaultWebsite->getId()],
+                    'definition' => null,
+                    'is_full' => true,
+                ]
+            ],
         ];
 
         $this->assertEquals(

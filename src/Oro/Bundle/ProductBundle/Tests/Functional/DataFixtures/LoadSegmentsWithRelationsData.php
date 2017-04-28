@@ -14,6 +14,7 @@ class LoadSegmentsWithRelationsData extends AbstractFixture
     const SECOND_SEGMENT = 'secondSegment';
     const THIRD_SEGMENT = 'thirdSegment';
     const NO_RELATIONS_SEGMENT = 'noRelationsSegment';
+    const WITH_CRITERIA_SEGMENT = 'withCriteriaSegment';
 
     private $definitions = [
         'withoutRelations' => [
@@ -25,6 +26,11 @@ class LoadSegmentsWithRelationsData extends AbstractFixture
             'filters' => [
                 ['columnName' => 'column+SomeClass::id'],
             ]
+        ],
+        'withCriteria' => [
+            'filters' => [
+                ['columnName' => 'column+SomeClass::id', 'criteria' => 'condition-activity'],
+            ]
         ]
     ];
 
@@ -34,13 +40,17 @@ class LoadSegmentsWithRelationsData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         foreach ([self::FIRST_SEGMENT, self::SECOND_SEGMENT, self::THIRD_SEGMENT] as $segmentName) {
-            $segment = $this->createSegment($manager, $segmentName);
+            $segment = $this->createSegment($manager, $segmentName, 'withRelations');
             $this->setReference($segmentName, $segment);
             $manager->persist($segment);
         }
 
-        $segment = $this->createSegment($manager, self::NO_RELATIONS_SEGMENT, false);
+        $segment = $this->createSegment($manager, self::NO_RELATIONS_SEGMENT, 'withoutRelations');
         $this->setReference(self::NO_RELATIONS_SEGMENT, $segment);
+        $manager->persist($segment);
+
+        $segment = $this->createSegment($manager, self::WITH_CRITERIA_SEGMENT, 'withCriteria');
+        $this->setReference(self::WITH_CRITERIA_SEGMENT, $segment);
         $manager->persist($segment);
 
         $manager->flush();
@@ -49,10 +59,10 @@ class LoadSegmentsWithRelationsData extends AbstractFixture
     /**
      * @param ObjectManager $manager
      * @param string $name
-     * @param bool $hasRelations
+     * @param string $segmentDefinition
      * @return Segment
      */
-    private function createSegment(ObjectManager $manager, $name, $hasRelations = true)
+    private function createSegment(ObjectManager $manager, $name, $segmentDefinition)
     {
         $segment = new Segment();
         $segmentType = $manager->getRepository(SegmentType::class)->find(SegmentType::TYPE_DYNAMIC);
@@ -62,7 +72,7 @@ class LoadSegmentsWithRelationsData extends AbstractFixture
             ->setType($segmentType)
             ->setEntity(WorkflowAwareEntity::class);
 
-        $segment->setDefinition(json_encode($this->definitions[$hasRelations ? 'withRelations' : 'withoutRelations']));
+        $segment->setDefinition(json_encode($this->definitions[$segmentDefinition]));
 
         return $segment;
     }

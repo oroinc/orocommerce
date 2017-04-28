@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Command;
 use Oro\Bundle\ProductBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Helper\ProductCollectionSegmentHelper;
 use Oro\Bundle\ProductBundle\Model\SegmentMessageFactory;
-use Oro\Bundle\ProductBundle\Provider\SegmentWithRelationsProvider;
+use Oro\Bundle\ProductBundle\Provider\CronSegmentsProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +29,7 @@ class ProductCollectionsIndexCronCommand extends ContainerAwareCommand
     private $messageFactory;
 
     /**
-     * @var SegmentWithRelationsProvider
+     * @var CronSegmentsProvider
      */
     private $segmentProvider;
 
@@ -55,9 +55,9 @@ class ProductCollectionsIndexCronCommand extends ContainerAwareCommand
     }
 
     /**
-     * @param SegmentWithRelationsProvider $segmentProvider
+     * @param CronSegmentsProvider $segmentProvider
      */
-    public function setSegmentProvider(SegmentWithRelationsProvider $segmentProvider)
+    public function setSegmentProvider(CronSegmentsProvider $segmentProvider)
     {
         $this->segmentProvider = $segmentProvider;
     }
@@ -89,7 +89,7 @@ DESC;
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $hasSchedules = false;
-        foreach ($this->segmentProvider->getSegmentsWithRelations() as $segment) {
+        foreach ($this->segmentProvider->getSegments() as $segment) {
             $websiteIds = $this->productCollectionHelper->getWebsiteIdsBySegment($segment);
             if (empty($websiteIds)) {
                 continue;

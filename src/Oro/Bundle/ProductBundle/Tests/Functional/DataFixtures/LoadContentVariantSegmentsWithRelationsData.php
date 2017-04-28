@@ -53,6 +53,12 @@ class LoadContentVariantSegmentsWithRelationsData extends AbstractFixture implem
             $this->getReference(LoadSegmentsWithRelationsData::NO_RELATIONS_SEGMENT)
         );
 
+        $this->createTestContentVariant(
+            $manager,
+            $this->getWebCatalog(LoadWebCatalogsData::FIRST_WEB_CATALOG),
+            $this->getReference(LoadSegmentsWithRelationsData::WITH_CRITERIA_SEGMENT)
+        );
+
         $manager->flush();
     }
 
