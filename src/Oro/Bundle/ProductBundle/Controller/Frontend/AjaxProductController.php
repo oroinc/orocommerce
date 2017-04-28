@@ -43,6 +43,8 @@ class AjaxProductController extends Controller
             Criteria::expr()->neq('type', Product::TYPE_CONFIGURABLE)
         );
 
+        $searchQuery->setMaxResults(1000);
+
         $products = $searchQuery->getResult();
 
         $names = $this->prepareNamesData($products);

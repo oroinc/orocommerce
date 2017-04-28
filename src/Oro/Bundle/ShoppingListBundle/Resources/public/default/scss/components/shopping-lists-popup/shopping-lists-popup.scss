@@ -69,6 +69,14 @@
 
 @include breakpoint('mobile-landscape') {
     .shopping-lists-popup {
+        &__quantity {
+            width: $shopping-lists-popup-quantity-width-mobile;
+        }
+
+        &__list {
+            width: $shopping-lists-popup-list-width-mobile;
+        }
+
         &__footer & {
             &__list {
                 width: $shopping-lists-popup-footer-list-width-mobile;

@@ -24,12 +24,3 @@ layout:
             id: orders_container
             parentId: page_content
             blockType: container
-
-        - '@add':
-            id: orders_title
-            parentId: orders_container
-            siblingId: orders_datagrid
-            prepend: true
-            blockType: page_subtitle
-            options:
-                text: 'oro.frontend.order.past_orders.label'

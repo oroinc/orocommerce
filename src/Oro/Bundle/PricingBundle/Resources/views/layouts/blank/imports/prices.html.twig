@@ -2,7 +2,8 @@
     {% if productPrices is not null %}
         {% do block|merge_context({
             productPrices: productPrices,
-            product: product
+            product: product,
+            productUnitSelectionVisible: productUnitSelectionVisible
         }) %}
     {% endif %}
 
@@ -180,7 +181,7 @@
                 <tr class="product-prices__tr">
                     <td colspan="2" class="product-prices__td">
                         {% if loop.index > 1 %}<br/>{% endif %}
-                        {% if productUnitSelectionVisible is defined and productUnitSelectionVisible %}
+                        {% if productUnitSelectionVisible %}
                             <strong>{{ currentUnit|capitalize }}</strong>
                         {% endif %}
                     </td>

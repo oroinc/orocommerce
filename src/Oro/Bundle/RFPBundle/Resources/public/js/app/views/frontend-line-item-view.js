@@ -23,6 +23,7 @@ define(function(require) {
             fieldQuantity: '[data-name="field__quantity"]',
             fieldUnit: '[data-name="field__product-unit"]',
             fieldPrice: '[data-name="field__value"]',
+            fieldCommentCheckbox: '[data-role="field__comment-checkbox"]',
             fieldComment: '[data-name="field__comment"]',
             remove: '[data-role="remove"]'
         },
@@ -42,6 +43,10 @@ define(function(require) {
             this.template = _.template(this.getElement('template').text());
 
             this.listenTo(mediator, 'line-items:show:before', this.onShowBefore);
+
+            if (_.isEmpty(this.getProduct())) {
+                this.createInputWidget();
+            }
         },
 
         onInit: function() {
@@ -55,6 +60,10 @@ define(function(require) {
             if (!_.isEmpty(this.getProduct())) {
                 this.viewMode();
             }
+        },
+
+        createInputWidget: function() {
+            this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
         },
 
         render: function() {
@@ -82,7 +91,7 @@ define(function(require) {
         },
 
         editMode: function() {
-            this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
+            this.createInputWidget();
             this.toggleEditMode('enable');
         },
 
@@ -123,6 +132,7 @@ define(function(require) {
 
             data.product = this.getProduct();
             data.comment = this.getElement('fieldComment').val();
+            data.commentChecked = this.getElement('fieldCommentCheckbox').prop('checked');
             data.lines = [];
 
             _.each($quantities, function(quantity, i) {
