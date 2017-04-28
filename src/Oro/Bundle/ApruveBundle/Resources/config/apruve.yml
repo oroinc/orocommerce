@@ -2,6 +2,7 @@ services:
 
     oro_apruve.apruve.generator.order_secure_hash:
         class: 'Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator'
+        public: false
 
     oro_apruve.apruve.helper.amount_normalizer:
         class: 'Oro\Bundle\ApruveBundle\Apruve\Helper\AmountNormalizer'
