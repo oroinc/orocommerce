@@ -53,7 +53,7 @@ PaymentTransaction Lifecycle:
 
 Things to Consider:
 -------------------
-1. Apruve does not properly respect `price_total_cents` property of Apruve LineItem - it is not taken into account when secure hash is being generated on Apruve side. That's why it was decided (and approved by Apruve Support) to use `amount_cents` instead of `price_total_cents` property in Apruve LineItem entity. See `Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilder` and `Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator` for details.
+1. Apruve does not properly respect `price_total_cents` property of Apruve LineItem - it is not taken into account when secure hash is being generated on Apruve side. That's why it was decided (and approved by Apruve Support) to use `amount_cents` instead of `price_total_cents` property in Apruve LineItem entity. See `Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilder` and `Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator` for details. See [Merchant Integration Tutorial][1]
 
 2. Apruve wants to be notified about shipments from merchants who sell physical goods, but does not for other merchant types. Due to this fact it will not fulfil invoices in cases when it was not notified of shipment (when Shipment entity is not created via API) for merchants of physical goods. In order to unify the behavior for all types of merchants, it was decided to always notify Apruve about shipment, no matter goods of what type were sold. Shipment entity is created in Apruve along with Invoice entity when "Invoice" button is clicked on Order view page in the transactions datagrid.
 
@@ -84,3 +84,4 @@ Links:
 [1]: https://test.apruve.com
 [2]: https://docs.apruve.com/reference
 [3]: https://docs.apruve.com/guides
+[4]: https://docs.apruve.com/guides/merchant-integration-tutorial#1b-creating-a-secure-hash
