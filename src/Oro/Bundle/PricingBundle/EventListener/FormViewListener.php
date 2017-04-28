@@ -71,7 +71,7 @@ class FormViewListener
                 'priceAttributePrices' => $this->getPriceAttributePrices($product)
             ]
         );
-        $this->addProductPricesBlock($event->getScrollData(), $template);
+        $this->addProductPricesBlock($event->getScrollData(), $template, 500);
     }
 
     /**
@@ -83,7 +83,7 @@ class FormViewListener
             'OroPricingBundle:Product:prices_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $this->addProductPricesBlock($event->getScrollData(), $template);
+        $this->addProductPricesBlock($event->getScrollData(), $template, 10);
     }
 
     /**
@@ -136,10 +136,10 @@ class FormViewListener
      * @param ScrollData $scrollData
      * @param string $html
      */
-    protected function addProductPricesBlock(ScrollData $scrollData, $html)
+    protected function addProductPricesBlock(ScrollData $scrollData, $html, $priority)
     {
         $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
-        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, 10);
+        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, $priority);
         $subBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
         $scrollData->addSubBlockData(self::PRICING_BLOCK_NAME, $subBlockId, $html, 'productPriceAttributesPrices');
     }

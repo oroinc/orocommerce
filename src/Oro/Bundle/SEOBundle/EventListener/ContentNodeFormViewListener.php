@@ -28,8 +28,9 @@ class ContentNodeFormViewListener extends BaseFormViewListener
      * @param ScrollData $scrollData
      * @param string $descriptionTemplate
      * @param string $keywordsTemplate
+     * @param int $priority
      */
-    protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate)
+    protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate, $priority = 10)
     {
         // Set priorities to existing blocks to be able to pass new block in the middle
         $data = $scrollData->getData();

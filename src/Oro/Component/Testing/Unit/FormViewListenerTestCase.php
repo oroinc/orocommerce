@@ -82,7 +82,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
         $scrollData = $this->createMock(ScrollData::class);
 
-        $scrollData->expects($this->once())
+        $scrollData->expects($this->any())
             ->method('addBlock');
 
         $scrollData->expects($this->any())

@@ -73,7 +73,17 @@ class FormViewListener
             'OroCatalogBundle:Product:category_view.html.twig',
             ['entity' => $category]
         );
-        $this->addCategoryBlock($event->getScrollData(), $template);
+        $scrollData = $event->getScrollData()->getData();
+        if (!empty($scrollData[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA])) {
+            $subData = $scrollData[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA];
+            if (array_key_exists('category', $subData)) {
+                $subData['category'] = $template;
+            } else {
+                $subData = ['category' => $template] + $subData;    // insert as first element
+            }
+            $scrollData[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA] = $subData;
+            $event->getScrollData()->setData($scrollData);
+        }
     }
 
     /**

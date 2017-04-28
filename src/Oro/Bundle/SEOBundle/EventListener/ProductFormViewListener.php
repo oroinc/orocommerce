@@ -13,7 +13,7 @@ class ProductFormViewListener extends BaseFormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $this->addViewPageBlock($event, 'OroProductBundle:Product');
+        $this->addViewPageBlock($event, 'OroProductBundle:Product', 800);
     }
 
     /**

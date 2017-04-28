@@ -29,11 +29,6 @@ abstract class BaseFormViewListener
     protected $requestStack;
 
     /**
-     * @var int
-     */
-    protected $blockPriority = 10;
-
-    /**
      * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
@@ -49,21 +44,11 @@ abstract class BaseFormViewListener
     }
 
     /**
-     * @param int $blockPriority
-     * @return BaseFormViewListener
-     */
-    public function setBlockPriority($blockPriority)
-    {
-        $this->blockPriority = $blockPriority;
-
-        return $this;
-    }
-
-    /**
      * @param BeforeListRenderEvent $event
      * @param string $entityClass
+     * @param int $priority
      */
-    protected function addViewPageBlock(BeforeListRenderEvent $event, $entityClass)
+    protected function addViewPageBlock(BeforeListRenderEvent $event, $entityClass, $priority = 10)
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
@@ -90,13 +75,14 @@ abstract class BaseFormViewListener
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
 
-        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate);
+        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate, $priority);
     }
 
     /**
      * @param BeforeListRenderEvent $event
+     * @param int $priority
      */
-    protected function addEditPageBlock(BeforeListRenderEvent $event)
+    protected function addEditPageBlock(BeforeListRenderEvent $event, $priority = 10)
     {
         $twigEnv = $event->getEnvironment();
         $formView = $event->getFormView();
@@ -109,18 +95,19 @@ abstract class BaseFormViewListener
             ['form' => $formView]
         );
 
-        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate);
+        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate, $priority);
     }
 
     /**
      * @param ScrollData $scrollData
      * @param string $descriptionTemplate
      * @param string $keywordsTemplate
+     * @param int $priority
      */
-    protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate)
+    protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate, $priority = 10)
     {
         $blockLabel = $this->translator->trans('oro.seo.label');
-        $scrollData->addNamedBlock(self::SEO_BLOCK_ID, $blockLabel, $this->blockPriority);
+        $scrollData->addNamedBlock(self::SEO_BLOCK_ID, $blockLabel, $priority);
         $leftSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
         $rightSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $descriptionTemplate, 'metaDescriptions');
