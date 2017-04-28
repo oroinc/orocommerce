@@ -1,3 +1,5 @@
+@ticket-BB-8426
+@automatically-ticket-tagged
 @fixture-web_catalog.yml
 Feature: Move node within parent
   In order to change order of nodes
