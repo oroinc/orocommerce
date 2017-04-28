@@ -22,6 +22,6 @@ abstract class AbstractApruveEntity implements ApruveEntityInterface
      */
     public function getData()
     {
-        return (array) $this->data;
+        return (array)$this->data;
     }
 }

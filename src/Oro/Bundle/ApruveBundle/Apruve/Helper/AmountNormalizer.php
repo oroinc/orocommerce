@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\ApruveBundle\Apruve\Helper;
 
-class AmountNormalizer
+class AmountNormalizer implements AmountNormalizerInterface
 {
     /**
-     * @param mixed $amount
-     *
-     * @return int
+     * {@inheritDoc}
      */
-    public static function normalize($amount)
+    public function normalize($amount)
     {
-        $amountCents = ((float) $amount) * 100;
+        $amountCents = ((float)$amount) * 100;
 
-        return (int) round($amountCents, 0, PHP_ROUND_HALF_UP);
+        return (int)round($amountCents, 0, PHP_ROUND_HALF_UP);
     }
 }

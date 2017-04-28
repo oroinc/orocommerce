@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-
 interface ApruveOrderBuilderFactoryInterface
 {
     /**
-     * @param PaymentContextInterface $paymentContext
-     * @param ApruveConfigInterface $config
+     * @param string $merchantId
+     * @param int    $amountCents
+     * @param string $currency
+     * @param array  $lineItems
      *
      * @return ApruveOrderBuilderInterface
      */
-    public function create(PaymentContextInterface $paymentContext, ApruveConfigInterface $config);
+    public function create($merchantId, $amountCents, $currency, array $lineItems);
 }

@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem;
 
-use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
-
 interface ApruveLineItemBuilderFactoryInterface
 {
     /**
-     * @param PaymentLineItemInterface $paymentLineItem
+     * @param string $title
+     * @param int    $amountCents
+     * @param int    $quantity
+     * @param string $currency
      *
      * @return ApruveLineItemBuilderInterface
      */
-    public function create(PaymentLineItemInterface $paymentLineItem);
+    public function create($title, $amountCents, $quantity, $currency);
 }

@@ -10,7 +10,7 @@ class SupportedCurrenciesProvider implements SupportedCurrenciesProviderInterfac
     const USD = 'USD';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getCurrencies()
     {
@@ -18,7 +18,7 @@ class SupportedCurrenciesProvider implements SupportedCurrenciesProviderInterfac
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isSupported($currency)
     {

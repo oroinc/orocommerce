@@ -7,16 +7,26 @@ use Oro\Bundle\ApruveBundle\Apruve\Helper\AmountNormalizer;
 class AmountNormalizerTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var AmountNormalizer
+     */
+    private $amountNormalizer;
+
+    protected function setUp()
+    {
+        $this->amountNormalizer = new AmountNormalizer();
+    }
+
+    /**
      * @dataProvider normalizeDataProvider
      *
-     * @param mixed $amount
-     * @param int $expected
+     * @param int|float|string|bool $amount
+     * @param int                   $expected
      */
     public function testNormalize($amount, $expected)
     {
-        $actual = AmountNormalizer::normalize($amount);
+        $actual = $this->amountNormalizer->normalize($amount);
 
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
     /**

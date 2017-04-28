@@ -27,7 +27,7 @@ class TaxAmountProvider implements TaxAmountProviderInterface, LoggerAwareInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getTaxAmount(PaymentContextInterface $paymentContext)
     {

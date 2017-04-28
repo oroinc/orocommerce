@@ -2,21 +2,14 @@
 
 namespace Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem;
 
-use Oro\Bundle\ApruveBundle\Apruve\Model\LineItem\ApruveLineItemInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveLineItem;
 
 interface ApruveLineItemBuilderInterface
 {
     /**
-     * @return ApruveLineItemInterface
+     * @return ApruveLineItem
      */
     public function getResult();
-
-    /**
-     * @param string $title
-     *
-     * @return self
-     */
-    public function setTitle($title);
 
     /**
      * @param string $description
@@ -52,4 +45,18 @@ interface ApruveLineItemBuilderInterface
      * @return self
      */
     public function setVariantInfo($info);
+
+    /**
+     * @param string $sku
+     *
+     * @return self
+     */
+    public function setSku($sku);
+
+    /**
+     * @param int $amount
+     *
+     * @return self
+     */
+    public function setEaCents($amount);
 }

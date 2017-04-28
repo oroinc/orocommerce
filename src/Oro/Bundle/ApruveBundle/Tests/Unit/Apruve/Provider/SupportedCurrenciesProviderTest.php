@@ -12,7 +12,7 @@ class SupportedCurrenciesProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setUp()
     {
@@ -22,7 +22,7 @@ class SupportedCurrenciesProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetCurrencies()
     {
         $actual = $this->provider->getCurrencies();
-        $this->assertSame(['USD'], $actual);
+        static::assertSame(['USD'], $actual);
     }
 
     /**
@@ -34,7 +34,7 @@ class SupportedCurrenciesProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsSupported($currency, $expected)
     {
         $actual = $this->provider->isSupported($currency);
-        $this->assertSame($expected, $actual);
+        static::assertSame($expected, $actual);
     }
 
     /**
