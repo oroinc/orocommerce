@@ -2,93 +2,47 @@
 
 namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\AbstractApruveEntityBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactoryInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrder;
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
-use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
-use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveOrder;
 
-class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOrderBuilderInterface
+class ApruveOrderBuilder implements ApruveOrderBuilderInterface
 {
-    /**
-     * Mandatory
-     */
-    const MERCHANT_ID = 'merchant_id';
-    const AMOUNT_CENTS = 'amount_cents';
-    const CURRENCY = 'currency';
-    const LINE_ITEMS = 'order_items';
-
-    /**
-     * Optional
-     */
-    const MERCHANT_ORDER_ID = 'merchant_order_id';
-    const TAX_CENTS = 'tax_cents';
-    const SHIPPING_CENTS = 'shipping_cents';
-    const EXPIRE_AT = 'expire_at';
-    const AUTO_ESCALATE = 'auto_escalate';
-    const PO_NUMBER = 'po_number';
-    const PAYMENT_TERM_PARAMS = 'payment_term_params';
-    const _CORPORATE_ACCOUNT_ID = 'corporate_account_id';
-    const FINALIZE_ON_CREATE = 'finalize_on_create';
-    const INVOICE_ON_CREATE = 'invoice_on_create';
-
-    /**
-     * Required for offline (created manually via Apruve API) orders only.
-     */
-    const SHOPPER_ID = 'shopper_id';
-
-    /**
-     * @var PaymentContextInterface
-     */
-    private $paymentContext;
-
-    /**
-     * @var ApruveConfigInterface
-     */
-    private $config;
-
-    /**
-     * @var ApruveLineItemBuilderFactoryInterface
-     */
-    private $lineItemBuilderFactory;
-
-    /**
-     * @var TaxAmountProviderInterface
-     */
-    private $taxAmountProvider;
-
-    /**
-     * @var ShippingAmountProviderInterface
-     */
-    private $shippingAmountProvider;
-
     /**
      * @var array
      */
     private $data = [];
 
     /**
-     * @param PaymentContextInterface $paymentContext
-     * @param ApruveConfigInterface $config
-     * @param ApruveLineItemBuilderFactoryInterface $lineItemBuilderFactory
-     * @param ShippingAmountProviderInterface $shippingAmountProvider
-     * @param TaxAmountProviderInterface $taxAmountProvider
+     * @var string
      */
-    public function __construct(
-        PaymentContextInterface $paymentContext,
-        ApruveConfigInterface $config,
-        ApruveLineItemBuilderFactoryInterface $lineItemBuilderFactory,
-        ShippingAmountProviderInterface $shippingAmountProvider,
-        TaxAmountProviderInterface $taxAmountProvider
-    ) {
-        $this->paymentContext = $paymentContext;
-        $this->config = $config;
-        $this->lineItemBuilderFactory = $lineItemBuilderFactory;
-        $this->shippingAmountProvider = $shippingAmountProvider;
-        $this->taxAmountProvider = $taxAmountProvider;
+    private $merchantId;
+
+    /**
+     * @var int
+     */
+    private $amountCents;
+
+    /**
+     * @var string
+     */
+    private $currency;
+
+    /**
+     * @var array
+     */
+    private $lineItems;
+
+    /**
+     * @param string $merchantId
+     * @param int    $amountCents
+     * @param string $currency
+     * @param array  $lineItems
+     */
+    public function __construct($merchantId, $amountCents, $currency, array $lineItems)
+    {
+        $this->merchantId = $merchantId;
+        $this->amountCents = $amountCents;
+        $this->currency = $currency;
+        $this->lineItems = $lineItems;
     }
 
     /**
@@ -97,13 +51,10 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     public function getResult()
     {
         $this->data += [
-            self::MERCHANT_ID => (string) $this->config->getMerchantId(),
-            self::MERCHANT_ORDER_ID => (string) $this->getMerchantOrderId($this->paymentContext),
-            self::AMOUNT_CENTS => (int) $this->getAmountCents($this->paymentContext),
-            self::CURRENCY => (string) $this->paymentContext->getCurrency(),
-            self::LINE_ITEMS => (array) $this->getLineItems($this->paymentContext->getLineItems()),
-            self::SHIPPING_CENTS => (int) $this->getShippingCents($this->paymentContext),
-            self::TAX_CENTS => (int) $this->getTaxCents($this->paymentContext),
+            ApruveOrder::MERCHANT_ID => (string)$this->merchantId,
+            ApruveOrder::AMOUNT_CENTS => (int)$this->amountCents,
+            ApruveOrder::CURRENCY => (string)$this->currency,
+            ApruveOrder::LINE_ITEMS => (array)$this->lineItems,
         ];
 
         return new ApruveOrder($this->data);
@@ -114,7 +65,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
      */
     public function setInvoiceOnCreate($bool)
     {
-        $this->data[self::INVOICE_ON_CREATE] = (bool) $bool;
+        $this->data[ApruveOrder::INVOICE_ON_CREATE] = (bool)$bool;
 
         return $this;
     }
@@ -124,7 +75,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
      */
     public function setFinalizeOnCreate($bool)
     {
-        $this->data[self::FINALIZE_ON_CREATE] = (bool) $bool;
+        $this->data[ApruveOrder::FINALIZE_ON_CREATE] = (bool)$bool;
 
         return $this;
     }
@@ -134,7 +85,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
      */
     public function setShopperId($id)
     {
-        $this->data[self::SHOPPER_ID] = (string)$id;
+        $this->data[ApruveOrder::SHOPPER_ID] = (string)$id;
 
         return $this;
     }
@@ -144,7 +95,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
      */
     public function setCorporateAccountId($id)
     {
-        $this->data[self::PAYMENT_TERM_PARAMS][self::_CORPORATE_ACCOUNT_ID] = (string)$id;
+        $this->data[ApruveOrder::PAYMENT_TERM_PARAMS][ApruveOrder::_CORPORATE_ACCOUNT_ID] = (string)$id;
 
         return $this;
     }
@@ -152,9 +103,9 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
     /**
      * {@inheritDoc}
      */
-    public function setExpireAt(\DateTime $dateTime)
+    public function setExpireAt($expireAt)
     {
-        $this->data[self::EXPIRE_AT] = (string)$dateTime->format(\DateTime::ATOM);
+        $this->data[ApruveOrder::EXPIRE_AT] = (string)$expireAt;
 
         return $this;
     }
@@ -164,7 +115,7 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
      */
     public function setAutoEscalate($bool)
     {
-        $this->data[self::AUTO_ESCALATE] = (bool)$bool;
+        $this->data[ApruveOrder::AUTO_ESCALATE] = (bool)$bool;
 
         return $this;
     }
@@ -174,76 +125,38 @@ class ApruveOrderBuilder extends AbstractApruveEntityBuilder implements ApruveOr
      */
     public function setPoNumber($poNumber)
     {
-        $this->data[self::PO_NUMBER] = (string)$poNumber;
+        $this->data[ApruveOrder::PO_NUMBER] = (string)$poNumber;
 
         return $this;
     }
 
     /**
-     * @param PaymentLineItemCollectionInterface $lineItems
-     *
-     * @return array
+     * {@inheritDoc}
      */
-    protected function getLineItems($lineItems)
+    public function setMerchantOrderId($orderId)
     {
-        $apruveLineItems = [];
-        foreach ($lineItems as $lineItem) {
-            $builder = $this->lineItemBuilderFactory->create($lineItem);
+        $this->data[ApruveOrder::MERCHANT_ORDER_ID] = (string)$orderId;
 
-            $apruveLineItems[] = $builder->getResult()->getData();
-        }
-
-        return $apruveLineItems;
+        return $this;
     }
 
     /**
-     * @param PaymentContextInterface $paymentContext
-     *
-     * @return int
+     * {@inheritDoc}
      */
-    protected function getShippingCents(PaymentContextInterface $paymentContext)
+    public function setShippingCents($amount)
     {
-        $amount = $this->shippingAmountProvider->getShippingAmount($paymentContext);
+        $this->data[ApruveOrder::SHIPPING_CENTS] = (int)$amount;
 
-        return $this->normalizeAmount($amount);
+        return $this;
     }
 
     /**
-     * @param PaymentContextInterface $paymentContext
-     *
-     * @return int
+     * {@inheritDoc}
      */
-    protected function getTaxCents(PaymentContextInterface $paymentContext)
+    public function setTaxCents($amount)
     {
-        $amount = $this->taxAmountProvider->getTaxAmount($paymentContext);
+        $this->data[ApruveOrder::TAX_CENTS] = (int)$amount;
 
-        return $this->normalizeAmount($amount);
-    }
-
-    /**
-     * @param PaymentContextInterface $paymentContext
-     *
-     * @return string
-     */
-    protected function getMerchantOrderId(PaymentContextInterface $paymentContext)
-    {
-        return (string) $paymentContext->getSourceEntityIdentifier();
-    }
-
-    /**
-     * Get total order amount for "amount_cents" property.
-     * Sums total price of line items, shipping costs and taxes.
-     *
-     * @param PaymentContextInterface $paymentContext
-     *
-     * @return int
-     */
-    protected function getAmountCents(PaymentContextInterface $paymentContext)
-    {
-        $amountCents = $this->normalizePrice($paymentContext->getSubtotal());
-        $amountCents += $this->getShippingCents($paymentContext);
-        $amountCents += $this->getTaxCents($paymentContext);
-
-        return $amountCents;
+        return $this;
     }
 }

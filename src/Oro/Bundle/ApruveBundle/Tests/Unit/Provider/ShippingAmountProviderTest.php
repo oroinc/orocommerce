@@ -37,7 +37,7 @@ class ShippingAmountProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
@@ -45,17 +45,20 @@ class ShippingAmountProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentContext = $this->createMock(PaymentContextInterface::class);
         $this->paymentContext
+            ->expects(static::once())
             ->method('getSourceEntity')
             ->willReturn($this->sourceEntity);
 
         $this->surcharge = $this->createMock(Surcharge::class);
         $this->surcharge
+            ->expects(static::once())
             ->method('getShippingAmount')
             ->willReturn(self::AMOUNT);
 
         $this->surchargeProvider = $this->createMock(SurchargeProvider::class);
 
         $this->surchargeProvider
+            ->expects(static::once())
             ->method('getSurcharges')
             ->with($this->sourceEntity)
             ->willReturn($this->surcharge);

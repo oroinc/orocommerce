@@ -8,7 +8,6 @@ use Oro\Bundle\TaxBundle\Exception\TaxationDisabledException;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Mapper\UnmappableArgumentException;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
-use Psr\Log\LoggerInterface;
 
 class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +37,7 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
@@ -69,6 +68,7 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['getTaxAmount'])
             ->getMock();
         $taxResultElement
+            ->expects(static::once())
             ->method('getTaxAmount')
             ->willReturn($taxAmount);
 
@@ -76,11 +76,14 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
         $taxResult = $this->getMockBuilder(\stdClass::class)
             ->setMethods(['getTotal'])
             ->getMock();
+
         $taxResult
+            ->expects(static::once())
             ->method('getTotal')
             ->willReturn($taxResultElement);
 
         $this->taxManager
+            ->expects(static::once())
             ->method('loadTax')
             ->with($this->sourceEntity)
             ->willReturn($taxResult);
@@ -104,6 +107,7 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetTaxAmountIfTaxationIsDisabled()
     {
         $this->taxManager
+            ->expects(static::once())
             ->method('loadTax')
             ->with($this->sourceEntity)
             ->willThrowException(new TaxationDisabledException());
@@ -115,6 +119,7 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetTaxAmountIfIsNotMappable()
     {
         $this->taxManager
+            ->expects(static::once())
             ->method('loadTax')
             ->with($this->sourceEntity)
             ->willThrowException(new UnmappableArgumentException());
@@ -128,6 +133,7 @@ class TaxAmountProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetTaxAmountIfEntityIsInvalid()
     {
         $this->taxManager
+            ->expects(static::once())
             ->method('loadTax')
             ->with($this->sourceEntity)
             ->willThrowException(new \InvalidArgumentException());

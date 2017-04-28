@@ -2,40 +2,28 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilder;
 use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderFactory;
-use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
-use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
-use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 class ApruveOrderBuilderFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $paymentContext;
-
-    /**
-     * @var ApruveConfigInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $config;
-
-    /**
-     * @var ApruveLineItemBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $apruveLineItemBuilderFactory;
-
-    /**
-     * @var ShippingAmountProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $shippingAmountProvider;
-
-    /**
-     * @var TaxAmountProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $taxAmountProvider;
+    const MERCHANT_ID = 'sampleMerchantId';
+    const AMOUNT_CENTS = 11130;
+    const CURRENCY = 'USD';
+    const LINE_ITEMS = [
+        'sku1' => [
+            'sku' => 'sku1',
+            'quantity' => 100,
+            'currency' => 'USD',
+            'amount_cents' => 2000,
+        ],
+        'sku2' => [
+            'sku' => 'sku2',
+            'quantity' => 50,
+            'currency' => 'USD',
+            'amount_cents' => 1000,
+        ],
+    ];
 
     /**
      * @var ApruveOrderBuilderFactory
@@ -47,28 +35,23 @@ class ApruveOrderBuilderFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->paymentContext = $this->createMock(PaymentContextInterface::class);
-        $this->config = $this->createMock(ApruveConfigInterface::class);
-        $this->apruveLineItemBuilderFactory = $this->createMock(ApruveLineItemBuilderFactoryInterface::class);
-        $this->shippingAmountProvider = $this->createMock(ShippingAmountProviderInterface::class);
-        $this->taxAmountProvider = $this->createMock(TaxAmountProviderInterface::class);
-
-        $this->factory = new ApruveOrderBuilderFactory(
-            $this->apruveLineItemBuilderFactory,
-            $this->shippingAmountProvider,
-            $this->taxAmountProvider
-        );
+        $this->factory = new ApruveOrderBuilderFactory();
     }
 
     public function testCreate()
     {
-        $actual = $this->factory->create($this->paymentContext, $this->config);
+        $actual = $this->factory->create(
+            self::MERCHANT_ID,
+            self::AMOUNT_CENTS,
+            self::CURRENCY,
+            self::LINE_ITEMS
+        );
+
         $expected = new ApruveOrderBuilder(
-            $this->paymentContext,
-            $this->config,
-            $this->apruveLineItemBuilderFactory,
-            $this->shippingAmountProvider,
-            $this->taxAmountProvider
+            self::MERCHANT_ID,
+            self::AMOUNT_CENTS,
+            self::CURRENCY,
+            self::LINE_ITEMS
         );
 
         static::assertEquals($expected, $actual);

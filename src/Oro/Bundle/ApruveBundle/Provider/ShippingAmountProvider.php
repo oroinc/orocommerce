@@ -21,7 +21,7 @@ class ShippingAmountProvider implements ShippingAmountProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getShippingAmount(PaymentContextInterface $paymentContext)
     {

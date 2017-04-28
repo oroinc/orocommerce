@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Model\Order;
+namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Model;
 
 use Oro\Bundle\ApruveBundle\Apruve\Model\AbstractApruveEntity;
-use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrder;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveOrder;
 
 class ApruveOrderTest extends \PHPUnit_Framework_TestCase
 {

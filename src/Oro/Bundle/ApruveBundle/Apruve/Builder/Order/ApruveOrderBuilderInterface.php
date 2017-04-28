@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ApruveBundle\Apruve\Builder\Order;
 
-use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrderInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveOrder;
 
 interface ApruveOrderBuilderInterface
 {
     /**
-     * @return ApruveOrderInterface
+     * @return ApruveOrder
      */
     public function getResult();
 
@@ -40,11 +40,11 @@ interface ApruveOrderBuilderInterface
     public function setCorporateAccountId($id);
 
     /**
-     * @param \DateTime $dateTime
+     * @param string $expireAt
      *
-     * @return ApruveOrderBuilderInterface
+     * @return self
      */
-    public function setExpireAt(\DateTime $dateTime);
+    public function setExpireAt($expireAt);
 
     /**
      * @param bool $bool
@@ -56,7 +56,28 @@ interface ApruveOrderBuilderInterface
     /**
      * @param string $poNumber
      *
-     * @return ApruveOrderBuilderInterface
+     * @return self
      */
     public function setPoNumber($poNumber);
+
+    /**
+     * @param string|int $orderId
+     *
+     * @return self
+     */
+    public function setMerchantOrderId($orderId);
+
+    /**
+     * @param int $amount
+     *
+     * @return self
+     */
+    public function setShippingCents($amount);
+
+    /**
+     * @param int $amount
+     *
+     * @return self
+     */
+    public function setTaxCents($amount);
 }

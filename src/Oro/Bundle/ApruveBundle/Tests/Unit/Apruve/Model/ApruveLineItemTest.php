@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Model\LineItem;
+namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Model;
 
 use Oro\Bundle\ApruveBundle\Apruve\Model\AbstractApruveEntity;
-use Oro\Bundle\ApruveBundle\Apruve\Model\LineItem\ApruveLineItem;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveLineItem;
 
 class ApruveLineItemTest extends \PHPUnit_Framework_TestCase
 {
