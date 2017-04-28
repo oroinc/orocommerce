@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Context\Factory;
 
-use Oro\Bundle\PaymentBundle\Context\Factory\Exception\UnsupportedEntity;
+use Oro\Bundle\PaymentBundle\Context\Factory\Exception\UnsupportedEntityException;
 
 class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaymentContextFactoryInterface
 {
@@ -47,7 +47,7 @@ class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaym
      *
      * @return SupportsEntityPaymentContextFactoryInterface
      *
-     * @throws \Oro\Bundle\PaymentBundle\Context\Factory\Exception\UnsupportedEntity
+     * @throws UnsupportedEntityException
      */
     protected function getFactory($entityClass, $entityId)
     {
@@ -62,6 +62,6 @@ class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaym
             $entityClass,
             $entityId
         );
-        throw new UnsupportedEntity($msg);
+        throw new UnsupportedEntityException($msg);
     }
 }

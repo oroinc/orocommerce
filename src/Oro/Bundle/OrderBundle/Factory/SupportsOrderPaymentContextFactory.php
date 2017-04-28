@@ -33,9 +33,8 @@ class SupportsOrderPaymentContextFactory implements SupportsEntityPaymentContext
         $this->orderPaymentContextFactory = $orderPaymentContextFactory;
     }
 
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function create($entityClass, $entityId)
     {
@@ -49,7 +48,7 @@ class SupportsOrderPaymentContextFactory implements SupportsEntityPaymentContext
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function supports($entityClass, $entityId)
     {
@@ -65,7 +64,7 @@ class SupportsOrderPaymentContextFactory implements SupportsEntityPaymentContext
      *
      * @return Order|null
      */
-    protected function findOrder($entityId)
+    private function findOrder($entityId)
     {
         if (!array_key_exists($entityId, $this->orders)) {
             $this->orders[$entityId] = $this->doctrine->getEntity(Order::class, $entityId);

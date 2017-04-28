@@ -11,12 +11,12 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @var CompositeSupportsEntityPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $compositeFactory;
+    private $compositeFactory;
 
     /**
      * @var TransactionPaymentContextFactory
      */
-    protected $factory;
+    private $factory;
 
     /**
      * {@inheritDoc}
@@ -33,7 +33,7 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $entityClass = \stdClass::class;
         $entityId = 1;
 
-        $transaction = $this->createMock(PaymentTransaction::class);
+        $transaction = $this->createPaymentTransactionMock();
         $transaction
             ->expects(static::exactly(2))
             ->method('getEntityClass')
@@ -62,7 +62,7 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $entityClass = \stdClass::class;
         $entityId = 1;
 
-        $transaction = $this->createMock(PaymentTransaction::class);
+        $transaction = $this->createPaymentTransactionMock();
         $transaction
             ->expects(static::once())
             ->method('getEntityClass')
@@ -85,5 +85,13 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $actual = $this->factory->create($transaction);
 
         static::assertSame(null, $actual);
+    }
+
+    /**
+     * @return PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createPaymentTransactionMock()
+    {
+        return $this->createMock(PaymentTransaction::class);
     }
 }

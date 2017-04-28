@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Context\Factory;
 
+use Oro\Bundle\PaymentBundle\Context\Factory\Exception\UnsupportedEntityException;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 interface SupportsEntityPaymentContextFactoryInterface
@@ -10,7 +11,9 @@ interface SupportsEntityPaymentContextFactoryInterface
      * @param string $entityClass
      * @param int $entityId
      *
-     * @return PaymentContextInterface|null
+     * @throws UnsupportedEntityException
+     *
+     * @return PaymentContextInterface
      */
     public function create($entityClass, $entityId);
 

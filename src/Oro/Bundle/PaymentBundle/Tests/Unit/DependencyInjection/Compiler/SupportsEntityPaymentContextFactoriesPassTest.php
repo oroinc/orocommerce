@@ -13,17 +13,17 @@ class SupportsEntityPaymentContextFactoriesPassTest extends \PHPUnit_Framework_T
     /**
      * @var PaymentMethodProvidersPass
      */
-    protected $compilerPass;
+    private $compilerPass;
 
     /**
      * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $containerBuilder;
+    private $containerBuilder;
 
     /**
      * {@inheritDoc}
      */
-    public function setUp()
+    protected function setUp()
     {
         $this->containerBuilder = $this
             ->getMockBuilder(ContainerBuilder::class)

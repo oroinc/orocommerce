@@ -10,12 +10,12 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit_Framewor
     /**
      * @var CompositeSupportsEntityPaymentContextFactory
      */
-    protected $factory;
+    private $factory;
 
-    protected $entityClassOne = 'OrderFQCN';
-    protected $entityClassTwo = 'InvoiceFQCN';
-    protected $entityIdOne = 1;
-    protected $entityIdTwo = 2;
+    const ENTITY_CLASS_ONE = 'OrderFQCN';
+    const ENTITY_ID_ONE = 1;
+    const ENTITY_CLASS_TWO = 'InvoiceFQCN';
+    const ENTITY_ID_TWO = 2;
 
     /**
      * @var array
@@ -36,24 +36,24 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit_Framewor
         $factoryOne
             ->method('supports')
             ->willReturnMap([
-                [$this->entityClassOne, $this->entityIdOne, true],
-                [$this->entityClassTwo, $this->entityIdTwo, false],
+                [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, true],
+                [self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO, false],
             ]);
         $factoryOne
             ->method('create')
-            ->with($this->entityClassOne, $this->entityIdOne)
+            ->with(self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE)
             ->willReturn($this->results['resultOne']);
 
         $factoryTwo = $this->createMock(SupportsEntityPaymentContextFactoryInterface::class);
         $factoryTwo
             ->method('supports')
             ->willReturnMap([
-                [$this->entityClassOne, $this->entityIdOne, false],
-                [$this->entityClassTwo, $this->entityIdTwo, true],
+                [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, false],
+                [self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO, true],
             ]);
         $factoryTwo
             ->method('create')
-            ->with($this->entityClassTwo, $this->entityIdTwo)
+            ->with(self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO)
             ->willReturn($this->results['resultTwo']);
 
         $factories = [$factoryOne, $factoryTwo];
@@ -81,8 +81,8 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit_Framewor
     public function createDataProvider()
     {
         return [
-            [$this->entityClassOne, $this->entityIdOne, 'resultOne'],
-            [$this->entityClassTwo, $this->entityIdTwo, 'resultTwo'],
+            [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, 'resultOne'],
+            [self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO, 'resultTwo'],
         ];
     }
 
@@ -105,8 +105,8 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit_Framewor
     public function supportsWithSupportedClassDataProvider()
     {
         return [
-            'with first supported entity' => [$this->entityClassOne, $this->entityIdOne, true],
-            'with second supported entity' => [$this->entityClassTwo, $this->entityIdTwo, true],
+            'with first supported entity' => [self::ENTITY_CLASS_ONE, self::ENTITY_ID_ONE, true],
+            'with second supported entity' => [self::ENTITY_CLASS_TWO, self::ENTITY_ID_TWO, true],
             'with unsupported entity' => ['UnsupportedEntityClass', 1, false],
         ];
     }
