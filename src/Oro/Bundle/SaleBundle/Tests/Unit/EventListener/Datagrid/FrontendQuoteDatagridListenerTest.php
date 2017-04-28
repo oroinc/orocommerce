@@ -7,7 +7,7 @@ use Doctrine\ORM\Query\Parameter;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQuery;
-use Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
 
@@ -34,19 +34,22 @@ class FrontendQuoteDatagridListenerTest extends OrmTestCase
         $em = $this->getTestEntityManager();
         $qb = $em->createQueryBuilder()
             ->select('q.id')
-            ->from(Quote::class, 'qoute');
+            ->from(Quote::class, 'quote');
 
         $this->listener->onResultBeforeQuery(new OrmResultBeforeQuery($this->datagrid, $qb));
 
         $this->assertEquals(
-            'SELECT q.id FROM Oro\Bundle\SaleBundle\Tests\Unit\EventListener\Datagrid\Quote qoute '.
-            'WHERE qoute.internal_status IS NULL OR qoute.internal_status IN(:internalStatuses)',
+            sprintf(
+                'SELECT q.id FROM %s quote '.
+                'WHERE quote.internal_status IS NULL OR quote.internal_status IN(:internalStatuses)',
+                Quote::class
+            ),
             $qb->getQuery()->getDQL()
         );
 
         $this->assertEquals(
             new ArrayCollection([
-                new Parameter('internalStatuses', FrontendQuotePermissionVoter::FRONTEND_INTERNAL_STATUSES),
+                new Parameter('internalStatuses', Quote::FRONTEND_INTERNAL_STATUSES),
             ]),
             $qb->getParameters()
         );

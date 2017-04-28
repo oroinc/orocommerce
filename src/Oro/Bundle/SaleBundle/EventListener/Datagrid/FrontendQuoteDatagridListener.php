@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQuery;
-use Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class FrontendQuoteDatagridListener
 {
@@ -24,6 +24,6 @@ class FrontendQuoteDatagridListener
             )
         );
 
-        $qb->setParameter('internalStatuses', FrontendQuotePermissionVoter::FRONTEND_INTERNAL_STATUSES);
+        $qb->setParameter('internalStatuses', Quote::FRONTEND_INTERNAL_STATUSES);
     }
 }

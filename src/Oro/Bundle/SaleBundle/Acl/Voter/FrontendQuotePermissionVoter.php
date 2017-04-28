@@ -14,16 +14,6 @@ class FrontendQuotePermissionVoter extends Voter
     /** @var CurrentApplicationProviderInterface */
     protected $applicationProvider;
 
-    const FRONTEND_INTERNAL_STATUSES = [
-        'template',
-        'open',
-        'sent_to_customer',
-        'expired',
-        'accepted',
-        'declined',
-        'cancelled',
-    ];
-
     /**
      * @param CurrentApplicationProviderInterface $applicationProvider
      */
@@ -46,7 +36,8 @@ class FrontendQuotePermissionVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         /* @var $subject Quote */
-        return in_array($subject->getInternalStatus()->getId(), self::FRONTEND_INTERNAL_STATUSES, true);
+        return !$subject->getInternalStatus() ||
+            in_array($subject->getInternalStatus()->getId(), Quote::FRONTEND_INTERNAL_STATUSES, true);
     }
 
     /**
