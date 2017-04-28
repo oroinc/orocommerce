@@ -6,12 +6,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
+use Oro\Bundle\DataGridBundle\Datagrid\NameStrategyInterface;
 use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener;
+use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,6 +36,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
+     * @var NameStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $nameStrategy;
+
+    /**
      * @var ProductCollectionDatagridListener
      */
     protected $listener;
@@ -46,10 +52,12 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->nameStrategy = $this->createMock(NameStrategyInterface::class);
         $this->listener = new ProductCollectionDatagridListener(
             $this->requestStack,
             $this->segmentManager,
-            $this->registry
+            $this->registry,
+            $this->nameStrategy
         );
     }
 
@@ -92,13 +100,14 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildAfterWithoutDefinition()
     {
-        $dataSource = $this->createMock(DatasourceInterface::class);
+        $dataSource = $this->createMock(OrmDatasource::class);
 
         /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
+        $this->assertGetGridFullNameCalls($dataGrid, 'grid_name', '1');
 
         $event = new BuildAfter($dataGrid);
 
@@ -112,11 +121,17 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testOnBuildAfter()
+    /**
+     * @dataProvider gridNameDataProvider
+     * @param string $gridName
+     * @param string $scope
+     * @param string $resolvedName
+     */
+    public function testOnBuildAfterWhenDefinitionFromRequest($gridName, $scope, $resolvedName)
     {
         $segmentType = new SegmentType(SegmentType::TYPE_DYNAMIC);
 
-        $em  = $this->createMock(EntityManager::class);
+        $em = $this->createMock(EntityManager::class);
         $em->expects($this->once())
             ->method('getReference')
             ->with(SegmentType::class, SegmentType::TYPE_DYNAMIC)
@@ -141,11 +156,15 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getDatasource')
             ->willReturn($dataSource);
 
+        $this->assertGetGridFullNameCalls($dataGrid, $gridName, $scope);
         $event = new BuildAfter($dataGrid);
 
+        $requestParameterKey = ProductCollectionDatagridListener::SEGMENT_DEFINITION_PARAMETER_KEY . $resolvedName;
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
-            ->willReturn(new Request(['segmentDefinition' => $segmentDefinition]));
+            ->willReturn(new Request([
+                $requestParameterKey => $segmentDefinition
+            ]));
 
         $createdSegment = new Segment();
         $createdSegment->setDefinition($segmentDefinition)
@@ -157,5 +176,40 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->with($qb, $createdSegment);
 
         $this->listener->onBuildAfter($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function gridNameDataProvider(): array
+    {
+        return [
+            'without scope' => ['grid_name', null, 'grid_name:0'],
+            'with 0 scope' => ['grid_name', '0', 'grid_name:0'],
+            'with scope' => ['grid_name', '1', 'grid_name:1']
+        ];
+    }
+
+    /**
+     * @param Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid
+     * @param string $gridName
+     * @param string $gridScope
+     */
+    private function assertGetGridFullNameCalls(Datagrid $dataGrid, $gridName, $gridScope)
+    {
+        $gridFullName = $gridName;
+        if ($gridScope) {
+            $gridFullName .= ':' . $gridScope;
+        }
+        $dataGrid->expects($this->once())
+            ->method('getName')
+            ->willReturn($gridName);
+        $dataGrid->expects($this->once())
+            ->method('getScope')
+            ->willReturn($gridScope);
+        $this->nameStrategy->expects($this->once())
+            ->method('buildGridFullName')
+            ->with($gridName, $gridScope)
+            ->willReturn($gridFullName);
     }
 }

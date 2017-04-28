@@ -19,6 +19,8 @@ define(function(require) {
          */
         options: {
             segmentDefinitionSelectorTemplate: 'input[name="%s"]',
+            controlsBlockAlias: null,
+            gridName: null,
             selectors: {
                 reset: null,
                 apply: null,
@@ -32,7 +34,8 @@ define(function(require) {
          */
         requiredOptions: [
             'segmentDefinitionFieldName',
-            'controlsBlockAlias'
+            'controlsBlockAlias',
+            'gridName'
         ],
 
         /**
@@ -87,6 +90,8 @@ define(function(require) {
 
             this.initialDefinitionState = this.currentDefinitionState = this._getSegmentDefinition();
             this.$form.on('submit' + this.eventNamespace(), _.bind(this.onSubmit, this));
+
+            mediator.on('grid-sidebar:load:' + this.options.controlsBlockAlias, this._applyQuery, this);
         },
 
         /**
@@ -128,7 +133,8 @@ define(function(require) {
          */
         onApplyQuery: function(e) {
             e.preventDefault();
-            this._applyQuery();
+            $(this.options.selectors.gridWidgetContainer).removeClass('hide');
+            this._applyQuery(true);
         },
 
         onConfirmModalOk: function() {
@@ -136,11 +142,11 @@ define(function(require) {
             this.$form.trigger('submit');
         },
 
-        onReset: function() {
+        onReset: function(e) {
             var filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
             this.$conditionBuilder.conditionBuilder('setValue', filters);
             this.currentDefinitionState = this.initialDefinitionState;
-            this._applyQuery();
+            this.onApplyQuery(e);
         },
 
         _checkOptions: function() {
@@ -165,12 +171,16 @@ define(function(require) {
         /**
          * @private
          */
-        _applyQuery: function() {
-            $(this.options.selectors.gridWidgetContainer).removeClass('hide');
+        _applyQuery: function(reload) {
             var segmentDefinition = this._getSegmentDefinition();
-            mediator.trigger('grid-sidebar:change:' + this.options.controlsBlockAlias, {
-                params: {segmentDefinition: segmentDefinition}
-            });
+            var parameters = {
+                updateUrl: false,
+                reload: reload,
+                params: {}
+            };
+            parameters.params['sd_' + this.options.gridName] = segmentDefinition;
+
+            mediator.trigger('grid-sidebar:change:' + this.options.controlsBlockAlias, parameters);
             this.currentDefinitionState = segmentDefinition;
         },
 
@@ -237,6 +247,7 @@ define(function(require) {
                 this.$form.data('productCollectionApplyQueryModal').off('ok', _.bind(this.onConfirmModalOk, this));
             }
             this.$form.off(this.eventNamespace());
+            mediator.off('grid-sidebar:load:' + this.options.controlsBlockAlias);
 
             ProductCollectionApplyQueryComponent.__super__.dispose.call(this);
         }

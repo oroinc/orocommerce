@@ -869,6 +869,7 @@ services:
             - '@request_stack'
             - '@oro_segment.segment_manager'
             - '@doctrine'
+            - '@oro_datagrid.datagrid.name_strategy'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
 

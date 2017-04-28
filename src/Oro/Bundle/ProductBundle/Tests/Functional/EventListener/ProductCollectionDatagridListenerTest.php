@@ -36,15 +36,16 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
             }]
         }';
 
+        $gridName = 'product-collection-grid';
         $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_datagrid_index',
-                ['gridName' => 'product-collection-grid']
-            ),
-            [
-                'segmentDefinition' => $segmentDefinition
-            ]
+                [
+                    'gridName' => $gridName,
+                    'sd_' . $gridName . ':0' => $segmentDefinition
+                ]
+            )
         );
 
         $result = $this->client->getResponse();

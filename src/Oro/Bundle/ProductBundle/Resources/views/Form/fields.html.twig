@@ -245,9 +245,16 @@
     {% set controlsBlockAlias = 'product-collection-grid-control-' ~ form.vars.name %}
     {% set gridVisibilityState = form.vars.segmentDefinition is empty ? 'hide' : ''%}
 
+    {% set gridName = oro_datagrid_build_fullname(form.vars.results_grid, form.vars.name) %}
+    {% set resolvedGridName = gridName %}
+    {% if ':' not in gridName  %}
+        {% set resolvedGridName = gridName ~ ':0' %}
+    {% endif %}
     {% set widgetRouteParameters = {
-        'gridName': oro_datagrid_build_fullname(form.vars.results_grid, form.vars.name),
-        'segmentDefinition': form.vars.segmentDefinition
+        'gridName': gridName,
+        'renderParams': {'routerEnabled': false},
+        'renderParamsTypes': {'routerEnabled': 'bool'},
+        ('sd_' ~ resolvedGridName): form.vars.segmentDefinition
     } %}
 
     {% set gridSidebarComponentOptions = {
@@ -264,7 +271,8 @@
             'apply': '.filter-apply'
         },
         'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
-        'controlsBlockAlias': controlsBlockAlias
+        'controlsBlockAlias': controlsBlockAlias,
+        'gridName': gridName
     } %}
 
     <div id="{{ form.vars.id }}"
