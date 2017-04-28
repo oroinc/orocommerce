@@ -9,6 +9,9 @@ use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -175,6 +178,63 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             '/base/context/_item/slug',
             $this->generator->generate($routeName, $routeParameters, $referenceType)
         );
+    }
+
+    /**
+     * @dataProvider emptyContextAwareUrlDataProvider
+     * @param string $contextUrl
+     */
+    public function testGenerateWithDataStorageWithEmptyContext($contextUrl)
+    {
+        $routeName = 'test';
+        $contextType = 'test_context';
+        $contextData = 1;
+        $routeParameters = ['id' => 2, 'context_type' => $contextType, 'context_data' => $contextData];
+        $cleanParameters = ['id' => 2];
+        $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
+        $slug = 'slug';
+
+        /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
+        $storage = $this->getMockBuilder(UrlDataStorage::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $storage->expects($this->never())
+            ->method('getSlug');
+        $storage->expects($this->once())
+            ->method('getUrl')
+            ->willReturn($slug);
+        $this->baseGenerator->expects($this->never())
+            ->method('generate');
+
+        $baseUrl = '/base';
+        $this->assertRequestContextCalled($baseUrl);
+
+        $this->contextUrlProvider->expects($this->once())
+            ->method('getUrl')
+            ->with($contextType, $contextData)
+            ->willReturn($contextUrl);
+
+        $this->cache->expects($this->once())
+            ->method('getUrlDataStorage')
+            ->with($routeName, $cleanParameters)
+            ->willReturn($storage);
+
+        $this->assertEquals(
+            '/base/slug',
+            $this->generator->generate($routeName, $routeParameters, $referenceType)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function emptyContextAwareUrlDataProvider()
+    {
+        return [
+            'empty context' => [''],
+            'null context' => [null],
+            'root context' => ['/']
+        ];
     }
 
     public function testGenerateWithDataStorageWithoutContext()

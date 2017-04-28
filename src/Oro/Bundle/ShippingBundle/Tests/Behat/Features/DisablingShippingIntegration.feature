@@ -1,3 +1,5 @@
+@ticket-BB-7664
+@automatically-ticket-tagged
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-ShippingMethodsConfigsRule.yml
 Feature: Shipping Method Configurations disappear when removing integration

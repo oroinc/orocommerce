@@ -93,3 +93,6 @@ oro_behat_extension:
         - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features'
+
+    AttributeGroupCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
