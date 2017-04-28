@@ -616,7 +616,7 @@ class QuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testGridAccessDeniedForAnonymousUsers()

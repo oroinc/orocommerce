@@ -82,6 +82,16 @@ class Quote extends ExtendQuote implements
     const INTERNAL_STATUS_DELETED = 'deleted';
     const INTERNAL_STATUS_SENT_TO_CUSTOMER = 'sent_to_customer';
 
+    const FRONTEND_INTERNAL_STATUSES = [
+        'template',
+        'open',
+        'sent_to_customer',
+        'expired',
+        'accepted',
+        'declined',
+        'cancelled',
+    ];
+
     /**
      * @var int
      *
