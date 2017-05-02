@@ -47,7 +47,9 @@ oro:
 
         content_variant:
             product_page.label: Product Page
-            product_collection.label: Product Collection
+            product_collection:
+                label: Product Collection
+                segment_edit_button.label: Edit within Web Catalog
             field:
                 product_collection:
                     label: Filter

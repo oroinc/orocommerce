@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -27,7 +28,7 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
      */
     public function getDependencies()
     {
-        return [LoadProductData::class, LoadSegmentData::class];
+        return [LoadProductData::class, LoadSegmentData::class, LoadContentNodeData::class];
     }
 
     /**
@@ -40,16 +41,19 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         $this->createContentVariantWithTestSegment(
             $manager,
             self::TEST_VARIANT_WITH_TEST_SEGMENT_1,
+            $this->getReference(LoadContentNodeData::FIRST_CONTENT_NODE),
             $this->getReference(LoadSegmentData::SEGMENT_DYNAMIC)
         );
         $this->createContentVariantWithTestSegment(
             $manager,
             self::TEST_VARIANT_WITH_TEST_SEGMENT_2,
+            $this->getReference(LoadContentNodeData::FIRST_CONTENT_NODE),
             $this->getReference(LoadSegmentData::SEGMENT_DYNAMIC)
         );
         $this->createContentVariantWithTestSegment(
             $manager,
             self::TEST_VARIANT_WITH_TEST_SEGMENT_3,
+            $this->getReference(LoadContentNodeData::SECOND_CONTENT_NODE),
             $this->getReference(LoadSegmentData::SEGMENT_STATIC)
         );
 
@@ -140,12 +144,18 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
     /**
      * @param ObjectManager $manager
      * @param string $reference
+     * @param TestContentNode $node
      * @param Segment|null $segment
      */
-    private function createContentVariantWithTestSegment(ObjectManager $manager, $reference, Segment $segment = null)
-    {
+    private function createContentVariantWithTestSegment(
+        ObjectManager $manager,
+        $reference,
+        TestContentNode $node,
+        Segment $segment = null
+    ) {
         $testContentVariant = new TestContentVariant();
         $testContentVariant->setProductCollectionSegment($segment);
+        $testContentVariant->setNode($node);
 
         $manager->persist($testContentVariant);
         $this->setReference($reference, $testContentVariant);

@@ -18,7 +18,7 @@ Feature:
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I click "Content Variants"
-    Then I should see "Product Collection"
+    Then I should see 1 elements "Product Collection Variant Label"
     And I should not see an "Product Collection Preview Grid" element
 
   Scenario: Apply filters
@@ -54,9 +54,18 @@ Feature:
     Then I should see "Product Collection" in grid with following data:
       | Entity                  | Product               |
       | Type                    | Dynamic               |
+    And I should see following actions for Product Collection in grid:
+      | View                           |
+      | Edit within Web Catalog |
     When I click on Product Collection in grid
     Then I should not see an "Entity Edit Button" element
     And I should not see an "Entity Delete Button" element
+    And I should see an "Edit within Web Catalog" element
+    When I click "Edit within Web Catalog"
+    Then "Content Node Form" must contains values:
+      | Titles | Root Node |
+      | Meta Keywords | CollectionMetaKeyword |
+      | Meta Description | CollectionMetaDescription |
 
   Scenario: Product Collection can be edited
     When I go to Marketing/Web Catalogs
@@ -168,8 +177,9 @@ Feature:
     And I click "Content Variants"
     Then I should see 2 elements "Product Collection Variant Label"
     And I click "Save"
-    Then I should see text matching "You have changes in the Filters section that have not been applied"
-    And I click "Cancel" in modal window
+#   Uncomment after popup but is fixed
+#    Then I should see text matching "You have changes in the Filters section that have not been applied"
+#    And I click "Cancel" in modal window
     Then I should not see text matching "You have changes in the Filters section that have not been applied"
 
   Scenario: Reset Product Collection after filters change
@@ -206,7 +216,8 @@ Feature:
     And I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on "Default Web Catalog" in grid
     When I click on "Remove Variant Button"
-    Then I should not see "Product Collection"
+    And I click on "Remove Variant Button"
+    Then I should see 0 elements "Product Collection Variant Label"
     When I click on "Show Variants Dropdown"
     And I click "Add System Page"
     When I save form

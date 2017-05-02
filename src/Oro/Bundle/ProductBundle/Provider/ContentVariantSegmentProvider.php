@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 /**
@@ -51,6 +52,22 @@ class ContentVariantSegmentProvider
             ->orderBy('segment.id');
 
         return new BufferedQueryResultIterator($queryBuilder);
+    }
+
+    /**
+     * @param Segment $segment
+     * @return ContentNodeInterface|null
+     */
+    public function getContentNode(Segment $segment)
+    {
+        $contentVariants = iterator_to_array($this->getContentVariants($segment));
+        if (empty($contentVariants)) {
+            return null;
+        }
+
+        $contentVariant = reset($contentVariants);
+
+        return $contentVariant->getNode();
     }
 
     /**

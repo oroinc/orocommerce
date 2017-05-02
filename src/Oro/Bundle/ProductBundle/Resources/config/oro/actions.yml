@@ -40,6 +40,34 @@ operations:
         exclude_datagrids:
             - products-select-grid
             - frontend-product-search-grid
+    oro_segment_edit_inside_content_node:
+        label: oro.product.content_variant.product_collection.segment_edit_button.label
+        datagrids:
+            - oro_segments-grid
+        button_options:
+            icon: pencil-square-o
+        order: 500
+        acl_resource: oro_web_catalog_update
+        entities:
+            - Oro\Bundle\SegmentBundle\Entity\Segment
+        preactions:
+            - '@call_service_method':
+                service: oro_product.provider.content_variant_segment_provider
+                method: hasContentVariant
+                method_parameters: [$.data]
+                attribute: $.hasContentVariant
+        preconditions:
+            '@equal': [$.hasContentVariant, true]
+        actions:
+            - '@call_service_method':
+                service: oro_product.provider.content_variant_segment_provider
+                method: getContentNode
+                method_parameters: [$.data]
+                attribute: $.contentNode
+            - '@redirect':
+                route: oro_content_node_update
+                route_parameters:
+                    id: $.contentNode.id
 
 action_groups:
     oro_product_duplicate:

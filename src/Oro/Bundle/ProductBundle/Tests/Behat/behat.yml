@@ -80,6 +80,10 @@ oro_behat_extension:
         type: 'xpath'
         locator: '//h5[contains(., "Product Collection")]'
 
+    Edit within Web Catalog:
+      selector: 'a.operation-button[title="Edit within Web Catalog"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
   suites:
     OroProductBundle:
       contexts:

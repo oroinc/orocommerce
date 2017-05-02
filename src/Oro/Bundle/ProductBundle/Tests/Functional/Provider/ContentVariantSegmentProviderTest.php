@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Provider;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentVariant;
 use Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadContentNodeData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductCollectionContentVariants;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -120,6 +121,32 @@ class ContentVariantSegmentProviderTest extends WebTestCase
         $this->assertTrue($this->provider->hasContentVariant($this->getReference('segment_dynamic')));
         $this->assertTrue($this->provider->hasContentVariant($this->getReference('segment_static')));
         $this->assertFalse($this->provider->hasContentVariant($this->getReference('segment_dynamic_with_filter')));
+    }
+
+    public function testGetContentNodeNoClass()
+    {
+        $metadata = $this->getContentVariantMetadata();
+        $metadata->name = null;
+
+        $this->assertNull($this->provider->getContentNode($this->getReference('segment_dynamic')));
+        $this->assertNull($this->provider->getContentNode($this->getReference('segment_static')));
+        $this->assertNull($this->provider->getContentNode($this->getReference('segment_dynamic_with_filter')));
+    }
+
+    public function testGetContentNode()
+    {
+        $metadata = $this->getContentVariantMetadata();
+        $metadata->name = TestContentVariant::class;
+
+        $this->assertEquals(
+            $this->getReference(LoadContentNodeData::FIRST_CONTENT_NODE),
+            $this->provider->getContentNode($this->getReference('segment_dynamic'))
+        );
+        $this->assertEquals(
+            $this->getReference(LoadContentNodeData::SECOND_CONTENT_NODE),
+            $this->provider->getContentNode($this->getReference('segment_static'))
+        );
+        $this->assertNull($this->provider->getContentNode($this->getReference('segment_dynamic_with_filter')));
     }
 
     /**
