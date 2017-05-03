@@ -100,7 +100,7 @@ define([
                 }
             });
 
-            $.uniform.update(this.methodSelect);
+            this.methodSelect.inputWidget('refresh');
             $(this.el).show();
         },
 
@@ -114,7 +114,7 @@ define([
          * @return {jQuery}
          */
         createOption: function(value) {
-            return this.allMethodsOptions.filter('[value="'+value+'"]').clone();
+            return this.allMethodsOptions.filter('[value="' + value + '"]').clone();
         }
     });
 });
