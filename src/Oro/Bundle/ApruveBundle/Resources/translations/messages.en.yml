@@ -26,7 +26,7 @@ oro:
                 not_available_yet.text: Webhook URL will become available after the form is submitted
         payment_method:
             option:
-                description: You should have corporate account in Apruve to make a payment.
+                description: You will be prompted to log on with your Apruve corporate account to authorise payment.
         check_connection:
             button.text: Check Apruve connection
             result:

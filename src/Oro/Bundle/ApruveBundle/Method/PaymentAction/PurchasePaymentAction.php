@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ApruveBundle\Method\PaymentAction;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Factory\Order\ApruveOrderFromPaymentContextFactory;
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
@@ -16,33 +16,33 @@ class PurchasePaymentAction extends AbstractPaymentAction
     const NAME = 'purchase';
 
     /**
-     * @var ApruveOrderBuilderFactoryInterface
-     */
-    private $apruveOrderBuilderFactory;
-
-    /**
      * @var OrderSecureHashGeneratorInterface
      */
     private $orderSecureHashGenerator;
 
     /**
+     * @var ApruveOrderFromPaymentContextFactory
+     */
+    private $apruveOrderFromPaymentContextFactory;
+
+    /**
      * @param TransactionPaymentContextFactoryInterface $paymentContextFactory
-     * @param ApruveOrderBuilderFactoryInterface $apruveOrderBuilderFactory
-     * @param OrderSecureHashGeneratorInterface $orderSecureHashGenerator
+     * @param ApruveOrderFromPaymentContextFactory      $apruveOrderFromPaymentContextFactory
+     * @param OrderSecureHashGeneratorInterface         $orderSecureHashGenerator
      */
     public function __construct(
         TransactionPaymentContextFactoryInterface $paymentContextFactory,
-        ApruveOrderBuilderFactoryInterface $apruveOrderBuilderFactory,
+        ApruveOrderFromPaymentContextFactory $apruveOrderFromPaymentContextFactory,
         OrderSecureHashGeneratorInterface $orderSecureHashGenerator
     ) {
         parent::__construct($paymentContextFactory);
 
-        $this->apruveOrderBuilderFactory = $apruveOrderBuilderFactory;
         $this->orderSecureHashGenerator = $orderSecureHashGenerator;
+        $this->apruveOrderFromPaymentContextFactory = $apruveOrderFromPaymentContextFactory;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function execute(ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
@@ -53,13 +53,10 @@ class PurchasePaymentAction extends AbstractPaymentAction
             return [];
         }
 
-        $apruveOrderBuilder = $this->apruveOrderBuilderFactory->create($paymentContext, $apruveConfig);
-        $apruveOrderBuilder
-            ->setFinalizeOnCreate(true)
-            ->setInvoiceOnCreate(false);
+        $apruveOrder = $this->apruveOrderFromPaymentContextFactory
+            ->createFromPaymentContext($paymentContext, $apruveConfig);
 
-        $apruveOrder = $apruveOrderBuilder->getResult();
-        $secureHash = $this->orderSecureHashGenerator->generate($apruveOrder, $apruveConfig);
+        $secureHash = $this->orderSecureHashGenerator->generate($apruveOrder, $apruveConfig->getApiKey());
 
         $apruveOrderData = $apruveOrder->getData();
 
@@ -80,7 +77,7 @@ class PurchasePaymentAction extends AbstractPaymentAction
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getName()
     {

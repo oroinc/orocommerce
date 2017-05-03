@@ -22,6 +22,9 @@ class OrderSecureHashGenerator implements OrderSecureHashGeneratorInterface
 
     /**
      * Order fields order.
+     *
+     * Property "accepts_payment_terms" is missing as it is not used during
+     * hash generation on Apruve side (approved by Apruve Support in request #370).
      */
     const ORDER_FIELDS_ORDER = [
         ApruveOrder::MERCHANT_ID,
@@ -31,7 +34,6 @@ class OrderSecureHashGenerator implements OrderSecureHashGeneratorInterface
         ApruveOrder::TAX_CENTS,
         ApruveOrder::SHIPPING_CENTS,
         ApruveOrder::EXPIRE_AT,
-        ApruveOrder::ACCEPTS_PAYMENT_TERMS,
         ApruveOrder::FINALIZE_ON_CREATE,
         ApruveOrder::INVOICE_ON_CREATE,
     ];
@@ -63,13 +65,16 @@ class OrderSecureHashGenerator implements OrderSecureHashGeneratorInterface
         $secureArray[] = $apiKey;
 
         // Then goes order data.
-        $secureArray = array_merge($secureArray, $this->prepareSecureArray($data, self::ORDER_FIELDS_ORDER));
+        $secureArray = array_merge(
+            $secureArray,
+            $this->removeUnrequiredFieldsAndSort($data, self::ORDER_FIELDS_ORDER)
+        );
 
         // Then goes order line items data.
         foreach ($data[ApruveOrder::LINE_ITEMS] as $lineItemData) {
             $secureArray = array_merge(
                 $secureArray,
-                $this->prepareSecureArray($lineItemData, self::LINE_ITEM_FIELDS_ORDER)
+                $this->removeUnrequiredFieldsAndSort($lineItemData, self::LINE_ITEM_FIELDS_ORDER)
             );
         }
 
@@ -95,9 +100,24 @@ class OrderSecureHashGenerator implements OrderSecureHashGeneratorInterface
      */
     protected function convertToString(array $array)
     {
-        $array = array_map([$this, 'convertTypes'], $array);
+        $array = array_map([$this, 'convertValueToStringRepresentation'], $array);
 
         return implode(self::DELIMITER, $array);
+    }
+
+    /**
+     * Remove elements which are not present in the array of required fields.
+     *
+     * @param array $array
+     * @param array $requiredOrderedFields
+     *
+     * @return array
+     */
+    protected function removeUnrequiredFieldsAndSort(array $array, array $requiredOrderedFields)
+    {
+        $arrayWithoutUnrequiredFields = array_intersect_key($array, array_flip($requiredOrderedFields));
+
+        return $this->sortArray($arrayWithoutUnrequiredFields, $requiredOrderedFields);
     }
 
     /**
@@ -106,13 +126,16 @@ class OrderSecureHashGenerator implements OrderSecureHashGeneratorInterface
      *
      * @return array
      */
-    protected function prepareSecureArray(array $array, array $requiredOrderedFields)
+    protected function sortArray(array $array, array $requiredOrderedFields)
     {
-        // Remove elements which are not present in the array template.
-        $array = array_intersect_key($array, array_flip($requiredOrderedFields));
+        // Remove missing keys from the array of required fields.
+        $requiredOrderedFieldsWithoutMissing = array_intersect_key(
+            array_flip($requiredOrderedFields),
+            $array
+        );
 
-        // Sort elements according to required fields array.
-        $array = array_merge(array_flip($requiredOrderedFields), $array);
+        // Sort elements according to the array of required fields.
+        $array = array_merge($requiredOrderedFieldsWithoutMissing, $array);
 
         return array_values($array);
     }
@@ -124,7 +147,7 @@ class OrderSecureHashGenerator implements OrderSecureHashGeneratorInterface
      *
      * @return mixed
      */
-    protected function convertTypes($value)
+    protected function convertValueToStringRepresentation($value)
     {
         switch (true) {
             case ($value === true):
