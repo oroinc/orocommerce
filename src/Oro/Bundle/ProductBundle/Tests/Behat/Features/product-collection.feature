@@ -177,9 +177,8 @@ Feature:
     And I click "Content Variants"
     Then I should see 2 elements "Product Collection Variant Label"
     And I click "Save"
-#   Uncomment after popup but is fixed
-#    Then I should see text matching "You have changes in the Filters section that have not been applied"
-#    And I click "Cancel" in modal window
+    Then I should see text matching "You have changes in the Filters section that have not been applied"
+    And I click "Cancel" in modal window
     Then I should not see text matching "You have changes in the Filters section that have not been applied"
 
   Scenario: Reset Product Collection after filters change

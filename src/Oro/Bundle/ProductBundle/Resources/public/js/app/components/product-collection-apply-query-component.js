@@ -88,10 +88,12 @@ define(function(require) {
                 .on('click', this.options.selectors.apply, _.bind(this.onApplyQuery, this))
                 .on('click', this.options.selectors.reset, _.bind(this.onReset, this));
 
-            this.initialDefinitionState = this.currentDefinitionState = this._getSegmentDefinition();
+            this.initialDefinitionState = this._getSegmentDefinition();
+            if (this.initialDefinitionState !== null && this.initialDefinitionState !== '') {
+                this.currentDefinitionState = this.initialDefinitionState;
+                mediator.on('grid-sidebar:load:' + this.options.controlsBlockAlias, this._applyQuery, this);
+            }
             this.$form.on('submit' + this.eventNamespace(), _.bind(this.onSubmit, this));
-
-            mediator.on('grid-sidebar:load:' + this.options.controlsBlockAlias, this._applyQuery, this);
         },
 
         /**
