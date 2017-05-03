@@ -26,8 +26,11 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: inventory_status
             type: text
         -
-            name: all_text
-            type: text
+            name:  all_text
+            type:  text
+            store: false
+            default_search_field: true
         -
-            name: all_text_LOCALIZATION_ID
-            type: text
+            name:  all_text_LOCALIZATION_ID
+            type:  text
+            store: false

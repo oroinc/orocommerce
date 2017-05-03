@@ -13,13 +13,16 @@ use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Entity\ZipCode;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class TaxEntitiesFactory
 {
+    use UserUtilityTrait;
+
     /**
      * @param string $code
      * @param string $description
-     * @param ObjectManager $persistTo (optional)
+     * @param ObjectManager $manager
      * @param AbstractFixture $addReferenceTo (optional)
      *
      * @return CustomerTaxCode
@@ -27,16 +30,18 @@ class TaxEntitiesFactory
     public function createCustomerTaxCode(
         $code,
         $description,
-        ObjectManager $persistTo = null,
+        ObjectManager $manager,
         AbstractFixture $addReferenceTo = null
     ) {
+        $owner = $this->getFirstUser($manager);
+
         $taxCode = new CustomerTaxCode();
         $taxCode->setCode($code);
         $taxCode->setDescription($description);
+        $taxCode->setOwner($owner);
+        $taxCode->setOrganization($owner->getOrganization());
 
-        if ($persistTo) {
-            $persistTo->persist($taxCode);
-        }
+        $manager->persist($taxCode);
 
         if ($addReferenceTo) {
             $addReferenceTo->addReference($code, $taxCode);

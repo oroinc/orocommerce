@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AsyncIndexer implements IndexerInterface

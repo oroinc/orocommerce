@@ -1,5 +1,9 @@
 UPGRADE FROM 1.1 to 1.2
-=======================
+
+MoneyOrderBundle
+----------------
+- `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`
+    - removed constant `const TYPE = 'money_order'`
 
 OrderBundle
 -------------
@@ -20,6 +24,7 @@ PricingBundle
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
 - Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
+- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now.
 
 ShoppingBundle
 -------------
@@ -61,6 +66,53 @@ RuleBundle
     - `getBaseSlug`
     - `getSlugByLocalization`
 
+OrderBundle
+-----------
+- Added API for:
+    - `Oro\Bundle\OrderBundle\Entity\Order`
+    - `Oro\Bundle\OrderBundle\Entity\OrderDiscount`
+    - `Oro\Bundle\OrderBundle\Entity\OrderLineItem`
+    - `Oro\Bundle\OrderBundle\Entity\OrderAddress`
+    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
+
+CustomerBundle
+--------------
+- Class `Oro\Bundle\CustomerBundle\Audit\DiscriminatorMapListener` moved to `Oro\Bundle\EntityBundle\ORM\DiscriminatorMapListener`
+- `Oro\Bundle\CustomerBundle\Controller\Frontend\Api\Rest\GridViewController`
+    - added api controller based on `Oro\Bundle\DataGridBundle\Controller\Api\Rest\GridViewController ` and override methods:
+        postAction(), putAction(), deleteAction(), defaultAction()
+- `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtension`
+    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension`
+- `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtensionComposite`
+    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension` and override methods:
+        isApplicable(), getPriority(), visitMetadata(), setParameters()
+- `Oro\Bundle\CustomerBundle\Entity\GridView`
+    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_owner_id`
+- `Oro\Bundle\CustomerBundle\Entity\GridViewUser`
+    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_id`
+- `Oro\Bundle\CustomerBundle\Entity\Manager\GridViewManagerComposite`
+    - added class based on `Oro\Bundle\DataGridBundle\Entity\Manager\GridViewManager` and override methods:
+        setDefaultGridView(), getSystemViews(), getAllGridViews(), getDefaultView(), getView()
+- `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewRepository`
+    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewRepository` with replaced getOwnerFieldName() and getUserFieldName() to `customerUserOwner` and `customerUser`
+- `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewUserRepository`
+    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewUserRepository` with replaced getUserFieldName() to `customerUser`
+
+ShippingBundle
+--------------
+- `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method deprecated because it completely duplicate `getEnabledRulesByMethod`
+- If you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface` and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example.
+- The `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` was created,
+
+FlatRateShippingBundle
+--------------
+- The `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` was deprecated, the `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` was created instead.
+
+CatalogBundle
+--------------
+- The `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles` was deprecated, the `\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren` was created instead.
+
 PayPalBundle
 ------------
+- Form type `\Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `\Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
 - Interface `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.

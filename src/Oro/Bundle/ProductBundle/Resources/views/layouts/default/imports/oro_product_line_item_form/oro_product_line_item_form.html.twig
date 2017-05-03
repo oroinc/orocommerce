@@ -22,7 +22,16 @@
                     'configDefaultUnit': defaultUnitCode
                 }|json_encode
             }) %}
+
             <div {{ block('block_attributes') }}>
+                <div>
+                    <div class="form-row {{ class_prefix }}">
+                        {{ form_widget(form.quantity) }}
+                    </div>
+                    <div class="form-row {{ class_prefix }}">
+                        {{ form_widget(form.unit) }}
+                    </div>
+                </div>
                 {{ block_widget(block) }}
             </div>
         {% endset %}

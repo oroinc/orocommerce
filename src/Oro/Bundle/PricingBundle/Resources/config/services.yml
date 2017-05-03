@@ -337,7 +337,7 @@ services:
             - '@oro_pricing.datagrid.provider.combined_product_price'
             - '@translator'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid,, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-product-search-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
 
     oro_pricing.validator.product_price_allowed_units:
@@ -453,6 +453,7 @@ services:
             - [setProductPriceClass, ['%oro_pricing.entity.product_price.class%']]
             - [setDoctrineHelper,  ['@oro_entity.doctrine_helper']]
             - [setShardManager, ['@oro_pricing.shard_manager']]
+            - [setPriceManager, ['@oro_pricing.manager.price_manager']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
 

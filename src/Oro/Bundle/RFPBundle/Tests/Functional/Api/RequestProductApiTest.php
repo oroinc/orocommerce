@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
-use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-class RequestProductApiTest extends AbstractRequestApiTest
+class RequestProductApiTest extends RestJsonApiTestCase
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function setUp()
     {
@@ -22,29 +21,30 @@ class RequestProductApiTest extends AbstractRequestApiTest
         $this->loadFixtures([LoadRequestData::class]);
     }
 
-    /**
-     * @return string
-     */
-    protected function getEntityClass()
+    public function testGetList()
     {
-        return RequestProduct::class;
+        $response = $this->cget(
+            ['entity' => 'requestproducts']
+        );
+
+        $expectedCount = LoadRequestData::NUM_REQUESTS
+            * LoadRequestData::NUM_LINE_ITEMS
+            * LoadRequestData::NUM_PRODUCTS;
+
+        $this->assertResponseCount($expectedCount, $response);
     }
 
-    /**
-     * @return array
-     */
-    public function cgetParamsAndExpectation()
+    public function testGet()
     {
-        $maxCount = LoadRequestData::NUM_REQUESTS * LoadRequestData::NUM_LINE_ITEMS * LoadRequestData::NUM_PRODUCTS;
+        $entity = $this->getEntityManager()
+            ->getRepository(RequestProduct::class)
+            ->findOneBy([]);
 
-        return [
-            [
-                'filters' => [],
-                'expectedCount' => $maxCount,
-                'params' => [],
-                'expectedContent' => null,
-            ],
-        ];
+        $response = $this->get(
+            ['entity' => 'requestproducts', 'id' => $entity->getId()]
+        );
+
+        $this->assertResponseNotEmpty($response);
     }
 
     /**
@@ -52,24 +52,6 @@ class RequestProductApiTest extends AbstractRequestApiTest
      */
     public function testCreateEntity()
     {
-        $entityType = $this->getEntityType($this->getEntityClass());
-        $notValidData = [
-            'data' => [
-                'type' => $entityType,
-                'attributes' => [
-                    'comment' => 'Test'
-                ],
-            ]
-        ];
-
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', ['entity' => $entityType]),
-            $notValidData
-        );
-
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var Request $request */
@@ -80,23 +62,23 @@ class RequestProductApiTest extends AbstractRequestApiTest
         /** @var RequestProductItem $requestProductItem */
         $requestProductItem = $requestProduct->getRequestProductItems()->first();
 
-        $validData = [
+        $data = [
             'data' => [
-                'type' => $entityType,
+                'type' => 'requestproducts',
                 'attributes' => [
                     'comment' => 'Test'
                 ],
                 'relationships' => [
                     'request' => [
-                        'data' => ['type' => $this->getEntityType(Request::class), 'id' => (string)$request->getId()]
+                        'data' => ['type' => 'requests', 'id' => (string)$request->getId()]
                     ],
                     'product' => [
-                        'data' => ['type' => $this->getEntityType(Product::class), 'id' => (string)$product->getId()]
+                        'data' => ['type' => 'products', 'id' => (string)$product->getId()]
                     ],
                     'requestProductItems' => [
                         'data' => [
                             [
-                                'type' => $this->getEntityType(RequestProductItem::class),
+                                'type' => 'requestproductitems',
                                 'id' => (string)$requestProductItem->getId()
                             ]
                         ]
@@ -105,24 +87,22 @@ class RequestProductApiTest extends AbstractRequestApiTest
             ]
         ];
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', ['entity' => $entityType]),
-            $validData
+        $response = $this->post(
+            ['entity' => 'requestproducts'],
+            $data
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
         $result = $this->jsonToArray($response->getContent());
         $entityId = $result['data']['id'];
         /** @var RequestProduct $requestProduct */
-        $requestProduct = $this->doctrineHelper->getEntity($this->getEntityClass(), $entityId);
+        $requestProduct = $this->getEntityManager()->find(RequestProduct::class, $entityId);
         /** @var Product $product */
-        $product = $this->doctrineHelper->getEntity(Product::class, $product->getId());
+        $product = $this->getEntityManager()->find(Product::class, $product->getId());
 
         $this->assertInstanceOf(RequestProduct::class, $requestProduct);
         $this->assertEquals($product->getSku(), $requestProduct->getProductSku());
 
-        return $result['data']['id'];
+        return (int)$result['data']['id'];
     }
 
     /**
@@ -132,31 +112,23 @@ class RequestProductApiTest extends AbstractRequestApiTest
      */
     public function testUpdateEntity($entityId)
     {
-        $entityType = $this->getEntityType($this->getEntityClass());
-
         $data = [
             'data' => [
-                'id' => $entityId,
-                'type' => $entityType,
+                'id' => (string)$entityId,
+                'type' => 'requestproducts',
                 'attributes' => [
                     'comment' => 'Test2'
                 ]
             ]
         ];
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                ['entity' => $entityType, 'id' => (string)$entityId]
-            ),
+        $this->patch(
+            ['entity' => 'requestproducts', 'id' => (string)$entityId],
             $data
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
-
         /** @var RequestProduct $requestProduct */
-        $requestProduct = $this->doctrineHelper->getEntity($this->getEntityClass(), $entityId);
+        $requestProduct = $this->getEntityManager()->find(RequestProduct::class, $entityId);
         $this->assertEquals('Test2', $requestProduct->getComment());
     }
 
@@ -167,13 +139,12 @@ class RequestProductApiTest extends AbstractRequestApiTest
      */
     public function testDeleteEntity($entityId)
     {
-        $entityType = $this->getEntityType($this->getEntityClass());
-
-        $response = $this->request(
-            'DELETE',
-            $this->getUrl('oro_rest_api_delete', ['entity' => $entityType, 'id' => $entityId])
+        $this->delete(
+            ['entity' => 'requestproducts', 'id' => $entityId]
         );
 
-        $this->assertDeletedEntity($response, $entityId);
+        $this->assertNull(
+            $this->getEntityManager()->find(RequestProduct::class, $entityId)
+        );
     }
 }

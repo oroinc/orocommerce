@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
@@ -51,8 +52,6 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
      */
     public function setUp()
     {
-        parent::setUp();
-
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         /** @var CreditCardTypesDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $cardTypesDataProvider */
@@ -80,6 +79,8 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             $cardTypesDataProvider,
             $this->paymentActionsDataProvider
         );
+
+        parent::setUp();
     }
 
     /**
@@ -93,6 +94,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $localizedType->getName() => $localizedType,
+                    new OroEncodedPlaceholderPasswordType($this->encoder),
                 ],
                 []
             ),

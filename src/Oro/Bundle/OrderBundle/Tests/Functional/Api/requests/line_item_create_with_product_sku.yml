@@ -1,0 +1,16 @@
+data:
+    type: orderlineitems
+    attributes:
+        productSku: '@product-4->sku'
+        quantity: 6
+        value: 200
+        currency: 'USD'
+    relationships:
+        order:
+            data:
+                type: orders
+                id: '<toString(@simple_order->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.bottle->code)>'

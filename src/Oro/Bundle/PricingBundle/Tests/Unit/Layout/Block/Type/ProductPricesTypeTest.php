@@ -72,12 +72,13 @@ class ProductPricesTypeTest extends BlockTypeTestCase
         $view = $this->getBlockView(
             ProductPricesType::NAME,
             [
-                'productPrices' => $pricesExpression
+                'productPrices' => $pricesExpression,
+                'productUnitSelectionVisible' => false
             ]
         );
 
         $this->assertEquals($pricesExpression, $view->vars['productPrices']);
-        $this->assertNull($view->vars['productUnitSelectionVisible']);
+        $this->assertFalse($view->vars['productUnitSelectionVisible']);
         $this->assertNull($view->vars['product']);
     }
 

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 
 class ShippingMethodTypeConfigRepository extends EntityRepository
 {
@@ -38,6 +39,22 @@ class ShippingMethodTypeConfigRepository extends EntityRepository
         $qb->delete()
             ->where($qb->expr()->in('methodTypeConfig.id', ':ids'))
             ->setParameter('ids', $ids)
+            ->getQuery()->execute();
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return ShippingMethodTypeConfig[]
+     */
+    public function findEnabledByMethodIdentifier($method)
+    {
+        return $this->createQueryBuilder('methodTypeConfig')
+            ->select('methodTypeConfig')
+            ->innerJoin('methodTypeConfig.methodConfig', 'methodConfig')
+            ->where('methodTypeConfig.enabled = true')
+            ->andWhere('methodConfig.method = :method')
+            ->setParameter('method', $method)
             ->getQuery()->execute();
     }
 }

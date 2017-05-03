@@ -1,3 +1,5 @@
+@ticket-BB-7802
+@automatically-ticket-tagged
 @fixture-QuoteBackofficeDefaultFixture.yml
 Feature: Quote Backoffice Default
 
@@ -149,6 +151,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Sent to customer |
       | Customer Status | N/A |
     When I click "Expire"
+    And click "Mark as Expired"
     Then I should see "Quote #15 was successfully marked as expired" flash message
     And should see Quote with:
       | Quote # | 15 |

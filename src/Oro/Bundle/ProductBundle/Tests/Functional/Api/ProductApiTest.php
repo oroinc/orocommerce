@@ -9,13 +9,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 
 class ProductApiTest extends RestJsonApiTestCase
 {
-    const ARRAY_DELIMITER = ',';
-
-    /**
-     * @var array
-     */
-    protected $expectations;
-
     /**
      * {@inheritdoc}
      */
@@ -27,21 +20,21 @@ class ProductApiTest extends RestJsonApiTestCase
 
     /**
      * @param array $parameters
-     * @param string $expectedContentFile filename with expected json response data
+     * @param string $expectedDataFileName
      *
-     * @dataProvider cgetParamsAndExpectation
+     * @dataProvider getListDataProvider
      */
-    public function testCgetEntity(array $parameters, $expectedContentFile)
+    public function testGetList(array $parameters, $expectedDataFileName)
     {
-        $entityType = $this->getEntityType(Product::class);
-        $response = $this->cget(['entity' => $entityType], $parameters);
-        $this->assertResponseContains($expectedContentFile, $response);
+        $response = $this->cget(['entity' => 'products'], $parameters);
+
+        $this->assertResponseContains($expectedDataFileName, $response);
     }
 
     /**
      * @return array
      */
-    public function cgetParamsAndExpectation()
+    public function getListDataProvider()
     {
         return [
             'filter by Product' => [
@@ -50,7 +43,7 @@ class ProductApiTest extends RestJsonApiTestCase
                         'sku' => '@product-1->sku',
                     ],
                 ],
-                'expectedContent' => '@OroProductBundle/Tests/Functional/Api/responses/cget_filter_by_product.yml',
+                'expectedDataFileName' => 'cget_filter_by_product.yml',
             ],
             'filter by Products with different inventory status' => [
                 'parameters' => [
@@ -58,8 +51,7 @@ class ProductApiTest extends RestJsonApiTestCase
                         'sku' => ['@product-2->sku', '@product-3->sku'],
                     ],
                 ],
-                'expectedContent'
-                => '@OroProductBundle/Tests/Functional/Api/responses/cget_filter_by_products_by_inventory_status.yml',
+                'expectedDataFileName' => 'cget_filter_by_products_by_inventory_status.yml',
             ],
         ];
     }
@@ -70,34 +62,28 @@ class ProductApiTest extends RestJsonApiTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
 
-        $entityType = $this->getEntityType(Product::class);
-        $data = [
-            'data' => [
-                'type' => $entityType,
-                'id' => LoadProductData::PRODUCT_1,
-                'relationships' => [
-                    'inventory_status' => [
-                        'data' => [
-                            'type' => 'prodinventorystatuses',
-                            'id' => 'out_of_stock',
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => LoadProductData::PRODUCT_1],
+            [
+                'data' => [
+                    'type' => 'products',
+                    'id' => LoadProductData::PRODUCT_1,
+                    'relationships' => [
+                        'inventory_status' => [
+                            'data' => [
+                                'type' => 'prodinventorystatuses',
+                                'id' => 'out_of_stock',
+                            ],
                         ],
                     ],
-                ],
+                ]
             ]
-        ];
-        $response = $this->patch(
-            ['entity' => $entityType, 'id' => LoadProductData::PRODUCT_1],
-            $data
         );
 
-        $doctrineHelper = $this->getContainer()->get('oro_api.doctrine_helper');
         /** @var Product $product */
-        $product = $doctrineHelper->getEntity(Product::class, $product->getId());
+        $product = $this->getEntityManager()->find(Product::class, $product->getId());
         $this->getReferenceRepository()->setReference(LoadProductData::PRODUCT_1, $product);
 
-        $this->assertResponseContains(
-            '@OroProductBundle/Tests/Functional/Api/responses/patch_update_entity.yml',
-            $response
-        );
+        $this->assertResponseContains('patch_update_entity.yml', $response);
     }
 }

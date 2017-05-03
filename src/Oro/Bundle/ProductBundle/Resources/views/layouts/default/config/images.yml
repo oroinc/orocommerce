@@ -35,7 +35,7 @@ dimensions:
         options:
             applyProductImageWatermark: true
     product_gallery_main:
-        width: 600
+        width: 378
         height: auto
         options:
             applyProductImageWatermark: true

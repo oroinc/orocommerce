@@ -78,6 +78,8 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.repository.shipping_method_config',
             'oro_shipping.method.event_listener.method_renaming',
             'oro_shipping.method.event.dispatcher.method_renaming',
+            'oro_shipping.repository.shipping_method_type_config',
+            'oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
