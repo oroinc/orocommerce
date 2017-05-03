@@ -1,25 +1,19 @@
 // @theme: default
 
 .shopping-lists-modify {
-    margin: 0 -16px 0 -10px;
-    padding: 0;
-
     white-space: nowrap;
 
+    @include clearfix();
+
     &__text,
-    &__select,
-    &__badges {
+    &__select {
         display: inline-block;
 
         vertical-align: middle;
     }
 
     &__badges {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-
-        transform: translateY(-50%);
+        float: right;
     }
 
     &__text {
@@ -77,10 +71,6 @@
     .shopping-lists-modify {
         &__select {
             width: 65px;
-        }
-
-        &__badges {
-            right: 5px;
         }
 
         &__input {
