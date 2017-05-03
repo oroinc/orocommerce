@@ -7,14 +7,7 @@ interface ApruveJsUriProviderInterface
     /**
      * @param string $paymentMethodIdentifier
      *
-     * @return string
+     * @return string|null
      */
     public function getUri($paymentMethodIdentifier);
-
-    /**
-     * @param $paymentMethodIdentifier
-     *
-     * @return bool
-     */
-    public function isSupported($paymentMethodIdentifier);
 }
