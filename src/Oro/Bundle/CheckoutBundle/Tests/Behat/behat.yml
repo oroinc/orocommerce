@@ -17,7 +17,7 @@ oro_behat_extension:
       selector: 'h1.checkout__success__title'
 
     OpenOrdersGrid:
-      selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.grid-container'
+      selector: 'div[data-page-component-name="frontend-checkouts-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     OpenOrdersGridFilters:
@@ -35,3 +35,7 @@ oro_behat_extension:
     OpenOrdersGridFilterItem:
       selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filter-items-hint span'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    PastOrdersGrid:
+      selector: 'div[data-page-component-name="frontend-orders-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
