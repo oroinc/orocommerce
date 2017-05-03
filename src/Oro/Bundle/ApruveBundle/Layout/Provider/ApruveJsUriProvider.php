@@ -24,10 +24,14 @@ class ApruveJsUriProvider implements ApruveJsUriProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getUri($paymentMethodIdentifier)
     {
+        if (!$this->apruveConfigProvider->hasPaymentConfig($paymentMethodIdentifier)) {
+            return null;
+        }
+
         if ($this->getPaymentConfig($paymentMethodIdentifier)->isTestMode()) {
             return self::URI_TEST;
         }
@@ -36,19 +40,11 @@ class ApruveJsUriProvider implements ApruveJsUriProviderInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function isSupported($paymentMethodIdentifier)
-    {
-        return $this->apruveConfigProvider->hasPaymentConfig($paymentMethodIdentifier);
-    }
-
-    /**
      * @param string $identifier
      *
      * @return ApruveConfigInterface|null
      */
-    protected function getPaymentConfig($identifier)
+    private function getPaymentConfig($identifier)
     {
         return $this->apruveConfigProvider->getPaymentConfig($identifier);
     }

@@ -25,7 +25,7 @@ class PaymentCallbackListenerTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

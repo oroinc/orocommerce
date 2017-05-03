@@ -28,10 +28,8 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            var initializeApruve = _.bind(this.initializeApruve, this);
-
             this._deferredInit();
-            tools.loadModules(this.options.apruvejsUri, initializeApruve);
+            tools.loadModules(this.options.apruvejsUri, this.initializeApruve, this);
 
             mediator.on('checkout:place-order:response', this.handleSubmit, this);
         },

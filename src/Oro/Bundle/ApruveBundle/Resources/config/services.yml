@@ -31,13 +31,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_apruve_apruvejs_uri_provider }
 
-    oro_apruve.layout.context_configurator.apruve:
-        class: 'Oro\Bundle\ApruveBundle\Layout\ContextConfigurator\ApruveContextConfigurator'
-        arguments:
-            - '@oro_apruve.method.config.provider'
-        tags:
-            - { name: layout.context_configurator }
-
     oro_apruve.action.invoice_payment_transaction:
         class: 'Oro\Bundle\ApruveBundle\PaymentTransaction\Action\PaymentTransactionInvoiceAction'
         parent: oro_payment.action.payment_method_action.abstract

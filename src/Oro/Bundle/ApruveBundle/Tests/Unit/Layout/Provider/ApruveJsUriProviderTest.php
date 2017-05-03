@@ -24,7 +24,7 @@ class ApruveJsUriProviderTest extends \PHPUnit_Framework_TestCase
     private $config;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
@@ -43,6 +43,11 @@ class ApruveJsUriProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetUri($paymentMethodIdentifier, $isTestMode, $expectedUri)
     {
+        $this->configProvider
+            ->method('hasPaymentConfig')
+            ->with($paymentMethodIdentifier)
+            ->willReturn(true);
+
         $this->configProvider
             ->expects(static::once())
             ->method('getPaymentConfig')
@@ -70,32 +75,21 @@ class ApruveJsUriProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @dataProvider isSupportedDataProvider
-     *
-     * @param string $paymentMethodIdentifier
-     * @param bool $isSupported
-     * @param bool $expected
-     */
-    public function testIsSupported($paymentMethodIdentifier, $isSupported, $expected)
+    public function testGetUriNull()
     {
+        $paymentMethodIdentifier = 'apruve';
+
         $this->configProvider
             ->method('hasPaymentConfig')
-            ->willReturn($isSupported);
+            ->with($paymentMethodIdentifier)
+            ->willReturn(false);
 
-        $actual = $this->provider->isSupported($paymentMethodIdentifier);
+        $this->configProvider
+            ->expects(static::never())
+            ->method('getPaymentConfig');
 
-        static::assertSame($expected, $actual);
-    }
+        $actual = $this->provider->getUri($paymentMethodIdentifier);
 
-    /**
-     * @return array
-     */
-    public function isSupportedDataProvider()
-    {
-        return [
-            ['apruve_1', true, true],
-            ['another_method_1', false, false],
-        ];
+        static::assertNull($actual);
     }
 }
