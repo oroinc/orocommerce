@@ -23,7 +23,6 @@ class ApruveOrder extends AbstractApruveEntity
     const PO_NUMBER = 'po_number';
     const PAYMENT_TERM_PARAMS = 'payment_term_params';
     const _CORPORATE_ACCOUNT_ID = 'corporate_account_id';
-    const ACCEPTS_PAYMENT_TERMS = 'accepts_payment_terms';
     const FINALIZE_ON_CREATE = 'finalize_on_create';
     const INVOICE_ON_CREATE = 'invoice_on_create';
 

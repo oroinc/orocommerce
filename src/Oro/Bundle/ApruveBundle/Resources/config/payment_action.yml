@@ -20,7 +20,7 @@ services:
         parent: oro_apruve.method.payment_action.abstract
         class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\PurchasePaymentAction'
         arguments:
-            - '@oro_apruve.apruve.builder.factory.order'
+            - '@oro_apruve.apruve.factory.order'
             - '@oro_apruve.apruve.generator.order_secure_hash'
         calls:
             - [setLogger, ['@logger']]

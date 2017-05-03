@@ -62,7 +62,6 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
                     ApruveOrder::TAX_CENTS => '100',
                     ApruveOrder::SHIPPING_CENTS => '500',
                     ApruveOrder::EXPIRE_AT => '2017-07-15T10:12:27-05:00',
-                    ApruveOrder::ACCEPTS_PAYMENT_TERMS => true,
                     ApruveOrder::FINALIZE_ON_CREATE => true,
                     ApruveOrder::INVOICE_ON_CREATE => false,
                     ApruveOrder::LINE_ITEMS => [
@@ -80,7 +79,7 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                '03009e34c1430d46a6b6016d389201389a76d4a7d680225a8979ac920bce6f9a',
+                '9b286c88323757ce118839330e8b6598d07d7875af55c2dd308050d59d9d3140',
             ],
             'unordered data array with all possible parameters' => [
                 [
@@ -91,7 +90,6 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
                     ApruveOrder::MERCHANT_ORDER_ID => '10',
                     ApruveOrder::TAX_CENTS => '100',
                     ApruveOrder::SHIPPING_CENTS => '500',
-                    ApruveOrder::ACCEPTS_PAYMENT_TERMS => true,
                     ApruveOrder::INVOICE_ON_CREATE => false,
                     ApruveOrder::FINALIZE_ON_CREATE => true,
                     ApruveOrder::LINE_ITEMS => [
@@ -109,7 +107,7 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                '03009e34c1430d46a6b6016d389201389a76d4a7d680225a8979ac920bce6f9a',
+                '9b286c88323757ce118839330e8b6598d07d7875af55c2dd308050d59d9d3140',
             ],
             'properly ordered data array with missing parameters' => [
                 [
@@ -117,8 +115,6 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
                     ApruveOrder::AMOUNT_CENTS => 10000,
                     ApruveOrder::CURRENCY => 'USD',
                     ApruveOrder::SHIPPING_CENTS => '500',
-                    ApruveOrder::FINALIZE_ON_CREATE => true,
-                    ApruveOrder::INVOICE_ON_CREATE => false,
                     ApruveOrder::LINE_ITEMS => [
                         [
                             ApruveLineItem::TITLE => 'Sample title',
@@ -130,16 +126,14 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                '2f67c8b892ad54beec33c630bd2bac5f69e08d0efb244f6998b55b19fded5da1',
+                '1e35db97342dd7362f0906caa9304d86c14337fab6619382e08a42b71eb72460',
             ],
             'unordered data array with missing parameters' => [
                 [
-                    ApruveOrder::FINALIZE_ON_CREATE => true,
                     ApruveOrder::SHIPPING_CENTS => '500',
                     ApruveOrder::MERCHANT_ID => 'sampleId',
                     ApruveOrder::AMOUNT_CENTS => 10000,
                     ApruveOrder::CURRENCY => 'USD',
-                    ApruveOrder::INVOICE_ON_CREATE => false,
                     ApruveOrder::LINE_ITEMS => [
                         [
                             ApruveLineItem::VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
@@ -151,7 +145,7 @@ class OrderSecureHashGeneratorTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                '2f67c8b892ad54beec33c630bd2bac5f69e08d0efb244f6998b55b19fded5da1',
+                '1e35db97342dd7362f0906caa9304d86c14337fab6619382e08a42b71eb72460',
             ],
         ];
     }
