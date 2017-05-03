@@ -1,3 +1,5 @@
+@ticket-BAP-11270
+@automatically-ticket-tagged
 Feature: New user registration
   In order to have ability make order
   As a shop client

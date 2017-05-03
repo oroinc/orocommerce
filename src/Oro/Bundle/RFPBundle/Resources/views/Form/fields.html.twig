@@ -134,6 +134,7 @@
                     <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox">
                         <input type="checkbox"
                                name="{{ 'lineItem'~id }}"
+                               data-role="field__comment-checkbox"
                                id="{{ 'lineItem-'~prototype_name }}"{% if notes is not empty %} checked="checked"{% endif %}
                                class="custom-checkbox__input custom-checkbox__input"
                         >

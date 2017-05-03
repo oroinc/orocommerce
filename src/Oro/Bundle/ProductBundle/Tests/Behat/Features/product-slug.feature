@@ -1,3 +1,5 @@
+@ticket-BB-6729
+@automatically-ticket-tagged
 Feature: Slug generations based on product name
   In order to provide users with human readable product urls
   As administrator
