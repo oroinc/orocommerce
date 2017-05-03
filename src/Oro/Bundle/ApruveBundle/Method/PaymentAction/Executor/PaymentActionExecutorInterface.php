@@ -16,9 +16,9 @@ interface PaymentActionExecutorInterface
     public function addPaymentAction(PaymentActionInterface $paymentAction);
 
     /**
-     * @param string $action
+     * @param string                $action
      * @param ApruveConfigInterface $apruveConfig
-     * @param PaymentTransaction $paymentTransaction
+     * @param PaymentTransaction    $paymentTransaction
      *
      * @return array
      *
