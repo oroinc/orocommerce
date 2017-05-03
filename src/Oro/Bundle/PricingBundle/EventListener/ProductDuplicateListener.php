@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
@@ -25,6 +26,11 @@ class ProductDuplicateListener
     protected $shardManager;
 
     /**
+     * @var PriceManager
+     */
+    protected $priceManager;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      */
     public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
@@ -41,6 +47,14 @@ class ProductDuplicateListener
     }
 
     /**
+     * @param PriceManager $priceManager
+     */
+    public function setPriceManager(PriceManager $priceManager)
+    {
+        $this->priceManager = $priceManager;
+    }
+
+    /**
      * Copy product prices
      *
      * @param ProductDuplicateAfterEvent $event
@@ -51,15 +65,14 @@ class ProductDuplicateListener
         $sourceProduct = $event->getSourceProduct();
 
         $productPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $sourceProduct);
-        $objectManager = $this->doctrineHelper->getEntityManager($this->productPriceClass);
 
         foreach ($productPrices as $productPrice) {
             $productPriceCopy = clone $productPrice;
             $productPriceCopy->setProduct($product);
-            $this->getProductPriceRepository()->save($this->shardManager, $productPriceCopy);
+            $this->priceManager->persist($productPriceCopy);
         }
 
-        $objectManager->flush();
+        $this->priceManager->flush();
     }
 
     /**

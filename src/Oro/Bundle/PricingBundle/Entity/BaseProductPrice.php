@@ -311,4 +311,9 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
 
         return $this;
     }
+
+    public function __clone()
+    {
+        $this->id = null;
+    }
 }
