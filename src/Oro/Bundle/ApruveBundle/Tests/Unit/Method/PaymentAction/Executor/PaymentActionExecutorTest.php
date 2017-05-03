@@ -95,7 +95,7 @@ class PaymentActionExecutorTest extends \PHPUnit_Framework_TestCase
      * @dataProvider supportsDataProvider
      *
      * @param string $actionName
-     * @param bool $expected
+     * @param bool   $expected
      */
     public function testSupports($actionName, $expected)
     {

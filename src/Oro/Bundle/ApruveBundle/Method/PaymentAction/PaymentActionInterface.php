@@ -16,7 +16,7 @@ interface PaymentActionInterface
 
     /**
      * @param ApruveConfigInterface $apruveConfig
-     * @param PaymentTransaction $paymentTransaction
+     * @param PaymentTransaction    $paymentTransaction
      *
      * @return array
      */

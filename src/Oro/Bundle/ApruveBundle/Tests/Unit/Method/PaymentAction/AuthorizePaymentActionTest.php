@@ -38,7 +38,7 @@ class AuthorizePaymentActionTest extends \PHPUnit_Framework_TestCase
     private $config;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {

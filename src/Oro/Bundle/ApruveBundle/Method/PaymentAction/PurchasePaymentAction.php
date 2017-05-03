@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ApruveBundle\Method\PaymentAction;
 
 use Oro\Bundle\ApruveBundle\Apruve\Factory\Order\ApruveOrderFromPaymentContextFactory;
+use Oro\Bundle\ApruveBundle\Apruve\Factory\Order\ApruveOrderFromPaymentContextFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
@@ -26,13 +27,13 @@ class PurchasePaymentAction extends AbstractPaymentAction
     private $apruveOrderFromPaymentContextFactory;
 
     /**
-     * @param TransactionPaymentContextFactoryInterface $paymentContextFactory
-     * @param ApruveOrderFromPaymentContextFactory      $apruveOrderFromPaymentContextFactory
-     * @param OrderSecureHashGeneratorInterface         $orderSecureHashGenerator
+     * @param TransactionPaymentContextFactoryInterface     $paymentContextFactory
+     * @param ApruveOrderFromPaymentContextFactoryInterface $apruveOrderFromPaymentContextFactory
+     * @param OrderSecureHashGeneratorInterface             $orderSecureHashGenerator
      */
     public function __construct(
         TransactionPaymentContextFactoryInterface $paymentContextFactory,
-        ApruveOrderFromPaymentContextFactory $apruveOrderFromPaymentContextFactory,
+        ApruveOrderFromPaymentContextFactoryInterface $apruveOrderFromPaymentContextFactory,
         OrderSecureHashGeneratorInterface $orderSecureHashGenerator
     ) {
         parent::__construct($paymentContextFactory);

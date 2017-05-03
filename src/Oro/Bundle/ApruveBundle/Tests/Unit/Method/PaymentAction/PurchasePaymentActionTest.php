@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\PaymentAction;
 
-use Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilder;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderFactoryInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Factory\Order\ApruveOrderFromPaymentContextFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Model\Order\ApruveOrderInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveLineItem;
+use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveOrder;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Method\PaymentAction\PurchasePaymentAction;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
@@ -17,25 +15,26 @@ use Psr\Log\LoggerInterface;
 
 class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
 {
+    const API_KEY = 'sampleApiKey';
     const APRUVE_ORDER = [
-        ApruveOrderBuilder::MERCHANT_ID => 'sampleId',
-        ApruveOrderBuilder::AMOUNT_CENTS => 10000,
-        ApruveOrderBuilder::CURRENCY => 'USD',
-        ApruveOrderBuilder::SHIPPING_CENTS => '500',
-        ApruveOrderBuilder::FINALIZE_ON_CREATE => true,
-        ApruveOrderBuilder::INVOICE_ON_CREATE => false,
-        ApruveOrderBuilder::LINE_ITEMS => [
+        ApruveOrder::MERCHANT_ID => 'sampleId',
+        ApruveOrder::AMOUNT_CENTS => 10000,
+        ApruveOrder::CURRENCY => 'USD',
+        ApruveOrder::SHIPPING_CENTS => '500',
+        ApruveOrder::FINALIZE_ON_CREATE => true,
+        ApruveOrder::INVOICE_ON_CREATE => false,
+        ApruveOrder::LINE_ITEMS => [
             [
-                ApruveLineItemBuilder::TITLE => 'Sample title',
-                ApruveLineItemBuilder::PRICE_TOTAL_CENTS => 10000,
-                ApruveLineItemBuilder::QUANTITY => 10,
-                ApruveLineItemBuilder::DESCRIPTION => "Sample" . PHP_EOL . "description with line break",
-                ApruveLineItemBuilder::SKU => 'sku1',
-                ApruveLineItemBuilder::VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
+                ApruveLineItem::TITLE => 'Sample title',
+                ApruveLineItem::AMOUNT_CENTS => 10000,
+                ApruveLineItem::QUANTITY => 10,
+                ApruveLineItem::DESCRIPTION => "Sample" . PHP_EOL . "description with line break",
+                ApruveLineItem::SKU => 'sku1',
+                ApruveLineItem::VIEW_PRODUCT_URL => 'http://example.com/product/view/1',
             ],
         ],
-        ApruveOrderBuilder::FINALIZE_ON_CREATE => true,
-        ApruveOrderBuilder::INVOICE_ON_CREATE => false,
+        ApruveOrder::FINALIZE_ON_CREATE => true,
+        ApruveOrder::INVOICE_ON_CREATE => false,
     ];
     const SECURE_HASH = '6c6b4a10f9afc452a065051ff42da575264d937f77888b4397fd85d0c12d2109';
 
@@ -47,7 +46,7 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
     private $logger;
 
     /**
-     * @var ApruveOrderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ApruveOrder|\PHPUnit_Framework_MockObject_MockObject
      */
     private $apruveOrder;
 
@@ -57,9 +56,9 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
     private $paymentContext;
 
     /**
-     * @var ApruveOrderBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ApruveOrderFromPaymentContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $apruveOrderBuilderFactory;
+    private $apruveOrderFromPaymentContextFactory;
 
     /**
      * @var OrderSecureHashGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -88,22 +87,23 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
         $this->paymentTransaction = $this->createMock(PaymentTransaction::class);
         $this->paymentContext = $this->createMock(PaymentContextInterface::class);
         $this->paymentContextFactory = $this->createMock(TransactionPaymentContextFactoryInterface::class);
-        $this->apruveOrder = $this->createMock(ApruveOrderInterface::class);
-        $this->apruveOrderBuilderFactory = $this->createMock(ApruveOrderBuilderFactoryInterface::class);
+        $this->apruveOrder = $this->createMock(ApruveOrder::class);
+        $this->apruveOrderFromPaymentContextFactory
+            = $this->createMock(ApruveOrderFromPaymentContextFactoryInterface::class);
         $this->orderSecureHashGenerator = $this->createMock(OrderSecureHashGeneratorInterface::class);
         $this->config = $this->createMock(ApruveConfigInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->paymentAction = new PurchasePaymentAction(
             $this->paymentContextFactory,
-            $this->apruveOrderBuilderFactory,
+            $this->apruveOrderFromPaymentContextFactory,
             $this->orderSecureHashGenerator
         );
         $this->paymentAction->setLogger($this->logger);
@@ -122,16 +122,21 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn(self::APRUVE_ORDER);
 
-        $this->apruveOrderBuilderFactory
+        $this->config
             ->expects(static::once())
-            ->method('create')
-            ->with($this->paymentContext)
-            ->willReturn($this->getApruveOrderBuilder());
+            ->method('getApiKey')
+            ->willReturn(self::API_KEY);
+
+        $this->apruveOrderFromPaymentContextFactory
+            ->expects(static::once())
+            ->method('createFromPaymentContext')
+            ->with($this->paymentContext, $this->config)
+            ->willReturn($this->apruveOrder);
 
         $this->orderSecureHashGenerator
             ->expects(static::once())
             ->method('generate')
-            ->with($this->apruveOrder, $this->config)
+            ->with($this->apruveOrder, self::API_KEY)
             ->willReturn(self::SECURE_HASH);
 
         $this->paymentTransaction
@@ -170,9 +175,9 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
             ->with($this->paymentTransaction)
             ->willReturn(null);
 
-        $this->apruveOrderBuilderFactory
+        $this->apruveOrderFromPaymentContextFactory
             ->expects(static::never())
-            ->method('create');
+            ->method('createFromPaymentContext');
 
         $this->logger
             ->expects(static::once())
@@ -195,30 +200,5 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
         $actual = $this->paymentAction->getName();
 
         static::assertSame(PurchasePaymentAction::NAME, $actual);
-    }
-
-    /**
-     * @return ApruveOrderBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getApruveOrderBuilder()
-    {
-        /** @var ApruveOrderBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $apruveOrderBuilder */
-        $apruveOrderBuilder = $this->createMock(ApruveOrderBuilderInterface::class);
-
-        $apruveOrderBuilder
-            ->expects(static::once())
-            ->method('setFinalizeOnCreate')
-            ->with(true)
-            ->willReturnSelf();
-        $apruveOrderBuilder
-            ->expects(static::once())
-            ->method('setInvoiceOnCreate')
-            ->with(false);
-        $apruveOrderBuilder
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($this->apruveOrder);
-
-        return $apruveOrderBuilder;
     }
 }
