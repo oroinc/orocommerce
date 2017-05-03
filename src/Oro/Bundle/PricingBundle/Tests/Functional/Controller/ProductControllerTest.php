@@ -6,10 +6,11 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\Controller\ProductHelperTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -17,7 +18,7 @@ use Symfony\Component\DomCrawler\Form;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ProductControllerTest extends WebTestCase
+class ProductControllerTest extends ProductHelperTestCase
 {
     /**
      * @var array
@@ -379,6 +380,57 @@ class ProductControllerTest extends WebTestCase
 
         foreach ($result['data'] as $product) {
             static::assertContains($product['sku'], $expected);
+        }
+    }
+
+    public function testDuplicate()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
+        $this->client->followRedirects(true);
+
+        $crawler = $this->client->getCrawler();
+        $button = $crawler->selectLink('Duplicate');
+        $this->assertCount(1, $button);
+
+        $headers = ['HTTP_X-Requested-With' => 'XMLHttpRequest'];
+        $this->client->request('GET', $button->attr('data-operation-url'), [], [], $headers);
+        $response = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        $data = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('redirectUrl', $data);
+
+        $this->client->request('GET', $data['redirectUrl']);
+        $newProduct = $this->getProductDataBySku($product->getSku().'-1');
+
+        $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+        /** @var ProductPriceRepository $productPriceRepository */
+        $productPriceRepository = $this->getContainer()
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityRepository(ProductPrice::class);
+
+        $newPrices = $productPriceRepository->getPricesByProduct($shardManager, $newProduct);
+        $oldPrices = $productPriceRepository->getPricesByProduct($shardManager, $product);
+
+        $this->assertNotEmpty($newPrices);
+        $this->assertCount(count($oldPrices), $newPrices);
+        foreach ($newPrices as $key => $price) {
+            $price->loadPrice();
+            $oldPrices[$key]->loadPrice();
+            $expected = [
+                'priceList' => $oldPrices[$key]->getPriceList()->getName(),
+                'quantity' => $oldPrices[$key]->getQuantity(),
+                'unit' => $oldPrices[$key]->getUnit(),
+                'price' => $oldPrices[$key]->getPrice(),
+            ];
+
+            $this->assertEquals($expected, [
+                'priceList' => $price->getPriceList()->getName(),
+                'quantity' => $price->getQuantity(),
+                'unit' => $price->getUnit(),
+                'price' => $price->getPrice(),
+            ]);
         }
     }
 
