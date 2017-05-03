@@ -215,7 +215,6 @@ Feature:
     And I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on "Default Web Catalog" in grid
     When I click on "Remove Variant Button"
-    And I click on "Remove Variant Button"
     Then I should see 0 elements "Product Collection Variant Label"
     When I click on "Show Variants Dropdown"
     And I click "Add System Page"

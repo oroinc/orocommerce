@@ -84,6 +84,9 @@ oro_behat_extension:
       selector: 'a.operation-button[title="Edit within Web Catalog"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    AttributeGroupCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
+
   suites:
     OroProductBundle:
       contexts:
@@ -97,6 +100,3 @@ oro_behat_extension:
         - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features'
-
-    AttributeGroupCollection:
-      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
