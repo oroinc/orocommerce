@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Valid;
 
 class ProductCollectionVariantType extends AbstractType
 {
@@ -38,7 +39,7 @@ class ProductCollectionVariantType extends AbstractType
                 'name_field_required' => false,
                 'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
                 'required' => true,
-                'constraints' => [new NotBlank()]
+                'constraints' => [new NotBlank(), new Valid()]
             ]
         );
 

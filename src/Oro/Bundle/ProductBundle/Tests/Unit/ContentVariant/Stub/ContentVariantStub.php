@@ -47,9 +47,12 @@ class ContentVariantStub extends AbstractContentVariantStub
 
     /**
      * @param Segment $productCollectionSegment
+     * @return $this
      */
     public function setProductCollectionSegment(Segment $productCollectionSegment)
     {
         $this->productCollectionSegment = $productCollectionSegment;
+
+        return $this;
     }
 }

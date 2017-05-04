@@ -204,3 +204,11 @@ services:
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
+
+    oro_product.form.type.extension.product_collection:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
+        arguments:
+            - '@translator'
+            - '%oro_web_catalog.type.content_variant_collection.class%'
+        tags:
+            - { name: form.type_extension, extended_type: '%oro_web_catalog.type.content_variant_collection.class%' }
