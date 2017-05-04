@@ -14,6 +14,8 @@
 
     &__badges {
         float: right;
+        margin-top: 3px;
+        margin-left: 4px;
     }
 
     &__text {
@@ -29,9 +31,10 @@
         min-width: 66px;
     }
 
-    &__edit,
-    &__remove {
-        margin-left: 4px;
+    &__edit {
+        &:not(:first-child) {
+            margin-left: 4px;
+        }
     }
 
     &__edit {
@@ -69,13 +72,8 @@
 
 @include breakpoint('mobile') {
     .shopping-lists-modify {
-        &__select {
-            width: 65px;
-        }
-
         &__input {
-            width: 40px;
-            padding: 7px 2px;
+            width: 35px;
             text-align: center;
         }
 

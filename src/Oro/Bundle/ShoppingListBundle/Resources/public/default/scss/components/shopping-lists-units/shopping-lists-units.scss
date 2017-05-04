@@ -36,3 +36,11 @@
         transition-delay: 0.1s;
     }
 }
+
+@include breakpoint('mobile') {
+    .shopping-lists-units {
+        &__static {
+            padding-left: 0;
+        }
+    }
+}
