@@ -6,6 +6,8 @@ oro_behat_extension:
       selector: "select[name='oro_product[primaryUnitPrecision][unit]']"
     ProductAdditionalUnitField:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
+    OptionCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
 
     ProductForm:
       selector: 'div#container'
@@ -19,6 +21,16 @@ oro_behat_extension:
           PrimaryPrecision: 'oro_product[primaryUnitPrecision][precision]'
           AdditionalUnit: 'oro_product[additionalUnitPrecisions][0][unit]'
           AdditionalPrecision: 'oro_product[additionalUnitPrecisions][0][precision]'
+
+    Product Family Form:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Label: 'oro_attribute_family[labels][values][default]'
+
+    Configurable Attributes:
+      selector: 'div[id^="oro_product_variantFields"]'
 
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"
