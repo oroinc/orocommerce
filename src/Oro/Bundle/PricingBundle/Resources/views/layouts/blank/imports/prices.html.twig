@@ -1,4 +1,7 @@
 {% block product_price_container %}
+    {% if product.prices is defined %}
+        {% set productPrices = product.prices %}
+    {% endif %}
     {% if productPrices is not null %}
         {% do block|merge_context({
             productPrices: productPrices,
