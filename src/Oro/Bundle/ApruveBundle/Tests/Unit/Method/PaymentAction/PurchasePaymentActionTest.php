@@ -11,10 +11,12 @@ use Oro\Bundle\ApruveBundle\Method\PaymentAction\PurchasePaymentAction;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Psr\Log\LoggerInterface;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 
 class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
 {
+    use LoggerAwareTraitTestTrait;
+
     const API_KEY = 'sampleApiKey';
     const APRUVE_ORDER = [
         ApruveOrder::MERCHANT_ID => 'sampleId',
@@ -38,12 +40,10 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
     ];
     const SECURE_HASH = '6c6b4a10f9afc452a065051ff42da575264d937f77888b4397fd85d0c12d2109';
 
-    const INITIAL_OPTIONS = ['some_option' => 'option_value'];
-
-    /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $logger;
+    const REQUEST_DATA = [
+        'apruveOrder' => self::APRUVE_ORDER,
+        'apruveOrderSecureHash' => self::SECURE_HASH,
+    ];
 
     /**
      * @var ApruveOrder|\PHPUnit_Framework_MockObject_MockObject
@@ -99,14 +99,14 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
             = $this->createMock(ApruveOrderFromPaymentContextFactoryInterface::class);
         $this->orderSecureHashGenerator = $this->createMock(OrderSecureHashGeneratorInterface::class);
         $this->config = $this->createMock(ApruveConfigInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->paymentAction = new PurchasePaymentAction(
             $this->paymentContextFactory,
             $this->apruveOrderFromPaymentContextFactory,
             $this->orderSecureHashGenerator
         );
-        $this->paymentAction->setLogger($this->logger);
+
+        $this->setUpLoggerMock($this->paymentAction);
     }
 
     public function testExecute()
@@ -141,18 +141,14 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentTransaction
             ->expects(static::once())
-            ->method('getTransactionOptions')
-            ->willReturn(self::INITIAL_OPTIONS);
-
-        $this->paymentTransaction
-            ->expects(static::once())
-            ->method('setTransactionOptions')
-            ->with(self::INITIAL_OPTIONS + ['apruveOrder' => self::APRUVE_ORDER]);
+            ->method('setRequest')
+            ->with(self::REQUEST_DATA);
 
         $this->paymentTransaction
             ->expects(static::once())
             ->method('setSuccessful')
             ->with(false);
+
         $this->paymentTransaction
             ->expects(static::once())
             ->method('setActive')
@@ -160,11 +156,7 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
 
         $actual = $this->paymentAction->execute($this->config, $this->paymentTransaction);
 
-        $expected = [
-            'apruveOrder' => self::APRUVE_ORDER,
-            'apruveOrderSecureHash' => self::SECURE_HASH,
-        ];
-        static::assertSame($expected, $actual);
+        static::assertSame(self::REQUEST_DATA, $actual);
     }
 
     public function testExecuteWithoutPaymentContext()
@@ -179,16 +171,7 @@ class PurchasePaymentActionTest extends \PHPUnit_Framework_TestCase
             ->expects(static::never())
             ->method('createFromPaymentContext');
 
-        $this->logger
-            ->expects(static::once())
-            ->method('error')
-            ->with(
-                static::isType('string'),
-                static::logicalAnd(
-                    static::isType('array'),
-                    static::isEmpty()
-                )
-            );
+        $this->assertLoggerErrorMethodCalled();
 
         $actual = $this->paymentAction->execute($this->config, $this->paymentTransaction);
 

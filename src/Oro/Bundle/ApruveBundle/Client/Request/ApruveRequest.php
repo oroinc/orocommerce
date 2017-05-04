@@ -22,8 +22,8 @@ class ApruveRequest implements ApruveRequestInterface
     protected $method;
 
     /**
-     * @param string $method
-     * @param string $uri
+     * @param string                     $method
+     * @param string                     $uri
      * @param ApruveEntityInterface|null $requestData
      */
     public function __construct($method, $uri, ApruveEntityInterface $requestData = null)
@@ -31,6 +31,18 @@ class ApruveRequest implements ApruveRequestInterface
         $this->uri = $uri;
         $this->requestData = $requestData;
         $this->method = $method;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function toArray()
+    {
+        return [
+            'method' => $this->getMethod(),
+            'uri' => $this->getUri(),
+            'data' => $this->getData(),
+        ];
     }
 
     /**

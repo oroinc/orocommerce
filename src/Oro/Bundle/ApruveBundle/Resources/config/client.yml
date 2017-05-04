@@ -23,6 +23,14 @@ services:
         class: 'Oro\Bundle\ApruveBundle\Client\Request\Merchant\Factory\BasicGetMerchantRequestFactory'
         public: false
 
+    oro_apruve.client.request.invoice.factory:
+        class: 'Oro\Bundle\ApruveBundle\Client\Request\Invoice\Factory\BasicCreateInvoiceRequestFactory'
+        public: false
+
+    oro_apruve.client.request.shipment.factory:
+        class: 'Oro\Bundle\ApruveBundle\Client\Request\Shipment\Factory\BasicCreateShipmentRequestFactory'
+        public: false
+
     oro_apruve.client.url.provider:
         class: 'Oro\Bundle\ApruveBundle\Client\Url\Provider\Basic\BasicApruveClientUrlProvider'
         public: false

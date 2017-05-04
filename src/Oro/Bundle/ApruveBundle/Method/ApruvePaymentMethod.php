@@ -11,6 +11,8 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class ApruvePaymentMethod implements PaymentMethodInterface
 {
+    const INVOICE = 'invoice';
+    const SHIPMENT = 'shipment';
     const COMPLETE = 'complete';
     const CANCEL = 'cancel';
 

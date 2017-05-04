@@ -34,3 +34,6 @@ oro:
                 invalid_api_key.message: 'Api key is invalid'
                 merchant_not_found.message: 'Merchant with such id was not found'
                 server_error.message: 'Connection error has occurred: %error_message%. Please, try again later'
+
+        payment_transaction:
+            create_invoice.label: Create Invoice

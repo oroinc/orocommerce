@@ -24,4 +24,16 @@ abstract class AbstractApruveEntity implements ApruveEntityInterface
     {
         return (array)$this->data;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getId()
+    {
+        if (array_key_exists('id', $this->data)) {
+            return (string) $this->data['id'];
+        }
+
+        return null;
+    }
 }

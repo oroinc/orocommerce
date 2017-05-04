@@ -53,6 +53,7 @@ class ApruveLineItemBuilder implements ApruveLineItemBuilderInterface
         $this->data += [
             ApruveLineItem::TITLE => (string)$this->title,
             ApruveLineItem::AMOUNT_CENTS => (int)$this->amountCents,
+            ApruveLineItem::PRICE_TOTAL_CENTS => (int)$this->amountCents,
             ApruveLineItem::QUANTITY => (int)$this->quantity,
             ApruveLineItem::CURRENCY => (string)$this->currency,
         ];

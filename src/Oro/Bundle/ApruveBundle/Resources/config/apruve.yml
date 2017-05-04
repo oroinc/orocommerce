@@ -17,6 +17,16 @@ services:
         lazy: true
         public: false
 
+    oro_apruve.apruve.builder.factory.invoice:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Builder\Invoice\ApruveInvoiceBuilderFactory'
+        lazy: true
+        public: false
+
+    oro_apruve.apruve.builder.factory.shipment:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Builder\Shipment\ApruveShipmentBuilderFactory'
+        lazy: true
+        public: false
+
     oro_apruve.apruve.builder.factory.line_item:
         class: 'Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilderFactory'
         lazy: true
@@ -28,6 +38,15 @@ services:
         arguments:
             - '@oro_apruve.apruve.helper.amount_normalizer'
 
+    oro_apruve.apruve.factory.abstract_entity_with_line_items:
+        parent: oro_apruve.apruve.factory.abstract_entity
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\AbstractApruveEntityWithLineItemsFactory'
+        abstract: true
+        arguments:
+            - '@oro_apruve.apruve.factory.line_item'
+            - '@oro_apruve.provider.shipping_amount'
+            - '@oro_apruve.provider.tax_amount'
+
     oro_apruve.apruve.factory.line_item:
         parent: oro_apruve.apruve.factory.abstract_entity
         class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\LineItem\ApruveLineItemFromPaymentLineItemFactory'
@@ -38,12 +57,31 @@ services:
         public: false
 
     oro_apruve.apruve.factory.order:
-        parent: oro_apruve.apruve.factory.abstract_entity
+        parent: oro_apruve.apruve.factory.abstract_entity_with_line_items
         class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\Order\ApruveOrderFromPaymentContextFactory'
         arguments:
             - '@oro_apruve.apruve.builder.factory.order'
-            - '@oro_apruve.apruve.factory.line_item'
-            - '@oro_apruve.provider.shipping_amount'
-            - '@oro_apruve.provider.tax_amount'
+        lazy: true
+        public: false
+
+    oro_apruve.apruve.factory.invoice:
+        parent: oro_apruve.apruve.factory.abstract_entity_with_line_items
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\Invoice\ApruveInvoiceFromPaymentContextFactory'
+        arguments:
+            - '@oro_apruve.apruve.builder.factory.invoice'
+        lazy: true
+        public: false
+
+    oro_apruve.apruve.factory.invoice_from_response:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\Invoice\ApruveInvoiceFromResponseFactory'
+        lazy: true
+        public: false
+
+    oro_apruve.apruve.factory.shipment:
+        parent: oro_apruve.apruve.factory.abstract_entity_with_line_items
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\Shipment\ApruveShipmentFromPaymentContextFactory'
+        arguments:
+            - '@oro_apruve.apruve.builder.factory.shipment'
+            - '@oro_shipping.shipping_method.registry'
         lazy: true
         public: false
