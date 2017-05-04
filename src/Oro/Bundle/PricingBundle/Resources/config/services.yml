@@ -453,6 +453,7 @@ services:
             - [setProductPriceClass, ['%oro_pricing.entity.product_price.class%']]
             - [setDoctrineHelper,  ['@oro_entity.doctrine_helper']]
             - [setShardManager, ['@oro_pricing.shard_manager']]
+            - [setPriceManager, ['@oro_pricing.manager.price_manager']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
 

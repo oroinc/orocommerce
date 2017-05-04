@@ -21,6 +21,10 @@
         min-width: 50px;
     }
 
+    &__qty-container {
+        min-width: 165px;
+    }
+
     &__qty-input {
         width: 48%;
         min-width: 60px;
@@ -174,14 +178,6 @@
                 overflow: hidden;
             }
         }
-
-        &__qty-input,
-        &__select {
-            display: block;
-
-            margin-top: 10px;
-            width: 100%;
-        }
     }
 }
 
@@ -203,16 +199,4 @@
             width: 47%;
         }
     }
-}
-
-@include breakpoint('mobile') {
-   .product {
-       &__qty-input,
-       &__select {
-           display: block;
-
-           margin-top: 10px;
-           width: 100%;
-       }
-   }
 }
