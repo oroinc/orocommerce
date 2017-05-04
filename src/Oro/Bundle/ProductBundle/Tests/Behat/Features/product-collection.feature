@@ -34,6 +34,7 @@ Feature:
   Scenario: Save Product Collection with defined filters and applied query
     When I click "Save"
     Then I should not see text matching "You have changes in the Filters section that have not been applied"
+    Then I should see "Content Node has been saved" flash message
     Then I reload the page
     Then I should see following grid:
       | SKU   | NAME      |
@@ -81,7 +82,8 @@ Feature:
 
   Scenario: Edited Product Collection can be saved
     When I click "Save"
-    And I reload the page
+    Then I should see "Content Node has been saved" flash message
+    When I reload the page
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU2 | Product 2 |
@@ -91,14 +93,46 @@ Feature:
     When I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I fill "Content Node Form" with:
-      | First Product Collection Segment Name | Some Product Collection Name |
+      | First Product Collection Segment Name  | Some Product Collection Name |
       | Second Product Collection Segment Name | Some Product Collection Name |
     And I click "Save"
     Then I should see text matching "You have changes in the Filters section that have not been applied"
-    And I click "Continue" in modal window
+    When I click "Continue" in modal window
     And I click "Content Variants"
-    And I should see "Content Node Form" validation errors:
+    Then I should see "Content Node Form" validation errors:
       | Second Product Collection Segment Name | This name already in use |
+
+  Scenario: Add another product collection
+    When I reload the page
+    Then "Content Node Form" must contains values:
+      | First Product Collection Segment Name  | Some Custom Segment Name |
+    And I click on "Show Variants Dropdown"
+    And I click "Add Product Collection"
+    And I fill "Content Node Form" with:
+      | Second Product Collection Segment Name  | Unique Name |
+    And I click "Save"
+    Then I should see text matching "You have changes in the Filters section that have not been applied"
+    When I click "Continue" in modal window
+    Then I should see "Content Node has been saved" flash message
+
+  Scenario: Changing names to same for saved Product Collections results in validation error
+    Given I click "Content Variants"
+    And I fill "Content Node Form" with:
+      | First Product Collection Segment Name  | Same Name |
+      | Second Product Collection Segment Name | Same Name |
+    When I click "Save"
+    Then I should see "Content Node Form" validation errors:
+      | Second Product Collection Segment Name | This name already in use |
+
+  Scenario: Remove product collection
+    When I reload the page
+    Then "Content Node Form" must contains values:
+      | First Product Collection Segment Name  | Unique Name |
+      | Second Product Collection Segment Name | Some Custom Segment Name |
+    When I click on "Remove First Product Collection Variant Button"
+    And I click "Save"
+    Then I should see "Content Node has been saved" flash message
+    And I should see 1 element "Product Collection Variant Label"
 
   Scenario: Modification of Product Collection segment's name, reflected in Manage Segments section
     Given I proceed as the Admin

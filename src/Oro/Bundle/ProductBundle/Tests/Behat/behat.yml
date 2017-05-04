@@ -83,6 +83,10 @@ oro_behat_extension:
       selector: 'button.removeVariantBtn'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Remove First Product Collection Variant Button:
+      selector: 'button.removeVariantBtn[data-related="oro_web_catalog_content_node[contentVariants][0]"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
