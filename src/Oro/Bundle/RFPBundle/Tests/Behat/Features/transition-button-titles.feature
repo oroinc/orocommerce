@@ -1,4 +1,5 @@
 @fixture-RFQWorkflows.yml
+@skip #due to BAP-14674
 Feature: Transition button titles for Frontend
 
   Scenario: Prepare Test Workflow
