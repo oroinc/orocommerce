@@ -23,6 +23,7 @@ define(function(require) {
             fieldQuantity: '[data-name="field__quantity"]',
             fieldUnit: '[data-name="field__product-unit"]',
             fieldPrice: '[data-name="field__value"]',
+            fieldCommentCheckbox: '[data-role="field__comment-checkbox"]',
             fieldComment: '[data-name="field__comment"]',
             remove: '[data-role="remove"]'
         },
@@ -131,6 +132,7 @@ define(function(require) {
 
             data.product = this.getProduct();
             data.comment = this.getElement('fieldComment').val();
+            data.commentChecked = this.getElement('fieldCommentCheckbox').prop('checked');
             data.lines = [];
 
             _.each($quantities, function(quantity, i) {

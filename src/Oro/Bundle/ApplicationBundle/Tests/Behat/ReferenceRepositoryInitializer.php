@@ -51,9 +51,12 @@ class ReferenceRepositoryInitializer extends BaseInitializer
 
         /** @var ProductUnitRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroProductBundle:ProductUnit');
-        /** @var ProductUnit item*/
+        /** @var ProductUnit $item*/
         $item = $repository->findOneBy(['code' => 'item']);
         $this->referenceRepository->set('item', $item);
+        /** @var ProductUnit $each*/
+        $each = $repository->findOneBy(['code' => 'each']);
+        $this->referenceRepository->set('each', $each);
 
         /** @var AddressTypeRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroAddressBundle:AddressType');

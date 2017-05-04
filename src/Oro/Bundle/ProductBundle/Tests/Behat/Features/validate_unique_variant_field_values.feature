@@ -1,3 +1,5 @@
+@ticket-BB-8130
+@automatically-ticket-tagged
 @fixture-Products_validate_unique_variant_field_values.yml
 Feature: Validate unique variant field values when changing simple products or extended fields
 
@@ -76,12 +78,11 @@ Feature: Validate unique variant field values when changing simple products or e
       | Field Name | Color  |
       | Type       | Select |
     And I click "Continue"
-    And I click "Add"
-    And I click "Add"
-    And I click "Add"
-    And I fill in "oro_entity_config_type[enum][enum_options][1][label]" with "Green"
-    And I fill in "oro_entity_config_type[enum][enum_options][2][label]" with "Red"
-    And I fill in "oro_entity_config_type[enum][enum_options][3][label]" with "Yellow"
+    And set Options with:
+      | Label  |
+      | Green  |
+      | Red    |
+      | Yellow |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -92,12 +93,11 @@ Feature: Validate unique variant field values when changing simple products or e
       | Field Name | Size  |
       | Type       | Select |
     And I click "Continue"
-    And I click "Add"
-    And I click "Add"
-    And I click "Add"
-    And I fill in "oro_entity_config_type[enum][enum_options][1][label]" with "L"
-    And I fill in "oro_entity_config_type[enum][enum_options][2][label]" with "M"
-    And I fill in "oro_entity_config_type[enum][enum_options][3][label]" with "S"
+    And set Options with:
+      | Label  |
+      | L      |
+      | M      |
+      | S      |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
@@ -111,10 +111,10 @@ Feature: Validate unique variant field values when changing simple products or e
       | Storage Type | Table column  |
       | Type         | Select        |
     And I click "Continue"
-    And I click "Add"
-    And I click "Add"
-    And I fill in "oro_entity_config_type[enum][enum_options][1][label]" with "Nike"
-    And I fill in "oro_entity_config_type[enum][enum_options][2][label]" with "Lacoste"
+    And set Options with:
+      | Label   |
+      | Nike    |
+      | Lacoste |
     And I save form
     Then I should see "Field saved" flash message
 
@@ -125,19 +125,9 @@ Feature: Validate unique variant field values when changing simple products or e
     # Update attribute family
     And I go to Products / Product Families
     And I click Edit T_shirt in grid
-    And I fill in "oro_attribute_family[attributeGroups][0][labels][values][default]" with "T-shirt group"
-    And I additionally select "SKU" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Name" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Is Featured" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Description" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Short Description" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Images" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Inventory Status" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Meta description" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Meta keywords" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Product prices" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Color" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
-    And I additionally select "Size" from "oro_attribute_family[attributeGroups][0][attributeRelations][]"
+    And set Attribute Groups with:
+      | Label         | Visible | Attributes |
+      | T-shirt group | true    | [SKU, Name, Is Featured, Description, Short Description, Images, Inventory Status, Meta description, Meta keywords, Product prices, Color, Size] |
     And I save form
     Then I should see "Successfully updated" flash message
 
@@ -162,9 +152,8 @@ Feature: Validate unique variant field values when changing simple products or e
 
     And I go to Products / Products
     And I click Edit shirt_101 in grid
-    And I check "Color"
-    And I check "Size"
-    And I check "Brand"
+    And I fill "ProductForm" with:
+      | Configurable Attributes | [Color, Size, Brand] |
     And I save form
     Then I should see "Product has been saved" flash message
     And I go to Products / Products
@@ -227,8 +216,9 @@ Feature: Validate unique variant field values when changing simple products or e
     # Restore state
     And I go to Products / Product Attributes
     And I click on Color in grid
-    And I click "Add"
-    And I fill in "oro_entity_config_type[enum][enum_options][2][label]" with "Green"
+    And set Options with:
+      | Label |
+      | Green |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
     And I go to Products / Products

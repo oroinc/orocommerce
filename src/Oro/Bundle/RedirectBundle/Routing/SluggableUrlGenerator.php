@@ -120,7 +120,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
 
     /**
      * @param array $parameters
-     * @return string
+     * @return string|null
      */
     private function getContextUrl(array &$parameters)
     {
@@ -129,7 +129,9 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
             $contextData = $parameters[self::CONTEXT_DATA];
             unset($parameters[self::CONTEXT_TYPE], $parameters[self::CONTEXT_DATA]);
 
-            return $this->contextUrlProvider->getUrl($contextType, $contextData);
+            $url = $this->contextUrlProvider->getUrl($contextType, $contextData);
+
+            return trim($url, '/');
         }
 
         return null;

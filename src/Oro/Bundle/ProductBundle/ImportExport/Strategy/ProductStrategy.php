@@ -102,6 +102,12 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
         /** @var Product $entity */
         $entity = parent::afterProcessEntity($entity);
+        //Clear unitPrecision collection items with unit null
+        foreach ($entity->getUnitPrecisions() as $unitPrecision) {
+            if (!$unitPrecision->getProductUnitCode()) {
+                $entity->getUnitPrecisions()->removeElement($unitPrecision);
+            }
+        }
         $this->processedProducts[$entity->getSku()] = $entity;
 
         return $entity;

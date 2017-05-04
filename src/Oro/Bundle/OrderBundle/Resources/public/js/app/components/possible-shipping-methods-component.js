@@ -92,8 +92,6 @@ define(function(require) {
             var confirmation = new StandardConfirmation({
                 title: __('oro.order.possible_shipping_methods.confirmation.title'),
                 content: __('oro.order.possible_shipping_methods.confirmation.content'),
-                allowOk: true,
-                allowCancel: true,
                 okText: __('Save'),
                 cancelText: __('oro.order.continue_editing')
             });
