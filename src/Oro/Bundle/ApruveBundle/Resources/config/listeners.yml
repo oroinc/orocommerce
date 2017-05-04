@@ -9,3 +9,12 @@ services:
             - ['setLogger', ['@logger']]
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn }
+
+    oro_apruve.event_listener.invoice_payment_transaction:
+        class: 'Oro\Bundle\ApruveBundle\EventListener\InvoicePaymentTransactionListener'
+        lazy: true
+        arguments:
+            - '@oro_apruve.method.apruve.provider'
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.transaction_complete, method: onTransactionComplete }

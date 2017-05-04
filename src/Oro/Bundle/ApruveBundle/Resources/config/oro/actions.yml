@@ -1,0 +1,32 @@
+operations:
+
+    oro_order_payment_transaction_capture:
+        preactions:
+            - '@call_service_method':
+                service: oro_apruve.method.apruve.provider
+                method: hasPaymentMethod
+                method_parameters: [$.data.paymentMethod]
+                attribute: $.isApruve
+        preconditions:
+            '@and':
+                - '@equal': [$.isApruve, false]
+
+    oro_apruve_payment_transaction_capture:
+        extends: oro_order_payment_transaction_capture
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preconditions
+        preconditions:
+            '@and':
+                - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
+                - '@equal': [$.data.entity_class, '%oro_order.entity.order.class%']
+                - '@equal': [$.data.action, 'authorize']
+                - '@equal': [$.paymentMethodExist, true]
+                - '@not':
+                    - '@payment_transaction_was_charged':
+                        transaction: $.data
+                - '@equal': [$.isApruve, true]
+        label: oro.apruve.payment_transaction.create_invoice.label
+        button_options:
+            icon: fa-file-text-o

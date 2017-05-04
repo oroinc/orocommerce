@@ -16,14 +16,15 @@ class AuthorizePaymentAction extends AbstractPaymentAction
      */
     public function execute(ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
-        $transactionOptions = $paymentTransaction->getTransactionOptions();
         $response = $paymentTransaction->getResponse();
-        $transactionOptions[ApruvePaymentMethod::PARAM_ORDER_ID] = $response[ApruvePaymentMethod::PARAM_ORDER_ID];
-        $paymentTransaction->setTransactionOptions($transactionOptions);
+
+        // AUTHORIZE transaction holds ApruveOrderId in reference property.
+        $paymentTransaction->setReference($response[ApruvePaymentMethod::PARAM_ORDER_ID]);
 
         $paymentTransaction->setAction(PaymentMethodInterface::AUTHORIZE);
 
         $paymentTransaction->setSuccessful(true);
+
         // Transaction is awaiting for payment capture.
         $paymentTransaction->setActive(true);
 

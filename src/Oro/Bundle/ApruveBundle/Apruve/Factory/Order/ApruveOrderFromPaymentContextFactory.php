@@ -3,16 +3,15 @@
 namespace Oro\Bundle\ApruveBundle\Apruve\Factory\Order;
 
 use Oro\Bundle\ApruveBundle\Apruve\Builder\Order\ApruveOrderBuilderFactoryInterface;
-use Oro\Bundle\ApruveBundle\Apruve\Factory\AbstractApruveEntityFactory;
+use Oro\Bundle\ApruveBundle\Apruve\Factory\AbstractApruveEntityWithLineItemsFactory;
 use Oro\Bundle\ApruveBundle\Apruve\Factory\LineItem\ApruveLineItemFromPaymentLineItemFactoryInterface;
 use Oro\Bundle\ApruveBundle\Apruve\Helper\AmountNormalizerInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\ApruveBundle\Provider\ShippingAmountProviderInterface;
 use Oro\Bundle\ApruveBundle\Provider\TaxAmountProviderInterface;
-use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
-class ApruveOrderFromPaymentContextFactory extends AbstractApruveEntityFactory implements
+class ApruveOrderFromPaymentContextFactory extends AbstractApruveEntityWithLineItemsFactory implements
     ApruveOrderFromPaymentContextFactoryInterface
 {
     /**
@@ -31,40 +30,27 @@ class ApruveOrderFromPaymentContextFactory extends AbstractApruveEntityFactory i
     private $apruveOrderBuilderFactory;
 
     /**
-     * @var ShippingAmountProviderInterface
-     */
-    private $shippingAmountProvider;
-
-    /**
-     * @var TaxAmountProviderInterface
-     */
-    private $taxAmountProvider;
-
-    /**
-     * @var ApruveLineItemFromPaymentLineItemFactoryInterface
-     */
-    private $apruveLineItemFromPaymentLineItemFactory;
-
-    /**
      * @param AmountNormalizerInterface                         $amountNormalizer
-     * @param ApruveOrderBuilderFactoryInterface                $apruveOrderBuilderFactory
      * @param ApruveLineItemFromPaymentLineItemFactoryInterface $apruveLineItemFromPaymentLineItemFactory
      * @param ShippingAmountProviderInterface                   $shippingAmountProvider
      * @param TaxAmountProviderInterface                        $taxAmountProvider
+     * @param ApruveOrderBuilderFactoryInterface                $apruveOrderBuilderFactory
      */
     public function __construct(
         AmountNormalizerInterface $amountNormalizer,
-        ApruveOrderBuilderFactoryInterface $apruveOrderBuilderFactory,
         ApruveLineItemFromPaymentLineItemFactoryInterface $apruveLineItemFromPaymentLineItemFactory,
         ShippingAmountProviderInterface $shippingAmountProvider,
-        TaxAmountProviderInterface $taxAmountProvider
+        TaxAmountProviderInterface $taxAmountProvider,
+        ApruveOrderBuilderFactoryInterface $apruveOrderBuilderFactory
     ) {
-        parent::__construct($amountNormalizer);
+        parent::__construct(
+            $amountNormalizer,
+            $apruveLineItemFromPaymentLineItemFactory,
+            $shippingAmountProvider,
+            $taxAmountProvider
+        );
 
         $this->apruveOrderBuilderFactory = $apruveOrderBuilderFactory;
-        $this->apruveLineItemFromPaymentLineItemFactory = $apruveLineItemFromPaymentLineItemFactory;
-        $this->shippingAmountProvider = $shippingAmountProvider;
-        $this->taxAmountProvider = $taxAmountProvider;
     }
 
     /**
@@ -95,47 +81,6 @@ class ApruveOrderFromPaymentContextFactory extends AbstractApruveEntityFactory i
     }
 
     /**
-     * @param PaymentLineItemCollectionInterface $lineItems
-     *
-     * @return array
-     */
-    private function getLineItems($lineItems)
-    {
-        $apruveLineItems = [];
-        foreach ($lineItems as $lineItem) {
-            $apruveLineItems[] = $this->apruveLineItemFromPaymentLineItemFactory
-                ->createFromPaymentLineItem($lineItem)
-                ->getData();
-        }
-
-        return $apruveLineItems;
-    }
-
-    /**
-     * @param PaymentContextInterface $paymentContext
-     *
-     * @return int
-     */
-    private function getShippingCents(PaymentContextInterface $paymentContext)
-    {
-        $amount = $this->shippingAmountProvider->getShippingAmount($paymentContext);
-
-        return $this->normalizeAmount($amount);
-    }
-
-    /**
-     * @param PaymentContextInterface $paymentContext
-     *
-     * @return int
-     */
-    private function getTaxCents(PaymentContextInterface $paymentContext)
-    {
-        $amount = $this->taxAmountProvider->getTaxAmount($paymentContext);
-
-        return $this->normalizeAmount($amount);
-    }
-
-    /**
      * @param PaymentContextInterface $paymentContext
      *
      * @return string
@@ -143,22 +88,5 @@ class ApruveOrderFromPaymentContextFactory extends AbstractApruveEntityFactory i
     private function getMerchantOrderId(PaymentContextInterface $paymentContext)
     {
         return (string)$paymentContext->getSourceEntityIdentifier();
-    }
-
-    /**
-     * Get total order amount for "amount_cents" property.
-     * Sums total price of line items, shipping costs and taxes.
-     *
-     * @param PaymentContextInterface $paymentContext
-     *
-     * @return int
-     */
-    private function getAmountCents(PaymentContextInterface $paymentContext)
-    {
-        $amountCents = $this->normalizePrice($paymentContext->getSubtotal());
-        $amountCents += $this->getShippingCents($paymentContext);
-        $amountCents += $this->getTaxCents($paymentContext);
-
-        return $amountCents;
     }
 }

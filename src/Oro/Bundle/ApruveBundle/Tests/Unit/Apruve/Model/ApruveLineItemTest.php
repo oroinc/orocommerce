@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Apruve\Model;
 
-use Oro\Bundle\ApruveBundle\Apruve\Model\AbstractApruveEntity;
 use Oro\Bundle\ApruveBundle\Apruve\Model\ApruveLineItem;
 
 class ApruveLineItemTest extends \PHPUnit_Framework_TestCase
 {
+    const ID = 'sampleId';
     const DATA = [
+        'id' => self::ID,
         'merchantId' => 'sampleId',
     ];
 
     /**
-     * @var AbstractApruveEntity
+     * @var ApruveLineItem
      */
     private $apruveLineItem;
 
@@ -27,5 +28,10 @@ class ApruveLineItemTest extends \PHPUnit_Framework_TestCase
     public function testGetData()
     {
         static::assertSame(self::DATA, $this->apruveLineItem->getData());
+    }
+
+    public function testGetId()
+    {
+        static::assertSame(self::ID, $this->apruveLineItem->getId());
     }
 }

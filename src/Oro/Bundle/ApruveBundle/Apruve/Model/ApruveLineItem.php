@@ -14,6 +14,7 @@ class ApruveLineItem extends AbstractApruveEntity
      * @see README.md, section "Things to Consider"
      */
     const AMOUNT_CENTS = 'amount_cents';
+    const PRICE_TOTAL_CENTS = 'price_total_cents';
     const QUANTITY = 'quantity';
     const CURRENCY = 'currency';
 

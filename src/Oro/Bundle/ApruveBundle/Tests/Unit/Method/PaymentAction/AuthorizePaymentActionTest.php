@@ -10,12 +10,8 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 class AuthorizePaymentActionTest extends \PHPUnit_Framework_TestCase
 {
-    const RESPONSE = [ApruvePaymentMethod::PARAM_ORDER_ID => 100];
-    const INITIAL_OPTIONS = ['some_option' => 'option_value'];
-    const OPTIONS = [
-        ApruvePaymentMethod::PARAM_ORDER_ID => 100,
-        'some_option' => 'option_value',
-    ];
+    const APRUVE_ORDER_ID = 'sampleApruveOrderId';
+    const RESPONSE = [ApruvePaymentMethod::PARAM_ORDER_ID => self::APRUVE_ORDER_ID];
 
     /**
      * @var AuthorizePaymentAction
@@ -55,26 +51,27 @@ class AuthorizePaymentActionTest extends \PHPUnit_Framework_TestCase
             ->expects(static::once())
             ->method('getResponse')
             ->willReturn(self::RESPONSE);
+
         $this->paymentTransaction
             ->expects(static::once())
-            ->method('getTransactionOptions')
-            ->willReturn(self::INITIAL_OPTIONS);
-        $this->paymentTransaction
-            ->expects(static::once())
-            ->method('setTransactionOptions')
-            ->with(self::OPTIONS);
-        $this->paymentTransaction
-            ->expects(static::once())
-            ->method('setSuccessful')
-            ->with(true);
-        $this->paymentTransaction
-            ->expects(static::once())
-            ->method('setActive')
-            ->with(true);
+            ->method('setReference')
+            ->with(self::APRUVE_ORDER_ID);
+
         $this->paymentTransaction
             ->expects(static::once())
             ->method('setAction')
             ->with('authorize');
+
+        $this->paymentTransaction
+            ->expects(static::once())
+            ->method('setSuccessful')
+            ->with(true);
+
+        $this->paymentTransaction
+            ->expects(static::once())
+            ->method('setActive')
+            ->with(true);
+
         $actual = $this->paymentAction->execute($this->config, $this->paymentTransaction);
 
         static::assertSame([], $actual);

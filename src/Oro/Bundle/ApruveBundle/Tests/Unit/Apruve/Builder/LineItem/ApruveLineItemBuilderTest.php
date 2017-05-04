@@ -48,6 +48,7 @@ class ApruveLineItemBuilderTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             ApruveLineItem::AMOUNT_CENTS => self::AMOUNT_CENTS,
+            ApruveLineItem::PRICE_TOTAL_CENTS => self::AMOUNT_CENTS,
             ApruveLineItem::QUANTITY => self::QUANTITY,
             ApruveLineItem::CURRENCY => self::CURRENCY,
             ApruveLineItem::TITLE => self::TITLE,
@@ -72,6 +73,7 @@ class ApruveLineItemBuilderTest extends \PHPUnit_Framework_TestCase
             // Mandatory params.
             ApruveLineItem::TITLE => self::TITLE,
             ApruveLineItem::AMOUNT_CENTS => self::AMOUNT_CENTS,
+            ApruveLineItem::PRICE_TOTAL_CENTS => self::AMOUNT_CENTS,
             ApruveLineItem::CURRENCY => self::CURRENCY,
             ApruveLineItem::QUANTITY => self::QUANTITY,
 

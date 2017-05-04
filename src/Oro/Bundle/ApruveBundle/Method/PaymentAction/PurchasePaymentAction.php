@@ -8,9 +8,10 @@ use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
-class PurchasePaymentAction extends AbstractPaymentAction
+class PurchasePaymentAction extends AbstractPaymentAction implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -59,11 +60,12 @@ class PurchasePaymentAction extends AbstractPaymentAction
 
         $secureHash = $this->orderSecureHashGenerator->generate($apruveOrder, $apruveConfig->getApiKey());
 
-        $apruveOrderData = $apruveOrder->getData();
+        $requestData = [
+            'apruveOrder' => $apruveOrder->getData(),
+            'apruveOrderSecureHash' => $secureHash,
+        ];
 
-        $transactionOptions = $paymentTransaction->getTransactionOptions();
-        $transactionOptions['apruveOrder'] = $apruveOrderData;
-        $paymentTransaction->setTransactionOptions($transactionOptions);
+        $paymentTransaction->setRequest($requestData);
 
         // Transaction is not finished yet.
         $paymentTransaction->setSuccessful(false);
@@ -71,24 +73,13 @@ class PurchasePaymentAction extends AbstractPaymentAction
         // Transaction should be authorized by end user.
         $paymentTransaction->setActive(true);
 
-        return [
-            'apruveOrder' => $apruveOrderData,
-            'apruveOrderSecureHash' => $secureHash,
-        ];
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
+        return $requestData;
     }
 
     /**
      * @param int $transactionId
      */
-    protected function logNoPaymentContext($transactionId)
+    private function logNoPaymentContext($transactionId)
     {
         if ($this->logger) {
             $msg = sprintf(
@@ -97,5 +88,13 @@ class PurchasePaymentAction extends AbstractPaymentAction
             );
             $this->logger->error($msg);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getName()
+    {
+        return static::NAME;
     }
 }

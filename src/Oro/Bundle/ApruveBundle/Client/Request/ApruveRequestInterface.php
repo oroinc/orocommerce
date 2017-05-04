@@ -18,4 +18,9 @@ interface ApruveRequestInterface
      * @return string
      */
     public function getMethod();
+
+    /**
+     * @return array
+     */
+    public function toArray();
 }
