@@ -28,31 +28,7 @@ define(function(require) {
         confirmState: true,
 
         onConfirmModalOk: function() {
-            var data = this.moveEventData.data;
-            $.ajax({
-                async: false,
-                type: 'PUT',
-                url: routing.generate(this.onMoveRoute),
-                data: {
-                    id: data.node.id,
-                    parent: data.parent,
-                    position: data.position,
-                    createRedirect: +this.confirmState
-                },
-                success: _.bind(function(result) {
-                    if (!result.status) {
-                        this.rollback(data);
-                        messenger.notificationFlashMessage(
-                            'error',
-                            __('oro.ui.jstree.move_node_error', {nodeText: data.node.text})
-                        );
-                    } else if (this.reloadWidget) {
-                        widgetManager.getWidgetInstanceByAlias(this.reloadWidget, function(widget) {
-                            widget.render();
-                        });
-                    }
-                }, this)
-            });
+            this._doMove(this.confirmState);
         },
 
         onConfirmModalCancel: function() {
@@ -75,6 +51,11 @@ define(function(require) {
             }
 
             this.moveEventData = {e: e, data: data};
+
+            if (this.moveEventData.data.old_parent === this.moveEventData.data.parent) {
+                this._doMove(false);
+                return;
+            }
 
             this._removeConfirmModal();
             this.confirmModal = new ConfirmSlugChangeModal({
@@ -142,6 +123,39 @@ define(function(require) {
                 delete this.confirmModal;
                 this.confirmState = true;
             }
+        },
+
+        /**
+         * @param {Boolean} createRedirect
+         * @private
+         */
+        _doMove: function(createRedirect) {
+            var data = this.moveEventData.data;
+
+            $.ajax({
+                async: false,
+                type: 'PUT',
+                url: routing.generate(this.onMoveRoute),
+                data: {
+                    id: data.node.id,
+                    parent: data.parent,
+                    position: data.position,
+                    createRedirect: +createRedirect
+                },
+                success: _.bind(function(result) {
+                    if (!result.status) {
+                        this.rollback(data);
+                        messenger.notificationFlashMessage(
+                            'error',
+                            __('oro.ui.jstree.move_node_error', {nodeText: data.node.text})
+                        );
+                    } else if (this.reloadWidget) {
+                        widgetManager.getWidgetInstanceByAlias(this.reloadWidget, function(widget) {
+                            widget.render();
+                        });
+                    }
+                }, this)
+            });
         },
 
         /**

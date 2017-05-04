@@ -1,3 +1,5 @@
+@ticket-BB-8491
+@automatically-ticket-tagged
 Feature: Contact us and About pages availability
   In order to get useful information
   As user

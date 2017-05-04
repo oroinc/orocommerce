@@ -7,7 +7,6 @@ use Symfony\Component\EventDispatcher\Event;
 final class ReindexationRequestEvent extends Event
 {
     const EVENT_NAME = 'oro_website_search.reindexation_request';
-
     /**
      * @var array
      */

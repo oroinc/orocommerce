@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -27,12 +26,32 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="shopping"
+ *          },
+ *          "sharding"={
+ *              "discrimination_field"="priceList"
  *          }
  *      }
  * )
+ * @method PriceList getPriceList()
  */
 class ProductPrice extends BaseProductPrice
 {
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="id", type="guid")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $id;
+
     /**
      * @var PriceList
      *

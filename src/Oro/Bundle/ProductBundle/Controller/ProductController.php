@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
@@ -263,5 +264,35 @@ class ProductController extends Controller
     {
         return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
             ->getChangedSlugsData($product, ProductType::class));
+    }
+
+    /**
+     * @Route("/get-changed-default-url/{id}", name="oro_product_get_changed_default_slug", requirements={"id"="\d+"})
+     *
+     * @AclAncestor("oro_product_update")
+     *
+     * @param Request $request
+     * @param Product $product
+     * @return JsonResponse
+     */
+    public function getChangedDefaultSlugAction(Request $request, Product $product)
+    {
+        $newName = $request->get('productName');
+
+        $configManager = $this->get('oro_config.manager');
+        $showRedirectConfirmation =
+            $configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
+
+        $slugsData = [];
+        if ($newName !== null) {
+            $newSlug = $this->get('oro_entity_config.slug.generator')->slugify($newName);
+            $slugsData = $this->get('oro_redirect.helper.changed_slugs_helper')
+                ->getChangedDefaultSlugData($product, $newSlug);
+        }
+
+        return new JsonResponse([
+            'showRedirectConfirmation' => $showRedirectConfirmation,
+            'slugsData' => $slugsData,
+        ]);
     }
 }

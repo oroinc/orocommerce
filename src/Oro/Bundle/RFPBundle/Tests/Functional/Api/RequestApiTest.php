@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
+use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -12,7 +11,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-class RequestApiTest extends AbstractRequestApiTest
+class RequestApiTest extends RestJsonApiTestCase
 {
     /**
      * {@inheritDoc}
@@ -23,40 +22,26 @@ class RequestApiTest extends AbstractRequestApiTest
         $this->loadFixtures([LoadRequestData::class]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getEntityClass()
+    public function testGetList()
     {
-        return Request::class;
+        $response = $this->cget(
+            ['entity' => 'requests']
+        );
+
+        $this->assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
     }
 
-    /**
-     * @return array
-     */
-    public function cgetParamsAndExpectation()
+    public function testGet()
     {
-        return [
-            [
-                'filters' => [],
-                'expectedCount' => LoadRequestData::NUM_REQUESTS,
-                'params' => [],
-                'expectedContent' => null,
-            ],
-        ];
-    }
+        $entity = $this->getEntityManager()
+            ->getRepository(Request::class)
+            ->findOneBy([]);
 
-    /**
-     * @param array $filters
-     * @param int $expectedCount
-     * @param array $params
-     * @param array $expectedContent
-     *
-     * @dataProvider cgetParamsAndExpectation
-     */
-    public function testCgetEntity(array $filters, $expectedCount, array $params = [], array $expectedContent = null)
-    {
-        parent::testCgetEntity($filters, $expectedCount, $params, $expectedContent);
+        $response = $this->get(
+            ['entity' => 'requests', 'id' => $entity->getId()]
+        );
+
+        $this->assertResponseNotEmpty($response);
     }
 
     public function testUpdateEntity()
@@ -65,11 +50,9 @@ class RequestApiTest extends AbstractRequestApiTest
         $requestEntity = $this->getReference('rfp.request.1');
         $oldRequestEntity = clone $requestEntity;
 
-
-        $entityType = $this->getEntityType($this->getEntityClass());
         $data = [
             'data' => [
-                'type' => $entityType,
+                'type' => 'requests',
                 'id' => (string)$requestEntity->getId(),
                 'attributes' => [
                     'firstName' => 'Ronald',
@@ -91,16 +74,11 @@ class RequestApiTest extends AbstractRequestApiTest
             ]
         ];
 
-        $response = $this->request(
-            'PATCH',
-            $this->getUrl(
-                'oro_rest_api_patch',
-                ['entity' => $entityType, 'id' => $requestEntity->getId()]
-            ),
+        $response = $this->patch(
+            ['entity' => 'requests', 'id' => $requestEntity->getId()],
             $data
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_OK);
         $result = $this->jsonToArray($response->getContent());
         $this->assertUpdatedRequest($oldRequestEntity, $result, $data);
     }
@@ -113,7 +91,7 @@ class RequestApiTest extends AbstractRequestApiTest
     protected function assertUpdatedRequest(Request $oldRequest, array $result, array $data)
     {
         /** @var Request $newRequest */
-        $newRequest = $this->doctrineHelper->getEntity($this->getEntityClass(), $data['data']['id']);
+        $newRequest = $this->getEntityManager()->find(Request::class, $data['data']['id']);
 
         $attributes = $data['data']['attributes'];
         unset($attributes['createdAt'], $attributes['updatedAt']);
@@ -138,7 +116,6 @@ class RequestApiTest extends AbstractRequestApiTest
      */
     public function testCreate()
     {
-        $entityType = $this->getEntityType($this->getEntityClass());
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $product = (string)$product->getId();
@@ -149,7 +126,7 @@ class RequestApiTest extends AbstractRequestApiTest
         $data = [
             'data' => [
                 'id' => '8da4d8e6',
-                'type' => $entityType,
+                'type' => 'requests',
                 'attributes' => [
                     'company' => 'Oro',
                     'firstName' => 'Ronald',
@@ -214,19 +191,17 @@ class RequestApiTest extends AbstractRequestApiTest
             ]
         ];
 
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', ['entity' => $entityType]),
+        $response = $this->post(
+            ['entity' => 'requests'],
             $data
         );
 
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
         $result = $this->jsonToArray($response->getContent());
 
         $this->assertEquals($data['data']['attributes']['firstName'], $result['data']['attributes']['firstName']);
 
-        return $result['data']['id'];
+        return (int)$result['data']['id'];
     }
 
     /**
@@ -236,13 +211,12 @@ class RequestApiTest extends AbstractRequestApiTest
      */
     public function testDeleteEntity($entityId)
     {
-        $entityType = $this->getEntityType($this->getEntityClass());
-
-        $response = $this->request(
-            'DELETE',
-            $this->getUrl('oro_rest_api_delete', ['entity' => $entityType, 'id' => $entityId])
+        $this->delete(
+            ['entity' => 'requests', 'id' => $entityId]
         );
 
-        $this->assertDeletedEntity($response, $entityId);
+        $this->assertNull(
+            $this->getEntityManager()->find(Request::class, $entityId)
+        );
     }
 }

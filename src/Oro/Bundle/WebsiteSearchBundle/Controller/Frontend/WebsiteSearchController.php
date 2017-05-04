@@ -8,6 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
+use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
+
 class WebsiteSearchController extends Controller
 {
     /**
@@ -23,9 +26,11 @@ class WebsiteSearchController extends Controller
         // @todo It is just a simple temporary implementation of search . Proper one should be implemented in BB-5220
         $urlParams = [];
         if ($searchString) {
-            $urlParams['frontend-product-search-grid'] = [
-                '_filter' => ['all_text' => ['value' => $searchString, 'type' => 1]]
-            ];
+            $urlParams['grid']['frontend-product-search-grid'] = http_build_query([
+                AbstractFilterExtension::MINIFIED_FILTER_PARAM => [
+                    'all_text' => ['value' => $searchString, 'type' => TextFilterType::TYPE_CONTAINS]
+                ],
+            ]);
         }
 
         return $this->redirectToRoute('oro_product_frontend_product_index', $urlParams);
