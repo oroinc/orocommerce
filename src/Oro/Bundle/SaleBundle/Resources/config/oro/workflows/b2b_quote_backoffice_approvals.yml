@@ -1,29 +1,6 @@
 imports:
-    -
-        workflow: b2b_quote_backoffice_default
-        as: b2b_quote_backoffice_approvals
-        replace: []
-workflows:
-    b2b_quote_backoffice_approvals: #imports b2b_quote_backoffice_default
-        steps:
-            submitted_for_review:
-                order: 110
-            under_review:
-                order: 120
-            reviewed:
-                order: 130
-            not_approved:
-                order: 140
-        transition_definitions:
-            send_to_customer_transition_definition:
-                preconditions:
-                    '@or':
-                        - '@acl_granted': 'oro_quote_review_and_approve'
-                        - '@or':
-                            - '@equal': [false, '$price_override_triggers_approval']
-                            - '@equal': [false, '$quote.prices_changed']
-        variable_definitions:
-            variables:
-                price_override_triggers_approval:
-                    type: boolean
-                    value: false
+    - { resource: 'b2b_quote_backoffice_approvals/attributes.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/variables.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/steps.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/transitions.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/transition_definitions.yml' }
