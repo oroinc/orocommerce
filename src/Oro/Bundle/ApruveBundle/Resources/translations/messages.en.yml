@@ -37,3 +37,9 @@ oro:
 
         payment_transaction:
             create_invoice.label: Create Invoice
+
+    payment:
+        paymenttransaction:
+            types:
+                invoice.label: Invoice
+                shipment.label: Shipment

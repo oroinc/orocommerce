@@ -17,6 +17,23 @@ operations:
         for_all_datagrids: false
         replace:
             - preconditions
+        preactions:
+            - '@foreach':
+                array: $.data.relatedPaymentTransactions
+                value: $.relatedTransaction
+                actions:
+                    - '@assign_value':
+                        conditions:
+                            '@and':
+                                - '@equal': ['invoice', $.relatedTransaction.action]
+                                - '@equal': [true, $.relatedTransaction.successful]
+                        parameters: [$.invoiceTransactionExists, true]
+                    - '@assign_value':
+                        conditions:
+                            '@and':
+                                - '@equal': ['shipment', $.relatedTransaction.action]
+                                - '@equal': [true, $.relatedTransaction.successful]
+                        parameters: [$.shipmentTransactionExists, true]
         preconditions:
             '@and':
                 - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
@@ -27,6 +44,8 @@ operations:
                     - '@payment_transaction_was_charged':
                         transaction: $.data
                 - '@equal': [$.isApruve, true]
+                - '@not_equal': [$.invoiceTransactionExists, true]
+                - '@not_equal': [$.shipmentTransactionExists, true]
         label: oro.apruve.payment_transaction.create_invoice.label
         button_options:
             icon: fa-file-text-o
