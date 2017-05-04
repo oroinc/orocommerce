@@ -15,12 +15,6 @@
     }
 
     &__content {
-        display: block;
-
-        padding-left: 9px;
-    }
-
-    .checkout-order-summary__content {
         padding: 0 30px 10px 90px;
     }
 
@@ -151,27 +145,33 @@
 
 @include breakpoint('mobile') {
     .checkout-order-summary {
+        .scrollable-content {
+            max-height: 100%;
+        }
+
         &__grid-head {
             display: none;
         }
 
         &__content {
-            padding: 0 10px;
+            padding: 0 15px;
         }
 
         &__header {
             padding-right: 60px;
-            padding-left: 60px;
+            padding-left: 65px;
         }
 
         &__icon-group {
-            left: 10px;
+            left: 15px;
         }
 
         &__edit-link {
-            right: 10px;
+            right: 15px;
+        }
 
-            width: 40px;
+        &__edit-text {
+            display: none;
         }
 
         &__table,
@@ -218,6 +218,7 @@
         }
 
         &__price {
+            width: 100%;
             padding-left: 0;
         }
 
