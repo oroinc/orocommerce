@@ -145,16 +145,16 @@
 
 @include breakpoint('mobile') {
     .checkout-order-summary {
-        .scrollable-content {
-            max-height: 100%;
-        }
-
         &__grid-head {
             display: none;
         }
 
         &__content {
             padding: 0 15px;
+        }
+
+        &__content .scrollable-content { // Platform styles override
+            max-height: 100%;
         }
 
         &__header {
