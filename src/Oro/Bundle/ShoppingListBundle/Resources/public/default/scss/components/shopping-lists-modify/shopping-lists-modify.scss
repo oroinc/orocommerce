@@ -32,14 +32,12 @@
     }
 
     &__edit {
+        display: inline-block;
+        vertical-align: middle;
+
         &:not(:first-child) {
             margin-left: 4px;
         }
-    }
-
-    &__edit {
-        display: inline-block;
-        vertical-align: middle;
     }
 
     &__button {
