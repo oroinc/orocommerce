@@ -164,6 +164,10 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
                 /** @var Customer $customer */
                 $customer = $customer['entity'];
 
+                if (!$customer instanceof Customer) {
+                    continue;
+                }
+
                 $this->customerTaxCodes[$customer->getId()] = (new CustomerTaxCode())->setCode('Tax_code_1');
             }
         }
