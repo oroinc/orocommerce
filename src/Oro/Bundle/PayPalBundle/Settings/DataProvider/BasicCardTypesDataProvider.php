@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Settings\DataProvider;
 
-class BasicCardTypesDataProvider implements CardTypesDataProviderInterface
+class BasicCardTypesDataProvider implements CreditCardTypesDataProviderInterface
 {
     /**
      * @internal
@@ -25,7 +25,7 @@ class BasicCardTypesDataProvider implements CardTypesDataProviderInterface
     const AMERICAN_EXPRESS = 'american_express';
 
     /**
-     * @return string[]
+     * {@inheritdoc}
      */
     public function getCardTypes()
     {
@@ -34,6 +34,17 @@ class BasicCardTypesDataProvider implements CardTypesDataProviderInterface
             self::MASTERCARD,
             self::DISCOVER,
             self::AMERICAN_EXPRESS,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultCardTypes()
+    {
+        return [
+            self::VISA,
+            self::MASTERCARD,
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -13,7 +12,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Symfony\Component\HttpFoundation\Response;
 
 class OrderLineItemTest extends RestJsonApiTestCase
 {
@@ -31,18 +29,19 @@ class OrderLineItemTest extends RestJsonApiTestCase
 
     public function testGetList()
     {
-        $response = $this->cget(['entity' => $this->getEntityType(OrderLineItem::class)]);
-        $this->assertResponseContains(__DIR__.'/responses/line_item/get_items.yml', $response);
+        $response = $this->cget(['entity' => 'orderlineitems']);
+
+        $this->assertResponseContains('line_item_get_list.yml', $response);
     }
 
     public function testGet()
     {
         $response = $this->get([
-            'entity' => $this->getEntityType(OrderLineItem::class),
+            'entity' => 'orderlineitems',
             'id' => '<toString(@order_line_item.1->id)>',
         ]);
 
-        $this->assertResponseContains(__DIR__.'/responses/line_item/get_item.yml', $response);
+        $this->assertResponseContains('line_item_get.yml', $response);
     }
 
     public function testUpdate()
@@ -57,40 +56,33 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $newValue = 100;
         $newCurrency = 'EUR';
 
-        $requestData = [
-            'data' => [
-                'type' => $this->getEntityType(OrderLineItem::class),
-                'id' => (string)$item->getId(),
-                'attributes' => [
-                    'quantity' => $newQuantity,
-                    'value' => $newValue,
-                    'currency' => $newCurrency,
-                ],
-            ],
-        ];
-
-        $uri = $this->getUrl(
-            'oro_rest_api_patch',
+        $this->patch(
+            ['entity' => 'orderlineitems', 'id' => $item->getId()],
             [
-                'entity' => $this->getEntityType(OrderLineItem::class),
-                'id' => $item->getId(),
+                'data' => [
+                    'type' => 'orderlineitems',
+                    'id' => (string)$item->getId(),
+                    'attributes' => [
+                        'quantity' => $newQuantity,
+                        'value' => $newValue,
+                        'currency' => $newCurrency,
+                    ],
+                ],
             ]
         );
-        $response = $this->request('PATCH', $uri, $requestData);
 
         /** @var OrderLineItem $updatedItem */
-        $updatedItem = $this->getManager()
+        $updatedItem = $this->getEntityManager()
             ->getRepository(OrderLineItem::class)
             ->find($item->getId());
 
-        static::assertSame(Response::HTTP_OK, $response->getStatusCode());
-        static::assertEquals($newQuantity, $updatedItem->getQuantity());
+        self::assertEquals($newQuantity, $updatedItem->getQuantity());
 
         $updatedItem->setQuantity($oldQuantity)
             ->setValue($oldValue)
             ->setCurrency($oldCurrency);
 
-        $this->getManager()->flush();
+        $this->getEntityManager()->flush();
     }
 
     public function testGetSubResources()
@@ -126,37 +118,37 @@ class OrderLineItemTest extends RestJsonApiTestCase
     public function testCreateWithFreeFormProduct()
     {
         $this->post(
-            ['entity' => $this->getEntityType(OrderLineItem::class)],
-            __DIR__.'/responses/line_item/create_with_free_form_product.yml'
+            ['entity' => 'orderlineitems'],
+            'line_item_create_with_free_form_product.yml'
         );
 
         /** @var OrderLineItem $item */
-        $item = $this->getManager()
+        $item = $this->getEntityManager()
             ->getRepository(OrderLineItem::class)
             ->findOneBy(['freeFormProduct' => 'Test']);
 
-        static::assertSame($this->getReference(LoadProductData::PRODUCT_1)->getSku(), $item->getProductSku());
-        static::assertEquals(6, $item->getQuantity());
-        static::assertEquals(
+        self::assertSame($this->getReference(LoadProductData::PRODUCT_1)->getSku(), $item->getProductSku());
+        self::assertEquals(6, $item->getQuantity());
+        self::assertEquals(
             $this->getReference(LoadProductUnits::BOTTLE)->getCode(),
             $item->getProductUnit()->getCode()
         );
-        static::assertEquals(200, $item->getValue());
-        static::assertSame('USD', $item->getCurrency());
-        static::assertSame($this->getReference(LoadProductUnits::BOTTLE)->getCode(), $item->getProductUnitCode());
+        self::assertEquals(200, $item->getValue());
+        self::assertSame('USD', $item->getCurrency());
+        self::assertSame($this->getReference(LoadProductUnits::BOTTLE)->getCode(), $item->getProductUnitCode());
 
-        static::assertSame($this->getReference(LoadOrders::ORDER_1)->getId(), $item->getOrder()->getId());
-        static::assertSame($this->getReference(LoadProductData::PRODUCT_1)->getId(), $item->getProduct()->getId());
-        static::assertSame(
+        self::assertSame($this->getReference(LoadOrders::ORDER_1)->getId(), $item->getOrder()->getId());
+        self::assertSame($this->getReference(LoadProductData::PRODUCT_1)->getId(), $item->getProduct()->getId());
+        self::assertSame(
             $this->getReference(LoadProductData::PRODUCT_3)->getId(),
             $item->getParentProduct()->getId()
         );
-        static::assertSame(
+        self::assertSame(
             $this->getReference(LoadProductUnits::BOTTLE)->getCode(),
             $item->getProductUnit()->getCode()
         );
 
-        static::assertEquals(Price::create(200, 'USD'), $item->getPrice());
+        self::assertEquals(Price::create(200, 'USD'), $item->getPrice());
 
         $this->removeItem($item);
     }
@@ -164,19 +156,19 @@ class OrderLineItemTest extends RestJsonApiTestCase
     public function testCreateWithProductSku()
     {
         $this->post(
-            ['entity' => $this->getEntityType(OrderLineItem::class)],
-            __DIR__.'/responses/line_item/create_with_product_sku.yml'
+            ['entity' => 'orderlineitems'],
+            'line_item_create_with_product_sku.yml'
         );
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_4);
 
         /** @var OrderLineItem $item */
-        $item = $this->getManager()
+        $item = $this->getEntityManager()
             ->getRepository(OrderLineItem::class)
             ->findOneBy(['productSku' => $product->getSku()]);
 
-        static::assertEquals($product->getSku(), $item->getProduct()->getSku());
+        self::assertEquals($product->getSku(), $item->getProduct()->getSku());
 
         $this->removeItem($item);
     }
@@ -188,29 +180,22 @@ class OrderLineItemTest extends RestJsonApiTestCase
         /** @var Order $order2 */
         $order2 = $this->getReference(LoadOrders::MY_ORDER);
 
-        $uri = $this->getUrl(
-            'oro_rest_api_patch_relationship',
+        $this->patchRelationship(
+            ['entity' => 'orderlineitems', 'id' => (string)$item->getId(), 'association' => 'order'],
             [
-                'entity' => $this->getEntityType(OrderLineItem::class),
-                'id' => (string)$item->getId(),
-                'association' => 'order',
+                'data' => [
+                    'type' => $this->getEntityType(Order::class),
+                    'id' => (string)$order2->getId(),
+                ],
             ]
         );
-        $data = [
-            'data' => [
-                'type' => $this->getEntityType(Order::class),
-                'id' => (string)$order2->getId(),
-            ],
-        ];
-        $response = $this->request('PATCH', $uri, $data);
 
         /** @var OrderLineItem $updatedItem */
-        $updatedItem = $this->getManager()
+        $updatedItem = $this->getEntityManager()
             ->getRepository(OrderLineItem::class)
             ->find($item->getId());
 
-        static::assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-        static::assertSame($order2->getId(), $updatedItem->getOrder()->getId());
+        self::assertSame($order2->getId(), $updatedItem->getOrder()->getId());
     }
 
     public function testDeleteByFilter()
@@ -218,24 +203,16 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $item = $this->getFirstLineItem();
         $itemId = $item->getId();
 
-        $uri = $this->getUrl(
-            'oro_rest_api_cget',
-            ['entity' => $this->getEntityType(OrderLineItem::class)]
-        );
-        $response = $this->request(
-            'DELETE',
-            $uri,
+        $this->cdelete(
+            ['entity' => 'orderlineitems'],
             ['filter' => ['id' => $itemId]]
         );
 
-        $this->getManager()->clear();
-
-        $removedDiscount = $this->getManager()
+        $removedDiscount = $this->getEntityManager()
             ->getRepository(OrderLineItem::class)
             ->find($itemId);
 
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
-        static::assertNull($removedDiscount);
+        self::assertNull($removedDiscount);
     }
 
     /**
@@ -245,20 +222,13 @@ class OrderLineItemTest extends RestJsonApiTestCase
      */
     private function assertGetSubResource($entityId, $associationName, $expectedAssociationId)
     {
-        $uri = $this->getUrl(
-            'oro_rest_api_get_subresource',
-            [
-                'entity' => $this->getEntityType(OrderLineItem::class),
-                'id' => $entityId,
-                'association' => $associationName,
-            ]
+        $response = $this->getSubresource(
+            ['entity' => 'orderlineitems', 'id' => $entityId, 'association' => $associationName]
         );
-        $response = $this->request('GET', $uri);
 
-        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
-        $resource = json_decode($response->getContent(), true)['data'];
+        $result = json_decode($response->getContent(), true);
 
-        static::assertEquals($expectedAssociationId, $resource['id']);
+        self::assertEquals($expectedAssociationId, $result['data']['id']);
     }
 
     /**
@@ -273,27 +243,19 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $associationClassName,
         $expectedAssociationId
     ) {
-        $uri = $this->getUrl(
-            'oro_rest_api_get_relationship',
-            [
-                'entity' => $this->getEntityType(OrderLineItem::class),
-                'id' => $entityId,
-                'association' => $associationName,
-            ]
+        $response = $this->getRelationship(
+            ['entity' => 'orderlineitems', 'id' => $entityId, 'association' => $associationName]
         );
-        $response = $this->request('GET', $uri);
 
-        $this->assertSame(Response::HTTP_OK, $response->getStatusCode());
-        $content = json_decode($response->getContent(), true);
-
-        $expected = [
-            'data' => [
+        $this->assertResponseContains(
+            [
+                'data' => [
                     'type' => $this->getEntityType($associationClassName),
-                    'id' => (string)$expectedAssociationId,
-                ],
-        ];
-
-        static::assertEquals($expected, $content);
+                    'id' => (string)$expectedAssociationId
+                ]
+            ],
+            $response
+        );
     }
 
     /**
@@ -305,20 +267,12 @@ class OrderLineItemTest extends RestJsonApiTestCase
     }
 
     /**
-     * @return ObjectManager
-     */
-    private function getManager()
-    {
-        return static::getContainer()->get('doctrine')->getManager();
-    }
-
-    /**
      * @param OrderLineItem $item
      */
     private function removeItem(OrderLineItem $item)
     {
-        $this->getManager()->remove($item);
-        $this->getManager()->flush();
-        $this->getManager()->clear();
+        $this->getEntityManager()->remove($item);
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
     }
 }
