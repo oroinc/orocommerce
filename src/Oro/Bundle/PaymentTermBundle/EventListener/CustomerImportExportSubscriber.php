@@ -45,6 +45,10 @@ class CustomerImportExportSubscriber implements EventSubscriberInterface
                 /** @var Customer $customer */
                 $customer = $customer['entity'];
 
+                if (!$customer instanceof Customer) {
+                    continue;
+                }
+
                 $this->associationProvider->setPaymentTerm($customer, (new PaymentTerm())->setLabel('net 90'));
             }
         }
