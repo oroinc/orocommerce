@@ -94,8 +94,8 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider testDenormalizeCustomerTaxCodeShouldThrowExceptionDataProvider
-     * @param array $data
      * @expectedException \Doctrine\ORM\EntityNotFoundException
+     * @param array $data
      */
     public function testDenormalizeCustomerTaxCodeShouldThrowException(array $data)
     {
