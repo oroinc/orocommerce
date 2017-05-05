@@ -32,6 +32,7 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
+        test_variant_field.label: Test variant field
         featured:
             label: Is Featured
             yes: Yes

@@ -39,11 +39,9 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
             'expanded' => true,
             'allow_add' => false,
             'allow_delete' => false,
-            'handle_primary' => false
+            'handle_primary' => false,
+            'attributeFamily' => null
         ]);
-
-        $resolver->setRequired(['attributeFamily']);
-        $resolver->setAllowedTypes('attributeFamily', [AttributeFamily::class]);
     }
 
     /**
@@ -64,6 +62,10 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
         $form = $event->getForm();
         $config = $form->getConfig();
         $attributeFamily = $config->getOption('attributeFamily');
+
+        if (!$attributeFamily) {
+            return;
+        }
 
         $eventData = $event->getData();
 
