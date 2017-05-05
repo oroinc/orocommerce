@@ -14,7 +14,7 @@ Feature:
     Given I proceed as the Admin
     And I login as administrator
     When I go to Marketing/Web Catalogs
-    And I click "Edit Content Tree" on "Default Web Catalog" in grid
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I click "Content Variants"
@@ -70,7 +70,7 @@ Feature:
 
   Scenario: Product Collection can be edited
     When I go to Marketing/Web Catalogs
-    And I click "Edit Content Tree" on "Default Web Catalog" in grid
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
     And type "PSKU" in "value"
     And I click on "Apply the Query"
@@ -159,7 +159,7 @@ Feature:
 
   Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at backend
     When I go to Marketing/Web Catalogs
-    And I click "Edit Content Tree" on "Default Web Catalog" in grid
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU1 | Product 1 |
@@ -182,7 +182,7 @@ Feature:
 
   Scenario: "Product 2" that confirm to filter again, included into product collection grid at backend
     When I go to Marketing/Web Catalogs
-    And I click "Edit Content Tree" on "Default Web Catalog" in grid
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU2 | Product 2 |
@@ -241,7 +241,7 @@ Feature:
 
   Scenario: Content Node changes are reflected on frontend
     When I go to Marketing/Web Catalogs
-    And I click "Edit Content Tree" on "Default Web Catalog" in grid
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I fill "Content Node Form" with:
       | Meta Keywords    | AnotherCollectionMetaKeyword     |
       | Meta Description | AnotherCollectionMetaDescription |
@@ -260,7 +260,7 @@ Feature:
   Scenario: Products Collection is deletable
     Given I proceed as the Admin
     And I go to Marketing/Web Catalogs
-    And I click "Edit Content Tree" on "Default Web Catalog" in grid
+    And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     When I click on "Remove Variant Button"
     Then I should see 0 elements "Product Collection Variant Label"
     When I click on "Show Variants Dropdown"
