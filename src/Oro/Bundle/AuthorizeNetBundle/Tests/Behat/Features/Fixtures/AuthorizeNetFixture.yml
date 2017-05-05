@@ -66,10 +66,17 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        owner: '@business_unit'
+        organization: '@organization'
+
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
         label: 'List 1'
+        customerUser: '@amanda'
+        organization: '@organization'
+    shoppinglist2:
+        label: 'List 2'
         customerUser: '@amanda'
         organization: '@organization'
 
@@ -81,7 +88,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
         organization: '@organization'
-
+    lineitem2:
+        product: '@product'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal:
         __construct: ['@shoppinglist','USD']
@@ -89,7 +102,12 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         currency: 'USD'
         subtotalValue: '10'
         valid: true
-
+    shoppingListTotal2:
+        __construct: ['@shoppinglist2','USD']
+        shoppingList: '@shoppinglist2'
+        currency: 'USD'
+        subtotalValue: '10'
+        valid: true
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address:
         country: '@germany'

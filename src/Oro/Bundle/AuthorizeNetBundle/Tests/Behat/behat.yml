@@ -6,15 +6,15 @@ oro_behat_extension:
       options:
         mapping:
           Name: 'oro_integration_channel_form[name]'
-          DefaultLabel: 'oro_integration_channel_form[transport][creditCardLabels][values][default]'
-          ShortLabel: 'oro_integration_channel_form[transport][creditCardShortLabels][values][default]'
-          AllowedCreditCards: 'oro_integration_channel_form[transport][allowedCreditCardTypes][]'
-          APiLoginId: 'oro_integration_channel_form[transport][apiLoginId]'
-          TransactionKey: 'oro_integration_channel_form[transport][transactionKey]'
-          ClientKey: 'oro_integration_channel_form[transport][clientKey]'
-          CVVRequiredEntry: 'oro_integration_channel_form[transport][authNetRequireCVVEntry]'
-          TestMode: 'oro_integration_channel_form[transport][authNetTestMode]'
-          PaymentAction: 'oro_integration_channel_form[transport][creditCardPaymentAction]'
+          Label: 'oro_integration_channel_form[transport][creditCardLabels][values][default]'
+          Short Label: 'oro_integration_channel_form[transport][creditCardShortLabels][values][default]'
+          Allowed Credit Card Types: 'oro_integration_channel_form[transport][allowedCreditCardTypes][]'
+          API Login ID: 'oro_integration_channel_form[transport][apiLoginId]'
+          Transaction Key: 'oro_integration_channel_form[transport][transactionKey]'
+          Client Key: 'oro_integration_channel_form[transport][clientKey]'
+          Require CVV Entry: 'oro_integration_channel_form[transport][authNetRequireCVVEntry]'
+          Test Mode: 'oro_integration_channel_form[transport][authNetTestMode]'
+          Payment Action: 'oro_integration_channel_form[transport][creditCardPaymentAction]'
     CreditCardForm:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -26,6 +26,8 @@ oro_behat_extension:
           CVV: 'oro_authorize_net_credit_card[CVV2]'
     AddMethodButton:
       selector: "a[class='btn add-method']"
+    DeleteShoppingList:
+      selector: 'input[name=oro_workflow_transition[remove_source]]'
 
   suites:
     OroAuthorizeNetBundle:

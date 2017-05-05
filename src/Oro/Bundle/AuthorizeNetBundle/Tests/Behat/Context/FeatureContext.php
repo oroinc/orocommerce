@@ -14,6 +14,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -22,20 +24,21 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
+
     const PRODUCT_SKU = 'SKU123';
     const PRODUCT_INVENTORY_QUANTITY = 100;
 
     /**
      * Example: And I fill integration fields with next data:
-     * | Name               | Authorize                                                        |
-     * | DefaultLabel       | authorize                                                        |
-     * | ShortLabel         | au_sys                                                           |
-     * | AllowedCreditCards | Visa                                                             |
-     * | APiLoginId         | qwer1234                                                         |
-     * | TransactionKey     | qwertyui12345678                                                 |
-     * | ClientKey          | qwertyuiop1234567890qwertyuiop1234567890qwertyyuiop1234567890qwe |
-     * | CVVRequiredEntry   | true                                                             |
-     * | PaymentAction      | Authorize                                                        |
+     * | Name                       | Authorize             |
+     * | Label                      | authorize             |
+     * | Short Label                | au_sys                |
+     * | Allowed Credit Card Types  | Visa                  |
+     * | API Login ID               | someapiloginid        |
+     * | Transaction Key            | sometransactionkey    |
+     * | Client Key                 | someclientkey         |
+     * | Require CVV Entry          | true                  |
+     * | Payment Action             | Authorize             |
      * @Then I fill integration fields with next data:
      *
      * @param TableNode $table
@@ -93,17 +96,46 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $product = $doctrineHelper->getEntityRepositoryForClass(Product::class)
             ->findOneBy(['sku' => self::PRODUCT_SKU]);
 
-        $em = $doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
+        $inventoryLevelEntityManager = $doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
+        $inventoryLevelRepository = $inventoryLevelEntityManager->getRepository(InventoryLevel::class);
 
         /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $em->getRepository(InventoryLevel::class)->findOneBy(['product' => $product]);
+        $inventoryLevel = $inventoryLevelRepository->findOneBy(['product' => $product]);
         if (!$inventoryLevel) {
             /** @var InventoryManager $inventoryManager */
             $inventoryManager = $this->getContainer()->get('oro_inventory.manager.inventory_manager');
             $inventoryLevel = $inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
-            $em->persist($inventoryLevel);
         }
         $inventoryLevel->setQuantity(self::PRODUCT_INVENTORY_QUANTITY);
-        $em->flush();
+
+        // package commerce-ee available
+        if (method_exists($inventoryLevel, 'setWarehouse')) {
+            $warehouseEntityManager = $doctrineHelper->getEntityManagerForClass(Warehouse::class);
+            $warehouseRepository = $warehouseEntityManager->getRepository(Warehouse::class);
+
+            $warehouse = $warehouseRepository->findOneBy([]);
+
+            if (!$warehouse) {
+                $warehouse = new Warehouse();
+                $warehouse
+                    ->setName('Test Warehouse 222')
+                    ->setOwner($product->getOwner())
+                    ->setOrganization($product->getOrganization());
+                $warehouseEntityManager->persist($warehouse);
+                $warehouseEntityManager->flush();
+            }
+
+            $inventoryLevel->setWarehouse($warehouse);
+            $inventoryLevelEntityManager->persist($inventoryLevel);
+            $inventoryLevelEntityManager->flush();
+
+            $warehouseConfig = new WarehouseConfig($warehouse, 1);
+            $configManager = $this->getContainer()->get('oro_config.global');
+            $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
+            $configManager->flush();
+        } else {
+            $inventoryLevelEntityManager->persist($inventoryLevel);
+            $inventoryLevelEntityManager->flush();
+        }
     }
 }
