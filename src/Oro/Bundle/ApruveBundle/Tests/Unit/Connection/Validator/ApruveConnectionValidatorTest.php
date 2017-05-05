@@ -56,7 +56,7 @@ class ApruveConnectionValidatorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testValidateConnectionByUpsSettings()
+    public function testValidateConnectionByApruveSettings()
     {
         $transport = new ApruveSettings();
 
@@ -86,7 +86,7 @@ class ApruveConnectionValidatorTest extends \PHPUnit_Framework_TestCase
         static::assertSame($result, $this->validator->validateConnectionByApruveSettings($transport));
     }
 
-    public function testValidateConnectionByUpsSettingsServerError()
+    public function testValidateConnectionByApruveSettingsServerError()
     {
         $transport = new ApruveSettings();
 
