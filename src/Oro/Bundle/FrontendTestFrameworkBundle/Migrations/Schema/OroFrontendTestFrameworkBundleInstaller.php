@@ -68,6 +68,7 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
                 [
                     'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
                     'attribute' => ['is_attribute' => true],
+                    'importexport' => ['excluded' => true]
                 ]
             );
         }
