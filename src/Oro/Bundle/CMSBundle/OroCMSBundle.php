@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle;
 
+use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -22,6 +23,9 @@ class OroCMSBundle extends Bundle
                     'slugPrototype' => 'slugPrototypes',
                     'title' => 'titles'
                 ],
+                ContentBlock::class => [
+                    'title' => 'titles'
+                ]
             ]));
     }
 }

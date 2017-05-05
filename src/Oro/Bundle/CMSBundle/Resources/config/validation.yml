@@ -6,3 +6,25 @@ Oro\Bundle\CMSBundle\Entity\Page:
             - Valid: ~
         slugPrototypes:
             - Valid: ~
+
+Oro\Bundle\CMSBundle\Entity\ContentBlock:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: alias
+    properties:
+        alias:
+            - NotBlank: ~
+            - Regex:
+                pattern: '/^[a-zA-Z0-9_\-]*$/'
+                message: oro.cms.contentblock.alias.regex.message
+        titles:
+            - NotBlank: ~
+            - Valid: ~
+        scopes:
+            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
+        contentVariants:
+            - Valid: ~
+
+Oro\Bundle\CMSBundle\Entity\TextContentVariant:
+    properties:
+        scopes:
+            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
