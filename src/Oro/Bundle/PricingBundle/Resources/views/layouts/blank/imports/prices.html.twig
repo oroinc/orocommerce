@@ -49,7 +49,14 @@
             <span class="product-price__main-box">
                 <span class="product-price__value" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
                 <span> / </span>
-                <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
+                <span class="product-price__unit" data-name="unit">
+                    <span class="product-price__unit-full">
+                        {{ firstPrice ? firstPrice.formatted_unit }}
+                    </span>
+                    <span class="product-price__unit-short">
+                        {{ firstPrice ? firstPrice.unit }}
+                    </span>
+                </span>
             </span>
         {% endif %}
     </div>
@@ -139,7 +146,14 @@
                       title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
                     <span class="product-price__listed-value">{{ price.formatted_price }}</span>
                     <span> / </span>
-                    <span>{{ price.formatted_unit}}</span>
+                    <span class="product-price__unit">
+                        <span class="product-price__unit-full">
+                            {{ price.formatted_unit}}
+                        </span>
+                        <span class="product-price__unit-short">
+                            {{ price.unit}}
+                        </span>
+                    </span>
                 </span>
             {% endfor %}
         {% endif %}
