@@ -115,3 +115,4 @@ CatalogBundle
 PayPalBundle
 ------------
 - Form type `\Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `\Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+- Interface `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.

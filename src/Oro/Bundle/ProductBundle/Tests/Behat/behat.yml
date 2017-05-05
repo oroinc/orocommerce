@@ -7,6 +7,12 @@ oro_behat_extension:
     ProductAdditionalUnitField:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
 
+    Configurable Attributes:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
+      selector:
+        type: 'xpath'
+        locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
+
     ProductForm:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -19,6 +25,10 @@ oro_behat_extension:
           PrimaryPrecision: 'oro_product[primaryUnitPrecision][precision]'
           AdditionalUnit: 'oro_product[additionalUnitPrecisions][0][unit]'
           AdditionalPrecision: 'oro_product[additionalUnitPrecisions][0][precision]'
+          Configurable Attributes:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
+            element: Configurable Attributes
 
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"

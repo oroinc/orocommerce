@@ -6,6 +6,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Symfony\Component\Form\AbstractType;
@@ -14,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -196,6 +199,23 @@ class PayPalSettingsType extends AbstractType
         $this->transformWithEncodedValue($builder, 'user');
         $this->transformWithEncodedValue($builder, 'proxyHost');
         $this->transformWithEncodedValue($builder, 'proxyPort');
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        // TODO: remove this condition when CardTypesDataProviderInterface is removed in v1.3.
+        if ($this->cardTypesDataProvider instanceof CreditCardTypesDataProviderInterface) {
+            /** @var PayPalSettings|null $data */
+            $data = $event->getData();
+            if ($data && !$data->getAllowedCreditCardTypes()) {
+                $data->setAllowedCreditCardTypes($this->cardTypesDataProvider->getDefaultCardTypes());
+            }
+        }
     }
 
     /**

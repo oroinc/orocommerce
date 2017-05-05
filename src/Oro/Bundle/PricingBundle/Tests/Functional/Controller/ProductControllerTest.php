@@ -56,16 +56,16 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertEquals(
             $defaultPriceList->getId(),
-            $crawler->filter('.sidebar-item.default-price-list-choice input[type=hidden]')->attr('value')
+            $crawler->filter('.sidebar-items .default-price-list-choice input[type=hidden]')->attr('value')
         );
 
-        foreach ($crawler->filter('.sidebar-item.currencies input[type=checkbox]')->children() as $checkbox) {
+        foreach ($crawler->filter('.sidebar-items .currencies input[type=checkbox]')->children() as $checkbox) {
             static::assertContains($checkbox->attr('value'), $defaultPriceList->getCurrencies());
         }
 
         static::assertContains(
             static::getContainer()->get('translator')->trans('oro.pricing.productprice.show_tier_prices.label'),
-            $crawler->filter('.sidebar-item.show-tier-prices-choice')->html()
+            $crawler->filter('.sidebar-items .show-tier-prices-choice')->html()
         );
     }
 
@@ -93,7 +93,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertEquals(
             $priceList->getId(),
-            $crawler->filter('.sidebar-item.default-price-list-choice input[type=hidden]')->attr('value')
+            $crawler->filter('.sidebar-items .default-price-list-choice input[type=hidden]')->attr('value')
         );
     }
 
@@ -122,10 +122,10 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-item.currencies input[type=checkbox]')
+            $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
         );
-        static::assertCount(0, $crawler->filter('.sidebar-item.currencies input[type=checkbox][checked=checked]'));
-        $crawler->filter('.sidebar-item.currencies input[type=checkbox]')->each(
+        static::assertCount(0, $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]'));
+        $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList) {
                 static::assertContains($node->attr('value'), $priceList->getCurrencies());
                 static::assertEmpty($node->attr('checked'));
@@ -158,13 +158,13 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-item.currencies input[type=checkbox]')
+            $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
         );
         static::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-item.currencies input[type=checkbox][checked=checked]')
+            $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]')
         );
-        $crawler->filter('.sidebar-item.currencies input[type=checkbox]')->each(
+        $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList) {
                 static::assertContains($node->attr('value'), $priceList->getCurrencies());
                 static::assertNotEmpty($node->attr('checked'));
@@ -194,13 +194,13 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertSameSize(
             $priceList->getCurrencies(),
-            $crawler->filter('.sidebar-item.currencies input[type=checkbox]')
+            $crawler->filter('.sidebar-items .currencies input[type=checkbox]')
         );
         static::assertSameSize(
             $selectedCurrencies,
-            $crawler->filter('.sidebar-item.currencies input[type=checkbox][checked=checked]')
+            $crawler->filter('.sidebar-items .currencies input[type=checkbox][checked=checked]')
         );
-        $crawler->filter('.sidebar-item.currencies input[type=checkbox]')->each(
+        $crawler->filter('.sidebar-items .currencies input[type=checkbox]')->each(
             function (Crawler $node) use ($priceList, $selectedCurrencies) {
                 static::assertContains($node->attr('value'), $priceList->getCurrencies());
 
@@ -230,7 +230,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertEquals(
             'checked',
-            $crawler->filter('.sidebar-item.show-tier-prices-choice input[type=checkbox]')->attr('checked')
+            $crawler->filter('.sidebar-items .show-tier-prices-choice input[type=checkbox]')->attr('checked')
         );
     }
 
@@ -251,7 +251,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         static::assertEquals(
             '',
-            $crawler->filter('.sidebar-item.show-tier-prices-choice input[type=checkbox]')->attr('checked')
+            $crawler->filter('.sidebar-items .show-tier-prices-choice input[type=checkbox]')->attr('checked')
         );
     }
 
