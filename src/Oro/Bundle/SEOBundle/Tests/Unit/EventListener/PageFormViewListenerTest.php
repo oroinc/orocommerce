@@ -35,7 +35,7 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
         $page = new Page();
         $this->doctrineHelper
             ->expects($this->once())
-            ->method('getEntityReference')
+            ->method('getEntity')
             ->willReturn($page);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */

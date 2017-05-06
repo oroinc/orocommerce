@@ -50,17 +50,7 @@ abstract class BaseFormViewListener
      */
     protected function addViewPageBlock(BeforeListRenderEvent $event, $entityClass, $priority = 10)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return;
-        }
-
-        $objectId = (int)$request->get('id');
-        if (!$objectId) {
-            return;
-        }
-
-        $object = $this->doctrineHelper->getEntityReference($entityClass, $objectId);
+        $object = $this->extractEntityFromCurrentRequest($entityClass);
         if (!$object) {
             return;
         }
@@ -112,6 +102,25 @@ abstract class BaseFormViewListener
         $rightSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $descriptionTemplate, 'metaDescriptions');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $rightSubBlock, $keywordsTemplate, 'metaKeywords');
+    }
+
+    /**
+     * @param string $entityClass
+     * @return null|object
+     */
+    protected function extractEntityFromCurrentRequest($entityClass)
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return null;
+        }
+
+        $objectId = (int)$request->get('id');
+        if (!$objectId) {
+            return null;
+        }
+
+        return $this->doctrineHelper->getEntity($entityClass, $objectId);
     }
 
     /**

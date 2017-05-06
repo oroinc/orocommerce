@@ -39,7 +39,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
         $page = new ContentNode();
         $this->doctrineHelper
             ->expects($this->once())
-            ->method('getEntityReference')
+            ->method('getEntity')
             ->willReturn($page);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
