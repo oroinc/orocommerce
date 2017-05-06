@@ -37,6 +37,10 @@ UPSBundle
     - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
     - method `validateConnection` was renamed to `validateConnectionAction`
 
+OroCMSBundle
+------------
+- Content Blocks functionality was added. Please, see [documentation](./src/Oro/Bundle/CMSBundle/README.md) for more information.
+
 LayoutBundle
 -------------
  - `isApplicable(ThemeImageTypeDimension $dimension)` method added to `Oro\Bundle\LayoutBundle\Provider\CustomImageFilterProviderInterface`
