@@ -134,6 +134,7 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onApplyQuery: function(e) {
+            this.currentDefinitionState = this._getSegmentDefinition();
             e.preventDefault();
             $(this.options.selectors.gridWidgetContainer).removeClass('hide');
             this._applyQuery(true);
@@ -174,16 +175,15 @@ define(function(require) {
          * @private
          */
         _applyQuery: function(reload) {
-            var segmentDefinition = this._getSegmentDefinition();
             var parameters = {
                 updateUrl: false,
                 reload: reload,
                 params: {}
             };
-            parameters.params['sd_' + this.options.gridName] = segmentDefinition;
+
+            parameters.params['sd_' + this.options.gridName] = this.currentDefinitionState;
 
             mediator.trigger('grid-sidebar:change:' + this.options.controlsBlockAlias, parameters);
-            this.currentDefinitionState = segmentDefinition;
         },
 
         /**
