@@ -647,6 +647,8 @@ services:
 
     oro_product.event_listener.attributes_form_view:
         parent: oro_entity_config.event_listener.attributes_form_view.abstract
+        arguments:
+            - '@oro_product.restrictable_product_attributes_moving.filter'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit, priority: -255 }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit, priority: -255 }
@@ -812,3 +814,6 @@ services:
         arguments: []
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.entity.attribute.before_save, method: onBeforeSave }
+
+    oro_product.restrictable_product_attributes_moving.filter:
+        class: 'Oro\Bundle\ProductBundle\AttributeFilter\RestrictableProductAttributesMovingFilter'
