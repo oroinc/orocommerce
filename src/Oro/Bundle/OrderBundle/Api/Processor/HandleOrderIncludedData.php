@@ -8,7 +8,7 @@ use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class OrderProductCacherProcessor implements ProcessorInterface
+class HandleOrderIncludedData implements ProcessorInterface
 {
     const ORDER_LINE_ITEM_API_TYPE = 'orderlineitems';
 

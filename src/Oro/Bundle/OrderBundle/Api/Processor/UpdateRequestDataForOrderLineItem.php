@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class OrderLineItemProductProcessor implements ProcessorInterface
+class UpdateRequestDataForOrderLineItem implements ProcessorInterface
 {
     /**
      * @var SkuCachedProductProvider

@@ -5,12 +5,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Api\Processor;
 use Oro\Bundle\ApiBundle\Processor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\RFPBundle\Api\Processor\RequestProductItemProcessor;
+use Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestDataForRequestProductItem;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
-class RequestProductItemProcessorTest extends \PHPUnit_Framework_TestCase
+class UpdateRequestDataForRequestProductItemTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var RequestProductItemProcessor */
+    /** @var UpdateRequestDataForRequestProductItem */
     protected $processor;
 
     /**
@@ -18,7 +18,7 @@ class RequestProductItemProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->processor = new RequestProductItemProcessor();
+        $this->processor = new UpdateRequestDataForRequestProductItem();
     }
 
     public function testProcessWithNotFormContext()

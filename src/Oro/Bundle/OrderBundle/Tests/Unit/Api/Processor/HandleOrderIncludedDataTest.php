@@ -3,12 +3,12 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\OrderBundle\Api\Processor\OrderProductCacherProcessor;
+use Oro\Bundle\OrderBundle\Api\Processor\HandleOrderIncludedData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Component\ChainProcessor\ContextInterface;
 
-class OrderProductCacherProcessorTest extends \PHPUnit_Framework_TestCase
+class HandleOrderIncludedDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SkuCachedProductProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -16,7 +16,7 @@ class OrderProductCacherProcessorTest extends \PHPUnit_Framework_TestCase
     protected $skuCachedProductProviderMock;
 
     /**
-     * @var OrderProductCacherProcessor
+     * @var HandleOrderIncludedData
      */
     protected $testedProcessor;
 
@@ -24,7 +24,7 @@ class OrderProductCacherProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $this->skuCachedProductProviderMock = $this->createMock(SkuCachedProductProvider::class);
 
-        $this->testedProcessor = new OrderProductCacherProcessor($this->skuCachedProductProviderMock);
+        $this->testedProcessor = new HandleOrderIncludedData($this->skuCachedProductProviderMock);
     }
 
     /**

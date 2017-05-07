@@ -3,13 +3,13 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\OrderBundle\Api\Processor\OrderLineItemProductProcessor;
+use Oro\Bundle\OrderBundle\Api\Processor\UpdateRequestDataForOrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\ChainProcessor\ContextInterface;
 
-class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
+class UpdateRequestDataForOrderLineItemTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var SkuCachedProductProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -17,7 +17,7 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
     protected $skuCachedProductProviderMock;
 
     /**
-     * @var OrderLineItemProductProcessor
+     * @var UpdateRequestDataForOrderLineItem
      */
     protected $testedProcessor;
 
@@ -25,7 +25,7 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $this->skuCachedProductProviderMock = $this->createMock(SkuCachedProductProvider::class);
 
-        $this->testedProcessor = new OrderLineItemProductProcessor($this->skuCachedProductProviderMock);
+        $this->testedProcessor = new UpdateRequestDataForOrderLineItem($this->skuCachedProductProviderMock);
     }
 
     /**

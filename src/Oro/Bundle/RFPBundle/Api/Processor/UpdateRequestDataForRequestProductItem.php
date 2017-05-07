@@ -8,7 +8,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class RequestProductItemProcessor implements ProcessorInterface
+class UpdateRequestDataForRequestProductItem implements ProcessorInterface
 {
     /**
      * {@inheritdoc}

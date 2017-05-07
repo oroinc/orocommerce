@@ -6,12 +6,12 @@ use Oro\Bundle\ApiBundle\Processor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
-use Oro\Bundle\ProductBundle\Api\Processor\ProductLineItemPriceProcessor;
+use Oro\Bundle\ProductBundle\Api\Processor\UpdateProductLineItemPrice;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
-class ProductLineItemPriceProcessorTest extends \PHPUnit_Framework_TestCase
+class UpdateProductLineItemPriceTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ProductLineItemPriceProcessor */
+    /** @var UpdateProductLineItemPrice */
     protected $processor;
 
     /**
@@ -19,7 +19,7 @@ class ProductLineItemPriceProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->processor = new ProductLineItemPriceProcessor();
+        $this->processor = new UpdateProductLineItemPrice();
     }
 
     public function testProcessWithNotFormContext()
