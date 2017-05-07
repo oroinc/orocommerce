@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor\Order;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\OrderBundle\Api\Processor\Order\OrderProductCacherProcessor;
+use Oro\Bundle\OrderBundle\Api\Processor\OrderProductCacherProcessor;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Component\ChainProcessor\ContextInterface;

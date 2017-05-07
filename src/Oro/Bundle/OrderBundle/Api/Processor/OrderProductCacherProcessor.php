@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Api\Processor\Order;
+namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\OrderBundle\Entity\Order;
