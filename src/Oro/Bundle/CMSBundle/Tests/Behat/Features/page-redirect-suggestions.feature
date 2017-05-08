@@ -1,3 +1,5 @@
+@ticket-BB-7986
+@automatically-ticket-tagged
 Feature: Page redirect suggestions
   In order to make administrator aware of redirect generation process
   As administrator

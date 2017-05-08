@@ -6,6 +6,9 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductDa
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractFrontendScopedProductSelectTypeTest;
 
+/**
+ * @dbIsolationPerTest
+ */
 class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectTypeTest
 {
     public function setUp()
@@ -14,6 +17,11 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
         $this->setConfigPath('oro_rfp.frontend_product_visibility');
 
         parent::setUp();
+
+        $this->getContainer()
+            ->get('oro_website_search.indexer')
+            ->resetIndex();
+
         $this->loadFixtures([LoadCategoryProductData::class, LoadFrontendProductData::class]);
     }
 }

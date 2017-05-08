@@ -22,6 +22,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
                 minMessage: 'oro.product.unit_precisions_items.blank'
         primaryUnitPrecision:
             - NotBlank: ~
+            - Valid: ~
         status:
             - NotBlank: ~
             - Choice: { callback: getStatuses }

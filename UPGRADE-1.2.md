@@ -1,5 +1,9 @@
 UPGRADE FROM 1.1 to 1.2
-=======================
+
+MoneyOrderBundle
+----------------
+- `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`
+    - removed constant `const TYPE = 'money_order'`
 
 OrderBundle
 -------------
@@ -20,7 +24,7 @@ PricingBundle
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
 - Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
-- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now. 
+- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now.
 
 ShoppingBundle
 -------------
@@ -32,6 +36,10 @@ UPSBundle
 - Class `Oro\Bundle\UPSBundle\Controller`
     - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
     - method `validateConnection` was renamed to `validateConnectionAction`
+
+OroCMSBundle
+------------
+- Content Blocks functionality was added. Please, see [documentation](./src/Oro/Bundle/CMSBundle/README.md) for more information.
 
 LayoutBundle
 -------------
@@ -107,3 +115,8 @@ FlatRateShippingBundle
 CatalogBundle
 --------------
 - The `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles` was deprecated, the `\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren` was created instead.
+
+PayPalBundle
+------------
+- Form type `\Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `\Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+- Interface `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
