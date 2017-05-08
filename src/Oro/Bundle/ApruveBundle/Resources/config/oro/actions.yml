@@ -11,12 +11,16 @@ operations:
             '@and':
                 - '@equal': [$.isApruve, false]
 
-    oro_apruve_payment_transaction_capture:
+    oro_apruve_payment_transaction_invoice:
         extends: oro_order_payment_transaction_capture
         for_all_entities: false
         for_all_datagrids: false
         replace:
             - preconditions
+            - actions
+        label: oro.apruve.payment_transaction.invoice.label
+        button_options:
+            icon: fa-file-text-o
         preactions:
             - '@foreach':
                 array: $.data.relatedPaymentTransactions
@@ -27,25 +31,42 @@ operations:
                             '@and':
                                 - '@equal': ['invoice', $.relatedTransaction.action]
                                 - '@equal': [true, $.relatedTransaction.successful]
-                        parameters: [$.invoiceTransactionExists, true]
+                        parameters: [$.invoiceTransactionSuccessful, true]
                     - '@assign_value':
                         conditions:
                             '@and':
                                 - '@equal': ['shipment', $.relatedTransaction.action]
                                 - '@equal': [true, $.relatedTransaction.successful]
-                        parameters: [$.shipmentTransactionExists, true]
+                        parameters: [$.shipmentTransactionSuccessful, true]
         preconditions:
             '@and':
                 - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
                 - '@equal': [$.data.entity_class, '%oro_order.entity.order.class%']
                 - '@equal': [$.data.action, 'authorize']
-                - '@equal': [$.paymentMethodExist, true]
                 - '@not':
                     - '@payment_transaction_was_charged':
                         transaction: $.data
                 - '@equal': [$.isApruve, true]
-                - '@not_equal': [$.invoiceTransactionExists, true]
-                - '@not_equal': [$.shipmentTransactionExists, true]
-        label: oro.apruve.payment_transaction.create_invoice.label
-        button_options:
-            icon: fa-file-text-o
+                - '@or':
+                    - '@not_equal': [$.invoiceTransactionSuccessful, true]
+                    - '@not_equal': [$.shipmentTransactionSuccessful, true]
+        actions:
+            - '@oro_apruve_payment_transaction_invoice':
+                paymentTransaction: $.data
+                transactionOptions: []
+                attribute: $.result
+            - '@flash_message':
+                conditions:
+                    '@equal': ['$.result[successful]', true]
+                message: oro.apruve.payment_transaction.invoice.result.success
+                type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@equal': ['$.result[successful]', false]
+                message: '$.result[message]'
+                type: 'error'
+            - '@refresh_grid':
+                conditions:
+                    '@equal': ['$.result[successful]', true]
+                parameters:
+                    - order-payment-transactions-grid

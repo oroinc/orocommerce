@@ -48,7 +48,7 @@ class InvoicePaymentActionTest extends \PHPUnit_Framework_TestCase
     ];
 
     const RETURN_SUCCESS = ['success' => true];
-    const RETURN_ERROR = ['success' => false];
+    const RETURN_ERROR = ['success' => false, 'message' => 'oro.apruve.payment_transaction.invoice.result.error'];
 
     /**
      * @var ApruveRestClientInterface|\PHPUnit_Framework_MockObject_MockObject
