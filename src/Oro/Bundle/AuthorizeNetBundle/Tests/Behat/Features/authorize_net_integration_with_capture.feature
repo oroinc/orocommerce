@@ -15,7 +15,7 @@ Feature: Process order submission with Authorize.Net integration
       | Transaction Key           | qwerty123456         |
       | Client Key                | qwer12345            |
       | Require CVV Entry         | true                 |
-      | Payment Action            | Authorize and Charge |
+      | Payment Action            | Authorize            |
     And I save and close form
     Then I should see "Integration saved" flash message
     And I should see AuthorizeNet in grid
@@ -31,36 +31,6 @@ Feature: Process order submission with Authorize.Net integration
     And click add payment method button
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
-
-  Scenario: Frontend AcceptJs Card validation error when pay order with AuthorizeNet
-    Given There are products in the system available for order
-    And I signed in as AmandaRCole@example.org on the store frontend
-    When I open page with shopping list List 2
-    And I press "Create Order"
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
-    And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
-    And I fill credit card fields with next data:
-      | CreditCardNumber | 5555555555554444 |
-      | Month            | 11               |
-      | Year             | 2027             |
-      | CVV              | 123              |
-    And I click "Continue"
-    Then I should see "Authorize.Net communication error." flash message
-
-  Scenario: Error from Backend API when pay order with AuthorizeNet
-    Given There are products in the system available for order
-    And I signed in as AmandaRCole@example.org on the store frontend
-    When I open page with shopping list List 2
-    And I press "Create Order"
-    And I fill credit card fields with next data:
-      | CreditCardNumber | 5105105105105100 |
-      | Month            | 11               |
-      | Year             | 2027             |
-      | CVV              | 123              |
-    And I click "Continue"
-    And I press "Submit Order"
-    Then I should see "We were unable to process your payment. Please verify your payment information and try again, or try another payment method." flash message
 
   Scenario: Successful order payment with AuthorizeNet
     Given There are products in the system available for order
@@ -78,3 +48,12 @@ Feature: Process order submission with Authorize.Net integration
     And I click "Continue"
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+
+  Scenario: Create new Payment Rule for Authorize.Net integration
+    Given I login as administrator
+    When I go to Sales/Orders
+    And I click View Payment authorized in grid
+    And I click "Capture"
+    Then I should see "Charge The Customer" modal window
+    When I click "Yes, Charge" in modal window
+    Then I should see "The payment has been captured successfully" flash message
