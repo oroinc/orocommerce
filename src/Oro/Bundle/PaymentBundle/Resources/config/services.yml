@@ -50,8 +50,6 @@ services:
         arguments:
             - '@oro_payment.payment_method_provider.registry'
             - '@oro_payment.payment_methods_configs.rules_provider_basic'
-            - '@oro_checkout.factory.payment_context_factory'
-            - '@oro_checkout.repository.checkout'
 
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
@@ -125,7 +123,7 @@ services:
         lazy: true
         arguments:
             - '@session'
-            - '@oro_payment.method.provider.method_provider'
+            - '@oro_payment.provider.result_messages'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 10 }
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 10 }
@@ -283,3 +281,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Method\Event\BasicMethodRenamingEventDispatcher'
         arguments:
             - '@event_dispatcher'
+
+    oro_payment.provider.result_messages:
+        class: 'Oro\Bundle\PaymentBundle\Provider\DefaultPaymentResultMessageProvider'
+        public: false

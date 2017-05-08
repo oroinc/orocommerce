@@ -11,8 +11,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 
 class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,20 +21,20 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
     /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
     protected $session;
 
-    /** @var PaymentMethodProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodProvider;
-
     /** @var PaymentTransaction */
     protected $paymentTransaction;
 
+    /** @var PaymentResultMessageProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $messageProvider;
 
 
     protected function setUp()
     {
         $this->session = $this->createMock(Session::class);
-        $this->paymentMethodProvider = $this->createMock(PaymentMethodProvider::class);
         $this->paymentTransaction = new PaymentTransaction();
-        $this->listener = new RedirectListener($this->session, $this->paymentMethodProvider);
+        $this->messageProvider = $this->createMock(PaymentResultMessageProviderInterface::class);
+
+        $this->listener = new RedirectListener($this->session, $this->messageProvider);
     }
 
     protected function tearDown()
@@ -92,21 +91,19 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $errorAlreadyInFlashBag
      * @param array $options
      * @param Response $expectedResponse
-     * @param array|null $applicablePaymentMethods
      * @param string $expectedFlashError
      */
     public function testOnError(
         $errorAlreadyInFlashBag,
         $options,
         $expectedResponse,
-        $applicablePaymentMethods,
         $expectedFlashError = null
     ) {
         $this->paymentTransaction->setTransactionOptions($options);
 
-        $this->paymentMethodProvider->expects($this->once())
-            ->method('getApplicablePaymentMethodsForTransaction')
-            ->willReturn($applicablePaymentMethods);
+        $this->messageProvider->expects($this->once())
+            ->method('getErrorMessage')
+            ->willReturn($expectedFlashError);
 
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
@@ -137,42 +134,35 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function onErrorProvider()
     {
-        $firstPaymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $secondPaymentMethod = $this->createMock(PaymentMethodInterface::class);
         return [
             [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
                 'expectedResponse' => new RedirectResponse('testUrl'),
-                'applicablePaymentMethods' => null,
                 'expectedFlashError' => 'oro.payment.result.error_single_method'
             ],
             [
                 'errorAlreadyInFlashBag' => true,
                 'options' => ['someAnotherValue'],
                 'expectedResponse' => Response::create(null, Response::HTTP_FORBIDDEN),
-                'applicablePaymentMethods' => null,
                 'expectedFlashError' => null
             ],
             [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
                 'expectedResponse' => new RedirectResponse('testUrl'),
-                'applicablePaymentMethods' => [],
                 'expectedFlashError' => 'oro.payment.result.error_single_method'
             ],
             [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
                 'expectedResponse' => new RedirectResponse('testUrl'),
-                'applicablePaymentMethods' => [$firstPaymentMethod],
                 'expectedFlashError' => 'oro.payment.result.error_single_method'
             ],
             [
                 'errorAlreadyInFlashBag' => false,
                 'options' => [RedirectListener::FAILURE_URL_KEY => 'testUrl'],
                 'expectedResponse' => new RedirectResponse('testUrl'),
-                'applicablePaymentMethods' => [$firstPaymentMethod, $secondPaymentMethod],
                 'expectedFlashError' => 'oro.payment.result.error_multiple_methods'
             ]
         ];

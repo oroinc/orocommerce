@@ -2,13 +2,9 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
@@ -32,102 +28,69 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
      */
     private $paymentContextMock;
 
-    /**
-     * @var CheckoutPaymentContextFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $contextFactory;
-
-    /**
-     * @var CheckoutRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $checkoutRepository;
-
-    /**
-     * @var PaymentMethodProvider
-     */
-    private $provider;
-
     public function setUp()
     {
         $this->paymentMethodProvidersRegistryMock = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
-        $this->paymentMethodsConfigsRulesProviderMock = $this
-            ->createMock(PaymentMethodsConfigsRulesProviderInterface::class);
-        $this->paymentContextMock = $this->createMock(PaymentContextInterface::class);
-        $this->contextFactory = $this->createMock(CheckoutPaymentContextFactory::class);
-        $this->checkoutRepository = $this->createMock(CheckoutRepository::class);
 
-        $this->provider = new PaymentMethodProvider(
-            $this->paymentMethodProvidersRegistryMock,
-            $this->paymentMethodsConfigsRulesProviderMock,
-            $this->contextFactory,
-            $this->checkoutRepository
-        );
+        $this->paymentMethodsConfigsRulesProviderMock = $this
+            ->getMockBuilder(PaymentMethodsConfigsRulesProviderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->paymentContextMock = $this->getMockBuilder(PaymentContextInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testGetApplicablePaymentMethods()
     {
-        $expectedPaymentMethodsMocks = $this->prepareMocks();
-        $paymentMethods = $this->provider->getApplicablePaymentMethods($this->paymentContextMock);
+        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['SomeType']);
+        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['PayPal', 'SomeOtherType']);
+
+        $this->paymentMethodsConfigsRulesProviderMock
+            ->expects($this->once())
+            ->method('getFilteredPaymentMethodsConfigs')
+            ->with($this->paymentContextMock)
+            ->willReturn($configsRules);
+
+        $someTypeMethodMock = $this->createPaymentMethodMock('SomeType');
+        $payPalMethodMock = $this->createPaymentMethodMock('PayPal');
+        $someOtherTypeMethodMock = $this->createPaymentMethodMock('SomeOtherType');
+
+        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+
+        $paymentMethodProvider
+            ->expects($this->exactly(3))
+            ->method('getPaymentMethod')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['SomeType', $someTypeMethodMock],
+                        ['PayPal', $payPalMethodMock],
+                        ['SomeOtherType', $someOtherTypeMethodMock],
+                    ]
+                )
+            );
+
+        $this->paymentMethodProvidersRegistryMock
+            ->expects($this->any())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
+
+        $expectedPaymentMethodsMocks = [
+            'SomeType' => $someTypeMethodMock,
+            'PayPal' => $payPalMethodMock,
+            'SomeOtherType' => $someOtherTypeMethodMock,
+        ];
+
+        $provider = new PaymentMethodProvider(
+            $this->paymentMethodProvidersRegistryMock,
+            $this->paymentMethodsConfigsRulesProviderMock
+        );
+
+        $paymentMethods = $provider->getApplicablePaymentMethods($this->paymentContextMock);
+
         $this->assertEquals($expectedPaymentMethodsMocks, $paymentMethods);
-    }
-
-
-    public function testGetApplicablePaymentMethodsForTransaction()
-    {
-        $expectedPaymentMethodsMocks = $this->prepareMocks();
-
-        $checkout = new Checkout();
-        $checkoutId = 123;
-
-        $transaction = new PaymentTransaction();
-        $transaction->setTransactionOptions(['checkoutId' => $checkoutId]);
-
-        $this->checkoutRepository->expects($this->once())->method('find')->with($checkoutId)->willReturn($checkout);
-
-        $this->contextFactory->expects($this->once())
-            ->method('create')
-            ->with($checkout)
-            ->willReturn($this->paymentContextMock);
-
-        $paymentMethods = $this->provider->getApplicablePaymentMethodsForTransaction($transaction);
-
-        $this->assertSame($expectedPaymentMethodsMocks, $paymentMethods);
-    }
-
-    public function testGetApplicablePaymentMethodsForTransactionWithoutCheckoutId()
-    {
-        $transaction = new PaymentTransaction();
-        $transaction->setTransactionOptions(['checkoutId' => null]);
-
-        $this->checkoutRepository->expects($this->never())->method('find');
-
-        $this->assertNull($this->provider->getApplicablePaymentMethodsForTransaction($transaction));
-    }
-
-    public function testGetApplicablePaymentMethodsForTransactionWithoutCheckout()
-    {
-        $checkoutId = 123;
-        $transaction = new PaymentTransaction();
-        $transaction->setTransactionOptions(['checkoutId' => $checkoutId]);
-
-        $this->checkoutRepository->expects($this->once())->method('find')->with($checkoutId)->willReturn(null);
-        $this->contextFactory->expects($this->never())->method('create');
-
-        $this->assertNull($this->provider->getApplicablePaymentMethodsForTransaction($transaction));
-    }
-
-    public function testGetApplicablePaymentMethodsForTransactionWithoutContext()
-    {
-        $checkout = new Checkout();
-        $checkoutId = 123;
-
-        $transaction = new PaymentTransaction();
-        $transaction->setTransactionOptions(['checkoutId' => $checkoutId]);
-
-        $this->checkoutRepository->expects($this->once())->method('find')->with($checkoutId)->willReturn($checkout);
-        $this->contextFactory->expects($this->once())->method('create')->with($checkout)->willReturn(null);
-
-        $this->assertNull($this->provider->getApplicablePaymentMethodsForTransaction($transaction));
     }
 
     /**
@@ -191,51 +154,5 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         return $method;
-    }
-
-    /**
-     * @return PaymentMethodInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
-     */
-    private function prepareMocks()
-    {
-        $configsRules = [];
-        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['SomeType']);
-        $configsRules[] = $this->createPaymentMethodsConfigsRuleMock(['PayPal', 'SomeOtherType']);
-
-        $this->paymentMethodsConfigsRulesProviderMock
-            ->expects($this->once())
-            ->method('getFilteredPaymentMethodsConfigs')
-            ->with($this->paymentContextMock)
-            ->willReturn($configsRules);
-
-        $someTypeMethodMock = $this->createPaymentMethodMock('SomeType');
-        $payPalMethodMock = $this->createPaymentMethodMock('PayPal');
-        $someOtherTypeMethodMock = $this->createPaymentMethodMock('SomeOtherType');
-
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
-
-        $paymentMethodProvider
-            ->expects($this->exactly(3))
-            ->method('getPaymentMethod')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['SomeType', $someTypeMethodMock],
-                        ['PayPal', $payPalMethodMock],
-                        ['SomeOtherType', $someOtherTypeMethodMock],
-                    ]
-                )
-            );
-
-        $this->paymentMethodProvidersRegistryMock
-            ->expects($this->any())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
-
-        return [
-            'SomeType' => $someTypeMethodMock,
-            'PayPal' => $payPalMethodMock,
-            'SomeOtherType' => $someOtherTypeMethodMock,
-        ];
     }
 }
