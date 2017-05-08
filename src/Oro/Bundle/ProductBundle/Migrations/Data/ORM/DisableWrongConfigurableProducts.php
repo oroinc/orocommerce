@@ -14,6 +14,9 @@ use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Disables configurable products which have extend fields as variants selected or simple products from other families
+ */
 class DisableWrongConfigurableProducts extends AbstractFixture implements ContainerAwareInterface
 {
     const BATCH_SIZE = 200;

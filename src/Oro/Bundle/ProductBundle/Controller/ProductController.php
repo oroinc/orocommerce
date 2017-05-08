@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Controller;
 
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
@@ -14,7 +13,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -120,27 +118,18 @@ class ProductController extends Controller
     /**
      * Create product form step two
      *
-     * @Route(
-     *     "/create/step-two/{attributeFamilyId}",
-     *      name="oro_product_create_step_two",
-     *      requirements={"attributeFamilyId"="\d+"}
-     * )
-     * @ParamConverter(
-     *     "attributeFamily",
-     *      class="Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily",
-     *      options={"mapping": {"attributeFamilyId"   : "id"}}
-     * )
+     * @Route("/create/step-two", name="oro_product_create_step_two")
+     *
      * @Template("OroProductBundle:Product:createStepTwo.html.twig")
      *
      * @AclAncestor("oro_product_create")
      *
      * @param Request $request
-     * @param AttributeFamily $attributeFamily
      * @return array|RedirectResponse
      */
-    public function createStepTwoAction(Request $request, AttributeFamily $attributeFamily)
+    public function createStepTwoAction(Request $request)
     {
-        return $this->createStepTwo($request, (new Product())->setAttributeFamily($attributeFamily));
+        return $this->createStepTwo($request, new Product());
     }
 
     /**
@@ -197,11 +186,7 @@ class ProductController extends Controller
         $handler = new ProductCreateStepOneHandler($form, $request);
 
         if ($handler->process()) {
-            /** @var Product $product */
-            $product = $form->getData();
-            $options['attributeFamilyId'] = $product->getAttributeFamily()->getId();
-
-            return $this->forward('OroProductBundle:Product:createStepTwo', $options);
+            return $this->forward('OroProductBundle:Product:createStepTwo');
         }
 
         return ['form' => $form->createView()];
@@ -231,6 +216,9 @@ class ProductController extends Controller
                 'form' => $form->createView(),
                 'entity' => $product
             ];
+        } else {
+            $form = $this->createForm(ProductType::NAME, $product, ['validation_groups'=> false]);
+            $form->handleRequest($request);
         }
 
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(

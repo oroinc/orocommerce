@@ -243,7 +243,7 @@ class ProductType extends AbstractType
             );
         }
 
-        if ($product instanceof Product && ($product->isConfigurable() || !$product->getId())) {
+        if ($product instanceof Product && $product->isConfigurable()) {
             $form
                 ->add(
                     'variantLinks',

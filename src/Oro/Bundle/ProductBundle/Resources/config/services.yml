@@ -295,10 +295,12 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@oro_product.provider.custom_field_provider"
+            - "@oro_product.provider.variant_field_provider"
             - '%oro_product.entity.product.class%'
             - '%oro_product.entity.product_variant_link.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfterEditGrid }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:

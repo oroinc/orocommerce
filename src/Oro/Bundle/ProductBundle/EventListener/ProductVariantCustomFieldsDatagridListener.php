@@ -10,14 +10,17 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\EventListener\RowSelectionListener;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 
 class ProductVariantCustomFieldsDatagridListener
 {
     const FORM_SELECTED_VARIANTS = 'selectedVariantFields';
     const FORM_APPEND_VARIANTS = 'appendVariants';
     const GRID_DYNAMIC_LOAD_OPTION = 'gridDynamicLoad';
+    const ATTRIBUTE_FAMILY = 'attributeFamily';
 
     /**
      * @var DoctrineHelper
@@ -40,14 +43,21 @@ class ProductVariantCustomFieldsDatagridListener
     private $productVariantLinkClass;
 
     /**
+     * @var VariantFieldProvider
+     */
+    private $variantFieldProvider;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param CustomFieldProvider $customFieldProvider
+     * @param VariantFieldProvider $variantFieldProvider
      * @param string $productClass
      * @param string $productVariantLinkClass
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CustomFieldProvider $customFieldProvider,
+        VariantFieldProvider $variantFieldProvider,
         $productClass,
         $productVariantLinkClass
     ) {
@@ -55,6 +65,7 @@ class ProductVariantCustomFieldsDatagridListener
         $this->customFieldProvider = $customFieldProvider;
         $this->productClass = (string)$productClass;
         $this->productVariantLinkClass = (string)$productVariantLinkClass;
+        $this->variantFieldProvider = $variantFieldProvider;
     }
 
     /**
@@ -85,8 +96,8 @@ class ProductVariantCustomFieldsDatagridListener
                 $parentProduct->getVariantFields(),
                 $additionalParams
             );
-        } elseif (isset($additionalParams['selectedVariantFields'])) {
-            $variantFields = $additionalParams['selectedVariantFields'];
+        } elseif (isset($additionalParams[self::FORM_SELECTED_VARIANTS])) {
+            $variantFields = $additionalParams[self::FORM_SELECTED_VARIANTS];
         }
 
         $appendVariants = $this->getMergedVariants($parameters);
@@ -120,21 +131,13 @@ class ProductVariantCustomFieldsDatagridListener
 
     /**
      * @param BuildAfter $event
+     * @param array $variantFields
      */
-    public function onBuildAfter(BuildAfter $event)
+    private function removeExtendFields(BuildAfter $event, array  $variantFields)
     {
         $datagridConfig = $event->getDatagrid()->getConfig();
-        $productRepository = $this->getProductRepository();
 
-        /** @var Product $parentProduct */
-        $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
         $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
-        $parameters = $event->getDatagrid()->getParameters();
-
-        $variantFields = $this->getConfigurableAttributes(
-            $parentProduct->getVariantFields(),
-            $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, [])
-        );
 
         foreach ($allCustomFields as $customField) {
             $customFieldName = $customField['name'];
@@ -144,6 +147,43 @@ class ProductVariantCustomFieldsDatagridListener
 
             $datagridConfig->removeColumn($customFieldName);
         }
+    }
+
+    /**
+     * @param BuildAfter $event
+     */
+    public function onBuildAfterEditGrid(BuildAfter $event)
+    {
+        $parameters = $event->getDatagrid()->getParameters();
+        $familyId = $parameters->get(self::ATTRIBUTE_FAMILY);
+        /** @var AttributeFamily $attributeFamily */
+        $attributeFamily = $this->doctrineHelper->getEntityRepository(AttributeFamily::class)->find($familyId);
+
+        if ($attributeFamily) {
+            $variantFields = $this->variantFieldProvider->getVariantFields($attributeFamily);
+            $variantFields = array_keys($variantFields);
+            $this->removeExtendFields($event, $variantFields);
+        }
+    }
+
+    /**
+     * @param BuildAfter $event
+     */
+    public function onBuildAfter(BuildAfter $event)
+    {
+        $productRepository = $this->getProductRepository();
+
+        /** @var Product $parentProduct */
+        $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
+
+        $parameters = $event->getDatagrid()->getParameters();
+
+        $variantFields = $this->getConfigurableAttributes(
+            $parentProduct->getVariantFields(),
+            $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, [])
+        );
+
+        $this->removeExtendFields($event, $variantFields);
     }
 
     /**
