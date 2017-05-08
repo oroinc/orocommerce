@@ -76,19 +76,19 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     protected function isConditionAllowed($context)
     {
         $paymentMethodIdentifier = $this->resolveValue($context, $this->paymentMethod);
-        if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
-            $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodIdentifier);
-            $event = new RequirePaymentRedirectEvent($paymentMethod);
-            $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
-            $this->eventDispatcher->dispatch(
-                sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodIdentifier),
-                $event
-            );
-
-            return $event->isRedirectRequired();
+        if (!$this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
+            return false;
         }
 
-        return false;
+        $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodIdentifier);
+        $event = new RequirePaymentRedirectEvent($paymentMethod);
+        $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodIdentifier),
+            $event
+        );
+
+        return $event->isRedirectRequired();
     }
 
     /**

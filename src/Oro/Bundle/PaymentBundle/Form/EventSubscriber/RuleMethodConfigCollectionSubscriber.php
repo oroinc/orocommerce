@@ -91,12 +91,8 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
     protected function getPaymentMethodForConfig($methodConfigType)
     {
         $paymentMethod = null;
-        try {
-            if ($this->paymentMethodProvider->hasPaymentMethod($methodConfigType)) {
-                $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($methodConfigType);
-            }
-        } catch (\InvalidArgumentException $e) {
-            // TODO: log exception?
+        if ($this->paymentMethodProvider->hasPaymentMethod($methodConfigType)) {
+            $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($methodConfigType);
         }
 
         return $paymentMethod;
