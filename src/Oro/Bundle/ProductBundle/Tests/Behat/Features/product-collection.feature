@@ -32,7 +32,7 @@ Feature:
       | PSKU1 | Product 1 |
 
   Scenario: Save Product Collection with defined filters and applied query
-    When I click "Save"
+    When I save form
     Then I should not see text matching "You have changes in the Filters section that have not been applied"
     Then I should see "Content Node has been saved" flash message
     Then I reload the page
@@ -81,7 +81,7 @@ Feature:
     Then I fill in "Segment Name" with "Some Custom Segment Name"
 
   Scenario: Edited Product Collection can be saved
-    When I click "Save"
+    When I save form
     Then I should see "Content Node has been saved" flash message
     When I reload the page
     Then I should see following grid:
@@ -95,7 +95,7 @@ Feature:
     And I fill "Content Node Form" with:
       | First Product Collection Segment Name  | Some Product Collection Name |
       | Second Product Collection Segment Name | Some Product Collection Name |
-    And I click "Save"
+    And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     When I click "Continue" in modal window
     And I click "Content Variants"
@@ -110,7 +110,7 @@ Feature:
     And I click "Add Product Collection"
     And I fill "Content Node Form" with:
       | Second Product Collection Segment Name  | Unique Name |
-    And I click "Save"
+    And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     When I click "Continue" in modal window
     Then I should see "Content Node has been saved" flash message
@@ -120,7 +120,7 @@ Feature:
     And I fill "Content Node Form" with:
       | First Product Collection Segment Name  | Same Name |
       | Second Product Collection Segment Name | Same Name |
-    When I click "Save"
+    When I save form
     Then I should see "Content Node Form" validation errors:
       | Second Product Collection Segment Name | This name already in use |
 
@@ -130,7 +130,7 @@ Feature:
       | First Product Collection Segment Name  | Unique Name |
       | Second Product Collection Segment Name | Some Custom Segment Name |
     When I click on "Remove First Product Collection Variant Button"
-    And I click "Save"
+    And I save form
     Then I should see "Content Node has been saved" flash message
     And I should see 1 element "Product Collection Variant Label"
 
@@ -198,7 +198,7 @@ Feature:
     Given I proceed as the Admin
     And I click "Content Variants"
     When type "PSKU1" in "value"
-    And I click "Save"
+    And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     And I click "Cancel" in modal window
     And I should see following grid:
@@ -209,7 +209,7 @@ Feature:
   Scenario: Confirmation accept after save changed not applied filters
     When I click "Content Variants"
     And type "PSKU1" in "value"
-    And I click "Save"
+    And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     And I click "Continue" in modal window
     And I should see following grid:
@@ -223,7 +223,7 @@ Feature:
     And I click "Add Product Collection"
     And I click "Content Variants"
     Then I should see 2 elements "Product Collection Variant Label"
-    And I click "Save"
+    And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     And I click "Cancel" in modal window
     Then I should not see text matching "You have changes in the Filters section that have not been applied"
