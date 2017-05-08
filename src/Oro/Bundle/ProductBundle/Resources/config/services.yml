@@ -496,24 +496,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_product_variant }
 
-    oro_product.api.processor.update_product.build_query:
-        class: 'Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery'
-        arguments:
-            - '@oro_api.doctrine_helper'
-            - '@oro_api.criteria_connector'
-        tags:
-            - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%oro_product.entity.product.class%'}
-
-    oro_product.api.processor.product_id.normalize_input:
-        class: 'Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
-        tags:
-            - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%oro_product.entity.product.class%'}
-
-    oro_product.api.processor.entity_id.load_data:
-        class: 'Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId'
-        tags:
-            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_product.entity.product.class%'}
-
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
         arguments:
