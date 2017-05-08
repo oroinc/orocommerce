@@ -6,7 +6,6 @@ use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
-
 use Symfony\Component\Console\Output\OutputInterface;
 
 class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements CronCommandInterface
@@ -58,7 +57,8 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
             ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
-        $combinedProductPriceResolver = $container->get('oro_pricing.resolver.combined_product_price_resolver');
+        $combinedProductPriceResolver = $container->get('oro_pricing.pricing_strategy.strategy_register')
+            ->get('merge_by_priority');
 
         foreach ($combinedPriceLists as $combinedPriceList) {
             $combinedProductPriceResolver->combinePrices($combinedPriceList);

@@ -109,15 +109,23 @@ services:
         tags:
             - { name: oro_entity.virtual_relation_provider, priority: 120 }
 
-    oro_pricing.resolver.combined_product_price_resolver:
-        class: 'Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver'
+    oro_pricing.pricing_strategy.abstract_price_combining_strategy:
+        class: 'Oro\Bundle\PricingBundle\PricingStrategy\AbstractPriceCombiningStrategy'
+        abstract: true
+        public: false
         arguments:
             - '@doctrine'
             - '@oro_pricing.orm.insert_from_select_query_executor'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
 
+    oro_pricing.pricing_strategy.merge_price_combining_strategy:
+        class: Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy
+        parent: oro_pricing.pricing_strategy.abstract_price_combining_strategy
+        tags:
+            - { name: oro_pricing.price_strategy, alias: merge_by_priority }
+
     oro_pricing.resolver.combined_product_schedule_resolver:
-        class: 'Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver'
+        class: Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver
         arguments:
             - '@doctrine'
             - '@oro_config.global'
@@ -147,7 +155,7 @@ services:
             - '@oro_pricing.provider.combined_price_list'
             - '@oro_pricing.builder.combined_price_list_garbage_collector'
             - '@oro_pricing.resolver.combined_product_schedule_resolver'
-            - '@oro_pricing.resolver.combined_product_price_resolver'
+            - '@oro_pricing.pricing_strategy.strategy_register'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
             - [setCombinedPriceListClassName, ['%oro_pricing.entity.combined_price_list.class%']]
@@ -187,7 +195,7 @@ services:
             - '@oro_pricing.provider.combined_price_list'
             - '@oro_pricing.builder.combined_price_list_garbage_collector'
             - '@oro_pricing.resolver.combined_product_schedule_resolver'
-            - '@oro_pricing.resolver.combined_product_price_resolver'
+            - '@oro_pricing.pricing_strategy.strategy_register'
         calls:
             - [setWebsiteCombinedPriceListBuilder,  ['@oro_pricing.builder.website_combined_price_list_builder']]
 
@@ -878,7 +886,7 @@ services:
         arguments:
             - '@oro_pricing.price_list_trigger_factory'
             - '@doctrine'
-            - '@oro_pricing.resolver.combined_product_price_resolver'
+            - '@oro_pricing.pricing_strategy.strategy_register'
             - '@event_dispatcher'
             - '@logger'
             - '@oro_entity.database_exception_helper'
@@ -1023,3 +1031,8 @@ services:
         parent: oro_form.form.handler.default
         arguments:
             - '@oro_pricing.manager.price_manager'
+
+    oro_pricing.pricing_strategy.strategy_register:
+        class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister
+        arguments:
+            - '@oro_config.manager'

@@ -1,0 +1,31 @@
+<?php
+
+namespace Oro\Bundle\PricingBundle\Tests\Unit\PricingStrategy;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
+
+class StrategyRegisterTest extends \PHPUnit_Framework_TestCase
+{
+    public function test()
+    {
+        $configManager = self::createMock(ConfigManager::class);
+        $register = new StrategyRegister($configManager);
+        $strategy = self::createMock(PriceCombiningStrategyInterface::class);
+        $register->add('merge_by_priority', $strategy);
+        $this->assertSame($strategy, $register->getCurrentStrategy());
+        $this->assertSame(['merge_by_priority' => $strategy], $register->getStrategies());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Pricing strategy named "merge_by_priority" does not exist.
+     */
+    public function testInvalidArguments()
+    {
+        $configManager = self::createMock(ConfigManager::class);
+        $register = new StrategyRegister($configManager);
+        $register->getCurrentStrategy();
+    }
+}

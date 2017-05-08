@@ -1,9 +1,8 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\PricingStrategy;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -11,7 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
@@ -20,10 +19,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 
-class CombinedProductPriceResolverTest extends WebTestCase
+class MergePricesCombiningStrategyTest extends WebTestCase
 {
     /**
-     * @var CombinedProductPriceResolver
+     * @var MergePricesCombiningStrategy
      */
     protected $resolver;
 
@@ -43,7 +42,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 LoadCombinedPriceLists::class
             ]
         );
-        $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver');
+        $this->resolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+            ->get('merge_by_priority');
     }
 
     /**

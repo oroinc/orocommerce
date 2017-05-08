@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class PriceListRecalculateCommandTest extends WebTestCase
@@ -49,7 +49,9 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->getContainer()->get('oro_pricing.builder.website_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_group_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_combined_price_list_builder')->resetCache();
-        $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver')->resetCache();
+        $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+            ->get('merge_by_priority')
+            ->resetCache();
 
         foreach ($websites as $websiteName) {
             $params[] = '--website='.$this->getReference($websiteName)->getId();

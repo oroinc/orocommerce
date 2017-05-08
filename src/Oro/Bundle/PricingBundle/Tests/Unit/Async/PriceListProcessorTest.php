@@ -16,7 +16,8 @@ use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -40,7 +41,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $triggerHandler;
 
     /**
-     * @var CombinedProductPriceResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var MergePricesCombiningStrategy|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceResolver;
 
@@ -79,9 +80,11 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceResolver = $this->getMockBuilder(CombinedProductPriceResolver::class)
+        $this->priceResolver = $this->getMockBuilder(MergePricesCombiningStrategy::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $strategyRegister = self::createMock(StrategyRegister::class);
+        $strategyRegister->method('getCurrentStrategy')->willReturn($this->priceResolver);
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -104,7 +107,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
             $this->registry,
-            $this->priceResolver,
+            $strategyRegister,
             $this->eventDispatcher,
             $this->logger,
             $this->databaseExceptionHelper,

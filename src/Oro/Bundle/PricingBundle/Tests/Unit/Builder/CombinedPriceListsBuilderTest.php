@@ -7,10 +7,11 @@ use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
-use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
 class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +51,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
     protected $cplScheduleResolver;
 
     /**
-     * @var CombinedProductPriceResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var MergePricesCombiningStrategy|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceResolver;
 
@@ -83,10 +84,9 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
         $this->cplScheduleResolver = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
-        $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver';
-        $this->priceResolver = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceResolver = self::createMock(MergePricesCombiningStrategy::class);
+        $strategyRegister = new StrategyRegister($this->configManager);
+        $strategyRegister->add('merge_by_priority', $priceResolver);
 
         $this->builder = new CombinedPriceListsBuilder(
             $this->configManager,
@@ -94,7 +94,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             $this->combinedPriceListProvider,
             $this->garbageCollector,
             $this->cplScheduleResolver,
-            $this->priceResolver
+            $strategyRegister
         );
         $this->builder->setWebsiteCombinedPriceListBuilder($this->websiteBuilder);
     }
@@ -128,7 +128,8 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 
         $fullKey = Configuration::getConfigKeyToFullPriceList();
         $key = Configuration::getConfigKeyToPriceList();
-        $this->configManager->expects($this->exactly($callExpects * 2))
+        //1 from register + 2 from strategy
+        $this->configManager->expects($this->exactly($callExpects * 2 + 1))
             ->method('get')
             ->willReturnMap([
                 [$fullKey, $configCPLId],

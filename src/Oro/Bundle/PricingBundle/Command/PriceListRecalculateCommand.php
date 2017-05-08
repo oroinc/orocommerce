@@ -2,11 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
@@ -19,6 +14,10 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class PriceListRecalculateCommand extends ContainerAwareCommand
 {
@@ -81,7 +80,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver')
+        $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+            ->get('merge_by_priority')
             ->setOutput($output);
 
         $disableTriggers = (bool)$input->getOption(self::DISABLE_TRIGGERS);
@@ -226,7 +226,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 
         $cplIterator = $cplRepository->getCombinedPriceListsByPriceLists($priceLists);
 
-        $priceResolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver');
+        $priceResolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+            ->get('merge_by_priority');
         foreach ($cplIterator as $cpl) {
             $priceResolver->combinePrices($cpl);
         }
