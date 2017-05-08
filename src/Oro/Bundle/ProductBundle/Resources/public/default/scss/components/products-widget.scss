@@ -664,13 +664,13 @@
       z-index: 1;
     }
 
-    @media (min-width: 992px) {
+    @include breakpoint('strict-desktop') {
       &:nth-child(5n+5) {
         margin: 0;
       }
     }
 
-    @media (min-width: 843px) and (max-width: $screen-md) {
+    @include breakpoint('strict-tablet') {
       width: calc(25% - 15px);
       margin-right: 20px;
 
@@ -679,7 +679,7 @@
       }
     }
 
-    @media (min-width: 560px) and (max-width: 842px) {
+    @include breakpoint('strict-tablet-small') {
       width: calc(33.3333% - 16px);
       margin-right: 24px;
 
@@ -688,7 +688,7 @@
       }
     }
 
-    @media (max-width: 559px) {
+    @include breakpoint('strict-mobile-landscape') {
       width: calc(50% - 5px);
 
       &:nth-child(2n+1) {
@@ -699,6 +699,11 @@
         margin-right: 0;
         margin-left: 5px;
       }
+    }
+
+    @include breakpoint('strict-mobile') {
+      width: 100%;
+      margin: 0;
     }
   }
 
