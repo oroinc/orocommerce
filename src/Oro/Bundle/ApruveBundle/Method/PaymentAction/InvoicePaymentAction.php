@@ -245,7 +245,10 @@ class InvoicePaymentAction extends AbstractPaymentAction implements LoggerAwareI
      */
     private function returnError()
     {
-        return ['success' => false];
+        return [
+            'success' => false,
+            'message' => 'oro.apruve.payment_transaction.invoice.result.error',
+        ];
     }
 
     /**

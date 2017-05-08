@@ -37,3 +37,9 @@ services:
             - '@oro_apruve.method.config.provider'
         tags:
             - { name: layout.context_configurator }
+
+    oro_apruve.action.invoice_payment_transaction:
+        class: 'Oro\Bundle\ApruveBundle\PaymentTransaction\Action\PaymentTransactionInvoiceAction'
+        parent: oro_payment.action.payment_method_action.abstract
+        tags:
+            - { name: oro_action.action, alias: oro_apruve_payment_transaction_invoice }

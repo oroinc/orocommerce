@@ -36,7 +36,12 @@ oro:
                 server_error.message: 'Connection error has occurred: %error_message%. Please, try again later'
 
         payment_transaction:
-            create_invoice.label: Create Invoice
+            invoice:
+                label: "Send Invoice"
+                result.success: "Invoice has been sent successfully"
+                result.error: "Invoice has not been sent. Look into the application logs for details"
+            shipment:
+                result.error: "Shipment has not been created. Look into the application logs for details"
 
     payment:
         paymenttransaction:

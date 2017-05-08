@@ -77,6 +77,11 @@ services:
         lazy: true
         public: false
 
+    oro_apruve.apruve.factory.shipment_from_response:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\Shipment\ApruveShipmentFromResponseFactory'
+        lazy: true
+        public: false
+
     oro_apruve.apruve.factory.shipment:
         parent: oro_apruve.apruve.factory.abstract_entity_with_line_items
         class: 'Oro\Bundle\ApruveBundle\Apruve\Factory\Shipment\ApruveShipmentFromPaymentContextFactory'

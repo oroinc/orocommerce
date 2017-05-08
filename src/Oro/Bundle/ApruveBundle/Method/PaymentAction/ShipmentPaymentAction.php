@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ApruveBundle\Method\PaymentAction;
 
 use Oro\Bundle\ApruveBundle\Apruve\Factory\Shipment\ApruveShipmentFromPaymentContextFactoryInterface;
+use Oro\Bundle\ApruveBundle\Apruve\Factory\Shipment\ApruveShipmentFromResponseFactoryInterface;
 use Oro\Bundle\ApruveBundle\Client\Factory\Config\ApruveConfigRestClientFactoryInterface;
 use Oro\Bundle\ApruveBundle\Client\Request\ApruveRequestInterface;
 use Oro\Bundle\ApruveBundle\Client\Request\Invoice\Factory\CreateInvoiceRequestFactoryInterface;
@@ -29,6 +30,11 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
     private $apruveShipmentFromPaymentContextFactory;
 
     /**
+     * @var ApruveShipmentFromResponseFactoryInterface
+     */
+    private $apruveShipmentFromResponseFactory;
+
+    /**
      * @var CreateInvoiceRequestFactoryInterface
      */
     private $createShipmentRequestFactory;
@@ -41,18 +47,21 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
     /**
      * @param TransactionPaymentContextFactoryInterface        $paymentContextFactory
      * @param ApruveShipmentFromPaymentContextFactoryInterface $apruveShipmentFromPaymentContextFactory
+     * @param ApruveShipmentFromResponseFactoryInterface       $apruveShipmentFromResponseFactory
      * @param ApruveConfigRestClientFactoryInterface           $apruveConfigRestClientFactory
      * @param CreateShipmentRequestFactoryInterface            $createShipmentRequestFactory
      */
     public function __construct(
         TransactionPaymentContextFactoryInterface $paymentContextFactory,
         ApruveShipmentFromPaymentContextFactoryInterface $apruveShipmentFromPaymentContextFactory,
+        ApruveShipmentFromResponseFactoryInterface $apruveShipmentFromResponseFactory,
         ApruveConfigRestClientFactoryInterface $apruveConfigRestClientFactory,
         CreateShipmentRequestFactoryInterface $createShipmentRequestFactory
     ) {
         parent::__construct($paymentContextFactory);
 
         $this->apruveShipmentFromPaymentContextFactory = $apruveShipmentFromPaymentContextFactory;
+        $this->apruveShipmentFromResponseFactory = $apruveShipmentFromResponseFactory;
         $this->apruveConfigRestClientFactory = $apruveConfigRestClientFactory;
         $this->createShipmentRequestFactory = $createShipmentRequestFactory;
     }
@@ -88,7 +97,8 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
             $transactionResult = $restResponse->isSuccessful();
 
             $paymentTransaction
-                ->setResponse($restResponse->json());
+                ->setResponse($restResponse->json())
+                ->setReference($this->getApruveShipmentId($restResponse));
 
             if (!$transactionResult) {
                 return $this->returnAndLogApruveError($restResponse);
@@ -128,6 +138,21 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
         }
 
         return $apruveInvoiceId;
+    }
+
+    /**
+     * @param RestResponseInterface $restResponse
+     *
+     * @return string|null
+     *
+     * @throws \Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException
+     */
+    private function getApruveShipmentId(RestResponseInterface $restResponse)
+    {
+        $createdApruveShipment = $this->apruveShipmentFromResponseFactory
+            ->createFromResponse($restResponse);
+
+        return $createdApruveShipment->getId();
     }
 
     /**
@@ -221,7 +246,10 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
      */
     private function returnError()
     {
-        return ['success' => false];
+        return [
+            'success' => false,
+            'message' => 'oro.apruve.payment_transaction.shipment.result.error',
+        ];
     }
 
     /**
