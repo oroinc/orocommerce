@@ -6,13 +6,13 @@ use Oro\Bundle\ApiBundle\Processor\Create\CreateContext;
 use Oro\Bundle\ApiBundle\Request\RequestType;
 use Oro\Bundle\ApiBundle\Request\ValueNormalizer;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;
-use Oro\Bundle\RFPBundle\Api\Processor\SortIncludedDataProcessor;
+use Oro\Bundle\RFPBundle\Api\Processor\SortIncludedData;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 
-class SortIncludedDataProcessorTest extends \PHPUnit_Framework_TestCase
+class SortIncludedDataTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var SortIncludedDataProcessor */
+    /** @var SortIncludedData */
     protected $processor;
 
     /**
@@ -24,7 +24,7 @@ class SortIncludedDataProcessorTest extends \PHPUnit_Framework_TestCase
         $valueNormalizer = $this->createMock(ValueNormalizer::class);
         $valueNormalizer->expects($this->any())->method('normalizeValue')->willReturnArgument(0);
 
-        $this->processor = new SortIncludedDataProcessor($valueNormalizer);
+        $this->processor = new SortIncludedData($valueNormalizer);
     }
 
     /**

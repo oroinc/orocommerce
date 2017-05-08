@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Api\Processor\Order;
+namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class OrderLineItemProductProcessor implements ProcessorInterface
+class UpdateRequestDataForOrderLineItem implements ProcessorInterface
 {
     /**
      * @var SkuCachedProductProvider

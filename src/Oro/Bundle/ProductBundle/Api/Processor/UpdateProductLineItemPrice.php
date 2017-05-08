@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class ProductLineItemPriceProcessor implements ProcessorInterface
+class UpdateProductLineItemPrice implements ProcessorInterface
 {
     /**
      * {@inheritdoc}

@@ -6,7 +6,7 @@ use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class RequestEntityProcessor implements ProcessorInterface
+class UpdateRequestDataForRequestEntity implements ProcessorInterface
 {
     /**
      * {@inheritdoc}

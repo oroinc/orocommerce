@@ -4,11 +4,11 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\RFPBundle\Api\Processor\RequestEntityProcessor;
+use Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestDataForRequestEntity;
 
-class RequestEntityProcessorTest extends \PHPUnit_Framework_TestCase
+class UpdateRequestDataForRequestEntityTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var RequestEntityProcessor */
+    /** @var UpdateRequestDataForRequestEntity */
     protected $processor;
 
     /**
@@ -16,7 +16,7 @@ class RequestEntityProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->processor = new RequestEntityProcessor();
+        $this->processor = new UpdateRequestDataForRequestEntity();
     }
 
     public function testProcessWithNotFormContext()

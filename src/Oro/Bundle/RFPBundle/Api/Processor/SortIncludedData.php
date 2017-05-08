@@ -11,7 +11,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class SortIncludedDataProcessor implements ProcessorInterface
+class SortIncludedData implements ProcessorInterface
 {
     /** @var ValueNormalizer */
     protected $valueNormalizer;
