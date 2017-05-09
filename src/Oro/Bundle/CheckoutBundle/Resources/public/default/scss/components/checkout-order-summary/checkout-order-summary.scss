@@ -143,7 +143,7 @@
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('mobile-landscape') {
     .checkout-order-summary {
         &__grid-head {
             display: none;
