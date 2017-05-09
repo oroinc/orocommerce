@@ -1,0 +1,21 @@
+services:
+    oro_authorize_net.integation.authorize_net.channel:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Integration\AuthorizeNetChannelType'
+        tags:
+            - { name: oro_integration.channel, type: authorize_net }
+
+    oro_authorize_net.integration.authorize_net.transport:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Integration\AuthorizeNetTransport'
+        tags:
+            - { name: oro_integration.transport, type: authorize_net, channel_type: authorize_net }
+
+    oro_authorize_net.method_view_factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Method\View\Factory\AuthorizeNetPaymentMethodViewFactory'
+        arguments:
+            - '@form.factory'
+
+    oro_authorize_net.settings.payment_action.provider:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\BasicPaymentActionsDataProvider'
+
+    oro_authorize_net.settings.card_type.provider:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\BasicCardTypesDataProvider'

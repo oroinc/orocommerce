@@ -64,10 +64,10 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
 
-            $.validator.loadMethod('oropaypal/js/validator/credit-card-number');
-            $.validator.loadMethod('oropaypal/js/validator/credit-card-type');
-            $.validator.loadMethod('oropaypal/js/validator/credit-card-expiration-date');
-            $.validator.loadMethod('oropaypal/js/validator/credit-card-expiration-date-not-blank');
+            $.validator.loadMethod('oropayment/js/validator/credit-card-number');
+            $.validator.loadMethod('oropayment/js/validator/credit-card-type');
+            $.validator.loadMethod('oropayment/js/validator/credit-card-expiration-date');
+            $.validator.loadMethod('oropayment/js/validator/credit-card-expiration-date-not-blank');
 
             this.$el = this.options._sourceElement;
 
@@ -249,13 +249,15 @@ define(function(require) {
             $.data(virtualForm, 'validator', validator);
 
             // Add CC type validation rule
-            var cardNumberField = this.$form.find(this.options.selectors.cardNumber);
+            var cardNumberField = virtualForm.find(this.options.selectors.cardNumber);
             var cardNumberValidation = cardNumberField.data('validation');
             var creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
 
-            _.extend(cardNumberValidation[creditCardTypeValidator],
-                {allowedCreditCards: this.options.allowedCreditCards}
-            );
+            if (creditCardTypeValidator && creditCardTypeValidator in cardNumberValidation) {
+                _.extend(cardNumberValidation[creditCardTypeValidator],
+                    {allowedCreditCards: this.options.allowedCreditCards}
+                );
+            }
 
             var errors;
 

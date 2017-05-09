@@ -426,7 +426,7 @@ class PayPalSettings extends Transport
      */
     public function setTestMode($testMode)
     {
-        $this->testMode = $testMode;
+        $this->testMode = (bool)$testMode;
 
         return $this;
     }
@@ -450,7 +450,7 @@ class PayPalSettings extends Transport
      */
     public function setDebugMode($debugMode)
     {
-        $this->debugMode = $debugMode;
+        $this->debugMode = (bool)$debugMode;
 
         return $this;
     }
@@ -474,7 +474,7 @@ class PayPalSettings extends Transport
      */
     public function setRequireCVVEntry($requireCVVEntry)
     {
-        $this->requireCVVEntry = $requireCVVEntry;
+        $this->requireCVVEntry = (bool)$requireCVVEntry;
 
         return $this;
     }
@@ -498,7 +498,7 @@ class PayPalSettings extends Transport
      */
     public function setZeroAmountAuthorization($zeroAmountAuthorization)
     {
-        $this->zeroAmountAuthorization = $zeroAmountAuthorization;
+        $this->zeroAmountAuthorization = (bool)$zeroAmountAuthorization;
 
         return $this;
     }
@@ -522,7 +522,7 @@ class PayPalSettings extends Transport
      */
     public function setAuthorizationForRequiredAmount($authorizationForRequiredAmount)
     {
-        $this->authorizationForRequiredAmount = $authorizationForRequiredAmount;
+        $this->authorizationForRequiredAmount = (bool)$authorizationForRequiredAmount;
 
         return $this;
     }
@@ -546,7 +546,7 @@ class PayPalSettings extends Transport
      */
     public function setUseProxy($useProxy)
     {
-        $this->useProxy = $useProxy;
+        $this->useProxy = (bool)$useProxy;
 
         return $this;
     }
@@ -618,7 +618,7 @@ class PayPalSettings extends Transport
      */
     public function setEnableSSLVerification($enableSSLVerification)
     {
-        $this->enableSSLVerification = $enableSSLVerification;
+        $this->enableSSLVerification = (bool)$enableSSLVerification;
 
         return $this;
     }
@@ -818,7 +818,7 @@ class PayPalSettings extends Transport
     /**
      * Get allowedCreditCardTypes
      *
-     * @return Collection
+     * @return array
      */
     public function getAllowedCreditCardTypes()
     {
