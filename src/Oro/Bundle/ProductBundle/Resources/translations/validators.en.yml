@@ -46,3 +46,6 @@ oro:
         product_image:
             not_blank: 'The file cannot be blank'
             type_restriction: 'You cannot choose more than %maxNumber% images with type "%type%"'
+
+        product_collection:
+            unique_segment_name.message: 'This name already in use'
