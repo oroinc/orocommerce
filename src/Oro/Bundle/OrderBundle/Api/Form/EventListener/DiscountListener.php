@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Form\Type\EventListener;
+namespace Oro\Bundle\OrderBundle\Api\Form\EventListener;
 
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class DiscountSubscriber implements EventSubscriberInterface
+class DiscountListener implements EventSubscriberInterface
 {
     /**
      * @var TotalHelper
@@ -29,29 +29,26 @@ class DiscountSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::SUBMIT => 'onSubmitEventListener',
+            FormEvents::SUBMIT => 'onSubmit',
         ];
     }
 
     /**
      * @param FormEvent $event
      */
-    public function onSubmitEventListener(FormEvent $event)
+    public function onSubmit(FormEvent $event)
     {
+        if (!$event->getForm()->has('order')) {
+            return;
+        }
+
         $data = $event->getData();
-
-        if (!$data instanceof OrderDiscount) {
-            return;
+        if ($data instanceof OrderDiscount) {
+            $order = $data->getOrder();
+            if (null !== $order) {
+                $order->addDiscount($data);
+                $this->totalHelper->fillDiscounts($order);
+            }
         }
-
-        $order = $data->getOrder();
-
-        if (null === $order) {
-            return;
-        }
-
-        $order->addDiscount($data);
-
-        $this->totalHelper->fillDiscounts($order);
     }
 }

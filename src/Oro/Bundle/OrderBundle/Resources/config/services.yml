@@ -357,8 +357,3 @@ services:
             - '@oro_product.layout.data_provider.configurable_products'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }
-
-    oro_order.product_provider.sku_cached:
-        class: 'Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider'
-        arguments:
-            - '@oro_product.repository.product'

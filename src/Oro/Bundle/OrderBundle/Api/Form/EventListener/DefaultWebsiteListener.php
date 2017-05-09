@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Form\Type\EventListener;
+namespace Oro\Bundle\OrderBundle\Api\Form\EventListener;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class DefaultWebsiteSubscriber implements EventSubscriberInterface
+class DefaultWebsiteListener implements EventSubscriberInterface
 {
     /**
      * @var WebsiteManager
@@ -29,26 +29,18 @@ class DefaultWebsiteSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::SUBMIT => ['onSubmitEventListener', 10]
+            FormEvents::SUBMIT => ['onSubmit', 10]
         ];
     }
 
     /**
      * @param FormEvent $event
      */
-    public function onSubmitEventListener(FormEvent $event)
+    public function onSubmit(FormEvent $event)
     {
         $data = $event->getData();
-
-        if (!$data instanceof Order) {
-            return;
+        if ($data instanceof Order && null === $data->getWebsite()) {
+            $data->setWebsite($this->websiteManager->getDefaultWebsite());
         }
-
-        if ($data->getWebsite()) {
-            return;
-        }
-
-        $data->setWebsite($this->websiteManager->getDefaultWebsite());
-        $event->setData($data);
     }
 }
