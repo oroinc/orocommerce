@@ -72,7 +72,7 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
      */
     public function getUrlItems(WebsiteInterface $website, $version)
     {
-        // If master catalog is enabled - do not return we catalog nodes
+        // If master catalog is enabled - we do not return catalog nodes
         if ($this->isFeaturesEnabled($website)) {
             return;
         }
