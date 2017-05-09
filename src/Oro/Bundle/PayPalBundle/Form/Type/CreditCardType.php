@@ -16,7 +16,9 @@ class CreditCardType extends AbstractType
 {
     const NAME = 'oro_paypal_credit_card';
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -29,11 +31,11 @@ class CreditCardType extends AbstractType
                 'attr' => [
                     'data-validation' => [
                         'credit-card-number' => [
-                            'message' => 'oro.paypal.validation.credit_card',
+                            'message' => 'oro.payment.validation.credit_card',
                             'payload' => null,
                         ],
                         'credit-card-type' => [
-                            'message' => 'oro.paypal.validation.credit_card_type',
+                            'message' => 'oro.payment.validation.credit_card_type',
                             'payload' => null,
                         ]
                     ],
@@ -51,7 +53,7 @@ class CreditCardType extends AbstractType
             ]
         )->add(
             'expirationDate',
-            'oro_paypal_credit_card_expiration_date',
+            CreditCardExpirationDateType::NAME,
             [
                 'required' => true,
                 'label' => 'oro.paypal.credit_card.expiration_date.label',
@@ -115,7 +117,7 @@ class CreditCardType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -126,6 +128,7 @@ class CreditCardType extends AbstractType
             'requireCvvEntryEnabled' => true,
         ]);
     }
+
 
     /**
      * {@inheritdoc}
@@ -138,7 +141,7 @@ class CreditCardType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

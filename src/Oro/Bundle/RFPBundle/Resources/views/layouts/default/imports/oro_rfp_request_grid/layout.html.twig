@@ -10,3 +10,13 @@
         {{ block('combined_buttons_widget') }}
     </div>
 {% endblock %}
+
+{% block __oro_rfp_request_grid__additional_views_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' grid-views__aditional'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

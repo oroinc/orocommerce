@@ -2,8 +2,14 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -13,11 +19,10 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
-class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
+class LoadRequestData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    use UserUtilityTrait;
+    use ContainerAwareTrait;
 
     const FIRST_NAME = 'Grzegorz';
     const FIRST_NAME_DELETED = 'John';
@@ -229,6 +234,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
+            LoadUser::class,
             LoadUserData::class,
             LoadProductUnitPrecisions::class,
         ];
@@ -239,10 +245,11 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
      */
     public function load(ObjectManager $manager)
     {
-        $owner = $this->getFirstUser($manager);
+        /** @var User $owner */
+        $owner = $this->getReference('user');
 
         /** @var Organization $organization */
-        $organization = $this->getUser($manager)->getOrganization();
+        $organization = $owner->getOrganization();
 
         foreach (self::$requests as $key => $rawRequest) {
             $request = new Request();

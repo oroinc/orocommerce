@@ -3,9 +3,9 @@
 namespace Oro\Bundle\FrontendTestFrameworkBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
  * @ORM\Entity()
@@ -39,6 +39,22 @@ class TestContentVariant
     private $category_page_category;
 
     /**
+     * @var Segment
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(name="product_collection_segment", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    private $product_collection_segment;
+
+    /**
+     * @var TestContentNode
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\FrontendTestFrameworkBundle\Entity\TestContentNode")
+     * @ORM\JoinColumn(name="node", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     */
+    private $node;
+
+    /**
      * @return integer
      */
     public function getId()
@@ -63,7 +79,7 @@ class TestContentVariant
     }
 
     /**
-     * @return Product
+     * @return Category
      */
     public function getCategoryPageCategory()
     {
@@ -76,5 +92,40 @@ class TestContentVariant
     public function setCategoryPageCategory(Category $category_page_category = null)
     {
         $this->category_page_category = $category_page_category;
+    }
+
+    /**
+     * @return Segment
+     */
+    public function getProductCollectionSegment()
+    {
+        return $this->product_collection_segment;
+    }
+
+    /**
+     * @param Segment|null $product_collection_segment
+     */
+    public function setProductCollectionSegment(Segment $product_collection_segment = null)
+    {
+        $this->product_collection_segment = $product_collection_segment;
+    }
+
+    /**
+     * @param TestContentNode|null $node
+     * @return $this
+     */
+    public function setNode(TestContentNode $node = null)
+    {
+        $this->node = $node;
+
+        return $this;
+    }
+
+    /**
+     * @return TestContentNode
+     */
+    public function getNode()
+    {
+        return $this->node;
     }
 }

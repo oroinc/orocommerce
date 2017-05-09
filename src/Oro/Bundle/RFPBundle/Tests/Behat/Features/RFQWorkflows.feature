@@ -1,4 +1,5 @@
 @fixture-RFQWorkflows.yml
+@ticket-BB-7962
 Feature: Default RFQ Workflows
 
   Scenario: Logged in as buyer and manager on different window sessions

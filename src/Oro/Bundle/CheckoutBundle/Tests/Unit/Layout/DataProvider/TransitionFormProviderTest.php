@@ -11,12 +11,14 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
+use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 
 class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass
+     * @var \PHPUnit_Framework_MockObject_MockObject|\stdClass|TransitionProvider
      */
     protected $transitionProvider;
 
@@ -26,23 +28,18 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
     protected $formFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
-     */
-    protected $router;
-
-    /**
      * @var TransitionFormProvider
      */
     protected $provider;
 
     protected function setUp()
     {
-        $this->transitionProvider =
-            $this->createMock('Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider');
-        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
-        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->transitionProvider = $this->createMock(TransitionProvider::class);
+        $this->formFactory = $this->createMock(FormFactoryInterface::class);
+        /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject $router */
+        $router = $this->createMock(UrlGeneratorInterface::class);
 
-        $this->provider = new TransitionFormProvider($this->formFactory, $this->router);
+        $this->provider = new TransitionFormProvider($this->formFactory, $router);
         $this->provider->setTransitionProvider($this->transitionProvider);
     }
 
@@ -51,8 +48,9 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
         $workflowData = new WorkflowData();
         $workflowItem = new WorkflowItem();
         $workflowItem->setData($workflowData);
+        $optionsResolver = $this->createMock(TransitionOptionsResolver::class);
 
-        $continueTransition = new Transition();
+        $continueTransition = new Transition($optionsResolver);
         $continueTransition->setName('transition3');
         $continueTransition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $continueTransition->setFormType('transition_type');

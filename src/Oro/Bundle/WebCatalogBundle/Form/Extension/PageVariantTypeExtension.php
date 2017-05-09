@@ -2,35 +2,21 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Form\PageVariantType;
 use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Component\WebCatalog\Form\PageVariantType;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
-use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PageVariantTypeExtension extends AbstractTypeExtension
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -90,21 +76,9 @@ class PageVariantTypeExtension extends AbstractTypeExtension
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $em = $this->registry->getManager();
-
         $resolver->setRequired(['web_catalog', 'content_variant_type']);
-        $resolver->setAllowedTypes(
-            'web_catalog',
-            [
-                'null',
-                $em->getClassMetadata(WebCatalogInterface::class)->getName()
-            ]
-        );
+        $resolver->setAllowedTypes('web_catalog', ['null', WebCatalog::class]);
 
-        $resolver->setDefaults(
-            [
-                'data_class' => $em->getClassMetadata(ContentVariantInterface::class)->getName()
-            ]
-        );
+        $resolver->setDefault('data_class', ContentVariant::class);
     }
 }

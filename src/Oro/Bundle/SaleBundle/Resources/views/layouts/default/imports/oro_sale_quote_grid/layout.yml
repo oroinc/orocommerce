@@ -9,3 +9,13 @@ layout:
             id: __datagrid
             optionName: grid_name
             optionValue: frontend-quotes-grid
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.gridViewsOptions.text
+            optionValue: 'oro.sale.quote.label'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_render_parameters.gridViewsOptions.hideTitle
+            optionValue: '.page-title-wrapper'
