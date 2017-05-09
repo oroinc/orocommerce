@@ -39,6 +39,7 @@ class OroProductBundleInstaller implements
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'oro_product_variant_link';
     const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'oro_product_short_desc';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
+    const RELATED_PRODUCTS_TABLE_NAME = 'oro_product_related_products';
 
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
@@ -105,6 +106,7 @@ class OroProductBundleInstaller implements
         $this->createOroProductImageTypeTable($schema);
         $this->createOroProductSlugTable($schema);
         $this->createOroProductSlugPrototypeTable($schema);
+        $this->createRelatedProductsTable($schema);
 
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
@@ -600,6 +602,32 @@ class OroProductBundleInstaller implements
                     'configName' => 'oro_frontend.page_templates',
                 ],
             ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function createRelatedProductsTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::RELATED_PRODUCTS_TABLE_NAME);
+        $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('related_product_id', 'integer', ['notnull' => true]);
+        $table->setPrimaryKey(['product_id', 'related_product_id']);
+        $table->addIndex(['product_id'], 'IDX_B0C000714584665A', []);
+        $table->addIndex(['related_product_id'], 'IDX_B0C00071CF496EEA', []);
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['related_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

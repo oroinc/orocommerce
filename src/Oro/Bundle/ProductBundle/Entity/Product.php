@@ -471,6 +471,17 @@ class Product extends ExtendProduct implements
     protected $images;
 
     /**
+     * @var Collection|Product[]
+     *
+     * @ORM\ManyToMany(targetEntity="Product")
+     * @ORM\JoinTable(name="oro_product_related_products",
+     *     joinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="related_product_id", referencedColumnName="id", onDelete="CASCADE")}
+     * )
+     */
+    protected $relatedProducts;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=32, nullable=false)
@@ -527,6 +538,7 @@ class Product extends ExtendProduct implements
     {
         parent::__construct();
 
+        $this->relatedProducts = new ArrayCollection();
         $this->unitPrecisions = new ArrayCollection();
         $this->names = new ArrayCollection();
         $this->descriptions = new ArrayCollection();
@@ -1261,5 +1273,35 @@ class Product extends ExtendProduct implements
         $this->featured = (bool)$featured;
 
         return $this;
+    }
+
+    /**
+     * @param \Oro\Bundle\ProductBundle\Entity\Product $relatedProduct
+     * @return Product
+     */
+    public function addRelatedProduct(\Oro\Bundle\ProductBundle\Entity\Product $relatedProduct)
+    {
+        $this->relatedProducts[] = $relatedProduct;
+
+        return $this;
+    }
+
+    /**
+     * @param \Oro\Bundle\ProductBundle\Entity\Product $relatedProduct
+     * @return Product
+     */
+    public function removeRelatedProduct(\Oro\Bundle\ProductBundle\Entity\Product $relatedProduct)
+    {
+        $this->relatedProducts->removeElement($relatedProduct);
+
+        return $this;
+    }
+
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getRelatedProducts()
+    {
+        return $this->relatedProducts;
     }
 }
