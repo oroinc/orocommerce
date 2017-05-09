@@ -2,37 +2,6 @@ parameters:
     oro_inventory.entity.inventory_level.class: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
 
 services:
-    oro_inventory.api.processor.product_id.normalize_input:
-        class: 'Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
-        tags:
-            - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%oro_inventory.entity.inventory_level.class%' }
-
-    oro_inventory.api.processor.entity_id.load_data:
-        class: 'Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId'
-        tags:
-            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_inventory.entity.inventory_level.class%' }
-
-    oro_inventory.api.processor.update_inventory_level.build_query:
-        class: 'Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleInventoryLevelQuery'
-        arguments:
-            - '@oro_api.doctrine_helper'
-            - '@oro_api.criteria_connector'
-        tags:
-            - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%oro_inventory.entity.inventory_level.class%' }
-
-    oro_inventory.api.processor.create_inventory_level.normalize_input:
-        class: 'Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData'
-        arguments:
-            - '@oro_api.doctrine_helper'
-        tags:
-            - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_inventory.entity.inventory_level.class%' }
-
-    oro_inventory.api.json_api.processor.fix_product_unit_precision_unit_code_filter:
-        class: 'Oro\Bundle\InventoryBundle\Api\Processor\JsonApi\FixProductUnitPrecisionUnitCodeFilter'
-        tags:
-            - { name: oro.api.processor, action: get_list, group: initialize, requestType: json_api, priority: -59, class: '%oro_inventory.entity.inventory_level.class%' }
-            - { name: oro.api.processor, action: delete_list, group: initialize, requestType: json_api, priority: -59, class: '%oro_inventory.entity.inventory_level.class%' }
-
     oro_inventory.service.fallback_fields_form_view:
         abstract: true
         arguments:

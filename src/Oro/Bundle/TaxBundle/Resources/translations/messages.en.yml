@@ -170,3 +170,6 @@ oro.tax:
             excludingTax.label: Row Total (Excluding Tax)
             taxAmount.label: Row Total (Tax Amount)
         taxes.label: Taxes
+
+    import_export:
+        tax_code_doesnt_exist: Unable to find related tax code for customer "%customer_name%".

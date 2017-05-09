@@ -1,4 +1,15 @@
 oro_behat_extension:
+    suites:
+        OroRFPBundle:
+            contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - OroDataGridBundle::GridContext
+                - OroWorkflowBundle::FeatureContext
+                - OroApplicationBundle::CommerceMainContext
+                - OroRFPBundle::FeatureContext
+            paths:
+                - '@OroRFPBundle/Tests/Behat/Features'
+
     elements:
         RequestForQuote:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote

@@ -152,9 +152,8 @@ Feature: Validate unique variant field values when changing simple products or e
 
     And I go to Products / Products
     And I click Edit shirt_101 in grid
-    And I check "Color"
-    And I check "Size"
-    And I check "Brand"
+    And I fill "ProductForm" with:
+      | Configurable Attributes | [Color, Size, Brand] |
     And I save form
     Then I should see "Product has been saved" flash message
     And I go to Products / Products

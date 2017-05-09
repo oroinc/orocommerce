@@ -24,7 +24,7 @@ PricingBundle
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
 - Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
-- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now. 
+- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now.
 
 ShoppingBundle
 -------------
@@ -36,6 +36,10 @@ UPSBundle
 - Class `Oro\Bundle\UPSBundle\Controller`
     - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
     - method `validateConnection` was renamed to `validateConnectionAction`
+
+OroCMSBundle
+------------
+- Content Blocks functionality was added. Please, see [documentation](./src/Oro/Bundle/CMSBundle/README.md) for more information.
 
 LayoutBundle
 -------------
@@ -108,6 +112,19 @@ FlatRateShippingBundle
 --------------
 - The `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` was deprecated, the `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` was created instead.
 
+RedirectBundle
+--------------
+- Class `Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor` moved to `Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor`
+
 CatalogBundle
 --------------
 - The `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles` was deprecated, the `\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren` was created instead.
+
+ProductBundle
+--------------
+- The method [`ProductContentVariantReindexEventListener::__construct`](https://github.com/orocommerce/orocommerce/blob/1.1.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener") has been updated. Pass `Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener` as a third argument of the method.
+
+PayPalBundle
+------------
+- Form type `\Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `\Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+- Interface `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.

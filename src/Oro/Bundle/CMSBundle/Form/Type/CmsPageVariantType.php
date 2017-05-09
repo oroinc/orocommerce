@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class CmsPageVariantType extends AbstractType
 {
@@ -58,7 +57,7 @@ class CmsPageVariantType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'content_variant_type' => CmsPageContentVariantType::TYPE,

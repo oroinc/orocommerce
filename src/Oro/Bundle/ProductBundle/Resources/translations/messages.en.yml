@@ -48,6 +48,17 @@ oro:
 
         content_variant:
             product_page.label: Product Page
+            product_collection:
+                label: Product Collection
+                segment_edit_button.label: Edit within Web Catalog
+            field:
+                product_collection:
+                    label: Filter
+                    tooltip: Use Filter for Adding Products to the Variant
+            ui:
+                apply_query: Apply the Query
+                reset: Reset
+                filtered_products: Filtered Products
 
         type:
             simple: Simple
@@ -177,6 +188,8 @@ oro:
         system_configuration:
             groups:
                 product.title: 'Product'
+                product_collections.title: 'Product Collections'
+                product_collections_indexation.title: 'Product Collections Indexation'
                 product_unit_rounding.title: 'Product Unit Rounding'
                 product_single_unit_mode.title: 'Product Single Unit Mode'
                 frontend_inventory_statuses_visibility.title: 'Store Frontend'
@@ -199,6 +212,18 @@ oro:
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
                 default_unit_precision.label: 'Default Primary Unit Precision'
+                product_collections_indexation_cron_schedule:
+                    label: 'Indexation Cron Schedule'
+                    tooltip: |
+                        Product collections which have dependencies on other entities in a segment filter segment will be
+                        indexed based on cron schedule to improve system responsiveness.
+                    choice:
+                        every_hour.label: Every hour
+                        every_two_hours.label: Every two hours
+                        every_three_hours.label: Every three hours
+                        every_six_hours.label: Every six hours
+                        every_twelve_hours.label: Every twelve hours
+                        every_day.label: Every day
                 product_image_watermark_file.label: 'File'
                 product_image_watermark_size:
                     label: 'Size'
@@ -390,6 +415,7 @@ oro:
 
     webcatalog:
         contentvariant:
+            product_collection_segment.label: Product Collection Segment
             product_page_product.label: Product
 
     feature:
