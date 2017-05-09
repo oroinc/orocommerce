@@ -495,9 +495,6 @@ class CategoryControllerTest extends WebTestCase
             $newUnitPrecision['precision']
         ;
 
-        $parentCategory = $crawler->filter('[name = "oro_catalog_category[parentCategory]"]')->attr('value');
-        $parameters['oro_catalog_category']['parentCategory'] = $parentCategory;
-
         foreach ($this->localizations as $localization) {
             $locId = $localization->getId();
 
