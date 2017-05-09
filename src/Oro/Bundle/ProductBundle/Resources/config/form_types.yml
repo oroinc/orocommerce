@@ -197,13 +197,6 @@ services:
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
 
-    oro_product.form.type.extension.enum_value_for_product:
-        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
-
     oro_product.form.type.extension.product_collection:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
         arguments:

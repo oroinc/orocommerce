@@ -217,7 +217,7 @@ class ProductController extends Controller
                 'entity' => $product
             ];
         } else {
-            $form = $this->createForm(ProductType::NAME, $product, ['validation_groups'=> false]);
+            $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
             $form->handleRequest($request);
         }
 

@@ -3,7 +3,7 @@
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
-{% set formAction = path('oro_product_create_step_two', { attributeFamilyId: entity.attributeFamily.id})  %}
+{% set formAction = path('oro_product_create_step_two')  %}
 
 {% block navButtons %}
     {{ parent() }}
