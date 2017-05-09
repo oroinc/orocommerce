@@ -1,7 +1,9 @@
 api:
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
-            # totals are calculated using processors
+            form_event_subscriber:
+                - oro_order.form.type.event_listener.subtotals_subscriber
+                - oro_order.api.form_listener.default_website
             actions:
                 create:
                     fields:
@@ -48,5 +50,8 @@ api:
                             exclude: true
 
         Oro\Bundle\OrderBundle\Entity\OrderAddress: ~
-        Oro\Bundle\OrderBundle\Entity\OrderDiscount: ~
+
+        Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+            form_event_subscriber: oro_order.api.form_listener.discount
+
         Oro\Bundle\OrderBundle\Entity\OrderShippingTracking: ~

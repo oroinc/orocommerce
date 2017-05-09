@@ -16,6 +16,7 @@ use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -33,6 +34,9 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     /** @var WebCatalogUsageProviderInterface */
     private $webCatalogUsageProvider;
 
+    /** @var ProductCollectionVariantReindexMessageSendListener */
+    private $messageSendListener;
+
     /**
      * List of fields of ContentNode that this class will listen to changes.
      * If any of fields have any changes, product reindexation will be triggered.
@@ -43,17 +47,20 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param FieldUpdatesChecker      $fieldUpdatesChecker
+     * @param FieldUpdatesChecker $fieldUpdatesChecker
+     * @param ProductCollectionVariantReindexMessageSendListener $messageSendListener
      * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         FieldUpdatesChecker $fieldUpdatesChecker,
+        ProductCollectionVariantReindexMessageSendListener $messageSendListener,
         WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->webCatalogUsageProvider = $webCatalogUsageProvider;
         $this->fieldUpdatesChecker = $fieldUpdatesChecker;
+        $this->messageSendListener = $messageSendListener;
     }
 
     /**
@@ -114,6 +121,23 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
             }
 
             $this->addProduct($entity->getProductPageProduct(), $productIds);
+        }
+    }
+
+    /**
+     * @param array|Collection $entities
+     */
+    private function sendProductCollectionForReindex($entities)
+    {
+        foreach ($entities as $entity) {
+            if (!$entity instanceof ContentVariantInterface
+                || $entity->getType() !== ProductCollectionContentVariantType::TYPE
+                || !$entity->getProductCollectionSegment()
+            ) {
+                continue;
+            }
+
+            $this->messageSendListener->scheduleSegment($entity->getProductCollectionSegment(), true);
         }
     }
 
@@ -203,6 +227,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         if ($isAnyFieldChanged) {
             $this->collectProductIds($entity->getContentVariants(), $productIds);
             $this->collectWebsiteIds($entity->getContentVariants(), $websiteIds);
+            $this->sendProductCollectionForReindex($entity->getContentVariants());
         }
     }
 

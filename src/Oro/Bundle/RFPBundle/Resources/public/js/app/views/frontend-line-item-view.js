@@ -131,8 +131,7 @@ define(function(require) {
             var $prices = this.getElement('fieldPrice');
 
             data.product = this.getProduct();
-            data.comment = this.getElement('fieldComment').val();
-            data.commentChecked = this.getElement('fieldCommentCheckbox').prop('checked');
+            data.comment = this.getComment() || '';
             data.lines = [];
 
             _.each($quantities, function(quantity, i) {
@@ -145,6 +144,17 @@ define(function(require) {
             });
 
             return data;
+        },
+
+        getComment: function() {
+            var commentChecked = this.getElement('fieldCommentCheckbox').prop('checked');
+
+            if (!commentChecked) {
+                this.getElement('fieldComment').val('');
+                return null;
+            }
+
+            return this.getElement('fieldComment').val();
         },
 
         getProduct: function() {

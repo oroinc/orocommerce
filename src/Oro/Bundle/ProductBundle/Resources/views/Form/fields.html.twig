@@ -209,6 +209,77 @@
     {{ form_row(form.productPageProduct) }}
 {% endblock %}
 
+{% block oro_product_collection_variant_widget %}
+    {% set gridWidgetContainerClass = 'product-collection-grid-widget-container-' ~ form.vars.name %}
+    {% set gridWidgetAlias = 'product-collection-products-grid-' ~ form.vars.name %}
+    {% set controlsBlockAlias = 'product-collection-grid-control-' ~ form.vars.name %}
+    {% set gridVisibilityState = form.vars.segmentDefinition is empty ? 'hide' : ''%}
+
+    {% set gridName = oro_datagrid_build_fullname(form.vars.results_grid, form.vars.name) %}
+    {% set resolvedGridName = gridName %}
+    {% if ':' not in gridName  %}
+        {% set resolvedGridName = gridName ~ ':0' %}
+    {% endif %}
+    {% set widgetRouteParameters = {
+        'gridName': gridName,
+        'renderParams': {'routerEnabled': false},
+        'renderParamsTypes': {'routerEnabled': 'bool'},
+        ('sd_' ~ resolvedGridName): form.vars.segmentDefinition
+    } %}
+
+    {% set gridSidebarComponentOptions = {
+        'sidebarAlias': controlsBlockAlias,
+        'widgetAlias': gridWidgetAlias,
+        'widgetRouteParameters': widgetRouteParameters
+    } %}
+
+    {% set productCollectionApplyQueryComponentOptions = {
+        'selectors': {
+            'conditionBuilder': '#' ~ form.productCollectionSegment.vars.id ~ '-condition-builder',
+            'gridWidgetContainer': '.' ~ gridWidgetContainerClass,
+            'reset': '.filter-reset',
+            'apply': '.filter-apply'
+        },
+        'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
+        'controlsBlockAlias': controlsBlockAlias,
+        'gridName': gridName
+    } %}
+    <div data-role="grid-sidebar-component-container">
+        <div id="{{ form.vars.id }}"
+             data-page-component-module="oroproduct/js/app/components/product-collection-apply-query-component"
+             data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}"
+        >
+            {{ form_row(form.productCollectionSegment) }}
+            <div class="{{ controlsBlockAlias }} control-group"
+                 data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+                 data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
+            >
+                <div class="pull-right">
+                    <div class="btn-group">
+                        <a class="btn filter-reset">
+                            {{ 'oro.product.content_variant.ui.reset'|trans }}
+                        </a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-primary filter-apply">
+                            {{ 'oro.product.content_variant.ui.apply_query'|trans }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="{{ gridWidgetContainerClass }} {{ gridVisibilityState }}">
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path('oro_datagrid_widget', widgetRouteParameters),
+                'title': 'oro.product.content_variant.ui.filtered_products'|trans,
+                'alias': gridWidgetAlias
+            }) }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block oro_product_custom_variant_fields_collection_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     <div class="enum-value-collection" {{ UI.renderPageComponentAttributes({

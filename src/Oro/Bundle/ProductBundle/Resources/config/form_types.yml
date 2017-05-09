@@ -172,6 +172,11 @@ services:
         tags:
             - { name: form.type, alias: oro_product_page_variant }
 
+    oro_product.form.type.product_collection_content_variant:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType
+        tags:
+            - { name: form.type, alias: oro_product_collection_variant }
+
     oro_product.product_variant.form.type.frontend_variant_field:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType'
         arguments:
@@ -191,3 +196,18 @@ services:
             - "@oro_product.visibility.product_unit_fields_settings"
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
+
+    oro_product.form.type.extension.enum_value_for_product:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
+
+    oro_product.form.type.extension.product_collection:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
+        arguments:
+            - '@translator'
+            - '%oro_web_catalog.type.content_variant_collection.class%'
+        tags:
+            - { name: form.type_extension, extended_type: '%oro_web_catalog.type.content_variant_collection.class%' }

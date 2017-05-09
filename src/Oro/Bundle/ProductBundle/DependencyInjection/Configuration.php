@@ -21,6 +21,8 @@ class Configuration implements ConfigurationInterface
     const FEATURED_PRODUCTS_SEGMENT_ID = 'featured_products_segment_id';
     const ENABLE_QUICK_ORDER_FORM = 'enable_quick_order_form';
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
+    const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
+    const DEFAULT_CRON_SCHEDULE = '0 * * * *';
 
     /**
      * {@inheritDoc}
@@ -51,6 +53,7 @@ class Configuration implements ConfigurationInterface
                 self::FEATURED_PRODUCTS_SEGMENT_ID => ['value' => null],
                 self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 self::DIRECT_URL_PREFIX => ['value' => ''],
+                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE]
             ]
         );
 

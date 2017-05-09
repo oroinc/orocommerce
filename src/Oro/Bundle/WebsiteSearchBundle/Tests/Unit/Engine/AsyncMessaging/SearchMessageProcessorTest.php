@@ -143,6 +143,23 @@ class SearchMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
     }
 
+    public function testRejectOnJobMessage()
+    {
+        $messageBody = ['class' => null, 'context' => [], 'jobId' => 1];
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+
+        $message->method('getBody')
+            ->will($this->returnValue(json_encode($messageBody)));
+
+        $message->method('getProperty')
+            ->with(MessageQueConfig::PARAMETER_TOPIC_NAME)
+            ->willReturn(AsyncIndexer::TOPIC_REINDEX);
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
+    }
+
     /**
      * @return array
      */
