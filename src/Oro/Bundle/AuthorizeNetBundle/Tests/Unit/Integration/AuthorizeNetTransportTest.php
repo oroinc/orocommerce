@@ -25,16 +25,16 @@ class AuthorizeNetTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSettingsFormType()
     {
-        static::assertSame(AuthorizeNetSettingsType::class, $this->transport->getSettingsFormType());
+        $this->assertSame(AuthorizeNetSettingsType::class, $this->transport->getSettingsFormType());
     }
 
     public function testGetSettingsEntityFQCN()
     {
-        static::assertSame(AuthorizeNetSettings::class, $this->transport->getSettingsEntityFQCN());
+        $this->assertSame(AuthorizeNetSettings::class, $this->transport->getSettingsEntityFQCN());
     }
 
     public function testGetLabelReturnsString()
     {
-        static::assertTrue(is_string($this->transport->getLabel()));
+        $this->assertTrue(is_string($this->transport->getLabel()));
     }
 }

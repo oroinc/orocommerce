@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Method\Config\Provider;
 
+use Psr\Log\LoggerInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\Factory\AuthorizeNetConfigFactoryInterface;
-use Oro\Bundle\AuthorizeNetBundle\Method\Config\Provider\AuthorizeNetConfigProviderInterface;
-use Psr\Log\LoggerInterface;
 
 class AuthorizeNetConfigProvider implements AuthorizeNetConfigProviderInterface
 {
     /**
-     * @var AuthorizeNetConfigInterface[]
+     * @var AuthorizeNetConfigInterface[]|null
      */
-    protected $configs = [];
+    protected $configs;
 
     /**
      * @var string
@@ -29,7 +29,7 @@ class AuthorizeNetConfigProvider implements AuthorizeNetConfigProviderInterface
     /**
      * @var AuthorizeNetConfigFactoryInterface
      */
-    protected $factory;
+    protected $configFactory;
 
     /**
      * @var LoggerInterface
@@ -39,18 +39,18 @@ class AuthorizeNetConfigProvider implements AuthorizeNetConfigProviderInterface
     /**
      * @param ManagerRegistry                    $doctrine
      * @param LoggerInterface                    $logger
-     * @param AuthorizeNetConfigFactoryInterface $factory
+     * @param AuthorizeNetConfigFactoryInterface $configFactory
      * @param string                             $type
      */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
-        AuthorizeNetConfigFactoryInterface $factory,
+        AuthorizeNetConfigFactoryInterface $configFactory,
         $type
     ) {
         $this->doctrine = $doctrine;
         $this->logger = $logger;
-        $this->factory = $factory;
+        $this->configFactory = $configFactory;
         $this->type = $type;
     }
 
@@ -99,7 +99,7 @@ class AuthorizeNetConfigProvider implements AuthorizeNetConfigProviderInterface
         $settings = $this->getEnabledIntegrationSettings();
 
         foreach ($settings as $setting) {
-            $config = $this->factory->createConfig($setting);
+            $config = $this->configFactory->createConfig($setting);
             $configs[$config->getPaymentMethodIdentifier()] = $config;
         }
 
@@ -111,8 +111,8 @@ class AuthorizeNetConfigProvider implements AuthorizeNetConfigProviderInterface
      */
     public function getPaymentConfigs()
     {
-        if (0 === count($this->configs)) {
-            return $this->configs = $this->collectConfigs();
+        if ($this->configs === null) {
+            $this->configs = $this->collectConfigs();
         }
 
         return $this->configs;

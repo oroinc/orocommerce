@@ -4,10 +4,8 @@ namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client;
 
 use JMS\Serializer\Serializer;
 use net\authorize\api\contract\v1\CreateTransactionResponse;
-use net\authorize\api\contract\v1 as AnetAPI;
 
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\Factory\AnetSDKRequestFactory;
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
+use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\Factory\AnetSDKRequestFactoryInterface;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Response\AuthorizeNetSDKResponse;
 
 class AuthorizeNetSDKClient implements ClientInterface
@@ -18,78 +16,38 @@ class AuthorizeNetSDKClient implements ClientInterface
     protected $serializer;
 
     /**
-     * @var AnetSDKRequestFactory
+     * @var AnetSDKRequestFactoryInterface
      */
-    protected $factory;
+    protected $requestFactory;
 
     /**
      * @param Serializer $serializer
-     * @param AnetSDKRequestFactory $factory
+     * @param AnetSDKRequestFactoryInterface $requestFactory
      */
-    public function __construct(Serializer $serializer, AnetSDKRequestFactory $factory)
+    public function __construct(Serializer $serializer, AnetSDKRequestFactoryInterface $requestFactory)
     {
         $this->serializer = $serializer;
-        $this->factory = $factory;
+        $this->requestFactory = $requestFactory;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function send(array $options)
+    public function send($hostAddress, array $options = [])
     {
-        $request = $this->factory->createRequest();
-        $request->setMerchantAuthentication(
-            (new AnetAPI\MerchantAuthenticationType)
-                ->setName($options[Option\ApiLoginId::API_LOGIN_ID])
-                ->setTransactionKey($options[Option\TransactionKey::TRANSACTION_KEY])
-        );
-        $request->setTransactionRequest($this->getTransactionRequest($options));
+        $request = $this->requestFactory->createRequest($options);
+        $controller = $this->requestFactory->createController($request);
 
-        $controller = $this->factory->createController($request);
+        $apiResponse = $controller->executeWithApiResponse($hostAddress);
 
-        $apiResponse = $controller->executeWithApiResponse($options[Option\Environment::ENVIRONMENT]);
         if (!$apiResponse instanceof CreateTransactionResponse) {
-            throw new \LogicException('Authoreze.Net SDK API returned wrong response type.
-                Expected: net\authorize\api\contract\v1\CreateTransactionResponse. Actual: ' .
-                get_class($apiResponse));
+            throw new \LogicException(sprintf(
+                'Authorize.Net SDK API returned wrong response type. Expected: "%s". Actual: "%s"',
+                CreateTransactionResponse::class,
+                get_class($apiResponse)
+            ));
         }
 
         return new AuthorizeNetSDKResponse($this->serializer, $apiResponse);
-    }
-
-    /**
-     * @param array $options
-     * @return AnetAPI\TransactionRequestType
-     */
-    protected function getTransactionRequest(array $options)
-    {
-        $transactionType = $options[Option\Transaction::TRANSACTION_TYPE];
-
-        $transactionRequest = new AnetAPI\TransactionRequestType();
-        $transactionRequest->setTransactionType($transactionType)
-            ->setAmount($options[Option\Amount::AMOUNT])
-            ->setCurrencyCode($options[Option\Currency::CURRENCY]);
-
-        if ($transactionType === Option\Transaction::CAPTURE) {
-            $transactionRequest->setRefTransId($options[Option\OriginalTransaction::ORIGINAL_TRANSACTION]);
-        } else {
-            $transactionRequest->setPayment($this->getPayment($options));
-        }
-
-        return $transactionRequest;
-    }
-
-    /**
-     * @param array $options
-     * @return AnetAPI\PaymentType
-     */
-    protected function getPayment(array $options)
-    {
-        return (new AnetAPI\PaymentType)
-            ->setOpaqueData(
-                (new AnetAPI\OpaqueDataType)
-                    ->setDataDescriptor($options[Option\DataDescriptor::DATA_DESCRIPTOR])
-                    ->setDataValue($options[Option\DataValue::DATA_VALUE])
-            );
     }
 }

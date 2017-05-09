@@ -18,8 +18,7 @@ define(function(require) {
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
-                transitionTrigger: '[data-role="transition-trigger"]',
-                additionalDataContainer: '[name$="[additional_data]"]'
+                transitionTrigger: '[data-role="transition-trigger"]'
             }
         },
 
@@ -34,7 +33,6 @@ define(function(require) {
             this.initializeTriggers();
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
-                this.$additionalDataContainer = this.$form.find(this.options.selectors.additionalDataContainer);
                 this.$form.on('submit', $.proxy(this.onSubmit, this));
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
@@ -58,7 +56,7 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            this.transit(e, {method: 'POST', additionalDataContainer: this.$additionalDataContainer});
+            this.transit(e, {method: 'POST'});
         },
 
         transit: function(e, data) {
@@ -90,6 +88,7 @@ define(function(require) {
 
             if (response.hasOwnProperty('responseData')) {
                 var eventData = {stopped: false, responseData: response.responseData};
+                // FIXME: Inconsistent event name. This is not place-order logic, just "Continue"
                 mediator.trigger('checkout:place-order:response', eventData);
                 if (eventData.stopped) { return; }
             }

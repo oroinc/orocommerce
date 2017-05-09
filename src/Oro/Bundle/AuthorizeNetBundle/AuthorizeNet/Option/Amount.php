@@ -2,39 +2,34 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 
-class Amount implements OptionsDependentInterface
+class Amount implements OptionInterface
 {
     const AMOUNT = 'amount';
 
-    /** {@inheritdoc} */
+    /**
+     * @var bool
+     */
+    protected $requiredOption;
+
+    /**
+     * @param bool $requiredOption
+     */
+    public function __construct($requiredOption = true)
+    {
+        $this->requiredOption = (bool)$requiredOption;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
-        $resolver->setDefined(Amount::AMOUNT)
-            ->addAllowedTypes(Amount::AMOUNT, ['float', 'integer']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplicableDependent(array $options)
-    {
-        if (!isset($options[Transaction::TRANSACTION_TYPE])) {
-            return false;
+        if ($this->requiredOption) {
+            $resolver->setRequired(Amount::AMOUNT);
         }
 
-        return in_array(
-            $options[Transaction::TRANSACTION_TYPE],
-            [Transaction::CHARGE, Transaction::AUTHORIZE],
-            true
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureDependentOption(OptionsResolver $resolver, array $options)
-    {
-        $resolver->setRequired(Amount::AMOUNT)
+        $resolver
+            ->setDefined(Amount::AMOUNT)
             ->addAllowedTypes(Amount::AMOUNT, ['float', 'integer']);
     }
 }

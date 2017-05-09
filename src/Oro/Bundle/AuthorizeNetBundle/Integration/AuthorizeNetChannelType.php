@@ -22,6 +22,6 @@ class AuthorizeNetChannelType implements ChannelInterface, IconAwareIntegrationI
      */
     public function getIcon()
     {
-        return  'bundles/oroauthorizenet/img/authorize-net-logo.png';
+        return 'bundles/oroauthorizenet/img/authorize-net-logo.png';
     }
 }

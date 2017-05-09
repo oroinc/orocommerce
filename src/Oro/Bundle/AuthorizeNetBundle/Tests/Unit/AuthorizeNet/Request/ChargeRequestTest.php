@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\AuthorizeNet\Request;
 
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\AbstractRequest;
+use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\ChargeRequest;
 
 class ChargeRequestTest extends AbstractRequestTest
@@ -22,11 +22,16 @@ class ChargeRequestTest extends AbstractRequestTest
      */
     protected function getOptions()
     {
-        return [];
+        return [
+            Option\Amount::AMOUNT => 10.00,
+            Option\Currency::CURRENCY => Option\Currency::US_DOLLAR,
+            Option\DataDescriptor::DATA_DESCRIPTOR => 'some_data_descriptor',
+            Option\DataValue::DATA_VALUE => 'some_data_value',
+        ];
     }
 
     /**
-     * @return AbstractRequest
+     * {@inheritdoc}
      */
     public function getRequest()
     {

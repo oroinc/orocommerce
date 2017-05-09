@@ -16,7 +16,7 @@ class AuthorizeNetSettingsRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
@@ -24,7 +24,7 @@ class AuthorizeNetSettingsRepositoryTest extends WebTestCase
             ]
         );
 
-        $this->repository = static::getContainer()->get('doctrine')
+        $this->repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass(AuthorizeNetSettings::class)
             ->getRepository(AuthorizeNetSettings::class);
     }

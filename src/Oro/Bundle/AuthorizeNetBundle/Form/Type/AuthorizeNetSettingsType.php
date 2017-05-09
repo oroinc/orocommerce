@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\DataTransformer\EncryptionTransformer;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
@@ -9,17 +10,13 @@ use Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\CardTypesDataProviderInt
 use Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Exception\InvalidOptionsException;
-use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -42,18 +39,18 @@ class AuthorizeNetSettingsType extends AbstractType
     /**
      * @var CardTypesDataProviderInterface
      */
-    private $cardTypesDataProvider;
+    protected $cardTypesDataProvider;
 
     /**
      * @var PaymentActionsDataProviderInterface
      */
-    private $paymentActionsDataProvider;
+    protected $paymentActionsDataProvider;
 
 
     /**
-     * @param TranslatorInterface                 $translator
-     * @param SymmetricCrypterInterface           $encoder
-     * @param CardTypesDataProviderInterface      $cardTypesDataProvider
+     * @param TranslatorInterface $translator
+     * @param SymmetricCrypterInterface $encoder
+     * @param CardTypesDataProviderInterface $cardTypesDataProvider
      * @param PaymentActionsDataProviderInterface $paymentActionsDataProvider
      */
     public function __construct(
@@ -69,11 +66,7 @@ class AuthorizeNetSettingsType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array                $options
-     * @throws InvalidOptionsException
-     * @throws MissingOptionsException
-     * @throws \InvalidArgumentException
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -146,14 +139,13 @@ class AuthorizeNetSettingsType extends AbstractType
                     'required' => false,
                 ]
             );
+
         $this->transformWithEncodedValue($builder, 'apiLoginId');
         $this->transformWithEncodedValue($builder, 'clientKey');
     }
 
     /**
-     * @param OptionsResolver $resolver
-     *
-     * @throws AccessException
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -163,7 +155,7 @@ class AuthorizeNetSettingsType extends AbstractType
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getBlockPrefix()
     {
@@ -172,20 +164,12 @@ class AuthorizeNetSettingsType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param string               $field
-     * @param bool                 $decrypt
-     *
-     * @throws \InvalidArgumentException
+     * @param string $field
      */
-    protected function transformWithEncodedValue(FormBuilderInterface $builder, $field, $decrypt = true)
+    protected function transformWithEncodedValue(FormBuilderInterface $builder, $field)
     {
-        $builder->get($field)->addModelTransformer(new CallbackTransformer(
-            function ($value) use ($decrypt) {
-                return $decrypt ? $this->encoder->decryptData($value) : $value;
-            },
-            function ($value) {
-                return $this->encoder->encryptData($value);
-            }
-        ));
+        // TODO: BB-9260 BAP-14664
+        // TODO: It would be great to have extension which adds this transformer by setting some option
+        $builder->get($field)->addModelTransformer(new EncryptionTransformer($this->encoder));
     }
 }

@@ -155,7 +155,7 @@ class PaymentTransaction implements DatesAwareInterface
 
     /**
      * @var array
-     * @ORM\Column(name="transaction_options", type="array", nullable=true)
+     * @ORM\Column(name="transaction_options", type="secure_array", nullable=true)
      */
     protected $transactionOptions;
 

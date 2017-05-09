@@ -8,14 +8,17 @@ class BasicCardTypesDataProvider implements CardTypesDataProviderInterface
      * @internal
      */
     const VISA = 'visa';
+
     /**
      * @internal
      */
     const MASTERCARD = 'mastercard';
+
     /**
      * @internal
      */
     const DISCOVER = 'discover';
+
     /**
      * @internal
      */

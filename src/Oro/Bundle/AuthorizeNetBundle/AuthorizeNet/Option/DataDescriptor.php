@@ -6,7 +6,9 @@ class DataDescriptor implements OptionInterface
 {
     const DATA_DESCRIPTOR = 'data_descriptor';
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

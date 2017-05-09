@@ -6,7 +6,9 @@ class ApiLoginId implements OptionInterface
 {
     const API_LOGIN_ID = 'api_login_id';
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

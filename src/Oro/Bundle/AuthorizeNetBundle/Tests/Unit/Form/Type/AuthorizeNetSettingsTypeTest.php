@@ -91,7 +91,7 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefixReturnsCorrectString()
     {
-        static::assertSame(AuthorizeNetSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        $this->assertSame(AuthorizeNetSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 
     public function testSubmit()
@@ -109,7 +109,7 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
         ];
 
         $this->encoder
-            ->expects(static::any())
+            ->expects($this->any())
             ->method('encryptData')
             ->willReturnMap(
                 [
@@ -125,15 +125,15 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
 
         $form->submit($submitData);
 
-        static::assertTrue($form->isValid());
-        static::assertEquals($authorizeNetSettings, $form->getData());
+        $this->assertTrue($form->isValid());
+        $this->assertEquals($authorizeNetSettings, $form->getData());
     }
 
     public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects(static::once())
+        $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [

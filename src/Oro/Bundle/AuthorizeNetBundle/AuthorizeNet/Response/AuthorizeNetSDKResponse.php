@@ -24,6 +24,10 @@ class AuthorizeNetSDKResponse implements ResponseInterface
      */
     protected $serializer;
 
+    /**
+     * @param Serializer $serializer
+     * @param CreateTransactionResponse $apiResponse
+     */
     public function __construct(Serializer $serializer, CreateTransactionResponse $apiResponse)
     {
         $this->serializer = $serializer;
@@ -36,6 +40,7 @@ class AuthorizeNetSDKResponse implements ResponseInterface
     public function isSuccessful()
     {
         $transactionResponse = $this->apiResponse->getTransactionResponse();
+
         return $transactionResponse && $transactionResponse->getResponseCode() === '1';
     }
 
@@ -45,6 +50,7 @@ class AuthorizeNetSDKResponse implements ResponseInterface
     public function getReference()
     {
         $transactionResponse = $this->apiResponse->getTransactionResponse();
+
         return $transactionResponse ? $transactionResponse->getTransId() : null;
     }
 
@@ -112,6 +118,7 @@ class AuthorizeNetSDKResponse implements ResponseInterface
         if ($this->apiResponseSerialized === null) {
             $this->apiResponseSerialized = $this->cleanup($this->serializer->toArray($this->apiResponse));
         }
+
         return $this->apiResponseSerialized;
     }
 
@@ -129,6 +136,7 @@ class AuthorizeNetSDKResponse implements ResponseInterface
                 unset($response[$key]);
             }
         }
+
         return $response;
     }
 }

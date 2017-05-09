@@ -16,11 +16,11 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
 {
     use LoggerAwareTrait;
 
-    const ZERO_AMOUNT = 0;
     const AMOUNT_PRECISION = 2;
-    const API_CREDENTIALS_DELIMITER = ';';
+    const DATA_DESCRIPTOR = 'dataDescriptor';
+    const DATA_VALUE = 'dataValue';
 
-    /**@var Gateway */
+    /** @var Gateway */
     protected $gateway;
 
     /** @var AuthorizeNetConfigInterface */
@@ -55,6 +55,7 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     public function isApplicable(PaymentContextInterface $context)
     {
         $request = $this->requestStack->getCurrentRequest();
+
         return !$request || $request->isSecure();
     }
 
@@ -81,16 +82,7 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
 
         $this->gateway->setTestMode($this->config->isTestMode());
 
-        switch ($action) {
-            case self::VALIDATE:
-                return $this->validate($paymentTransaction);
-            case self::PURCHASE:
-                return $this->purchase($paymentTransaction);
-            case self::CAPTURE:
-                return $this->capture($paymentTransaction);
-            default:
-                return $this->executePaymentAction($action, $paymentTransaction) ?: [];
-        }
+        return $this->{$action}($paymentTransaction) ?: [];
     }
 
     /**
@@ -100,8 +92,8 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     protected function validate(PaymentTransaction $paymentTransaction)
     {
         $paymentTransaction
-            ->setAmount(self::ZERO_AMOUNT)
-            ->setCurrency(Option\Currency::US_DOLLAR)
+            ->setAmount(0)
+            ->setCurrency('')
             ->setAction(PaymentMethodInterface::VALIDATE)
             ->setActive(true)
             ->setSuccessful(true);
@@ -115,8 +107,13 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
      */
     protected function purchase(PaymentTransaction $paymentTransaction)
     {
+        $request = array_merge(
+            $this->getPaymentOptions($paymentTransaction),
+            $this->getOpaqueCredentials($paymentTransaction)
+        );
+
         $paymentTransaction
-            ->setRequest($this->getPaymentOptions($paymentTransaction))
+            ->setRequest($request)
             ->setAction($this->config->getPurchaseAction());
 
         return $this->executePaymentAction($paymentTransaction->getAction(), $paymentTransaction);
@@ -126,27 +123,44 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
      * @param PaymentTransaction $paymentTransaction
      * @return array
      */
+    protected function authorize(PaymentTransaction $paymentTransaction)
+    {
+        return $this->executePaymentAction(self::AUTHORIZE, $paymentTransaction);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function charge(PaymentTransaction $paymentTransaction)
+    {
+        return $this->executePaymentAction(self::CHARGE, $paymentTransaction);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
     protected function capture(PaymentTransaction $paymentTransaction)
     {
-        $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        $authorizeTransaction = $paymentTransaction->getSourcePaymentTransaction();
 
-        if (!$sourceTransaction) {
-            $paymentTransaction->setSuccessful(false)->setActive(false);
+        if (!$authorizeTransaction) {
+            $paymentTransaction
+                ->setSuccessful(false)
+                ->setActive(false);
 
             return ['successful' => false];
         }
 
-        $options = $this->getPaymentOptions($paymentTransaction->getSourcePaymentTransaction());
-        $options[Option\OriginalTransaction::ORIGINAL_TRANSACTION] = $sourceTransaction->getReference();
+        $options = $this->getPaymentOptions($authorizeTransaction);
+        $options[Option\OriginalTransaction::ORIGINAL_TRANSACTION] = $authorizeTransaction->getReference();
 
-        $paymentTransaction
-            ->setRequest($options)
-            ->setAction(self::CAPTURE);
-
+        $paymentTransaction->setRequest($options);
         $result = $this->executePaymentAction(self::CAPTURE, $paymentTransaction);
 
         $paymentTransaction->setActive(false);
-        $sourceTransaction->setActive(!$paymentTransaction->isSuccessful());
+        $authorizeTransaction->setActive(!$paymentTransaction->isSuccessful());
 
         return $result;
     }
@@ -160,7 +174,7 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     {
         $response = $this->gateway->request(
             $this->getTransactionType($action),
-            $this->combineOptions((array)$paymentTransaction->getRequest())
+            $this->combineOptions($paymentTransaction->getRequest())
         );
 
         $paymentTransaction
@@ -169,7 +183,7 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
             ->setReference($response->getReference())
             ->setResponse($response->getData());
 
-        if (!$response->isSuccessful() && $this->logger) {
+        if ($this->logger && !$response->isSuccessful()) {
             $this->logger->critical($response->getMessage());
         }
 
@@ -185,14 +199,23 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
      */
     protected function getPaymentOptions(PaymentTransaction $paymentTransaction)
     {
-        list($dataDescriptor, $dataValue) = $this->extractOpaqueCreditCardCredentials($paymentTransaction);
-
         return [
-            Option\DataDescriptor::DATA_DESCRIPTOR => $dataDescriptor,
-            Option\DataValue::DATA_VALUE => $dataValue,
-            //TODO: consider using RoundingServiceInterface
             Option\Amount::AMOUNT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
+        ];
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getOpaqueCredentials(PaymentTransaction $paymentTransaction)
+    {
+        $opaqueData = $this->extractOpaqueCreditCardCredentials($paymentTransaction);
+
+        return [
+            Option\DataDescriptor::DATA_DESCRIPTOR => $opaqueData[self::DATA_DESCRIPTOR],
+            Option\DataValue::DATA_VALUE => $opaqueData[self::DATA_VALUE],
         ];
     }
 
@@ -203,12 +226,20 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     protected function combineOptions(array $options = [])
     {
         return array_replace(
-            [
-                Option\ApiLoginId::API_LOGIN_ID => $this->config->getApiLoginId(),
-                Option\TransactionKey::TRANSACTION_KEY => $this->config->getTransactionKey(),
-            ],
+            $this->getCredentials(),
             $options
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCredentials()
+    {
+        return [
+            Option\ApiLoginId::API_LOGIN_ID => $this->config->getApiLoginId(),
+            Option\TransactionKey::TRANSACTION_KEY => $this->config->getTransactionKey(),
+        ];
     }
 
     /**
@@ -242,12 +273,37 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
         if (!$sourceTransaction) {
             throw new \LogicException('Cant extract required opaque credit card credentials from transaction');
         }
+
         $options = $sourceTransaction->getTransactionOptions();
-        if (empty($options['additionalData']) ||
-            strpos($options['additionalData'], self::API_CREDENTIALS_DELIMITER) === false
-        ) {
+        if (!array_key_exists('additionalData', $options)) {
             throw new \LogicException('Cant extract required opaque credit card credentials from transaction');
         }
-        return explode(self::API_CREDENTIALS_DELIMITER, $options['additionalData']);
+
+        $additionalData = json_decode($options['additionalData'], true);
+
+        if (!is_array($additionalData)) {
+            throw new \LogicException('Additional data must be an array');
+        }
+
+        $this->assertOpaqueData($additionalData, self::DATA_DESCRIPTOR);
+        $this->assertOpaqueData($additionalData, self::DATA_VALUE);
+
+        return array_intersect_key($additionalData, array_flip([self::DATA_DESCRIPTOR, self::DATA_VALUE]));
+    }
+
+    /**
+     * @param array $additionalData
+     * @param string $fieldName
+     * @throws \LogicException
+     */
+    private function assertOpaqueData(array $additionalData, $fieldName)
+    {
+
+        if (!array_key_exists($fieldName, $additionalData)) {
+            throw new \LogicException(sprintf(
+                'Can not find field "%s" in additional data',
+                $fieldName
+            ));
+        }
     }
 }

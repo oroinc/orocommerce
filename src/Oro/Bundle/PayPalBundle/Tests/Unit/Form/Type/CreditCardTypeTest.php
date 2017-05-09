@@ -9,7 +9,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType;
+use Oro\Bundle\PayPalBundle\Form\Type\CreditCardExpirationDateType;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 
 class CreditCardTypeTest extends FormIntegrationTestCase

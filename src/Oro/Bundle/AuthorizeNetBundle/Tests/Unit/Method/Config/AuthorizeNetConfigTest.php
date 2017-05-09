@@ -5,7 +5,6 @@ namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\Method\Config;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfig;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 
 class AuthorizeNetConfigTest extends AbstractPaymentConfigTestCase
 {
@@ -28,8 +27,8 @@ class AuthorizeNetConfigTest extends AbstractPaymentConfigTestCase
             AuthorizeNetConfig::TEST_MODE_KEY => true,
             AuthorizeNetConfig::PURCHASE_ACTION_KEY => 'authorize',
             AuthorizeNetConfig::CLIENT_KEY => 'client key',
-            Option\ApiLoginId::API_LOGIN_ID => 'api login id',
-            Option\TransactionKey::TRANSACTION_KEY => 'trans key',
+            AuthorizeNetConfig::API_LOGIN_ID => 'api login id',
+            AuthorizeNetConfig::TRANSACTION_KEY => 'trans key',
         ];
 
         return new AuthorizeNetConfig($params);

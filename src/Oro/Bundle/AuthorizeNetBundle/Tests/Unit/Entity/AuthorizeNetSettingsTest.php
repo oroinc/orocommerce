@@ -15,7 +15,7 @@ class AuthorizeNetSettingsTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessors()
     {
-        static::assertPropertyAccessors(
+        $this->assertPropertyAccessors(
             new AuthorizeNetSettings(),
             [
                 ['apiLoginId', 'some string'],
@@ -27,7 +27,7 @@ class AuthorizeNetSettingsTest extends \PHPUnit_Framework_TestCase
                 ['allowedCreditCardTypes', ['visa']],
             ]
         );
-        static::assertPropertyCollections(
+        $this->assertPropertyCollections(
             new AuthorizeNetSettings(),
             [
                 ['creditCardLabels', new LocalizedFallbackValue()],
@@ -57,26 +57,26 @@ class AuthorizeNetSettingsTest extends \PHPUnit_Framework_TestCase
         /** @var ParameterBag $result */
         $result = $entity->getSettingsBag();
 
-        static::assertEquals('some login', $result->get('api_login_id'));
-        static::assertEquals('some transaction key', $result->get('transaction_key'));
-        static::assertEquals('some client key', $result->get('client_key'));
-        static::assertEquals(true, $result->get('test_mode'));
-        static::assertEquals(false, $result->get('require_cvv_entry'));
+        $this->assertEquals('some login', $result->get('api_login_id'));
+        $this->assertEquals('some transaction key', $result->get('transaction_key'));
+        $this->assertEquals('some client key', $result->get('client_key'));
+        $this->assertEquals(true, $result->get('test_mode'));
+        $this->assertEquals(false, $result->get('require_cvv_entry'));
 
-        static::assertEquals(
+        $this->assertEquals(
             $result->get('allowed_credit_card_types'),
             $entity->getAllowedCreditCardTypes()
         );
-        static::assertEquals(
+        $this->assertEquals(
             $result->get('credit_card_payment_action'),
             $entity->getCreditCardPaymentAction()
         );
 
-        static::assertEquals(
+        $this->assertEquals(
             $result->get('credit_card_labels'),
             $entity->getCreditCardLabels()
         );
-        static::assertEquals(
+        $this->assertEquals(
             $result->get('credit_card_short_labels'),
             $entity->getCreditCardShortLabels()
         );

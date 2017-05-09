@@ -35,7 +35,13 @@ oro:
         methods:
             credit_card.label: 'Credit card'
 
-        errors:
-            communication_err: 'Authorize.Net communication error.'
-
-
+        credit_card:
+            card_number.label: Credit Card Number
+            expiration_date.label: Expiration Date
+            cvv2.label: CVV
+            whats_this: "What's this?"
+            tooltip: |
+                The verification number is a 3-digit
+                number printed on the back of your card.
+                The American Express security code is a 4-digit
+                number printed on the front of your card.

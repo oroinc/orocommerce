@@ -12,7 +12,7 @@ class AuthorizeNetMethodProvider extends AbstractPaymentMethodProvider
     /**
      * @var AuthorizeNetPaymentMethodFactoryInterface
      */
-    private $factory;
+    private $paymentMethodFactory;
 
     /**
      * @var AuthorizeNetConfigProviderInterface
@@ -21,15 +21,15 @@ class AuthorizeNetMethodProvider extends AbstractPaymentMethodProvider
 
     /**
      * @param AuthorizeNetConfigProviderInterface $configProvider
-     * @param AuthorizeNetPaymentMethodFactoryInterface $factory
+     * @param AuthorizeNetPaymentMethodFactoryInterface $paymentMethodFactory
      */
     public function __construct(
         AuthorizeNetConfigProviderInterface $configProvider,
-        AuthorizeNetPaymentMethodFactoryInterface $factory
+        AuthorizeNetPaymentMethodFactoryInterface $paymentMethodFactory
     ) {
         parent::__construct();
         $this->configProvider = $configProvider;
-        $this->factory = $factory;
+        $this->paymentMethodFactory = $paymentMethodFactory;
     }
 
     /**
@@ -39,18 +39,18 @@ class AuthorizeNetMethodProvider extends AbstractPaymentMethodProvider
     {
         $configs = $this->configProvider->getPaymentConfigs();
         foreach ($configs as $config) {
-            $this->addCreditCardMethod($config);
+            $this->addPaymentMethod($config);
         }
     }
 
     /**
      * @param AuthorizeNetConfigInterface $config
      */
-    protected function addCreditCardMethod(AuthorizeNetConfigInterface $config)
+    protected function addPaymentMethod(AuthorizeNetConfigInterface $config)
     {
         $this->addMethod(
             $config->getPaymentMethodIdentifier(),
-            $this->factory->create($config)
+            $this->paymentMethodFactory->create($config)
         );
     }
 }

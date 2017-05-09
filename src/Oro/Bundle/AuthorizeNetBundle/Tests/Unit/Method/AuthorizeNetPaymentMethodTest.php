@@ -35,64 +35,69 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
     /** @var Serializer|\PHPUnit_Framework_MockObject_MockObject */
     protected $serializer;
 
-    /** @var  CreateTransactionResponse|\PHPUnit_Framework_MockObject_MockObject */
-    protected $apiResponse;
-
-    /** @var  RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestStack;
 
     protected function setUp()
     {
         $this->gateway = $this->createMock(Gateway::class);
-
         $this->paymentConfig = $this->createMock(AuthorizeNetConfigInterface::class);
-
         $this->requestStack = $this->createMock(RequestStack::class);
 
         $this->method = new AuthorizeNetPaymentMethod($this->gateway, $this->paymentConfig, $this->requestStack);
 
         $this->serializer = $this->createMock(Serializer::class);
-
-        $this->apiResponse = $this->createMock(CreateTransactionResponse::class);
     }
 
     /**
-     * @dataProvider paymentActionDataProvider
-     * @param string $paymentAction
-     * @param string $authorizePaymentAction
-     * @param bool $requestResult
+     * @dataProvider purchaseExecuteProvider
+     * @param string $purchaseAction
+     * @param string $gatewayTransactionType
+     * @param bool $requestSuccessful
      * @param string $expectedMessage
      * @param string|null $transId
+     * @param array $responseArray
      */
-    public function testExecute(
-        $paymentAction,
-        $authorizePaymentAction,
-        $requestResult,
+    public function testPurchaseExecute(
+        $purchaseAction,
+        $gatewayTransactionType,
+        $requestSuccessful,
         $expectedMessage,
         $transId,
-        $responseArray
+        array $responseArray
     ) {
-        $transaction = $this->preparePaymentTransaction(PaymentMethodInterface::PURCHASE);
+        $testMode = false;
+        $transaction = $this->createPaymentTransaction(PaymentMethodInterface::PURCHASE);
 
-        $this->paymentConfig->expects($this->any())->method('isTestMode')->willReturn(false);
         $this->paymentConfig->expects($this->any())
-            ->method('getPurchaseAction')->willReturn($paymentAction);
+            ->method('isTestMode')
+            ->willReturn($testMode);
 
-        $this->gateway->expects($this->once())->method('setTestMode')
-            ->with($this->paymentConfig->isTestMode());
-        $this->gateway->expects($this->once())->method('request')->with($authorizePaymentAction)
-            ->willReturn($this->prepareSDKResponse($requestResult));
+        $this->paymentConfig->expects($this->any())
+            ->method('getPurchaseAction')
+            ->willReturn($purchaseAction);
+
+        $this->gateway->expects($this->once())
+            ->method('setTestMode')
+            ->with($testMode);
+
+        $response = $this->prepareSDKResponse($requestSuccessful);
+
+        $this->gateway->expects($this->once())
+            ->method('request')
+            ->with($gatewayTransactionType)
+            ->willReturn($response);
 
         $this->assertEquals(
             [
                 'message' => $expectedMessage,
-                'successful' => $requestResult,
+                'successful' => $requestSuccessful,
             ],
             $this->method->execute($transaction->getAction(), $transaction)
         );
 
-        $this->assertSame($requestResult, $transaction->isSuccessful());
-        $this->assertSame($requestResult, $transaction->isActive());
+        $this->assertSame($requestSuccessful, $transaction->isSuccessful());
+        $this->assertSame($requestSuccessful, $transaction->isActive());
         $this->assertSame($transId, $transaction->getReference());
         $this->assertSame($responseArray, $transaction->getResponse());
     }
@@ -109,33 +114,146 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $this->method->execute($transaction->getAction(), $transaction);
     }
 
-    public function testCapture()
-    {
-        $sourceTransaction = $this->preparePaymentTransaction(PaymentMethodInterface::AUTHORIZE);
-        $transaction = (new PaymentTransaction)
-            ->setSourcePaymentTransaction($sourceTransaction)
-            ->setAction(PaymentMethodInterface::CAPTURE);
 
-        $this->paymentConfig->expects($this->any())->method('isTestMode')->willReturn(false);
+    /**
+     * @dataProvider executeProvider
+     * @param string $paymentAction
+     * @param string $gatewayTransactionType
+     * @param bool $requestSuccessful
+     * @param string $expectedMessage
+     * @param string|null $transId
+     * @param array $responseArray
+     */
+    public function testExecute(
+        $paymentAction,
+        $gatewayTransactionType,
+        $requestSuccessful,
+        $expectedMessage,
+        $transId,
+        array $responseArray
+    ) {
+        $testMode = false;
+        $transaction = $this->createPaymentTransaction($paymentAction);
+
         $this->paymentConfig->expects($this->any())
-            ->method('getPurchaseAction')->willReturn(PaymentMethodInterface::CAPTURE);
+            ->method('isTestMode')
+            ->willReturn($testMode);
 
-        $this->gateway->expects($this->once())->method('setTestMode')
-            ->with($this->paymentConfig->isTestMode());
-        $this->gateway->expects($this->once())->method('request')->with(Transaction::CAPTURE)
-            ->willReturn($this->prepareSDKResponse(true));
+        $this->gateway->expects($this->once())
+            ->method('setTestMode')
+            ->with($testMode);
+
+        $response = $this->prepareSDKResponse($requestSuccessful);
+
+        $this->gateway->expects($this->once())
+            ->method('request')
+            ->with($gatewayTransactionType)
+            ->willReturn($response);
 
         $this->assertEquals(
             [
-                'message' => '(1) success',
-                'successful' => true,
+                'message' => $expectedMessage,
+                'successful' => $requestSuccessful,
             ],
             $this->method->execute($transaction->getAction(), $transaction)
         );
 
-        $this->assertSame(true, $transaction->isSuccessful());
-        $this->assertSame(false, $transaction->isActive());
-        $this->assertSame(false, $transaction->getSourcePaymentTransaction()->isActive());
+        $this->assertSame($requestSuccessful, $transaction->isSuccessful());
+        $this->assertSame($requestSuccessful, $transaction->isActive());
+        $this->assertSame($transId, $transaction->getReference());
+        $this->assertSame($responseArray, $transaction->getResponse());
+    }
+
+    /**
+     * @return array
+     */
+    public function executeProvider()
+    {
+        return [
+            'successful charge' => [
+                'paymentAction' => PaymentMethodInterface::CHARGE,
+                'gatewayTransactionType' => Transaction::CHARGE,
+                'requestSuccessful' => true,
+                'expectedMessage' => '(1) success',
+                'transId' => '111',
+                'responseArray' => ['1', 'success', '111'],
+            ],
+            'successful authorize' => [
+                'paymentAction' => PaymentMethodInterface::AUTHORIZE,
+                'gatewayTransactionType' => Transaction::AUTHORIZE,
+                'requestSuccessful' => true,
+                'expectedMessage' => '(1) success',
+                'transId' => '111',
+                'responseArray' => ['1', 'success', '111'],
+            ],
+        ];
+    }
+
+    public function testCapture()
+    {
+        $authorizeTransaction = $this->createPaymentTransaction(PaymentMethodInterface::AUTHORIZE);
+        $transaction = (new PaymentTransaction)
+            ->setSourcePaymentTransaction($authorizeTransaction)
+            ->setAction(PaymentMethodInterface::CAPTURE);
+
+        $testMode = false;
+
+        $this->paymentConfig->expects($this->any())
+            ->method('isTestMode')
+            ->willReturn($testMode);
+
+        $this->paymentConfig->expects($this->any())
+            ->method('getPurchaseAction')
+            ->willReturn(PaymentMethodInterface::CAPTURE);
+
+        $this->gateway->expects($this->once())
+            ->method('setTestMode')
+            ->with($testMode);
+
+        $response = $this->prepareSDKResponse(true);
+
+        $this->gateway->expects($this->once())
+            ->method('request')
+            ->with(Transaction::CAPTURE)
+            ->willReturn($response);
+
+        $result = $this->method->execute($transaction->getAction(), $transaction);
+        $this->assertArrayHasKey('message', $result);
+        $this->assertSame('(1) success', $result['message']);
+
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertTrue($result['successful']);
+
+        $this->assertTrue($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+        $this->assertNotNull($transaction->getSourcePaymentTransaction());
+        $this->assertFalse($transaction->getSourcePaymentTransaction()->isActive());
+    }
+
+    public function testValidate()
+    {
+        $validateTransaction = $this->createPaymentTransaction(PaymentMethodInterface::VALIDATE);
+
+        $testMode = false;
+
+        $this->paymentConfig->expects($this->any())
+            ->method('isTestMode')
+            ->willReturn($testMode);
+
+        $this->gateway->expects($this->once())
+            ->method('setTestMode')
+            ->with($testMode);
+
+        $result = $this->method->execute($validateTransaction->getAction(), $validateTransaction);
+
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertTrue($result['successful']);
+
+        $this->assertTrue($validateTransaction->isSuccessful());
+        $this->assertTrue($validateTransaction->isActive());
+        $this->assertEquals(PaymentMethodInterface::VALIDATE, $validateTransaction->getAction());
+        $this->assertEquals(0, $validateTransaction->getAmount());
+        $this->assertEquals('', $validateTransaction->getCurrency());
     }
 
     public function testCaptureWithoutSourcePaymentAction()
@@ -143,33 +261,65 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $transaction = (new PaymentTransaction)
             ->setAction(PaymentMethodInterface::CAPTURE);
 
-        $this->paymentConfig->expects($this->any())->method('isTestMode')->willReturn(false);
+        $testMode = false;
 
-        $this->gateway->expects($this->once())->method('setTestMode')
-            ->with($this->paymentConfig->isTestMode());
+        $this->paymentConfig->expects($this->any())
+            ->method('isTestMode')
+            ->willReturn($testMode);
 
-        $this->gateway->expects($this->never())->method('request');
+        $this->gateway->expects($this->once())
+            ->method('setTestMode')
+            ->with($testMode);
 
-        $this->assertEquals(
-            ['successful' => false],
-            $this->method->execute($transaction->getAction(), $transaction)
-        );
+        $this->gateway->expects($this->never())
+            ->method('request');
 
-        $this->assertSame(false, $transaction->isSuccessful());
-        $this->assertSame(false, $transaction->isActive());
+        $result = $this->method->execute($transaction->getAction(), $transaction);
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertFalse($result['successful']);
+
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
     }
 
     /**
-     * @dataProvider wrongCredentialsProvider
-     * @param mixed $transactionOptions
+     * @dataProvider incorrectAdditionalDataProvider
+     * @param string $expectedExceptionMessage
+     * @param array|null $transactionOptions
      * @expectedException \LogicException
-     * @expectedExceptionMessage Cant extract required opaque credit card credentials from transaction
      */
-    public function testEmptyCredentials($transactionOptions)
+    public function testIncorrectAdditionalData($expectedExceptionMessage, array $transactionOptions = null)
     {
-        $transaction = $this->preparePaymentTransaction(PaymentMethodInterface::PURCHASE);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+
+        $transaction = $this->createPaymentTransaction(PaymentMethodInterface::PURCHASE);
         $transaction->getSourcePaymentTransaction()->setTransactionOptions($transactionOptions);
         $this->method->execute($transaction->getAction(), $transaction);
+    }
+
+    public function testCorrectAdditionalData()
+    {
+        $transactionOptions = [
+            'additionalData' => json_encode([
+                'dataDescriptor' => 'dataDescriptorValue',
+                'dataValue' => 'dataValueValue',
+            ])
+        ];
+
+        $response = $this->prepareSDKResponse(true);
+        $this->gateway->expects($this->once())
+            ->method('request')
+            ->willReturn($response);
+
+        $this->paymentConfig->expects($this->any())
+            ->method('getPurchaseAction')
+            ->willReturn(PaymentMethodInterface::AUTHORIZE);
+
+
+        $transaction = $this->createPaymentTransaction(PaymentMethodInterface::PURCHASE);
+        $transaction->getSourcePaymentTransaction()->setTransactionOptions($transactionOptions);
+        $result = $this->method->execute($transaction->getAction(), $transaction);
+        $this->assertInternalType('array', $result);
     }
 
     /**
@@ -187,17 +337,24 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
     {
         $isConnectionSecure = true;
         $request = $this->createMock(Request::class);
-        $request->expects($this->once())->method('isSecure')->willReturn($isConnectionSecure);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $request->expects($this->once())
+            ->method('isSecure')
+            ->willReturn($isConnectionSecure);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $this->assertSame($isConnectionSecure, $this->method->isApplicable($context));
+        $this->assertTrue($this->method->isApplicable($context));
     }
 
     public function testIsApplicableWithoutCurrentRequest()
     {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn(null);
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
@@ -209,17 +366,18 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $this->paymentConfig->expects($this->once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn('authorize_net');
+
         $this->assertSame('authorize_net', $this->method->getIdentifier());
     }
 
     /**
-     * @param bool $requestResult
+     * @param bool $requestSuccessful
      * @return AuthorizeNetSDKResponse
      */
-    protected function prepareSDKResponse($requestResult = true)
+    protected function prepareSDKResponse($requestSuccessful)
     {
         $transactionResponse = new TransactionResponseType();
-        if ($requestResult === true) {
+        if ($requestSuccessful === true) {
             $responseCode = '1';
             $message = 'success';
             $transactionId = '111';
@@ -239,50 +397,72 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $transactionResponse->setResponseCode($responseCode);
         $transactionResponse->setTransId($transactionId);
 
-        $this->apiResponse->expects($this->once())->method('getMessages')->willReturn($apiMessageType);
-        $this->apiResponse->expects($this->any())->method('getTransactionResponse')
+        $apiResponse = $this->createMock(CreateTransactionResponse::class);
+        $apiResponse->expects($this->once())
+            ->method('getMessages')
+            ->willReturn($apiMessageType);
+
+        $apiResponse->expects($this->any())
+            ->method('getTransactionResponse')
             ->willReturn($transactionResponse);
 
         $this->serializer->expects($this->once())
             ->method('toArray')
-            ->with($this->apiResponse)
+            ->with($apiResponse)
             ->willReturn([$responseCode, $message, $transactionId]);
 
-        return new AuthorizeNetSDKResponse($this->serializer, $this->apiResponse);
+        return new AuthorizeNetSDKResponse($this->serializer, $apiResponse);
     }
 
     /**
-     * @param $paymentAction
+     * @param string $paymentAction
      * @return PaymentTransaction
      */
-    protected function preparePaymentTransaction($paymentAction)
+    protected function createPaymentTransaction($paymentAction)
     {
-        $sourcePaymentTransaction = (new PaymentTransaction)
-            ->setTransactionOptions(['additionalData' => 'apiLoginId;transKey']);
+        $sourcePaymentTransaction = new PaymentTransaction();
+        $additionalData = [
+            'dataDescriptor' => 'data_descriptor_value',
+            'dataValue' => 'data_value_value'
+        ];
 
-        return (new PaymentTransaction)
+        $sourcePaymentTransaction
+            ->setTransactionOptions(['additionalData' => json_encode($additionalData)]);
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
             ->setAction($paymentAction)
             ->setSourcePaymentTransaction($sourcePaymentTransaction);
+
+        return $paymentTransaction;
     }
 
     /**
      * @return array
      */
-    public function paymentActionDataProvider()
+    public function purchaseExecuteProvider()
     {
         return [
-            [
-                'paymentAction' => PaymentMethodInterface::CHARGE,
-                'authorizePaymentAction' => Transaction::CHARGE,
-                'requestResult' => true,
+            'successful charge' => [
+                'purchaseAction' => PaymentMethodInterface::CHARGE,
+                'gatewayTransactionType' => Transaction::CHARGE,
+                'requestSuccessful' => true,
                 'expectedMessage' => '(1) success',
                 'transId' => '111',
                 'responseArray' => ['1', 'success', '111'],
             ],
-            [
-                'paymentAction' => PaymentMethodInterface::AUTHORIZE,
-                'authorizePaymentAction' => Transaction::AUTHORIZE,
-                'requestResult' => false,
+            'successful authorize' => [
+                'purchaseAction' => PaymentMethodInterface::AUTHORIZE,
+                'gatewayTransactionType' => Transaction::AUTHORIZE,
+                'requestSuccessful' => true,
+                'expectedMessage' => '(1) success',
+                'transId' => '111',
+                'responseArray' => ['1', 'success', '111'],
+            ],
+            'unsuccessful authorize' => [
+                'purchaseAction' => PaymentMethodInterface::AUTHORIZE,
+                'gatewayTransactionType' => Transaction::AUTHORIZE,
+                'requestSuccessful' => false,
                 'expectedMessage' => '(0) fail',
                 'transId' => null,
                 'responseArray' => ['0', 'fail', null],
@@ -307,17 +487,32 @@ class AuthorizeNetPaymentMethodTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function wrongCredentialsProvider()
+    public function incorrectAdditionalDataProvider()
     {
         return [
-            [
-                [],
+            'nullable transaction options' => [
+                'expectedExceptionMessage' => 'Cant extract required opaque credit card credentials from transaction',
+                'transactionOptions' => null,
             ],
-            [
-                ['additionalData' => null],
+            'empty array of transaction options' => [
+                'expectedExceptionMessage' => 'Cant extract required opaque credit card credentials from transaction',
+                'transactionOptions' => [],
             ],
-            [
-                ['additionalData' => 'apiLoginId,transactionKey'],
+            'nullable additional data' => [
+                'expectedExceptionMessage' => 'Additional data must be an array',
+                'transactionOptions' => ['additionalData' => null],
+            ],
+            'non-json additional data' => [
+                'expectedExceptionMessage' => 'Additional data must be an array',
+                'transactionOptions' => ['additionalData' => 'apiLoginId,transactionKey'],
+            ],
+            'json additional data only with dataDescriptor' => [
+                'expectedExceptionMessage' => 'Can not find field "dataValue" in additional data',
+                'transactionOptions' => ['additionalData' => json_encode(['dataDescriptor' => 'value'])]
+            ],
+            'json additional data only with dataValue' => [
+                'expectedExceptionMessage' => 'Can not find field "dataDescriptor" in additional data',
+                'transactionOptions' => ['additionalData' => json_encode(['dataValue' => 'value'])]
             ],
         ];
     }

@@ -7,7 +7,6 @@ define(function(require) {
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var console = window.console;
     require('jquery.validate');
 
     CreditCardComponent = BaseComponent.extend({
@@ -27,7 +26,6 @@ define(function(require) {
                 validation: '[data-validation]'
             },
             messages: {
-                wrong_response: 'oro.authorize_net.errors.accept_js.wrong_response',
                 communication_err: 'oro.authorize_net.errors.accept_js.communication_err'
             },
             clientKey: null,
@@ -35,7 +33,7 @@ define(function(require) {
             testMode: null,
             acceptJsUrls: {
                 test: 'https://jstest.authorize.net/v1/Accept.js',
-                prod: 'https://js.authorize.net/v1/Accept.js',
+                prod: 'https://js.authorize.net/v1/Accept.js'
             }
         },
 
@@ -50,7 +48,7 @@ define(function(require) {
         $form: null,
 
         /**
-         * @property {Accept}
+         * @property {(Accept|null)}
          */
         acceptJs: null,
 
@@ -59,12 +57,6 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
-
-            var acceptJsUrl = this.options.testMode ? this.options.acceptJsUrls.test : this.options.acceptJsUrls.prod;
-            var self = this; // jshint ignore:line
-            require([acceptJsUrl], function() {
-                self.acceptJs = Accept; // jshint ignore:line
-            });
 
             $.validator.loadMethod('oropayment/js/validator/credit-card-number');
             $.validator.loadMethod('oropayment/js/validator/credit-card-type');
@@ -98,7 +90,7 @@ define(function(require) {
         },
 
         dispose: function() {
-            if (this.disposed || !this.disposable) {
+            if (this.disposed) {
                 return;
             }
 
@@ -182,33 +174,53 @@ define(function(require) {
          * @param {Object} eventData
          */
         beforeTransit: function(eventData) {
-            if (eventData.data.paymentMethod === this.options.paymentMethod && !eventData.stopped) {
-                var self = this;
-                eventData.stopped = true;
-                if (this.validate()) {
-                    mediator.execute('showLoading');
-                    var cardData = {
-                        cardNumber: this.$form.find(this.options.selectors.cardNumber).val(),
-                        month: this.$form.find(this.options.selectors.month).val(),
-                        year: this.$form.find(this.options.selectors.year).val()
-                    };
-                    var $cvv = this.$form.find(this.options.selectors.cvv);
-                    if ($cvv.length) {
-                        cardData.cardCode = $cvv.val();
-                    }
-                    this.acceptJs.dispatchData({
-                            authData: {
-                                clientKey: this.options.clientKey,
-                                apiLoginID: this.options.apiLoginID
-                            },
-                            cardData: cardData
-                        }, function(response) {
-                            mediator.execute('hideLoading');
-                            self.acceptJsResponse.call(self, response, eventData);
-                        }
-                    );
-                }
+            if (eventData.data.paymentMethod !== this.options.paymentMethod || eventData.stopped) {
+                return;
             }
+
+            var self = this;
+            eventData.stopped = true;
+            if (this.validate()) {
+                mediator.execute('showLoading');
+                var cardData = {
+                    cardNumber: this.$form.find(this.options.selectors.cardNumber).val(),
+                    month: this.$form.find(this.options.selectors.month).val(),
+                    year: this.$form.find(this.options.selectors.year).val()
+                };
+                var $cvv = this.$form.find(this.options.selectors.cvv);
+                if ($cvv.length) {
+                    cardData.cardCode = $cvv.val();
+                }
+
+                this.acceptJs.dispatchData({
+                        authData: {
+                            clientKey: this.options.clientKey,
+                            apiLoginID: this.options.apiLoginID
+                        },
+                        cardData: cardData
+                    }, function(response) {
+                        mediator.execute('hideLoading');
+                        self.acceptJsResponse.call(self, response, eventData);
+                    }
+                );
+            }
+        },
+
+        /**
+         * @param {Object} eventData
+         */
+        onPaymentMethodChanged: function(eventData) {
+            if (eventData.paymentMethod === this.options.paymentMethod) {
+                this.loadAcceptJsLibrary();
+            }
+        },
+
+        loadAcceptJsLibrary: function() {
+            var acceptJsUrl = this.options.testMode ? this.options.acceptJsUrls.test : this.options.acceptJsUrls.prod;
+            var self = this;
+            require([acceptJsUrl], function() {
+                self.acceptJs = Accept; // jshint ignore:line
+            });
         },
 
         /**
@@ -220,10 +232,14 @@ define(function(require) {
                 !response.opaqueData.dataDescriptor || !response.opaqueData.dataValue
             ) {
                 mediator.execute('showFlashMessage', 'error', __(this.options.messages.communication_err));
-                console.error(response);
+                this.logError(response);
             } else {
-                var $container = eventData.additionalDataContainer;
-                $container.val(response.opaqueData.dataDescriptor + ';' + response.opaqueData.dataValue);
+                var additionalData = {
+                    dataDescriptor: response.opaqueData.dataDescriptor,
+                    dataValue: response.opaqueData.dataValue
+                };
+
+                mediator.trigger('checkout:payment:additional-data:set', JSON.stringify(additionalData));
                 mediator.trigger('checkout:payment:validate:change', true);
                 eventData.resume();
             }
@@ -237,8 +253,19 @@ define(function(require) {
                 eventData.stopped = true;
                 mediator.execute('redirectTo', {url: eventData.responseData.successUrl}, {redirect: true});
             }
-        }
+        },
 
+        /**
+         * @param {(string|Object)} message
+         */
+        logError: function(message) {
+            if (typeof window.console === 'undefined') {
+                // can not log error because console doesn't exist
+                return;
+            }
+
+            window.console.error(message);
+        }
     });
 
     return CreditCardComponent;

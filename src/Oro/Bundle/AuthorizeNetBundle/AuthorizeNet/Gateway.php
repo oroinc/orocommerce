@@ -9,12 +9,17 @@ use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option\OptionsResolver;
 
 class Gateway
 {
+    const ADDRESS_SANDBOX = \net\authorize\api\constants\ANetEnvironment::SANDBOX;
+    const ADDRESS_PRODUCTION = \net\authorize\api\constants\ANetEnvironment::PRODUCTION;
+
     /**
      * @var ClientInterface
      */
-    protected $apiClient;
+    protected $client;
 
-    /** @var RequestRegistry */
+    /**
+     * @var RequestRegistry
+     */
     protected $requestRegistry;
 
     /**
@@ -28,7 +33,7 @@ class Gateway
      */
     public function __construct(ClientInterface $client, RequestRegistry $requestRegistry)
     {
-        $this->apiClient = $client;
+        $this->client = $client;
         $this->requestRegistry = $requestRegistry;
     }
 
@@ -37,32 +42,30 @@ class Gateway
      * @param array $options
      * @return ResponseInterface
      */
-    public function request($transactionType, array $options)
+    public function request($transactionType, array $options = [])
     {
-        $options[Option\Environment::ENVIRONMENT] = $this->getEnvironment();
-
         $resolver = new OptionsResolver();
         $request = $this->requestRegistry->getRequest($transactionType);
         $request->configureOptions($resolver);
 
-        return $this->apiClient->send($resolver->resolve($options));
+        return $this->client->send($this->getHostAddress(), $resolver->resolve($options));
     }
 
     /**
-     * @param string $testMode
+     * @param bool $testMode
      */
     public function setTestMode($testMode)
     {
-        $this->testMode = $testMode;
+        $this->testMode = (bool)$testMode;
     }
 
     /**
      * @return string
      */
-    protected function getEnvironment()
+    protected function getHostAddress()
     {
         return $this->testMode === true ?
-            \net\authorize\api\constants\ANetEnvironment::SANDBOX :
-            \net\authorize\api\constants\ANetEnvironment::PRODUCTION;
+            self::ADDRESS_SANDBOX :
+            self::ADDRESS_PRODUCTION;
     }
 }

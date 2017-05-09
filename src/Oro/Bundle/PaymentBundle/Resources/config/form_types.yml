@@ -38,8 +38,3 @@ services:
             - '@oro_payment.payment_method_view.composite_provider'
         tags:
             - { name: form.type, alias: oro_payment_methods_configs_rule }
-
-    oro_payment.form.type.credit_card_expiration_date:
-        class: Oro\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType
-        tags:
-            - { name: form.type, alias: oro_payment_credit_card_expiration_date }

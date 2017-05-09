@@ -4,7 +4,9 @@ namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request;
 
 class RequestRegistry
 {
-    /** @var RequestInterface[] */
+    /**
+     * @var RequestInterface[]
+     */
     protected $requests = [];
 
     /**

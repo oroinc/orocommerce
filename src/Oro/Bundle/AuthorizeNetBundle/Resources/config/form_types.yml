@@ -13,3 +13,8 @@ services:
         class: Oro\Bundle\AuthorizeNetBundle\Form\Type\CreditCardType
         tags:
             - { name: form.type, alias: oro_authorize_net_credit_card }
+
+    oro_authorize_net.form.type.credit_card_expiration_date:
+        class: Oro\Bundle\AuthorizeNetBundle\Form\Type\CreditCardExpirationDateType
+        tags:
+            - { name: form.type, alias: oro_authorize_net_credit_card_expiration_date }

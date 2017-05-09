@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 
-class Currency implements OptionsDependentInterface
+class Currency implements OptionInterface
 {
-    const CURRENCY = 'Currency';
+    const CURRENCY = 'currency';
 
     const AUSTRALIAN_DOLLAR = 'AUD';
     const US_DOLLAR = 'USD';
@@ -22,37 +22,31 @@ class Currency implements OptionsDependentInterface
         Currency::NEW_ZEALAND_DOLLAR,
     ];
 
-    /** {@inheritdoc} */
+    /**
+     * @var bool
+     */
+    protected $requiredOption;
+
+    /**
+     * @param bool $requiredOption
+     */
+    public function __construct($requiredOption = true)
+    {
+        $this->requiredOption = $requiredOption;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
-        $resolver
-            ->setDefined(Currency::CURRENCY)
-            ->addAllowedValues(Currency::CURRENCY, Currency::ALL_CURRENCIES);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplicableDependent(array $options)
-    {
-        if (!isset($options[Transaction::TRANSACTION_TYPE])) {
-            return false;
+        if ($this->requiredOption) {
+            $resolver->setRequired(Currency::CURRENCY);
         }
 
-        return in_array(
-            $options[Transaction::TRANSACTION_TYPE],
-            [Transaction::CHARGE, Transaction::AUTHORIZE],
-            true
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureDependentOption(OptionsResolver $resolver, array $options)
-    {
         $resolver
-            ->setRequired(Currency::CURRENCY)
+            ->setDefined(Currency::CURRENCY)
             ->addAllowedValues(Currency::CURRENCY, Currency::ALL_CURRENCIES);
     }
 }

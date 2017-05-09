@@ -30,15 +30,14 @@ abstract class AbstractRequest implements RequestInterface
         $this
             ->addOption(new Option\Transaction())
             ->addOption(new Option\ApiLoginId())
-            ->addOption(new Option\TransactionKey())
-            ->addOption(new Option\DataDescriptor())
-            ->addOption(new Option\DataValue())
-            ->addOption(new Option\Environment());
+            ->addOption(new Option\TransactionKey());
 
         return $this;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function configureOptions(Option\OptionsResolver $resolver)
     {
         $this
@@ -54,10 +53,6 @@ abstract class AbstractRequest implements RequestInterface
      */
     protected function configureRequestOptions()
     {
-        $this
-            ->addOption(new Option\Amount())
-            ->addOption(new Option\Currency());
-
         return $this;
     }
 

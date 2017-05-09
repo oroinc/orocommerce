@@ -10,7 +10,9 @@ class Transaction implements OptionInterface
     const CAPTURE = 'priorAuthCaptureTransaction';
     const CHARGE = 'authCaptureTransaction';
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

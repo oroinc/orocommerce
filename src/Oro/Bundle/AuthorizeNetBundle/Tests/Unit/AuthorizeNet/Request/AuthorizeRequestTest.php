@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\AuthorizeNet\Request;
 
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\AbstractRequest;
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\AuthorizeRequest;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Currency;
+use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\AuthorizeRequest;
 
 class AuthorizeRequestTest extends AbstractRequestTest
 {
@@ -20,7 +18,7 @@ class AuthorizeRequestTest extends AbstractRequestTest
     }
 
     /**
-     * @return AbstractRequest
+     * {@inheritdoc}
      */
     protected function getRequest()
     {
@@ -34,7 +32,9 @@ class AuthorizeRequestTest extends AbstractRequestTest
     {
         return [
             Option\Amount::AMOUNT => 10.00,
-            Option\Currency::CURRENCY => Currency::US_DOLLAR,
+            Option\Currency::CURRENCY => Option\Currency::US_DOLLAR,
+            Option\DataDescriptor::DATA_DESCRIPTOR => 'some_data_descriptor',
+            Option\DataValue::DATA_VALUE => 'some_data_value',
         ];
     }
 

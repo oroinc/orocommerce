@@ -13,7 +13,7 @@ class AuthorizeNetPaymentMethodFactory implements AuthorizeNetPaymentMethodFacto
 {
     use LoggerAwareTrait;
 
-    /**@var Gateway*/
+    /** @var Gateway */
     protected $gateway;
 
     /** @var RequestStack */
@@ -30,7 +30,7 @@ class AuthorizeNetPaymentMethodFactory implements AuthorizeNetPaymentMethodFacto
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function create(AuthorizeNetConfigInterface $config)
     {
@@ -38,6 +38,7 @@ class AuthorizeNetPaymentMethodFactory implements AuthorizeNetPaymentMethodFacto
         if ($this->logger) {
             $method->setLogger($this->logger);
         }
+
         return $method;
     }
 }

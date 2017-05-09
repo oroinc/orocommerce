@@ -5,7 +5,6 @@ namespace Oro\Bundle\AuthorizeNetBundle\Method\Config\Factory;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfig;
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
@@ -61,9 +60,9 @@ class AuthorizeNetConfigFactory implements AuthorizeNetConfigFactoryInterface
         $params[AuthorizeNetConfig::ALLOWED_CREDIT_CARD_TYPES_KEY] = $settings->getAllowedCreditCardTypes();
         $params[AuthorizeNetConfig::TEST_MODE_KEY] = $settings->getAuthNetTestMode();
         $params[AuthorizeNetConfig::PURCHASE_ACTION_KEY] = $settings->getCreditCardPaymentAction();
+        $params[AuthorizeNetConfig::API_LOGIN_ID] = $this->getDecryptedValue($settings->getApiLoginId());
+        $params[AuthorizeNetConfig::TRANSACTION_KEY] = $this->getDecryptedValue($settings->getTransactionKey());
         $params[AuthorizeNetConfig::CLIENT_KEY] = $this->getDecryptedValue($settings->getClientKey());
-        $params[Option\ApiLoginId::API_LOGIN_ID] = $this->getDecryptedValue($settings->getApiLoginId());
-        $params[Option\TransactionKey::TRANSACTION_KEY] = $this->getDecryptedValue($settings->getTransactionKey());
         $params[AuthorizeNetConfig::REQUIRE_CVV_ENTRY_KEY] = $settings->getAuthNetRequireCVVEntry();
 
         return new AuthorizeNetConfig($params);

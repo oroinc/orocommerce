@@ -16,11 +16,11 @@ class AuthorizeNetChannelTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabelReturnsString()
     {
-        static::assertTrue(is_string($this->channel->getLabel()));
+        $this->assertTrue(is_string($this->channel->getLabel()));
     }
 
     public function testGetIconReturnsString()
     {
-        static::assertTrue(is_string($this->channel->getIcon()));
+        $this->assertTrue(is_string($this->channel->getIcon()));
     }
 }

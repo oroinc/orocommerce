@@ -5,9 +5,11 @@ namespace Oro\Bundle\AuthorizeNetBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AuthorizeNetBundle\Entity\Repository\AuthorizeNetSettingsRepository")
@@ -66,7 +68,7 @@ class AuthorizeNetSettings extends Transport
      * @var array
      *
      * @ORM\Column(name="au_net_allowed_card_types", type="array", length=255, nullable=false)
-     **/
+     */
     protected $allowedCreditCardTypes = [];
 
     /**
@@ -132,6 +134,9 @@ class AuthorizeNetSettings extends Transport
         $this->creditCardShortLabels = new ArrayCollection();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getSettingsBag()
     {
         if (null === $this->settings) {
@@ -178,7 +183,7 @@ class AuthorizeNetSettings extends Transport
     /**
      * @param array $allowedCreditCardTypes
      */
-    public function setAllowedCreditCardTypes($allowedCreditCardTypes)
+    public function setAllowedCreditCardTypes(array $allowedCreditCardTypes)
     {
         $this->allowedCreditCardTypes = $allowedCreditCardTypes;
     }
@@ -196,7 +201,7 @@ class AuthorizeNetSettings extends Transport
      */
     public function setAuthNetTestMode($testMode)
     {
-        $this->authNetTestMode = $testMode;
+        $this->authNetTestMode = (bool)$testMode;
     }
 
     /**
@@ -337,7 +342,7 @@ class AuthorizeNetSettings extends Transport
      */
     public function setAuthNetRequireCVVEntry($requireCVVEntry)
     {
-        $this->authNetRequireCVVEntry = $requireCVVEntry;
+        $this->authNetRequireCVVEntry = (bool)$requireCVVEntry;
 
         return $this;
     }

@@ -10,41 +10,44 @@ use Oro\Bundle\AuthorizeNetBundle\Method\View\Factory\AuthorizeNetPaymentMethodV
 class AuthorizeNetMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
     /** @var AuthorizeNetPaymentMethodViewFactoryInterface*/
-    private $factory;
+    private $paymentMethodFactory;
 
     /** @var AuthorizeNetConfigProviderInterface */
     private $configProvider;
 
     /**
-     * @param AuthorizeNetPaymentMethodViewFactoryInterface $factory
+     * @param AuthorizeNetPaymentMethodViewFactoryInterface $paymentMethodFactory
      * @param AuthorizeNetConfigProviderInterface $configProvider
      */
     public function __construct(
-        AuthorizeNetPaymentMethodViewFactoryInterface $factory,
+        AuthorizeNetPaymentMethodViewFactoryInterface $paymentMethodFactory,
         AuthorizeNetConfigProviderInterface $configProvider
     ) {
-        $this->factory = $factory;
+        $this->paymentMethodFactory = $paymentMethodFactory;
         $this->configProvider = $configProvider;
 
         parent::__construct();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function buildViews()
     {
         $configs = $this->configProvider->getPaymentConfigs();
         foreach ($configs as $config) {
-            $this->addCreditCardView($config);
+            $this->addPaymentMethodView($config);
         }
     }
 
     /**
      * @param AuthorizeNetConfigInterface $config
      */
-    protected function addCreditCardView(AuthorizeNetConfigInterface $config)
+    protected function addPaymentMethodView(AuthorizeNetConfigInterface $config)
     {
         $this->addView(
             $config->getPaymentMethodIdentifier(),
-            $this->factory->create($config)
+            $this->paymentMethodFactory->create($config)
         );
     }
 }

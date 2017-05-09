@@ -7,9 +7,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType;
+use Oro\Bundle\AuthorizeNetBundle\Form\Type\CreditCardExpirationDateType;
 use Oro\Bundle\AuthorizeNetBundle\Form\Type\CreditCardType;
-use Oro\Bundle\PaymentBundle\Form\Type\CreditCardType as ParentCreditCardType;
 
 class CreditCardTypeTest extends FormIntegrationTestCase
 {
@@ -53,10 +52,5 @@ class CreditCardTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals('oro_authorize_net_credit_card', $this->formType->getName());
-    }
-
-    public function testGetParent()
-    {
-        $this->assertEquals(ParentCreditCardType::class, $this->formType->getParent());
     }
 }

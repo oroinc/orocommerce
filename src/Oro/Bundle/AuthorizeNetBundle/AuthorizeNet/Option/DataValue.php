@@ -6,7 +6,9 @@ class DataValue implements OptionInterface
 {
     const DATA_VALUE = 'data_value';
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

@@ -3,19 +3,32 @@
 namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\AuthorizeNet\Option;
 
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
+use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option\Transaction;
 
 class AmountTest extends AbstractOptionTest
 {
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     protected function getOptions()
     {
         return [new Option\Amount()];
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function configureOptionDataProvider()
     {
         return [
+            'empty' => [
+                [],
+                [],
+                [
+                    'Symfony\Component\OptionsResolver\Exception\MissingOptionsException',
+                    'The required option "amount" is missing.',
+                ],
+            ],
             'invalid type' => [
                 ['amount' => 'twenty backs'],
                 [],
@@ -36,46 +49,12 @@ class AmountTest extends AbstractOptionTest
         ];
     }
 
-    /**
-     * @dataProvider requiredAmountPaymentActionProvider
-     * @param string $paymentAction
-     * @expectedException \Symfony\Component\OptionsResolver\Exception\MissingOptionsException
-     * @expectedExceptionMessage The required option "amount" is missing.
-     */
-    public function testRequired($paymentAction)
-    {
-        $amount = new Option\Amount();
-        $transaction = new Option\Transaction();
-        $resolver = new Option\OptionsResolver();
-
-        $resolver
-            ->addOption($amount)
-            ->addOption($transaction);
-
-        $resolver->resolve(['transaction_type' => $paymentAction]);
-    }
-
     public function testNotRequired()
     {
-        $amount = new Option\Amount();
-        $transaction = new Option\Transaction();
+        $amount = new Option\Amount(false);
         $resolver = new Option\OptionsResolver();
 
-        $resolver
-            ->addOption($amount)
-            ->addOption($transaction);
-
-        $resolver->resolve(['transaction_type' => 'priorAuthCaptureTransaction']);
-    }
-
-    /**
-     * @return array
-     */
-    public function requiredAmountPaymentActionProvider()
-    {
-        return [
-            ['authCaptureTransaction'],
-            ['authOnlyTransaction'],
-        ];
+        $resolver->addOption($amount);
+        $resolver->resolve([]);
     }
 }

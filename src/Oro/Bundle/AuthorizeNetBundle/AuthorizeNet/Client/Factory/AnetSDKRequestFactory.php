@@ -5,19 +5,43 @@ namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\Factory;
 use net\authorize\api\contract\v1 as AnetAPI;
 use net\authorize\api\controller as AnetController;
 
-class AnetSDKRequestFactory
+use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\RequestConfigurator\RequestConfiguratorRegistry;
+
+class AnetSDKRequestFactory implements AnetSDKRequestFactoryInterface
 {
     /**
-     * @return AnetAPI\CreateTransactionRequest
+     * @var RequestConfiguratorRegistry
      */
-    public function createRequest()
+    private $requestConfiguratorRegistry;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(RequestConfiguratorRegistry $requestConfiguratorRegistry)
     {
-        return new AnetAPI\CreateTransactionRequest();
+        $this->requestConfiguratorRegistry = $requestConfiguratorRegistry;
     }
 
     /**
-     * @param AnetAPI\CreateTransactionRequest $request
-     * @return AnetController\CreateTransactionController
+     * {@inheritdoc}
+     */
+    public function createRequest(array $options = [])
+    {
+        $request = new AnetAPI\CreateTransactionRequest();
+
+        $configurators = $this->requestConfiguratorRegistry->getRequestConfigurators();
+
+        foreach ($configurators as $configurator) {
+            if ($configurator->isApplicable($options)) {
+                $configurator->handle($request, $options);
+            }
+        }
+
+        return $request;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function createController(AnetAPI\CreateTransactionRequest $request)
     {

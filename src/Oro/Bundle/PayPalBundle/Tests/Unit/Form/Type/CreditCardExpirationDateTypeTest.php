@@ -1,21 +1,23 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\PaymentBundle\Form\Type\CreditCardExpirationDateType;
+use Oro\Bundle\PayPalBundle\Form\Type\CreditCardExpirationDateType;
 
 class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
 {
+    const YEAR_PERIOD = 10;
+
     /**
      * @var CreditCardExpirationDateType
      */
     protected $formType;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp()
     {
@@ -67,7 +69,7 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
                     'view_timezone' => 'UTC',
                     'format' => 'dMy',
                     'input' => 'array',
-                    'years' => range(date('y'), date('y') + CreditCardExpirationDateType::YEAR_PERIOD),
+                    'years' => range(date('y'), date('y') + self::YEAR_PERIOD),
                     'months' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
                 ]
             ],
@@ -78,7 +80,7 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
      * @param FormConfigInterface $formConfig
      * @param array $formOptions
      */
-    public function assertFormOptions(FormConfigInterface $formConfig, $formOptions)
+    protected function assertFormOptions(FormConfigInterface $formConfig, array $formOptions)
     {
         $options = $formConfig->getOptions();
         foreach ($formOptions as $formOptionName => $formOptionData) {
@@ -89,6 +91,6 @@ class CreditCardExpirationDateTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(CreditCardExpirationDateType::NAME, $this->formType->getName());
+        $this->assertEquals('oro_paypal_credit_card_expiration_date', $this->formType->getName());
     }
 }

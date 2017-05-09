@@ -6,7 +6,9 @@ class TransactionKey implements OptionInterface
 {
     const TRANSACTION_KEY = 'transaction_key';
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

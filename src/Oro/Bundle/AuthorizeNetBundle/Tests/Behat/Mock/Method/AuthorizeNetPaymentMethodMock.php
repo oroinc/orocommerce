@@ -7,6 +7,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 
 class AuthorizeNetPaymentMethodMock extends AuthorizeNetPaymentMethod
 {
+    /**
+     * {@inheritdoc}
+     */
     public function isApplicable(PaymentContextInterface $context)
     {
         return true;

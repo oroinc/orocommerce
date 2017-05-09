@@ -8,6 +8,7 @@ class BasicPaymentActionsDataProvider implements PaymentActionsDataProviderInter
      * @internal
      */
     const AUTHORIZE = 'authorize';
+
     /**
      * @internal
      */

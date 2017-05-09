@@ -27,7 +27,7 @@ define(function(require) {
 
         placeOrderResponse: function(eventData) {
             if (eventData.responseData.paymentMethod === this.options.paymentMethod) {
-                if (!eventData.responseData.successful) {
+                if (!eventData.responseData.purchaseSuccessful) {
                     eventData.stopped = true;
                     mediator.execute('redirectTo', {url: eventData.responseData.errorUrl}, {redirect: true});
                 }

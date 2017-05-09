@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\AuthorizeNet\Request;
 
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\AbstractRequest;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\CaptureRequest;
 
 class CaptureRequestTest extends AbstractRequestTest
@@ -23,11 +22,15 @@ class CaptureRequestTest extends AbstractRequestTest
      */
     protected function getOptions()
     {
-        return [Option\OriginalTransaction::ORIGINAL_TRANSACTION => 1];
+        return [
+            Option\Amount::AMOUNT => 10.00,
+            Option\Currency::CURRENCY => Option\Currency::US_DOLLAR,
+            Option\OriginalTransaction::ORIGINAL_TRANSACTION => 1
+        ];
     }
 
     /**
-     * @return AbstractRequest
+     * {@inheritdoc}
      */
     public function getRequest()
     {

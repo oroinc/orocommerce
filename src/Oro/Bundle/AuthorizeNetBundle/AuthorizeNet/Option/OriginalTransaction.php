@@ -2,37 +2,34 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 
-class OriginalTransaction implements OptionsDependentInterface
+class OriginalTransaction implements OptionInterface
 {
     const ORIGINAL_TRANSACTION = 'original_transaction';
 
-    /** {@inheritdoc} */
+    /**
+     * @var bool
+     */
+    protected $requiredOption;
+
+    /**
+     * @param bool $requiredOption
+     */
+    public function __construct($requiredOption = true)
+    {
+        $this->requiredOption = $requiredOption;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function configureOption(OptionsResolver $resolver)
     {
+        if ($this->requiredOption) {
+            $resolver->setRequired(OriginalTransaction::ORIGINAL_TRANSACTION);
+        }
+
         $resolver
             ->setDefined(OriginalTransaction::ORIGINAL_TRANSACTION)
             ->addAllowedTypes(OriginalTransaction::ORIGINAL_TRANSACTION, ['integer','string']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplicableDependent(array $options)
-    {
-        if (!isset($options[Transaction::TRANSACTION_TYPE])) {
-            return false;
-        }
-
-        return $options[Transaction::TRANSACTION_TYPE] === Transaction::CAPTURE;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureDependentOption(OptionsResolver $resolver, array $options)
-    {
-        $resolver
-            ->setRequired(OriginalTransaction::ORIGINAL_TRANSACTION)
-            ->addAllowedTypes(OriginalTransaction::ORIGINAL_TRANSACTION, ['integer', 'string']);
     }
 }

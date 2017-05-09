@@ -7,13 +7,16 @@ use net\authorize\api\contract\v1\CreateTransactionResponse;
 use net\authorize\api\contract\v1\MessagesType;
 use net\authorize\api\contract\v1\TransactionResponseType;
 use net\authorize\api\contract\v1\TransactionResponseType\MessagesAType\MessageAType;
-use net\authorize\api\controller\CreateTransactionController;
+use net\authorize\api\controller\base\ApiOperationBase;
 
-class CreateTransactionControllerMock extends CreateTransactionController
+class CreateTransactionControllerMock extends ApiOperationBase
 {
     /** @var CreateTransactionRequest */
     protected $request;
 
+    /**
+     * @param CreateTransactionRequest $request
+     */
     public function __construct(CreateTransactionRequest $request)
     {
         $this->request = $request;
@@ -21,6 +24,7 @@ class CreateTransactionControllerMock extends CreateTransactionController
 
     /**
      * @param null|string $endPoint
+     * @return CreateTransactionResponse
      */
     public function executeWithApiResponse($endPoint = null)
     {
@@ -67,6 +71,23 @@ class CreateTransactionControllerMock extends CreateTransactionController
                 );
             $response->setTransactionResponse($transactionResponse);
         }
+
         return $response;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiResponse()
+    {
+        throw new \RuntimeException('This method must not be called in tests');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function execute($endPoint = \net\authorize\api\constants\ANetEnvironment::CUSTOM)
+    {
+        throw new \RuntimeException('This method must not be called in tests');
     }
 }

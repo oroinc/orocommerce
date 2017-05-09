@@ -8,8 +8,9 @@ use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Response\ResponseInterface;
 interface ClientInterface
 {
     /**
+     * @param string $hostAddress
      * @param array $options
      * @return ResponseInterface
      */
-    public function send(array $options);
+    public function send($hostAddress, array $options = []);
 }

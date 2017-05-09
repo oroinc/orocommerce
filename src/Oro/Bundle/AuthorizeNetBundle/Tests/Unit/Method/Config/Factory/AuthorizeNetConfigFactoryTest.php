@@ -50,7 +50,7 @@ class AuthorizeNetConfigFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateConfig()
     {
-        $this->encoder->expects(static::any())
+        $this->encoder->expects($this->any())
             ->method('decryptData')
             ->willReturnMap(
                 [
@@ -80,7 +80,7 @@ class AuthorizeNetConfigFactoryTest extends \PHPUnit_Framework_TestCase
         $authorizeNetSettings = $this->getEntity(AuthorizeNetSettings::class, $bag);
         $authorizeNetSettings->setAuthNetTestMode(true);
 
-        $this->localizationHelper->expects(static::exactly(2))
+        $this->localizationHelper->expects($this->exactly(2))
             ->method('getLocalizedValue')
             ->willReturnMap(
                 [
@@ -89,14 +89,14 @@ class AuthorizeNetConfigFactoryTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->identifierGenerator->expects(static::once())
+        $this->identifierGenerator->expects($this->once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn('authorize_net_1');
 
         $config = $this->authorizeNetConfigFactory->createConfig($authorizeNetSettings);
 
-        static::assertEquals(new AuthorizeNetConfig([
+        $this->assertEquals(new AuthorizeNetConfig([
             'payment_method_identifier' => 'authorize_net_1',
             'admin_label' => 'authorize_net',
             'label' => 'test label',

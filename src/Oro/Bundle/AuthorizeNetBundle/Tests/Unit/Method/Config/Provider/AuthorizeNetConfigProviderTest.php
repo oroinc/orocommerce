@@ -48,29 +48,29 @@ class AuthorizeNetConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->settings[] = $this->getEntity(AuthorizeNetSettings::class, ['id' => 2, 'channel' => $channel2]);
 
         $config = $this->createMock(AuthorizeNetConfig::class);
-        $config->expects(static::at(0))
+        $config->expects($this->at(0))
             ->method('getPaymentMethodIdentifier')
             ->willReturn('authorize_net_1');
-        $config->expects(static::at(1))
+        $config->expects($this->at(1))
             ->method('getPaymentMethodIdentifier')
             ->willReturn('authorize_net_2');
 
         $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $objectRepository = $this->createMock(AuthorizeNetSettingsRepository::class);
-        $objectRepository->expects(static::once())
+        $objectRepository->expects($this->once())
             ->method('getEnabledSettingsByType')
             ->with($this->type)
             ->willReturn($this->settings);
 
         $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
+        $objectManager->expects($this->once())->method('getRepository')->willReturn($objectRepository);
 
-        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
+        $this->doctrine->expects($this->once())->method('getManagerForClass')->willReturn($objectManager);
 
         /** @var AuthorizeNetConfigFactory|\PHPUnit_Framework_MockObject_MockObject $factory */
         $factory = $this->createMock(AuthorizeNetConfigFactory::class);
-        $factory->expects(static::exactly(2))
+        $factory->expects($this->exactly(2))
             ->method('createConfig')
             ->willReturn($config);
 

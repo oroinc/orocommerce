@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\AuthorizeNetBundle\Integration;
 
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
