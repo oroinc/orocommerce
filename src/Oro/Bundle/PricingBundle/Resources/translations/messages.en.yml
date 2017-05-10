@@ -199,9 +199,15 @@ oro.pricing:
             price_rounding.title: Pricing Rounding
             pricing.title: Pricing
             price_lists_update.title: 'Price List Calculations'
+            price_strategies.title: Price Selection Strategy
         fields:
             price_lists.title: Price Lists
             precision.label: Pricing Precision
+            pricing_strategy.label: Pricing Strategy
+            strategy_type:
+                choises:
+                    merge_by_priority: Merge by priority
+                    minimal_prices: Minimal prices
             rounding_type:
                 label: Pricing Rounding Type
                 tooltip: Select the rounding type that can be used for product prices.

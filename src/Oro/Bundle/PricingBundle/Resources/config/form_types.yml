@@ -149,3 +149,11 @@ services:
             - '@oro_pricing.provider.price_list_provider'
         tags:
             - { name: form.type, alias: oro_type_default_price_list_filter }
+
+    oro_pricing.form.type.strategy_price_list:
+        class: Oro\Bundle\PricingBundle\Form\Type\PriceListStrategySelectType
+        arguments:
+            - '@oro_pricing.pricing_strategy.strategy_register'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: oro_pricing_list_strategy_selection }

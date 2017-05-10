@@ -30,11 +30,7 @@ class StrategyRegister
      */
     public function getCurrentStrategy()
     {
-        //TODO: BB-8601 get real strategy name from config manager
-        $currentAlias = $this->configManager->get('oro_pricing.strategy');
-        if (!$currentAlias) {
-            $currentAlias = 'merge_by_priority';
-        }
+        $currentAlias = $this->configManager->get('oro_pricing.price_strategy');
 
         return $this->get($currentAlias);
     }

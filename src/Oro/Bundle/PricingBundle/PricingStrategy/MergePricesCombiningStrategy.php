@@ -11,6 +11,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
 {
+    const NAME = 'merge_by_priority';
+
     /**
      * {@inheritdoc}
      */
