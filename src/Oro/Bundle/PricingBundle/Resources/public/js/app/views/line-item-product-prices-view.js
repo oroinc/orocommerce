@@ -3,7 +3,9 @@ define(function(require) {
 
     var LineItemProductPricesView;
     var _ = require('underscore');
+    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
+    var NumberFormatter = require('orolocale/js/formatter/number');
     var ProductPricesEditableView = require('oropricing/js/app/views/product-prices-editable-view');
 
     LineItemProductPricesView = ProductPricesEditableView.extend({
@@ -20,6 +22,12 @@ define(function(require) {
             'currency changePricesCurrency': ['change', 'changePricesCurrency']
         }),
 
+        options: _.extend({}, ProductPricesEditableView.prototype.options, {
+            allowPriceEdit: false
+        }),
+
+        storedPrice: {},
+
         /**
          * @inheritDoc
          */
@@ -27,13 +35,28 @@ define(function(require) {
             LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
-            mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);
+            if (!this.options.allowPriceEdit) {
+                mediator.on('pricing:load:products-tier-prices', this.refreshTierPrices, this);
+            }
+            mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
 
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
                 this.setTierPrices(tierPrices, true);
             }, this));
 
             this.updateTierPrices();
+            if (!this.options.allowPriceEdit) {
+                this.getElement('priceValue').prop('disabled', true);
+                var productId = this.model.get('id');
+                if (!_.isUndefined(productId) && productId.length) {
+                    this.storedPrice = {
+                        productId: productId,
+                        unit: this.model.get('unit'),
+                        price: this.model.get('price'),
+                        currency: this.model.get('currency')
+                    };
+                }
+            }
         },
 
         updateTierPrices: function() {
@@ -51,6 +74,18 @@ define(function(require) {
 
         changePricesCurrency: function() {
             this.setTierPrices(this.tierPrices);
+            var price = this.findPrice();
+
+            if (!price &&
+                this.storedPrice &&
+                this.model.get('id') === this.storedPrice.productId &&
+                this.model.get('unit') === this.storedPrice.unit &&
+                this.model.get('currency') === this.storedPrice.currency
+            ) {
+                price = this.storedPrice;
+            }
+            this.setPriceValue(price ? price.price : null);
+            this.getElement('priceValue').addClass('matched-price');
         },
 
         /**
@@ -79,6 +114,18 @@ define(function(require) {
         },
 
         /**
+         * @param {Object} tierPrices
+         * @param {Boolean} silent
+         */
+        refreshTierPrices: function(tierPrices, silent) {
+            this.setTierPrices(tierPrices, silent);
+            if (!this.options.allowPriceEdit) {
+                this.filterValues();
+            }
+        },
+
+
+        /**
          * @param {Array} items
          */
         collectLineItems: function(items) {
@@ -92,6 +139,50 @@ define(function(require) {
                     currency: this.model.get('currency')
                 });
             }
+        },
+
+        filterValues: function() {
+            var prices = {};
+
+            var productId = this.model.get('id');
+            if (!_.isUndefined(productId) && productId.length !== 0) {
+                prices = this.tierPrices[productId] || {};
+            }
+            var currencies = [];
+            var units = [];
+
+            _.each(prices, function (price) {
+                currencies.push(price.currency);
+                units.push(price.unit);
+            });
+
+            this.getElement('currency')
+                .find('option')
+                .show()
+                .filter(function() {
+                    return !$(this).prop('selected') && (-1 === $.inArray(this.value, currencies));
+                })
+                .hide();
+
+            mediator.trigger(
+                'product:unit:filter-values',
+                productId,
+                units
+            );
+        },
+
+        getHintContent: function() {
+            if (_.isEmpty(this.prices)) {
+                return '';
+            }
+
+            return $(this.templates.pricesHintContent({
+                model: this.model.attributes,
+                prices: this.prices,
+                matchedPrice: this.findPrice(),
+                clickable: this.options.allowPriceEdit,
+                formatter: NumberFormatter
+            }));
         },
 
         /**
