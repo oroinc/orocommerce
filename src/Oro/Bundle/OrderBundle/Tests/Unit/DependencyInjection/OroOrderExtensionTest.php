@@ -31,15 +31,12 @@ class OroOrderExtensionTest extends ExtensionTestCase
             'oro_order.factory.shipping_context',
             'oro_order.event_listener.order.possible_shipping_methods',
             'oro_order.converter.shipping_prices',
-            'oro_order.order_api.handle_order_included_data',
-            'oro_order.product_provider.sku_cached',
-            'oro_order.order_api.totals_processor',
-            'oro_order.order_api.form_builder_default_website',
-            'oro_order.order_api.form_builder_totals_processor',
-            'oro_order.order_api.update_request_data_for_order_line_item',
-            'oro_order.order_api.update_product_line_item_price',
-            'oro_order.form_event_subscriber.default_website',
-            'oro_order.form_event_subscriber.discount'
+            'oro_order.form.type.event_listener.subtotals_subscriber',
+            'oro_order.api.form_listener.discount',
+            'oro_order.api.form_listener.default_website',
+            'oro_order.api.handle_order_included_data',
+            'oro_order.api.update_request_data_for_order_line_item',
+            'oro_order.api.update_product_line_item_price',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

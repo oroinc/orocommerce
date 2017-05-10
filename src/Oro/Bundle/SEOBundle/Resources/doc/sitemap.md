@@ -30,17 +30,60 @@ Technical details
 URLs for sitemaps are received from providers. Each provider must implement `UrlItemsProviderInterface` interface and be registered with `oro_seo.sitemap.url_items_provider` DI tag. Such providers will be gathered in UrlItemsProviderRegistry.
 There are 4 providers registered out of the box:
 
-* three instances of the UrlItemsProvider:
+* three instances of the `UrlItemsProvider`:
 
     - oro_seo.sitemap.provider.product_url_items_provider:
     - oro_seo.sitemap.provider.category_url_items_provider:
     - oro_seo.sitemap.provider.cms_page_url_items_provider:
 
-* and one instance of the WebCatalogUrlItemsProvider:
+* and one instance of the `ContentVariantUrlItemsProvider`:
 
-    - oro_seo.sitemap.provider.webcatalog_url_items_provider
+    - oro_seo.sitemap.provider.content_variant_items_provider
 
-Use `UrlItemsProviderRegistry` to collect all providers.
+For adding custom logic to providers each provider dispatch events on start and end method `UrlItemsProvider::getUrlItems`:
+```php
+    /**
+     * {@inheritdoc}
+     */
+    public function getUrlItems(WebsiteInterface $website, $version)
+    {
+        $this->loadConfigs($website);
+
+        $this->dispatchIterationEvent(UrlItemsProviderEvent::ON_START, $website, $version);
+
+        foreach ($this->getResultIterator($website, $version) as $row) {
+            $entityUrlItem = $this->getEntityUrlItem($website, $row);
+
+            if ($entityUrlItem) {
+                yield $entityUrlItem;
+            }
+        }
+
+        $this->dispatchIterationEvent(UrlItemsProviderEvent::ON_END, $website, $version);
+    }
+```
+
+For example for limitation which are included in web catalog (there are products from Product Content Variants, products included in categories and subcategories from Category Content Variants, products from Product Collection Variants) there are two listeners for this events:
+```yaml
+    oro_seo.event_listener.url_items_provider_start:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener'
+        arguments:
+            - '@oro_seo.limiter.web_catalog_product_limiter'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.url_items_provider_start.product, method: onStart }
+
+    oro_seo.event_listener.url_items_provider_end:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderEndListener'
+        arguments:
+            - '@oro_seo.limiter.web_catalog_product_limiter'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.url_items_provider_end.product, method: onEnd }
+```
+
+For Limitation used `WebCatalogProductLimiter`. This class collect all appropriate products to `WebCatalogProductLimitation`.
+Listener `RestrictSitemapProductByWebCatalogListener` restrict Sitemap products сonsidering only those that are in the table `WebCatalogProductLimitation`.
+You can override `WebCatalogProductLimiter` or create your own `oro_seo.event.url_items_provider_start.*`, `oro_seo.event.url_items_provider_end.*` listeners for adding products to Sitemap from your own sources.
+
 
 ### HOW To add new provider
 

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 
 class PayflowExpressCheckoutRedirectListener
 {
@@ -20,13 +20,23 @@ class PayflowExpressCheckoutRedirectListener
     protected $paymentMethodProvider;
 
     /**
+     * @var PaymentResultMessageProviderInterface
+     */
+    protected $messageProvider;
+
+    /**
      * @param Session $session
      * @param PaymentMethodProviderInterface $paymentMethodProvider
+     * @param PaymentResultMessageProviderInterface $messageProvider
      */
-    public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
-    {
+    public function __construct(
+        Session $session,
+        PaymentMethodProviderInterface $paymentMethodProvider,
+        PaymentResultMessageProviderInterface $messageProvider
+    ) {
         $this->session = $session;
         $this->paymentMethodProvider = $paymentMethodProvider;
+        $this->messageProvider = $messageProvider;
     }
 
     /**
@@ -49,17 +59,12 @@ class PayflowExpressCheckoutRedirectListener
 
             if (!empty($transactionOptions['failureUrl'])) {
                 $event->setResponse(new RedirectResponse($transactionOptions['failureUrl']));
-                $this->setErrorMessage();
+
+                $flashBag = $this->session->getFlashBag();
+                if (!$flashBag->has('error')) {
+                    $flashBag->add('error', $this->messageProvider->getErrorMessage($paymentTransaction));
+                }
             }
-        }
-    }
-
-    private function setErrorMessage()
-    {
-        $flashBag = $this->session->getFlashBag();
-
-        if (!$flashBag->has('error')) {
-            $flashBag->add('error', 'oro.payment.result.error');
         }
     }
 }

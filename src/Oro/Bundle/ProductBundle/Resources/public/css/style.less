@@ -144,3 +144,92 @@ table.unit-table {
     }
   }
 }
+
+.web-catalog-page-data {
+  .scope-collection {
+    div[data-validation-optional-group=""] {
+      display: block;
+      padding-right: 0;
+    }
+  }
+}
+
+.content-variant-item {
+  div.filter-box {
+    &.oro-clearfix-width {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  .grid-toolbar {
+    padding-right: 0;
+  }
+
+  div.other-scroll-container {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .box-type1 {
+    .title {
+      padding-left: 0;
+    }
+  }
+
+  div.control-group {
+    max-width: 100%;
+
+    &.control-group-oro_segment_filter_builder {
+
+      .control-label {
+        &.wrap {
+          float: none;
+          width: 60px;
+          text-align: left;
+
+          i {
+            float: right;
+            line-height: 20px;
+          }
+
+          label {
+            color: rgb(68, 68, 68);
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+
+            em {
+              display: none !important;
+            }
+          }
+        }
+      }
+
+      .controls {
+        margin-left: 0;
+      }
+    }
+
+    &.control-group-oro_segment_filter_builder_segment_name {
+
+      .control-label {
+        &.wrap {
+          float: none;
+          text-align: left;
+
+          label {
+            color: rgb(68, 68, 68);
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+          }
+        }
+      }
+
+      .controls {
+        margin-left: 0;
+      }
+    }
+  }
+}

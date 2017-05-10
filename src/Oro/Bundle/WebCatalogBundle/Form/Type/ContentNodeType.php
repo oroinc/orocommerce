@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
@@ -44,11 +43,6 @@ class ContentNodeType extends AbstractType
         /** @var ContentNode $contentNode */
         $contentNode = array_key_exists('data', $options) ? $options['data'] : null;
         $builder
-            ->add(
-                'parentNode',
-                EntityIdentifierType::NAME,
-                ['class' => ContentNode::class, 'multiple' => false]
-            )
             ->add(
                 'titles',
                 LocalizedFallbackValueCollectionType::NAME,

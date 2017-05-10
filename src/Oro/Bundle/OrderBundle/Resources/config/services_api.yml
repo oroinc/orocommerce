@@ -1,46 +1,39 @@
 services:
-    oro_order.order_api.form_builder_totals_processor:
-        class: 'Oro\Bundle\ApiBundle\Processor\Shared\AddFormEventSubscriber'
-        arguments:
-            - '@oro_order.form.type.event_listener.subtotals_subscriber'
-        tags:
-            - { name: oro.api.processor, action: create, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }
-            - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }
 
-    oro_order.order_api.form_builder_default_website:
-        class: 'Oro\Bundle\ApiBundle\Processor\Shared\AddFormEventSubscriber'
+    oro_order.api.form_listener.discount:
+        class: 'Oro\Bundle\OrderBundle\Api\Form\EventListener\DiscountListener'
         arguments:
-            - '@oro_order.form_event_subscriber.default_website'
-        tags:
-            - { name: oro.api.processor, action: create, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }
-            - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }
+            - '@oro_order.order.total.total_helper'
 
-    oro_order.order_api.handle_order_included_data:
+    oro_order.api.form_listener.default_website:
+        class: 'Oro\Bundle\OrderBundle\Api\Form\EventListener\DefaultWebsiteListener'
+        arguments:
+            - '@oro_website.manager'
+
+    oro_order.api.product_provider.sku_cached:
+        class: 'Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider'
+        public: false
+        arguments:
+            - '@oro_product.repository.product'
+
+    oro_order.api.handle_order_included_data:
         class: 'Oro\Bundle\OrderBundle\Api\Processor\HandleOrderIncludedData'
         arguments:
-            - '@oro_order.product_provider.sku_cached'
+            - '@oro_order.api.product_provider.sku_cached'
         tags:
             - { name: oro.api.processor, action: create, group: load_data, priority: -40, class: '%oro_order.entity.order.class%' }
             - { name: oro.api.processor, action: update, group: load_data, priority: -40, class: '%oro_order.entity.order.class%' }
 
-    oro_order.order_api.update_product_line_item_price:
+    oro_order.api.update_product_line_item_price:
         class: 'Oro\Bundle\ProductBundle\Api\Processor\UpdateProductLineItemPrice'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
             - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
 
-    oro_order.order_api.update_request_data_for_order_line_item:
+    oro_order.api.update_request_data_for_order_line_item:
         class: 'Oro\Bundle\OrderBundle\Api\Processor\UpdateRequestDataForOrderLineItem'
         arguments:
-            - '@oro_order.product_provider.sku_cached'
+            - '@oro_order.api.product_provider.sku_cached'
         tags:
             - { name: oro.api.processor, action: create, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
             - { name: oro.api.processor, action: update, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
-
-    oro_order.order_api.totals_processor:
-        class: 'Oro\Bundle\ApiBundle\Processor\Shared\AddFormEventSubscriber'
-        arguments:
-            - '@oro_order.form_event_subscriber.discount'
-        tags:
-            - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order_discount_item.class%' }
-            - { name: oro.api.processor, action: create, group: transform_data, priority: 90, class: '%oro_order.entity.order_discount_item.class%' }

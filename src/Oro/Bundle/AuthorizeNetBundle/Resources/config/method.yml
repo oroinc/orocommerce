@@ -1,0 +1,54 @@
+parameters:
+    oro_authorize_net.method.id: 'authorize_net'
+
+services:
+    oro_authorize_net.method.config.factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Method\Config\Factory\AuthorizeNetConfigFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_locale.helper.localization'
+            - '@oro_authorize_net.method.generator.identifier'
+
+    oro_authorize_net.method.factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Method\Factory\AuthorizeNetPaymentMethodFactory'
+        public: false
+        arguments:
+            - '@oro_authorize_net.authorize_net.gateway'
+            - '@request_stack'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_authorize_net }
+
+    oro_authorize_net.method.generator.identifier:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
+        arguments:
+            - '%oro_authorize_net.method.id%'
+
+    oro_authorize_net.method.config.provider:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Method\Config\Provider\AuthorizeNetConfigProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '@oro_authorize_net.method.config.factory'
+            - '%oro_authorize_net.method.id%'
+
+    oro_authorize_net.method.provider:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Method\Provider\AuthorizeNetMethodProvider'
+        public: false
+        arguments:
+            - '@oro_authorize_net.method.config.provider'
+            - '@oro_authorize_net.method.factory'
+        tags:
+            - { name: oro_payment.payment_method_provider }
+
+    oro_authorize_net.method.view.provider:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Method\View\Provider\AuthorizeNetMethodViewProvider'
+        arguments:
+            - '@oro_authorize_net.method_view_factory'
+            - '@oro_authorize_net.method.config.provider'
+        tags:
+            - { name: oro_payment.payment_method_view_provider }

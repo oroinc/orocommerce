@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
@@ -20,9 +21,11 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodTypeConfigCollectionSubscriberProxy;
@@ -34,6 +37,7 @@ use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -69,6 +73,16 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
      */
     protected $choicesProvider;
 
+    /**
+     * @var ShippingMethodIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $iconProvider;
+
+    /**
+     * @var AssetHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $assetHelper;
+
     protected function setUp()
     {
         $this->methodRegistry = new ShippingMethodRegistry();
@@ -76,7 +90,13 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
+
+        $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
+        $this->iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
+        $this->assetHelper = $this->createMock(AssetHelper::class);
+
         parent::setUp();
+
         $this->methodTypeConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
         $this->methodConfigSubscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
@@ -91,12 +111,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                 return $message.'_translated';
             }));
 
-        $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
-
-        $this->formType = new ShippingMethodsConfigsRuleType(
-            $this->choicesProvider,
-            $translator
-        );
+        $this->formType = new ShippingMethodsConfigsRuleType();
     }
 
     public function testGetBlockPrefix()
@@ -240,6 +255,13 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                     CollectionType::NAME => new CollectionType(),
                     ShippingMethodsConfigsRuleDestinationType::NAME => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
+                    ),
+                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
+                    OroChoiceType::class => new OroChoiceType(),
+                    ShippingMethodSelectType::class => new ShippingMethodSelectType(
+                        $this->choicesProvider,
+                        $this->iconProvider,
+                        $this->assetHelper
                     ),
                     'oro_country' => new CountryType(),
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),

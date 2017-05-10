@@ -86,6 +86,10 @@ class SearchMessageProcessor implements MessageProcessorInterface
         $data = JSON::decode($message->getBody());
 
         $result = static::REJECT;
+        // REJECT messages that are a part of job
+        if (!empty($data['jobId'])) {
+            return $result;
+        }
 
         switch ($message->getProperty(MessageQueConfig::PARAMETER_TOPIC_NAME)) {
             case AsyncIndexer::TOPIC_SAVE:
