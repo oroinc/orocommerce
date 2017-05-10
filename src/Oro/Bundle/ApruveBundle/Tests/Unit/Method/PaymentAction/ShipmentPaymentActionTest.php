@@ -40,8 +40,8 @@ class ShipmentPaymentActionTest extends \PHPUnit_Framework_TestCase
         ],
     ];
 
-    const RETURN_SUCCESS = ['success' => true];
-    const RETURN_ERROR = ['success' => false, 'message' => 'oro.apruve.payment_transaction.shipment.result.error'];
+    const RETURN_SUCCESS = ['successful' => true];
+    const RETURN_ERROR = ['successful' => false, 'message' => 'oro.apruve.payment_transaction.shipment.result.error'];
 
     /**
      * @var ApruveShipmentFromResponseFactoryInterface|\PHPUnit_Framework_MockObject_MockObject

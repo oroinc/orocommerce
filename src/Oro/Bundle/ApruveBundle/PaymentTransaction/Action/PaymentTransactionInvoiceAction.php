@@ -63,54 +63,64 @@ class PaymentTransactionInvoiceAction extends AbstractPaymentMethodAction
         $options = $this->getOptions($context);
 
         $authorizePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
-        list($invoicePaymentTransaction, $invoiceResult) = $this
-            ->executeSpecificAction($authorizePaymentTransaction, ApruvePaymentMethod::INVOICE, $options);
+        $invoicePaymentTransaction = $this
+            ->createPaymentTransaction($authorizePaymentTransaction, ApruvePaymentMethod::INVOICE, $options);
 
-        list($shipmentPaymentTransaction, $shipmentResult) = $this
-            ->executeSpecificAction($invoicePaymentTransaction, ApruvePaymentMethod::SHIPMENT, $options);
+        $attributeValue = $this->executeActionOnTransaction($invoicePaymentTransaction);
 
-        $this->setAttributeValue(
-            $context,
-            array_merge(
-                [
-                    'invoiceTransaction' => $invoicePaymentTransaction->getEntityIdentifier(),
-                    'shipmentTransaction' => $shipmentPaymentTransaction->getEntityIdentifier(),
-                    // We consider shipment transaction as a resulting transaction, as it indicates
-                    // the result of both invoice and shipment creations, because without successful
-                    // invoice transaction it would be impossible to execute shipment.
-                    'transaction' => $shipmentPaymentTransaction->getEntityIdentifier(),
-                    'successful' => $shipmentPaymentTransaction->isSuccessful(),
-                    'message' => null,
-                ],
-                (array)$invoicePaymentTransaction->getTransactionOptions(),
-                (array)$shipmentPaymentTransaction->getTransactionOptions(),
-                $invoiceResult,
-                $shipmentResult
-            )
+        // Proceed to shipment if invoice transaction is successful.
+        if ($invoicePaymentTransaction->isSuccessful()) {
+            $shipmentPaymentTransaction = $this
+                ->createPaymentTransaction($invoicePaymentTransaction, ApruvePaymentMethod::SHIPMENT, $options);
+
+            // Execute shipment transaction and merge result with invoice transaction result.
+            $attributeValue = $this->executeActionOnTransaction($shipmentPaymentTransaction) + $attributeValue;
+
+            // Provide invoice transaction id just in case if somebody needs it later.
+            $attributeValue['invoiceTransaction'] = $invoicePaymentTransaction->getId();
+        }
+
+        $this->setAttributeValue($context, $attributeValue);
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     *
+     * @return array
+     */
+    private function executeActionOnTransaction(PaymentTransaction $paymentTransaction)
+    {
+        $response = $this->executePaymentTransaction($paymentTransaction);
+
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+
+        return array_merge(
+            [
+                'transaction' => $paymentTransaction->getId(),
+                'successful' => $paymentTransaction->isSuccessful(),
+                'message' => null,
+            ],
+            (array)$paymentTransaction->getTransactionOptions(),
+            $response
         );
     }
 
     /**
      * @param PaymentTransaction $sourcePaymentTransaction
-     * @param string             $actionName
-     * @param array              $options
+     * @param string             $action
+     * @param array              $options Options from context.
      *
-     * @return array
+     * @return PaymentTransaction
      */
-    private function executeSpecificAction(PaymentTransaction $sourcePaymentTransaction, $actionName, array $options)
+    private function createPaymentTransaction(PaymentTransaction $sourcePaymentTransaction, $action, array $options)
     {
         $paymentTransaction = $this->paymentTransactionProvider
-            ->createPaymentTransactionByParentTransaction($actionName, $sourcePaymentTransaction);
+            ->createPaymentTransactionByParentTransaction($action, $sourcePaymentTransaction);
 
         if (!empty($options['transactionOptions'])) {
             $paymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $response = $this->executePaymentTransaction($paymentTransaction);
-
-        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
-        $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
-
-        return [$paymentTransaction, $response];
+        return $paymentTransaction;
     }
 }

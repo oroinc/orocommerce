@@ -7,10 +7,13 @@ use Oro\Bundle\ApruveBundle\PaymentTransaction\Action\PaymentTransactionInvoiceA
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class PaymentTransactionInvoiceActionTest extends AbstractActionTest
 {
+    use EntityTrait;
+
     /**
      * @dataProvider executeDataProvider
      *
@@ -32,7 +35,7 @@ class PaymentTransactionInvoiceActionTest extends AbstractActionTest
             ->will($this->returnArgument(1));
 
         $this->paymentTransactionProvider
-            ->expects(static::exactly(2))
+            ->expects(static::atLeastOnce())
             ->method('createPaymentTransactionByParentTransaction')
             ->willReturnMap([
                 [ApruvePaymentMethod::INVOICE, $authorizationPaymentTransaction, $invoicePaymentTransaction],
@@ -41,7 +44,8 @@ class PaymentTransactionInvoiceActionTest extends AbstractActionTest
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethod->expects(static::exactly(2))
+        $paymentMethod
+            ->expects(static::atLeastOnce())
             ->method('execute')
             ->willReturnMap([
                 [ApruvePaymentMethod::INVOICE, $invoicePaymentTransaction, $data['invoiceResponse']],
@@ -51,24 +55,24 @@ class PaymentTransactionInvoiceActionTest extends AbstractActionTest
         $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
         $paymentMethodProvider
-            ->expects(static::exactly(2))
+            ->expects(static::atLeastOnce())
             ->method('hasPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn(true);
 
         $paymentMethodProvider
-            ->expects(static::exactly(2))
+            ->expects(static::atLeastOnce())
             ->method('getPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn($paymentMethod);
 
         $this->paymentMethodProvidersRegistry
-            ->expects(static::exactly(2))
+            ->expects(static::atLeastOnce())
             ->method('getPaymentMethodProviders')
             ->willReturn([$paymentMethodProvider]);
 
         $this->paymentTransactionProvider
-            ->expects(static::exactly(4))
+            ->expects(static::atLeastOnce())
             ->method('savePaymentTransaction')
             ->withConsecutive(
                 $invoicePaymentTransaction,
@@ -90,16 +94,18 @@ class PaymentTransactionInvoiceActionTest extends AbstractActionTest
     public function executeDataProvider()
     {
         return [
-            'default' => [
+            'successful' => [
                 'data' => [
-                    'invoicePaymentTransaction' => $this->createPaymentTransaction()
+                    'invoicePaymentTransaction' => $this->createPaymentTransaction(10)
                         ->setAction(ApruvePaymentMethod::INVOICE)
-                        ->setEntityIdentifier(10),
-                    'shipmentPaymentTransaction' => $this->createPaymentTransaction()
+                        ->setEntityIdentifier(10)
+                        ->setSuccessful(true),
+                    'shipmentPaymentTransaction' => $this->createPaymentTransaction(20)
                         ->setAction(ApruvePaymentMethod::SHIPMENT)
-                        ->setEntityIdentifier(20),
+                        ->setEntityIdentifier(20)
+                        ->setSuccessful(true),
                     'options' => [
-                        'paymentTransaction' => $this->createPaymentTransaction(),
+                        'paymentTransaction' => $this->createPaymentTransaction(1),
                         'attribute' => new PropertyPath('test'),
                         'transactionOptions' => [
                             'testOption' => 'testOption',
@@ -111,14 +117,68 @@ class PaymentTransactionInvoiceActionTest extends AbstractActionTest
                 'expected' => [
                     'transaction' => 20,
                     'invoiceTransaction' => 10,
-                    'shipmentTransaction' => 20,
+                    'successful' => true,
+                    'message' => null,
+                    'testOption' => 'testOption',
+                    'testInvoiceResponse' => 'testResponse',
+                    'testShipmentResponse' => 'testResponse',
+                ],
+            ],
+            'invoice is not successful' => [
+                'data' => [
+                    'invoicePaymentTransaction' => $this->createPaymentTransaction(10)
+                                                        ->setAction(ApruvePaymentMethod::INVOICE)
+                                                        ->setEntityIdentifier(10)
+                                                        ->setSuccessful(false),
+                    'shipmentPaymentTransaction' => null,
+                    'options' => [
+                        'paymentTransaction' => $this->createPaymentTransaction(1),
+                        'attribute' => new PropertyPath('test'),
+                        'transactionOptions' => [
+                            'testOption' => 'testOption',
+                        ],
+                    ],
+                    'invoiceResponse' => ['testInvoiceResponse' => 'testResponse'],
+                    'shipmentResponse' => null,
+                ],
+                'expected' => [
+                    'transaction' => 10,
+                    'successful' => false,
+                    'message' => null,
+                    'testOption' => 'testOption',
+                    'testInvoiceResponse' => 'testResponse',
+                ],
+            ],
+            'shipment is not successful' => [
+                'data' => [
+                    'invoicePaymentTransaction' => $this->createPaymentTransaction(10)
+                                                        ->setAction(ApruvePaymentMethod::INVOICE)
+                                                        ->setEntityIdentifier(10)
+                                                        ->setSuccessful(true),
+                    'shipmentPaymentTransaction' => $this->createPaymentTransaction(20)
+                                                         ->setAction(ApruvePaymentMethod::SHIPMENT)
+                                                         ->setEntityIdentifier(20)
+                                                         ->setSuccessful(false),
+                    'options' => [
+                        'paymentTransaction' => $this->createPaymentTransaction(1),
+                        'attribute' => new PropertyPath('test'),
+                        'transactionOptions' => [
+                            'testOption' => 'testOption',
+                        ],
+                    ],
+                    'invoiceResponse' => ['testInvoiceResponse' => 'testResponse'],
+                    'shipmentResponse' => ['testShipmentResponse' => 'testResponse'],
+                ],
+                'expected' => [
+                    'transaction' => 20,
+                    'invoiceTransaction' => 10,
                     'successful' => false,
                     'message' => null,
                     'testOption' => 'testOption',
                     'testInvoiceResponse' => 'testResponse',
                     'testShipmentResponse' => 'testResponse',
                 ],
-            ]
+            ],
         ];
     }
 
@@ -163,13 +223,14 @@ class PaymentTransactionInvoiceActionTest extends AbstractActionTest
     }
 
     /**
+     * @param int $id
+     *
      * @return PaymentTransaction
      */
-    private function createPaymentTransaction()
+    private function createPaymentTransaction($id)
     {
-        $paymentTransaction = new PaymentTransaction();
-        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
+        $properties = ['id' => $id, 'paymentMethod' => 'testPaymentMethodType'];
 
-        return $paymentTransaction;
+        return $this->getEntity(PaymentTransaction::class, $properties);
     }
 }
