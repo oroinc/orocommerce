@@ -66,6 +66,10 @@ define(function(require) {
                     [productId],
                     _.bind(this.refreshTierPrices, this)
                 );
+                mediator.trigger(
+                    'pricing:refresh:products-tier-prices',
+                    this.tierPrices
+                );
             }
         },
 
@@ -115,9 +119,12 @@ define(function(require) {
          * @param {Boolean} silent
          */
         refreshTierPrices: function(tierPrices, silent) {
-            if (tierPrices) {
-                this.setTierPrices(tierPrices, silent);
+            var productId = this.model.get('id');
+            if (productId && !_.isUndefined(tierPrices) && _.isUndefined(tierPrices[productId])) {
+                return;
             }
+            this.setTierPrices(tierPrices, silent);
+            this.setPrices();
             if (!this.options.allowPriceEdit) {
                 this.filterValues();
             }
@@ -150,7 +157,7 @@ define(function(require) {
             var currencies = [];
             var units = [];
 
-            _.each(prices, function (price) {
+            _.each(prices, function(price) {
                 currencies.push(price.currency);
                 units.push(price.unit);
             });

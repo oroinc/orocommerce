@@ -43,10 +43,11 @@ define(function(require) {
             }
             this.getElement('unit')
                 .find('option')
+                .show()
                 .filter(function() {
                     return !$(this).prop('selected') && (-1 === $.inArray(this.value, values));
                 })
-                .remove();
+                .hide();
         }
     });
 
