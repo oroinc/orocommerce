@@ -247,7 +247,7 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
     private function returnError()
     {
         return [
-            'success' => false,
+            'successful' => false,
             'message' => 'oro.apruve.payment_transaction.shipment.result.error',
         ];
     }
@@ -257,6 +257,6 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
      */
     private function returnSuccess()
     {
-        return ['success' => true];
+        return ['successful' => true];
     }
 }
