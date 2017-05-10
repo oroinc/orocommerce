@@ -36,6 +36,11 @@ system_configuration:
             icon: 'fa-shopping-cart'
         quick_order_form:
             title: oro.product.system_configuration.groups.quick_order_form.title
+        product_collections:
+            title: oro.product.system_configuration.groups.product_collections.title
+            icon: 'fa-list'
+        product_collections_indexation:
+            title: oro.product.system_configuration.groups.product_collections_indexation.title
 
     fields:
         oro_product.unit_rounding_type:
@@ -100,7 +105,6 @@ system_configuration:
             priority: 30
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_file.label
-                resettable: false
                 required: false
                 fileConstraints:
                     - Image: ~
@@ -161,6 +165,20 @@ system_configuration:
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
+        oro_product.product_collections_indexation_cron_schedule:
+            data_type: string
+            type: choice
+            options:
+                label: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.label
+                tooltip: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.tooltip
+                choices:
+                    0 * * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_hour.label
+                    0 */2 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_two_hours.label
+                    0 */3 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_three_hours.label
+                    0 */6 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_six_hours.label
+                    0 */12 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_twelve_hours.label
+                    0 0 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_day.label
+
     tree:
         system_configuration:
             platform:
@@ -205,6 +223,12 @@ system_configuration:
                                     featured_products_segment:
                                         children:
                                             - oro_product.featured_products_segment_id
+                            product_collections:
+                                priority: 0
+                                children:
+                                    product_collections_indexation:
+                                        children:
+                                            - oro_product.product_collections_indexation_cron_schedule
                     product_inventory:
                         priority: 650
                         children:

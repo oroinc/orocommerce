@@ -107,6 +107,13 @@ datagrids:
         source:
             skip_acl_apply: true
 
+    product-collection-grid:
+        extends: products-select-grid-base
+        options:
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+
     products-grid:
         extends: products-select-grid-base
         options:
@@ -132,6 +139,8 @@ datagrids:
             productName:
                 inline_editing:
                     enable: true
+                    editor:
+                        component: oroproduct/js/app/components/product-name-popup-editor-component
                     save_api_accessor:
                         route: oro_api_patch_product_inline_edit_name
                         query_parameter_names:

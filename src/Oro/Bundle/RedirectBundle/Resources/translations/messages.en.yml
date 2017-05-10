@@ -46,3 +46,8 @@ oro:
                         ask.label: 'Ask'
                         always.label: 'Always'
                         never.label: 'Never'
+                canonical_url_security_type:
+                    label: 'Canonical URL Security Type'
+                    choice:
+                        insecure.label: 'Insecure'
+                        secure.label: 'Secure'

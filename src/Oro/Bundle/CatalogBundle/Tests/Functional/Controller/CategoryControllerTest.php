@@ -128,7 +128,7 @@ class CategoryControllerTest extends WebTestCase
         $this->assertEquals('Categories', $crawler->filter('h1.oro-subtitle')->html());
         $this->assertContains(
             'Please select a category on the left or create new one.',
-            $crawler->filter('.content .text-center')->html()
+            $crawler->filter('[data-role="content"] .tree-empty-content')->html()
         );
     }
 
@@ -494,9 +494,6 @@ class CategoryControllerTest extends WebTestCase
         $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
             $newUnitPrecision['precision']
         ;
-
-        $parentCategory = $crawler->filter('[name = "oro_catalog_category[parentCategory]"]')->attr('value');
-        $parameters['oro_catalog_category']['parentCategory'] = $parentCategory;
 
         foreach ($this->localizations as $localization) {
             $locId = $localization->getId();

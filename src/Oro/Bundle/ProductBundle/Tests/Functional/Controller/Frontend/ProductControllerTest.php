@@ -14,6 +14,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductControllerTest extends WebTestCase
 {
     /**
@@ -32,6 +35,10 @@ class ProductControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+
+        $this->getContainer()
+            ->get('oro_website_search.indexer')
+            ->resetIndex();
 
         $this->loadFixtures([
             LoadFrontendProductData::class,

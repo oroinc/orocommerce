@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
-
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 
+use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 abstract class AbstractTaxCodeRepository extends EntityRepository
 {
@@ -132,7 +132,7 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
      * @param string $type
      * @param object $object
      *
-     * @return AbstractTaxCode|null
+     * @return null|AbstractTaxCode
      */
     public function findOneByEntity($type, $object)
     {
@@ -177,6 +177,14 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
             ->getResult();
 
         return $this->arrangeTaxCodes($objectIds, $taxCodes, $type);
+    }
+
+    /**
+     * @return bool
+     */
+    public function clearCachedQueries()
+    {
+        return $this->getQueryResultCache()->deleteAll();
     }
 
     /**

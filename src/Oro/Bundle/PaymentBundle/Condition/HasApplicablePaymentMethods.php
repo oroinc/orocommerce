@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -20,9 +19,6 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
     use ContextAccessorAwareTrait;
 
     const NAME = 'has_applicable_payment_methods';
-
-    /** @var CheckoutPaymentContextFactory */
-    protected $checkoutPaymentContextFactory;
 
     /** @var PaymentMethodProvider */
     protected $paymentMethodProvider;

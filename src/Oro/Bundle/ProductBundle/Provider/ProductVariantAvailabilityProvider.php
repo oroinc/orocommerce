@@ -3,11 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
+use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -16,9 +15,6 @@ class ProductVariantAvailabilityProvider
 {
     /** @var DoctrineHelper */
     private $doctrineHelper;
-
-    /** @var EnumValueProvider */
-    private $enumValueProvider;
 
     /** @var CustomFieldProvider */
     private $customFieldProvider;
@@ -32,25 +28,28 @@ class ProductVariantAvailabilityProvider
     /** @var array */
     private $customFieldsByEntity = [];
 
+    /** @var ProductVariantFieldValueHandlerRegistry */
+    private $fieldValueHandlerRegistry;
+
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param EnumValueProvider $enumValueProvider
      * @param CustomFieldProvider $customFieldProvider
      * @param PropertyAccessor $propertyAccessor
      * @param EventDispatcherInterface $eventDispatcher
+     * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        EnumValueProvider $enumValueProvider,
         CustomFieldProvider $customFieldProvider,
         PropertyAccessor $propertyAccessor,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->enumValueProvider = $enumValueProvider;
         $this->customFieldProvider = $customFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->eventDispatcher = $eventDispatcher;
+        $this->fieldValueHandlerRegistry = $fieldValueHandlerRegistry;
     }
 
     /**
@@ -101,26 +100,9 @@ class ProductVariantAvailabilityProvider
     public function getVariantFieldValues($variantFieldName)
     {
         $type = $this->getCustomFieldType($variantFieldName);
+        $handler = $this->fieldValueHandlerRegistry->getVariantFieldValueHandler($type);
 
-        $variants = [];
-        switch ($type) {
-            case 'enum':
-                $enumCode = ExtendHelper::generateEnumCode(Product::class, $variantFieldName);
-                $variants = $this->enumValueProvider->getEnumChoicesByCode($enumCode);
-                break;
-
-            case 'boolean':
-                // TODO: Is it possible to have this choice variants in one place?
-                $variants = [0 => 'No', 1 => 'Yes'];
-                break;
-
-            case null:
-                throw new \InvalidArgumentException(
-                    sprintf('Custom field "%s" not found', $variantFieldName)
-                );
-        }
-
-        return $variants;
+        return $handler->getPossibleValues($variantFieldName);
     }
 
     /**
@@ -216,26 +198,9 @@ class ProductVariantAvailabilityProvider
     {
         $variantValue = $this->propertyAccessor->getValue($product, $variantField);
         $fieldType = $this->getCustomFieldType($variantField);
+        $handler = $this->fieldValueHandlerRegistry->getVariantFieldValueHandler($fieldType);
 
-        switch ($fieldType) {
-            case 'enum':
-                $result = $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
-                break;
-
-            case 'boolean':
-                $result = (bool) $variantValue;
-                break;
-            default:
-                throw new \InvalidArgumentException(
-                    sprintf(
-                        'Can not get value of "%s" field from product (ID: %d)',
-                        $variantField,
-                        $product->getId()
-                    )
-                );
-        }
-
-        return $result;
+        return $handler->getScalarValue($variantValue);
     }
 
     /**

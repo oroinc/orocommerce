@@ -30,8 +30,9 @@ class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implemen
         /** @var EntityManager $manager */
         $inventoryLevels = $this->getObjectReferences($manager, InventoryLevel::class);
 
+        /** @var InventoryLevel $inventoryLevel */
         foreach ($inventoryLevels as $inventoryLevel) {
-            $inventoryLevel->setQuantity(mt_rand(1, 100));
+            $inventoryLevel->setQuantity(mt_rand(20, 200));
             $manager->persist($inventoryLevel);
         }
 

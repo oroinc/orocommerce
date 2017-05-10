@@ -161,7 +161,9 @@ class ProductVisibilityControllerTest extends WebTestCase
             'visibility to all'
         );
         $this->assertSame(
-            null,
+            json_encode([
+                $this->getReference('customer.level_1')->getId() => ['visibility' => 'hidden']
+            ]),
             $crawler->filter(sprintf('[name = "oro_scoped_data_type[%s][customer]"]', $scope->getId()))
                 ->attr('value'),
             'customer visibility form data'

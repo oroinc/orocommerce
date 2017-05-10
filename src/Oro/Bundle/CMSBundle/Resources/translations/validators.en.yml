@@ -1,0 +1,4 @@
+oro.cms:
+    contentblock:
+        alias:
+            regex.message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."

@@ -1,0 +1,16 @@
+oro_behat_extension:
+    elements:
+        Products:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul/li[contains(@class, "jstree-node")]/a[contains(., "Products")]'
+
+        Clearance:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul/li[contains(@class, "jstree-node")]/a[contains(., "Clearance")]'
+
+        By Brand:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "By Brand")]'

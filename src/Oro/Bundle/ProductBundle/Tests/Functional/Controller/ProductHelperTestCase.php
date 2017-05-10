@@ -142,38 +142,22 @@ class ProductHelperTestCase extends WebTestCase
                         'conversionRate' => 3, 'sell' => true
                     ]
                 ],
-                'names' => [
-                    'values' => [
-                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
-                        'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
-                        ],
-                    ],
-                    'ids' => [
-                        $localization->getId() => $localizedName->getId()
-                    ],
-                ],
                 'descriptions' => [
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
                         'localizations' => [
-                            $localization->getId() => ['fallback' => FallbackType::SYSTEM
-                            ]
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM]
                         ],
                     ],
                     'ids' => [
                         $localization->getId() => $localizedName->getId()
                     ],
                 ],
-                'shortDescriptions' => [
+                'names' => [
                     'values' => [
-                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
+                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
                         'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM]
                         ],
                     ],
                     'ids' => [
@@ -188,7 +172,18 @@ class ProductHelperTestCase extends WebTestCase
                     1 => [
                         'additional' => 1
                     ]
-                ]
+                ],
+                'shortDescriptions' => [
+                    'values' => [
+                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
+                        'localizations' => [
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM]
+                        ],
+                    ],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
+                ],
             ]),
         ];
     }

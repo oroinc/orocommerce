@@ -3,13 +3,13 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener;
-use Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider;
 
 class ShippingMethodConfigDataListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var UPSShippingMethodProvider | \PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $provider;
 
@@ -20,7 +20,7 @@ class ShippingMethodConfigDataListenerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->provider = $this->getMockBuilder(UPSShippingMethodProvider::class)
+        $this->provider = $this->getMockBuilder(ShippingMethodProviderInterface::class)
             ->disableOriginalConstructor()->getMock();
 
         $this->listener = new ShippingMethodConfigDataListener($this->provider);

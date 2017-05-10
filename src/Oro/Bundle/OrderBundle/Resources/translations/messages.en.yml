@@ -186,6 +186,7 @@ oro:
             shortcut_order_list.description: Show list of existing orders
             best_selling_list.label: Best Selling Products
             best_selling_list.description: List of best selling products
+            static_reports_tab.label: Reports
         widgets:
             order_information: Order Information
             shipping_tracking: Shipping Tracking
@@ -250,8 +251,15 @@ oro:
                 label: '%translatedMethodType%'
 
         permission:
-            view_payment_history.label: View Payment History
+            view_payment_history.label: 'View Payment History'
+            charge_authorized_payments.label: 'Charge Authorized Payments'
 
+        payment_transaction:
+            capture:
+                title: 'Charge The Customer'
+                message: 'The customer will be charged {{ amount }}. Are you sure you want to continue?'
+                button.okText: 'Yes, Charge'
+                result.success: 'The payment of %amount% has been captured successfully.'
     frontend:
         order:
             entity_plural_label: Orders

@@ -67,14 +67,16 @@ class ProductPricesType extends AbstractContainerType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
-            ->setDefined('productUnitSelectionVisible')
+            ->setRequired([
+                'productPrices',
+                'productUnitSelectionVisible',
+            ])
             ->setDefaults(
                 [
                     'product' => null,
                     'attributeFamily' => null
                 ]
-            )
-            ->setRequired('productPrices');
+            );
     }
 
     /**
