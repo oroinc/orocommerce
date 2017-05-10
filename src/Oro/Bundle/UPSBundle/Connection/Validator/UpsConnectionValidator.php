@@ -55,7 +55,7 @@ class UpsConnectionValidator implements UpsConnectionValidatorInterface
     public function validateConnectionByUpsSettings(UPSTransport $transport)
     {
         $request = $this->requestFactory->createByTransport($transport);
-        $client = $this->clientFactory->createUpsClient($transport->isTestMode());
+        $client = $this->clientFactory->createUpsClient($transport->isUpsTestMode());
 
         try {
             $response = $client->post($request->getUrl(), $request->getRequestData());
