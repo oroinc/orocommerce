@@ -46,6 +46,7 @@ define(function(require) {
                 this.getElement('priceValue').prop('disabled', true);
                 var productId = this.model.get('id');
                 if (!_.isUndefined(productId) && productId.length) {
+                    // store current value
                     this.storedPrice = {
                         productId: productId,
                         unit: this.model.get('unit'),
@@ -129,7 +130,6 @@ define(function(require) {
                 this.filterValues();
             }
         },
-
 
         /**
          * @param {Array} items
