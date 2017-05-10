@@ -950,3 +950,11 @@ services:
         arguments:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.provider.serialized_field_provider'
+
+    oro_product.form.type.extension.enum_value_for_product:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity_config.config_manager'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
