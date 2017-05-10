@@ -36,6 +36,9 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
+                'related_products_enabled' => ['value' => true],
+                'related_products_bidirectional' => ['value' => false],
+                'max_number_of_related_products' => ['value' => 5],
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
                 self::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
                 self::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],
