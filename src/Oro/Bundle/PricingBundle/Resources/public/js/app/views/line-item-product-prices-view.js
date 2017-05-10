@@ -23,7 +23,7 @@ define(function(require) {
         }),
 
         options: _.extend({}, ProductPricesEditableView.prototype.options, {
-            allowPriceEdit: false
+            allowPriceEdit: true
         }),
 
         storedPrice: {},
@@ -35,9 +35,6 @@ define(function(require) {
             LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
-            if (!this.options.allowPriceEdit) {
-                mediator.on('pricing:load:products-tier-prices', this.refreshTierPrices, this);
-            }
             mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
 
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
@@ -67,7 +64,7 @@ define(function(require) {
                 mediator.trigger(
                     'pricing:load:products-tier-prices',
                     [productId],
-                    _.bind(this.setTierPrices, this)
+                    _.bind(this.refreshTierPrices, this)
                 );
             }
         },
@@ -118,7 +115,9 @@ define(function(require) {
          * @param {Boolean} silent
          */
         refreshTierPrices: function(tierPrices, silent) {
-            this.setTierPrices(tierPrices, silent);
+            if (tierPrices) {
+                this.setTierPrices(tierPrices, silent);
+            }
             if (!this.options.allowPriceEdit) {
                 this.filterValues();
             }
