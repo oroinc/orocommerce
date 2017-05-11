@@ -65,7 +65,7 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
         ];
 
         $scrollData = new ScrollData($data);
-        $event = new BeforeListRenderEvent($env, $scrollData, new FormView());
+        $event = new BeforeListRenderEvent($env, $scrollData, new \stdClass(), new FormView());
 
         $this->getListener()->onEdit($event);
         $expectedData = $data;
