@@ -13,9 +13,23 @@ oro_behat_extension:
       paths:
         - '@OroDPDBundle/Tests/Behat/Features'
   elements:
+    Shippment Method Config Type Field:
+      class: Oro\Bundle\PaymentBundle\Tests\Behat\Element\PaymentMethodConfigType
+      selector:
+        type: 'xpath'
+        locator: '//div[@id[starts-with(.,"s2id_oro_shipping_methods_configs_rule_method")]]'
     Itegration Form:
       selector: "form[id^='oro_integration_channel_form-uid']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
           Lable: "oro_integration_channel_form[transport][labels][values][default]"
+    Shippment Rule Form:
+      selector: "form[id^='oro_shipping_methods_configs_rule-uid']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Method:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"s2id_oro_shipping_methods_configs_rule_method")]]'
+            element: Shippment Method Config Type Field
