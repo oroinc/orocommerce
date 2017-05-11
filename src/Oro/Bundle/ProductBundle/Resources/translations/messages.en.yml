@@ -29,6 +29,7 @@ oro:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
         parent_variant_links.label: Parent Product Variant Links
+        is_related.label: Is Related
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
@@ -175,6 +176,7 @@ oro:
             inventory: Inventory
             images: Images
             design: Design
+            relatedItems: Related Items
 
         widgets:
             product_information: Product Information

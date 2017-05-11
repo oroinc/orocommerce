@@ -3,6 +3,8 @@ placeholders:
         oro_product_quick_add_buttons:
             items:
                 quick_add_actions_buttons: ~
+        oro_product_related_items_view: ~
+        oro_product_related_items_edit: ~
 
     items:
         quick_add_actions_buttons:

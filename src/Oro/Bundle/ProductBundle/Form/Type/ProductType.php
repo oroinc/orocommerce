@@ -196,6 +196,26 @@ class ProductType extends AbstractType
                 'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
                 'empty_value' => false,
             ])
+            ->add(
+                'appendRelated',
+                'oro_entity_identifier',
+                [
+                    'class'    => Product::class,
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'removeRelated',
+                'oro_entity_identifier',
+                [
+                    'class'    => Product::class,
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true,
+                ]
+            )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);

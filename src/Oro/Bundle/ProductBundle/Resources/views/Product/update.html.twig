@@ -146,6 +146,31 @@
         }
     }) %}
 
+    {# @todo just a prototype. change to: #}
+    {# form.appendRelated.vars.value|split(',')|default([]) and form.removeRelated.vars.value|split(',')|default([]) #}
+    {% set relatedGridParams = {
+        'productId': entity.id,
+         _parameters: {
+            data_in: 60,
+            data_not_in: 64
+        }
+    } %}
+
+    {% set dataBlocks = dataBlocks|merge({
+        'relatedItems': {
+            'title': 'oro.product.sections.relatedItems'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'data': [
+                    form_widget(form.appendRelated, {'id': 'productAppendRelated'}),
+                    form_widget(form.removeRelated, {'id': 'productRemoveRelated'}),
+                    dataGrid.renderGrid('products-related-items-edit', relatedGridParams),
+                    placeholder('oro_product_related_items_edit', {'entity':  entity})
+                ]
+            }]
+        }
+    }) %}
+
     {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.data|length != 0) %}
 
     {% if productHasVariants %}

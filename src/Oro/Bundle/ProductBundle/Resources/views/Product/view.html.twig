@@ -124,6 +124,19 @@
         }
     }) %}
 
+    {% set dataBlocks = dataBlocks|merge({
+        'relatedItems': {
+            'title': 'oro.product.sections.relatedItems'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'data': [
+                    dataGrid.renderGrid('products-related-items-view', {'productId': entity.id}),
+                    placeholder('oro_product_related_items_view', {'entity':  entity})
+                ]
+            }]
+        }
+    }) %}
+
     {% if pageTemplate == null %}
         {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
     {% else %}
