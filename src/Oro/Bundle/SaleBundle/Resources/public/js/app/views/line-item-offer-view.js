@@ -12,6 +12,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            'allUnits': [],
             $: {
                 product: ''
             }
@@ -21,7 +22,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            mediator.on('product:unit:filter-values', _.bind(this.filterValues, this));
+            mediator.on('product:unit:filter-values', _.bind(this.filterUnits, this));
             this.elements.id = $(options.$.product);
             this.options = $.extend(true, {}, this.options, options || {});
             _.each(this.options.$, _.bind(function(selector, field) {
@@ -29,25 +30,47 @@ define(function(require) {
             }, this));
 
             LineItemOfferView.__super__.initialize.apply(this, arguments);
+
+            // get all units
+            _.each(this.getElement('unit').find('option'), _.bind(function(elem) {
+                this.options.allUnits[elem.value] = elem.text;
+            }, this));
         },
 
         /**
-         * Remove options from all selects
-         *
-         * @param {Number} productId
-         * @param {Array} values
+         * @param {Array} units
          */
-        filterValues: function(productId, values) {
-            if (productId !== this.model.id) {
+        filterUnits: function(productId, units) {
+            if (this.model.get('id') !== productId) {
                 return;
             }
-            this.getElement('unit')
+            var self = this;
+            var $select = this.getElement('unit');
+            var value = $select.val();
+
+            $select
+                .val(null)
                 .find('option')
-                .show()
-                .filter(function() {
-                    return !$(this).prop('selected') && (-1 === $.inArray(this.value, values));
-                })
-                .hide();
+                .remove();
+
+            if (units) {
+                _.each(self.options.allUnits, function(code, label) {
+                    if ($select.find('option[value=' + code + ']').length ||
+                        (-1 === $.inArray(this.value, units))
+                    ) {
+                        return;
+                    }
+                    $select.append($('<option/>').val(code).text(label));
+                });
+                $select.val(value);
+                if ($select.val() === null) {
+                    $select.val(units[0]);
+                }
+            }
+
+            $select
+                .trigger('value:changed')
+                .trigger('change');
         }
     });
 

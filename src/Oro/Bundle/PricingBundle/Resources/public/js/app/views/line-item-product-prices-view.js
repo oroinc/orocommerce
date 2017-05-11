@@ -38,7 +38,7 @@ define(function(require) {
             mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
 
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
-                this.setTierPrices(tierPrices, true);
+                this.setTierPrices(tierPrices, false);
             }, this));
 
             this.updateTierPrices();
@@ -65,12 +65,12 @@ define(function(require) {
                 mediator.trigger(
                     'pricing:load:products-tier-prices',
                     [productId],
-                    _.bind(this.refreshTierPrices, this)
+                    _.bind(this.onUpdatePrices, this)
                 );
-                mediator.trigger(
-                    'pricing:refresh:products-tier-prices',
-                    this.tierPrices
-                );
+                //mediator.trigger(
+                //    'pricing:refresh:products-tier-prices',
+                //    this.tierPrices
+                //);
             }
         },
 
@@ -124,11 +124,32 @@ define(function(require) {
             if (productId && !_.isUndefined(tierPrices) && _.isUndefined(tierPrices[productId])) {
                 return;
             }
-            this.setTierPrices(tierPrices, silent);
-            this.setPrices();
+            this.setTierPrices(tierPrices, false);
             if (!this.options.allowPriceEdit) {
-                this.filterValues();
+                this.filterValues(true);
             }
+            this.setTierPrices(tierPrices, false);
+        },
+
+        /**
+         * @param {Object} tierPrices
+         * @param {Boolean} silent
+         */
+        onUpdatePrices: function(tierPrices) {
+            var productId = this.model.get('id');
+            if (productId && !_.isUndefined(tierPrices) && _.isUndefined(tierPrices[productId])) {
+                return;
+            }
+            this.setTierPrices(tierPrices, false);
+            if (!this.options.allowPriceEdit) {
+                this.filterValues(!this.model.get('price'));
+                if (!this.model.get('price')) {
+                    this.findPrice();
+                    this.setPriceValue(this.findPriceValue());
+                    this.updateUI();
+                }
+            }
+
         },
 
         /**
@@ -147,7 +168,7 @@ define(function(require) {
             }
         },
 
-        filterValues: function() {
+        filterValues: function(keepSelected) {
             var prices = {};
 
             var productId = this.model.get('id');
@@ -166,7 +187,7 @@ define(function(require) {
                 .find('option')
                 .show()
                 .filter(function() {
-                    return !$(this).prop('selected') && (-1 === $.inArray(this.value, currencies));
+                    return (!keepSelected || !$(this).prop('selected')) && (-1 === $.inArray(this.value, currencies));
                 })
                 .hide();
 
