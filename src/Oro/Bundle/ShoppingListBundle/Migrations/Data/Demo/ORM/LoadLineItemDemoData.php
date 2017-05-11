@@ -83,7 +83,7 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
                     ->setOwner($owner)
                     ->setShoppingList($shoppingList)
                     ->setProduct($product)
-                    ->setQuantity(mt_rand(1, 25))
+                    ->setQuantity(mt_rand(1, 10))
                     ->setUnit($product->getUnitPrecisions()->current()->getUnit());
                 $shoppingList->addLineItem($lineItem);
 

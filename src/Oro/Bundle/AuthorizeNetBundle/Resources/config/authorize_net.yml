@@ -1,0 +1,62 @@
+services:
+    oro_authorize_net.authorize_net.gateway:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Gateway'
+        public: false
+        arguments:
+            - '@oro_authorize_net.authorize_net.client.authorize_net_sdk'
+            - '@oro_authorize_net.authorize_net.request.registry'
+
+    oro_authorize_net.authorize_net.client.authorize_net_sdk:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\AuthorizeNetSDKClient'
+        public: false
+        arguments:
+            - '@jms_serializer.serializer'
+            - '@oro_authorize_net.authorize_net.client.factory.anet_sdk_request_factory'
+
+    oro_authorize_net.authorize_net.request.registry:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\RequestRegistry'
+        public: false
+        calls:
+            - ['addRequest', ['@oro_authorize_net.authorize_net.request.authorize']]
+            - ['addRequest', ['@oro_authorize_net.authorize_net.request.charge']]
+            - ['addRequest', ['@oro_authorize_net.authorize_net.request.capture']]
+
+    oro_authorize_net.authorize_net.request.authorize:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\AuthorizeRequest'
+        public: false
+
+    oro_authorize_net.authorize_net.request.charge:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\ChargeRequest'
+        public: false
+
+    oro_authorize_net.authorize_net.request.capture:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\CaptureRequest'
+        public: false
+
+    oro_authorize_net.authorize_net.client.factory.anet_sdk_request_factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\Factory\AnetSDKRequestFactory'
+        public: false
+        arguments:
+            - '@oro_authorize_net.authorize_net.client.request_configurator.registry'
+
+    oro_authorize_net.authorize_net.client.request_configurator.registry:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\RequestConfigurator\RequestConfiguratorRegistry'
+        public: false
+        calls:
+            - ['addRequestConfigurator', ['@oro_authorize_net.authorize_net.client.request_configurator.merchant_authentication']]
+            - ['addRequestConfigurator', ['@oro_authorize_net.authorize_net.client.request_configurator.transaction_request']]
+            - ['addRequestConfigurator', ['@oro_authorize_net.authorize_net.client.request_configurator.fallback']]
+
+    oro_authorize_net.authorize_net.client.request_configurator.fallback:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\RequestConfigurator\FallbackRequestConfigurator'
+        public: false
+        arguments:
+            - '@property_accessor'
+
+    oro_authorize_net.authorize_net.client.request_configurator.merchant_authentication:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\RequestConfigurator\MerchantAuthenticationRequestConfigurator'
+        public: false
+
+    oro_authorize_net.authorize_net.client.request_configurator.transaction_request:
+        class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\RequestConfigurator\TransactionRequestConfigurator'
+        public: false

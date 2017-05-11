@@ -79,9 +79,9 @@ class PaymentTransactionCaptureAction extends AbstractPaymentMethodAction
                 [
                     'transaction' => $capturePaymentTransaction->getEntityIdentifier(),
                     'successful' => $capturePaymentTransaction->isSuccessful(),
-                    'message' => null,
+                    'message' => $capturePaymentTransaction->isSuccessful() ? null : 'oro.payment.message.error',
                 ],
-                (array)$capturePaymentTransaction->getTransactionOptions(),
+                $capturePaymentTransaction->getTransactionOptions(),
                 $response
             )
         );

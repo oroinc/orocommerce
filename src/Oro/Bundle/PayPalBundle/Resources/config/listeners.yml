@@ -51,6 +51,7 @@ services:
         arguments:
             - '@session'
             - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
+            - '@oro_payment.provider.result_messages'
         tags:
             # Priority of this listener should always be less then priority of oro_paypal.event_listener.callback.payflow_gateway.express_checkout
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: -100 }
@@ -61,6 +62,7 @@ services:
         arguments:
             - '@session'
             - '@oro_paypal.method.provider.payments_pro.express_checkout'
+            - '@oro_payment.provider.result_messages'
         tags:
             # Priority of this listener should always be less then priority of oro_paypal.event_listener.callback.payments_pro.express_checkout
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: -100 }

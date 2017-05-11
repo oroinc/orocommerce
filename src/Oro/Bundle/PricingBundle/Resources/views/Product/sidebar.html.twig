@@ -17,9 +17,10 @@
     'currencyTemplate': currencyTemplate,
 } %}
 
-<div data-page-component-module="oropricing/js/app/components/product-sidebar-component"
-     data-page-component-options="{{ pageComponentOptions|json_encode }}">
-    <div class="sidebar-item default-price-list-choice">{{ form_row(priceList) }}</div>
-    <div class="sidebar-item currencies">{{ form_row(currencies) }}</div>
-    <div class="sidebar-item show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>
+<div class="sidebar-items"
+    data-page-component-module="oropricing/js/app/components/product-sidebar-component"
+    data-page-component-options="{{ pageComponentOptions|json_encode }}">
+        <div class="default-price-list-choice">{{ form_row(priceList) }}</div>
+        <div class="currencies">{{ form_row(currencies) }}</div>
+        <div class="show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>
 </div>

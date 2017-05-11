@@ -21,6 +21,13 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
         ParentNode: '@nodeDefaultWebCatalog'
         webCatalog: '@webCatalog'
 
+    nodeByBrand:
+        addTitle: ['@localValueByBrand']
+        addSlugPrototype: ['@localValueByBrandSlug']
+        addContentVariant: ['@systemPageVariant']
+        ParentNode: '@nodeClearance'
+        webCatalog: '@webCatalog'
+
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueDefaultWebCatalog:
         string: 'Default Web Catalog'
@@ -43,9 +50,20 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueClearanceSlug:
         string: 'clearance'
 
+    localValueByBrand:
+        string: 'By Brand'
+
+    localValueByBrandSlug:
+        string: 'by-brand'
+
 Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
     webCatalog:
         name: 'Default Web Catalog'
         description: 'Default Web Catalog description'
         organization: '@organization'
         owner: '@business_unit'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    systemPageVariant:
+        type: 'system_page'
+        systemPageRoute: 'oro_customer_frontend_customer_user_index'

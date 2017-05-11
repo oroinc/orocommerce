@@ -11,6 +11,7 @@ use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadWebCatalogWithContent
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\OrmIndexerTest;
 
@@ -32,12 +33,10 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
     public function testOnWebsiteSearchIndex()
     {
         $container = $this->getContainer();
-        $doctrine = $container->get('doctrine');
-        $localizedFallbackValueManager = $doctrine->getManagerForClass(LocalizedFallbackValue::class);
+        $localizedFallbackValueManager = $container->get('doctrine')->getManagerForClass(LocalizedFallbackValue::class);
         
         /** @var WebCatalog $webCatalog */
-        $webCatalog = $doctrine->getRepository(WebCatalog::class)
-            ->findOneByName(LoadWebCatalogWithContentNodes::WEB_CATALOG_NAME);
+        $webCatalog = $this->getReference(LoadWebCatalogWithContentNodes::WEB_CATALOG_NAME);
         
         // set WebCatalog for current Website
         $container->get('oro_config.global')->set(
@@ -47,11 +46,11 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         );
         
         /** @var ContentNode $contentNode */
-        $contentNode = $doctrine->getRepository(ContentNode::class)
-            ->findOneByWebCatalog($webCatalog->getId());
-        
+        $contentNode = $this->getReference(LoadWebCatalogWithContentNodes::CONTENT_NODE_1);
         /** @var ContentVariant $contentVariant */
-        $contentVariant = $contentNode->getContentVariants()[0];
+        $notAssignedContentVariant = $this->getReference(LoadWebCatalogWithContentNodes::CONTENT_VARIANT_2);
+        /** @var ContentVariant $contentVariant */
+        $contentVariant = $this->getReference(LoadWebCatalogWithContentNodes::CONTENT_VARIANT_1);
         $product = $contentVariant->getProductPageProduct();
         
         /** @var LocalizedFallbackValue $metaDescription */
@@ -67,11 +66,23 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         );
         
         $query = $container->get('oro_product.website_search.repository.product')
-            ->getSearchQuery(self::QUERY, 0, 1);
+            ->getSearchQuery(self::QUERY, 0, 1)
+            ->addSelect(sprintf(
+                'integer.assigned_to_%s_%s as assigned',
+                WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
+                $contentVariant->getId()
+            ))
+            ->addSelect(sprintf(
+                'integer.assigned_to_%s_%s as notAssigned',
+                WebCatalogEntityIndexerListener::ASSIGN_TYPE_CONTENT_VARIANT,
+                $notAssignedContentVariant->getId()
+            ));
         
         $results = $query->getResult();
         
         $this->assertEquals(1, $results->getRecordsCount());
         $this->assertEquals($product->getId(), $results[0]->getRecordId());
+        $this->assertEquals(1, $results[0]->getSelectedData()['assigned']);
+        $this->assertEmpty($results[0]->getSelectedData()['notAssigned']);
     }
 }

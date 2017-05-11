@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicCardTypesDataProvider;
 
 class BasicCardTypesDataProviderTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetPaymentActions()
+    public function testGetCardTypes()
     {
         $provider = new BasicCardTypesDataProvider();
 
@@ -16,5 +16,15 @@ class BasicCardTypesDataProviderTest extends \PHPUnit_Framework_TestCase
             'discover',
             'american_express',
         ], $provider->getCardTypes());
+    }
+
+    public function testGetDefaultCardTypes()
+    {
+        $provider = new BasicCardTypesDataProvider();
+
+        $this->assertEquals([
+            'visa',
+            'mastercard',
+        ], $provider->getDefaultCardTypes());
     }
 }

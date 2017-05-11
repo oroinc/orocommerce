@@ -214,3 +214,8 @@ oro:
                 view.label: 'View Order'
             checkout:
                 cannot_create_order_no_payment_methods_available: 'Cannot create order because no payment methods available'
+
+        errors:
+            payment:
+                  error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
+                  error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'

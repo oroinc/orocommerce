@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -14,8 +16,10 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 
-class LoadCustomerUsersData extends AbstractFixture implements DependentFixtureInterface
+class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
+    use ContainerAwareTrait;
+
     const ADMINISTRATOR = 'ROLE_FRONTEND_ADMINISTRATOR';
     const BUYER         = 'ROLE_FRONTEND_BUYER';
 
@@ -32,9 +36,6 @@ class LoadCustomerUsersData extends AbstractFixture implements DependentFixtureI
 
     const NOT_SAME_ACCOUNT_USER_EMAIL    = 'not_same_customer@example.com';
     const NOT_SAME_ACCOUNT_USER_PASSWORD = '789789';
-
-    /** @var ContainerInterface */
-    protected $container;
 
     /**
      * {@inheritdoc}

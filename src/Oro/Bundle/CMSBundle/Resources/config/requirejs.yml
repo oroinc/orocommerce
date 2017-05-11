@@ -1,0 +1,5 @@
+config:
+    paths:
+        'orocms/js/app/components/content-variant-collection-component': 'bundles/orocms/js/app/components/content-variant-collection-component.js'
+        'orocms/js/app/views/variants-collection-view': 'bundles/orocms/js/app/views/variants-collection-view.js'
+        'orocms/js/app/views/default-variant-collection-view': 'bundles/orocms/js/app/views/default-variant-collection-view.js'

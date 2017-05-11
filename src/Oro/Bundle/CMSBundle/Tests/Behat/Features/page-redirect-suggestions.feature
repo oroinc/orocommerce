@@ -17,4 +17,4 @@ Feature: Page redirect suggestions
     And I fill in URL Slug field with "other-slug"
     And I press "Save and Close"
     Then I should see "\"/about-1\" to the \"/other-slug\" for \"Default Value\""
-    And I click on "Modal Cancel Button"
+    And I click "Cancel" in modal window
