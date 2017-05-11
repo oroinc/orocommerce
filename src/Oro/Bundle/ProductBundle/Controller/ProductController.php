@@ -218,7 +218,7 @@ class ProductController extends Controller
             ];
         } else {
             $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
-            $form->handleRequest($request);
+            $form->submit($request->request->get(ProductType::NAME));
         }
 
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(

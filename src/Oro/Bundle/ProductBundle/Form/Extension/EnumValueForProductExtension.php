@@ -84,13 +84,21 @@ class EnumValueForProductExtension extends AbstractTypeExtension
      */
     private function isValidAttributeEnum($configId)
     {
+
+        if (!$configId || !$configId instanceof FieldConfigId ||
+            !is_a($configId->getClassName(), Product::class, true)
+        ) {
+            return false;
+        }
+
         $attributeConfigProvider = $this->configManager->getProvider('attribute');
         $attributeConfig = $attributeConfigProvider->getConfig($configId->getClassName(), $configId->getFieldName());
 
-        return (!$configId || !$configId instanceof FieldConfigId ||
-            !is_a($configId->getClassName(), Product::class, true) ||
-            !$attributeConfig->is('is_attribute')
-        );
+        if (!$attributeConfig->is('is_attribute')) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

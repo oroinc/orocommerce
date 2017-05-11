@@ -77,7 +77,7 @@
                   title="{{ 'oro.entity_extend.enum_options.priority.tooltip'|trans }}">
                  <i class="fa-arrows-v {% if disabled %} disabled{% endif %}"></i>
                 {{ form_widget(form.priority, {disabled: disabled}) }}
-                        </span>
+            </span>
             <label class="add-on{% if disabled %} disabled{% endif %}"
                    title="{{ 'oro.entity_extend.enum_options.default.tooltip'|trans }}">
                 {{ form_widget(form.is_default, {disabled: disabled}) }}
@@ -88,12 +88,12 @@
     {% if tooltip is defined  and tooltip %}
         {% import 'OroUIBundle::macros.html.twig' as ui %}
         {{ ui.tooltip(
-        tooltip,
-        tooltip_parameters|default({}),
-        tooltip_placement|default(null),
-        tooltip_details_enabled|default(false),
-        tooltip_details_link|default(null),
-        tooltip_details_anchor|default(null)
+            tooltip,
+            tooltip_parameters|default({}),
+            tooltip_placement|default(null),
+            tooltip_details_enabled|default(false),
+            tooltip_details_link|default(null),
+            tooltip_details_anchor|default(null)
         ) }}
     {% endif %}
     {{ form_rest(form) }}

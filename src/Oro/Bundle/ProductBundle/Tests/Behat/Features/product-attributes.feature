@@ -26,7 +26,7 @@ Feature: Product attributes
     And click update schema
     Then I should see "Schema updated" flash message
 
-  Scenario: Create attribute from entity management
+  Scenario: Create extend field from entity management
     Given I go to System/ Entities/ Entity Management
     And I filter Name as is equal to "Product"
     And I click view "Product" in grid
