@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Extension;
 
+use Oro\Bundle\EntityExtendBundle\Form\Util\EnumTypeHelper;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -81,10 +82,12 @@ class EnumValueForProductExtension extends AbstractTypeExtension
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
 
         /** @var Product[] $productsUsedEnumValue */
-        $productsUsedEnumValue = $productRepository->findBy([
-            'type' => Product::TYPE_SIMPLE,
-            $configId->getFieldName() => $enumValueId
-        ]);
+        $productsUsedEnumValue = $productRepository->findByAttributeValue(
+            Product::TYPE_SIMPLE,
+            $configId->getFieldName(),
+            $enumValueId,
+            $configId->getFieldType() === EnumTypeHelper::MULTI_ENUM
+        );
 
         $configProductsSkuUsingEnum = [];
 
