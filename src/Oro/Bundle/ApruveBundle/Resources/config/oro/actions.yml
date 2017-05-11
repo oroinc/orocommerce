@@ -24,20 +24,23 @@ operations:
         preactions:
             - '@foreach':
                 array: $.data.relatedPaymentTransactions
-                value: $.relatedTransaction
+                value: $.relatedInvoiceTransaction
                 actions:
-                    - '@assign_value':
+                    - '@foreach':
                         conditions:
                             '@and':
-                                - '@equal': ['invoice', $.relatedTransaction.action]
-                                - '@equal': [true, $.relatedTransaction.successful]
-                        parameters: [$.invoiceTransactionSuccessful, true]
-                    - '@assign_value':
-                        conditions:
-                            '@and':
-                                - '@equal': ['shipment', $.relatedTransaction.action]
-                                - '@equal': [true, $.relatedTransaction.successful]
-                        parameters: [$.shipmentTransactionSuccessful, true]
+                                - '@equal': ['invoice', $.relatedInvoiceTransaction.action]
+                                - '@equal': [true, $.relatedInvoiceTransaction.successful]
+                        parameters:
+                            array: $.relatedInvoiceTransaction.relatedPaymentTransactions
+                            value: $.relatedShipmentTransaction
+                            actions:
+                                - '@assign_value':
+                                    conditions:
+                                        '@and':
+                                            - '@equal': ['shipment', $.relatedShipmentTransaction.action]
+                                            - '@equal': [true, $.relatedShipmentTransaction.successful]
+                                    parameters: [$.shipmentTransactionSuccessful, true]
         preconditions:
             '@and':
                 - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
@@ -47,9 +50,7 @@ operations:
                     - '@payment_transaction_was_charged':
                         transaction: $.data
                 - '@equal': [$.isApruve, true]
-                - '@or':
-                    - '@not_equal': [$.invoiceTransactionSuccessful, true]
-                    - '@not_equal': [$.shipmentTransactionSuccessful, true]
+                - '@not_equal': [$.shipmentTransactionSuccessful, true]
         actions:
             - '@oro_apruve_payment_transaction_invoice':
                 paymentTransaction: $.data
