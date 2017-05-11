@@ -32,5 +32,5 @@ oro_behat_extension:
         mapping:
           Method:
             type: 'xpath'
-            locator: '//div[@id[starts-with(.,"s2id_oro_shipping_methods_configs_rule_method")]]'
+            locator: '//div[@id[starts-with(.,"uniform-oro_shipping_methods_configs_rule_method")]]'
             element: Shippment Method Config Type Field
