@@ -22,7 +22,7 @@ trait FormViewListenerWrongProductTestTrait
 
         $this->doctrineHelper
             ->expects($this->never())
-            ->method('getEntityReference');
+            ->method('getEntity');
 
         $this->listener->onProductView($event);
 
@@ -43,7 +43,7 @@ trait FormViewListenerWrongProductTestTrait
 
         $this->doctrineHelper
             ->expects($this->once())
-            ->method('getEntityReference')
+            ->method('getEntity')
             ->willReturn(null);
 
         $this->request

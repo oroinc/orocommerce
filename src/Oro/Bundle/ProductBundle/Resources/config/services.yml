@@ -933,3 +933,6 @@ services:
             - '@oro_redirect.url_storage_cache'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
+
+    oro_product.restrictable_product_attributes_moving.filter:
+        class: 'Oro\Bundle\ProductBundle\AttributeFilter\RestrictableProductAttributesMovingFilter'

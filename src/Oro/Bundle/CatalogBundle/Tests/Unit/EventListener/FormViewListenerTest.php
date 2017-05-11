@@ -11,12 +11,9 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\EventListener\FormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Traits\FormViewListenerWrongProductTestTrait;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
-    use FormViewListenerWrongProductTestTrait;
-
     /**
      * @var FormViewListener
      */
