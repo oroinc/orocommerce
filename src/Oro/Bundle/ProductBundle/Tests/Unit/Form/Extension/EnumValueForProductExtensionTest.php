@@ -9,8 +9,6 @@ use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType;
@@ -19,6 +17,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +37,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $configInterface;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $productRepository;
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -55,7 +54,7 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->form = $this->createMock(FormInterface::class);
         $this->configInterface = $this->createMock(FormConfigInterface::class);
-        $this->productRepository = $this->getMockBuilder(EntityRepository::class)
+        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -185,11 +184,13 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->productRepository);
 
         $this->productRepository->expects($this->once())
-            ->method('findBy')
-            ->with([
-                'type' => Product::TYPE_SIMPLE,
-                'enumFieldName' => 1
-            ])
+            ->method('findByAttributeValue')
+            ->with(
+                Product::TYPE_SIMPLE,
+                'enumFieldName',
+                1,
+                false
+            )
             ->willReturn([]);
 
         $attributeConfigProvider = $this->getAttributeProvider();
@@ -233,11 +234,13 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->productRepository);
 
         $this->productRepository->expects($this->once())
-            ->method('findBy')
-            ->with([
-                'type' => Product::TYPE_SIMPLE,
-                self::ENUM_FIELD_NAME => 1
-            ])
+            ->method('findByAttributeValue')
+            ->with(
+                Product::TYPE_SIMPLE,
+                self::ENUM_FIELD_NAME,
+                1,
+                false
+            )
             ->willReturn($products);
 
         $attributeConfigProvider = $this->getAttributeProvider();

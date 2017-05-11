@@ -120,11 +120,12 @@ oro_behat_extension:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
-        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
         - OroSecurityBundle::ACLContext
-        - Oro\Bundle\SEOBundle\Tests\Behat\Context\FeatureContext
+        - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
+        - OroWebCatalogBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features'

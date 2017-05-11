@@ -6,4 +6,4 @@ oro_behat_extension:
 
     ShoppingListTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: 'h1.cart__order-title span'
+      selector: 'h1.cart-order-title span'

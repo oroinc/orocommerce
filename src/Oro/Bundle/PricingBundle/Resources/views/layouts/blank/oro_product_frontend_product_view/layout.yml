@@ -12,4 +12,4 @@ layout:
         - '@setOption':
             id: product_price_container
             optionName: product
-            optionValue: '=data["product"]'
+            optionValue: '=data["oro_product_variant"].getProductVariantOrProduct(data)'

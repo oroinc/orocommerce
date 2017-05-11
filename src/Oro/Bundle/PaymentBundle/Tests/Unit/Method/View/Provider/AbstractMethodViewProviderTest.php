@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\View\Provider;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 
 abstract class AbstractMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -150,7 +149,7 @@ abstract class AbstractMethodViewProviderTest extends \PHPUnit_Framework_TestCas
     /**
      * @param string $identifier
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|PayPalCreditCardConfigInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function buildPaymentConfig($identifier)
     {

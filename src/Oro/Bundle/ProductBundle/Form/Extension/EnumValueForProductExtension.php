@@ -10,6 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType;
+use Oro\Bundle\EntityExtendBundle\Form\Util\EnumTypeHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 
 /**
@@ -110,11 +111,12 @@ class EnumValueForProductExtension extends AbstractTypeExtension
     {
         $productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
 
-        /** @var Product[] $productsUsedEnumValue */
-        $productsUsedEnumValue = $productRepository->findBy([
-            'type' => Product::TYPE_SIMPLE,
-            $configId->getFieldName() => $enumValueId
-        ]);
+        $productsUsedEnumValue = $productRepository->findByAttributeValue(
+            Product::TYPE_SIMPLE,
+            $configId->getFieldName(),
+            $enumValueId,
+            $configId->getFieldType() === EnumTypeHelper::MULTI_ENUM
+        );
 
         $configProductsSkuUsingEnum = [];
 
