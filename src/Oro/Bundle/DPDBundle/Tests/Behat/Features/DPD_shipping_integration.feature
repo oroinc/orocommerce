@@ -43,20 +43,24 @@ Feature: DPD shipping integration
       |Label Start Position|Upper Right         |
       |Status              |Active              |
       |Default owner       |John Doe            |
-    And save form
+    And save and close form
     Then I should see "Integration saved" flash message
-    And should see Integration with:
-      |Type                |DPD                 |
-      |Name                |DPD                 |
-      |Label               |DPD                 |
-      |Live Mode           |False               |
-      |Cloud User Id       |2783                |
-      |Cloud User Token    |39653536665162576759|
-      |Shipping Services   |DPD Classic         |
-      |Unit of weight      |kilogram            |
-      |Rate Policy         |Flat Rate           |
-      |Flat Rate Price     |10                  |
-      |Label Size          |PDF_A6              |
-      |Label Start Position|Upper Right         |
-      |Status              |Active              |
-      |Default owner       |John Doe            |
+    And I go to System/ Shipping Rules
+    And click "Create Shipping Rule"
+    And fill "Shippment Rule Form" with:
+      |Enable    |true |
+      |Name      |DPD  |
+      |Sort Order|1    |
+      |Currency  |$    |
+      |Method    |[DPD]|
+    When save and close form
+    Then should see "Shippment rule has been saved" flash message
+    And I go to System/ Configuration
+    And click "Commerce"
+    And click "Shipping"
+    And click "Shipping Origin"
+    And fill form with:
+    |Use default|false|
+    |Country    |Denmark|
+    And click logout in user menu
+    And I wait for action
