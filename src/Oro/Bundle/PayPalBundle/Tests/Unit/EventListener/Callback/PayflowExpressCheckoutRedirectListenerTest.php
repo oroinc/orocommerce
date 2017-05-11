@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -12,6 +10,8 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 
 class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,14 +27,21 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
     /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodProvider;
 
+    /** @var PaymentResultMessageProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $messageProvider;
+
     protected function setUp()
     {
-        $this->session = $this->getMockBuilder(Session::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->session = $this->createMock(Session::class);
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->messageProvider = $this->createMock(PaymentResultMessageProviderInterface::class);
         $this->paymentTransaction = new PaymentTransaction();
-        $this->listener = new PayflowExpressCheckoutRedirectListener($this->session, $this->paymentMethodProvider);
+
+        $this->listener = new PayflowExpressCheckoutRedirectListener(
+            $this->session,
+            $this->paymentMethodProvider,
+            $this->messageProvider
+        );
     }
 
     public function testOnReturnWithoutErrorInFlashBag()
@@ -53,6 +60,9 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
 
+        $message = 'oro.payment.result.error';
+        $this->messageProvider->expects($this->once())->method('getErrorMessage')->willReturn($message);
+
         /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
         $flashBag = $this->createMock(FlashBagInterface::class);
 
@@ -63,7 +73,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
 
         $flashBag->expects($this->once())
             ->method('add')
-            ->with('error', 'oro.payment.result.error');
+            ->with('error', $message);
 
         $this->session->expects($this->once())
             ->method('getFlashBag')

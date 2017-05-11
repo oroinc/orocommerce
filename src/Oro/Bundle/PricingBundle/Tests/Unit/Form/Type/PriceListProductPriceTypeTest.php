@@ -199,7 +199,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                         'currency' => $defaultProductPriceWithId->getPrice()->getCurrency()
                     ],
                 ],
-                'expectedData'  => clone $defaultProductPriceWithId,
+                'expectedData'  => $defaultProductPriceWithId,
                 'rounding'      => false
             ],
             'product price with data' => [

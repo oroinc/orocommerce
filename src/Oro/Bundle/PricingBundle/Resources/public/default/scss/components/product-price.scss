@@ -1,22 +1,58 @@
 // @theme: default
 
 .product-price {
-    &__value {
-        color: $product-price-value-color;
-    }
+    width: $product-price-width;
 
     &__main-box {
+        width: $product-price-main-box-width;
+
+        clear: $product-price-main-box-clear;
+        float: $product-price-main-box-float;
+
         font-size: $product-price-main-box-font-size;
     }
 
     &__hint {
         display: $product-price-hint-display;
+
+        width: $product-price-hint-width;
+    }
+
+    &__value {
+        color: $product-price-value-color;
+    }
+
+    &__listed {
+        clear: $product-price-listed-box-clear;
+    }
+
+    &__listed-box {
+        width: $product-price-listed-box-width;
+        float: $product-price-listed-box-float;
+        clear: $product-price-listed-box-clear;
+    }
+
+    &__label,
+    &__listed-label {
+        width: $product-price-label-width;
+    }
+
+    &__unit-short {
+        display: $product-price-unit-short-display;
     }
 
     //Modifier for simple view(only main price)
     &--simple & {
+        &__main-box {
+            float: $product-price-simple-main-box-float;
+        }
+
+        &__hint {
+            width: $product-price-simple-hint-widht;
+        }
+
         &__label {
-            font-size: $product-price-simple-label-font-size;
+            display: $product-price-simple-label-display;
         }
 
         &__value {
@@ -37,6 +73,14 @@
             margin-top: $product-price-simple-margin-top-tablet;
 
             text-align: $product-price-simple-text-align-tablet;
+        }
+
+        &__unit-full {
+            display: $product-price-unit-full-display-tablet;
+        }
+
+        &__unit-short {
+            display: $product-price-unit-short-display-tablet;
         }
     }
 }

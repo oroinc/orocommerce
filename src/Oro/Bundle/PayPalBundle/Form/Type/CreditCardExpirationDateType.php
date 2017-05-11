@@ -12,8 +12,7 @@ class CreditCardExpirationDateType extends AbstractType
     const YEAR_PERIOD = 10;
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     *{@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -25,6 +24,8 @@ class CreditCardExpirationDateType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $years = range(date('y'), date('y') + self::YEAR_PERIOD);
+
         $months = array_map(function ($value) {
             return sprintf('%02d', $value);
         }, range(1, 12));
@@ -35,16 +36,16 @@ class CreditCardExpirationDateType extends AbstractType
                 'view_timezone' => 'UTC',
                 'format' => 'dMy',
                 'input' => 'array',
-                'years' => range(date('y'), date('y') + self::YEAR_PERIOD),
+                'years' => $years,
                 'months' => $months
             ]
         );
 
-        $resolver->setAllowedValues(['input' => ['array']]);
+        $resolver->setAllowedValues('input', ['array']);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

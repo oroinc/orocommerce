@@ -139,3 +139,7 @@ oro:
                     title: Import From File
                 import_validation:
                     title: Import Validation
+        product_collection:
+            filter_query:
+                continue: Continue
+                confirmation_modal_content: You have changes in the Filters section that have not been applied. Please click Cancel if you want to review and apply these changes before saving, or click Continue if you want to save all the changes.

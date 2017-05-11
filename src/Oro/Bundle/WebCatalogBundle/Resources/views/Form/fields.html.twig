@@ -9,12 +9,13 @@
          {% endif %}
          data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
-             view: 'orowebcatalog/js/app/views/scope-toggle-view',
+             view: 'oroscope/js/app/views/scope-toggle-view',
              selectors: {
                  useParentScopeSelector: '#' ~ form.default.vars.id,
                  scopesSelector: '.scope-elements'
              }
          }|json_encode }}"
+         data-layout="separate"
     >
         <h5 class="content-variant-item-title">
             {{ form_widget(form.default) }}

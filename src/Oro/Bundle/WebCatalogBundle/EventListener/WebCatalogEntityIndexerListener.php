@@ -15,11 +15,15 @@ use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\AssignTypePlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 
 class WebCatalogEntityIndexerListener
 {
+    const ASSIGN_TYPE_CONTENT_VARIANT = 'variant';
+
     /**
      * @var ManagerRegistry
      */
@@ -173,6 +177,7 @@ class WebCatalogEntityIndexerListener
             }
 
             $nodeId = $relation['nodeId'];
+            $variantId = $relation['variantId'];
             $node = $nodes[$nodeId];
 
             $recordId = $this->contentVariantProvider->getRecordId($relation);
@@ -182,6 +187,16 @@ class WebCatalogEntityIndexerListener
 
             $plainValues = $this->contentVariantProvider->getValues($node);
             $localizedValues = $this->contentVariantProvider->getLocalizedValues($node);
+
+            $event->addPlaceholderField(
+                $recordId,
+                'assigned_to_ASSIGN_TYPE_ASSIGN_ID',
+                1,
+                [
+                    AssignTypePlaceholder::NAME => self::ASSIGN_TYPE_CONTENT_VARIANT,
+                    AssignIdPlaceholder::NAME => $variantId,
+                ]
+            );
 
             foreach ($localizations as $localization) {
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];

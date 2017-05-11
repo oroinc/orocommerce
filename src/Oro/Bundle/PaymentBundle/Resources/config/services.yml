@@ -123,6 +123,7 @@ services:
         lazy: true
         arguments:
             - '@session'
+            - '@oro_payment.provider.result_messages'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 10 }
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 10 }
@@ -280,3 +281,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Method\Event\BasicMethodRenamingEventDispatcher'
         arguments:
             - '@event_dispatcher'
+
+    oro_payment.provider.result_messages:
+        class: 'Oro\Bundle\PaymentBundle\Provider\DefaultPaymentResultMessageProvider'
+        public: false

@@ -25,15 +25,15 @@
     >
         {{ form_widget(form.demandProducts) }}
         {{ form_rest(form) }}
-        <div class="order-checkout-widget order-checkout-widget_block text-right">
+        <div class="order-checkout-widget text-right">
             {{ block_widget(block) }}
         </div>
     </form>
 {% endblock %}
 
 {% block _quote_choice_submit_button_widget %}
-    <div class=" order-checkout-widget order-checkout-widget_block text-right mb4-md">
-        <div class=" text-right mb4-md">
+    <div class=" order-checkout-widget text-right">
+        <div class=" text-right">
             <button class="btn theme-btn" type="submit">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
         </div>
     </div>
@@ -41,7 +41,7 @@
 
 {% block _quote_choice_subtotals_widget %}
     <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
-        <div class="order-checkout-widget__container order-checkout-widget__container_lg">
+        <div class="order-checkout-widget__container order-checkout-widget__container--lg">
             <table class="order-checkout-widget__table pull-right">
                 {% for subtotal in subtotals %}
                     {% if subtotal.visible %}

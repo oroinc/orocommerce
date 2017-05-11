@@ -183,7 +183,6 @@ datagrids:
             successful:
                 label: oro.payment.paymenttransaction.successful.label
                 frontend_type: boolean
-                renderable: false
             createdAt:
                 label: oro.ui.created_at
                 frontend_type: datetime
@@ -207,4 +206,4 @@ datagrids:
                 updatedAt:
                     data_name: payment_transaction.updatedAt
             default:
-                updatedAt: DESC
+                id: DESC

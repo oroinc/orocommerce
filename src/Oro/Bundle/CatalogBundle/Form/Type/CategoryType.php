@@ -68,11 +68,6 @@ class CategoryType extends AbstractType
     {
         $builder
             ->add(
-                'parentCategory',
-                EntityIdentifierType::NAME,
-                ['class' => $this->dataClass, 'multiple' => false]
-            )
-            ->add(
                 'titles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
