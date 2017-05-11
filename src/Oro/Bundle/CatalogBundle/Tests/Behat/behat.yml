@@ -1,0 +1,11 @@
+oro_behat_extension:
+    elements:
+        Printers:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Products categories")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "Printers")]'
+
+        Lighting Products:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Products categories")]/parent::li/ul/li[contains(@class, "jstree-node")]/a[contains(., "Lighting Products")]'

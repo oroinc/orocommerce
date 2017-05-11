@@ -1,0 +1,2 @@
+bundles:
+    - OroAuthorizeNetBundle:Form:fields.html.twig

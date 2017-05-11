@@ -5,3 +5,4 @@ services:
         arguments:
             - '@oro_flat_rate_shipping.method.identifier_generator.method'
             - '@oro_locale.helper.localization'
+            - '@oro_integration.provider.integration_icon'

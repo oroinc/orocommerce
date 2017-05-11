@@ -153,7 +153,7 @@ abstract class AbstractCustomerFormViewListenerTest extends FormViewListenerTest
                 ]
             ]
         ];
-        return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $formView);
+        return new BeforeListRenderEvent($environment, new ScrollData($defaultData), new \stdClass(), $formView);
     }
 
     /**

@@ -52,7 +52,7 @@ class ValidateAction extends AbstractPaymentMethodAction
             array_merge(
                 ['paymentMethod' => $options['paymentMethod']],
                 $this->getCallbackUrls($validatePaymentTransaction),
-                (array) $validatePaymentTransaction->getTransactionOptions(),
+                $validatePaymentTransaction->getTransactionOptions(),
                 $response
             )
         );

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 
 class RedirectListener
 {
@@ -18,12 +19,17 @@ class RedirectListener
     /** @var Session */
     protected $session;
 
+    /** @var PaymentResultMessageProviderInterface */
+    protected $messageProvider;
+
     /**
      * @param Session $session
+     * @param PaymentResultMessageProviderInterface $messageProvider
      */
-    public function __construct(Session $session)
+    public function __construct(Session $session, PaymentResultMessageProviderInterface $messageProvider)
     {
         $this->session = $session;
+        $this->messageProvider = $messageProvider;
     }
 
     /**
@@ -40,7 +46,7 @@ class RedirectListener
     public function onError(CallbackErrorEvent $event)
     {
         $this->handleEvent($event, self::FAILURE_URL_KEY);
-        $this->setErrorMessage('oro.payment.result.error');
+        $this->setErrorMessage($this->messageProvider->getErrorMessage($event->getPaymentTransaction()));
     }
 
     /**

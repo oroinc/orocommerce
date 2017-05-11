@@ -19,8 +19,8 @@
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}
-    <div class="cart-list_empty">
-        <span class="cart-list_empty__icon"><i class="fa-shopping-cart"></i></span>
+    <div class="cart-list-empty">
+        <span class="cart-list-empty__icon"><i class="fa-shopping-cart"></i></span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
@@ -53,12 +53,12 @@
                 },
                 view_options: {
                     tooltip: 'oro.shoppinglist.label.edit.tooltip'|trans,
-                    additionalClass: 'cart__order-title'
+                    additionalClass: 'cart-order-title'
                 }
             }
         }
     }) }}>
-        <h1 class="cart__order-title nmmt4-md">
+        <h1 class="cart-order-title">
             <span>{{ shoppingList.label }}</span>
         </h1>
     </div>
@@ -66,7 +66,7 @@
 
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " cart__order__controls-list",
+        class: attr.class|default('') ~ " controls-list",
         'data-name': "empty-items__hide"
     }) %}
     <div{{ block('block_attributes') }}>
@@ -107,8 +107,8 @@
         </span>
         <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}</a>
 
-        <div class="collapse-view__container" data-collapse-container>
-            <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
+        <div class="shopping-list-view-options collapse-view__container" data-collapse-container
+            {{ UI.renderPageComponentAttributes({
                 module: 'orofrontend/js/app/components/switchable-editable-view-component',
                 options: {
                     frontend_type: 'multilineText',
@@ -130,25 +130,24 @@
                     }
                 }
             }) }}>
-                <label for="addANote"
-                       data-checkbox
-                       class="custom-checkbox {% if notes is not empty %}checked{% endif %}"
+            <label for="addANote"
+                   data-checkbox
+                   class="custom-checkbox {% if notes is not empty %}checked{% endif %}"
+            >
+                <input id="addANote"
+                       name="addANote"
+                       type="checkbox"
+                       data-role="start-editing"
+                       class="custom-checkbox__input"
+                       {% if notes is not empty %}checked="checked"{% endif %}
                 >
-                    <input id="addANote"
-                           name="addANote"
-                           type="checkbox"
-                           data-role="start-editing"
-                           class="custom-checkbox__input"
-                           {% if notes is not empty %}checked="checked"{% endif %}
-                    >
-                    <span class="custom-checkbox__icon"></span>
-                    <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
-                </label>
-                <div data-role="editor">
-                <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
-                          rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                          class="textarea textarea--full">{{ notes }}</textarea>
-                </div>
+                <span class="custom-checkbox__icon"></span>
+                <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+            </label>
+            <div data-role="editor">
+            <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                      rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
+                      class="textarea textarea--full">{{ notes }}</textarea>
             </div>
         </div>
     </div>
@@ -160,11 +159,11 @@
     {# TODO: Pass default currency from provider. BB-2218 #}
     {% set defaultCurrency = 'USD' %}
 
-        {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged"}) %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table"}) %}
         <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
             module: 'orofrontend/js/app/components/empty-items-component',
             options: {eventName: 'frontend:item:delete'}
-        }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list_empty">
+        }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list-empty">
             <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
                 module: 'oroui/js/app/components/view-component',
                 layout: 'separate',
@@ -356,7 +355,7 @@
                             </div>
                         </td>
                         <td class="va-t_md text-right">
-                            <button class="item-remove button-icon gray fs20" {{ UI.renderPageComponentAttributes({
+                            <button class="item-remove button button--plain" {{ UI.renderPageComponentAttributes({
                                     module: 'orofrontend/js/app/components/delete-item-component',
                                     options: {
                                         url: path('oro_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
@@ -365,7 +364,7 @@
                                         sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
                                     }
                                 }) }} >
-                                <i class="fa-trash-o"></i>
+                                <i class="fa-trash-o fa--x-large fa--no-offset"></i>
                             </button>
                         </td>
                     </tr>
@@ -441,9 +440,9 @@
 {% endblock %}
 
 {% block _shopping_list_line_items_empty_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list-empty"}) %}
     <div {{ block('block_attributes') }}>
-        <span class="cart-list_empty__icon">
+        <span class="cart-list-empty__icon">
             <i class="fa-shopping-cart"></i>
         </span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
@@ -451,7 +450,7 @@
 {% endblock %}
 
 {% block _shopping_list_checkout_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget order-checkout-widget_block text-right mb4-md"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget text-right"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

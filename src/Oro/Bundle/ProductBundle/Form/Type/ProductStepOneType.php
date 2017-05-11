@@ -6,6 +6,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductStepOneType extends AbstractType
@@ -32,6 +34,14 @@ class ProductStepOneType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('type', ProductTypeType::NAME, ['label' => 'oro.product.type.label']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['default_input_action'] = 'oro_product_create';
     }
 
     /**

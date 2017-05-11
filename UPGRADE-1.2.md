@@ -15,6 +15,8 @@ PaymentBundle
 -------------
 - For supporting same approaches for working with payment methods, `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` and its implementation were deprecated. Related deprecation is `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass`. `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` which implements `Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface` was added instead. And `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\CompositePaymentMethodProviderCompilerPass` was added for collecting providers in new composite. 
 - Class `Oro\Bundle\PaymentBundle\Action\CaptureAction` was removed, `Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction` should be used instead
+- Class `Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
 
 PricingBundle
 -------------
@@ -126,5 +128,14 @@ ProductBundle
 
 PayPalBundle
 ------------
-- Form type `\Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `\Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
-- Interface `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
+- Form type `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+- Interface `Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
+- Class `Oro\Bundle\PayPalBundle\EventListener\Callback`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
+- JS credit card validators were moved to `PaymentBundle`. List of moved components:
+    - `oropaypal/js/lib/jquery-credit-card-validator`
+    - `oropaypal/js/validator/credit-card-expiration-date`
+    - `oropaypal/js/validator/credit-card-expiration-date-not-blank`
+    - `oropaypal/js/validator/credit-card-number`
+    - `oropaypal/js/validator/credit-card-type`
+    - `oropaypal/js/adapter/credit-card-validator-adapter`

@@ -1,0 +1,45 @@
+oro_behat_extension:
+  elements:
+    AuNetForm:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_integration_channel_form[name]'
+          Label: 'oro_integration_channel_form[transport][creditCardLabels][values][default]'
+          Short Label: 'oro_integration_channel_form[transport][creditCardShortLabels][values][default]'
+          Allowed Credit Card Types: 'oro_integration_channel_form[transport][allowedCreditCardTypes][]'
+          API Login ID: 'oro_integration_channel_form[transport][apiLoginId]'
+          Transaction Key: 'oro_integration_channel_form[transport][transactionKey]'
+          Client Key: 'oro_integration_channel_form[transport][clientKey]'
+          Require CVV Entry: 'oro_integration_channel_form[transport][authNetRequireCVVEntry]'
+          Test Mode: 'oro_integration_channel_form[transport][authNetTestMode]'
+          Payment Action: 'oro_integration_channel_form[transport][creditCardPaymentAction]'
+    CreditCardForm:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          CreditCardNumber: 'oro_authorize_net_credit_card[ACCT]'
+          Month: 'oro_authorize_net_credit_card[expirationDate][month]'
+          Year: 'oro_authorize_net_credit_card[expirationDate][year]'
+          CVV: 'oro_authorize_net_credit_card[CVV2]'
+    AddMethodButton:
+      selector: "a[class='btn add-method']"
+    DeleteShoppingList:
+      selector: 'input[name=oro_workflow_transition[remove_source]]'
+
+  suites:
+    OroAuthorizeNetBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroFormBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroConfigBundle::FeatureContext
+        - OroAuthorizeNetBundle::FeatureContext
+        - OroCheckoutBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroDataGridBundle::GridContext
+      paths:
+        - '@OroAuthorizeNetBundle/Tests/Behat/Features'

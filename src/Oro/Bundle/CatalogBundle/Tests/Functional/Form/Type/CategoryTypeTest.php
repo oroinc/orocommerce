@@ -47,14 +47,11 @@ class CategoryTypeTest extends WebTestCase
     {
         $doctrine = $this->getContainer()->get('doctrine');
         $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
-        $categoryRepository = $doctrine->getRepository('OroCatalogBundle:Category');
         $productRepository = $doctrine->getRepository('OroProductBundle:Product');
         $productUnitRepository = $doctrine->getRepository('OroProductBundle:ProductUnit');
 
         /** @var Localization[] $localizations */
         $localizations = $localizationRepository->findAll();
-        /** @var Category $parentCategory */
-        $parentCategory = $categoryRepository->findOneBy([]);
         /** @var Product[] $appendedProducts */
         $appendedProducts = $productRepository->findBy([], [], 2, 0);
         /** @var Product[] $removedProducts */
@@ -85,7 +82,6 @@ class CategoryTypeTest extends WebTestCase
 
         // prepare input array
         $submitData = [
-            'parentCategory' => $parentCategory->getId(),
             'titles' => [ 'values' => ['default' => $defaultTitle]],
             'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
             'longDescriptions' => ['values' => [ 'default' => $defaultLongDescription]],
@@ -122,7 +118,6 @@ class CategoryTypeTest extends WebTestCase
         /** @var Category $category */
         $category = $form->getData();
         $this->assertInstanceOf('Oro\Bundle\CatalogBundle\Entity\Category', $category);
-        $this->assertEquals($parentCategory->getId(), $category->getParentCategory()->getId());
         $this->assertEquals($defaultTitle, (string)$category->getDefaultTitle());
         $this->assertEquals($defaultShortDescription, (string)$category->getDefaultShortDescription());
         $this->assertEquals($defaultLongDescription, (string)$category->getDefaultLongDescription());
