@@ -1,6 +1,6 @@
 oro_behat_extension:
   suites:
-    DPDBundle:
+    OroDPDBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
@@ -11,7 +11,7 @@ oro_behat_extension:
         - OroApplicationBundle::CommerceMainContext
         - OroShoppingListBundle::ShoppingListContext
       paths:
-        - '@DPDBundle/Tests/Behat/Features'
+        - '@OroDPDBundle/Tests/Behat/Features'
   elements:
     Itegration Form:
       selector: "form[id^='oro_integration_channel_form-uid']"
