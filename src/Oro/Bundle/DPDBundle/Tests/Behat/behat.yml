@@ -1,0 +1,21 @@
+oro_behat_extension:
+  suites:
+    DPDBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - OroCheckoutBundle::FeatureContext
+        - OroWarehouseBundle::FeatureContext
+        - OroShippingBundle::SingleCurrencyContext
+        - OroCustomerBundle::CustomerUserContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroShoppingListBundle::ShoppingListContext
+      paths:
+        - '@DPDBundle/Tests/Behat/Features'
+  elements:
+    Itegration Form:
+      selector: "form[id^='oro_integration_channel_form-uid']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Lable: "oro_integration_channel_form[transport][labels][values][default]"
