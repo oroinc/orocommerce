@@ -4,6 +4,7 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - OroConfigBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
         - OroWarehouseBundle::FeatureContext
         - OroShippingBundle::SingleCurrencyContext

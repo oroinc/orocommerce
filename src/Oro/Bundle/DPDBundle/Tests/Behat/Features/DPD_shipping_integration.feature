@@ -32,7 +32,7 @@ Feature: DPD shipping integration
       |Type                |DPD                 |
       |Name                |DPD                 |
       |Label               |DPD                 |
-      |Live Mode           |False               |
+      |Live Mode           |false               |
       |Cloud User Id       |2783                |
       |Cloud User Token    |39653536665162576759|
       |Shipping Services   |DPD Classic         |
@@ -56,11 +56,17 @@ Feature: DPD shipping integration
     When save and close form
     Then should see "Shippment rule has been saved" flash message
     And I go to System/ Configuration
-    And click "Commerce"
-    And click "Shipping"
-    And click "Shipping Origin"
+    And I click "Shipping Origin" on configuration sidebar
     And fill form with:
-    |Use default|false|
-    |Country    |Denmark|
+    |Use default     |false                      |
+    |Country         |Portugal                   |
+    And fill form with:
+    |Region/State    |Faro                       |
+    |Zip/Postal Code |8000-397                   |
+    |City            |Faro                       |
+    |Street Address 1|Rua Mouzinho de Albuquerque|
+    |Street Address 2|1A                         |
+    And I save form
+    Then should see "Configuration saved" flash message
     And click logout in user menu
     And I wait for action
