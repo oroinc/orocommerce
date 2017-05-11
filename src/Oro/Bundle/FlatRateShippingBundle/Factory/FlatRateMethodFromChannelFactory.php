@@ -5,6 +5,7 @@ namespace Oro\Bundle\FlatRateShippingBundle\Factory;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
@@ -22,15 +23,23 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
     private $localizationHelper;
 
     /**
+     * @var IntegrationIconProviderInterface
+     */
+    private $integrationIconProvider;
+
+    /**
      * @param IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
-     * @param LocalizationHelper $localizationHelper
+     * @param LocalizationHelper                            $localizationHelper
+     * @param IntegrationIconProviderInterface              $integrationIconProvider
      */
     public function __construct(
         IntegrationMethodIdentifierGeneratorInterface $identifierGenerator,
-        LocalizationHelper $localizationHelper
+        LocalizationHelper $localizationHelper,
+        IntegrationIconProviderInterface $integrationIconProvider
     ) {
         $this->identifierGenerator = $identifierGenerator;
         $this->localizationHelper = $localizationHelper;
+        $this->integrationIconProvider = $integrationIconProvider;
     }
 
     /**
@@ -42,8 +51,9 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
     {
         $id = $this->identifierGenerator->generateIdentifier($channel);
         $label = $this->getChannelLabel($channel);
+        $icon = $this->getIcon($channel);
 
-        return new FlatRateMethod($id, $label, $channel->isEnabled());
+        return new FlatRateMethod($id, $label, $icon, $channel->isEnabled());
     }
 
     /**
@@ -57,5 +67,15 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
         $transport = $channel->getTransport();
 
         return (string) $this->localizationHelper->getLocalizedValue($transport->getLabels());
+    }
+
+    /**
+     * @param Channel $channel
+     *
+     * @return string|null
+     */
+    private function getIcon(Channel $channel)
+    {
+        return $this->integrationIconProvider->getIcon($channel);
     }
 }

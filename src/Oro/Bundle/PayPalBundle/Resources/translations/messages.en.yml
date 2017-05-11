@@ -2,12 +2,6 @@ oro:
     paypal:
         methods:
             credit_card.label: 'Credit Card'
-            whats_this: "What's this?"
-            tooltip: |
-                The verification number is a 3-digit
-                number printed on the back of your card.
-                The American Express security code is a 4-digit
-                number printed on the front of your card.
         settings:
             label.tooltip: 'This label is used on the checkout screens'
             short_label.tooltip: 'This label is used in order history'
@@ -68,6 +62,12 @@ oro:
             card_number.label: Credit Card Number
             expiration_date.label: Expiration Date
             cvv2.label: CVV
+            whats_this: "What's this?"
+            tooltip: |
+                The verification number is a 3-digit
+                number printed on the back of your card.
+                The American Express security code is a 4-digit
+                number printed on the front of your card.
             save_for_later.label: Save this card for later use
 
         payflow:
