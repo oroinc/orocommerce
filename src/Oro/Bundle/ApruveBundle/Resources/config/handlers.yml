@@ -1,0 +1,6 @@
+services:
+    oro_apruve.webhook_notify.event_handler.invoice_closed:
+        class: Oro\Bundle\ApruveBundle\Handler\Invoice\InvoiceClosedWebhookEventHandler
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+            - '@oro_payment.provider.payment_transaction'

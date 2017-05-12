@@ -65,16 +65,26 @@
         </div>
         <div class="controls wrap html-content">
             {% if form.parent.vars.value.id %}
-                <div class="clearfix"><span class="webhook-token-url"></span></div>
+                {% set webhookUrlSelector = '[name="oro_integration_channel_form"] .webhook-token-url' %}
+                <div class="clearfix"><pre class="webhook-token-url"></pre></div>
                 <button type="button"
                         class="btn btn-mini"
                         data-page-component-module="oroapruve/js/app/components/webhook-token-component"
                         data-page-component-options="{{ {
                             'webhookTokenSelector': '#'~form.vars.id,
-                            'webhookUrlSelector': '[name="oro_integration_channel_form"] .webhook-token-url'
+                            'webhookUrlSelector': webhookUrlSelector
                         }|json_encode }}"
                 >
                     {{ 'oro.apruve.settings.webhook_url.regenerate.button'|trans }}
+                </button>
+                <button type="button"
+                        class="btn btn-mini"
+                        data-page-component-module="oroui/js/app/components/element-value-copy-to-clipboard-component"
+                        data-page-component-options="{{ {
+                            'elementSelector': webhookUrlSelector
+                        }|json_encode }}"
+                >
+                    {{ 'oro.apruve.settings.webhook_url.copy_to_clipboard.button'|trans }}
                 </button>
             {% else %}
                 <span>{{ 'oro.apruve.settings.webhook_url.not_available_yet.text'|trans }}</span>
