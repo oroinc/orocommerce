@@ -15,7 +15,7 @@ class CancelPaymentAction extends AbstractPaymentAction
     public function execute(ApruveConfigInterface $apruveConfig, PaymentTransaction $paymentTransaction)
     {
         // Stub for cancel action.
-        // todo@webevt: make proper implementation once Client is ready.
+        // TODO: will be implemented in BB-8127
         $paymentTransaction->setSuccessful(false);
 
         return [];
