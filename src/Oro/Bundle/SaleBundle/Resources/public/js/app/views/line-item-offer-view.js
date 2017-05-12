@@ -22,7 +22,6 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            mediator.on('product:unit:filter-values', _.bind(this.filterUnits, this));
             this.elements.id = $(options.$.product);
             this.options = $.extend(true, {}, this.options, options || {});
             _.each(this.options.$, _.bind(function(selector, field) {
@@ -33,18 +32,15 @@ define(function(require) {
 
             // get all units
             _.each(this.getElement('unit').find('option'), _.bind(function(elem) {
-                this.options.allUnits[elem.value] = elem.text;
+                this.options.allUnits.push({ code: elem.value, label: elem.text });
             }, this));
+            this.model.on('product:unit:filter-values', _.bind(this.filterUnits, this));
         },
 
         /**
          * @param {Array} units
          */
-        filterUnits: function(productId, units) {
-            if (this.model.get('id') !== productId) {
-                return;
-            }
-            var self = this;
+        filterUnits: function(units) {
             var $select = this.getElement('unit');
             var value = $select.val();
 
@@ -54,14 +50,14 @@ define(function(require) {
                 .remove();
 
             if (units) {
-                _.each(self.options.allUnits, function(code, label) {
-                    if ($select.find('option[value=' + code + ']').length ||
-                        (-1 === $.inArray(this.value, units))
+                _.each(this.options.allUnits, _.bind(function(unit) {
+                    if ($select.find('option[value=' + unit.code + ']').length ||
+                        (-1 === $.inArray(unit.code, units))
                     ) {
                         return;
                     }
-                    $select.append($('<option/>').val(code).text(label));
-                });
+                    $select.append($('<option/>').val(unit.code).text(unit.label));
+                }));
                 $select.val(value);
                 if ($select.val() === null) {
                     $select.val(units[0]);
