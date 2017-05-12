@@ -933,3 +933,7 @@ services:
             - '@oro_redirect.url_storage_cache'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
+
+    oro_product.service.product_collection_definition_converter:
+        class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
+        public: false
