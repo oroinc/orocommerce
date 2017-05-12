@@ -36,11 +36,11 @@ class ProductCollectionDefinitionConverter
      *      'included'   => included filter value string, if were found in definition
      * ]
      *
-     * @param array $definition
+     * @param string $definition
      *
-     * @return array
+     * @return string
      */
-    public function getDefinitionParts(array $definition)
+    public function getDefinitionParts($definition)
     {
         // Stub, will be implemented in BB-9438
         return [
