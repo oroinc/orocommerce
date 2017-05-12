@@ -19,6 +19,9 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class ShipmentPaymentActionTest extends \PHPUnit_Framework_TestCase
 {
     use LoggerAwareTraitTestTrait;
@@ -420,7 +423,7 @@ class ShipmentPaymentActionTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransaction
             ->expects(static::once())
             ->method('setActive')
-            ->with($isSuccessful);
+            ->with(false);
     }
 
     /**

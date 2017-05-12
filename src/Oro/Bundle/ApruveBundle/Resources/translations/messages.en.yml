@@ -23,6 +23,7 @@ oro:
                     Copy this URL and paste into the "Webhook URL" field in Apruve profile settings of your
                     merchant account
                 regenerate.button: Regenerate
+                copy_to_clipboard.button: Copy to clipboard
                 not_available_yet.text: Webhook URL will become available after the form is submitted
         payment_method:
             option:
@@ -46,5 +47,4 @@ oro:
     payment:
         paymenttransaction:
             types:
-                invoice.label: Invoice
                 shipment.label: Shipment

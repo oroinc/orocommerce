@@ -25,6 +25,11 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
     const NAME = 'shipment';
 
     /**
+     * @internal
+     */
+    const TRANSACTION_ACTIVE = false;
+
+    /**
      * @var ApruveShipmentFromPaymentContextFactoryInterface
      */
     private $apruveShipmentFromPaymentContextFactory;
@@ -111,7 +116,7 @@ class ShipmentPaymentAction extends AbstractPaymentAction implements LoggerAware
             $paymentTransaction
                 ->setRequest($apruveShipmentRequest->toArray())
                 ->setSuccessful($transactionResult)
-                ->setActive($transactionResult);
+                ->setActive(self::TRANSACTION_ACTIVE);
         }
 
         return $this->returnSuccess();

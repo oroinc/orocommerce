@@ -8,7 +8,7 @@ services:
             - ['addPaymentAction', ['@oro_apruve.method.payment_action.authorize']]
             - ['addPaymentAction', ['@oro_apruve.method.payment_action.invoice']]
             - ['addPaymentAction', ['@oro_apruve.method.payment_action.shipment']]
-            - ['addPaymentAction', ['@oro_apruve.method.payment_action.complete']]
+            - ['addPaymentAction', ['@oro_apruve.method.payment_action.capture']]
             - ['addPaymentAction', ['@oro_apruve.method.payment_action.cancel']]
 
     oro_apruve.method.payment_action.abstract:
@@ -60,9 +60,9 @@ services:
         public: false
         lazy: true
 
-    oro_apruve.method.payment_action.complete:
+    oro_apruve.method.payment_action.capture:
         parent: oro_apruve.method.payment_action.abstract
-        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\CompletePaymentAction'
+        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\CapturePaymentAction'
         public: false
         lazy: true
 

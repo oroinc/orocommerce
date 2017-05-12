@@ -9,7 +9,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class AuthorizePaymentAction extends AbstractPaymentAction
 {
-    const NAME = 'authorize';
+    const NAME = PaymentMethodInterface::AUTHORIZE;
 
     /**
      * {@inheritDoc}

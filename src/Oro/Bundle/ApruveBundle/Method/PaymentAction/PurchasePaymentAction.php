@@ -8,6 +8,7 @@ use Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGeneratorInterface;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactoryInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -15,7 +16,7 @@ class PurchasePaymentAction extends AbstractPaymentAction implements LoggerAware
 {
     use LoggerAwareTrait;
 
-    const NAME = 'purchase';
+    const NAME = PaymentMethodInterface::PURCHASE;
 
     /**
      * @var OrderSecureHashGeneratorInterface

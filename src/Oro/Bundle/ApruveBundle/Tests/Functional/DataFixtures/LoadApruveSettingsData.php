@@ -13,9 +13,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class LoadApruveSettingsData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
 {
     const APRUVE_LABEL = 'Apruve';
-    const WEBHOOK_TOKEN = 'sampleToken';
     const MERCHANT_ID = 'sampleMerchantId';
     const API_KEY = 'sampleApiKey';
+    const WEBHOOK_TOKEN_1 = 'sampleToken_1';
+    const WEBHOOK_TOKEN_2 = 'sampleToken_2';
+    const WEBHOOK_TOKEN_3 = 'sampleToken_3';
 
     /**
      * @var array Transports configuration
@@ -27,7 +29,7 @@ class LoadApruveSettingsData extends AbstractFixture implements FixtureInterface
             'short_label' => self::APRUVE_LABEL,
             'api_key' => self::API_KEY,
             'merchant_id' => self::MERCHANT_ID,
-            'webhook_token' => self::WEBHOOK_TOKEN,
+            'webhook_token' => self::WEBHOOK_TOKEN_1,
         ],
         [
             'reference' => 'apruve:transport_2',
@@ -35,7 +37,7 @@ class LoadApruveSettingsData extends AbstractFixture implements FixtureInterface
             'short_label' => self::APRUVE_LABEL,
             'api_key' => self::API_KEY,
             'merchant_id' => self::MERCHANT_ID,
-            'webhook_token' => self::WEBHOOK_TOKEN,
+            'webhook_token' => self::WEBHOOK_TOKEN_2,
         ],
         [
             'reference' => 'apruve:transport_3',
@@ -43,7 +45,7 @@ class LoadApruveSettingsData extends AbstractFixture implements FixtureInterface
             'short_label' => self::APRUVE_LABEL,
             'api_key' => self::API_KEY,
             'merchant_id' => self::MERCHANT_ID,
-            'webhook_token' => self::WEBHOOK_TOKEN,
+            'webhook_token' => self::WEBHOOK_TOKEN_3,
         ],
     ];
 
