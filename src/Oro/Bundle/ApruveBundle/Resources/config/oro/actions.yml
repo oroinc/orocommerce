@@ -22,6 +22,12 @@ operations:
         button_options:
             icon: fa-file-text-o
         preactions:
+            - '@assign_constant_value':
+                attribute: $.invoiceTransactionAction
+                value: Oro\Bundle\ApruveBundle\Method\ApruvePaymentMethod::INVOICE
+            - '@assign_constant_value':
+                attribute: $.shipmentTransactionAction
+                value: Oro\Bundle\ApruveBundle\Method\ApruvePaymentMethod::SHIPMENT
             - '@foreach':
                 array: $.data.relatedPaymentTransactions
                 value: $.relatedInvoiceTransaction
@@ -29,7 +35,7 @@ operations:
                     - '@foreach':
                         conditions:
                             '@and':
-                                - '@equal': ['invoice', $.relatedInvoiceTransaction.action]
+                                - '@equal': [$.invoiceTransactionAction, $.relatedInvoiceTransaction.action]
                                 - '@equal': [true, $.relatedInvoiceTransaction.successful]
                         parameters:
                             array: $.relatedInvoiceTransaction.relatedPaymentTransactions
@@ -38,7 +44,7 @@ operations:
                                 - '@assign_value':
                                     conditions:
                                         '@and':
-                                            - '@equal': ['shipment', $.relatedShipmentTransaction.action]
+                                            - '@equal': [$.shipmentTransactionAction, $.relatedShipmentTransaction.action]
                                             - '@equal': [true, $.relatedShipmentTransaction.successful]
                                     parameters: [$.shipmentTransactionSuccessful, true]
         preconditions:

@@ -13,8 +13,6 @@ class ApruvePaymentMethod implements PaymentMethodInterface
 {
     const INVOICE = 'invoice';
     const SHIPMENT = 'shipment';
-    const COMPLETE = 'complete';
-    const CANCEL = 'cancel';
 
     const PARAM_ORDER_ID = 'apruveOrderId';
 

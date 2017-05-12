@@ -89,8 +89,6 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 [ApruvePaymentMethod::AUTHORIZE, true],
                 [ApruvePaymentMethod::CAPTURE, true],
-                [ApruvePaymentMethod::COMPLETE, true],
-                [ApruvePaymentMethod::CANCEL, true],
                 [ApruvePaymentMethod::VALIDATE, false],
                 [ApruvePaymentMethod::PURCHASE, false],
                 [ApruvePaymentMethod::CHARGE, false],
@@ -107,8 +105,6 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
         return [
             [true, ApruvePaymentMethod::AUTHORIZE],
             [true, ApruvePaymentMethod::CAPTURE],
-            [true, ApruvePaymentMethod::COMPLETE],
-            [true, ApruvePaymentMethod::CANCEL],
             [false, ApruvePaymentMethod::VALIDATE],
             [false, ApruvePaymentMethod::PURCHASE],
             [false, ApruvePaymentMethod::CHARGE],
