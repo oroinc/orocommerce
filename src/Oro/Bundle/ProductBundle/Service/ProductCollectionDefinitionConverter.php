@@ -45,8 +45,8 @@ class ProductCollectionDefinitionConverter
         // Stub, will be implemented in BB-9438
         return [
             self::DEFINITION_KEY => $definition,
-            self::INCLUDED_FILTER_KEY => '1,2,3',
-            self::EXCLUDED_FILTER_KEY => '1,2,3'
+            self::INCLUDED_FILTER_KEY => ['1','2','3'],
+            self::EXCLUDED_FILTER_KEY => ['1','2','3']
         ];
     }
 }
