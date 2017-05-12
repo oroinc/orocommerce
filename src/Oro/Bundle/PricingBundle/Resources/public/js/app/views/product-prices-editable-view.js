@@ -30,12 +30,15 @@ define(function(require) {
 
         options: {
             matchedPriceEnabled: true,
-            precision: 4
+            precision: 4,
+            editable: false
         },
 
         templates: {
             priceOverridden: '#product-prices-price-overridden-template'
         },
+
+        storedValues: {},
 
         /**
          * @inheritDoc
@@ -50,8 +53,25 @@ define(function(require) {
         /**
          * @inheritDoc
          */
+        deferredInitialize: function(options) {
+            ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
+
+            if (!this.options.editable) {
+                this.getElement('priceValue').prop('disabled', true);
+                var productId = this.model.get('id');
+                if (!_.isUndefined(productId) && productId.length && this.model.get('price')) {
+                    // store current values
+                    this.storedValues = _.extend({}, this.model.attributes);
+                }
+            }
+        },
+
+        /**
+         * @inheritDoc
+         */
         dispose: function(options) {
             delete this.templates;
+            delete this.storedValues;
             ProductPricesEditableView.__super__.dispose.apply(this, arguments);
         },
 
@@ -131,7 +151,7 @@ define(function(require) {
                 model: this.model.attributes,
                 prices: this.prices,
                 matchedPrice: this.findPrice(),
-                clickable: true,
+                clickable: this.options.editable,
                 formatter: NumberFormatter
             }));
         },

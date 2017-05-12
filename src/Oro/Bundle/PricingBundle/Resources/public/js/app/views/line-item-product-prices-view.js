@@ -5,7 +5,6 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
-    var NumberFormatter = require('orolocale/js/formatter/number');
     var ProductPricesEditableView = require('oropricing/js/app/views/product-prices-editable-view');
 
     LineItemProductPricesView = ProductPricesEditableView.extend({
@@ -24,12 +23,6 @@ define(function(require) {
             'quantity updatePriceValue': ['change', 'updatePriceValue']
         }),
 
-        options: _.extend({}, ProductPricesEditableView.prototype.options, {
-            allowPriceEdit: false
-        }),
-
-        storedValues: {},
-
         /**
          * @inheritDoc
          */
@@ -43,14 +36,6 @@ define(function(require) {
                 this.setTierPrices(tierPrices, false);
             }, this));
 
-            if (!this.options.allowPriceEdit) {
-                this.getElement('priceValue').prop('disabled', true);
-                var productId = this.model.get('id');
-                if (!_.isUndefined(productId) && productId.length && this.model.get('price')) {
-                    // store current values
-                    this.storedValues = _.extend({}, this.model.attributes);
-                }
-            }
             this.updateTierPrices();
         },
 
@@ -69,15 +54,17 @@ define(function(require) {
 
         changePricesCurrency: function() {
             this.setTierPrices(this.tierPrices);
-            var price = this.findPrice();
-            if (!price &&
-                this.storedValues &&
+
+            var price;
+            if (this.storedValues &&
                 this.model.get('id') === this.storedValues.id &&
                 this.model.get('unit') === this.storedValues.unit &&
                 this.model.get('quantity') === this.storedValues.quantity &&
                 this.model.get('currency') === this.storedValues.currency
             ) {
                 price = this.storedValues;
+            } else {
+                price = this.findPrice();
             }
             this.setPriceValue(price ? price.price : null);
             this.getElement('priceValue').addClass('matched-price');
@@ -118,7 +105,7 @@ define(function(require) {
                 return;
             }
             this.setTierPrices(tierPrices, false);
-            if (!this.options.allowPriceEdit) {
+            if (!this.options.editable) {
                 this.filterValues(true);
             }
             this.setTierPrices(tierPrices, false);
@@ -133,13 +120,8 @@ define(function(require) {
                 return;
             }
             this.setTierPrices(tierPrices, false);
-            if (!this.options.allowPriceEdit) {
+            if (!this.options.editable) {
                 this.filterValues(!this.model.get('price'));
-                if (!this.model.get('price')) {
-                    this.findPrice();
-                    this.setPriceValue(this.findPriceValue());
-                    this.updateUI();
-                }
             }
 
         },
