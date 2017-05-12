@@ -2,12 +2,38 @@
 
 namespace Oro\Bundle\PricingBundle\PricingStrategy;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
+    /**
+     * MinimalPricesCombiningStrategy constructor.
+     * @param Registry $registry
+     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
+     * @param CombinedPriceListTriggerHandler $triggerHandler
+     * @param ShardManager $shardManager
+     */
+    public function __construct(
+        Registry $registry,
+        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
+        CombinedPriceListTriggerHandler $triggerHandler,
+        ShardManager $shardManager
+    ) {
+        $this->shardManager = $shardManager;
+        parent::__construct($registry, $insertFromSelectQueryExecutor, $triggerHandler);
+    }
+
     /**
      * @param CombinedPriceList $combinedPriceList
      * @param CombinedPriceListToPriceList $priceListRelation
@@ -18,6 +44,12 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
         CombinedPriceListToPriceList $priceListRelation,
         Product $product = null
     ) {
-        // TODO: BB-8600
+        $this->getCombinedProductPriceRepository()->insertMinimalPricesByPriceList(
+            $this->shardManager,
+            $this->insertFromSelectQueryExecutor,
+            $combinedPriceList,
+            $priceListRelation->getPriceList(),
+            $product
+        );
     }
 }

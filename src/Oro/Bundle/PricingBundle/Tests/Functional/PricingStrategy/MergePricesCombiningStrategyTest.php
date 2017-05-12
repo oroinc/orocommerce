@@ -19,6 +19,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 
+/**
+ * {@inheritDoc}
+ */
 class MergePricesCombiningStrategyTest extends WebTestCase
 {
     /**
@@ -465,6 +468,6 @@ class MergePricesCombiningStrategyTest extends WebTestCase
             $criteria
         );
 
-        return $prices[0];
+        return isset($prices[0]) ? $prices[0] : null;
     }
 }
