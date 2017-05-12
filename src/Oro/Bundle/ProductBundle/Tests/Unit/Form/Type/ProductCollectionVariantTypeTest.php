@@ -149,6 +149,8 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         $this->assertEquals('test', $view->vars['results_grid']);
         $this->assertEquals('included_grid', $view->vars['includedProductsGrid']);
         $this->assertEquals('excluded_grid', $view->vars['excludedProductsGrid']);
+        $this->assertEquals([], $view->vars['includedProducts']);
+        $this->assertEquals([], $view->vars['excludedProducts']);
         $this->assertEquals($segmentDefinition, $view->vars['segmentDefinition']);
         $this->assertEquals($segmentDefinitionFieldName, $view->vars['segmentDefinitionFieldName']);
     }

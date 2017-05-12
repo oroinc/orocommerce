@@ -104,6 +104,8 @@ class ProductCollectionVariantType extends AbstractType
         $view->vars['results_grid'] = $options['results_grid'];
         $view->vars['includedProductsGrid'] = $options['included_products_grid'];
         $view->vars['excludedProductsGrid'] = $options['excluded_products_grid'];
+        $view->vars['includedProducts'] = [];
+        $view->vars['excludedProducts'] = [];
         $view->vars['segmentDefinitionFieldName'] = $view->children['productCollectionSegment']
             ->children['definition']->vars['full_name'];
         $view->vars['segmentDefinition'] = $view->children['productCollectionSegment']
