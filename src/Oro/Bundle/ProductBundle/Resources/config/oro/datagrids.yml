@@ -113,6 +113,12 @@ datagrids:
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
+        actions:
+            add_to_excluded:
+                type:          trigger-event
+                event_name:    product-collection-add-to-exclude
+                label:         oro.product.grid.action.product_collection.add_to_exclude
+                icon:          remove
 
     product-collection-selected-products-grid:
         extends: products-select-grid-base
@@ -131,9 +137,21 @@ datagrids:
 
     product-collection-included-products-grid:
         extends: product-collection-selected-products-grid
+        actions:
+            remove_from_included:
+                type:          trigger-event
+                event_name:    product-collection-remove-from-included
+                label:         oro.product.grid.action.product_collection.remove_from_included
+                icon:          undo
 
     product-collection-excluded-products-grid:
         extends: product-collection-selected-products-grid
+        actions:
+            remove_from_excluded:
+                type:          trigger-event
+                event_name:    product-collection-remove-from-excluded
+                label:         oro.product.grid.action.product_collection.remove_from_excluded
+                icon:          trash
 
     products-grid:
         extends: products-select-grid-base

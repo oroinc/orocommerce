@@ -255,6 +255,10 @@ oro:
         grid:
             action:
                 duplicate: Duplicate
+                product_collection:
+                    add_to_exclude: Exclude
+                    remove_from_included: Reset to Default
+                    remove_from_excluded: Remove
 
         ui:
             duplicate: Duplicate
