@@ -18,7 +18,12 @@ oro_behat_extension:
       class: Oro\Bundle\PaymentBundle\Tests\Behat\Element\PaymentMethodConfigType
       selector:
         type: 'xpath'
-        locator: '//div[@id[starts-with(.,"s2id_oro_shipping_methods_configs_rule_method")]]'
+        locator: '//div[@id[starts-with(.,"uniform-oro_shipping_methods_configs_rule_method")]]'
+    Payment Method Config Type Field:
+      class: Oro\Bundle\PaymentBundle\Tests\Behat\Element\PaymentMethodConfigType
+      selector:
+        type: 'xpath'
+        locator: '//div[@id[starts-with(.,"uniform-oro_payment_methods_configs_rule_method")]]'
     Itegration Form:
       selector: "form[id^='oro_integration_channel_form-uid']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -34,3 +39,18 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"uniform-oro_shipping_methods_configs_rule_method")]]'
             element: Shippment Method Config Type Field
+    DPD Classic Form:
+      selector: "form[id^='oro_shipping_methods_configs_rule-uid']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Enable: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]"
+    Payment Rule Form:
+      selector: "form[id^='oro_payment_methods_configs_rule-uid']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Method:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"uniform-oro_payment_methods_configs_rule_method")]]'
+            element: Payment Method Config Type Field
