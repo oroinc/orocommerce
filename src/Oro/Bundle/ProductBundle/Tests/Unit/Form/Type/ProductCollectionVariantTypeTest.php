@@ -113,6 +113,19 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         $this->assertEquals(ProductCollectionVariantType::NAME, $this->type->getBlockPrefix());
     }
 
+    public function testDefaultOptions()
+    {
+        $form = $this->factory->create($this->type, null);
+
+        $expectedDefaultOptions = [
+            'results_grid' => 'product-collection-grid',
+            'excluded_products_grid' => 'product-collection-excluded-products-grid',
+            'included_products_grid' => 'product-collection-included-products-grid'
+        ];
+
+        $this->assertArraySubset($expectedDefaultOptions, $form->getConfig()->getOptions());
+    }
+
     public function testFinishView()
     {
         $view = new FormView();
@@ -122,7 +135,11 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         $segmentDefinitionFieldName = 'segment-definition-field-name';
         /** @var FormInterface $form */
         $form = $this->createMock(FormInterface::class);
-        $options = ['results_grid' => 'test'];
+        $options = [
+            'results_grid' => 'test',
+            'included_products_grid' => 'included_grid',
+            'excluded_products_grid' => 'excluded_grid',
+        ];
         $view->children['productCollectionSegment']
             ->children['definition']->vars['full_name'] = $segmentDefinitionFieldName;
         $view->children['productCollectionSegment']
@@ -130,6 +147,8 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
 
         $this->type->finishView($view, $form, $options);
         $this->assertEquals('test', $view->vars['results_grid']);
+        $this->assertEquals('included_grid', $view->vars['includedProductsGrid']);
+        $this->assertEquals('excluded_grid', $view->vars['excludedProductsGrid']);
         $this->assertEquals($segmentDefinition, $view->vars['segmentDefinition']);
         $this->assertEquals($segmentDefinitionFieldName, $view->vars['segmentDefinitionFieldName']);
     }

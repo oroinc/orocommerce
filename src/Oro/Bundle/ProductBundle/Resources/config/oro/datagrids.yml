@@ -114,6 +114,27 @@ datagrids:
                 pageSize:
                     default_per_page: 10
 
+    product-collection-selected-products-grid:
+        extends: products-select-grid-base
+        options:
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+        source:
+            query:
+                where:
+                    and:
+                        - product.id IN (:selectedProducts)
+            bind_parameters:
+                selectedProducts:
+                    default: []
+
+    product-collection-included-products-grid:
+        extends: product-collection-selected-products-grid
+
+    product-collection-excluded-products-grid:
+        extends: product-collection-selected-products-grid
+
     products-grid:
         extends: products-select-grid-base
         options:

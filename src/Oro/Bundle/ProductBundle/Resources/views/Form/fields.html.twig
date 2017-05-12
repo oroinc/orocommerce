@@ -307,6 +307,26 @@
                 'alias': gridWidgetAlias
             }) }}
         </div>
+
+        {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, form.vars.name) %}
+        <div class="{{ gridWidgetContainerClass }}">
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path('oro_datagrid_widget', {'gridName': includedProductsGridName}),
+                'title': 'oro.product.content_variant.ui.included_products'|trans,
+                'alias': 'product-collection-included-products-grid-' ~ form.vars.name
+            }) }}
+        </div>
+
+        {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, form.vars.name) %}
+        <div class="{{ gridWidgetContainerClass }}">
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path('oro_datagrid_widget', {'gridName': excludedProductsGridName}),
+                'title': 'oro.product.content_variant.ui.excluded_products'|trans,
+                'alias': 'product-collection-excluded-products-grid-' ~ form.vars.name
+            }) }}
+        </div>
     </div>
 {% endblock %}
 

@@ -58,6 +58,8 @@ oro:
                 apply_query: Apply the Query
                 reset: Reset
                 filtered_products: Filtered Products
+                included_products: Manually added
+                excluded_products: Excluded
 
         type:
             simple: Simple

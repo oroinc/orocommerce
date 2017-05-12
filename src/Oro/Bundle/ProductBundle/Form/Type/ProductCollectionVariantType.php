@@ -88,8 +88,12 @@ class ProductCollectionVariantType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('content_variant_type', ProductCollectionContentVariantType::TYPE);
-        $resolver->setDefault('results_grid', 'product-collection-grid');
+        $resolver->setDefaults([
+            'content_variant_type' => ProductCollectionContentVariantType::TYPE,
+            'results_grid' => 'product-collection-grid',
+            'included_products_grid' => 'product-collection-included-products-grid',
+            'excluded_products_grid' => 'product-collection-excluded-products-grid'
+        ]);
     }
 
     /**
@@ -98,6 +102,8 @@ class ProductCollectionVariantType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['results_grid'] = $options['results_grid'];
+        $view->vars['includedProductsGrid'] = $options['included_products_grid'];
+        $view->vars['excludedProductsGrid'] = $options['excluded_products_grid'];
         $view->vars['segmentDefinitionFieldName'] = $view->children['productCollectionSegment']
             ->children['definition']->vars['full_name'];
         $view->vars['segmentDefinition'] = $view->children['productCollectionSegment']
