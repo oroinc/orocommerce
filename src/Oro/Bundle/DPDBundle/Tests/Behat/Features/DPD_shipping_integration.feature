@@ -53,6 +53,9 @@ Feature: DPD shipping integration
       |Sort Order|1    |
       |Currency  |$    |
       |Method    |[DPD]|
+    And fill "DPD Classic Form" with:
+      |Enable      |true|
+      |Handling fee|10  |
     When save and close form
     Then should see "Shippment rule has been saved" flash message
     And I go to System/ Configuration
@@ -60,7 +63,6 @@ Feature: DPD shipping integration
     And fill form with:
     |Use default     |false                      |
     |Country         |Portugal                   |
-    And fill form with:
     |Region/State    |Faro                       |
     |Zip/Postal Code |8000-397                   |
     |City            |Faro                       |
@@ -68,5 +70,25 @@ Feature: DPD shipping integration
     |Street Address 2|1A                         |
     And I save form
     Then should see "Configuration saved" flash message
+    And I go to System/ Payment Rules
+    And click "Create Payment Rule"
+    And fill "Payment Rule Form" with:
+      |Enable    |true          |
+      |Name      |Payment Terms |
+      |Sort Order|1             |
+      |Currency  |$             |
+      |Method    |[Payment Term]|
+    When save and close form
+    Then should see "Payment rule has been saved" flash message
     And click logout in user menu
+
+  Scenario: Check out with DPD integration
+    Given Currency is set to USD
+    And I enable the existing warehouses
+    And AmandaRCole@example.org customer user has Buyer role
+    And I signed in as AmandaRCole@example.org on the store frontend
+    When I open page with shopping list List 1
+    And I press "Create Order"
+    And I select "VOTUM GmbH Ohlauer Str. 43, 10999 Berlin, Germany" on the "Billing Information" checkout step and press Continue
+    And I select "VOTUM GmbH Ohlauer Str. 43, 10999 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I wait for action

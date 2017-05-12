@@ -82,9 +82,10 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         country: '@germany'
         region: '@berlin'
         label: 'Primary address'
-        street: 'Fifth avenue'
+        street: 'VOTUM GmbH Ohlauer Str.'
+        street2: '43'
         city: 'Berlin'
-        postalCode: '10115'
+        postalCode: '10999'
         frontendOwner: '@amanda'
         owner: '@admin'
         setDefaults: ['@shippingType', '@billingType']

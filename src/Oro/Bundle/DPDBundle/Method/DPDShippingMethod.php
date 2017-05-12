@@ -8,6 +8,7 @@ use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class DPDShippingMethod implements
     ShippingMethodInterface,
@@ -131,7 +132,7 @@ class DPDShippingMethod implements
      */
     public function getOptionsConfigurationFormType()
     {
-        return DPDShippingMethodOptionsType::class;
+        return HiddenType::class;
     }
 
     /**
