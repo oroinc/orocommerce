@@ -63,7 +63,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:
         product: '@product'
-        quantity: '5'
+        quantity: '1'
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
@@ -111,7 +111,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         pricelist: '@pricelistShipping'
         product: '@product'
         productSku: 'SKU123'
-        quantity: 5
+        quantity: 1
         unit: '@item'
         value: 5
         currency: 'USD'
@@ -121,7 +121,7 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         pricelist: '@combinedPriceList'
         product: '@product'
         productSku: 'SKU123'
-        quantity: 5
+        quantity: 1
         unit: '@item'
         value: 2
         currency: 'USD'
