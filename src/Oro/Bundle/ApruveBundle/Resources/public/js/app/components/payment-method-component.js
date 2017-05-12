@@ -79,7 +79,11 @@ define(function(require) {
          */
         handleApruveComplete: function(orderId) {
             mediator.execute('showLoading');
-            mediator.execute('redirectTo', {url: this.returnUrl + '?' + this.options.orderIdParamName + '=' + orderId}, {redirect: true});
+            mediator.execute(
+                'redirectTo',
+                {url: this.returnUrl + '?' + this.options.orderIdParamName + '=' + orderId},
+                {redirect: true}
+            );
         },
 
         handleApruveClose: function() {
