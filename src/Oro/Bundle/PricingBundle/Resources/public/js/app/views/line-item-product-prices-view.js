@@ -42,12 +42,12 @@ define(function(require) {
         updateTierPrices: function() {
             var productId = this.model.get('id');
             if (productId.length === 0) {
-                this.onUpdatePrices({});
+                this.refreshTierPrices({});
             } else {
                 mediator.trigger(
                     'pricing:load:products-tier-prices',
                     [productId],
-                    _.bind(this.onUpdatePrices, this)
+                    _.bind(this.refreshTierPrices, this)
                 );
             }
         },
@@ -97,9 +97,8 @@ define(function(require) {
 
         /**
          * @param {Object} tierPrices
-         * @param {Boolean} silent
          */
-        refreshTierPrices: function(tierPrices, silent) {
+        refreshTierPrices: function(tierPrices) {
             var productId = this.model.get('id');
             if (productId && !_.isUndefined(tierPrices) && _.isUndefined(tierPrices[productId])) {
                 return;
@@ -108,22 +107,6 @@ define(function(require) {
             if (!this.options.editable) {
                 this.filterValues(true);
             }
-            this.setTierPrices(tierPrices, false);
-        },
-
-        /**
-         * @param {Object} tierPrices
-         */
-        onUpdatePrices: function(tierPrices) {
-            var productId = this.model.get('id');
-            if (productId && !_.isUndefined(tierPrices) && _.isUndefined(tierPrices[productId])) {
-                return;
-            }
-            this.setTierPrices(tierPrices, false);
-            if (!this.options.editable) {
-                this.filterValues(!this.model.get('price'));
-            }
-
         },
 
         /**

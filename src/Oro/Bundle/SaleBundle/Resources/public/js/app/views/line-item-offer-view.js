@@ -4,7 +4,6 @@ define(function(require) {
     var LineItemOfferView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
     var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
 
     LineItemOfferView = LineItemProductView.extend({
