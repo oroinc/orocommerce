@@ -33,29 +33,26 @@ Technical Components:
  - `Oro\Bundle\ApruveBundle\Client\ApruveRestClient` - works with `RestClientFactoryInterface` under the hood
  - `Oro\Bundle\ApruveBundle\Client\Request\ApruveRequest` - request DTO
 5. Apruve webhooks:
- - `Oro\Bundle\ApruveBundle\Controller\WebhookController` - provides route for webhooks
- - `Oro\Bundle\ApruveBundle\EventListener\Callback\PaymentCallbackListener` - handles incoming webhooks. Delegates further processing to concrete payment method actions.
+ - `Oro\Bundle\ApruveBundle\Controller\WebhookController` - entry point of webhooks processing.
+ - `Oro\Bundle\ApruveBundle\EventListener\Callback\PaymentCallbackListener` - handles "return" payment event, which is triggered when user authorises a payment. Delegates further processing to `Oro\Bundle\ApruveBundle\Method\PaymentAction\AuthorizePaymentAction`.
 
 
-PaymentTransaction Lifecycle:
+PaymentTransactions Lifecycle:
 --------------------------------
 1. PaymentTransaction 1 is created in `Oro\Bundle\ApruveBundle\Method\PaymentAction\PurchasePaymentAction` when a customer clicks Submit on the last step of checkout process.
 
 2. If a customer authorises payment in Apruve lightbox, PaymentTransaction 1 is updated with Apruve Order Id and is marked as successful in `Oro\Bundle\ApruveBundle\Method\PaymentAction\AuthorizePaymentAction`. Otherwise - nothing is changed.
 
-3. Once a payment is authorized, it can be invoiced using "Invoice" button in admin area on Order view page in transactions datagrid. When you click "Invoice", PaymentTransaction 2 is getting created along with Apruve Invoice and Shipment entities in `Oro\Bundle\ApruveBundle\Method\PaymentAction\InvoicePaymentAction`.
+3. Once a payment is authorized, it can be invoiced using "Send Invoice" button in admin area on Order view page in the "Payment History" section. When you click "Send Invoice", PaymentTransaction 2 is getting created along with Apruve Invoice in `Oro\Bundle\ApruveBundle\Method\PaymentAction\InvoicePaymentAction`. As soon as Apruve Invoice is created successfully, PaymentTransaction 3 is getting created along with Apruve Shipment entity in `Oro\Bundle\ApruveBundle\Method\PaymentAction\ShipmentPaymentAction`.
 
-4. When a customer fulfils invoice, Apruve notifies about it via webhook `invoice.closed` which is processed in `Oro\Bundle\ApruveBundle\Method\PaymentAction\CompletePaymentAction`. PaymentTransaction 3 is created and marked as successful.
-
-5. When a customer declines an invoice or does not pay for more than certain amount of days (90 by default) - Apruve cancels corresponding Order and Invoice, and notifies about this event via webhook `order.canceled` which is processed in `Oro\Bundle\ApruveBundle\Method\PaymentAction\CancelPaymentAction`. PaymentTransaction 3 is created and marked as not successful.
-
+4. When a customer fulfils invoice, Apruve notifies about it via webhook `invoice.closed` which is getting processed starting from in `Oro\Bundle\ApruveBundle\Controller\WebhookController`. In case of success, PaymentTransaction 4 is created and marked as successful. If a customer does not pay for Apruve Invoice in time, it is being marked as overdue and silently canceled on Apruve side.
 
 
 Things to Consider:
 -------------------
-1. Apruve does not properly respect `price_total_cents` property of Apruve LineItem - it is not included in the secure hash generation on Apruve side, though Apruve takes `amount_cents` (see [Merchant Integration Tutorial][1]). That's why it was decided (and approved by Apruve Support) to use `amount_cents` instead of `price_total_cents` property in Apruve LineItem entity. See `Oro\Bundle\ApruveBundle\Apruve\Model\ApruveLineItem` and `Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator` for details.
+1. Apruve does not properly respect `price_total_cents` property of Apruve LineItem - it is not taken into account when secure hash is being generated from Apruve Order on Apruve side, though Apruve takes `amount_cents` (see [Merchant Integration Tutorial][1]). That's why it was decided (and approved by Apruve Support) to use `amount_cents` property in Apruve LineItem entity. See `Oro\Bundle\ApruveBundle\Apruve\Builder\LineItem\ApruveLineItemBuilder` and `Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator` for details. On the other hand, `price_total_cents` is required for the line items which reside in Apruve Invoice, that is why both of these properties are present in Apruve LineItem entity.
 
-2. Apruve wants to be notified about shipments from merchants who sell physical goods, but does not for other merchant types. Due to this fact it will not fulfil invoices in cases when it was not notified of shipment (when Shipment entity is not created via API) for merchants of physical goods. In order to unify the behavior for all types of merchants, it was decided to always notify Apruve about shipment, no matter goods of what type were sold. Shipment entity is created in Apruve along with Invoice entity when "Invoice" button is clicked on Order view page in the transactions datagrid.
+2. Apruve wants to be notified about shipments from merchants who sell physical goods, but does not for other merchant types. Due to this fact it will not fulfil invoices in cases when it was not notified of shipment (when Shipment entity is not created via API) for merchants of physical goods. In order to unify the behavior for all types of merchants, it was decided to always notify Apruve about shipment, no matter goods of what type are sold. Shipment entity is created in Apruve along with Invoice entity when "Send Invoice" button is clicked on Order view page in the "Payment History" section.
 
 
 FAQ:
