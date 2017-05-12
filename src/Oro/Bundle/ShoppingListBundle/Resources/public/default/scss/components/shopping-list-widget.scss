@@ -156,6 +156,7 @@
 
   @include breakpoint('mobile-landscape') {
     position: static;
+    text-align: left;
   }
 
   @media (max-width: 360px) {
