@@ -186,7 +186,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             )
             ->willReturn($renderedHtml);
 
-        $event = new BeforeListRenderEvent($twig, $this->getScrollData());
+        $event = new BeforeListRenderEvent($twig, $this->getScrollData(), new \stdClass());
 
         $this->listener->onProductView($event);
 
@@ -205,7 +205,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
         $twig->expects($this->once())->method('render')->willReturn($renderedHtml);
 
-        $event = new BeforeListRenderEvent($twig, $this->getScrollData());
+        $event = new BeforeListRenderEvent($twig, $this->getScrollData(), new \stdClass());
 
         $this->listener->onProductEdit($event);
 

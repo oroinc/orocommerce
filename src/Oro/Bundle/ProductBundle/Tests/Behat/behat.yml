@@ -7,6 +7,12 @@ oro_behat_extension:
     ProductAdditionalUnitField:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
 
+    Configurable Attributes:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
+      selector:
+        type: 'xpath'
+        locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
+
     ProductForm:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -19,6 +25,10 @@ oro_behat_extension:
           PrimaryPrecision: 'oro_product[primaryUnitPrecision][precision]'
           AdditionalUnit: 'oro_product[additionalUnitPrecisions][0][unit]'
           AdditionalPrecision: 'oro_product[additionalUnitPrecisions][0][precision]'
+          Configurable Attributes:
+            type: 'xpath'
+            locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
+            element: Configurable Attributes
 
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"
@@ -28,3 +38,82 @@ oro_behat_extension:
 
     EntityConfigForm:
       selector: "form[name='oro_entity_config_type']"
+
+    Show Variants Dropdown:
+      selector: ".content-variant-add-btn-container .dropdown-toggle"
+
+    Product Collection Preview Grid:
+      selector: 'div[class*="product-collection-grid-widget-container-"]'
+
+    Field Condition:
+      selector: 'li[data-widget="fieldCondition"]'
+
+    Drop condition here:
+      selector: ".right-area"
+
+    Choose a field..:
+      selector: "#select2-drop-mask"
+
+    Apply the Query:
+      selector:
+        type: xpath
+        locator: '//a[contains(@class, "btn") and contains(., "Apply the Query")]'
+
+    Reset:
+      selector: "a.btn.filter-reset"
+
+    SKU:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "select2-result-label") and contains(., "SKU")]'
+
+    Content Node Form:
+      selector: 'form[name="oro_web_catalog_content_node"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Titles: 'oro_web_catalog_content_node[titles][values][default]'
+          Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
+          Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
+          First Product Collection Segment Name: 'oro_web_catalog_content_node[contentVariants][0][productCollectionSegment][name]'
+          Second Product Collection Segment Name: 'oro_web_catalog_content_node[contentVariants][1][productCollectionSegment][name]'
+
+    Remove Variant Button:
+      selector: 'button.removeVariantBtn'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Remove First Product Collection Variant Button:
+      selector: 'button.removeVariantBtn[data-related="oro_web_catalog_content_node[contentVariants][0]"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Search Button:
+      selector: 'button[name="oro_website_search_search_button"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Product Collection Variant Label:
+      selector:
+        type: 'xpath'
+        locator: '//h5[contains(., "Product Collection")]'
+
+    Edit within Web Catalog:
+      selector: 'a.operation-button[title="Edit within Web Catalog"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    AttributeGroupCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
+
+  suites:
+    OroProductBundle:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+      paths:
+        - '@OroProductBundle/Tests/Behat/Features'

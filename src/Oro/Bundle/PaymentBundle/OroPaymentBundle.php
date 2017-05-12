@@ -19,9 +19,7 @@ class OroPaymentBundle extends Bundle
         return new OroPaymentExtension();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function build(ContainerBuilder $container)
     {
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
@@ -31,12 +29,13 @@ class OroPaymentBundle extends Bundle
         parent::build($container);
     }
 
+    /** {@inheritdoc} */
     public function boot()
     {
         if (!SecureArrayType::hasType(SecureArrayType::TYPE)) {
             SecureArrayType::addType(
                 SecureArrayType::TYPE,
-                'Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType'
+                SecureArrayType::class
             );
 
             $mcrypt = $this->container->get('oro_security.encoder.mcrypt');

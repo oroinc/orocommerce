@@ -1,5 +1,9 @@
 UPGRADE FROM 1.1 to 1.2
-=======================
+
+MoneyOrderBundle
+----------------
+- `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`
+    - removed constant `const TYPE = 'money_order'`
 
 OrderBundle
 -------------
@@ -11,6 +15,8 @@ PaymentBundle
 -------------
 - For supporting same approaches for working with payment methods, `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` and its implementation were deprecated. Related deprecation is `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass`. `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` which implements `Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface` was added instead. And `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\CompositePaymentMethodProviderCompilerPass` was added for collecting providers in new composite. 
 - Class `Oro\Bundle\PaymentBundle\Action\CaptureAction` was removed, `Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction` should be used instead
+- Class `Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
 
 PricingBundle
 -------------
@@ -20,7 +26,7 @@ PricingBundle
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
 - Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
    - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
-- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now. 
+- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now.
 
 ShoppingBundle
 -------------
@@ -32,6 +38,10 @@ UPSBundle
 - Class `Oro\Bundle\UPSBundle\Controller`
     - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
     - method `validateConnection` was renamed to `validateConnectionAction`
+
+OroCMSBundle
+------------
+- Content Blocks functionality was added. Please, see [documentation](./src/Oro/Bundle/CMSBundle/README.md) for more information.
 
 LayoutBundle
 -------------
@@ -61,6 +71,15 @@ RuleBundle
 - Following methods were added to `\Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface`:
     - `getBaseSlug`
     - `getSlugByLocalization`
+
+OrderBundle
+-----------
+- Added API for:
+    - `Oro\Bundle\OrderBundle\Entity\Order`
+    - `Oro\Bundle\OrderBundle\Entity\OrderDiscount`
+    - `Oro\Bundle\OrderBundle\Entity\OrderLineItem`
+    - `Oro\Bundle\OrderBundle\Entity\OrderAddress`
+    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
 
 CustomerBundle
 --------------
@@ -95,3 +114,28 @@ FlatRateShippingBundle
 --------------
 - The `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` was deprecated, the `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` was created instead.
 
+RedirectBundle
+--------------
+- Class `Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor` moved to `Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor`
+
+CatalogBundle
+--------------
+- The `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles` was deprecated, the `\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren` was created instead.
+
+ProductBundle
+--------------
+- The method [`ProductContentVariantReindexEventListener::__construct`](https://github.com/orocommerce/orocommerce/blob/1.1.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener") has been updated. Pass `Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener` as a third argument of the method.
+
+PayPalBundle
+------------
+- Form type `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+- Interface `Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
+- Class `Oro\Bundle\PayPalBundle\EventListener\Callback`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
+- JS credit card validators were moved to `PaymentBundle`. List of moved components:
+    - `oropaypal/js/lib/jquery-credit-card-validator`
+    - `oropaypal/js/validator/credit-card-expiration-date`
+    - `oropaypal/js/validator/credit-card-expiration-date-not-blank`
+    - `oropaypal/js/validator/credit-card-number`
+    - `oropaypal/js/validator/credit-card-type`
+    - `oropaypal/js/adapter/credit-card-validator-adapter`

@@ -56,7 +56,6 @@
                 'data': [
                     form_widget(form.appendProducts, {'id': 'categoryAppendProducts'}),
                     form_widget(form.removeProducts, {'id': 'categoryRemoveProducts'}),
-                    form_row(form.parentCategory),
                     form_row(form.titles),
                     form_row(form.slugPrototypesWithRedirect),
                     form_row(form.shortDescriptions),
@@ -112,37 +111,20 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {% set componentOptions = {
-        container: 'category-container',
-        sidebar: 'category-tree',
-        sidebarAlias: 'categories-sidebar',
-        widgetAlias: 'category-data--widget',
-        widgetContainer: '.category-data',
-        fixSidebarHeight: true
+    {% set treeOptions = {
+        'view' : 'orocatalog/js/app/views/tree-manage-view',
+        'key' : 'commerce-category',
+        'data' : oro_category_list(),
+        'nodeId' : entityId ? entityId : parentCategoryId,
+        'updateAllowed' : resource_granted('oro_catalog_category_update'),
+        'onSelectRoute' : 'oro_catalog_category_update',
+        'onMoveRoute' : 'oro_catalog_category_move'
     } %}
 
-    <div class="category-container tree-component-container"
-         data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
-         data-page-component-options="{{ componentOptions|json_encode }}">
-        <div class="category category-tree tree-component">
-            <div class="left-panel-header">
-                <div class="left-panel-control left-panel-control-maximize">
-                    <i class="fa-forward control-maximize"></i>
-                </div>
-                <div class="left-panel-control left-panel-control-minimize">
-                    <i class="fa-backward control-minimize"></i>
-                </div>
-            </div>
-            {% set treeOptions = {
-                'view' : 'orocatalog/js/app/views/tree-manage-view',
-                'key' : 'commerce-category',
-                'data' : oro_category_list(),
-                'nodeId' : entityId ? entityId : parentCategoryId,
-                'updateAllowed' : resource_granted('oro_catalog_category_update'),
-                'onSelectRoute' : 'oro_catalog_category_update',
-                'onMoveRoute' : 'oro_catalog_category_move'
-            } %}
+    {% set twoColumnContent = parent() %}
 
+    {% embed "OroUIBundle::content_sidebar.html.twig" %}
+        {% block sidebar %}
             {{ UI.renderJsTree(
                 {
                     'label': 'oro.catalog.category.entity_plural_label'|trans,
@@ -154,9 +136,15 @@
                     }
                 }
             ) }}
-        </div>
-    </div>
-    <div class="category-data">
-        {{ parent() }}
-    </div>
+        {% endblock sidebar %}
+
+        {% block content %}
+            {% autoescape %}
+                <div class="category-data">
+                    {{ twoColumnContent|raw}}
+                </div>
+            {% endautoescape %}
+        {% endblock content %}
+    {% endembed %}
+
 {% endblock content_data %}

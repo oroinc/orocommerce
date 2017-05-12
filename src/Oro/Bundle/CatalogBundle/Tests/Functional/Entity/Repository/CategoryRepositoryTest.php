@@ -53,6 +53,21 @@ class CategoryRepositoryTest extends WebTestCase
         $this->assertEquals('Products categories', $defaultTitle->getString());
     }
 
+    public function testGetChildren()
+    {
+        $this->registry->getManagerForClass('OroCatalogBundle:Category')->clear();
+
+        $categories = $this->repository->getChildren();
+        $this->assertCount(8, $categories);
+
+        /** @var Category $category */
+        $category = current($categories);
+        /** @var PersistentCollection $titles */
+        $titles = $category->getTitles();
+        $this->assertInstanceOf(PersistentCollection::class, $titles);
+        $this->assertNotEmpty($titles->toArray());
+    }
+
     public function testGetChildrenWithTitles()
     {
         $this->registry->getManagerForClass('OroCatalogBundle:Category')->clear();

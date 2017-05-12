@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
+use Brick\Math\BigDecimal;
+use Brick\Math\Exception\ArithmeticException;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table("oro_order_discount")
@@ -129,7 +130,15 @@ class OrderDiscount
      */
     public function getPercent()
     {
-        return $this->percent;
+        $percent = $this->percent;
+        if ($this->percent !== null) {
+            try {
+                $percent = BigDecimal::of($this->percent)->toFloat();
+            } catch (ArithmeticException $e) {
+            }
+        }
+
+        return $percent;
     }
 
     /**
@@ -153,7 +162,15 @@ class OrderDiscount
      */
     public function getAmount()
     {
-        return $this->amount;
+        $amount = $this->amount;
+        if ($this->amount !== null) {
+            try {
+                $amount = BigDecimal::of($this->amount)->toFloat();
+            } catch (ArithmeticException $e) {
+            }
+        }
+
+        return $amount;
     }
 
     /**
