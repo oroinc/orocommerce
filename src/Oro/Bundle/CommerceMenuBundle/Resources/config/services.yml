@@ -63,6 +63,8 @@ services:
         public: false
         arguments:
             - '@knp_menu.matcher'
+        calls:
+            - [setRequestStack, ['@request_stack']]
         tags:
             - { name: twig.extension }
 
