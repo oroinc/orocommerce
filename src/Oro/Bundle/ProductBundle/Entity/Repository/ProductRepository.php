@@ -359,6 +359,19 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * @param int $id
+     * @param bool $bidirectional
+     * @param int $limit
+     * @return Product[]
+     */
+    public function findRelated($id, $bidirectional, $limit)
+    {
+        return $this->findRelatedProductsQuery($id, $bidirectional, $limit)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
      * @param $type
      * @param $fieldName
      * @param $fieldValue
@@ -383,5 +396,27 @@ class ProductRepository extends EntityRepository
                 $fieldName => $fieldValue
             ]);
         }
+    }
+
+    /**
+     * @param int $id
+     * @param bool $bidirectional
+     * @param int $limit
+     * @return QueryBuilder
+     */
+    protected function findRelatedProductsQuery($id, $bidirectional, $limit)
+    {
+        $queryBuilder = $this->createQueryBuilder('product')
+            ->leftJoin('product.relatedByProducts', 'relatedByProduct')
+            ->where('relatedByProduct.id = :id')
+            ->setParameter(':id', $id)
+            ->setMaxResults($limit);
+
+        if ($bidirectional) {
+            $queryBuilder->leftJoin('product.relatedToProducts', 'relatedToProduct')
+                ->orWhere('relatedToProduct.id = :id');
+        }
+
+        return $queryBuilder;
     }
 }

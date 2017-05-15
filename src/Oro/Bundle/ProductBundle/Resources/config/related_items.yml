@@ -1,0 +1,8 @@
+services:
+    oro_product.related_products.strategy:
+        class: Oro\Bundle\ProductBundle\RelatedItem\DatabaseStrategy
+        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_products.config_provider']
+
+    oro_product.related_products.config_provider:
+        class: Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider
+        arguments: ['@oro_config.manager']
