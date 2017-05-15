@@ -330,13 +330,14 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="{{ 'excluded_products' ~ form.vars.name}}">
+                    {{ form_widget(form.excludedProducts) }}
                     {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, form.vars.name) %}
                     <div class="{{ gridWidgetContainerClass }}">
                         {{ oro_widget_render({
                             'widgetType': 'block',
                             'url': path('oro_datagrid_widget', {
                                 'gridName': excludedProductsGridName,
-                                'params': {'selectedProducts': excludedProducts},
+                                'params': {'selectedProducts': form.excludedProducts.vars.value|split(',')},
                                 'renderParams': {'routerEnabled': false},
                                 'renderParamsTypes': {'routerEnabled': 'bool'}
                             }),
@@ -346,13 +347,14 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="{{ 'included_products' ~ form.vars.name}}">
+                    {{ form_widget(form.includedProducts) }}
                     {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, form.vars.name) %}
                     <div class="{{ gridWidgetContainerClass }}">
                         {{ oro_widget_render({
                             'widgetType': 'block',
                             'url': path('oro_datagrid_widget', {
                                 'gridName': includedProductsGridName,
-                                'params': {'selectedProducts': includedProducts},
+                                'params': {'selectedProducts': form.includedProducts.vars.value|split(',')},
                                 'renderParams': {'routerEnabled': false},
                                 'renderParamsTypes': {'routerEnabled': 'bool'}
                             }),
