@@ -25,7 +25,9 @@ define(function(require) {
                 reset: null,
                 apply: null,
                 gridWidgetContainer: null,
-                conditionBuilder: null
+                conditionBuilder: null,
+                included: null,
+                excluded: null
             }
         },
 
@@ -42,6 +44,16 @@ define(function(require) {
          * @property string|null
          */
         initialDefinitionState: null,
+
+        /**
+         * @property string|null
+         */
+        initialIncluded: null,
+
+        /**
+         * @property string|null
+         */
+        initialExcluded: null,
 
         /**
          * @property string|null
@@ -69,6 +81,16 @@ define(function(require) {
         $form: null,
 
         /**
+         * @property {jQuery.Element}
+         */
+        $included: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
+        $excluded: null,
+
+        /**
          * @property {String}
          */
         namespace: null,
@@ -82,6 +104,8 @@ define(function(require) {
             this._checkOptions();
 
             this.$conditionBuilder = this.options._sourceElement.find(this.options.selectors.conditionBuilder);
+            this.$included = this.options._sourceElement.find(this.options.selectors.included);
+            this.$excluded = this.options._sourceElement.find(this.options.selectors.excluded);
             this.$form = this.options._sourceElement.closest('form');
 
             this.options._sourceElement
@@ -89,6 +113,9 @@ define(function(require) {
                 .on('click', this.options.selectors.reset, _.bind(this.onReset, this));
 
             this.initialDefinitionState = this._getSegmentDefinition();
+            this.initialIncluded = this.$included.val();
+            this.initialExcluded = this.$excluded.val();
+
             if (this.initialDefinitionState !== null && this.initialDefinitionState !== '') {
                 this.currentDefinitionState = this.initialDefinitionState;
                 mediator.on('grid-sidebar:load:' + this.options.controlsBlockAlias, this._applyQuery, this);
@@ -149,6 +176,8 @@ define(function(require) {
             var filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
             this.$conditionBuilder.conditionBuilder('setValue', filters);
             this.currentDefinitionState = this.initialDefinitionState;
+            this.$included.val(this.initialIncluded);
+            this.$excluded.val(this.initialExcluded);
             this.onApplyQuery(e);
         },
 
@@ -182,6 +211,8 @@ define(function(require) {
             };
 
             parameters.params['sd_' + this.options.gridName] = this.currentDefinitionState;
+            parameters.params['sd_' + this.options.gridName + ':incl'] = this.$included.val();
+            parameters.params['sd_' + this.options.gridName + ':excl'] = this.$excluded.val();
 
             mediator.trigger('grid-sidebar:change:' + this.options.controlsBlockAlias, parameters);
         },

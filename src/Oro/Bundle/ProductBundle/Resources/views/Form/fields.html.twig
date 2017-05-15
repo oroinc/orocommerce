@@ -254,7 +254,9 @@
         'gridName': gridName,
         'renderParams': {'routerEnabled': false},
         'renderParamsTypes': {'routerEnabled': 'bool'},
-        ('sd_' ~ resolvedGridName): form.vars.segmentDefinition
+        ('sd_' ~ resolvedGridName): form.vars.segmentDefinition,
+        ('sd_' ~ resolvedGridName ~ ':incl'): form.includedProducts.vars.value,
+        ('sd_' ~ resolvedGridName ~ ':excl'): form.excludedProducts.vars.value
     } %}
 
     {% set gridSidebarComponentOptions = {
@@ -268,7 +270,9 @@
             'conditionBuilder': '#' ~ form.productCollectionSegment.vars.id ~ '-condition-builder',
             'gridWidgetContainer': '.' ~ gridWidgetContainerClass,
             'reset': '.filter-reset',
-            'apply': '.filter-apply'
+            'apply': '.filter-apply',
+            'included': '#' ~ form.includedProducts.vars.id,
+            'excluded': '#' ~ form.excludedProducts.vars.id
         },
         'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
         'controlsBlockAlias': controlsBlockAlias,
@@ -298,69 +302,69 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="oro-tabs">
-            <ul class="nav nav-tabs">
-                <li class="active">
-                    <a href="#{{ 'filtered_products' ~ form.vars.name}}" data-toggle="tab">
-                        {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
-                    </a>
-                </li>
-                <li>
-                    <a href="#{{ 'excluded_products' ~ form.vars.name}}" data-toggle="tab">
-                        {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
-                    </a>
-                </li>
-                <li>
-                    <a href="#{{ 'included_products' ~ form.vars.name}}" data-toggle="tab">
-                        {{ 'oro.product.content_variant.ui.included_products'|trans }}
-                    </a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="{{ 'filtered_products' ~ form.vars.name}}">
-                    <div class="{{ gridWidgetContainerClass }} {{ gridVisibilityState }}">
-                        {{ oro_widget_render({
-                            'widgetType': 'block',
-                            'url': path('oro_datagrid_widget', widgetRouteParameters),
-                            'title': '',
-                            'alias': gridWidgetAlias
-                        }) }}
+            <div class="oro-tabs">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#{{ 'filtered_products' ~ form.vars.name}}" data-toggle="tab">
+                            {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#{{ 'excluded_products' ~ form.vars.name}}" data-toggle="tab">
+                            {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#{{ 'included_products' ~ form.vars.name}}" data-toggle="tab">
+                            {{ 'oro.product.content_variant.ui.included_products'|trans }}
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="{{ 'filtered_products' ~ form.vars.name}}">
+                        <div class="{{ gridWidgetContainerClass }} {{ gridVisibilityState }}">
+                            {{ oro_widget_render({
+                                'widgetType': 'block',
+                                'url': path('oro_datagrid_widget', widgetRouteParameters),
+                                'title': '',
+                                'alias': gridWidgetAlias
+                            }) }}
+                        </div>
                     </div>
-                </div>
-                <div class="tab-pane" id="{{ 'excluded_products' ~ form.vars.name}}">
-                    {{ form_widget(form.excludedProducts) }}
-                    {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, form.vars.name) %}
-                    <div class="{{ gridWidgetContainerClass }}">
-                        {{ oro_widget_render({
-                            'widgetType': 'block',
-                            'url': path('oro_datagrid_widget', {
-                                'gridName': excludedProductsGridName,
-                                'params': {'selectedProducts': form.excludedProducts.vars.value|split(',')},
-                                'renderParams': {'routerEnabled': false},
-                                'renderParamsTypes': {'routerEnabled': 'bool'}
-                            }),
-                            'title': '',
-                            'alias': 'product-collection-excluded-products-grid-' ~ form.vars.name
-                        }) }}
+                    <div class="tab-pane" id="{{ 'excluded_products' ~ form.vars.name}}">
+                        {{ form_widget(form.excludedProducts) }}
+                        {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, form.vars.name) %}
+                        <div class="{{ gridWidgetContainerClass }}">
+                            {{ oro_widget_render({
+                                'widgetType': 'block',
+                                'url': path('oro_datagrid_widget', {
+                                    'gridName': excludedProductsGridName,
+                                    'params': {'selectedProducts': form.excludedProducts.vars.value|split(',')},
+                                    'renderParams': {'routerEnabled': false},
+                                    'renderParamsTypes': {'routerEnabled': 'bool'}
+                                }),
+                                'title': '',
+                                'alias': 'product-collection-excluded-products-grid-' ~ form.vars.name
+                            }) }}
+                        </div>
                     </div>
-                </div>
-                <div class="tab-pane" id="{{ 'included_products' ~ form.vars.name}}">
-                    {{ form_widget(form.includedProducts) }}
-                    {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, form.vars.name) %}
-                    <div class="{{ gridWidgetContainerClass }}">
-                        {{ oro_widget_render({
-                            'widgetType': 'block',
-                            'url': path('oro_datagrid_widget', {
-                                'gridName': includedProductsGridName,
-                                'params': {'selectedProducts': form.includedProducts.vars.value|split(',')},
-                                'renderParams': {'routerEnabled': false},
-                                'renderParamsTypes': {'routerEnabled': 'bool'}
-                            }),
-                            'title': '',
-                            'alias': 'product-collection-included-products-grid-' ~ form.vars.name
-                        }) }}
+                    <div class="tab-pane" id="{{ 'included_products' ~ form.vars.name}}">
+                        {{ form_widget(form.includedProducts) }}
+                        {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, form.vars.name) %}
+                        <div class="{{ gridWidgetContainerClass }}">
+                            {{ oro_widget_render({
+                                'widgetType': 'block',
+                                'url': path('oro_datagrid_widget', {
+                                    'gridName': includedProductsGridName,
+                                    'params': {'selectedProducts': form.includedProducts.vars.value|split(',')},
+                                    'renderParams': {'routerEnabled': false},
+                                    'renderParamsTypes': {'routerEnabled': 'bool'}
+                                }),
+                                'title': '',
+                                'alias': 'product-collection-included-products-grid-' ~ form.vars.name
+                            }) }}
+                        </div>
                     </div>
                 </div>
             </div>
