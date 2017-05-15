@@ -437,6 +437,8 @@ datagrids:
         acl_resource: oro_product_update
         extends: products-related-items-base
         options:
+            requireJSModules:
+                - orodatagrid/js/datagrid/listener/action-form-listener
             rowSelection:
                 dataField: id
                 columnName: isRelated
@@ -447,20 +449,24 @@ datagrids:
             query:
                 where:
                     or:
-                        - 'related.id = :productId'
+                        - 'related.id = :productId AND product.id NOT IN (:data_not_in)'
                         - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
             bind_parameters:
                 - productId
-#        columns:
-#            isRelated:
-#                label: oro.product.is_related.label
-#                editable: true
-#                frontend_type: boolean
-#                order: -10
-#        sorters:
-#            columns:
-#                isRelated:
-#                    data_name: isRelated
+        actions:
+            delete:
+                type:          frontend
+                label:         oro.grid.action.delete
+                icon:          trash
+                configuration:
+                    triggerAction: excludeRow
+        mass_actions:
+            delete:
+                type: frontend
+                label: oro.grid.action.delete
+                icon: trash
+                configuration:
+                    triggerAction: excludeRow
 
     frontend-product-search-grid:
         options:

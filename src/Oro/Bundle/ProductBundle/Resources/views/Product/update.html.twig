@@ -146,15 +146,28 @@
         }
     }) %}
 
-    {# @todo just a prototype. change to: #}
-    {# form.appendRelated.vars.value|split(',')|default([]) and form.removeRelated.vars.value|split(',')|default([]) #}
     {% set relatedGridParams = {
         'productId': entity.id,
-         _parameters: {
-            data_in: 60,
-            data_not_in: 64
+        _parameters : {
+            data_in: [],
+            data_not_in: []
         }
     } %}
+
+    {% if form.appendRelated.vars.value is not empty %}
+        {% set relatedGridParams = relatedGridParams|merge({
+            _parameters: relatedGridParams._parameters|merge({
+                data_in: form.appendRelated.vars.value|split(',')
+            })
+        }) %}
+    {% endif %}
+    {% if form.removeRelated.vars.value is not empty %}
+        {% set relatedGridParams = relatedGridParams|merge({
+            _parameters: relatedGridParams._parameters|merge({
+                data_not_in: form.removeRelated.vars.value|split(',')
+            })
+        }) %}
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge({
         'relatedItems': {
