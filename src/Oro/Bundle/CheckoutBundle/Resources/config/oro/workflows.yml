@@ -61,6 +61,8 @@ workflows:
                 type: bool
             payment_save_for_later:
                 type: bool
+            additional_data:
+                type: array
             state_token:
                 type: string
             internal_state_token:
@@ -276,6 +278,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        additional_data:
+                            form_type: hidden
                         user_input:
                             form_type: collection
                             options:
@@ -778,6 +782,8 @@ workflows:
                                     saveForLaterUse: $payment_save_for_later
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
+                                    additionalData: $additional_data
+                                    checkoutId: $checkout.id
                                     userInput: $user_input
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -981,6 +987,7 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                                     failedShippingAddressUrl: $.result.failedShippingAddressUrl
+                                    checkoutId: $checkout.id
                                     additionalOptions: $user_input
                             - '@assign_value': [$payment_in_progress, true]
                     - '@extendable':

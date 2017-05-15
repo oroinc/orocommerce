@@ -86,7 +86,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_12';
     }
 
     /**
@@ -119,6 +119,7 @@ class OroProductBundleInstaller implements
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
         $this->addProductContentVariants($schema);
+        $this->addProductCollectionContentVariants($schema);
         $this->addAttributeFamilyField($schema);
 
         $this->addPageTemplateField($schema);
@@ -514,6 +515,42 @@ class OroProductBundleInstaller implements
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM,
                         'cascade' => ['persist'],
+                        'on_delete' => 'CASCADE',
+                    ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true]
+                ]
+            );
+        }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addProductCollectionContentVariants(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'product_collection_segment',
+                'oro_segment',
+                'id',
+                [
+                    'entity' => ['label' => 'oro.webcatalog.contentvariant.product_collection_segment.label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist', 'remove'],
                         'on_delete' => 'CASCADE',
                     ],
                     'datagrid' => [

@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
@@ -49,10 +50,15 @@ class ContentNodeRepositoryTest extends WebTestCase
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_2);
         /** @var ContentNode $node */
         $node = $this->getReference(LoadContentNodesData::CATALOG_2_ROOT);
+        /** @var ContentVariant $variant */
+        $variant = $this->getReference(LoadContentVariantsData::ROOT_VARIANT);
 
         $queryBuilder = $this->repository->getContentVariantQueryBuilder($webCatalog);
         $this->assertEquals(
-            [['nodeId' => $node->getId()]],
+            [[
+                'nodeId' => $node->getId(),
+                'variantId' => $variant->getId(),
+            ]],
             $queryBuilder->getQuery()->getArrayResult()
         );
     }

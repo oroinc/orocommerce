@@ -1,3 +1,5 @@
+@ticket-BB-8491
+@automatically-ticket-tagged
 Feature: Contact us and About pages availability
   In order to get useful information
   As user
@@ -6,9 +8,9 @@ Feature: Contact us and About pages availability
   Scenario: Access Contact us page
     Given I am on the homepage
     When I follow "Contact Us"
-    Then I am on page with title "Contact Us"
+    Then Page title equals to "Contact Us"
 
   Scenario: Access About page
     Given I am on the homepage
     When I follow "About"
-    Then I am on page with title "About"
+    Then Page title equals to "About"

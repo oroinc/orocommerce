@@ -37,7 +37,16 @@ $featured-products-height: 249px;
     }
 }
 
-@include breakpoint('mobile') {
+
+@include breakpoint('tablet-small') {
+    .featured-products {
+        & .embedded-list__item {
+            width: 33.33%;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
     .featured-products {
         & .embedded-list__container--slider {
             margin: 0 0 0 -16px;
@@ -51,6 +60,14 @@ $featured-products-height: 249px;
 
         & .embedded-list__item {
             width: 50%;
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .featured-products {
+        & .embedded-list__item {
+            width: 100%;
         }
     }
 }
