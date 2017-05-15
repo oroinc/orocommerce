@@ -71,6 +71,7 @@
     .shopping-lists-popup {
         &__quantity {
             width: $shopping-lists-popup-quantity-width-mobile;
+            padding: $shopping-lists-popup-quantity-inner-offset-mobile;
         }
 
         &__list {
@@ -85,6 +86,7 @@
 
             &__quantity {
                 width: $shopping-lists-popup-footer-quantity-width-mobile;
+                padding: $shopping-lists-popup-footer-quantity-inner-offset-mobile;
             }
         }
     }

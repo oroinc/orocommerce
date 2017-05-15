@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class OrderDiscountTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,7 +16,7 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
             ['id', '123'],
             ['description', 'Description'],
             ['type', 'test_type'],
-            ['amount', 100],
+            ['amount', 100.00],
             ['percent', 0.1],
             ['order', new Order()]
         ];

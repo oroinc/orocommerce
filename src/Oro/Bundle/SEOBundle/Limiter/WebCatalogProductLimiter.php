@@ -6,12 +6,16 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\SegmentBundle\Entity\SegmentSnapshot;
 use Oro\Bundle\SEOBundle\Entity\WebCatalogProductLimitation;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -77,6 +81,12 @@ class WebCatalogProductLimiter
             WebCatalogProductLimitation::class,
             ['productId', 'version'],
             $this->getWebCatalogDirectProductIds($version, $website)
+        );
+
+        $this->insertQueryExecutor->execute(
+            WebCatalogProductLimitation::class,
+            ['productId', 'version'],
+            $this->getWebCatalogProductCollectionProducts($version, $website)
         );
 
         $webCatalogCategoriesQueryBuilder = $this->getWebCatalogCategoriesQueryBuilder($website);
@@ -152,7 +162,7 @@ class WebCatalogProductLimiter
             ->leftJoin('productContentVariant.scopes', 'productScopes')
             ->where($qb->expr()->eq('productContentVariant.type', ':productPageType'))
             ->andWhere($qb->expr()->eq('productContentNode.webCatalog', ':webCatalog'))
-            ->setParameter('productPageType', 'product_page')
+            ->setParameter('productPageType', ProductPageContentVariantType::TYPE)
             ->setParameter('webCatalog', $this->webCatalogProvider->getWebCatalog($website));
 
         $this->getScopeCriteria($website)->applyWhereWithPriority($qb, 'productScopes');
@@ -199,13 +209,49 @@ class WebCatalogProductLimiter
             ->leftJoin('categoryContentVariant.scopes', 'categoryScopes')
             ->where($qb->expr()->eq('categoryContentVariant.type', ':categoryPageType'))
             ->andWhere($qb->expr()->eq('categoryContentNode.webCatalog', ':webCatalog'))
-            ->setParameter('categoryPageType', 'category_page')
+            ->setParameter('categoryPageType', CategoryPageContentVariantType::TYPE)
             ->setParameter(
                 'webCatalog',
                 $this->webCatalogProvider->getWebCatalog($website)
             );
 
         $this->getScopeCriteria($website)->applyWhereWithPriority($qb, 'categoryScopes');
+
+        return $qb;
+    }
+
+    /**
+     * @param int $version
+     * @param WebsiteInterface|null $website
+     * @return QueryBuilder
+     */
+    private function getWebCatalogProductCollectionProducts($version, WebsiteInterface $website = null)
+    {
+        /** @var EntityManager $em */
+        $em = $this->doctrineHelper->getEntityManager(Product::class);
+        $qb = $em->createQueryBuilder();
+
+        $qb->select('segmentSnapshot.integerEntityId, '. (int)$version)
+            ->from(ContentVariant::class, 'productCollectionContentVariant')
+            ->innerJoin(
+                SegmentSnapshot::class,
+                'segmentSnapshot',
+                Join::WITH,
+                $qb->expr()->eq('productCollectionContentVariant.product_collection_segment', 'segmentSnapshot.segment')
+            )
+            ->innerJoin(
+                ContentNode::class,
+                'productCollectionContentNode',
+                Join::WITH,
+                'productCollectionContentVariant.node = productCollectionContentNode'
+            )
+            ->leftJoin('productCollectionContentVariant.scopes', 'productCollectionScopes')
+            ->where($qb->expr()->eq('productCollectionContentVariant.type', ':productCollectionPageType'))
+            ->andWhere($qb->expr()->eq('productCollectionContentNode.webCatalog', ':webCatalog'))
+            ->setParameter('productCollectionPageType', ProductCollectionContentVariantType::TYPE)
+            ->setParameter('webCatalog', $this->webCatalogProvider->getWebCatalog($website));
+
+        $this->getScopeCriteria($website)->applyWhereWithPriority($qb, 'productCollectionScopes');
 
         return $qb;
     }

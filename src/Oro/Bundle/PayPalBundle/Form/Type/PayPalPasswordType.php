@@ -10,6 +10,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated since v1.2, to be removed in v1.3. Use OroEncodedPlaceholderPasswordType instead.
+ */
 class PayPalPasswordType extends PasswordType
 {
     const NAME = 'oro_paypal_paypal_password_type';

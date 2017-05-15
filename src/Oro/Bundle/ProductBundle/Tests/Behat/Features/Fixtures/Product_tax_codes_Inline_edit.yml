@@ -1,0 +1,69 @@
+#    Scenario: Preconditions
+#    I should have:
+#    Tax codes:
+#    TaxCode1
+#    TaxCode2
+#
+#    product:
+#    type - Simple
+#    name - Product1
+#    sku - SKU1
+#    product status - enabled
+#    inventory status - in stock
+#    unit - each
+#    price list - default
+#    tax code - TaxCode1
+
+include:
+    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product1'
+    locvalue2:
+        string: 'Control Product'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: '1'
+    precision2:
+        unit: '@each'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product2:
+        sku: 'CONTROL1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision2'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    taxCode1:
+        code: 'TaxCode1'
+        description: 'Tax Code 1'
+        products:
+            - '@product1'
+    taxCode2:
+        code: 'TaxCode2'
+        description: 'Tax Code 2'

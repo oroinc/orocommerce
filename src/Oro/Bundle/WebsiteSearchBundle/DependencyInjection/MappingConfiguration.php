@@ -44,6 +44,8 @@ class MappingConfiguration implements ConfigurationInterface
                         ->enumNode('type')
                             ->values($this->fieldTypes)
                         ->end()
+                        ->booleanNode('store')->end()
+                        ->booleanNode('default_search_field')->end()
                     ->end()
                 ->end()
             ->end();

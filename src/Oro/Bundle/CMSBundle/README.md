@@ -1,6 +1,7 @@
-Oro\Bundle\CMSBundle\OroCMSBundle
-===============================================
+OroCMSBundle
+============
 
-Table of Contents
------------------
- - [Widgets at CMS page content](./Resources/doc/widgets.md)
+### Table of contents
+
+* [Content Blocks](./Resources/doc/reference/content_blocks.md)
+* [Widgets at CMS page content](./Resources/doc/widgets.md)

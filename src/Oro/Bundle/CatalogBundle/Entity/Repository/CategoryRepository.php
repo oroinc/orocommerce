@@ -61,6 +61,29 @@ class CategoryRepository extends NestedTreeRepository
      * @param bool $includeNode
      * @return Category[]
      */
+    public function getChildren(
+        $node = null,
+        $direct = false,
+        $sortByField = null,
+        $direction = 'ASC',
+        $includeNode = false
+    ) {
+        return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
+            ->addSelect('children')
+            ->leftJoin('node.childCategories', 'children')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param object|null $node
+     * @param bool $direct
+     * @param string|null $sortByField
+     * @param string $direction
+     * @param bool $includeNode
+     * @return Category[]
+     * @deprecated Use \Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren
+     */
     public function getChildrenWithTitles(
         $node = null,
         $direct = false,

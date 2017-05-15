@@ -102,6 +102,12 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
         /** @var Product $entity */
         $entity = parent::afterProcessEntity($entity);
+        //Clear unitPrecision collection items with unit null
+        foreach ($entity->getUnitPrecisions() as $unitPrecision) {
+            if (!$unitPrecision->getProductUnitCode()) {
+                $entity->getUnitPrecisions()->removeElement($unitPrecision);
+            }
+        }
         $this->processedProducts[$entity->getSku()] = $entity;
 
         return $entity;
@@ -243,5 +249,47 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);
+    }
+
+    /**
+     * Validate unitPrecisions array data before model validation because model merges same codes
+     * {@inheritdoc}
+     */
+    protected function validateAndUpdateContext($entity)
+    {
+        $itemData = $this->context->getValue('itemData');
+        $unitPrecisions = [];
+
+        if (isset($itemData['unitPrecisions'])) {
+            $unitPrecisions = $itemData['unitPrecisions'];
+        }
+
+        if (isset($itemData['primaryUnitPrecision'])) {
+            $unitPrecisions[] = $itemData['primaryUnitPrecision'];
+        }
+
+        $usedCodes = [];
+
+        foreach ($unitPrecisions as $unitPrecision) {
+            if (!isset($unitPrecision['unit']['code'])) {
+                continue;
+            }
+
+            $code = $unitPrecision['unit']['code'];
+
+            if (in_array($code, $usedCodes, true)) {
+                $error = $this->translator->trans('oro.product.productunitprecision.duplicate_units_import_error');
+                $this->context->incrementErrorEntriesCount();
+                $this->strategyHelper->addValidationErrors([$error], $this->context);
+
+                $this->doctrineHelper->getEntityManager($entity)->detach($entity);
+
+                return null;
+            }
+
+            $usedCodes[] = $code;
+        }
+
+        return parent::validateAndUpdateContext($entity);
     }
 }
