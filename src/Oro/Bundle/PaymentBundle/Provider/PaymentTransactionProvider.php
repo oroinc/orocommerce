@@ -199,22 +199,22 @@ class PaymentTransactionProvider
     }
 
     /**
-     * @param string             $action
-     * @param PaymentTransaction $paymentTransaction
+     * @param string $action
+     * @param PaymentTransaction $parentPaymentTransaction
      *
      * @return PaymentTransaction
      */
-    public function createPaymentTransactionByParentTransaction($action, PaymentTransaction $paymentTransaction)
+    public function createPaymentTransactionByParentTransaction($action, PaymentTransaction $parentPaymentTransaction)
     {
         $paymentTransaction = $this->createEmptyPaymentTransaction()
             ->setAction($action)
-            ->setPaymentMethod($paymentTransaction->getPaymentMethod())
-            ->setEntityClass($paymentTransaction->getEntityClass())
-            ->setEntityIdentifier($paymentTransaction->getEntityIdentifier())
-            ->setAmount($paymentTransaction->getAmount())
-            ->setCurrency($paymentTransaction->getCurrency())
+            ->setPaymentMethod($parentPaymentTransaction->getPaymentMethod())
+            ->setEntityClass($parentPaymentTransaction->getEntityClass())
+            ->setEntityIdentifier($parentPaymentTransaction->getEntityIdentifier())
+            ->setAmount($parentPaymentTransaction->getAmount())
+            ->setCurrency($parentPaymentTransaction->getCurrency())
             ->setFrontendOwner($this->getLoggedCustomerUser())
-            ->setSourcePaymentTransaction($paymentTransaction);
+            ->setSourcePaymentTransaction($parentPaymentTransaction);
 
         return $paymentTransaction;
     }
