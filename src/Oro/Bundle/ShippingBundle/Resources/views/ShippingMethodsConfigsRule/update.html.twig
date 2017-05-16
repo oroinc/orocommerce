@@ -52,13 +52,15 @@
                 view: 'oroshipping/js/app/views/shipping-rule-method-view',
                 methodSelectSelector: '.oro-shipping-rule-add-method-select .oro-select2',
                 buttonSelector: '.add-method',
-                updateFlag: constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingMethodsConfigsRuleHandler::UPDATE_FLAG')
+                updateFlag: constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingMethodsConfigsRuleHandler::UPDATE_FLAG'),
             }|json_encode }}"
     >
         <div class="oro-shipping-rule-add-method-select">
-            {{ form_row(form.method, {'attr': {'class': 'oro-shipping-rule-add-method-select'}}) }}
+            {{ form_row(form.method, {'placeholder': 'oro.shipping.sections.shippingrule_configurations.placeholder.label'|trans, 'attr': {'class': ' oro-shipping-rule-add-method-select no-uniform '}}) }}
         </div>
-        <a class="btn add-method" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+        <a class="btn add-method" href="javascript: void(0);">
+            {{ form.vars.add_label|default('oro.form.collection.add')|trans }}
+        </a>
     </div>
 
     {% if form.method.vars.choices|length == 0 %}
