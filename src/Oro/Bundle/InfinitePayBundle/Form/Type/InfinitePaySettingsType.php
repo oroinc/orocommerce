@@ -69,42 +69,42 @@ class InfinitePaySettingsType extends AbstractType
                 'required' => true,
                 'options' => ['constraints' => [new NotBlank()]],
             ])
-            ->add('clientRef', TextType::class, [
+            ->add('infinitePayClientRef', TextType::class, [
                 'label' => 'oro.infinite_pay.settings.client_ref.label',
                 'required' => true,
             ])
-            ->add('username', TextType::class, [
+            ->add('infinitePayUsername', TextType::class, [
                 'label' => 'oro.infinite_pay.settings.username.label',
                 'required' => true,
             ])
-            ->add('password', PasswordType::class, [
+            ->add('infinitePayPassword', PasswordType::class, [
                 'label' => 'oro.infinite_pay.settings.password.label',
                 'required' => true,
             ])
-            ->add('secret', PasswordType::class, [
+            ->add('infinitePaySecret', PasswordType::class, [
                 'label' => 'oro.infinite_pay.settings.secret.label',
                 'required' => true,
             ])
-            ->add('autoCapture', CheckboxType::class, [
+            ->add('infinitePayAutoCapture', CheckboxType::class, [
                 'label' => 'oro.infinite_pay.settings.auto_capture.label'
             ])
-            ->add('autoActivate', CheckboxType::class, [
+            ->add('infinitePayAutoActivate', CheckboxType::class, [
                 'label' => 'oro.infinite_pay.settings.auto_activate.label'
             ])
-            ->add('testMode', CheckboxType::class, [
+            ->add('infinitePayTestMode', CheckboxType::class, [
                 'label' => 'oro.infinite_pay.settings.test_mode.label'
             ])
-            ->add('debugMode', CheckboxType::class, [
+            ->add('infinitePayDebugMode', CheckboxType::class, [
                 'label' => 'oro.infinite_pay.settings.debug_mode.label'
             ])
-            ->add('invoiceDuePeriod', IntegerType::class, [
+            ->add('infinitePayInvoiceDuePeriod', IntegerType::class, [
                 'label' => 'oro.infinite_pay.settings.invoice_due_period.label'
             ])
-            ->add('invoiceShippingDuration', IntegerType::class, [
+            ->add('infinitePayInvoiceShippingDuration', IntegerType::class, [
                 'label' => 'oro.infinite_pay.settings.invoice_shipping_duration.label'
             ]);
-        $this->transformWithEncodedValue($builder, 'password');
-        $this->transformWithEncodedValue($builder, 'secret');
+        $this->transformWithEncodedValue($builder, 'infinitePayPassword');
+        $this->transformWithEncodedValue($builder, 'infinitePaySecret');
     }
 
     /**

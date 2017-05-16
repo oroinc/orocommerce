@@ -13,11 +13,11 @@ Oro\Bundle\InfinitePayBundle\Entity\InfinitePaySettings:
             - NotBlank: ~
         infinitePayShortLabels:
             - NotBlank: ~
-        clientRef:
+        infinitePayClientRef:
             - NotBlank: ~
-        username:
+        infinitePayUsername:
             - NotBlank: ~
-        password:
+        infinitePayPassword:
             - NotBlank: ~
-        secret:
+        infinitePaySecret:
             - NotBlank: ~

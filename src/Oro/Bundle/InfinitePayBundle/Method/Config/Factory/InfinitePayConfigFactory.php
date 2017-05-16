@@ -56,16 +56,16 @@ class InfinitePayConfigFactory implements InfinitePayConfigFactoryInterface
             $this->getLocalizedValue($settings->getInfinitePayShortLabels());
         $params[InfinitePayConfig::FIELD_ADMIN_LABEL] = $channel->getName();
 
-        $params[InfinitePayConfig::CLIENT_REF_KEY] = $settings->getClientRef();
-        $params[InfinitePayConfig::USERNAME_KEY] = $settings->getUsername();
-        $params[InfinitePayConfig::PASSWORD_KEY] = $this->getDecryptedValue($settings->getPassword());
-        $params[InfinitePayConfig::SECRET_KEY] = $this->getDecryptedValue($settings->getSecret());
-        $params[InfinitePayConfig::AUTO_CAPTURE_KEY] = $settings->isAutoCapture();
-        $params[InfinitePayConfig::AUTO_ACTIVATE_KEY] = $settings->isAutoActivate();
-        $params[InfinitePayConfig::TEST_MODE_KEY] = $settings->isTestMode();
-        $params[InfinitePayConfig::DEBUG_MODE_KEY] = $settings->isDebugMode();
-        $params[InfinitePayConfig::INVOICE_DUE_PERIOD_KEY] = $settings->getInvoiceDuePeriod();
-        $params[InfinitePayConfig::INVOICE_SHIPPING_DURATION_KEY] = $settings->getInvoiceShippingDuration();
+        $params[InfinitePayConfig::CLIENT_REF_KEY] = $settings->getInfinitePayClientRef();
+        $params[InfinitePayConfig::USERNAME_KEY] = $settings->getInfinitePayUsername();
+        $params[InfinitePayConfig::PASSWORD_KEY] = $this->getDecryptedValue($settings->getInfinitePayPassword());
+        $params[InfinitePayConfig::SECRET_KEY] = $this->getDecryptedValue($settings->getInfinitePaySecret());
+        $params[InfinitePayConfig::AUTO_CAPTURE_KEY] = $settings->isInfinitePayAutoCapture();
+        $params[InfinitePayConfig::AUTO_ACTIVATE_KEY] = $settings->isInfinitePayAutoActivate();
+        $params[InfinitePayConfig::TEST_MODE_KEY] = $settings->isInfinitePayTestMode();
+        $params[InfinitePayConfig::DEBUG_MODE_KEY] = $settings->isInfinitePayDebugMode();
+        $params[InfinitePayConfig::INVOICE_DUE_PERIOD_KEY] = $settings->getInfinitePayInvoiceDuePeriod();
+        $params[InfinitePayConfig::INVOICE_SHIPPING_DURATION_KEY] = $settings->getInfinitePayInvoiceShippingDuration();
 
         return new InfinitePayConfig($params);
     }
