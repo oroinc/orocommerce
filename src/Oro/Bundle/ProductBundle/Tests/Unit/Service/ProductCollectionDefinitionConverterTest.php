@@ -157,8 +157,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                 'definition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => "id",
+                            'label' => "id",
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -168,7 +168,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                         'criterion' => [
                             'filter' => 'number',
                             'data' => [
-                                'value' => 10,
+                                'value' => 8,
                                 'type' => NumberFilterType::TYPE_LESS_THAN
                             ]
                         ],
@@ -179,7 +179,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => '1,3,5',
+                                    'value' => '6,7',
                                     'type' => NumberFilterType::TYPE_IN
                                 ]
                             ]
@@ -191,20 +191,20 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => '7,9',
+                                    'value' => '8,9',
                                     'type' => NumberFilterType::TYPE_NOT_IN
                                 ]
                             ]
                         ]
                     ]
                 ],
-                'includedIds' => '100,300,500',
-                'excludedIds' => '700,900',
+                'includedIds' => '600,700',
+                'excludedIds' => '800,900',
                 'expectedDefinition' => [
                     'columns' => [
                         [
-                            'name' => "sku",
-                            'label' => "sku",
+                            'name' => "id",
+                            'label' => "id",
                             'sorting' => 'DESC',
                             'func' => null
                         ]
@@ -215,7 +215,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => 10,
+                                    'value' => 8,
                                     'type' => NumberFilterType::TYPE_LESS_THAN
                                 ]
                             ]
@@ -227,7 +227,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => '100,300,500',
+                                    'value' => '600,700',
                                     'type' => NumberFilterType::TYPE_IN
                                 ]
                             ]
@@ -239,7 +239,7 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => '700,900',
+                                    'value' => '800,900',
                                     'type' => NumberFilterType::TYPE_NOT_IN
                                 ]
                             ]

@@ -12,6 +12,7 @@ use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener;
+use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
@@ -41,6 +42,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $nameStrategy;
 
     /**
+     * @var ProductCollectionDefinitionConverter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $definitionConverter;
+
+    /**
      * @var ProductCollectionDatagridListener
      */
     protected $listener;
@@ -48,16 +54,17 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->requestStack = $this->createMock(RequestStack::class);
-        $this->segmentManager = $this->getMockBuilder(SegmentManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->segmentManager = $this->createMock(SegmentManager::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->nameStrategy = $this->createMock(NameStrategyInterface::class);
+        $this->definitionConverter = $this->createMock(ProductCollectionDefinitionConverter::class);
+
         $this->listener = new ProductCollectionDatagridListener(
             $this->requestStack,
             $this->segmentManager,
             $this->registry,
-            $this->nameStrategy
+            $this->nameStrategy,
+            $this->definitionConverter
         );
     }
 
@@ -98,7 +105,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testOnBuildAfterWithoutDefinition()
+    public function testOnBuildAfterWithEmptyRequestData()
     {
         $dataSource = $this->createMock(OrmDatasource::class);
 
@@ -143,6 +150,8 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $segmentDefinition = 'definition';
+        $included = '1,2';
+        $excluded = '3,4';
         $qb = $this->createMock(QueryBuilder::class);
 
         $dataSource = $this->createMock(OrmDatasource::class);
@@ -163,11 +172,17 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn(new Request([
-                $requestParameterKey => $segmentDefinition
+                $requestParameterKey => $segmentDefinition,
+                $requestParameterKey . ':incl' => $included,
+                $requestParameterKey . ':excl' => $excluded
             ]));
+        $this->definitionConverter->expects($this->once())
+            ->method('putConditionsInDefinition')
+            ->with($segmentDefinition, $excluded, $included)
+            ->willReturn('definition_updated');
 
         $createdSegment = new Segment();
-        $createdSegment->setDefinition($segmentDefinition)
+        $createdSegment->setDefinition('definition_updated')
             ->setEntity(Product::class)
             ->setType($segmentType);
 

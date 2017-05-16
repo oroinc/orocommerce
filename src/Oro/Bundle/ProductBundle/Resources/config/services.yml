@@ -851,6 +851,7 @@ services:
             - '@oro_segment.segment_manager'
             - '@doctrine'
             - '@oro_datagrid.datagrid.name_strategy'
+            - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
 

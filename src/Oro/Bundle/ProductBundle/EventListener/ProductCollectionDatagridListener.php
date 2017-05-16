@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\NameStrategyInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
@@ -22,6 +23,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ProductCollectionDatagridListener
 {
     const SEGMENT_DEFINITION_PARAMETER_KEY = 'sd_';
+    const DEFINITION_KEY = 'definition';
+    const INCLUDED_KEY = 'included';
+    const EXCLUDED_KEY = 'excluded';
 
     /**
      * @var RequestStack
@@ -44,21 +48,29 @@ class ProductCollectionDatagridListener
     private $nameStrategy;
 
     /**
+     * @var ProductCollectionDefinitionConverter
+     */
+    private $definitionConverter;
+
+    /**
      * @param RequestStack $requestStack
      * @param SegmentManager $segmentManager
      * @param ManagerRegistry $registry
      * @param NameStrategyInterface $nameStrategy
+     * @param ProductCollectionDefinitionConverter $definitionConverter
      */
     public function __construct(
         RequestStack $requestStack,
         SegmentManager $segmentManager,
         ManagerRegistry $registry,
-        NameStrategyInterface $nameStrategy
+        NameStrategyInterface $nameStrategy,
+        ProductCollectionDefinitionConverter $definitionConverter
     ) {
         $this->requestStack = $requestStack;
         $this->segmentManager = $segmentManager;
         $this->registry = $registry;
         $this->nameStrategy = $nameStrategy;
+        $this->definitionConverter = $definitionConverter;
     }
 
     /**
@@ -111,12 +123,31 @@ class ProductCollectionDatagridListener
     {
         $scope = $dataGrid->getScope();
         $gridFullName = $this->nameStrategy->buildGridFullName($dataGrid->getName(), $scope);
-        $segmentDefinition = $request->get(self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName);
+        $requestParameterName = self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName;
+        $requestData = $this->getRequestData($request, $requestParameterName);
 
-        if (!$segmentDefinition && !$scope) {
-            $segmentDefinition = $request->get(self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName . ':0');
+        if (empty($requestData[self::DEFINITION_KEY]) && empty($requestData[self::INCLUDED_KEY]) && !$scope) {
+            $requestData = $this->getRequestData($request, $requestParameterName . ':0');
         }
 
-        return $segmentDefinition;
+        return $this->definitionConverter->putConditionsInDefinition(
+            $requestData[self::DEFINITION_KEY],
+            $requestData[self::EXCLUDED_KEY],
+            $requestData[self::INCLUDED_KEY]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param string $dataParameterName
+     * @return array
+     */
+    private function getRequestData(Request $request, $dataParameterName): array
+    {
+        return [
+            self::DEFINITION_KEY => $request->get($dataParameterName),
+            self::INCLUDED_KEY => $request->get($dataParameterName . ':incl'),
+            self::EXCLUDED_KEY => $request->get($dataParameterName . ':excl'),
+        ];
     }
 }
