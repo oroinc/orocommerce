@@ -268,7 +268,6 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($view->vars['allow_delete']);
     }
 
-
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
      */
