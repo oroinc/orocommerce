@@ -21,6 +21,10 @@ Feature:
     Then I should see 1 elements "Product Collection Variant Label"
     And I should not see an "Product Collection Preview Grid" element
 
+  Scenario: Saving Product Collection with empty filters results in validation error
+    When I click "Save"
+    Then I should see "Filters should not be blank."
+
   Scenario: Apply filters
     When I click "Content Variants"
     And I drag and drop "Field Condition" on "Drop condition here"
@@ -93,6 +97,10 @@ Feature:
   Scenario: Adding Product Collection with duplicated name results in validation error
     When I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
+    And I drag and drop "Field Condition" on "Drop condition here"
+    And I click "Choose a field.."
+    And I click on "SKU"
+    And type "PSKU" in "value"
     And I fill "Content Node Form" with:
       | First Product Collection Segment Name  | Some Product Collection Name |
       | Second Product Collection Segment Name | Some Product Collection Name |
@@ -109,6 +117,10 @@ Feature:
       | First Product Collection Segment Name  | Some Custom Segment Name |
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
+    And I drag and drop "Field Condition" on "Drop condition here"
+    And I click "Choose a field.."
+    And I click on "SKU"
+    And type "PSKU" in "value"
     And I fill "Content Node Form" with:
       | Second Product Collection Segment Name  | Unique Name |
     And I save form
@@ -170,6 +182,7 @@ Feature:
     And I am on homepage
     Then I should see "PSKU1"
     And I should not see "PSKU2"
+    And I should not see "XSKU"
 
   Scenario: Change "Product 2" SKU in order to include it to the product collection filter again
     Given I operate as the Admin
@@ -222,15 +235,21 @@ Feature:
     And type "PSKU2" in "value"
     Then I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
+    And I drag and drop "Field Condition" on "Drop condition here"
+    And I click "Choose a field.."
+    And I click on "SKU"
+    And type "PSKU" in "value"
     And I click "Content Variants"
     Then I should see 2 elements "Product Collection Variant Label"
     And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
     And I click "Cancel" in modal window
     Then I should not see text matching "You have changes in the Filters section that have not been applied"
+    And I press "Cancel"
+    Then I should see "Web Catalogs"
 
   Scenario: Reset Product Collection after filters change
-    Given I reload the page
+    When I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
     When type "TEST" in "value"
     And I click "Apply the Query"
