@@ -4,10 +4,7 @@ services:
         tags:
             - { name: form.type, alias: oro_infinite_pay_debtor_data }
 
-    oro_paypal.form.type.settings:
+    oro_infinite_pay.form.type.settings:
         class: 'Oro\Bundle\InfinitePayBundle\Form\Type\InfinitePaySettingsType'
-        arguments:
-            - '@translator.default'
-            - '@oro_security.encoder.mcrypt'
         tags:
             - { name: form.type }
