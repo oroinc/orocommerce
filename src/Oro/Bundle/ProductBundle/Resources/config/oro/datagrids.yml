@@ -468,6 +468,46 @@ datagrids:
                 configuration:
                     triggerAction: excludeRow
 
+    products-related-products-select:
+        extends: products-select-grid-base
+        options:
+            entityHint: products
+            rowSelection:
+                dataField: id
+                columnName: isRelated
+                selectors:
+                    included: '#productAppendRelatedSelect'
+                    excluded: '#productRemoveRelatedSelect'
+        source:
+            query:
+                select:
+                    - >
+                      (
+                        CASE WHEN (:productId MEMBER OF product.relatedToProducts OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ) as isRelated
+                where:
+                    and:
+                        - product.id != :productId
+            bind_parameters:
+                - productId
+        columns:
+            isRelated:
+                label: oro.product.is_related.label
+                frontend_type: boolean
+                editable: true
+                order: -10
+        filters:
+            columns:
+                isRelated:
+                    data_name: isRelated
+                    type:  boolean
+        sorters:
+            columns:
+                isRelated:
+                    data_name: isRelated
+            default: { isRelated: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC }
+
     frontend-product-search-grid:
         options:
             entityHint:        products

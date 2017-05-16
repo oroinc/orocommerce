@@ -154,6 +154,7 @@
         }
     } %}
 
+    {# @todo extract to another template eg. related_items.html.twig - there is too much code here #}
     {% if form.appendRelated.vars.value is not empty %}
         {% set relatedGridParams = relatedGridParams|merge({
             _parameters: relatedGridParams._parameters|merge({
@@ -169,6 +170,13 @@
         }) %}
     {% endif %}
 
+    {# @todo to be moved to popup/modal in scope of BB-9345. Here is just for testing purpose #}
+    {% set productRelatedSelectFields %}
+        <input type="hidden" name="productAppendRelatedSelect" id="productAppendRelatedSelect" value="{{ app.request.get('addedProductRelated') }}" />
+        <input type="hidden" name="productRemoveRelatedSelect" id="productRemoveRelatedSelect" value="{{ app.request.get('removedProductRelated') }}" />
+    {% endset %}
+
+    {# @todo "productRelatedSelectFields" and dataGrid.renderGrid('products-related-products-select', {'productId': entity.id}) - to be moved to popup/modal in scope of BB-9345. Here is just for testing purpose #}
     {% set dataBlocks = dataBlocks|merge({
         'relatedItems': {
             'title': 'oro.product.sections.relatedItems'|trans,
@@ -178,6 +186,8 @@
                     form_widget(form.appendRelated, {'id': 'productAppendRelated'}),
                     form_widget(form.removeRelated, {'id': 'productRemoveRelated'}),
                     dataGrid.renderGrid('products-related-items-edit', relatedGridParams),
+                    productRelatedSelectFields,
+                    dataGrid.renderGrid('products-related-products-select', {'productId': entity.id}),
                     placeholder('oro_product_related_items_edit', {'entity':  entity})
                 ]
             }]
