@@ -22,7 +22,8 @@ Feature:
     And I should not see an "Product Collection Preview Grid" element
 
   Scenario: Apply filters
-    When I drag and drop "Field Condition" on "Drop condition here"
+    When I click "Content Variants"
+    And I drag and drop "Field Condition" on "Drop condition here"
     And I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU1" in "value"
