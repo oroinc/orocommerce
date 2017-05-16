@@ -64,7 +64,7 @@ class ArticleListProvider implements ArticleListProviderInterface
         foreach ($result->getTaxes() as $taxResultElement) {
             $rate = (float) $taxResultElement->getRate();
 
-            return $rate * 10000;
+            return round($rate * 10000, 0, PHP_ROUND_HALF_UP);
         }
 
         return 0;
@@ -90,14 +90,24 @@ class ArticleListProvider implements ArticleListProviderInterface
 
             $article->setArticleId($item->getProductSku());
             $article->setArticleName($item->getProduct()->getName()->getString());
-            $article->setArticlePriceNet((int) ($item->getPrice()->getValue() * 100));
+            $article->setArticlePriceNet($this->convertToCentInt($item->getPrice()->getValue()));
             $article->setArticleQuantity($item->getQuantity());
 
             $article->setArticleVatPerc($this->extractTax($result));
-            $article->setArticlePriceGross((int) ($result->getUnit()->getIncludingTax() * 100));
+            $article->setArticlePriceGross($this->convertToCentInt($result->getUnit()->getIncludingTax()));
             $articles[] = $article;
         }
 
         return $articles;
+    }
+
+    /**
+     * @param float $input
+     *
+     * @return int
+     */
+    private function convertToCentInt($input)
+    {
+        return round($input * 100, 0, PHP_ROUND_HALF_UP);
     }
 }
