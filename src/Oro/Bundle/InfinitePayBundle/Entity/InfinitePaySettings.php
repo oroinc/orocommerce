@@ -84,70 +84,70 @@ class InfinitePaySettings extends Transport
      *
      * @ORM\Column(name="ipay_client_ref", type="string", length=255, nullable=false)
      */
-    protected $clientRef;
+    protected $infinitePayClientRef;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ipay_username", type="string", length=255, nullable=false)
      */
-    protected $username;
+    protected $infinitePayUsername;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ipay_password", type="string", length=255, nullable=false)
      */
-    protected $password;
+    protected $infinitePayPassword;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ipay_secret", type="string", length=255, nullable=false)
      */
-    protected $secret;
+    protected $infinitePaySecret;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="ipay_auto_capture", type="boolean", options={"default"=false})
      */
-    protected $autoCapture = false;
+    protected $infinitePayAutoCapture = false;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="ipay_auto_activate", type="boolean", options={"default"=false})
      */
-    protected $autoActivate = false;
+    protected $infinitePayAutoActivate = false;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="ipay_test_mode", type="boolean", options={"default"=false})
      */
-    protected $testMode = false;
+    protected $infinitePayTestMode = false;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="ipay_debug_mode", type="boolean", options={"default"=false})
      */
-    protected $debugMode = false;
+    protected $infinitePayDebugMode = false;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="ipay_invoice_due_period", type="smallint")
      */
-    protected $invoiceDuePeriod = self::INVOICE_DUE_PERIOD_DEFAULT;
+    protected $infinitePayInvoiceDuePeriod = self::INVOICE_DUE_PERIOD_DEFAULT;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="ipay_invoice_shipping_duration", type="smallint")
      */
-    protected $invoiceShippingDuration = self::INVOICE_SHIPPING_DURATION_DEFAULT;
+    protected $infinitePayInvoiceShippingDuration = self::INVOICE_SHIPPING_DURATION_DEFAULT;
 
     public function __construct()
     {
@@ -165,16 +165,16 @@ class InfinitePaySettings extends Transport
                 [
                     self::LABELS_KEY => $this->getInfinitePayLabels(),
                     self::SHORT_LABELS_KEY => $this->getInfinitePayShortLabels(),
-                    self::CLIENT_REF_KEY => $this->getClientRef(),
-                    self::USERNAME_KEY => $this->getUsername(),
-                    self::PASSWORD_KEY => $this->getPassword(),
-                    self::SECRET_KEY => $this->getSecret(),
-                    self::AUTO_CAPTURE_KEY => $this->isAutoCapture(),
-                    self::AUTO_ACTIVATE_KEY => $this->isAutoActivate(),
-                    self::API_DEBUG_MODE_KEY => $this->isDebugMode(),
-                    self::INVOICE_DUE_PERIOD_KEY => $this->getInvoiceDuePeriod(),
-                    self::INVOICE_SHIPPING_DURATION_KEY => $this->getInvoiceShippingDuration(),
-                    self::TEST_MODE_KEY => $this->isTestMode()
+                    self::CLIENT_REF_KEY => $this->getInfinitePayClientRef(),
+                    self::USERNAME_KEY => $this->getInfinitePayUsername(),
+                    self::PASSWORD_KEY => $this->getInfinitePayPassword(),
+                    self::SECRET_KEY => $this->getInfinitePaySecret(),
+                    self::AUTO_CAPTURE_KEY => $this->isInfinitePayAutoCapture(),
+                    self::AUTO_ACTIVATE_KEY => $this->isInfinitePayAutoActivate(),
+                    self::API_DEBUG_MODE_KEY => $this->isInfinitePayDebugMode(),
+                    self::INVOICE_DUE_PERIOD_KEY => $this->getInfinitePayInvoiceDuePeriod(),
+                    self::INVOICE_SHIPPING_DURATION_KEY => $this->getInfinitePayInvoiceShippingDuration(),
+                    self::TEST_MODE_KEY => $this->isInfinitePayTestMode()
                 ]
             );
         }
@@ -267,126 +267,126 @@ class InfinitePaySettings extends Transport
     /**
      * @return string
      */
-    public function getClientRef()
+    public function getInfinitePayClientRef()
     {
-        return $this->clientRef;
+        return $this->infinitePayClientRef;
     }
 
     /**
      * @param string $clientRef
      * @return InfinitePaySettings
      */
-    public function setClientRef($clientRef)
+    public function setInfinitePayClientRef($clientRef)
     {
-        $this->clientRef = $clientRef;
+        $this->infinitePayClientRef = $clientRef;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getUsername()
+    public function getInfinitePayUsername()
     {
-        return $this->username;
+        return $this->infinitePayUsername;
     }
 
     /**
      * @param string $username
      * @return InfinitePaySettings
      */
-    public function setUsername($username)
+    public function setInfinitePayUsername($username)
     {
-        $this->username = $username;
+        $this->infinitePayUsername = $username;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getPassword()
+    public function getInfinitePayPassword()
     {
-        return $this->password;
+        return $this->infinitePayPassword;
     }
 
     /**
      * @param string $password
      * @return InfinitePaySettings
      */
-    public function setPassword($password)
+    public function setInfinitePayPassword($password)
     {
-        $this->password = $password;
+        $this->infinitePayPassword = $password;
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getSecret()
+    public function getInfinitePaySecret()
     {
-        return $this->secret;
+        return $this->infinitePaySecret;
     }
 
     /**
      * @param string $secret
      * @return InfinitePaySettings
      */
-    public function setSecret($secret)
+    public function setInfinitePaySecret($secret)
     {
-        $this->secret = $secret;
+        $this->infinitePaySecret = $secret;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isAutoCapture()
+    public function isInfinitePayAutoCapture()
     {
-        return $this->autoCapture;
+        return $this->infinitePayAutoCapture;
     }
 
     /**
      * @param bool $autoCapture
      * @return InfinitePaySettings
      */
-    public function setAutoCapture($autoCapture)
+    public function setInfinitePayAutoCapture($autoCapture)
     {
-        $this->autoCapture = $autoCapture;
+        $this->infinitePayAutoCapture = $autoCapture;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isAutoActivate()
+    public function isInfinitePayAutoActivate()
     {
-        return $this->autoActivate;
+        return $this->infinitePayAutoActivate;
     }
 
     /**
      * @param bool $autoActivate
      * @return InfinitePaySettings
      */
-    public function setAutoActivate($autoActivate)
+    public function setInfinitePayAutoActivate($autoActivate)
     {
-        $this->autoActivate = $autoActivate;
+        $this->infinitePayAutoActivate = $autoActivate;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isTestMode()
+    public function isInfinitePayTestMode()
     {
-        return $this->testMode;
+        return $this->infinitePayTestMode;
     }
 
     /**
      * @param bool $testMode
      * @return InfinitePaySettings
      */
-    public function setTestMode($testMode)
+    public function setInfinitePayTestMode($testMode)
     {
-        $this->testMode = $testMode;
+        $this->infinitePayTestMode = $testMode;
         return $this;
     }
 
@@ -394,54 +394,54 @@ class InfinitePaySettings extends Transport
     /**
      * @return bool
      */
-    public function isDebugMode()
+    public function isInfinitePayDebugMode()
     {
-        return $this->debugMode;
+        return $this->infinitePayDebugMode;
     }
 
     /**
      * @param bool $debugMode
      * @return InfinitePaySettings
      */
-    public function setDebugMode($debugMode)
+    public function setInfinitePayDebugMode($debugMode)
     {
-        $this->debugMode = $debugMode;
+        $this->infinitePayDebugMode = $debugMode;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getInvoiceDuePeriod()
+    public function getInfinitePayInvoiceDuePeriod()
     {
-        return $this->invoiceDuePeriod;
+        return $this->infinitePayInvoiceDuePeriod;
     }
 
     /**
      * @param int $invoiceDuePeriod
      * @return InfinitePaySettings
      */
-    public function setInvoiceDuePeriod($invoiceDuePeriod)
+    public function setInfinitePayInvoiceDuePeriod($invoiceDuePeriod)
     {
-        $this->invoiceDuePeriod = $invoiceDuePeriod;
+        $this->infinitePayInvoiceDuePeriod = $invoiceDuePeriod;
         return $this;
     }
 
     /**
      * @return int
      */
-    public function getInvoiceShippingDuration()
+    public function getInfinitePayInvoiceShippingDuration()
     {
-        return $this->invoiceShippingDuration;
+        return $this->infinitePayInvoiceShippingDuration;
     }
 
     /**
      * @param int $invoiceShippingDuration
      * @return InfinitePaySettings
      */
-    public function setInvoiceShippingDuration($invoiceShippingDuration)
+    public function setInfinitePayInvoiceShippingDuration($invoiceShippingDuration)
     {
-        $this->invoiceShippingDuration = $invoiceShippingDuration;
+        $this->infinitePayInvoiceShippingDuration = $invoiceShippingDuration;
         return $this;
     }
 }
