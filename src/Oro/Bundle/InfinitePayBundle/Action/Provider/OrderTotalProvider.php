@@ -61,6 +61,7 @@ class OrderTotalProvider implements OrderTotalProviderInterface
 
         return $orderTotal;
     }
+
     /**
      * @param float $input
      *
@@ -68,7 +69,8 @@ class OrderTotalProvider implements OrderTotalProviderInterface
      */
     private function convertToCentInt($input)
     {
-        return $input * 100;
+        return round($input * 100, 0, PHP_ROUND_HALF_UP);
+//        return $input * 100;
     }
 
     /**
