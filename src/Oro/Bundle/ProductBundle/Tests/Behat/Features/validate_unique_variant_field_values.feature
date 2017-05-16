@@ -147,8 +147,10 @@ Feature: Validate unique variant field values when changing simple products
     And I save form
     Then I should see "Product has been saved" flash message
 
+
     And I go to Products / Products
     And I click Edit shirt_101 in grid
+    And I click "S"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Color, Size] |
     And I save form
@@ -157,11 +159,8 @@ Feature: Validate unique variant field values when changing simple products
     And I go to Products / Products
     And I click Edit shirt_101 in grid
     And I check gtsh_l and rtsh_m in grid
-    And I shouldn't see CustomExtend column in grid
-    And I should see Color column in grid
-    And I should see Size column in grid
+    And I shouldn't see "CustomExtend" column in grid
+    And I should see "Color" column in grid
+    And I should see "Size" column in grid
     And I save form
     Then I should see "Product has been saved" flash message
-
-
-
