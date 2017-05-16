@@ -57,7 +57,7 @@ class ArticleListProviderTest extends \PHPUnit_Framework_TestCase
         $list = $this->articleListProvider->getArticleList($order)->getARTICLE();
 
         $this->assertEquals(237880, $list[0]->getArticlePriceGross());
-        $this->assertEquals(199899, $list[0]->getArticlePriceNet());
+        $this->assertEquals(199900, $list[0]->getArticlePriceNet());
         $this->assertEquals(1900, $list[0]->getArticleVatPerc());
 
         $this->assertEquals(1189881, $list[1]->getArticlePriceGross());
