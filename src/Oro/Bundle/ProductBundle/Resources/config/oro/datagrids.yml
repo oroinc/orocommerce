@@ -116,7 +116,7 @@ datagrids:
         actions:
             add_to_excluded:
                 type:          trigger-event
-                event_name:    product-collection-add-to-exclude
+                event_name:    product-collection-add-to-excluded
                 label:         oro.product.grid.action.product_collection.add_to_exclude
                 icon:          remove
 

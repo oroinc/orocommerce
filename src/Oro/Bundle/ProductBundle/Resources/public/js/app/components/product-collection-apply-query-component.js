@@ -8,6 +8,8 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
+    var InclusionExclusionSubComponent =
+        require('oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent');
 
     /**
      * Perform synchronization between segment definition filters block and grid. By click on "apply the query" button
@@ -37,7 +39,8 @@ define(function(require) {
         requiredOptions: [
             'segmentDefinitionFieldName',
             'controlsBlockAlias',
-            'gridName'
+            'gridName',
+            'sidebarComponentContainerId'
         ],
 
         /**
@@ -96,6 +99,11 @@ define(function(require) {
         namespace: null,
 
         /**
+         * @property {Object}
+         */
+        inclusionExclusionSubComponent: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -121,6 +129,8 @@ define(function(require) {
                 mediator.on('grid-sidebar:load:' + this.options.controlsBlockAlias, this._applyQuery, this);
             }
             this.$form.on('submit' + this.eventNamespace(), _.bind(this.onSubmit, this));
+
+            this._initializeInclusionExclusionSubComponent();
         },
 
         /**
@@ -269,6 +279,18 @@ define(function(require) {
             }
 
             this.$form.data('productCollectionApplyQueryModal').open();
+        },
+
+        /**
+         * @private
+         */
+        _initializeInclusionExclusionSubComponent: function() {
+            var options = {
+                $included: this.$included,
+                $excluded: this.$excluded,
+                sidebarComponentContainerId: this.options.sidebarComponentContainerId
+            };
+            this.inclusionExclusionSubComponent = new InclusionExclusionSubComponent(options);
         },
 
         dispose: function() {
