@@ -3,9 +3,10 @@ define(function(require) {
     'use strict';
 
     var PaymentUserInputComponent;
+    var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
+    require('jquery.validate');
 
     var BaseComponent = require('oroui/js/app/components/base/component');
 
@@ -31,6 +32,7 @@ define(function(require) {
         options: {
             paymentMethod: null,
             selectors: {
+                form: '.infinitepay-form',
                 fieldEmail: '[name$="oro_infinite_pay_debtor_data[email]"]',
                 fieldLegalform: '[name$="oro_infinite_pay_debtor_data[legal_form]"]',
                 collectionUserInput: '[data-name="field__user-input"]',
@@ -43,11 +45,18 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.extend({}, this.options, options);
-
             this.$el = $(options._sourceElement);
+
             this.$userInput = this.getUserInputElement();
             mediator.on('checkout:payment:before-form-serialization', this.beforeTransit, this);
             mediator.on('checkout:payment:before-restore-filled-form', this.updateDebtorDataFormIdentifier, this);
+
+            this.getForm()
+                .on('focusout', 'input,textarea', $.proxy(this.validate, this))
+                .on('change', 'select', $.proxy(this.validate, this));
+
+            mediator.on('checkout:payment:method:changed', this.onPaymentMethodChanged, this);
+            mediator.on('checkout:payment:before-transit', this.validateBeforeTransit, this);
         },
 
         /**
@@ -68,6 +77,15 @@ define(function(require) {
 
                 this.getUserInputStorage('email').val(email);
                 this.getUserInputStorage('legalForm').val(legalForm);
+            }
+        },
+
+        /**
+         * @param {Object} eventData
+         */
+        validateBeforeTransit: function(eventData) {
+            if (eventData.data.paymentMethod === this.options.paymentMethod) {
+                eventData.stopped = !this.validate();
             }
         },
 
@@ -97,7 +115,6 @@ define(function(require) {
         getUserInputElement: function() {
             return $(this.options.selectors.collectionUserInput);
         },
-
         /**
          * @returns {jQuery|HTMLElement}
          */
@@ -120,6 +137,92 @@ define(function(require) {
                 return;
             }
             PaymentUserInputComponent.__super__.dispose.call(this);
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getForm: function() {
+            return $(this.options.selectors.form);
+        },
+
+        /**
+         * @param {Boolean} state
+         */
+        setGlobalPaymentValidate: function(state) {
+            this.paymentValidationRequiredComponentState = state;
+            mediator.trigger('checkout:payment:validate:change', state);
+        },
+
+        /**
+         * @param {Object} eventData
+         */
+        onPaymentMethodChanged: function(eventData) {
+            if (eventData.paymentMethod === this.options.paymentMethod) {
+                this.onCurrentPaymentMethodSelected();
+            }
+        },
+
+        onCurrentPaymentMethodSelected: function() {
+            this.setGlobalPaymentValidate(this.paymentValidationRequiredComponentState);
+        },
+
+        /**
+         * @param {Object} [event]
+         *
+         * @returns {Boolean}
+         */
+        validate: function(event) {
+            var virtualForm = $('<form>');
+
+            var appendElement;
+            if (event !== undefined && event.target) {
+                appendElement = $(event.target).clone();
+            } else {
+                appendElement = this.getForm().clone();
+            }
+
+
+            virtualForm.append(appendElement);
+
+            var self = this;
+            var validator = virtualForm.validate({
+                ignore: '', // required to validate all fields in virtual form
+                errorPlacement: function(error, element) {
+                    var $el = self.getForm().find('#' + $(element).attr('id'));
+                    var parentWithValidation = $el.parents('[data-validation]');
+
+                    $el.addClass('error');
+
+                    if (parentWithValidation.length) {
+                        error.appendTo(parentWithValidation.first());
+                    } else {
+                        error.appendTo($el.parent());
+                    }
+                }
+            });
+
+            virtualForm.find('select').each(function (index, item) {
+                //set new select to value of old select
+                //http://stackoverflow.com/questions/742810/clone-isnt-cloning-select-values
+                $(item).val(self.getForm().find('select').eq(index).val());
+            });
+
+            // Add validator to form
+            $.data(virtualForm, 'validator', validator);
+
+            var errors;
+
+            if (event) {
+                errors = $(event.target).parent();
+            } else {
+                errors = this.getForm();
+            }
+
+            errors.find(validator.settings.errorElement + '.' + validator.settings.errorClass).remove();
+            errors.parent().find('.error').removeClass('error');
+
+            return validator.form();
         }
     });
 
