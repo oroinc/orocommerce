@@ -146,7 +146,6 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
             $segment = $data->getProductCollectionSegment();
 
             $definitionParts = $this->definitionConverter->getDefinitionParts($segment->getDefinition());
-            $segment->setDefinition($definitionParts[ProductCollectionDefinitionConverter::DEFINITION_KEY]);
 
             $forms[self::PRODUCT_COLLECTION_SEGMENT]->setData($segment);
 

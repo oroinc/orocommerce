@@ -214,3 +214,10 @@ services:
             - '%oro_web_catalog.type.content_variant_collection.class%'
         tags:
             - { name: form.type_extension, extended_type: '%oro_web_catalog.type.content_variant_collection.class%' }
+
+    oro_product.form.type.extension.product_collection_segment_filter:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionSegmentFilterExtension'
+        arguments:
+            - '@oro_product.service.product_collection_definition_converter'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType' }
