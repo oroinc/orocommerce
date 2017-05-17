@@ -113,4 +113,46 @@ class RequestListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($request->attributes->has('_content_variant'));
         $this->assertEquals($variant, $request->attributes->get('_content_variant'));
     }
+
+    public function testOnKernelRequestSlugFromContextAttributes()
+    {
+        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(GetResponseEvent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->once())
+            ->method('isMasterRequest')
+            ->willReturn(true);
+        $request = Request::create('/');
+        $event->expects($this->any())
+            ->method('getRequest')
+            ->willReturn($request);
+
+        $slug = new Slug();
+        $contextUrlAttributes = [
+            [
+                '_used_slug' => $slug
+            ]
+        ];
+        $request->attributes->set('_context_url_attributes', $contextUrlAttributes);
+
+        $variantRepository = $this->createMock(ContentVariantRepository::class);
+        $variant           = new ContentVariant();
+        $variantRepository->expects($this->once())
+            ->method('findVariantBySlug')
+            ->with($slug)
+            ->willReturn($variant);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(ContentVariant::class)
+            ->willReturn($variantRepository);
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ContentVariant::class)
+            ->willReturn($em);
+
+        $this->listener->onKernelRequest($event);
+        $this->assertEquals($variant, $request->attributes->get('_content_variant'));
+    }
 }

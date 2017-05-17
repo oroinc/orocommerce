@@ -14,3 +14,14 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "By Brand")]'
+
+        Content Node:
+            selector: 'form[name="oro_web_catalog_content_node"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Title: 'oro_web_catalog_content_node[titles][values][default]'
+                    Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+
+        Show Variants Dropdown:
+            selector: ".content-variant-add-btn-container .dropdown-toggle"

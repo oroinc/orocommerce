@@ -195,6 +195,70 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testGetItemsForProduct()
+    {
+        $nodeTitle      = 'node1';
+        $nodeUrl        = '/';
+        $currentNode    = $this->getContentNode(1, 'root', $nodeTitle, $nodeUrl);
+        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($currentNode);
+
+        $request             = Request::create('/', Request::METHOD_GET);
+        $request->attributes = new ParameterBag([
+            '_content_variant' => $contentVariant
+        ]);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $nodeRepository = $this->getMockBuilder(ContentNodeRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $path = [];
+        $this->cascadeToArray($currentNode, $path);
+        $nodeRepository->expects($this->once())
+            ->method('getPath')
+            ->with($currentNode)
+            ->willReturn($path);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(ContentNode::class)
+            ->willReturn($nodeRepository);
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(ContentNode::class)
+            ->willReturn($em);
+
+        $this->localizationHelper
+            ->expects($this->exactly(2))
+            ->method('getLocalizedValue')
+            ->withConsecutive(
+                [$currentNode->getTitles()],
+                [$currentNode->getLocalizedUrls()]
+            )
+            ->willReturnOnConsecutiveCalls($nodeTitle, $nodeUrl);
+
+        $currentPageTitle    = '220 Lumen Rechargeable Headlamp';
+        $result              = $this->breadcrumbDataProvider->getItemsForProduct($currentPageTitle);
+        $expectedBreadcrumbs = [
+            [
+                'label' => $nodeTitle,
+                'url' => $nodeUrl
+            ],
+            [
+                'label' => $currentPageTitle,
+                'url' => null
+            ]
+        ];
+        $this->assertEquals($expectedBreadcrumbs, $result);
+    }
+
     /**
      * @param string        $id
      * @param string        $identifier

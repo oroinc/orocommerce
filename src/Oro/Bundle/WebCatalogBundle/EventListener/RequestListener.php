@@ -27,12 +27,20 @@ class RequestListener
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
+        if (!$event->isMasterRequest()) {
+            return;
+        }
         $request = $event->getRequest();
-        if (!$event->isMasterRequest() || !$request->attributes->has('_used_slug')) {
+        $slug = $request->attributes->get('_used_slug');
+        if (!$slug && $request->attributes->has('_context_url_attributes')) {
+            $contextUrlAttributes = $request->attributes->get('_context_url_attributes');
+            $slug = isset($contextUrlAttributes[0]['_used_slug']) ?
+                $contextUrlAttributes[0]['_used_slug'] : null;
+        }
+        if (!$slug) {
             return;
         }
 
-        $slug = $request->attributes->get('_used_slug');
         $contentVariant = $this->getRepository()->findVariantBySlug($slug);
         if ($contentVariant) {
             $request->attributes->set('_content_variant', $contentVariant);

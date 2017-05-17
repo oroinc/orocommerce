@@ -6,16 +6,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 
 class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
 {
-    /**
-     * @var CategoryProvider
-     */
-    protected $categoryProvider;
-
     /**
      * @param ManagerRegistry $registry
      * @param LocalizationHelper $localizationHelper
@@ -48,13 +42,25 @@ class WebCatalogBreadcrumbProvider extends AbstractWebCatalogDataProvider
                     $breadcrumbs[] = [
                         'label' => (string)$this->localizationHelper
                             ->getLocalizedValue($breadcrumb->getTitles()),
-                        'url' => $breadcrumb === $contentNode ? '' :
-                            (string)$this->localizationHelper
+                        'url' => (string)$this->localizationHelper
                                 ->getLocalizedValue($breadcrumb->getLocalizedUrls())
                     ];
                 }
             }
         }
+
+        return $breadcrumbs;
+    }
+
+    /**
+     * @param string $currentPageTitle
+     *
+     * @return array
+     */
+    public function getItemsForProduct($currentPageTitle)
+    {
+        $breadcrumbs = $this->getItems();
+        $breadcrumbs[] = ['label' => $currentPageTitle, 'url' => null];
 
         return $breadcrumbs;
     }
