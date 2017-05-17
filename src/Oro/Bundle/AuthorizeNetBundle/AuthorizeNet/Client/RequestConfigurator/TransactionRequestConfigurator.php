@@ -12,7 +12,7 @@ class TransactionRequestConfigurator implements RequestConfiguratorInterface
      */
     public function getPriority()
     {
-        return 10;
+        return 0;
     }
 
     /**
@@ -37,7 +37,8 @@ class TransactionRequestConfigurator implements RequestConfiguratorInterface
             $options[Option\Amount::AMOUNT],
             $options[Option\Transaction::TRANSACTION_TYPE],
             $options[Option\Currency::CURRENCY],
-            $options[Option\OriginalTransaction::ORIGINAL_TRANSACTION]
+            $options[Option\OriginalTransaction::ORIGINAL_TRANSACTION],
+            $options[Option\SolutionId::SOLUTION_ID]
         );
     }
 
@@ -70,6 +71,10 @@ class TransactionRequestConfigurator implements RequestConfiguratorInterface
             $transactionRequest->setPayment($this->getPaymentType($options));
         }
 
+        if (array_key_exists(Option\SolutionId::SOLUTION_ID, $options)) {
+            $transactionRequest->setSolution($this->getSolutionType($options));
+        }
+
         return $transactionRequest;
     }
 
@@ -88,5 +93,17 @@ class TransactionRequestConfigurator implements RequestConfiguratorInterface
         $paymentType->setOpaqueData($opaqueDataType);
 
         return $paymentType;
+    }
+
+    /**
+     * @param array $options
+     * @return AnetAPI\SolutionType
+     */
+    protected function getSolutionType(array $options)
+    {
+        $solutionType = new AnetAPI\SolutionType();
+        $solutionType->setId($options[Option\SolutionId::SOLUTION_ID]);
+
+        return $solutionType;
     }
 }
