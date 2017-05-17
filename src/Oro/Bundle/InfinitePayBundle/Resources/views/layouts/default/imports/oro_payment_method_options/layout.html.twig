@@ -2,8 +2,7 @@
     <div class="{{ class_prefix }}__form__payment-methods"
          data-page-component-module="oroinfinitepay/js/app/components/payment-user-input-component"
          data-page-component-options="{{ {paymentMethod: view.options.paymentMethod}|json_encode }}">
-        <div class="{{ class_prefix }}__form__payment-methods__form"
-             data-wirecard-form="data-infinitepay-form">
+        <div class="{{ class_prefix }}__form__payment-methods__form infinitepay-form">
             {% for child in view.options.formView.children %}
                 {{ form_row(child, {class_prefix: class_prefix}) }}
             {% endfor %}
