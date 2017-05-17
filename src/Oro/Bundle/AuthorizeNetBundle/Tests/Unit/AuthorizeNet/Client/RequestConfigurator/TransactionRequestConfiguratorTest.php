@@ -9,6 +9,8 @@ use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\RequestConfigurator\Transa
 
 class TransactionRequestConfiguratorTest extends \PHPUnit_Framework_TestCase
 {
+    const SOLUTION_ID = 'AAA000001';
+
     /**
      * @var TransactionRequestConfigurator
      */
@@ -26,7 +28,7 @@ class TransactionRequestConfiguratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriority()
     {
-        $this->assertEquals(10, $this->transactionRequestConfigurator->getPriority());
+        $this->assertEquals(0, $this->transactionRequestConfigurator->getPriority());
     }
 
     public function testIsApplicable()
@@ -64,7 +66,11 @@ class TransactionRequestConfiguratorTest extends \PHPUnit_Framework_TestCase
             ->setDataDescriptor('data_desc')
             ->setDataValue('data_value');
 
-        $paymentType = (new AnetAPI\PaymentType())->setOpaqueData($opaqueData);
+        $paymentType = new AnetAPI\PaymentType();
+        $paymentType->setOpaqueData($opaqueData);
+
+        $solutionType = new AnetApi\SolutionType();
+        $solutionType->setId(self::SOLUTION_ID);
 
         return [
             'opaque parameters only' => [
@@ -79,13 +85,13 @@ class TransactionRequestConfiguratorTest extends \PHPUnit_Framework_TestCase
                 'options' => [
                     Option\DataDescriptor::DATA_DESCRIPTOR => 'data_desc',
                 ],
-                'transactionRequestType' => (new AnetAPI\TransactionRequestType()),
+                'transactionRequestType' => new AnetAPI\TransactionRequestType(),
             ],
             'opaque parameters only(only valye)' => [
                 'options' => [
                     Option\DataValue::DATA_VALUE => 'data_value',
                 ],
-                'transactionRequestType' => (new AnetAPI\TransactionRequestType()),
+                'transactionRequestType' => new AnetAPI\TransactionRequestType(),
             ],
             'amount only' => [
                 'options' => [
@@ -123,13 +129,15 @@ class TransactionRequestConfiguratorTest extends \PHPUnit_Framework_TestCase
                     Option\Transaction::TRANSACTION_TYPE => 'transaction',
                     Option\Currency::CURRENCY => 'USD',
                     Option\OriginalTransaction::ORIGINAL_TRANSACTION => 'ref',
+                    Option\SolutionId::SOLUTION_ID => self::SOLUTION_ID,
                 ],
                 'transactionRequestType' => (new AnetAPI\TransactionRequestType())
                     ->setPayment($paymentType)
                     ->setAmount(1.00)
                     ->setTransactionType('transaction')
                     ->setCurrencyCode('USD')
-                    ->setRefTransId('ref'),
+                    ->setRefTransId('ref')
+                    ->setSolution($solutionType),
             ],
         ];
     }

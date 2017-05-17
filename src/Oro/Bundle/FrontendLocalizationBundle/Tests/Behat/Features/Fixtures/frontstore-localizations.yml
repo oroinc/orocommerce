@@ -1,0 +1,35 @@
+include:
+    - frontstore-customer.yml
+
+Oro\Bundle\TranslationBundle\Entity\Language:
+  dutch:
+    code: 'nl_NL'
+    enabled: true
+    organization: '@organization'
+    owner: '@admin'
+
+  japanese:
+    code: 'ja_JP'
+    enabled: true
+    organization: '@organization'
+    owner: '@admin'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    title_dutch:
+        string: 'Netherlands'
+
+    title_japanese:
+        string: 'Japanese'
+
+Oro\Bundle\LocaleBundle\Entity\Localization:
+    localization_dutch:
+        name: 'Netherlands'
+        language: '@dutch'
+        formattingCode: 'nl_NL'
+        titles: ['@title_dutch']
+
+    localization_japanese:
+        name: 'Japanese'
+        language: '@japanese'
+        formattingCode: 'en'
+        titles: ['@title_japanese']
