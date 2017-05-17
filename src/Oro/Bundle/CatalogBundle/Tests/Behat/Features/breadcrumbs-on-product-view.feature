@@ -6,3 +6,5 @@ Feature: Product view page breadcrumbs
     And I click "Headlamps"
     When I click "220 Lumen Rechargeable Headlamp"
     Then I should see "Products categories / Headlamps / 220 Lumen Rechargeable Headlamp"
+    When I click on "Products categories"
+    Then Page title equals to "Catalog"

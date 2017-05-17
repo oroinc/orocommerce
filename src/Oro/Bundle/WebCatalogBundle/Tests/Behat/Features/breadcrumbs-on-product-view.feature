@@ -24,3 +24,5 @@ Feature: Product view page breadcrumbs
     And I click "Headlamps"
     When I click "220 Lumen Rechargeable Headlamp"
     Then I should see "Lighting Products / Headlamps / 220 Lumen Rechargeable Headlamp"
+    When I follow "Lighting Products"
+    Then I should be on homepage
