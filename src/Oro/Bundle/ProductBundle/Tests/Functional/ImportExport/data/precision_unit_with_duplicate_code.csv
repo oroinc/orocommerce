@@ -1,0 +1,2 @@
+sku,attributeFamily.code,status,inventory_status.id,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision,additionalUnitPrecisions:0:unit:code,additionalUnitPrecisions:0:unit:precision
+SKU001,default_family,enabled,in_stock,item,0,item,0

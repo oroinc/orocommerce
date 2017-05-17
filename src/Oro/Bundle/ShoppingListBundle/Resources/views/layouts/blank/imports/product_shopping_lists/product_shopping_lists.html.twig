@@ -123,7 +123,7 @@
                                 }
                             })) }}>
                             <form action="#">
-                                <div class="shopping-lists-static"
+                                <div class="shopping-lists-units__static"
                                      data-role="line-item-view">
                                     <span class="shopping-lists-units__number"><%= lineItem.quantity %></span>
                                     <% if (!isProductApplySingleUnitMode([lineItem.unit]) || singleUnitModeCodeVisible) { %>
@@ -154,9 +154,7 @@
                                                                     lineItemId: '<%= lineItem.id %>'
                                                                 },
                                                                 confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                                                sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
-                                                                okButtonClass: 'btn ok btn--info btn--size-s',
-                                                                cancelButtonClass: 'btn cancel theme-btn_sm btn_gray'
+                                                                sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
                                                             }
                                                         })) }}>
                                                         <i class="actions-row__icon fa-trash-o"></i>

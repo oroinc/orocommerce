@@ -491,3 +491,12 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\ShippingRulesNonDeletableMethodTypeIdentifiersProvider'
         arguments:
             - '@oro_shipping.repository.shipping_method_type_config'
+
+    oro_shipping.provider.shipping_method_icon:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProvider'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+        calls:
+            - ['setLogger', ['@logger']]
+        public: false
+        lazy: true

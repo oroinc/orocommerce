@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
@@ -22,7 +21,6 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Form;
@@ -92,11 +90,6 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     TextType::class => new TextType(),
-                    EntityIdentifierType::NAME => new StubEntityIdentifierType(
-                        [
-                            1 => $this->getEntity(ContentNode::class, ['id' => 1])
-                        ]
-                    ),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
                     ContentVariantCollectionType::NAME => $variantCollection,
@@ -120,7 +113,6 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create($this->type, new ContentNode());
 
-        $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('contentVariants'));
@@ -134,7 +126,6 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $node->setParentNode(new ContentNode());
         $form = $this->factory->create($this->type, $node);
 
-        $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('contentVariants'));
@@ -147,7 +138,6 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $node = $this->getEntity(ContentNode::class, ['id' => 1]);
         $form = $this->factory->create($this->type, $node);
 
-        $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('scopes'));
     }
@@ -269,6 +259,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ],
                 ],
                 (new ContentNode())
+                    ->setParentNode(new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
@@ -286,7 +277,6 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug')),
                 [
-                    'parentNode' => 1,
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypesWithRedirect' => [
                         'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
@@ -343,6 +333,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     'rewriteVariantTitle' => false
                 ],
                 (new ContentNode())
+                    ->setParentNode(new ContentNode())
                     ->setParentScopeUsed(false)
                     ->setRewriteVariantTitle(false)
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))

@@ -84,6 +84,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'featured_products_segment_id' => [
                     'value' => null,
                     'scope' => 'app'
+                ],
+                'product_collections_indexation_cron_schedule' => [
+                    'value' => '0 * * * *',
+                    'scope' => 'app'
                 ]
             ]
         ];

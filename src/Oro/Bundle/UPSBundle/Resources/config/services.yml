@@ -47,6 +47,7 @@ services:
             - '@oro_ups.provider.transport'
             - '@oro_ups.factory.price_request_factory'
             - '@oro_locale.helper.localization'
+            - '@oro_integration.provider.integration_icon'
             - '@oro_ups.shipping_price_cache'
             - '@oro_ups.method.identifier_generator.method'
             - '@oro_ups.method.factory.type'

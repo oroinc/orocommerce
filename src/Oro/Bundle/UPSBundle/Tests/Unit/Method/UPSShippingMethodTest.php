@@ -42,6 +42,11 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
     const TYPE_IDENTIFIER = '59';
 
     /**
+     * @internal
+     */
+    const ICON = 'bundles/icon-uri.png';
+
+    /**
      * @var UPSTransportProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $transportProvider;
@@ -92,6 +97,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             new UPSShippingMethod(
                 self::IDENTIFIER,
                 self::LABEL,
+                self::ICON,
                 [$type],
                 $this->transport,
                 $this->transportProvider,
@@ -391,6 +397,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         $this->upsShippingMethod = new UPSShippingMethod(
             self::IDENTIFIER,
             self::LABEL,
+            self::ICON,
             [$type],
             $this->transport,
             $this->transportProvider,
@@ -410,6 +417,11 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             '01' => Price::create(90, 'USD'),
             self::TYPE_IDENTIFIER => Price::create(110, 'USD'),
         ], $prices);
+    }
+
+    public function testGetIcon()
+    {
+        static::assertSame(self::ICON, $this->upsShippingMethod->getIcon());
     }
 
     /**

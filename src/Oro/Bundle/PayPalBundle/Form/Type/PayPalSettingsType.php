@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\PayPalBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -150,7 +154,7 @@ class PayPalSettingsType extends AbstractType
                 'label' => 'oro.paypal.settings.user.label',
                 'required' => true,
             ])
-            ->add('password', PasswordType::class, [
+            ->add('password', OroEncodedPlaceholderPasswordType::class, [
                 'label' => 'oro.paypal.settings.password.label',
                 'required' => true,
             ])
@@ -193,9 +197,25 @@ class PayPalSettingsType extends AbstractType
         $this->transformWithEncodedValue($builder, 'vendor');
         $this->transformWithEncodedValue($builder, 'partner');
         $this->transformWithEncodedValue($builder, 'user');
-        $this->transformWithEncodedValue($builder, 'password', false);
         $this->transformWithEncodedValue($builder, 'proxyHost');
         $this->transformWithEncodedValue($builder, 'proxyPort');
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        // TODO: remove this condition when CardTypesDataProviderInterface is removed in v1.3.
+        if ($this->cardTypesDataProvider instanceof CreditCardTypesDataProviderInterface) {
+            /** @var PayPalSettings|null $data */
+            $data = $event->getData();
+            if ($data && !$data->getAllowedCreditCardTypes()) {
+                $data->setAllowedCreditCardTypes($this->cardTypesDataProvider->getDefaultCardTypes());
+            }
+        }
     }
 
     /**
@@ -227,6 +247,7 @@ class PayPalSettingsType extends AbstractType
      */
     protected function transformWithEncodedValue(FormBuilderInterface $builder, $field, $decrypt = true)
     {
+        // TODO: BB-9260 Reuse EncryptionTransformer
         $builder->get($field)->addModelTransformer(new CallbackTransformer(
             function ($value) use ($decrypt) {
                 if ($decrypt === true) {

@@ -1,8 +1,7 @@
 {% block oro_paypal_credit_card_expiration_date_widget -%}
-    {% set
-    validation = {
-    'credit-card-expiration-date-not-blank': {'message': 'oro.paypal.validation.expiration_date', 'payload': null},
-    'credit-card-expiration-date': {'message': 'oro.paypal.validation.month', 'payload': null}
+    {% set validation = {
+        'credit-card-expiration-date-not-blank': {'message': 'oro.payment.validation.expiration_date', 'payload': null},
+        'credit-card-expiration-date': {'message': 'oro.payment.validation.month', 'payload': null}
     }
     %}
 
