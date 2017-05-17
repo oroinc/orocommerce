@@ -1,2 +1,0 @@
-parameters:
-  infitepay.wsdl.url: 'https://app.infinitepay.de/ws/InfinitePayAPI?wsdl'
