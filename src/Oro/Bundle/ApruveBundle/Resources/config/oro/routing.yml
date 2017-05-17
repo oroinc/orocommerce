@@ -1,4 +1,0 @@
-oro_apruve:
-    resource:     "@OroApruveBundle/Controller"
-    type:         annotation
-    prefix:       /apruve
