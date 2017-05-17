@@ -26,7 +26,7 @@ class MerchantAuthenticationRequestConfiguratorTest extends \PHPUnit_Framework_T
 
     public function testGetPriority()
     {
-        $this->assertEquals(10, $this->merchantAuthenticationRequestConfigurator->getPriority());
+        $this->assertEquals(0, $this->merchantAuthenticationRequestConfigurator->getPriority());
     }
 
     public function testIsApplicable()

@@ -20,6 +20,9 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     const DATA_DESCRIPTOR = 'dataDescriptor';
     const DATA_VALUE = 'dataValue';
 
+    // Authorize.NET solution id
+    const SOLUTION_ID = 'AAA171478';
+
     /** @var Gateway */
     protected $gateway;
 
@@ -227,6 +230,7 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     {
         return array_replace(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $options
         );
     }
@@ -305,5 +309,18 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
                 $fieldName
             ));
         }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdditionalOptions()
+    {
+        $options = [];
+        if (!$this->config->isTestMode()) {
+            $options[Option\SolutionId::SOLUTION_ID] = self::SOLUTION_ID;
+        }
+
+        return $options;
     }
 }

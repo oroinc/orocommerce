@@ -34,7 +34,7 @@ class FallbackRequestConfiguratorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriority()
     {
-        $this->assertEquals(0, $this->fallbackRequestConfigurator->getPriority());
+        $this->assertEquals(-10, $this->fallbackRequestConfigurator->getPriority());
     }
 
     public function testIsApplicable()
