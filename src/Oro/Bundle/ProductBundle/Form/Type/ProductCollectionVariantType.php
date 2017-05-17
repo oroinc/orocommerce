@@ -47,23 +47,22 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                self::PRODUCT_COLLECTION_SEGMENT,
-                SegmentFilterBuilderType::NAME,
-                [
-                    'label' => 'oro.product.content_variant.field.product_collection.label',
-                    'segment_entity' => Product::class,
-                    'segment_columns' => ['id', 'sku'],
-                    'segment_name_template' => 'Product Collection %s',
-                    'add_name_field' => true,
-                    'name_field_required' => false,
-                    'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
-                    'required' => true,
-                    'constraints' => [new NotBlank(), new Valid()]
-                ]
-            )
-            ->add(self::INCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
+        $builder->add(
+            self::PRODUCT_COLLECTION_SEGMENT,
+            SegmentFilterBuilderType::NAME,
+            [
+                'label' => 'oro.product.content_variant.field.product_collection.label',
+                'segment_entity' => Product::class,
+                'segment_columns' => ['id', 'sku'],
+                'segment_name_template' => 'Product Collection %s',
+                'add_name_field' => true,
+                'name_field_required' => false,
+                'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
+                'required' => true,
+                'constraints' => [new NotBlank(), new Valid()],
+                'error_bubbling' => false
+            ]
+        )->add(self::INCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
             ->add(self::EXCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
             ->setDataMapper($this);
 
