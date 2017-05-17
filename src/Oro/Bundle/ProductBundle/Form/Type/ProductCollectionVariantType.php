@@ -39,7 +39,8 @@ class ProductCollectionVariantType extends AbstractType
                 'name_field_required' => false,
                 'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
                 'required' => true,
-                'constraints' => [new NotBlank(), new Valid()]
+                'constraints' => [new NotBlank(), new Valid()],
+                'error_bubbling' => false
             ]
         );
 

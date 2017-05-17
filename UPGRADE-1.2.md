@@ -104,6 +104,17 @@ CustomerBundle
 - `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewUserRepository`
     - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewUserRepository` with replaced getUserFieldName() to `customerUser`
 
+ShoppingListBundle
+------------------
+- `Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider`
+    - changed signature of `__construct` method, third argument `Oro\Bundle\SecurityBundle\SecurityFacade` $securityFacade replaced with `Oro\Bundle\SecurityProBundle\ORM\Walker\AclHelper` $aclHelper
+- `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository`
+    - signature of method `getProductItemsWithShoppingListNames` changed
+        - $customerUser parameter is removed
+        - now method takes two parameters `Oro\Bundle\SecurityProBundle\ORM\Walker\AclHelper` $aclHelper and array of `Oro\Bundle\ProductBundle\Entity\Product` $products
+- `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener`
+    - changed signature of `__construct` method, first argument `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage` $tokenStorage replaced with - `Oro\Bundle\SecurityBundle\SecurityFacade` $securityFacade
+
 ShippingBundle
 --------------
 - `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method deprecated because it completely duplicate `getEnabledRulesByMethod`
