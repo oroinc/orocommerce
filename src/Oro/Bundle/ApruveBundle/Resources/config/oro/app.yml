@@ -1,6 +1,0 @@
-security:
-    firewalls:
-        appruve_webhook:
-            pattern:                        ^%web_backend_prefix%/apruve/webhook/*
-            security:                       false
-            anonymous:                      true
