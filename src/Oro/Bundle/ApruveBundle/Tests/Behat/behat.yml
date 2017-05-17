@@ -4,6 +4,8 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\MagentoBundle\Tests\Behat\Context\FeatureContext
+        - OroFormBundle::FormContext
         - OroCheckoutBundle::FeatureContext
         - OroWarehouseBundle::FeatureContext
         - OroShippingBundle::SingleCurrencyContext
@@ -13,12 +15,12 @@ oro_behat_extension:
       paths:
         - '@OroApruveBundle/Tests/Behat/Features'
   elements:
-    Itegration Form:
+    Apruve Integration Form:
       selector: "form[id^='oro_integration_channel_form-uid']"
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Lable: "oro_integration_channel_form[transport][labels][values][default]"
+          Label: "oro_integration_channel_form[transport][labels][values][default]"
           Short Label: 'oro_integration_channel_form[transport][shortLabels][values][default]'
     Payment Rule Form:
       selector: "form[id^='oro_payment_methods_configs_rule-uid']"
@@ -30,7 +32,7 @@ oro_behat_extension:
             locator: '//div[@id[starts-with(.,"uniform-oro_payment_methods_configs_rule_method")]]'
             element: Payment Method Config Type Field
     Aprove Login Form:
-      selector: 'from.form'
+      selector: 'form.form'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         embedded-id: apruveCheckoutIFrame
