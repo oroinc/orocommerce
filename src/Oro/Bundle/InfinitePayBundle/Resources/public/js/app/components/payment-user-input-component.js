@@ -182,7 +182,6 @@ define(function(require) {
                 appendElement = this.getForm().clone();
             }
 
-
             virtualForm.append(appendElement);
 
             var self = this;
@@ -202,7 +201,7 @@ define(function(require) {
                 }
             });
 
-            virtualForm.find('select').each(function (index, item) {
+            virtualForm.find('select').each(function(index, item) {
                 //set new select to value of old select
                 //http://stackoverflow.com/questions/742810/clone-isnt-cloning-select-values
                 $(item).val(self.getForm().find('select').eq(index).val());
