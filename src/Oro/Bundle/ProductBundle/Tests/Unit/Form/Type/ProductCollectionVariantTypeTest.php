@@ -231,6 +231,42 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         $this->assertEquals($modifiedDefinition, $segment->getDefinition());
     }
 
+    public function testFormView()
+    {
+        $segmentDefinition
+            = '{"filters":[{"columnName":"id","criterion":{"filter":"number","data":{"value":3,"type":"3"}}}]}';
+        $segment = new Segment();
+        $segment->setDefinition($segmentDefinition);
+
+        $data = new ContentVariantStub();
+        $data->setProductCollectionSegment($segment);
+
+        $includedProducts = '1,5';
+        $excludedProducts = '2,11';
+
+        $modifiedDefinition = '{}';
+        $this->definitionConverter
+            ->expects($this->any())
+            ->method('getDefinitionParts')
+            ->with($segmentDefinition)
+            ->willReturn([
+                ProductCollectionDefinitionConverter::DEFINITION_KEY => $modifiedDefinition,
+                ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY => $includedProducts,
+                ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY => $excludedProducts
+            ]);
+
+        $form = $this->factory->create($this->type, $data);
+        $formView = $form->createView();
+
+        $this->assertEquals(
+            $modifiedDefinition,
+            $formView->children['productCollectionSegment']->children['definition']->vars['value']
+        );
+        
+        $this->assertEquals($includedProducts, $formView->children['includedProducts']->vars['value']);
+        $this->assertEquals($excludedProducts, $formView->children['excludedProducts']->vars['value']);
+    }
+
     public function testFinishView()
     {
         $view = new FormView();

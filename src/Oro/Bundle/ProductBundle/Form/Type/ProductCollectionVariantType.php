@@ -47,22 +47,39 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(
-            self::PRODUCT_COLLECTION_SEGMENT,
-            SegmentFilterBuilderType::NAME,
-            [
-                'label' => 'oro.product.content_variant.field.product_collection.label',
-                'segment_entity' => Product::class,
-                'segment_columns' => ['id', 'sku'],
-                'segment_name_template' => 'Product Collection %s',
-                'add_name_field' => true,
-                'name_field_required' => false,
-                'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
-                'required' => true,
-                'constraints' => [new NotBlank(), new Valid()],
-                'error_bubbling' => false
-            ]
-        )->add(self::INCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
+        $builder
+            ->add(
+                self::PRODUCT_COLLECTION_SEGMENT,
+                SegmentFilterBuilderType::NAME,
+                [
+                    'label' => 'oro.product.content_variant.field.product_collection.label',
+                    'segment_entity' => Product::class,
+                    'segment_columns' => ['id', 'sku'],
+                    'segment_name_template' => 'Product Collection %s',
+                    'add_name_field' => true,
+                    'name_field_required' => false,
+                    'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
+                    'required' => true,
+                    'constraints' => [new NotBlank(), new Valid()],
+                    'error_bubbling' => false,
+                    'field_event_listeners' => [
+                        'definition' => [
+                            FormEvents::PRE_SET_DATA => function (FormEvent $event) {
+                                $definition = $event->getData();
+
+                                if ($definition) {
+                                    $definitionParts = $this->definitionConverter->getDefinitionParts($definition);
+
+                                    $event->setData(
+                                        $definitionParts[ProductCollectionDefinitionConverter::DEFINITION_KEY]
+                                    );
+                                }
+                            }
+                        ]
+                    ]
+                ]
+            )
+            ->add(self::INCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
             ->add(self::EXCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
             ->setDataMapper($this);
 
@@ -71,11 +88,15 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) {
                 $segment = $event->getData();
+                $eventListeners = $event->getForm()->getConfig()->getOption('field_event_listeners');
                 if ($segment instanceof Segment && $segment->getId()) {
                     FormUtils::replaceField(
                         $event->getForm()->getParent(),
                         'productCollectionSegment',
-                        ['name_field_required' => true]
+                        [
+                            'name_field_required' => true,
+                            'field_event_listeners' => $eventListeners
+                        ]
                     );
                 }
             }
