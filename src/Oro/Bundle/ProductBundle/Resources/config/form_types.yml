@@ -212,3 +212,8 @@ services:
             - '%oro_web_catalog.type.content_variant_collection.class%'
         tags:
             - { name: form.type_extension, extended_type: '%oro_web_catalog.type.content_variant_collection.class%' }
+
+    oro_product.form.extension.attribute_config_extension:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'
+        tags:
+            - { name: form.type_extension, alias: oro_entity_config_type }
