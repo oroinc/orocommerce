@@ -1,22 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\RelatedItem;
+namespace Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
-class ConfigProvider
+class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
 {
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    public function __construct(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
     /**
      * @return bool
      */

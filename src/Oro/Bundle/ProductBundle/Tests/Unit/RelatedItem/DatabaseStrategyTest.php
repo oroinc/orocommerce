@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider;
-use Oro\Bundle\ProductBundle\RelatedItem\DatabaseStrategy;
+use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\RelatedProductsConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\Strategy\DatabaseStrategy;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -37,7 +37,7 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private $entityManager;
 
     /**
-     * @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $configProvider;
 
@@ -55,7 +55,7 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)
+        $this->configProvider = $this->getMockBuilder(RelatedProductsConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 

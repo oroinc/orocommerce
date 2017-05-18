@@ -12,6 +12,7 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProductAssigner;
 
 class ProductUpdateHandler extends UpdateHandler
 {
@@ -25,6 +26,9 @@ class ProductUpdateHandler extends UpdateHandler
 
     /** @var SymfonyRouter */
     private $symfonyRouter;
+
+    /** @var RelatedProductAssigner */
+    private $relatedProductAssigner;
 
     /**
      * @param ActionGroupRegistry $actionGroupRegistry
@@ -51,6 +55,14 @@ class ProductUpdateHandler extends UpdateHandler
     }
 
     /**
+     * @param RelatedProductAssigner $relatedProductAssigner
+     */
+    public function setRelatedProductAssigner(RelatedProductAssigner $relatedProductAssigner)
+    {
+        $this->relatedProductAssigner = $relatedProductAssigner;
+    }
+
+    /**
      * @param FormInterface $form
      * @param Product $entity
      * @param array|callable $saveAndStayRoute
@@ -67,6 +79,8 @@ class ProductUpdateHandler extends UpdateHandler
         $saveMessage,
         $resultCallback = null
     ) {
+        $this->onSuccess($form, $entity);
+
         $result = parent::processSave(
             $form,
             $entity,
@@ -99,5 +113,50 @@ class ProductUpdateHandler extends UpdateHandler
     protected function isSaveAndDuplicateAction()
     {
         return $this->getCurrentRequest()->get(Router::ACTION_PARAMETER) === self::ACTION_SAVE_AND_DUPLICATE;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Product $entity
+     */
+    private function onSuccess(FormInterface $form, Product $entity)
+    {
+        $appendRelated = $form->get('appendRelated')->getData();
+        $removeRelated = $form->get('removeRelated')->getData();
+
+        $this->addRelatedProducts($entity, $appendRelated);
+        $this->removeRelatedProducts($entity, $removeRelated);
+
+        if (!empty($appendRelated) || !empty($removeRelated)) {
+            $this->doctrineHelper
+                ->getEntityManager($entity)
+                ->flush();
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param Product[] $productsToAppend
+     */
+    private function addRelatedProducts(Product $product, array $productsToAppend)
+    {
+        if (!empty($productsToAppend)) {
+            foreach ($productsToAppend as $productToAppend) {
+                $this->relatedProductAssigner->assignRelation($product, $productToAppend);
+            }
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param Product[] $productsToRemove
+     */
+    private function removeRelatedProducts(Product $product, array $productsToRemove)
+    {
+        if (!empty($productsToRemove)) {
+            foreach ($productsToRemove as $productToRemove) {
+                $this->relatedProductAssigner->removeRelation($product, $productToRemove);
+            }
+        }
     }
 }

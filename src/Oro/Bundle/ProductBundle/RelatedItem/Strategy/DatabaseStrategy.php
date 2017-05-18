@@ -1,10 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\RelatedItem;
+namespace Oro\Bundle\ProductBundle\RelatedItem\Strategy;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\AbstractRelatedItemConfigProvider;
 
 class DatabaseStrategy implements StrategyInterface
 {
@@ -14,11 +15,11 @@ class DatabaseStrategy implements StrategyInterface
     private $doctrineHelper;
 
     /**
-     * @var ConfigProvider
+     * @var AbstractRelatedItemConfigProvider
      */
     private $configProvider;
 
-    public function __construct(DoctrineHelper $doctrineHelper, ConfigProvider $configProvider)
+    public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
     {
         $this->doctrineHelper = $doctrineHelper;
         $this->configProvider = $configProvider;

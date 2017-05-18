@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\RelatedItem;
+namespace Oro\Bundle\ProductBundle\RelatedItem\Strategy;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 

@@ -116,6 +116,7 @@ services:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setRouter, ['@router']]
+            - [setRelatedProductAssigner, ['@oro_product.related_products.assigner']]
 
     oro_product.storage.product_data_bag:
         class: '%session.attribute_bag.class%'

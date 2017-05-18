@@ -1,8 +1,20 @@
 services:
     oro_product.related_products.strategy:
-        class: Oro\Bundle\ProductBundle\RelatedItem\DatabaseStrategy
+        class: Oro\Bundle\ProductBundle\RelatedItem\Strategy\DatabaseStrategy
         arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_products.config_provider']
 
-    oro_product.related_products.config_provider:
-        class: Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider
+    oro_product.related_items.config_provider:
+        abstract: true
+        public: false
+        class: Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\AbstractRelatedItemConfigProvider
         arguments: ['@oro_config.manager']
+
+    oro_product.related_products.config_provider:
+        parent: oro_product.related_items.config_provider
+        public: true
+        class: Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\RelatedProductsConfigProvider
+
+    oro_product.related_products.assigner:
+        public: false
+        class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProductAssigner
+        arguments: ['@oro_product.related_products.config_provider']
