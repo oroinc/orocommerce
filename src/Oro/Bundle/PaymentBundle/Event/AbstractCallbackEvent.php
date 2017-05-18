@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractCallbackEvent extends AbstractTransactionEvent
 {
-    /** @var string */
+    /** @var array */
     protected $data;
 
     /** @var Response */
@@ -28,15 +28,6 @@ abstract class AbstractCallbackEvent extends AbstractTransactionEvent
     public function getData()
     {
         return $this->data;
-    }
-
-    /**
-     * @param string $type
-     * @return string
-     */
-    public function getTypedEventName($type)
-    {
-        return implode('.', [$this->getEventName(), $type]);
     }
 
     /**
