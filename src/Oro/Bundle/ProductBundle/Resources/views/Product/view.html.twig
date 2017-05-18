@@ -127,6 +127,12 @@
     {% set dataBlocks = dataBlocks|merge({
         'relatedItems': {
             'title': 'oro.product.sections.relatedItems'|trans,
+            'headerLinkContent': UII.link({
+                    path: path('oro_product_quick_update', {id: entity.id}),
+                    label: 'oro.product.quick_edit.label'|trans,
+                    iCss: 'fa-edit',
+                    class: 'quick-editable pull-right'
+                }),
             'priority': 0,
             'subblocks': [{
                 'data': [

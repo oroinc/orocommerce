@@ -1,0 +1,37 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% set relatedGridParams = {
+    'productId': entity.id,
+    _parameters : {
+        data_in: [],
+        data_not_in: []
+    }
+} %}
+
+    {% if form.appendRelated.vars.value is not empty %}
+        {% set relatedGridParams = relatedGridParams|merge({
+            _parameters: relatedGridParams._parameters|merge({
+                data_in: form.appendRelated.vars.value|split(',')
+            })
+        }) %}
+    {% endif %}
+    {% if form.removeRelated.vars.value is not empty %}
+        {% set relatedGridParams = relatedGridParams|merge({
+            _parameters: relatedGridParams._parameters|merge({
+                data_not_in: form.removeRelated.vars.value|split(',')
+            })
+        }) %}
+    {% endif %}
+
+    {# @todo to be moved to popup/modal in scope of BB-9345. Here is just for testing purpose #}
+    {% set productRelatedSelectFields %}
+        <input type="hidden" name="productAppendRelatedSelect" id="productAppendRelatedSelect" value="{{ app.request.get('addedProductRelated') }}" />
+        <input type="hidden" name="productRemoveRelatedSelect" id="productRemoveRelatedSelect" value="{{ app.request.get('removedProductRelated') }}" />
+    {% endset %}
+
+{{ form_widget(form.appendRelated, {'id': 'productAppendRelated'}) }}
+{{ form_widget(form.removeRelated, {'id': 'productRemoveRelated'}) }}
+{{ dataGrid.renderGrid('products-related-items-edit', relatedGridParams) }}
+{{ productRelatedSelectFields }}
+{{ dataGrid.renderGrid('products-related-products-select', {'productId': entity.id}) }}
+{{ placeholder('oro_product_related_items_edit', {'entity':  entity}) }}

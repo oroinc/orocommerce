@@ -151,6 +151,25 @@ class ProductController extends Controller
     }
 
     /**
+     * Quick edit product form
+     *
+     * @Route("/quick-update/{id}", name="oro_product_quick_update", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="oro_product_quick_update",
+     *      type="entity",
+     *      class="OroProductBundle:Product",
+     *      permission="EDIT"
+     * )
+     * @param Product $product
+     * @return array|RedirectResponse
+     */
+    public function quickUpdateAction(Product $product)
+    {
+        return $this->update($product);
+    }
+
+    /**
      * @param Product $product
      * @return array|RedirectResponse
      */

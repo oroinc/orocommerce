@@ -29,6 +29,7 @@ oro:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
         parent_variant_links.label: Parent Product Variant Links
+        quick_edit.label: Quick edit
         images.label: Images
         is_related.label: Is Related
         related_to_products.label: Related Products
