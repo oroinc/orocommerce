@@ -41,23 +41,11 @@ class ProductTaxCodeController extends FOSRestController
         /** @var ProductTaxCodeRepository $taxCodeRepository */
         $taxCodeRepository = $doctrineHelper->getEntityRepositoryForClass(ProductTaxCode::class);
 
-        $oldTaxCode = $taxCodeRepository->findOneByProduct($product);
         $newTaxCode = $taxCodeId ? $taxCodeRepository->find($taxCodeId) : null;
-        $manager = $doctrineHelper->getEntityManagerForClass(ProductTaxCode::class);
+        $manager = $doctrineHelper->getEntityManagerForClass(Product::class);
 
-        $manager->transactional(function (EntityManager $manager) use ($oldTaxCode, $newTaxCode, $product) {
-            // Added two flushes because doctrine runs insert query before delete query.
-            // ProductTaxCode have unique constraint for product relation.
-            if ($oldTaxCode) {
-                $oldTaxCode->removeProduct($product);
-                $manager->flush($oldTaxCode);
-            }
-
-            if ($newTaxCode) {
-                $newTaxCode->addProduct($product);
-                $manager->flush($newTaxCode);
-            }
-        });
+        $product->setTaxCode($newTaxCode);
+        $manager->flush($product);
 
         return parent::handleView($this->view([], Codes::HTTP_OK));
     }
