@@ -12,6 +12,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy
 {
+    const NAME = 'minimal_prices';
+
     /**
      * @var ShardManager
      */

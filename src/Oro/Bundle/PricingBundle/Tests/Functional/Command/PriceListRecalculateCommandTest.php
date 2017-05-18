@@ -50,7 +50,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->getContainer()->get('oro_pricing.builder.customer_group_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
-            ->get('merge_by_priority')
+            ->getCurrentStrategy()
             ->resetCache();
 
         foreach ($websites as $websiteName) {

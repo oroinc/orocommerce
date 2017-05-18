@@ -46,7 +46,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
             ]
         );
         $this->resolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
-            ->get('merge_by_priority');
+            ->getCurrentStrategy();
     }
 
     /**

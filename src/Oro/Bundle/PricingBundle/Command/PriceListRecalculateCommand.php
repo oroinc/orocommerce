@@ -81,7 +81,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
-            ->get('merge_by_priority')
+            ->getCurrentStrategy()
             ->setOutput($output);
 
         $disableTriggers = (bool)$input->getOption(self::DISABLE_TRIGGERS);
@@ -227,7 +227,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $cplIterator = $cplRepository->getCombinedPriceListsByPriceLists($priceLists);
 
         $priceResolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
-            ->get('merge_by_priority');
+            ->getCurrentStrategy();
         foreach ($cplIterator as $cpl) {
             $priceResolver->combinePrices($cpl);
         }

@@ -58,7 +58,7 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
         $combinedProductPriceResolver = $container->get('oro_pricing.pricing_strategy.strategy_register')
-            ->get('merge_by_priority');
+            ->getCurrentStrategy();
 
         foreach ($combinedPriceLists as $combinedPriceList) {
             $combinedProductPriceResolver->combinePrices($combinedPriceList);

@@ -86,7 +86,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $priceResolver = self::createMock(MergePricesCombiningStrategy::class);
         $strategyRegister = new StrategyRegister($this->configManager);
-        $strategyRegister->add('merge_by_priority', $priceResolver);
+        $strategyRegister->add(MergePricesCombiningStrategy::NAME, $priceResolver);
 
         $this->builder = new CombinedPriceListsBuilder(
             $this->configManager,

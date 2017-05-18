@@ -58,6 +58,9 @@ class StrategyRegister
         return $this->strategies[$alias];
     }
 
+    /**
+     * @return PriceCombiningStrategyInterface[]
+     */
     public function getStrategies()
     {
         return $this->strategies;
