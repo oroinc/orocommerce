@@ -197,11 +197,6 @@ services:
         tags:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
 
-    oro_payment.payment_method_provider.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
-        public: false
-        deprecated: 'The "%service_id%" service is deprecated since 1.1. Use "oro_payment.payment_method.composite_provider" instead'
-
     oro_payment.payment_method.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
 
