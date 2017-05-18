@@ -14,10 +14,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
+use Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener;
 use Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
@@ -38,6 +41,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $eventDispatcher;
 
+    /** @var ProductCollectionVariantReindexMessageSendListener|\PHPUnit_Framework_MockObject_MockObject */
+    private $messageSendListener;
+
     /** @var EntityManagerMockBuilder */
     private $entityManagerMockBuilder;
 
@@ -56,9 +62,12 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->messageSendListener = $this->createMock(ProductCollectionVariantReindexMessageSendListener::class);
+
         $this->eventListener = new ProductContentVariantReindexEventListener(
             $this->eventDispatcher,
             $this->fieldUpdatesChecker,
+            $this->messageSendListener,
             $this->webCatalogUsageProvider
         );
     }
@@ -290,6 +299,57 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
             [$notContentNodeAwareEntity],
             [$notWebCatalogAwareEntity],
         ];
+    }
+
+    public function testReindexationForProductCollectionIfNodeFieldsWasChanged()
+    {
+        list($contentNode, $segment) = $this->generateContentNodeAndSegment();
+        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [], [$contentNode], []);
+        $this->fieldUpdatesChecker->expects($this->once())
+            ->method('isRelationFieldChanged')
+            ->with($contentNode, 'titles')
+            ->willReturn(true);
+        $this->messageSendListener->expects($this->once())
+            ->method('scheduleSegment')
+            ->with($segment);
+
+        $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
+    }
+
+    public function testReindexationForProductCollectionIfNodeFieldsWithoutChanges()
+    {
+        list($contentNode) = $this->generateContentNodeAndSegment();
+        $entityManager = $this->entityManagerMockBuilder->getEntityManager($this, [], [$contentNode], []);
+        $this->fieldUpdatesChecker->expects($this->once())
+            ->method('isRelationFieldChanged')
+            ->with($contentNode, 'titles')
+            ->willReturn(false);
+        $this->messageSendListener->expects($this->never())
+            ->method('scheduleSegment');
+
+        $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
+    }
+
+    /**
+     * @param int $webCatalogId
+     * @return array|[ContentNode,Segment]
+     */
+    private function generateContentNodeAndSegment($webCatalogId = 1)
+    {
+        $contentVariant = new ContentVariantStub();
+        $contentVariant->setType(ProductCollectionContentVariantType::TYPE);
+        $segment = new Segment();
+        $contentVariant->setProductCollectionSegment($segment);
+        $webCatalogMock = $this->createMock(WebCatalogInterface::class);
+        $webCatalogMock->method('getId')
+            ->willReturn($webCatalogId);
+
+        $contentNode = new ContentNodeStub(1);
+        $contentNode->setWebCatalog($webCatalogMock);
+        $contentNode->addContentVariant($contentVariant);
+        $contentVariant->setNode($contentNode);
+
+        return [$contentNode, $segment];
     }
 
     /**

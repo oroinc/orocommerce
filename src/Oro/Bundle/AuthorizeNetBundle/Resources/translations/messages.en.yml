@@ -1,0 +1,47 @@
+oro:
+    authorize_net:
+        settings:
+            label: 'Authorize.NET'
+            api_login.label: 'API Login ID'
+            transaction_key.label: 'Transaction Key'
+            client_key.label: 'Client Key'
+            label.tooltip: 'This label is used on the checkout screens'
+            short_label.tooltip: 'This label is used in order history'
+            credit_card_payment_action.label: 'Payment Action'
+            credit_card_labels.label: 'Label'
+            credit_card_short_labels.label: 'Short Label'
+            test_mode.label: 'Test Mode'
+            require_cvv.label: 'Require CVV Entry'
+            payment_action:
+                label: 'Payment Action'
+                authorize: 'Authorize'
+                charge: 'Authorize and Charge'
+            allowed_cc_types:
+                label: 'Allowed Credit Card Types'
+                visa: 'Visa'
+                mastercard: 'Mastercard'
+                discover: 'Discover'
+                american_express: 'American Express'
+            form:
+                groups:
+                    display_options.title: 'Display Options'
+                    integration.title: 'Integration'
+                    connection.title: 'Connection Options'
+                    advanced_settings.title: 'Advanced Settings'
+                    other.title: 'Other'
+        channel_type:
+            authorize_net.label: 'Authorize.NET'
+
+        methods:
+            credit_card.label: 'Credit card'
+
+        credit_card:
+            card_number.label: Credit Card Number
+            expiration_date.label: Expiration Date
+            cvv2.label: CVV
+            whats_this: "What's this?"
+            tooltip: |
+                The verification number is a 3-digit
+                number printed on the back of your card.
+                The American Express security code is a 4-digit
+                number printed on the front of your card.

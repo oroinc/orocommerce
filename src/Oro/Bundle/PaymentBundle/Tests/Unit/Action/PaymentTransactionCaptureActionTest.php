@@ -102,7 +102,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
                 'expected' => [
                     'transaction' => 10,
                     'successful' => false,
-                    'message' => null,
+                    'message' => 'oro.payment.message.error',
                     'testOption' => 'testOption',
                     'testResponse' => 'testResponse',
                 ],
@@ -124,7 +124,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
                 'expected' => [
                     'transaction' => 10,
                     'successful' => false,
-                    'message' => null,
+                    'message' => 'oro.payment.message.error',
                     'testOption' => 'testOption',
                 ],
             ],

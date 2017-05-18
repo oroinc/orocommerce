@@ -1,6 +1,6 @@
 /*global define*/
-define(['underscore', 'orotranslation/js/translator', 'jquery'
-], function(_, __, $) {
+define(['underscore', 'orotranslation/js/translator', 'jquery', 'oroui/js/messenger'
+], function(_, __, $, messenger) {
     'use strict';
 
     var defaultParam = {
@@ -78,8 +78,9 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
         },
         function(param) {
             param = _.extend({}, defaultParam, param);
+            messenger.notificationFlashMessage('error', __(param.message, {}));
 
-            return __(param.message, {});
+            return false;
         }
     ];
 });

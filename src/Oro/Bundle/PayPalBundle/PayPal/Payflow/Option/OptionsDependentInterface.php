@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
+/**
+ * This interface could be used to allow dynamic option configuration based on value of another options
+ */
 interface OptionsDependentInterface extends OptionInterface
 {
     /**

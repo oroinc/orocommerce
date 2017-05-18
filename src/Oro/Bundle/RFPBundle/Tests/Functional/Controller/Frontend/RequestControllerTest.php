@@ -189,7 +189,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['hideButtonEdit'])) {
-            $buttonEdit = $crawler->filter('.oro-customer-user-role__controls-list')->html();
+            $buttonEdit = $crawler->filter('.controls-list')->html();
             static::assertNotContains('edit', $buttonEdit);
         }
     }

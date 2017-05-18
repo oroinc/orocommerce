@@ -455,3 +455,16 @@ services:
             - '@oro_checkout.repository.checkout'
         tags:
             - { name: kernel.event_listener, event: oro_payment.method_renaming, method: onMethodRename}
+
+    oro_checkout.provider.payment_method_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\PaymentMethodProvider
+        arguments:
+            - '@oro_checkout.factory.payment_context_factory'
+            - '@oro_checkout.repository.checkout'
+            - '@oro_payment.method.provider.method_provider'
+
+    oro_checkout.provider.result_messages:
+        class: Oro\Bundle\CheckoutBundle\Provider\PaymentResultMessageProvider
+        decorates: oro_payment.provider.result_messages
+        public: false
+        arguments: ['@oro_checkout.provider.payment_method_provider']

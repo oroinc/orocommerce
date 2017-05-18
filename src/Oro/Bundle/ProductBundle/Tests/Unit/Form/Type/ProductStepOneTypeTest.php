@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -34,6 +36,17 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
             'product',
             $form->getConfig()->getOptions()['intention']
         );
+    }
+
+    public function testBuildView()
+    {
+        $view = new FormView();
+        /** @var FormInterface $form */
+        $form = $this->createMock(FormInterface::class);
+        $this->productStepOneType->buildView($view, $form, []);
+
+        $this->assertArrayHasKey('default_input_action', $view->vars);
+        $this->assertEquals('oro_product_create', $view->vars['default_input_action']);
     }
 
     /**
