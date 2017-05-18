@@ -19,20 +19,15 @@ class TaxCodeGridListener
     /** @var string */
     protected $relatedEntityClass;
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
     /** @var Expr */
     protected $expressionBuilder;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
      * @param string $taxCodeClass
      * @param string $relatedEntityClass
      */
-    public function __construct(DoctrineHelper $doctrineHelper, $taxCodeClass, $relatedEntityClass)
+    public function __construct($taxCodeClass, $relatedEntityClass)
     {
-        $this->doctrineHelper = $doctrineHelper;
         $this->taxCodeClass = $taxCodeClass;
         $this->relatedEntityClass = $relatedEntityClass;
 
@@ -51,27 +46,6 @@ class TaxCodeGridListener
         $this->addColumn($config);
         $this->addSorter($config);
         $this->addFilter($config);
-    }
-
-    /**
-     * @param string $relatedEntityClass
-     * @return string
-     * @throws \InvalidArgumentException if there is not association
-     */
-    protected function getFieldName($relatedEntityClass)
-    {
-        $metadata = $this->doctrineHelper->getEntityMetadataForClass($this->taxCodeClass);
-
-        $associations = $metadata->getAssociationsByTargetClass($relatedEntityClass);
-        if (!$associations) {
-            throw new \InvalidArgumentException(
-                sprintf('Association for "%s" not found in "%s"', $relatedEntityClass, $this->taxCodeClass)
-            );
-        }
-
-        $association = reset($associations);
-
-        return $association['fieldName'];
     }
 
     /**
@@ -134,13 +108,8 @@ class TaxCodeGridListener
     protected function addJoin(DatagridConfiguration $config)
     {
         $config->getOrmQuery()->addLeftJoin(
-            $this->taxCodeClass,
-            $this->getJoinAlias(),
-            Expr\Join::WITH,
-            (string)$this->expressionBuilder->isMemberOf(
-                $this->getAlias($config),
-                sprintf('%s.%s', $this->getJoinAlias(), $this->getFieldName($this->relatedEntityClass))
-            )
+            $this->getAlias($config).'.taxCode',
+            $this->getJoinAlias()
         );
     }
 
@@ -170,7 +139,17 @@ class TaxCodeGridListener
     {
         $config->offsetSetByPath(
             sprintf('[filters][columns][%s]', $this->getDataName()),
-            ['type' => 'string', 'data_name' => $this->getDataName()]
+            [
+                'type' => 'entity',
+                'data_name' => $this->getAlias($config) . '.taxCode',
+                'options' => [
+                    'field_options' => [
+                        'multiple' => false,
+                        'class' => $this->taxCodeClass,
+                        'property' => 'code'
+                    ]
+                ]
+            ]
         );
     }
 }

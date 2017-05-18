@@ -44,13 +44,7 @@ class ProductTaxExtension extends AbstractTaxExtension
      */
     protected function handleTaxCode($product, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
     {
-        if ($taxCode) {
-            $taxCode->removeProduct($product);
-        }
-
-        if ($taxCodeNew) {
-            $taxCodeNew->addProduct($product);
-        }
+        $product->setTaxCode($taxCodeNew);
     }
 
     /**
@@ -59,9 +53,6 @@ class ProductTaxExtension extends AbstractTaxExtension
      */
     protected function getTaxCode($product)
     {
-        /** @var ProductTaxCodeRepository $repository */
-        $repository = $this->getRepository();
-
-        return $repository->findOneByProduct($product);
+        return $product->getTaxCode();
     }
 }

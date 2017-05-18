@@ -13,7 +13,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class CustomerControllerTest extends WebTestCase
 {
-    const ACCOUNT_NAME = 'Customer_name';
+    const CUSTOMER_NAME = 'Customer_name';
     const UPDATED_NAME = 'Customer_name_UP';
 
     protected function setUp()
@@ -43,13 +43,13 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
-        $this->assertCustomerSave($crawler, self::ACCOUNT_NAME, $parent, $group, $internalRating, $customerTaxCode);
+        $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group, $internalRating, $customerTaxCode);
 
         /** @var Customer $taxCustomer */
         $taxCustomer = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroCustomerBundle:Customer')
             ->getRepository('OroCustomerBundle:Customer')
-            ->findOneBy(['name' => self::ACCOUNT_NAME]);
+            ->findOneBy(['name' => self::CUSTOMER_NAME]);
         $this->assertNotEmpty($taxCustomer);
 
         return $taxCustomer->getId();
@@ -94,7 +94,7 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $grid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
-        $this->assertContains(self::ACCOUNT_NAME, $grid);
+        $this->assertContains(self::CUSTOMER_NAME, $grid);
     }
 
     /**
@@ -107,7 +107,7 @@ class CustomerControllerTest extends WebTestCase
 
         $response = $this->client->requestGrid(
             'customer-customers-grid',
-            ['customer-customers-grid[_filter][name][value]' => self::ACCOUNT_NAME]
+            ['customer-customers-grid[_filter][name][value]' => self::CUSTOMER_NAME]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
