@@ -70,7 +70,7 @@ class FrontendCustomerUserHandlerTest extends FormHandlerTestCase
      */
     public function testProcessValidData()
     {
-        $this->entity->expects($this->once())
+        $this->entity->expects($this->exactly(2))
             ->method('getId')
             ->will($this->returnValue(null));
         $this->request->setMethod('POST');
@@ -97,7 +97,7 @@ class FrontendCustomerUserHandlerTest extends FormHandlerTestCase
             ->method('updateUser')
             ->with($this->entity);
 
-        $this->userManager->expects($this->once())
+        $this->userManager->expects($this->never())
             ->method('reloadUser')
             ->with($this->entity);
 
@@ -109,7 +109,7 @@ class FrontendCustomerUserHandlerTest extends FormHandlerTestCase
      */
     public function testProcessValidDataExistingUser()
     {
-        $this->entity->expects($this->once())
+        $this->entity->expects($this->exactly(2))
             ->method('getId')
             ->will($this->returnValue(42));
         $this->request->setMethod('POST');
