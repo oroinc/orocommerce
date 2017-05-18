@@ -236,9 +236,9 @@ datagrids:
                 description:
                     data_name: description
                 customer_tax_code_code:
-                    data_name: customer_tax_code_code
+                    data_name: customer_tax_code.code
                 product_tax_code_code:
-                    data_name: product_tax_code_code
+                    data_name: product_tax_code.code
                 tax_code:
                     data_name: tax_code
                 tax_jurisdiction_code:
@@ -359,12 +359,9 @@ datagrids:
         extends: customer-groups-select-grid
         source:
             query:
-                join:
-                    left:
-                        - { join: %oro_tax.entity.customer_tax_code.class%, alias: customer_tax_code, conditionType: 'WITH', condition: 'customer_group MEMBER OF customer_tax_code.customerGroups' }
                 where:
                     and:
-                        - customer_tax_code.id = :customer_tax_code_id
+                        - customer_group.taxCode = :customer_tax_code_id
             bind_parameters:
                 - customer_tax_code_id
         properties:
@@ -385,12 +382,9 @@ datagrids:
         extends: customer-customers-select-grid
         source:
             query:
-                join:
-                    left:
-                        - { join: %oro_tax.entity.customer_tax_code.class%, alias: customer_tax_code, conditionType: 'WITH', condition: 'customer MEMBER OF customer_tax_code.customers' }
                 where:
                     and:
-                        - customer_tax_code.id = :customer_tax_code_id
+                        - customer.taxCode = :customer_tax_code_id
             bind_parameters:
                 - customer_tax_code_id
         properties:
@@ -411,12 +405,9 @@ datagrids:
         extends: products-select-grid-base
         source:
             query:
-                join:
-                    left:
-                        - { join: %oro_tax.entity.product_tax_code.class%, alias: product_tax_code, conditionType: 'WITH', condition: 'product MEMBER OF product_tax_code.products' }
                 where:
                     and:
-                        - product_tax_code.id = :product_tax_code_id
+                        - product.taxCode = :product_tax_code_id
             bind_parameters:
                 - product_tax_code_id
         properties:

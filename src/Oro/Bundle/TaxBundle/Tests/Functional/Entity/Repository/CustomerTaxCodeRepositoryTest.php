@@ -25,44 +25,12 @@ class CustomerTaxCodeRepositoryTest extends WebTestCase
         $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes']);
     }
 
-    public function testFindOneByCustomer()
-    {
-        /** @var Customer $customer1 */
-        $customer1 = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
-        $expectedTaxCode = $this->getRepository()->findOneByCustomer($customer1);
-
-        /** @var CustomerTaxCode $taxCode1 */
-        $taxCode1 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
-        $this->assertEquals($expectedTaxCode->getId(), $taxCode1->getId());
-    }
-
-    public function testFindNewCustomer()
-    {
-        $this->assertEmpty($this->getRepository()->findOneByCustomer(new Customer()));
-    }
-
     public function testFindByCodes()
     {
         /** @var CustomerTaxCode $taxCode1 */
         $taxCode = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
 
         $this->assertEquals([$taxCode], $this->getRepository()->findByCodes([TaxFixture::TAX_1]));
-    }
-
-    public function testFindOneByCustomerGroup()
-    {
-        /** @var CustomerGroup $customerGroup */
-        $customerGroup = $this->getReference(LoadGroups::GROUP2);
-        $expectedTaxCode = $this->getRepository()->findOneByCustomerGroup($customerGroup);
-
-        /** @var CustomerTaxCode $taxCode */
-        $taxCode = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_2);
-        $this->assertEquals($expectedTaxCode->getId(), $taxCode->getId());
-    }
-
-    public function testFindNewCustomerGroup()
-    {
-        $this->assertEmpty($this->getRepository()->findOneByCustomerGroup(new CustomerGroup()));
     }
 
     public function testFindManyByEntitiesWhenEmptyGroupsGiven()
