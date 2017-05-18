@@ -183,6 +183,10 @@ oro:
 
         widgets:
             product_information: Product Information
+            select_related_products:
+              title: Select related products for {{ sku }} - {{ name }}
+              label: Select related products
+            select_products: Select products
 
         controller:
             product.saved.message: Product has been saved

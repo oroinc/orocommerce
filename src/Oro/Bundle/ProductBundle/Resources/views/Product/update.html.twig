@@ -146,8 +146,6 @@
         }
     }) %}
 
-    {# @todo "productRelatedSelectFields" and dataGrid.renderGrid('products-related-products-select', {'productId': entity.id}) - to be moved to popup/modal in scope of BB-9345. Here is just for testing purpose #}
-
     {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.data|length != 0) %}
 
     {% if productHasVariants %}

@@ -35,6 +35,7 @@ config:
         'oroproduct/js/app/components/product-name-popup-editor-component': 'bundles/oroproduct/js/app/components/product-name-popup-editor-component.js'
         'oroproduct/js/app/components/product-variant-field-component': 'bundles/oroproduct/js/app/components/product-variant-field-component.js'
         'oroproduct/js/app/components/product-collection-apply-query-component': 'bundles/oroproduct/js/app/components/product-collection-apply-query-component.js'
+        'oro/related-items-widget': 'bundles/oroproduct/js/app/widget/related-items-widget.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

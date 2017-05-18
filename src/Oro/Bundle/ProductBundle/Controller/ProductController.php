@@ -298,4 +298,20 @@ class ProductController extends Controller
             'slugsData' => $slugsData,
         ]);
     }
+
+    /**
+     * @Route(
+     *     "/get-possible-products-for-related-products/{id}",
+     *     name="oro_product_possible_products_for_related_products",
+     *     requirements={"id"="\d+"}
+     * )
+     * @Template(template="OroProductBundle:Product:selectRelatedProducts.html.twig")
+     *
+     * @param int $id
+     * @return array
+     */
+    public function getPossibleProductsForRelatedProductsAction($id)
+    {
+        return ['productId' => $id];
+    }
 }
