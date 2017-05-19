@@ -14,6 +14,7 @@ Table of Contents
  - [Product API](./Resources/doc/product-api.md)
  - [Product Attributes](./Resources/doc/product-attributes.md)
  - [Customize products using layouts](./Resources/doc/customize-products.md)
+ - [Related products](./Resources/doc/related-products.md)
 
 Description:
 ------------
