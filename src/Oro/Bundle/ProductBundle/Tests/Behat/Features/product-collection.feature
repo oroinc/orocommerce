@@ -31,7 +31,7 @@ Feature:
     And I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU1" in "value"
-    And I click on "Apply the Query"
+    And I click on "Preview"
     And I should see following grid:
       | SKU   | NAME      |
       | PSKU1 | Product 1 |
@@ -78,7 +78,7 @@ Feature:
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
     And type "PSKU" in "value"
-    And I click on "Apply the Query"
+    And I click on "Preview"
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU2 | Product 2 |
@@ -252,10 +252,10 @@ Feature:
     When I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
     When type "TEST" in "value"
-    And I click "Apply the Query"
+    And I click "Preview"
     And I click on "Reset"
     Then I should not see "TEST"
-    And I click "Apply the Query"
+    And I click "Preview"
     Then I should see "PSKU1"
     And I click "Cancel"
 

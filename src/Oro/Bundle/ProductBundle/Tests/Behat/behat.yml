@@ -57,7 +57,7 @@ oro_behat_extension:
     Apply the Query:
       selector:
         type: xpath
-        locator: '//a[contains(@class, "btn") and contains(., "Apply the Query")]'
+        locator: '//a[contains(@class, "btn") and contains(., "Preview")]'
 
     Reset:
       selector: "a.btn.filter-reset"

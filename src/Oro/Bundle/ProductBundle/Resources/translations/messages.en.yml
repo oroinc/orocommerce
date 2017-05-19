@@ -50,13 +50,10 @@ oro:
             product_collection:
                 label: Product Collection
                 segment_edit_button.label: Edit within Web Catalog
-            field:
-                product_collection:
-                    label: Filter
-                    tooltip: Use Filter for Adding Products to the Variant
             ui:
-                apply_query: Apply the Query
-                reset: Reset
+                advanced_filter: Advanced Filter
+                apply_query: Preview
+                reset: Reset Products
                 filtered_products: All Added
                 included_products: Manually Added
                 excluded_products: Excluded
