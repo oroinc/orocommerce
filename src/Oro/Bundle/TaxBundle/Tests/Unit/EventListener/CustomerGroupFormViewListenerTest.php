@@ -65,19 +65,15 @@ class CustomerGroupFormViewListenerTest extends AbstractFormViewListenerTest
             ->setMethods(['findOneByCustomerGroup'])
             ->getMock();
         $taxCode = new CustomerTaxCode();
-        $repository
-            ->expects($this->once())
-            ->method('findOneByCustomerGroup')
-            ->willReturn($taxCode);
 
+        $customerGroup = $this->getMockBuilder(CustomerGroup::class)
+            ->setMethods(['getTaxCode', 'setTaxCode'])
+            ->getMock();
+        $customerGroup->method('getTaxCode')->willReturn($taxCode);
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn(new CustomerGroup());
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityRepository')
-            ->willReturn($repository);
+            ->willReturn($customerGroup);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')

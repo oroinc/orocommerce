@@ -138,11 +138,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             if ($taxCode === null) {
                 return;
             }
-
-            $this->customerTaxCodeImportExportHelper->setTaxCode(
-                $entity,
-                $taxCode
-            );
+            $entity->setTaxCode($taxCode);
         } catch (EntityNotFoundException $e) {
             $event->setEntity(null);
             $event->getContext()->addError(

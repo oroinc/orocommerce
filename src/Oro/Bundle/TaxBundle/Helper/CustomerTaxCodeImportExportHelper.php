@@ -34,11 +34,9 @@ class CustomerTaxCodeImportExportHelper
     public function loadCustomerTaxCode(array $customers)
     {
         $customerTaxCodes = [];
-        $this->getCustomerTaxCodeRepository()->clearCachedQueries();
 
         foreach ($customers as $customer) {
-            $customerTaxCodes[$customer->getId()] = $this->getCustomerTaxCodeRepository()
-                ->findOneByCustomer($customer);
+            $customerTaxCodes[$customer->getId()] = $customer->getTaxCode();
         }
 
         return $customerTaxCodes;
@@ -82,29 +80,6 @@ class CustomerTaxCodeImportExportHelper
     }
 
     /**
-     * @param Customer $customer
-     * @param CustomerTaxCode $taxCode
-     */
-    public function setTaxCode(Customer $customer, CustomerTaxCode $taxCode)
-    {
-        $this->getCustomerTaxCodeRepository()->clearCachedQueries();
-
-        /** @var CustomerTaxCode $currentCustomerTaxCode */
-        $currentCustomerTaxCode = $this->getCustomerTaxCodeRepository()
-            ->findOneByCustomer($customer);
-
-        if ($currentCustomerTaxCode && $currentCustomerTaxCode->getId() !== $taxCode->getId()) {
-            $this->removeCustomerFromPreviousTaxCode($customer, $currentCustomerTaxCode);
-        }
-
-        $taxCode->addCustomer(
-            $customer->getId() ?
-                $this->doctrineHelper->getEntityReference(Customer::class, $customer->getId()) :
-                $customer
-        );
-    }
-
-    /**
      * @return \Doctrine\ORM\EntityRepository|CustomerTaxCodeRepository
      */
     private function getCustomerTaxCodeRepository()
@@ -118,21 +93,5 @@ class CustomerTaxCodeImportExportHelper
     private function getEntityManager()
     {
         return $this->doctrineHelper->getEntityManager(CustomerTaxCode::class);
-    }
-
-    /**
-     * @param Customer $customer
-     * @param CustomerTaxCode $currentCustomerTaxCode
-     */
-    private function removeCustomerFromPreviousTaxCode(Customer $customer, CustomerTaxCode $currentCustomerTaxCode)
-    {
-        foreach ($currentCustomerTaxCode->getCustomers() as $originalCustomer) {
-            if ($originalCustomer->getId() === (int)$customer->getId()) {
-                $currentCustomerTaxCode->removeCustomer($originalCustomer);
-                $this->getEntityManager()->flush($currentCustomerTaxCode);
-
-                break;
-            }
-        }
     }
 }

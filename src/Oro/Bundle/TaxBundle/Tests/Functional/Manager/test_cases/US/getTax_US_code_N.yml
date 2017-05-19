@@ -2,9 +2,14 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
+    'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
+        customer_tax_code.TAX3:
+            code: TAX_3
+            description: 'TAX3 customer tax code description'
     'Oro\Bundle\CustomerBundle\Entity\Customer':
         customer.TAX3:
             name: customer.TAX3
+            taxCode: '@customer_tax_code.TAX3'
     'Oro\Bundle\OrderBundle\Entity\OrderAddress':
         us_ca_billing_address:
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
@@ -32,12 +37,6 @@ databaseBefore:
             code: us_any_state_jurisdiction_code
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
             region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
-    'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
-        customer_tax_code.TAX3:
-            code: TAX_3
-            description: 'TAX3 customer tax code description'
-            customers:
-                - '@customer.TAX3'
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule.TAX3:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }

@@ -47,10 +47,6 @@
             float: $product-price-simple-main-box-float;
         }
 
-        &__hint {
-            width: $product-price-simple-hint-widht;
-        }
-
         &__label {
             display: $product-price-simple-label-display;
         }
@@ -62,6 +58,19 @@
         &__listed-value {
             color: $product-price-simple-listed-value-color;
         }
+    }
+}
+
+.product-view {
+    .product-price {
+        display: block;
+
+        max-width: $product-price-max-width;
+        margin: $product-price-margin;
+    }
+
+    .product-price__listed {
+        text-align: $product-price-listed-text-align;
     }
 }
 
