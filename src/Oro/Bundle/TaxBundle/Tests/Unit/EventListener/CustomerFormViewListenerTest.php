@@ -64,25 +64,15 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->with('id')
             ->willReturn(1);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->setMethods(['findOneByCustomer'])
-            ->getMock();
         $taxCode = new CustomerTaxCode();
-        $repository
-            ->expects($this->once())
-            ->method('findOneByCustomer')
-            ->willReturn($taxCode);
-
+        $customer = $this->getMockBuilder(Customer::class)
+            ->setMethods(['getTaxCode'])
+            ->getMock();
+        $customer->expects($this->once())->method('getTaxCode')->willReturn($taxCode);
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn(new Customer());
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityRepository')
-            ->willReturn($repository);
+            ->willReturn($customer);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
@@ -115,30 +105,21 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->with('id')
             ->willReturn(1);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
-        $repository = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository
-            ->expects($this->once())
-            ->method('findOneByCustomer')
-            ->willReturn(null);
-
         $customerTaxCode = new CustomerTaxCode();
 
-        $repository
-            ->expects($this->once())
-            ->method('findOneByCustomerGroup')
-            ->willReturn($customerTaxCode);
+        $customerGroup = $this->getMockBuilder(CustomerGroup::class)
+            ->setMethods(['getTaxCode'])
+            ->getMock();
+        $customerGroup->method('getTaxCode')->willReturn($customerTaxCode);
+        $customer = $this->getMockBuilder(Customer::class)
+            ->setMethods(['getTaxCode', 'getGroup'])
+            ->getMock();
+        $customer->method('getGroup')->willReturn($customerGroup);
 
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn((new Customer())->setGroup(new CustomerGroup()));
-
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repository);
+            ->willReturn($customer);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
@@ -171,28 +152,17 @@ class CustomerFormViewListenerTest extends AbstractFormViewListenerTest
             ->with('id')
             ->willReturn(1);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
-        $repository = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository')
-            ->disableOriginalConstructor()
+        $customerGroup = $this->getMockBuilder(CustomerGroup::class)
+            ->setMethods(['getTaxCode'])
             ->getMock();
-
-        $repository
-            ->expects($this->once())
-            ->method('findOneByCustomer')
-            ->willReturn(null);
-
-        $repository
-            ->expects($this->once())
-            ->method('findOneByCustomerGroup')
-            ->willReturn(null);
-
+        $customer = $this->getMockBuilder(Customer::class)
+            ->setMethods(['getTaxCode', 'getGroup'])
+            ->getMock();
+        $customer->method('getGroup')->willReturn($customerGroup);
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityReference')
-            ->willReturn((new Customer())->setGroup(new CustomerGroup()));
-
-        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')->willReturn($repository);
+            ->willReturn($customer);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')

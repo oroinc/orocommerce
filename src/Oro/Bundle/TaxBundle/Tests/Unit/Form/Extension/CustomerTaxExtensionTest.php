@@ -24,60 +24,42 @@ class CustomerTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
     public function testOnPostSubmitNewCustomer()
     {
-        $this->prepareDoctrineHelper(true, true);
-
         $customer = $this->createTaxCodeTarget();
         $event = $this->createEvent($customer);
 
         $taxCode = $this->createTaxCode(1);
-
+        $customer->expects($this->once())->method('setTaxCode')->with($taxCode);
         $this->assertTaxCodeAdd($event, $taxCode);
-        $this->entityRepository->expects($this->once())
-            ->method($this->getRepositoryFindMethod());
-
         $this->getExtension()->onPostSubmit($event);
-
-        $this->assertEquals([$customer], $taxCode->getCustomers()->toArray());
     }
 
     public function testOnPostSubmitExistingCustomer()
     {
-        $this->prepareDoctrineHelper(true, true);
-
         $customer = $this->createTaxCodeTarget();
         $event = $this->createEvent($customer);
 
         $newTaxCode = $this->createTaxCode(1);
         $taxCodeWithCustomer = $this->createTaxCode(2);
-        $taxCodeWithCustomer->addCustomer($customer);
-
+        $customer->expects($this->once())->method('getTaxCode')->willReturn($taxCodeWithCustomer);
         $this->assertTaxCodeAdd($event, $newTaxCode);
-        $this->entityRepository->expects($this->once())
-            ->method($this->getRepositoryFindMethod())
-            ->will($this->returnValue($taxCodeWithCustomer));
-
+        $customer->expects($this->once())->method('setTaxCode')->with($newTaxCode);
         $this->getExtension()->onPostSubmit($event);
-
-        $this->assertEquals([$customer], $newTaxCode->getCustomers()->toArray());
-        $this->assertEquals([], $taxCodeWithCustomer->getCustomers()->toArray());
     }
 
     /**
      * @param int|null $id
      *
-     * @return Customer
+     * @return Customer|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createTaxCodeTarget($id = null)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $id]);
-    }
+        $mock = $this->getMockBuilder(Customer::class)
+        ->disableOriginalConstructor()
+        ->setMethods(['getTaxCode', 'setTaxCode', 'getId'])
+        ->getMock();
+        $mock->method('getId')->willReturn($id);
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getRepositoryFindMethod()
-    {
-        return 'findOneByCustomer';
+        return $mock;
     }
 
     /**
