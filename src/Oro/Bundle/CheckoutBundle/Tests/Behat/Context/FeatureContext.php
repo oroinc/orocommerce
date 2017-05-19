@@ -68,6 +68,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/
+     *
+     * @param string $step
+     * @param string $button
+     */
+    public function onCheckoutStepAndPressButton($step, $button)
+    {
+        $this->assertTitle($step);
+        $page = $this->getSession()->getPage();
+        $page->pressButton($button);
+        $this->waitForAjax();
+    }
+
+    /**
      * @When /^I see the "Thank You" page with "(?P<title>.+)" title$/
      *
      * @param string $title

@@ -18,7 +18,7 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         name: 'Company A'
         organization: '@organization'
         owner: '@admin'
-
+        payment_term_7c4f1e8e: '@paymentTerm'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:
@@ -53,6 +53,29 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
+
+Oro\Bundle\ShippingBundle\Model\Weight(local):
+    weight:
+        unit: 'kg'
+        value: 1
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue(local):
+    dimensionsValue:
+        length: 1
+        width: 1
+        height: 1
+
+Oro\Bundle\ShippingBundle\Model\Dimensions(local):
+    dimensions:
+        value: '@dimensionsValue'
+        unit: 'cm'
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    productShippingOptions:
+        product: '@product'
+        productUnit: '@item'
+        weight: '@weight'
+        dimensions: '@dimensions'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
