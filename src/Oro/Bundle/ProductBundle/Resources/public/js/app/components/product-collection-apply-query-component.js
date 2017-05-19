@@ -26,7 +26,6 @@ define(function(require) {
             selectors: {
                 reset: null,
                 apply: null,
-                gridWidgetContainer: null,
                 conditionBuilder: null,
                 included: null,
                 excluded: null
@@ -173,7 +172,6 @@ define(function(require) {
         onApplyQuery: function(e) {
             this.currentDefinitionState = this._getSegmentDefinition();
             e.preventDefault();
-            $(this.options.selectors.gridWidgetContainer).removeClass('hide');
             this._applyQuery(true);
         },
 

@@ -169,8 +169,14 @@ table.unit-table {
   }
 
   .collapse-view {
-    .init {
+    .filter {
       display: none;
+    }
+
+    &.expanded {
+      .filter {
+        display: block;
+      }
     }
   }
 

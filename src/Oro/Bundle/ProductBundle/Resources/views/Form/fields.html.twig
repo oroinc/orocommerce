@@ -240,10 +240,8 @@
 {% endblock %}
 
 {% block oro_product_collection_variant_widget %}
-    {% set gridWidgetContainerClass = 'product-collection-grid-widget-container-' ~ form.vars.name %}
     {% set gridWidgetAlias = 'product-collection-products-grid-' ~ form.vars.name %}
     {% set controlsBlockAlias = 'product-collection-grid-control-' ~ form.vars.name %}
-    {% set gridVisibilityState = form.vars.segmentDefinition is empty ? 'hide' : ''%}
 
     {% set gridName = oro_datagrid_build_fullname(form.vars.results_grid, form.vars.name) %}
     {% set resolvedGridName = gridName %}
@@ -270,7 +268,6 @@
     {% set productCollectionApplyQueryComponentOptions = {
         'selectors': {
             'conditionBuilder': '#' ~ form.productCollectionSegment.vars.id ~ '-condition-builder',
-            'gridWidgetContainer': '.' ~ gridWidgetContainerClass,
             'reset': '.filter-reset',
             'apply': '.filter-apply',
             'included': includedProductsElementId,
@@ -331,10 +328,10 @@
                                  data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                  data-page-component-options="{{ {
                                      widgetModule: 'oroui/js/widget/collapse-widget',
+                                     openClass: 'expanded',
                                      open: false
                                  }|json_encode() }}"
                             >
-                                {# --Will be replased after BB-9447 start--#}
                                 <div class="top-frame">
                                     <div class="control-group">
                                         <div class="pull-right">
@@ -349,8 +346,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div data-collapse-container>
-                                    {# --Will be replased after BB-9447 end--#}
+                                <div data-collapse-container class="filter">
                                     {{ form_row(form.productCollectionSegment) }}
                                         {# --Apply Query button start--#}
                                         <div class="clearfix">
@@ -362,14 +358,12 @@
                                         </div>
                                         {# --Apply Query button end-- #}
                                 </div>
-                                <div class="{{ gridWidgetContainerClass }} {{ gridVisibilityState }}">
-                                    {{ oro_widget_render({
-                                        'widgetType': 'block',
-                                        'url': path('oro_datagrid_widget', widgetRouteParameters),
-                                        'title': '',
-                                        'alias': gridWidgetAlias
-                                    }) }}
-                                </div>
+                                {{ oro_widget_render({
+                                    'widgetType': 'block',
+                                    'url': path('oro_datagrid_widget', widgetRouteParameters),
+                                    'title': '',
+                                    'alias': gridWidgetAlias
+                                }) }}
                             </div>
                         </div>
                         <div class="tab-pane" id="{{ 'excluded_products' ~ form.vars.name}}">
@@ -386,19 +380,17 @@
                             </div>
                             {{ form_widget(form.excludedProducts) }}
                             {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, form.vars.name) %}
-                            <div class="{{ gridWidgetContainerClass }}">
-                                {{ oro_widget_render({
-                                    'widgetType': 'block',
-                                    'url': path('oro_datagrid_widget', {
-                                        'gridName': excludedProductsGridName,
-                                        'params': {'selectedProducts': form.excludedProducts.vars.value|split(',')},
-                                        'renderParams': {'routerEnabled': false},
-                                        'renderParamsTypes': {'routerEnabled': 'bool'}
-                                    }),
-                                    'title': '',
-                                    'alias': 'product-collection-excluded-products-grid-' ~ form.vars.name
-                                }) }}
-                            </div>
+                            {{ oro_widget_render({
+                                'widgetType': 'block',
+                                'url': path('oro_datagrid_widget', {
+                                    'gridName': excludedProductsGridName,
+                                    'params': {'selectedProducts': form.excludedProducts.vars.value|split(',')},
+                                    'renderParams': {'routerEnabled': false},
+                                    'renderParamsTypes': {'routerEnabled': 'bool'}
+                                }),
+                                'title': '',
+                                'alias': 'product-collection-excluded-products-grid-' ~ form.vars.name
+                            }) }}
                         </div>
                         <div class="tab-pane" id="{{ 'included_products' ~ form.vars.name}}">
                             <div class="top-frame">
@@ -414,19 +406,17 @@
                             </div>
                             {{ form_widget(form.includedProducts) }}
                             {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, form.vars.name) %}
-                            <div class="{{ gridWidgetContainerClass }}">
-                                {{ oro_widget_render({
-                                    'widgetType': 'block',
-                                    'url': path('oro_datagrid_widget', {
-                                        'gridName': includedProductsGridName,
-                                        'params': {'selectedProducts': form.includedProducts.vars.value|split(',')},
-                                        'renderParams': {'routerEnabled': false},
-                                        'renderParamsTypes': {'routerEnabled': 'bool'}
-                                    }),
-                                    'title': '',
-                                    'alias': 'product-collection-included-products-grid-' ~ form.vars.name
-                                }) }}
-                            </div>
+                            {{ oro_widget_render({
+                                'widgetType': 'block',
+                                'url': path('oro_datagrid_widget', {
+                                    'gridName': includedProductsGridName,
+                                    'params': {'selectedProducts': form.includedProducts.vars.value|split(',')},
+                                    'renderParams': {'routerEnabled': false},
+                                    'renderParamsTypes': {'routerEnabled': 'bool'}
+                                }),
+                                'title': '',
+                                'alias': 'product-collection-included-products-grid-' ~ form.vars.name
+                            }) }}
                         </div>
                     </div>
                 </div>
