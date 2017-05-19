@@ -4,12 +4,12 @@ namespace Oro\Bundle\DPDBundle\Tests\Unit\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
-use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
 use Oro\Bundle\DPDBundle\Method\DPDHandlerInterface;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -108,7 +108,7 @@ class DPDShippingMethodTest extends \PHPUnit_Framework_TestCase
     {
         $type = $this->dpdShippingMethod->getOptionsConfigurationFormType();
 
-        static::assertEquals(DPDShippingMethodOptionsType::class, $type);
+        static::assertEquals(HiddenType::class, $type);
     }
 
     public function testGetSortOrder()

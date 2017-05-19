@@ -58,7 +58,6 @@ class OrderShippingDPDHandler
             return null;
         }
 
-        $result = [];
         $shippingMethod = $this->shippingMethodProvider->getShippingMethod($order->getShippingMethod());
         if (!$shippingMethod || !($shippingMethod instanceof DPDShippingMethod)) {
             return null;
@@ -70,7 +69,20 @@ class OrderShippingDPDHandler
         }
 
         $response = $dpdHandler->shipOrder($order, $shipDate);
-        if ($response && $response->isSuccessful()) {
+
+        $result = [
+            'successful' => false,
+            'errors' => [],
+        ];
+
+        if (!$response) {
+            return $result;
+        }
+
+        $result['successful'] = $response->isSuccessful();
+        $result['errors'] = $response->getErrorMessagesLong();
+
+        if ($response->isSuccessful()) {
             $tmpFile = $this->fileManager->writeToTemporaryFile($response->getLabelPDF());
             $labelFile = new File();
             $labelFile->setFile($tmpFile);
@@ -87,8 +99,6 @@ class OrderShippingDPDHandler
 
             $result['transaction'] = $dpdTransaction;
         }
-        $result['successful'] = $response ? $response->isSuccessful() : false;
-        $result['errors'] = $response ? $response->getErrorMessagesLong() : [];
 
         return $result;
     }
