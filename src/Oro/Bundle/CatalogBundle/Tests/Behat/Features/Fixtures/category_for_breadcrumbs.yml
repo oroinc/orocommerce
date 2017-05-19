@@ -12,6 +12,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         attributeFamily: '@productAttributeFamily'
+        owner: '@business_unit'
+        organization: '@organization'
+        type: 'simple'
 
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     productAttributeFamily:

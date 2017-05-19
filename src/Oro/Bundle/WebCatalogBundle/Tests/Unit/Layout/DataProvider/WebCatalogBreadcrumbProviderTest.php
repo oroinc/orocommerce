@@ -10,13 +10,16 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
+use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\WebCatalogBreadcrumbProvider;
@@ -56,9 +59,9 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
     protected $localizationHelper;
 
     /**
-     * @var CategoryProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CategoryBreadcrumbProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $categoryProvider;
+    protected $categoryBreadcrumbProvider;
 
     /**
      * @var WebCatalogBreadcrumbProvider
@@ -74,7 +77,7 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->categoryProvider = $this->getMockBuilder(CategoryProvider::class)
+        $this->categoryBreadcrumbProvider = $this->getMockBuilder(CategoryBreadcrumbProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -82,7 +85,7 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
             $this->registry,
             $this->localizationHelper,
             $this->requestStack,
-            $this->categoryProvider
+            $this->categoryBreadcrumbProvider
         );
 
         $this->webCatalog = $this->getEntity(WebCatalog::class, ['id' => self::WEBCATALOG_ID]);
@@ -106,9 +109,9 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
 
         $request             = Request::create('/', Request::METHOD_GET);
         $request->attributes = new ParameterBag([
-                                                    '_web_content_scope' => $scope,
-                                                    '_content_variant'   => $contentVariant
-                                                ]);
+            '_web_content_scope' => $scope,
+            '_content_variant'   => $contentVariant
+        ]);
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -195,7 +198,55 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testGetItemsForProduct()
+    public function testGetItemsWithoutContentVariant()
+    {
+        $categoryId     = 2;
+        $request        = Request::create('/', Request::METHOD_GET);
+        $request->query = new ParameterBag([
+            'categoryId' => $categoryId
+        ]);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $expectedBreadcrumbs = [
+            [
+                'label' => 'Main category',
+                'url' => '/'
+            ],
+            [
+                'label' => 'Sub category',
+                'url' => '/sub-category'
+            ]
+        ];
+        $this->categoryBreadcrumbProvider
+            ->expects($this->once())
+            ->method('getItems')
+            ->willReturn($expectedBreadcrumbs);
+        $result = $this->breadcrumbDataProvider->getItems();
+        $this->assertEquals($expectedBreadcrumbs, $result);
+    }
+
+    public function testGetItemsWithoutContentVariantAndCategory()
+    {
+        $request        = Request::create('/', Request::METHOD_GET);
+        $request->query = new ParameterBag();
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $result = $this->breadcrumbDataProvider->getItems();
+        $this->assertEquals([], $result);
+    }
+
+    public function testGetItemsForProductWithoutRequest()
+    {
+        $result = $this->breadcrumbDataProvider->getItemsForProduct(1, '220 Lumen Rechargeable Headlamp');
+        $this->assertEquals([], $result);
+    }
+
+    public function testGetItemsForProductWithContentVariant()
     {
         $nodeTitle      = 'node1';
         $nodeUrl        = '/';
@@ -209,7 +260,7 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
         $request->attributes = new ParameterBag([
             '_content_variant' => $contentVariant
         ]);
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects($this->exactly(2))
             ->method('getCurrentRequest')
             ->willReturn($request);
 
@@ -245,7 +296,88 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturnOnConsecutiveCalls($nodeTitle, $nodeUrl);
 
         $currentPageTitle    = '220 Lumen Rechargeable Headlamp';
-        $result              = $this->breadcrumbDataProvider->getItemsForProduct($currentPageTitle);
+        $categoryId          = 1;
+        $result              = $this->breadcrumbDataProvider->getItemsForProduct($categoryId, $currentPageTitle);
+        $expectedBreadcrumbs = [
+            [
+                'label' => $nodeTitle,
+                'url' => $nodeUrl
+            ]
+        ];
+        $this->assertEquals($expectedBreadcrumbs, $result);
+    }
+
+    public function testGetItemsForProductWithoutContentVariant()
+    {
+        $nodeTitle      = 'node1';
+        $nodeUrl        = '/';
+        $currentNode    = $this->getContentNode(1, 'root', $nodeTitle, $nodeUrl);
+        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($currentNode);
+
+        $slug                = new Slug();
+        $request             = Request::create('/', Request::METHOD_GET);
+        $request->attributes = new ParameterBag([
+            '_context_url_attributes' => [
+                [
+                    '_used_slug' => $slug
+                ]
+            ]
+        ]);
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $variantRepository = $this->getMockBuilder(ContentVariantRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $nodeRepository = $this->getMockBuilder(ContentNodeRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $path = [];
+        $this->cascadeToArray($currentNode, $path);
+        $variantRepository->expects($this->once())
+            ->method('findVariantBySlug')
+            ->with($slug)
+            ->willReturn($contentVariant);
+        $nodeRepository->expects($this->once())
+            ->method('getPath')
+            ->with($currentNode)
+            ->willReturn($path);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->exactly(2))
+            ->method('getRepository')
+            ->withConsecutive(
+                [ContentVariant::class],
+                [ContentNode::class]
+            )
+            ->willReturnOnConsecutiveCalls($variantRepository, $nodeRepository);
+
+        $this->registry
+            ->expects($this->any())
+            ->method('getManagerForClass')
+            ->withConsecutive(
+                [ContentVariant::class],
+                [ContentNode::class]
+            )
+            ->willReturnOnConsecutiveCalls($em, $em);
+
+        $this->localizationHelper
+            ->expects($this->exactly(2))
+            ->method('getLocalizedValue')
+            ->withConsecutive(
+                [$currentNode->getTitles()],
+                [$currentNode->getLocalizedUrls()]
+            )
+            ->willReturnOnConsecutiveCalls($nodeTitle, $nodeUrl);
+
+        $currentPageTitle    = '220 Lumen Rechargeable Headlamp';
+        $categoryId          = 1;
+        $result              = $this->breadcrumbDataProvider->getItemsForProduct($categoryId, $currentPageTitle);
         $expectedBreadcrumbs = [
             [
                 'label' => $nodeTitle,
@@ -254,8 +386,47 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit_Framework_TestCase
             [
                 'label' => $currentPageTitle,
                 'url' => null
+
             ]
         ];
+
+        $this->assertEquals($expectedBreadcrumbs, $result);
+    }
+
+    public function testGetItemsForProductWithoutContextAttributes()
+    {
+        $categoryId       = 2;
+        $currentPageTitle = '220 Lumen Rechargeable Headlamp';
+        $request          = Request::create('/', Request::METHOD_GET);
+        $request->query   = new ParameterBag([
+           'categoryId' => $categoryId
+        ]);
+
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $expectedBreadcrumbs = [
+            [
+                'label' => 'Main category',
+                'url' => '/'
+            ],
+            [
+                'label' => 'Sub category',
+                'url' => '/sub-category'
+            ],
+            [
+                'label' => $currentPageTitle,
+                'url' => null
+            ]
+        ];
+        $this->categoryBreadcrumbProvider
+            ->expects($this->once())
+            ->method('getItemsForProduct')
+            ->with($categoryId, $currentPageTitle)
+            ->willReturn($expectedBreadcrumbs);
+
+        $result = $this->breadcrumbDataProvider->getItemsForProduct($categoryId, $currentPageTitle);
         $this->assertEquals($expectedBreadcrumbs, $result);
     }
 

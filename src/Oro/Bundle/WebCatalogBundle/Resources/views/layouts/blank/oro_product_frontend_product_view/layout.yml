@@ -1,7 +1,10 @@
 layout:
     actions:
         - '@setOption':
-            id: breadcrumbs
-            optionName: breadcrumbs
-            optionValue: '=data["web_catalog_breadcrumbs"].getItemsForProduct(data["locale"].getLocalizedValue(data["product"].getNames()))'
-    conditions: 'context["web_catalog_id"] != null'
+            id: title
+            optionName: value
+            optionValue: '=data["web_catalog_title"].getTitle(defaultValue)'
+        - '@setOption':
+            id: product_view_attribute_group_general_attribute_localized_fallback_names
+            optionName: translated_value
+            optionValue: '=data["web_catalog_title"].getTitle(data["locale"].getLocalizedValue(value))'

@@ -25,3 +25,18 @@ oro_behat_extension:
 
         Show Variants Dropdown:
             selector: ".content-variant-add-btn-container .dropdown-toggle"
+
+        Content Variant:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[name="oro_web_catalog_content_node"] div[data-content="0"]'
+            options:
+                mapping:
+                    Product:
+                        type: 'css'
+                        locator: 'input[name="oro_web_catalog_content_node[contentVariants][0][productPageProduct]"]'
+                        element: Select2Entity
+
+        Headlamps category:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "embedded-list")]/a[contains(., "Headlamps")]'

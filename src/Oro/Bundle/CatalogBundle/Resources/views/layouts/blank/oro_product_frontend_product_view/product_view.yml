@@ -1,7 +1,8 @@
 layout:
     actions:
-        - '@setOption':
+        - '@add':
             id: breadcrumbs
-            optionName: breadcrumbs
-            optionValue: '=data["category_breadcrumbs"].getItemsForProduct(context["category_id"], data["locale"].getLocalizedValue(data["product"].getNames()))'
-    conditions: 'context["web_catalog_id"] == null'
+            parentId: page_main_header
+            blockType: breadcrumbs
+            options:
+                breadcrumbs: '=data["category_breadcrumbs"].getItemsForProduct(context["category_id"], data["locale"].getLocalizedValue(data["product"].getNames()))'
