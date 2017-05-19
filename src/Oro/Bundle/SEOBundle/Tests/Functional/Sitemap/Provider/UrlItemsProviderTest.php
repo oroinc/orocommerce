@@ -66,7 +66,7 @@ class UrlItemsProviderTest extends WebTestCase
         $this->configManager->flush();
 
         $urlItems = iterator_to_array($this->provider->getUrlItems($website, $version));
-        $this->assertCount(5, $urlItems);
+        $this->assertCount(4, $urlItems);
 
         $expectedEntity = $this->getReference(LoadPageData::PAGE_1);
         $expectedUrl = $this->canonicalUrlGenerator->getSystemUrl($expectedEntity);
