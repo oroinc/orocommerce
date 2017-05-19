@@ -17,5 +17,4 @@ interface PriceCombiningStrategyInterface
         Product $product = null,
         $startTimestamp = null
     );
-
 }

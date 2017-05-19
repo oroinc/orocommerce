@@ -12,6 +12,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const ROOT_NODE = 'oro_pricing';
     const DEFAULT_PRICE_LISTS = 'default_price_lists';
     const ROUNDING_TYPE = 'rounding_type';
     const PRECISION = 'precision';
