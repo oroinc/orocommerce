@@ -57,6 +57,12 @@ oro:
                 filtered_products: All Added
                 included_products: Manually Added
                 excluded_products: Excluded
+                add_products: Add Products
+                add: Add
+                selected: Selected
+                hint:
+                    add_to_included: Manually add products to All Added values
+                    add_to_excluded: Manually remove products from All Added values
 
         type:
             simple: Simple

@@ -265,14 +265,16 @@
         'widgetRouteParameters': widgetRouteParameters
     } %}
 
+    {% set includedProductsElementId = '#' ~ form.includedProducts.vars.id %}
+    {% set excludedProductsElementId = '#' ~ form.excludedProducts.vars.id %}
     {% set productCollectionApplyQueryComponentOptions = {
         'selectors': {
             'conditionBuilder': '#' ~ form.productCollectionSegment.vars.id ~ '-condition-builder',
             'gridWidgetContainer': '.' ~ gridWidgetContainerClass,
             'reset': '.filter-reset',
             'apply': '.filter-apply',
-            'included': '#' ~ form.includedProducts.vars.id,
-            'excluded': '#' ~ form.excludedProducts.vars.id
+            'included': includedProductsElementId,
+            'excluded': excludedProductsElementId
         },
         'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
         'controlsBlockAlias': controlsBlockAlias,
@@ -293,6 +295,7 @@
                  data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
                  data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
             >
+                {% import 'OroProductBundle::product_collection_macros.html.twig' as ProductCollection %}
                 <div class="oro-tabs">
                     <ul class="nav nav-tabs">
                         <li class="active">
@@ -322,6 +325,8 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="{{ 'filtered_products' ~ form.vars.name}}">
+                            {% set addToIncludedEvent = 'product-collection-add-to-included:' ~ form.vars.id %}
+                            {% set addToExcludedEvent = 'product-collection-add-to-excluded:' ~ form.vars.id %}
                             <div class="collapse-view"
                                  data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                  data-page-component-options="{{ {
@@ -336,9 +341,11 @@
                                             <div data-collapse-trigger class="btn-group icons-holder">
                                                 <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
                                             </div>
-                                            <div class="btn-group">
-                                                <a class="btn">Add</a>
-                                            </div>
+                                            {{ ProductCollection.popupButton(
+                                                addToIncludedEvent,
+                                                includedProductsElementId,
+                                                'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                            ) }}
                                         </div>
                                     </div>
                                 </div>
@@ -366,6 +373,17 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="{{ 'excluded_products' ~ form.vars.name}}">
+                            <div class="top-frame">
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            addToExcludedEvent,
+                                            excludedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_excluded'|trans
+                                        ) }}
+                                    </div>
+                                </div>
+                            </div>
                             {{ form_widget(form.excludedProducts) }}
                             {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, form.vars.name) %}
                             <div class="{{ gridWidgetContainerClass }}">
@@ -383,6 +401,17 @@
                             </div>
                         </div>
                         <div class="tab-pane" id="{{ 'included_products' ~ form.vars.name}}">
+                            <div class="top-frame">
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            addToIncludedEvent,
+                                            includedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                        ) }}
+                                    </div>
+                                </div>
+                            </div>
                             {{ form_widget(form.includedProducts) }}
                             {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, form.vars.name) %}
                             <div class="{{ gridWidgetContainerClass }}">
