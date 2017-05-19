@@ -1,5 +1,8 @@
 oro_entity:
     entity_aliases:
         Oro\Bundle\DPDBundle\Entity\ShippingService:
-            alias:        dpdshippingservice
-            plural_alias: dpdshippingservices
+            alias:        dpd_shipping_service
+            plural_alias: dpd_shipping_services
+        Oro\Bundle\DPDBundle\Entity\Rate:
+            alias:        dpd_rate
+            plural_alias: dpd_rates
