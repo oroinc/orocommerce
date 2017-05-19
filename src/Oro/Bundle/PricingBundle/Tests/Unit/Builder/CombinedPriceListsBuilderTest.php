@@ -132,8 +132,9 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
         $this->configManager->expects($this->exactly($callExpects * 2 + 1))
             ->method('get')
             ->willReturnMap([
-                [$fullKey, $configCPLId],
-                [$key, $actualCPLId],
+                [$fullKey, false, false, null, $configCPLId],
+                [$key, false, false, null, $actualCPLId],
+                ['oro_pricing.price_strategy', false, false, null, MergePricesCombiningStrategy::NAME],
             ]);
 
         if ($actualCPLId !== $configCPLId) {
@@ -142,7 +143,7 @@ class CombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
             $this->configManager->expects($this->any())
                 ->method('flush');
         } else {
-            $this->configManager->expects($this->exactly(2))
+            $this->configManager->expects($this->never())
                 ->method('set');
         }
 

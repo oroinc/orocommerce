@@ -12,6 +12,7 @@ class StrategyRegisterTest extends \PHPUnit_Framework_TestCase
     public function test()
     {
         $configManager = self::createMock(ConfigManager::class);
+        $configManager->method('get')->willReturn(MergePricesCombiningStrategy::NAME);
         $register = new StrategyRegister($configManager);
         $strategy = self::createMock(PriceCombiningStrategyInterface::class);
         $register->add(MergePricesCombiningStrategy::NAME, $strategy);
@@ -26,6 +27,7 @@ class StrategyRegisterTest extends \PHPUnit_Framework_TestCase
     public function testInvalidArguments()
     {
         $configManager = self::createMock(ConfigManager::class);
+        $configManager->method('get')->willReturn(MergePricesCombiningStrategy::NAME);
         $register = new StrategyRegister($configManager);
         $register->getCurrentStrategy();
     }
