@@ -1,7 +1,7 @@
 @ticket-BB-8130
 @automatically-ticket-tagged
 @fixture-Products_validate_unique_variant_field_values.yml
-Feature: Validate unique variant field values when changing simple products or extended fields
+Feature: Validate unique variant field values when changing simple products
 
   #Case 1:
   #Validate unique variant field values in configurable product in case of change product variant
@@ -30,14 +30,6 @@ Feature: Validate unique variant field values when changing simple products or e
   #    Product family: T_shirt
   #     Attribute: Color
   #     Attribute: Size
-  #  Extended field in Product Entity:
-  #   Field Name: Brand
-  #   Storage Type: Table column
-  #   Type: Select
-  #   Options:
-  #       Nike
-  #       Lacoste
-
 
   #  Product1:
   #    Type: Simple
@@ -58,7 +50,6 @@ Feature: Validate unique variant field values when changing simple products or e
   #    inventory status - in stock
   #    unit - item
   #    price list - default
-  #    Additional - Brand - Lacoste
 
   #   configurable product:
   #     Variant fields: Size, Color
@@ -67,6 +58,14 @@ Feature: Validate unique variant field values when changing simple products or e
   #    product status - enabled
   #    variant: Green shirt L
   #    variant: Red shirt M
+  #
+  #  Extended field in Product Entity:
+  #   Field Name: CustomExtend
+  #   Storage Type: Table column
+  #   Type: Select
+  #   Options:
+  #       Option1
+  #       Option2
 
   Scenario: Prepare product attributes
     Given I login as administrator
@@ -101,20 +100,20 @@ Feature: Validate unique variant field values when changing simple products or e
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
-    # Create Brand extended field
+    # Create Custom extended field
     And I go to System / Entities / Entity Management
     And filter Name as is equal to "Product"
     And I click View Product in grid
     And I click "Create field"
     And I fill form with:
-      | Field Name   | Brand         |
+      | Field Name   | CustomExtend  |
       | Storage Type | Table column  |
       | Type         | Select        |
     And I click "Continue"
     And set Options with:
       | Label   |
-      | Nike    |
-      | Lacoste |
+      | Option1 |
+      | Option2 |
     And I save form
     Then I should see "Field saved" flash message
 
@@ -137,7 +136,6 @@ Feature: Validate unique variant field values when changing simple products or e
     And I fill form with:
       | Color | Green |
       | Size  | L     |
-      | Brand | Nike  |
     And I save form
     Then I should see "Product has been saved" flash message
 
@@ -146,21 +144,26 @@ Feature: Validate unique variant field values when changing simple products or e
     And I fill form with:
       | Color | Red     |
       | Size  | M       |
-      | Brand | Lacoste |
     And I save form
     Then I should see "Product has been saved" flash message
 
+  Scenario: Save configurable product with simple products selected
     And I go to Products / Products
     And I click Edit shirt_101 in grid
+    And I should see "No records found"
     And I fill "ProductForm" with:
-      | Configurable Attributes | [Color, Size, Brand] |
-    And I save form
-    Then I should see "Product has been saved" flash message
-    And I go to Products / Products
-    And I click Edit shirt_101 in grid
+      | Configurable Attributes | [Color, Size] |
+    And I should not see "No records found"
     And I check gtsh_l and rtsh_m in grid
     And I save form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Check only Attributes displayed on grid but not extend field
+    And I go to Products / Products
+    And I click Edit shirt_101 in grid
+    And I shouldn't see "CustomExtend" column in grid
+    And I should see "Color" column in grid
+    And I should see "Size" column in grid
 
   Scenario: Check if attributes can't be deleted
     And I go to Products / Product Attributes
@@ -186,16 +189,6 @@ Feature: Validate unique variant field values when changing simple products or e
     And I unselect "Color" option from "oro_attribute_family[attributeGroups][t_shirt_group][attributeRelations][]"
     And I save form
     Then I should see "Attributes Color used as configurable attributes in products: shirt_101" error message
-
-  Scenario: Check if Enum value can't be deleted from Extended field
-    And I go to System / Entities / Entity Management
-    And filter Name as is equal to "Product"
-    And I click View Product in grid
-    And I click Remove Brand in grid
-    Then I should see "Are you sure you want to delete this field?"
-    And I click "Yes"
-    Then I should see "Cannot remove field because it's used as a variant field in the following configurable products: shirt_101" error message
-    Then I should see Brand in grid
 
   Scenario: Check if Enum value can be deleted if it is not unique
     And I go to Products / Product Attributes
@@ -228,6 +221,12 @@ Feature: Validate unique variant field values when changing simple products or e
     And I save form
     Then I should see "Product has been saved" flash message
     And I go to Products / Products
+    And I click Edit rtsh_m in grid
+    And I fill form with:
+      | Color | Red |
+    And I save form
+    Then I should see "Product has been saved" flash message
+    And I go to Products / Products
     And click Edit shirt_101 in grid
     And I check gtsh_l and rtsh_m in grid
     And I save form
@@ -245,20 +244,6 @@ Feature: Validate unique variant field values when changing simple products or e
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"
     Then I should see "Attribute successfully deleted" flash message
-
-  Scenario: Check if Extended field can be deleted if it does not contain unique Enum values
-    And I go to Products / Products
-    And click Edit shirt_101 in grid
-    And I uncheck "Brand"
-    And I save form
-    Then I should see "Product has been saved" flash message
-    And I go to System / Entities / Entity Management
-    And filter Name as is equal to "Product"
-    And I click View Product in grid
-    And I click Remove Brand in grid
-    Then I should see "Are you sure you want to delete this field?"
-    And I click "Yes"
-    Then I should see "Field successfully deleted" flash message
 
   Scenario: Check if Enum value can be deleted if Product with unique Enum values was deleted
     And I go to Products / Products
