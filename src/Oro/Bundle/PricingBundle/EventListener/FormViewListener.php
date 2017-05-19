@@ -9,13 +9,13 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
 class FormViewListener
 {
+    const PRICE_ATTRIBUTES_BLOCK_NAME = 'price_attributes';
     const PRICING_BLOCK_NAME = 'prices';
 
     /**
@@ -34,18 +34,26 @@ class FormViewListener
     protected $requestStack;
 
     /**
+     * @var PriceAttributePricesProvider
+     */
+    protected $provider;
+
+    /**
      * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
+     * @param PriceAttributePricesProvider $provider
      */
     public function __construct(
         RequestStack $requestStack,
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        PriceAttributePricesProvider $provider
     ) {
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+        $this->provider = $provider;
     }
 
     /**
@@ -59,19 +67,14 @@ class FormViewListener
         }
 
         $productId = (int)$request->get('id');
-        /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroProductBundle:Product', $productId);
+        /** @var Product|null $product */
+        $product = $this->doctrineHelper->getEntity(Product::class, $productId);
+        if (!$product) {
+            return;
+        }
 
-        $template = $event->getEnvironment()->render(
-            'OroPricingBundle:Product:prices_view.html.twig',
-            [
-                'entity' => $product,
-                'productUnits' => $product->getAvailableUnitCodes(),
-                'productAttributes' => $this->getProductAttributes(),
-                'priceAttributePrices' => $this->getPriceAttributePrices($product)
-            ]
-        );
-        $this->addProductPricesBlock($event->getScrollData(), $template, 500);
+        $this->addPriceAttributesBlock($event, $product);
+        $this->addProductPricesBlock($event, $product);
     }
 
     /**
@@ -83,37 +86,19 @@ class FormViewListener
             'OroPricingBundle:Product:prices_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $this->addProductPricesBlock($event->getScrollData(), $template, 10);
+        $scrollData = $event->getScrollData();
+        $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
+        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, 10);
+        $subBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
+        $scrollData->addSubBlockData(self::PRICING_BLOCK_NAME, $subBlockId, $template, 'productPriceAttributesPrices');
     }
 
     /**
      * @return array|PriceAttributePriceList[]
      */
-    protected function getProductAttributes()
+    protected function getProductAttributesPriceLists()
     {
         return $this->getPriceAttributePriceListRepository()->findAll();
-    }
-
-    /**
-     * @param Product $product
-     * @return array
-     */
-    protected function getPriceAttributePrices(Product $product)
-    {
-        /** @var PriceAttributeProductPrice[] $priceAttributePrices */
-        $priceAttributePrices = $this->getPriceAttributePriceListPricesRepository()->findBy(['product' => $product]);
-
-        $result = [];
-        foreach ($priceAttributePrices as $priceAttributePrice) {
-            $priceAttributeName = $priceAttributePrice->getPriceList()->getName();
-            $currency = $priceAttributePrice->getPrice()->getCurrency();
-            $unit = $priceAttributePrice->getProductUnitCode();
-            $amount = $priceAttributePrice->getPrice()->getValue();
-
-            $result[$priceAttributeName][$unit][$currency] = $amount;
-        }
-
-        return $result;
     }
 
     /**
@@ -125,22 +110,56 @@ class FormViewListener
     }
 
     /**
-     * @return EntityRepository
+     * @param BeforeListRenderEvent $event
+     * @param Product $product
      */
-    protected function getPriceAttributePriceListPricesRepository()
+    protected function addPriceAttributesBlock(BeforeListRenderEvent $event, Product $product)
     {
-        return $this->doctrineHelper->getEntityRepository('OroPricingBundle:PriceAttributeProductPrice');
+        $scrollData = $event->getScrollData();
+        $blockLabel = $this->translator->trans('oro.pricing.priceattributepricelist.entity_plural_label');
+        $scrollData->addNamedBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME, $blockLabel, 500);
+
+        foreach ($this->getProductAttributesPriceLists() as $priceList) {
+            $subBlockId = $scrollData->addSubBlock(self::PRICE_ATTRIBUTES_BLOCK_NAME);
+            $template = $event->getEnvironment()->render(
+                'OroPricingBundle:Product:price_attribute_prices.html.twig',
+                [
+                    'product' => $product,
+                    'priceList' => $priceList,
+                    'priceAttributePrices' => $this->provider->getPrices($priceList, $product),
+                ]
+            );
+            $scrollData->addSubBlockData(
+                self::PRICE_ATTRIBUTES_BLOCK_NAME,
+                $subBlockId,
+                $template,
+                $priceList->getName()
+            );
+        }
     }
 
     /**
-     * @param ScrollData $scrollData
-     * @param string $html
+     * @param BeforeListRenderEvent $event
+     * @param Product $product
      */
-    protected function addProductPricesBlock(ScrollData $scrollData, $html, $priority)
+    protected function addProductPricesBlock(BeforeListRenderEvent $event, Product $product)
     {
-        $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
-        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, $priority);
-        $subBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
-        $scrollData->addSubBlockData(self::PRICING_BLOCK_NAME, $subBlockId, $html, 'productPriceAttributesPrices');
+        $scrollData = $event->getScrollData();
+        $blockLabel = $this->translator->trans('oro.pricing.pricelist.entity_plural_label');
+        $scrollData->addNamedBlock(self::PRICING_BLOCK_NAME, $blockLabel, 550);
+        $priceListSubBlockId = $scrollData->addSubBlock(self::PRICING_BLOCK_NAME);
+
+        $template = $event->getEnvironment()->render(
+            'OroPricingBundle:Product:prices_view.html.twig',
+            [
+                'entity' => $product,
+            ]
+        );
+        $scrollData->addSubBlockData(
+            self::PRICING_BLOCK_NAME,
+            $priceListSubBlockId,
+            $template,
+            'productPriceAttributesPrices'
+        );
     }
 }

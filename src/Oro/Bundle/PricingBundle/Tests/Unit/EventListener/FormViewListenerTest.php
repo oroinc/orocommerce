@@ -7,19 +7,27 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\PricingBundle\EventListener\FormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
+    /**
+     * @var PriceAttributePricesProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $provider;
+
+    protected function setUp()
+    {
+        $this->provider = $this->createMock(PriceAttributePricesProvider::class);
+        return parent::setUp();
+    }
+
     protected function tearDown()
     {
         unset($this->doctrineHelper, $this->translator);
@@ -53,53 +61,46 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener = $this->getListener($requestStack);
 
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroProductBundle:Product', $productId)
+            ->method('getEntity')
+            ->with(Product::class, $productId)
             ->willReturn($product);
 
+        $priceList = new PriceAttributePriceList();
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $priceAttributePriceListRepository */
-        $priceAttributePriceListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceAttributePriceListRepository = $this->createMock('Doctrine\ORM\EntityRepository');
 
         $priceAttributePriceListRepository->expects($this->once())
-            ->method('findAll');
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $priceAttributePriceListRepository */
-        $priceAttributeProductPriceRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $priceAttributePrices = [
-            (new PriceAttributeProductPrice())
-                ->setPriceList((new PriceList())->setName('Test'))
-                ->setPrice((new Price())->setCurrency('USD')->setValue('100'))
-                ->setUnit((new ProductUnit())->setCode('item'))
-        ];
-
-        $priceAttributeProductPriceRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['product' => $product])
-            ->willReturn($priceAttributePrices);
+            ->method('findAll')->willReturn([$priceList]);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturnMap([
-                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository],
-                ['OroPricingBundle:PriceAttributeProductPrice', $priceAttributeProductPriceRepository]
-            ]);
+                ['OroPricingBundle:PriceAttributePriceList', $priceAttributePriceListRepository]]);
+
+        $this->provider->expects($this->once())->method('getPrices')->with($priceList, $product)
+            ->willReturn(['Test' => ['item' => ['USD' => 100]]]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->createMock('\Twig_Environment');
-        $environment->expects($this->once())
+        $environment->expects($this->at(0))
+            ->method('render')
+            ->with(
+                'OroPricingBundle:Product:price_attribute_prices.html.twig',
+                [
+                    'product' => $product,
+                    'priceList' => $priceList,
+                    'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]]
+                ]
+            )
+            ->willReturn($templateHtml);
+
+        $environment->expects($this->at(1))
             ->method('render')
             ->with(
                 'OroPricingBundle:Product:prices_view.html.twig',
                 [
                     'entity' => $product,
-                    'productUnits' => [],
-                    'productAttributes' => null,
-                    'priceAttributePrices' => ['Test' => ['item' => ['USD' => 100]]]
                 ]
             )
             ->willReturn($templateHtml);
@@ -108,7 +109,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $this->assertScrollDataPriceBlock($scrollData, $templateHtml);
+        $expectedTitle = 'oro.pricing.pricelist.entity_plural_label.trans';
+        $this->assertScrollDataPriceBlock($scrollData, $templateHtml, $expectedTitle);
     }
 
     public function testOnProductEdit()
@@ -132,17 +134,18 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onProductEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $this->assertScrollDataPriceBlock($scrollData, $templateHtml);
+        $expectedTitle = 'oro.pricing.productprice.entity_plural_label.trans';
+        $this->assertScrollDataPriceBlock($scrollData, $templateHtml, $expectedTitle);
     }
 
     /**
      * @param array $scrollData
      * @param string $html
      */
-    protected function assertScrollDataPriceBlock(array $scrollData, $html)
+    protected function assertScrollDataPriceBlock(array $scrollData, $html, $expectedTitle)
     {
         $this->assertEquals(
-            'oro.pricing.productprice.entity_plural_label.trans',
+            $expectedTitle,
             $scrollData[ScrollData::DATA_BLOCKS]['prices'][ScrollData::TITLE]
         );
         $this->assertEquals(
@@ -197,7 +200,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
         return new FormViewListener(
             $requestStack,
             $this->translator,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->provider
         );
     }
 
