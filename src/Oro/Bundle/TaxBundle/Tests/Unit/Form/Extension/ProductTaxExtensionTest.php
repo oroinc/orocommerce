@@ -38,23 +38,6 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         $this->assertEquals(ProductType::NAME, $this->getExtension()->getExtendedType());
     }
 
-    /**
-     * @param bool $expectsManager
-     * @param bool $expectsRepository
-     */
-    protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false)
-    {
-        $this->entityRepository = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper->expects($expectsRepository ? $this->once() : $this->never())
-            ->method('getEntityRepository')
-            ->with('OroTaxBundle:ProductTaxCode')
-            ->willReturn($this->entityRepository);
-    }
-
     public function testBuildForm()
     {
         $productTaxExtension = $this->getExtension();
@@ -87,17 +70,10 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 
     public function testOnPostSetDataExistingProduct()
     {
-        $this->prepareDoctrineHelper(false, true);
-
+        $taxCode = $this->createTaxCode();
         $product = $this->createTaxCodeTarget(1);
         $event = $this->createEvent($product);
-
-        $taxCode = $this->createTaxCode();
-
-        $this->entityRepository->expects($this->once())
-            ->method('findOneByProduct')
-            ->with($product)
-            ->willReturn($taxCode);
+        $product->method('getTaxCode')->willReturn($taxCode);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
         $taxCodeForm = $event->getForm()->get('taxCode');
@@ -110,52 +86,45 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 
     public function testOnPostSubmitNewProduct()
     {
-        $this->prepareDoctrineHelper(true, true);
-
         $product = $this->createTaxCodeTarget();
         $event = $this->createEvent($product);
-
         $taxCode = $this->createTaxCode(1);
+        $product->expects($this->once())->method('setTaxCode');
 
+        $product->method('getTaxCode')->willReturn($taxCode);
         $this->assertTaxCodeAdd($event, $taxCode);
-        $this->entityRepository->expects($this->once())
-            ->method('findOneByProduct');
 
         $this->getExtension()->onPostSubmit($event);
-
-        $this->assertEquals([$product], $taxCode->getProducts()->toArray());
     }
 
     public function testOnPostSubmitExistingProduct()
     {
-        $this->prepareDoctrineHelper(true, true);
-
         $product = $this->createTaxCodeTarget(1);
         $event = $this->createEvent($product);
 
         $newTaxCode = $this->createTaxCode(1);
         $taxCodeWithProduct = $this->createTaxCode(2);
-        $taxCodeWithProduct->addProduct($product);
-
+        $product->method('getTaxCode')->willReturn($taxCodeWithProduct);
+        $product->expects($this->once())->method('setTaxCode');
         $this->assertTaxCodeAdd($event, $newTaxCode);
-        $this->entityRepository->expects($this->once())
-            ->method('findOneByProduct')
-            ->will($this->returnValue($taxCodeWithProduct));
 
         $this->getExtension()->onPostSubmit($event);
-
-        $this->assertEquals([$product], $newTaxCode->getProducts()->toArray());
-        $this->assertEquals([], $taxCodeWithProduct->getProducts()->toArray());
     }
 
     /**
      * @param int|null $id
      *
-     * @return Product
+     * @return Product|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createTaxCodeTarget($id = null)
     {
-        return $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => $id]);
+        $mock = $this->getMockBuilder(Product::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getId', 'setTaxCode', 'getTaxCode'])
+            ->getMock();
+        $mock->method('getId')->willReturn($id);
+
+        return $mock;
     }
 
     /**
@@ -165,6 +134,6 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
      */
     protected function createTaxCode($id = null)
     {
-        return $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => $id]);
+        return $this->getEntity(ProductTaxCode::class, ['id' => $id]);
     }
 }

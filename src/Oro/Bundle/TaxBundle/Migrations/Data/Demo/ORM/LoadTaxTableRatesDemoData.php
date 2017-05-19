@@ -77,7 +77,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
                 foreach ($data['customers'] as $customerName) {
                     $customer = $manager->getRepository('OroCustomerBundle:Customer')->findOneByName($customerName);
                     if (null !== $customer) {
-                        $taxCode->addCustomer($customer);
+                        $customer->setTaxCode($taxCode);
                     }
                 }
             }
@@ -85,7 +85,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
                 foreach ($data['customer_groups'] as $groupName) {
                     $group = $manager->getRepository('OroCustomerBundle:CustomerGroup')->findOneByName($groupName);
                     if (null !== $group) {
-                        $taxCode->addCustomerGroup($group);
+                        $group->setTaxCode($taxCode);
                     }
                 }
             }
@@ -107,7 +107,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             foreach ($data['products'] as $sku) {
                 $product = $manager->getRepository('OroProductBundle:Product')->findOneBySku($sku);
                 if ($product) {
-                    $taxCode->addProduct($product);
+                    $product->setTaxCode($taxCode);
                 }
             }
         }
