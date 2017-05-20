@@ -23,8 +23,7 @@ Feature: Product attributes
       | L      |
       | M      |
     When I save and close form
-    And click update schema
-    Then I should see "Schema updated" flash message
+    Then click update schema
 
   Scenario: Create extend field from entity management
     Given I go to System/ Entities/ Entity Management
@@ -38,8 +37,7 @@ Feature: Product attributes
     And press "Continue"
     When I save and close form
     Then I should see "Field saved" flash message
-    When I click update schema
-    Then I should see "Schema updated" flash message
+    And I click update schema
 
   Scenario: Create product family with new attributes
     And I go to Products/ Product Families
