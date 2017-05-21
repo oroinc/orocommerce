@@ -33,10 +33,10 @@ class RelatedItemsProductEditListener
         $twigEnv = $event->getEnvironment();
         $relatedProductsTemplate = $twigEnv->render(
             '@OroProduct/Product/RelatedItems/relatedItems.html.twig',
-                [
-                    'form' => $event->getFormView(),
-                    'entity' => $event->getEntity()
-                ]
+            [
+                'form' => $event->getFormView(),
+                'entity' => $event->getEntity()
+            ]
         );
         $this->addEditPageBlock($event->getScrollData(), $relatedProductsTemplate);
     }

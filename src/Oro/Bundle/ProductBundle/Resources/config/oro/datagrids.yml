@@ -439,6 +439,7 @@ datagrids:
         options:
             requireJSModules:
                 - orodatagrid/js/datagrid/listener/action-form-listener
+                - oroproduct/js/app/datagrid/listener/related-product-listener
             rowSelection:
                 dataField: id
                 columnName: isRelated
@@ -483,7 +484,7 @@ datagrids:
                 select:
                     - >
                       (
-                        CASE WHEN (:productId MEMBER OF product.relatedToProducts OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                        CASE WHEN (:productId MEMBER OF product.relatedByProducts OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
                         THEN true ELSE false END
                       ) as isRelated
                 where:

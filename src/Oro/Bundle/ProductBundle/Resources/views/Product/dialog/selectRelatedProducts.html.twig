@@ -1,19 +1,29 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 <div class="widget-content">
     {% set productRelatedSelectFields %}
-        <input type="hidden" name="productAppendRelatedSelect" id="productAppendRelatedSelect" value="{{ app.request.get('addedProductRelated') }}" />
-        <input type="hidden" name="productRemoveRelatedSelect" id="productRemoveRelatedSelect" value="{{ app.request.get('removedProductRelated') }}" />
+        <input
+            type="hidden"
+            data-name="productAppendRelatedSelect"
+            name="productAppendRelatedSelect"
+            id="productAppendRelatedSelect"
+            value="{{ app.request.get('addedProductRelated')|join(',') }}"
+        />
+        <input
+            type="hidden"
+            data-name="productRemoveRelatedSelect"
+            name="productRemoveRelatedSelect"
+            id="productRemoveRelatedSelect"
+            value="{{ app.request.get('removedProductRelated')|join(',') }}"
+        />
     {% endset %}
 
     {{ productRelatedSelectFields }}
     {{ dataGrid.renderGrid('products-related-products-select', {'productId': productId}) }}
 
-    <form>
-        <div class="widget-actions form-actions">
-            <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
-            <button class="btn btn-primary" type="submit">
-                {{ 'oro.product.widgets.select_products'|trans }}
-            </button>
-        </div>
-    </form>
+    <div class="widget-actions form-actions">
+        <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+        <button class="btn btn-primary" data-name="select-related-items" type="button">
+            {{ 'oro.product.widgets.select_products'|trans }}
+        </button>
+    </div>
 </div>
