@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\VariantField;
+use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -18,14 +20,19 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     protected $formType;
 
     /**
-     * @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var VariantFieldProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $customFieldProvider;
+    protected $variantFieldProvider;
 
     /**
      * @var string
      */
     protected $productClass = 'stdClass';
+
+    /**
+     * @var AttributeFamily
+     */
+    protected $attributeFamily;
 
     /**
      * @var array
@@ -110,10 +117,6 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         'color' => [
             'priority' => 9999,
             'is_selected' => false,
-        ],
-        'boolValue' => [
-            'priority' => 9999,
-            'is_selected' => false,
         ]
     ];
 
@@ -124,14 +127,16 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     {
         parent::setUp();
 
-        $this->customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
+        $this->variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->formType = new ProductCustomVariantFieldsCollectionType(
-            $this->customFieldProvider,
+            $this->variantFieldProvider,
             $this->productClass
         );
+
+        $this->attributeFamily = new AttributeFamily();
     }
 
     /**
@@ -153,16 +158,18 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
     /**
      * @dataProvider submitProvider
      *
+     * @param array $variantFields
      * @param array $submittedData
      * @param string $expectedData
      */
-    public function testSubmit(array $submittedData, $expectedData)
+    public function testSubmit(array $variantFields, array $submittedData, $expectedData)
     {
-        $this->customFieldProvider->expects($this->once())
-            ->method('getEntityCustomFields')
-            ->willReturn($this->exampleCustomVariantFields);
+        $this->variantFieldProvider->expects($this->once())
+            ->method('getVariantFields')
+            ->with($this->attributeFamily)
+            ->willReturn($variantFields);
 
-        $form = $this->factory->create($this->formType);
+        $form = $this->factory->create($this->formType, null, ['attributeFamily' => $this->attributeFamily]);
 
         $this->assertEquals($this->emptyFieldsValues, $form->getData());
         $form->submit($submittedData);
@@ -175,18 +182,23 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
      */
     public function submitProvider()
     {
+        $variantFields[] = new VariantField('size', 'Size label');
+        $variantFields[] = new VariantField('color', 'Color label');
         return [
             'empty' => [
+                'variantFields' => $variantFields,
                 'submittedData' => [],
                 'expectedData' => []
             ],
             'size (enum)' => [
+                'variantFields' => $variantFields,
                 'submittedData' => $this->submitCustomVariantFields['size'],
                 'expectedData' => [
                     $this->exampleCustomVariantFields['size']['name']
                 ]
             ],
             'size&color (enum)' => [
+                'variantFields' => $variantFields,
                 'submittedData' => array_merge(
                     $this->submitCustomVariantFields['size'],
                     $this->submitCustomVariantFields['color']
@@ -196,13 +208,8 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
                     $this->exampleCustomVariantFields['color']['name']
                 ]
             ],
-            'boolValue (bool)' => [
-                'submittedData' => $this->submitCustomVariantFields['boolValue'],
-                'expectedData' => [
-                    $this->exampleCustomVariantFields['boolValue']['name'],
-                ]
-            ],
             'text value is not allowed' => [
+                'variantFields' => $variantFields,
                 'submittedData' => $this->submitCustomVariantFields['textValue'],
                 'expectedData' => []
             ],
