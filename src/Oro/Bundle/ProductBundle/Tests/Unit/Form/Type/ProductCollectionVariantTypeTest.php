@@ -183,6 +183,16 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         $excludedProductsString = '17';
         $modifiedDefinition = '{}';
 
+        $this->definitionConverter->expects($this->any())
+            ->method('getDefinitionParts')
+            ->with($segmentDefinition)
+            ->willReturn(
+                [
+                    ProductCollectionDefinitionConverter::DEFINITION_KEY => $segmentDefinition,
+                    ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY => $excludedProductsString,
+                    ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY => $includedProductsString
+                ]
+            );
         $this->definitionConverter
             ->expects($this->any())
             ->method('putConditionsInDefinition')

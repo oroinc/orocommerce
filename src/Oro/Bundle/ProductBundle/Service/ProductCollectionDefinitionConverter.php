@@ -10,7 +10,6 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
  */
 class ProductCollectionDefinitionConverter
 {
-    const EMPTY_SET = '0';
     const INCLUDED_FILTER_KEY = 'included';
     const EXCLUDED_FILTER_KEY = 'excluded';
     const DEFINITION_KEY = 'definition';
@@ -21,30 +20,30 @@ class ProductCollectionDefinitionConverter
      * Put excluded or\and included filters into definition.
      * Accept empty definition, in such case will create needed.
      *
-     * @param string $definition
+     * @param string $rawDefinition
      * @param string|null $excluded
      * @param string|null $included
      *
      * @return string
      */
-    public function putConditionsInDefinition($definition, $excluded = null, $included = null)
+    public function putConditionsInDefinition($rawDefinition, $excluded = null, $included = null): string
     {
-        $definitionParts = $this->getDefinitionPartsArray($definition);
-        $definition = $definitionParts[self::DEFINITION_KEY];
+        $definition = $this->normalizeDefinition($rawDefinition);
 
         if (!empty($definition['filters'])) {
-            $definition['filters'] = [
-                $definition['filters'],
-                'OR'
-            ];
+            $definition['filters'] = [$definition['filters']];
         }
 
-        // We always need to add this filter to understand in getDefinitionParts when we need to lower filters level
-        $definition['filters'][] = $this->getFilter(
-            NumberFilterType::TYPE_IN,
-            $included ?? self::EMPTY_SET,
-            self::INCLUDED_FILTER_ALIAS
-        );
+        if ($included) {
+            if (!empty($definition['filters'])) {
+                $definition['filters'][] = 'OR';
+            }
+            $definition['filters'][] = $this->getFilter(
+                NumberFilterType::TYPE_IN,
+                $included,
+                self::INCLUDED_FILTER_ALIAS
+            );
+        }
 
         if ($excluded) {
             if (!empty($definition['filters'])) {
@@ -69,52 +68,35 @@ class ProductCollectionDefinitionConverter
      *      'included'   => included filter value string, if were found in definition
      * ]
      *
-     * @param string $definition
+     * @param string $rawDefinition
      *
      * @return array
      */
-    public function getDefinitionParts($definition)
+    public function getDefinitionParts($rawDefinition): array
     {
-        $parts = $this->getDefinitionPartsArray($definition);
-
-        $parts[self::DEFINITION_KEY] = json_encode($parts[self::DEFINITION_KEY]);
-
-        return $parts;
-    }
-
-    /**
-     * @param string $definition
-     * @return array
-     */
-    private function getDefinitionPartsArray($definition)
-    {
-        $definition = $this->normalizeDefinition($definition);
-        $excluded = $this->removeFilterFromDefinition($definition, self::EXCLUDED_FILTER_ALIAS, 'AND');
-        $included = $this->removeFilterFromDefinition($definition, self::INCLUDED_FILTER_ALIAS, 'OR');
-
-        // Included is always set if putDefinitionParts was called (if no included is given then EMPTY_SET is used)
-        if (null !== $included && isset($definition['filters'][0])) {
-            $definition['filters'] = $definition['filters'][0];
-        }
-
-        if ($included === self::EMPTY_SET) {
-            $included = null;
+        $definition = $this->normalizeDefinition($rawDefinition);
+        $included = null;
+        $excluded = null;
+        if (!empty($definition['filters'])) {
+            $included = $this->getValueFromFilter(self::INCLUDED_FILTER_ALIAS, $definition['filters']);
+            $excluded = $this->getValueFromFilter(self::EXCLUDED_FILTER_ALIAS, $definition['filters']);
+            $definition['filters'] = $this->getUserDefinedFilter($definition);
         }
 
         return [
-            self::DEFINITION_KEY => $definition,
+            self::DEFINITION_KEY => json_encode($definition),
             self::INCLUDED_FILTER_KEY => $included,
             self::EXCLUDED_FILTER_KEY => $excluded
         ];
     }
 
     /**
-     * @param string $definition
+     * @param string $rawDefinition
      * @return array
      */
-    private function normalizeDefinition($definition)
+    private function normalizeDefinition($rawDefinition): array
     {
-        $definition = $definition ? json_decode($definition, true) : [];
+        $definition = $rawDefinition ? json_decode($rawDefinition, true) : [];
 
         if (!is_array($definition)) {
             $definition = [];
@@ -124,45 +106,12 @@ class ProductCollectionDefinitionConverter
     }
 
     /**
-     * @param array $definition
-     * @param string $filterAlias
-     * @param string $filterOperator
-     *
-     * @return string|null
-     */
-    private function removeFilterFromDefinition(&$definition, $filterAlias, $filterOperator)
-    {
-        $filterValue = null;
-        if (!isset($definition['filters']) || !is_array($definition['filters'])) {
-            return $filterValue;
-        }
-
-        $filters = $definition['filters'];
-        $filter = end($filters);
-
-        if (isset($filter['alias']) && $filter['alias'] === $filterAlias) {
-            $filterValue = $filter['criterion']['data']['value'];
-            array_pop($filters);
-
-            //try to remove operator
-            $operatorOrFilter = end($filters);
-            if ($operatorOrFilter === $filterOperator) {
-                array_pop($filters);
-            }
-        }
-
-        $definition['filters'] = $filters;
-
-        return $filterValue;
-    }
-
-    /**
      * @param int $type
      * @param string $value
      * @param string $alias
      * @return array
      */
-    private function getFilter($type, $value, $alias)
+    private function getFilter($type, $value, $alias): array
     {
         return [
             'alias' => $alias,
@@ -175,5 +124,37 @@ class ProductCollectionDefinitionConverter
                 ]
             ]
         ];
+    }
+
+    /**
+     * @param string $alias
+     * @param array $filters
+     * @return null|string
+     */
+    private function getValueFromFilter($alias, array $filters)
+    {
+        foreach ($filters as $filter) {
+            if (!empty($filter['alias']) && $filter['alias'] === $alias) {
+                return $filter['criterion']['data']['value'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array $definition
+     * @return array
+     */
+    protected function getUserDefinedFilter(array $definition): array
+    {
+        if (isset($definition['filters'][0])
+            && is_array($definition['filters'][0])
+            && array_key_exists(0, $definition['filters'][0])
+        ) {
+            return $definition['filters'][0];
+        }
+
+        return [];
     }
 }

@@ -153,16 +153,8 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                     ]
                 ]
             ],
-            'definition already contains included/excluded filters' => [
+            'definition with filters and no included/excluded ids' => [
                 'definition' => [
-                    'columns' => [
-                        [
-                            'name' => "id",
-                            'label' => "id",
-                            'sorting' => 'DESC',
-                            'func' => null
-                        ]
-                    ],
                     'filters' => [
                         'columnName' => 'id',
                         'criterion' => [
@@ -172,43 +164,41 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                                 'type' => NumberFilterType::TYPE_LESS_THAN
                             ]
                         ],
-                        'OR',
+                    ]
+                ],
+                'includedIds' => null,
+                'excludedIds' => null,
+                'expectedDefinition' => [
+                    'filters' => [
                         [
-                            'alias' => ProductCollectionDefinitionConverter::INCLUDED_FILTER_ALIAS,
                             'columnName' => 'id',
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => '6,7',
-                                    'type' => NumberFilterType::TYPE_IN
+                                    'value' => 8,
+                                    'type' => NumberFilterType::TYPE_LESS_THAN
                                 ]
                             ]
                         ],
-                        'AND',
-                        [
-                            'alias' => ProductCollectionDefinitionConverter::EXCLUDED_FILTER_ALIAS,
-                            'columnName' => 'id',
-                            'criterion' => [
-                                'filter' => 'number',
-                                'data' => [
-                                    'value' => '8,9',
-                                    'type' => NumberFilterType::TYPE_NOT_IN
-                                ]
+                    ]
+                ]
+            ],
+            'definition with filters and includedIds' => [
+                'definition' => [
+                    'filters' => [
+                        'columnName' => 'id',
+                        'criterion' => [
+                            'filter' => 'number',
+                            'data' => [
+                                'value' => 8,
+                                'type' => NumberFilterType::TYPE_LESS_THAN
                             ]
-                        ]
+                        ],
                     ]
                 ],
-                'includedIds' => '600,700',
-                'excludedIds' => '800,900',
+                'includedIds' => '1,7',
+                'excludedIds' => null,
                 'expectedDefinition' => [
-                    'columns' => [
-                        [
-                            'name' => "id",
-                            'label' => "id",
-                            'sorting' => 'DESC',
-                            'func' => null
-                        ]
-                    ],
                     'filters' => [
                         [
                             'columnName' => 'id',
@@ -227,8 +217,38 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => '600,700',
+                                    'value' => '1,7',
                                     'type' => NumberFilterType::TYPE_IN
+                                ]
+                            ]
+                        ],
+                    ]
+                ]
+            ],
+            'definition with filters and excludedIds' => [
+                'definition' => [
+                    'filters' => [
+                        'columnName' => 'id',
+                        'criterion' => [
+                            'filter' => 'number',
+                            'data' => [
+                                'value' => 8,
+                                'type' => NumberFilterType::TYPE_LESS_THAN
+                            ]
+                        ],
+                    ]
+                ],
+                'includedIds' => null,
+                'excludedIds' => '7,1',
+                'expectedDefinition' => [
+                    'filters' => [
+                        [
+                            'columnName' => 'id',
+                            'criterion' => [
+                                'filter' => 'number',
+                                'data' => [
+                                    'value' => 8,
+                                    'type' => NumberFilterType::TYPE_LESS_THAN
                                 ]
                             ]
                         ],
@@ -239,11 +259,11 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => '800,900',
+                                    'value' => '7,1',
                                     'type' => NumberFilterType::TYPE_NOT_IN
                                 ]
                             ]
-                        ]
+                        ],
                     ]
                 ]
             ],
@@ -369,22 +389,16 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
     public function getDefinitionsDataProvider()
     {
         $definitionWithoutIncludedExcludedFilters = [
-            'columns' => [
-                [
-                    'name' => "sku",
-                    'label' => "sku",
-                    'sorting' => 'DESC',
-                    'func' => null
-                ]
-            ],
             'filters' => [
                 [
-                    'columnName' => 'id',
-                    'criterion' => [
-                        'filter' => 'number',
-                        'data' => [
-                            'value' => 10,
-                            'type' => NumberFilterType::TYPE_LESS_THAN
+                    [
+                        'columnName' => 'id',
+                        'criterion' => [
+                            'filter' => 'number',
+                            'data' => [
+                                'value' => 10,
+                                'type' => NumberFilterType::TYPE_LESS_THAN
+                            ]
                         ]
                     ]
                 ]
@@ -424,7 +438,20 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
             ],
             'segment with a filter but without included/excluded filters' => [
                 'definition' => $definitionWithoutIncludedExcludedFilters,
-                'expectedDefinition' => $definitionWithoutIncludedExcludedFilters,
+                'expectedDefinition' => [
+                    'filters' => [
+                        [
+                            'columnName' => 'id',
+                            'criterion' => [
+                                'filter' => 'number',
+                                'data' => [
+                                    'value' => 10,
+                                    'type' => NumberFilterType::TYPE_LESS_THAN
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
                 'expectedIncluded' => null,
                 'expectedExcluded' => null
             ],
@@ -490,14 +517,27 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                     ],
                     'filters' => [
                         [
-                            'columnName' => 'id',
-                            'criterion' => [
-                                'filter' => 'number',
-                                'data' => [
-                                    'value' => 10,
-                                    'type' => NumberFilterType::TYPE_LESS_THAN
+                            [
+                                'columnName' => 'id',
+                                'criterion' => [
+                                    'filter' => 'number',
+                                    'data' => [
+                                        'value' => 10,
+                                        'type' => NumberFilterType::TYPE_LESS_THAN
+                                    ]
                                 ]
-                            ]
+                            ],
+                            'AND',
+                            [
+                                'columnName' => 'id',
+                                'criterion' => [
+                                    'filter' => 'number',
+                                    'data' => [
+                                        'value' => 1,
+                                        'type' => NumberFilterType::TYPE_GREATER_THAN
+                                    ]
+                                ]
+                            ],
                         ],
                         'OR',
                         [
@@ -535,14 +575,27 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
                         ],
                     ],
                     'filters' => [
-                        'columnName' => 'id',
-                        'criterion' => [
-                            'filter' => 'number',
-                            'data' => [
-                                'value' => 10,
-                                'type' => NumberFilterType::TYPE_LESS_THAN
+                        [
+                            'columnName' => 'id',
+                            'criterion' => [
+                                'filter' => 'number',
+                                'data' => [
+                                    'value' => 10,
+                                    'type' => NumberFilterType::TYPE_LESS_THAN
+                                ]
                             ]
-                        ]
+                        ],
+                        'AND',
+                        [
+                            'columnName' => 'id',
+                            'criterion' => [
+                                'filter' => 'number',
+                                'data' => [
+                                    'value' => 1,
+                                    'type' => NumberFilterType::TYPE_GREATER_THAN
+                                ]
+                            ]
+                        ],
                     ]
                 ],
                 'expectedIncluded' => '1,2',

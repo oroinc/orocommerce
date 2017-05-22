@@ -6,6 +6,7 @@ use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
+use Oro\Bundle\QueryDesignerBundle\Validator\NotBlankFilters;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
@@ -59,7 +60,11 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
                     'add_name_field' => true,
                     'name_field_required' => false,
                     'required' => true,
-                    'constraints' => [new NotBlank(), new Valid()],
+                    'constraints' => [
+                        new NotBlank(),
+                        new Valid(),
+                        new NotBlankFilters(['message' => 'oro.product.product_collection.blank_filters_or_included']),
+                    ],
                     'error_bubbling' => false,
                     'field_event_listeners' => [
                         'definition' => [

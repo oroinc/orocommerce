@@ -48,3 +48,4 @@ oro:
 
         product_collection:
             unique_segment_name.message: 'This name already in use'
+            blank_filters_or_included: "Should be specified filters or added some products manually."

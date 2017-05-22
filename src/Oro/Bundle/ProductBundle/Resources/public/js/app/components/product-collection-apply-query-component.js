@@ -117,7 +117,8 @@ define(function(require) {
 
             this.options._sourceElement
                 .on('click', this.options.selectors.apply, _.bind(this.onApplyQuery, this))
-                .on('click', this.options.selectors.reset, _.bind(this.onReset, this));
+                .on('click', this.options.selectors.reset, _.bind(this.onReset, this))
+                .on('query-designer:validate:not-blank-filters', _.bind(this.onFiltersValidate, this));
 
             this.initialDefinitionState = this._getSegmentDefinition();
             this.initialIncluded = this.$included.val();
@@ -187,6 +188,16 @@ define(function(require) {
             this.$included.val(this.initialIncluded);
             this.$excluded.val(this.initialExcluded);
             this.onApplyQuery(e);
+        },
+
+        /**
+         * @param {jQuery.Event} e
+         * @param {Object} data
+         */
+        onFiltersValidate: function(e, data) {
+            if (this.$included.val()) {
+                data.result = true;
+            }
         },
 
         _checkOptions: function() {
