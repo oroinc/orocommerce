@@ -236,7 +236,7 @@ Feature: Validate unique variant field values when changing simple products
 
     And I go to Products / Products
     And click Edit shirt_101 in grid
-    And I uncheck "Color"
+    And I uncheck "Color Product Attribute" element
     And I save form
     Then I should see "Product has been saved" flash message
     And I go to Products / Product Attributes
