@@ -21,3 +21,10 @@ oro_behat_extension:
         LocalizationSwitcherActiveOption:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'div.oro-localization-switcher .oro-toolbar__link--active'
+
+        CreateLocalizationForm:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[id^="oro_localization"]'
+            options:
+                mapping:
+                    Title: 'oro_localization[titles][values][default]'

@@ -312,6 +312,7 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         return [
             'action' => 'product_variants_get_available_variants_url',
             'parentProduct' => $product,
+            'dynamic_fields_disabled' => true
         ];
     }
 }
