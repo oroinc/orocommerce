@@ -24,3 +24,7 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Provider\VariantFieldProvider` was added it introduces logic to fetch variant field for certain family
   calling `getVariantFields(AttributeFamily $attributeFamily)` method
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
+
+CheckoutBundle
+--------------
+- Layout "oro_payment_method_order_review" is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
