@@ -89,9 +89,17 @@ class ProductCollectionDatagridListener
             return;
         }
 
-        $segmentDefinition = $this->getSegmentDefinition($dataGrid, $request);
+        $requestData = $this->getRequestData($dataGrid, $request);
+        $dataGridQueryBuilder = $dataSource->getQueryBuilder();
+
+        $definition = json_decode($requestData[self::DEFINITION_KEY], true);
+        if (empty($definition['filters']) && !$requestData[self::INCLUDED_KEY]) {
+            $dataGridQueryBuilder->andWhere('1 = 0');
+            return;
+        }
+
+        $segmentDefinition = $this->getSegmentDefinition($requestData);
         if ($segmentDefinition) {
-            $dataGridQueryBuilder = $dataSource->getQueryBuilder();
             $this->addFilterBySegment($dataGridQueryBuilder, $segmentDefinition);
         }
     }
@@ -115,17 +123,12 @@ class ProductCollectionDatagridListener
     }
 
     /**
-     * @param DatagridInterface $dataGrid
-     * @param Request $request
+     * @param array $requestData
+     *
      * @return null|string
      */
-    private function getSegmentDefinition(DatagridInterface $dataGrid, Request $request)
+    private function getSegmentDefinition(array $requestData)
     {
-        $scope = $dataGrid->getScope();
-        $gridFullName = $this->nameStrategy->buildGridFullName($dataGrid->getName(), $scope);
-        $requestParameterName = self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName;
-        $requestData = $this->getRequestData($request, $requestParameterName);
-
         return $this->definitionConverter->putConditionsInDefinition(
             $requestData[self::DEFINITION_KEY],
             $requestData[self::EXCLUDED_KEY],
@@ -133,13 +136,19 @@ class ProductCollectionDatagridListener
         );
     }
 
+
     /**
+     * @param DatagridInterface $dataGrid
      * @param Request $request
-     * @param string $dataParameterName
+     *
      * @return array
      */
-    private function getRequestData(Request $request, $dataParameterName): array
+    private function getRequestData(DatagridInterface $dataGrid, Request $request): array
     {
+        $scope = $dataGrid->getScope();
+        $gridFullName = $this->nameStrategy->buildGridFullName($dataGrid->getName(), $scope);
+        $dataParameterName = self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName;
+
         return [
             self::DEFINITION_KEY => $request->get($dataParameterName),
             self::INCLUDED_KEY => $request->get($dataParameterName . ':incl'),

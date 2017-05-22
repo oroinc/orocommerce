@@ -112,8 +112,22 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
                     'gridName' => $gridName,
                     'sd_' . $gridName . ':incl' => [LoadProductData::PRODUCT_5],
                 ],
-                'expectedFilteredProducts' => [LoadProductData::PRODUCT_5]
-            ]
+                'expectedFilteredProductsSku' => [LoadProductData::PRODUCT_5]
+            ],
+            'empty definition and empty included&excluded' => [
+                'request' => [
+                    'gridName' => $gridName,
+                    'sd_' . $gridName => '{}'
+                ],
+                'expectedFilteredProducts' => []
+            ],
+            'definition with just excluded' => [
+                'request' => [
+                    'gridName' => $gridName,
+                    'sd_' . $gridName . ':excl' => [LoadProductData::PRODUCT_1],
+                ],
+                'expectedFilteredProducts' => []
+            ],
         ];
     }
 }
