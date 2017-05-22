@@ -199,7 +199,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function gridNameDataProvider(): array
     {
         return [
-            'without scope' => ['grid_name', null, 'grid_name:0'],
+            'without scope' => ['grid_name', null, 'grid_name'],
             'with 0 scope' => ['grid_name', '0', 'grid_name:0'],
             'with scope' => ['grid_name', '1', 'grid_name:1']
         ];
@@ -213,7 +213,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     private function assertGetGridFullNameCalls(Datagrid $dataGrid, $gridName, $gridScope)
     {
         $gridFullName = $gridName;
-        if ($gridScope) {
+        if ($gridScope !== null) {
             $gridFullName .= ':' . $gridScope;
         }
         $dataGrid->expects($this->once())

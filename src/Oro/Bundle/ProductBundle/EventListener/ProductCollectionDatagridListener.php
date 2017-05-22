@@ -126,10 +126,6 @@ class ProductCollectionDatagridListener
         $requestParameterName = self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName;
         $requestData = $this->getRequestData($request, $requestParameterName);
 
-        if (empty($requestData[self::DEFINITION_KEY]) && empty($requestData[self::INCLUDED_KEY]) && !$scope) {
-            $requestData = $this->getRequestData($request, $requestParameterName . ':0');
-        }
-
         return $this->definitionConverter->putConditionsInDefinition(
             $requestData[self::DEFINITION_KEY],
             $requestData[self::EXCLUDED_KEY],

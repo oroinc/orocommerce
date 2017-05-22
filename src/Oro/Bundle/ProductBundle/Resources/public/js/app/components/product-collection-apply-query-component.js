@@ -10,6 +10,8 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var InclusionExclusionSubComponent =
         require('oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent');
+    var SelectedProductGridSubComponent =
+        require('oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent');
 
     /**
      * Perform synchronization between segment definition filters block and grid. By click on "apply the query" button
@@ -23,6 +25,11 @@ define(function(require) {
             segmentDefinitionSelectorTemplate: 'input[name="%s"]',
             controlsBlockAlias: null,
             gridName: null,
+            sidebarComponentContainerId: null,
+            excludedControlsBlockAlias: null,
+            includedControlsBlockAlias: null,
+            excludedProductsGridName: null,
+            includedProductsGridName: null,
             selectors: {
                 reset: null,
                 apply: null,
@@ -39,7 +46,11 @@ define(function(require) {
             'segmentDefinitionFieldName',
             'controlsBlockAlias',
             'gridName',
-            'sidebarComponentContainerId'
+            'sidebarComponentContainerId',
+            'excludedControlsBlockAlias',
+            'includedControlsBlockAlias',
+            'excludedProductsGridName',
+            'includedProductsGridName'
         ],
 
         /**
@@ -103,6 +114,16 @@ define(function(require) {
         inclusionExclusionSubComponent: null,
 
         /**
+         * @property {Object}
+         */
+        selectedProductGridSubComponent: null,
+
+        /**
+         * @property {String}
+         */
+        applyQueryEventName: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -130,7 +151,10 @@ define(function(require) {
             }
             this.$form.on('submit' + this.eventNamespace(), _.bind(this.onSubmit, this));
 
+            this.applyQueryEventName = 'productCollection:applyQuery:' + this.eventNamespace();
+            mediator.on(this.applyQueryEventName, _.bind(this.applyQuery, this));
             this._initializeInclusionExclusionSubComponent();
+            this._initializeSelectedProductGridsSubComponent();
         },
 
         /**
@@ -171,8 +195,12 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onApplyQuery: function(e) {
-            this.currentDefinitionState = this._getSegmentDefinition();
             e.preventDefault();
+            mediator.trigger(this.applyQueryEventName);
+        },
+
+        applyQuery: function() {
+            this.currentDefinitionState = this._getSegmentDefinition();
             this._applyQuery(true);
         },
 
@@ -185,8 +213,8 @@ define(function(require) {
             var filters = this.initialDefinitionState ? JSON.parse(this.initialDefinitionState).filters : [];
             this.$conditionBuilder.conditionBuilder('setValue', filters);
             this.currentDefinitionState = this.initialDefinitionState;
-            this.$included.val(this.initialIncluded);
-            this.$excluded.val(this.initialExcluded);
+            this.$included.val(this.initialIncluded).trigger('change');
+            this.$excluded.val(this.initialExcluded).trigger('change');
             this.onApplyQuery(e);
         },
 
@@ -224,6 +252,7 @@ define(function(require) {
          */
         _applyQuery: function(reload) {
             var parameters = {
+                ignoreVisibility: true,
                 updateUrl: false,
                 reload: reload,
                 params: {}
@@ -295,11 +324,33 @@ define(function(require) {
          */
         _initializeInclusionExclusionSubComponent: function() {
             var options = {
-                $included: this.$included,
-                $excluded: this.$excluded,
-                sidebarComponentContainerId: this.options.sidebarComponentContainerId
+                _sourceElement: this.options._sourceElement,
+                sidebarComponentContainerId: this.options.sidebarComponentContainerId,
+                selectors: {
+                    included: this.options.selectors.included,
+                    excluded: this.options.selectors.excluded
+                }
             };
             this.inclusionExclusionSubComponent = new InclusionExclusionSubComponent(options);
+        },
+
+        /**
+         * @private
+         */
+        _initializeSelectedProductGridsSubComponent: function() {
+            var options = {
+                _sourceElement: this.options._sourceElement,
+                applyQueryEventName: this.applyQueryEventName,
+                excludedControlsBlockAlias: this.options.excludedControlsBlockAlias,
+                includedControlsBlockAlias: this.options.includedControlsBlockAlias,
+                excludedProductsGridName: this.options.excludedProductsGridName,
+                includedProductsGridName: this.options.includedProductsGridName,
+                selectors: {
+                    included: this.options.selectors.included,
+                    excluded: this.options.selectors.excluded
+                }
+            };
+            this.selectedProductGridSubComponent = new SelectedProductGridSubComponent(options);
         },
 
         dispose: function() {
@@ -312,6 +363,7 @@ define(function(require) {
             }
             this.$form.off(this.eventNamespace());
             mediator.off('grid-sidebar:load:' + this.options.controlsBlockAlias);
+            mediator.off(this.applyQueryEventName);
 
             ProductCollectionApplyQueryComponent.__super__.dispose.call(this);
         }

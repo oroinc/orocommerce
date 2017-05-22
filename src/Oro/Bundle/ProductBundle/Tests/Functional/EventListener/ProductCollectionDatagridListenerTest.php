@@ -62,7 +62,7 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
 
     public function requestAndResultDataProvider()
     {
-        $gridName = 'product-collection-grid';
+        $gridName = 'product-collection-grid:scope_0';
         $segmentDefinition = '{
             "columns":[{
                 "name": "id",
@@ -85,7 +85,7 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
             'just definition' => [
                 'request' => [
                     'gridName' => $gridName,
-                    'sd_' . $gridName . ':0' => $segmentDefinition
+                    'sd_' . $gridName => $segmentDefinition
                 ],
                 'expectedFilteredProducts' => [
                     LoadProductData::PRODUCT_4,
@@ -97,9 +97,9 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
             'definition with excluded&included' => [
                 'request' => [
                     'gridName' => $gridName,
-                    'sd_' . $gridName . ':0' => $segmentDefinition,
-                    'sd_' . $gridName . ':0:excl' => [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2],
-                    'sd_' . $gridName . ':0:incl' => [LoadProductData::PRODUCT_5],
+                    'sd_' . $gridName => $segmentDefinition,
+                    'sd_' . $gridName . ':excl' => [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2],
+                    'sd_' . $gridName . ':incl' => [LoadProductData::PRODUCT_5],
                 ],
                 'expectedFilteredProducts' => [
                     LoadProductData::PRODUCT_5,
@@ -110,17 +110,10 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
             'without definition just included' => [
                 'request' => [
                     'gridName' => $gridName,
-                    'sd_' . $gridName . ':0:incl' => [LoadProductData::PRODUCT_5],
-                ],
-                'expectedFilteredProducts' => [LoadProductData::PRODUCT_5]
-            ],
-            'with just included, for grid without scope' => [
-                'request' => [
-                    'gridName' => $gridName,
                     'sd_' . $gridName . ':incl' => [LoadProductData::PRODUCT_5],
                 ],
-                'expectedFilteredProductsSku' => [LoadProductData::PRODUCT_5]
-            ],
+                'expectedFilteredProducts' => [LoadProductData::PRODUCT_5]
+            ]
         ];
     }
 }
