@@ -1,14 +1,16 @@
 {% block _rfp_request_view_toolbar_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "box-toolbar" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "box-toolbar box-toolbar--offset-none" }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _rfp_request_view_toolbar_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " controls-list box-toolbar__actions" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " box-toolbar__actions" }) %}
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div class="controls-list">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 
@@ -24,7 +26,7 @@
     {% set text %}
         {{ 'oro.frontend.rfp.request.customer_status.label'|trans }}: {{ text }}
     {% endset %}
-    <div class="box-toolbar__title">{{ parent_block_widget(block) }}</div>
+    <div class="box-toolbar__content">{{ parent_block_widget(block) }}</div>
 {% endblock %}
 
 {% block _rfp_request_view_information_widget %}
