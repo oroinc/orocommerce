@@ -6,14 +6,14 @@
 {% endblock %}
 
 {% block _rfp_request_view_toolbar_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer-user-role__controls-list box-toolbar__actions" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " controls-list box-toolbar__actions" }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _rfp_request_view_controls_list_widget %}
-    <ul class="oro-order__controls-list">
+    <ul class="controls-list">
         <li><a href="#"><i class="fa-reply"></i>Share</a></li>
         <li><a href="#"><i class="fa-print"></i>Print</a></li>
         <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>

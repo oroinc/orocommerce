@@ -25,7 +25,7 @@ class FallbackRequestConfigurator implements RequestConfiguratorInterface
      */
     public function getPriority()
     {
-        return 0;
+        return -10;
     }
 
     /**
