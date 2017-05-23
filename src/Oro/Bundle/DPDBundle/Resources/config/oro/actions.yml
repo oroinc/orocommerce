@@ -84,9 +84,10 @@ operations:
                     '@equal': ['$.result[successful]', true]
                 actions:
                     - '@call_service_method':
-                        service: oro_dpd.handler.order_shipping_dpd
-                        method: linkLabelToOrder
+                        service: oro_dpd.order.attachment.factory
+                        method: createAttachmentFromDPDTransaction
                         method_parameters: [$.data, '$.result[transaction]']
+                        attribute: $.orderAttachment
                     - '@call_service_method':
                         service: oro_dpd.handler.order_shipping_dpd
                         method: addTrackingNumbersToOrder
@@ -94,6 +95,7 @@ operations:
                     - '@flash_message':
                         message: oro.dpd.form.ship_order.flash.success
                         type: 'success'
+                    - '@flush_entity': $.orderAttachment
                     - '@refresh_grid': order-shipping-trackings-grid
                     - '@refresh_grid': attachment-grid
             - '@foreach':
@@ -167,9 +169,10 @@ operations:
                     '@equal': ['$.result[successful]', true]
                 actions:
                     - '@call_service_method':
-                        service: oro_dpd.handler.order_shipping_dpd
-                        method: linkLabelToOrder
-                        method_parameters: [$.data, '$.result[transaction]']
+                        service: oro_dpd.order.attachment.factory
+                        method: createAttachmentFromDPDTransaction
+                        method_parameters: ['$.result[transaction]']
+                        attribute: $.orderAttachment
                     - '@call_service_method':
                         service: oro_dpd.handler.order_shipping_dpd
                         method: unlinkLabelFromOrder
@@ -182,6 +185,7 @@ operations:
                         service: oro_dpd.handler.order_shipping_dpd
                         method: addTrackingNumbersToOrder
                         method_parameters: [$.data, '$.result[transaction]']
+                    - '@flush_entity': $.orderAttachment
                     - '@flash_message':
                         message: oro.dpd.form.reship_order.flash.success
                         type: 'success'

@@ -9,6 +9,8 @@ use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\DPDBundle\Entity\DPDTransaction;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethodProvider;
+use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
+use Oro\Bundle\DPDBundle\Transaction\File\Name\Provider\TransactionFileNameProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Symfony\Component\Form\FormInterface;
@@ -31,18 +33,26 @@ class OrderShippingDPDHandler
     protected $shippingMethodProvider;
 
     /**
-     * @param ManagerRegistry           $doctrine
-     * @param FileManager               $fileManager
-     * @param DPDShippingMethodProvider $shippingMethodProvider
+     * @var TransactionFileNameProviderInterface
+     */
+    protected $transactionFileNameProvider;
+
+    /**
+     * @param ManagerRegistry                      $doctrine
+     * @param FileManager                          $fileManager
+     * @param DPDShippingMethodProvider            $shippingMethodProvider
+     * @param TransactionFileNameProviderInterface $transactionFileNameProvider
      */
     public function __construct(
         ManagerRegistry $doctrine,
         FileManager $fileManager,
-        DPDShippingMethodProvider $shippingMethodProvider
+        DPDShippingMethodProvider $shippingMethodProvider,
+        TransactionFileNameProviderInterface $transactionFileNameProvider
     ) {
         $this->doctrine = $doctrine;
         $this->fileManager = $fileManager;
         $this->shippingMethodProvider = $shippingMethodProvider;
+        $this->transactionFileNameProvider = $transactionFileNameProvider;
     }
 
     /**
@@ -83,10 +93,7 @@ class OrderShippingDPDHandler
         $result['errors'] = $response->getErrorMessagesLong();
 
         if ($response->isSuccessful()) {
-            $tmpFile = $this->fileManager->writeToTemporaryFile($response->getLabelPDF());
-            $labelFile = new File();
-            $labelFile->setFile($tmpFile);
-            $labelFile->setOriginalFilename('label.pdf'); //FIXME: better name?
+            $labelFile = $this->createLabelFile($order, $response);
 
             $dpdTransaction = (new DPDTransaction())
                 ->setOrder($order)
@@ -101,6 +108,24 @@ class OrderShippingDPDHandler
         }
 
         return $result;
+    }
+
+    /**
+     * @param Order            $order
+     * @param SetOrderResponse $response
+     *
+     * @return File
+     */
+    private function createLabelFile(Order $order, SetOrderResponse $response)
+    {
+        $labelFileName = $this->transactionFileNameProvider->getTransactionFileName($order, $response);
+
+        $tmpFile = $this->fileManager->writeToTemporaryFile($response->getLabelPDF());
+        $labelFile = new File();
+        $labelFile->setFile($tmpFile);
+        $labelFile->setOriginalFilename($labelFileName);
+
+        return $labelFile;
     }
 
     /**
@@ -121,23 +146,6 @@ class OrderShippingDPDHandler
         }
 
         return $dpdHandler->getNextPickupDay(new \DateTime('now'));
-    }
-
-    /**
-     * @param Order          $order
-     * @param DPDTransaction $dpdTransaction
-     * @param string         $labelComment
-     */
-    public function linkLabelToOrder(Order $order, DPDTransaction $dpdTransaction, $labelComment = 'dpd label')
-    {
-        $attachment = new Attachment();
-        $attachment->setTarget($order);
-        $attachment->setFile($dpdTransaction->getLabelFile());
-        $attachment->setComment($labelComment);
-
-        $em = $this->doctrine->getManagerForClass(Attachment::class);
-        $em->persist($attachment);
-        $em->flush();
     }
 
     /**

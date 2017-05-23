@@ -46,3 +46,7 @@ oro:
                 label: 'Retransmit request for DPD shipping label'
                 message: 'Retransmit order shipping information to DPD? This will remove current tracking information and label.'
                 ship_date.label: 'New pickup date'
+        order.attachment:
+            comment.message.id: 'Shipping numbers: %parcelNumbers%'
+        transaction.file:
+            name.message.id: 'Shipping - Order #%orderNumber% - %parcelNumbers%'
