@@ -34,11 +34,12 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroApplicationBundle::CommerceMainContext
-        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\AuthorizeNetBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - OroFormBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroConfigBundle::FeatureContext
+        - OroAuthorizeNetBundle::FeatureContext
+        - OroCheckoutBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
         - OroDataGridBundle::GridContext
       paths:
         - '@OroAuthorizeNetBundle/Tests/Behat/Features'

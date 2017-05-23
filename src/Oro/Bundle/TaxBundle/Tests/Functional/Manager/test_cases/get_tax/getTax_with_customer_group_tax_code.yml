@@ -9,7 +9,11 @@ databaseBefore:
     'Oro\Bundle\CustomerBundle\Entity\Customer':
         customer.with_group:
             name: customer.with_group
-            group: { class: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', query: { name: 'customer_group.group1' } }
+            group: '@customer_group.group1'
+    'Oro\Bundle\CustomerBundle\Entity\CustomerGroup':
+        customer_group.group1:
+            name: customer_group.group1
+            taxCode: '@customer_tax_code.group_tax_code'
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: simple_order
@@ -37,11 +41,9 @@ databaseBefore:
             quantity: 6
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
-    'Oro\Bundle\TaxBundle\Entity\customerTaxCode':
+    'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
         customer_tax_code.group_tax_code:
             code: customer_tax_code.group_tax_code
-            customerGroups:
-                - { class: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', query: { name: 'customer_group.group1' } }
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         new_jurisdiction:
             code: new_jurisdiction

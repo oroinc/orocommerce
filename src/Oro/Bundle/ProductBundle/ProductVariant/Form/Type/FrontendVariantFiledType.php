@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
@@ -28,8 +28,8 @@ class FrontendVariantFiledType extends AbstractType
     /** @var ProductVariantTypeHandlerRegistry */
     protected $productVariantTypeHandlerRegistry;
 
-    /** @var CustomFieldProvider */
-    protected $customFieldProvider;
+    /** @var VariantFieldProvider */
+    protected $variantFieldProvider;
 
     /** @var PropertyAccessor */
     protected $propertyAccessor;
@@ -40,20 +40,20 @@ class FrontendVariantFiledType extends AbstractType
     /**
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry
-     * @param CustomFieldProvider $customFieldProvider
+     * @param VariantFieldProvider $variantFieldProvider
      * @param PropertyAccessor $propertyAccessor
      * @param string $productClass
      */
     public function __construct(
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry,
-        CustomFieldProvider $customFieldProvider,
+        VariantFieldProvider $variantFieldProvider,
         PropertyAccessor $propertyAccessor,
         $productClass
     ) {
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->productVariantTypeHandlerRegistry = $productVariantTypeHandlerRegistry;
-        $this->customFieldProvider = $customFieldProvider;
+        $this->variantFieldProvider = $variantFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->productClass = (string)$productClass;
     }
@@ -102,7 +102,7 @@ class FrontendVariantFiledType extends AbstractType
         }
 
         $variantAvailability = $this->productVariantAvailabilityProvider->getVariantFieldsAvailability($parentProduct);
-        $labels = $this->customFieldProvider->getVariantFields($this->productClass);
+        $variantFields = $this->variantFieldProvider->getVariantFields($parentProduct->getAttributeFamily());
 
         foreach ($parentProduct->getVariantFields() as $fieldName) {
             $fieldType = $this->productVariantAvailabilityProvider->getCustomFieldType($fieldName);
@@ -117,7 +117,7 @@ class FrontendVariantFiledType extends AbstractType
                 $variantAvailability[$fieldName],
                 [
                     'data' => $subFormData,
-                    'label' => $labels[$fieldName]['label'],
+                    'label' => $variantFields[$fieldName]->getLabel(),
                     'placeholder' => 'oro.product.type.please_select_option',
                     'empty_data' => null
                 ]

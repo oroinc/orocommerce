@@ -62,7 +62,11 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            this.transit(e, {method: 'POST'});
+            this.$form.validate();
+
+            if (this.$form.valid()) {
+                this.transit(e, {method: 'POST'});
+            }
         },
 
         transit: function(e, data) {

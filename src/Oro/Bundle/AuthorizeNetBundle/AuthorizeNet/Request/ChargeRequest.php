@@ -22,6 +22,7 @@ class ChargeRequest extends AbstractRequest
         $this
             ->addOption(new Option\Amount())
             ->addOption(new Option\Currency())
+            ->addOption(new Option\SolutionId())
             ->addOption(new Option\DataDescriptor())
             ->addOption(new Option\DataValue());
 

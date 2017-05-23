@@ -357,4 +357,31 @@ class ProductRepository extends EntityRepository
 
         return $queryBuilder;
     }
+
+    /**
+     * @param $type
+     * @param $fieldName
+     * @param $fieldValue
+     * @param $isRelationField
+     * @return mixed
+     */
+    public function findByAttributeValue($type, $fieldName, $fieldValue, $isRelationField)
+    {
+        if ($isRelationField) {
+            return $this->createQueryBuilder('p')
+                ->select('p')
+                ->join('p.' . $fieldName, 'attr')
+                ->where('attr = :valueId')
+                ->setParameter('valueId', $fieldValue)
+                ->andWhere('p.type = :type')
+                ->setParameter('type', $type)
+                ->getQuery()
+                ->getResult();
+        } else {
+            return $this->findBy([
+                'type' => $type,
+                $fieldName => $fieldValue
+            ]);
+        }
+    }
 }

@@ -75,3 +75,58 @@ services:
             - "@oro_locale.provider.current_localization"
         tags:
             - {name: oro_scope.provider, scopeType: cms_content_block, priority: 1}
+
+    oro_cms.twig.content_security_policy:
+        class: 'Twig_Sandbox_SecurityPolicy'
+        public: false
+        arguments:
+            # tags
+            - []
+            # filters
+            - ['escape']
+            # methods
+            - []
+            # properties
+            - []
+            # functions
+            - ['widget']
+
+    oro_cms.twig.sandbox_extension:
+        class: 'Twig_Extension_Sandbox'
+        arguments:
+            - '@oro_cms.twig.content_security_policy'
+            - true # use sandbox globally in instance
+        public: false
+
+    oro_cms.twig.widget_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\WidgetExtension'
+        public: false
+        arguments:
+            - '@oro_cms.widget_registry'
+
+    oro_cms.widget_registry:
+        class: 'Oro\Bundle\CMSBundle\Widget\WidgetRegistry'
+        public: false
+        arguments:
+            - '@logger'
+            - []
+        tags:
+            - { name: monolog.logger, channel: oro_cms }
+
+    oro_cms.twig.array_loader:
+        class: 'Twig_Loader_Array'
+
+    oro_cms.twig.renderer:
+        class: 'Twig_Environment'
+        arguments:
+            - '@oro_cms.twig.array_loader'
+        calls:
+            - [addExtension, ['@oro_cms.twig.widget_extension']]
+            - [addExtension, ['@oro_cms.twig.sandbox_extension']]
+
+    oro_crm.twig.twig_in_variables_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\TwigInVariablesExtension'
+        arguments:
+            - '@oro_cms.twig.renderer'
+        tags:
+            - { name: twig.extension }

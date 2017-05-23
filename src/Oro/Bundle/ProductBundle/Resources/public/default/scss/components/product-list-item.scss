@@ -101,10 +101,6 @@
         label {
             display: block;
             margin: 0 0 8px;
-
-            &.wsnr {
-                white-space: nowrap;
-            }
         }
     }
 
@@ -175,13 +171,6 @@
                 margin: 0 !important;
             }
         }
-
-        &__description {
-            &_list-view {
-                height: 40px;
-                overflow: hidden;
-            }
-        }
     }
 }
 
@@ -201,6 +190,17 @@
 
             margin-top: 0;
             width: 47%;
+        }
+
+        &__description {
+            &_list-view {
+                font-size: $base-font-size;
+                line-height: $base-line-height;
+
+                height: $base-font-size * $base-line-height * 2;
+
+                overflow: hidden;
+            }
         }
     }
 }

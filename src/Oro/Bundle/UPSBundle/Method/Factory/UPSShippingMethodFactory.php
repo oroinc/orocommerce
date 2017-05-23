@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
@@ -46,9 +47,15 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $methodTypeFactory;
 
     /**
+     * @var IntegrationIconProviderInterface
+     */
+    private $integrationIconProvider;
+
+    /**
      * @param UPSTransport                                  $transport
      * @param PriceRequestFactory                           $priceRequestFactory
      * @param LocalizationHelper                            $localizationHelper
+     * @param IntegrationIconProviderInterface              $integrationIconProvider
      * @param ShippingPriceCache                            $shippingPriceCache
      * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param UPSShippingMethodTypeFactoryInterface         $methodTypeFactory
@@ -57,6 +64,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
         UPSTransport $transport,
         PriceRequestFactory $priceRequestFactory,
         LocalizationHelper $localizationHelper,
+        IntegrationIconProviderInterface $integrationIconProvider,
         ShippingPriceCache $shippingPriceCache,
         IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
         UPSShippingMethodTypeFactoryInterface $methodTypeFactory
@@ -67,6 +75,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
         $this->shippingPriceCache = $shippingPriceCache;
         $this->methodIdentifierGenerator = $methodIdentifierGenerator;
         $this->methodTypeFactory = $methodTypeFactory;
+        $this->integrationIconProvider = $integrationIconProvider;
     }
 
     /**
@@ -77,6 +86,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
         return new UPSShippingMethod(
             $this->getIdentifier($channel),
             $this->getLabel($channel),
+            $this->getIcon($channel),
             $this->createTypes($channel),
             $this->getSettings($channel),
             $this->transport,
@@ -126,5 +136,15 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
         return array_map(function (ShippingService $shippingService) use ($channel) {
             return $this->methodTypeFactory->create($channel, $shippingService);
         }, $applicableShippingServices);
+    }
+
+    /**
+     * @param Channel $channel
+     *
+     * @return string|null
+     */
+    private function getIcon(Channel $channel)
+    {
+        return $this->integrationIconProvider->getIcon($channel);
     }
 }

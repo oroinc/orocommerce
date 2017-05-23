@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AuthorizeNetBundle\Tests\Unit\AuthorizeNet\Option;
 
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option\Transaction;
 
 class AmountTest extends AbstractOptionTest
 {

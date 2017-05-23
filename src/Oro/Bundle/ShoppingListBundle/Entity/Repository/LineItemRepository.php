@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -38,21 +39,19 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
+     * @param AclHelper $aclHelper
      * @param array|Product $products
-     * @param CustomerUser $customerUser
      * @return array|LineItem[]
      */
-    public function getProductItemsWithShoppingListNames($products, $customerUser)
+    public function getProductItemsWithShoppingListNames(AclHelper $aclHelper, $products)
     {
         $qb = $this->createQueryBuilder('li')
             ->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
-            ->andWhere('li.customerUser = :customerUser')
             ->andWhere('li.product IN (:products)')
-            ->setParameter('products', $products)
-            ->setParameter('customerUser', $customerUser);
+            ->setParameter('products', $products);
 
-        return $qb->getQuery()->getResult();
+        return $aclHelper->apply($qb, 'EDIT')->getResult();
     }
 
     /**

@@ -2,15 +2,21 @@
 
 namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\Builder;
 
-use Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
+use Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var IntegrationIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $integrationIconProvider;
+
     /**
      * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -26,6 +32,9 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
      */
     private $factory;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         $this->identifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
@@ -34,7 +43,13 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->factory = new FlatRateMethodFromChannelFactory($this->identifierGenerator, $this->localizationHelper);
+        $this->integrationIconProvider = $this->createMock(IntegrationIconProviderInterface::class);
+
+        $this->factory = new FlatRateMethodFromChannelFactory(
+            $this->identifierGenerator,
+            $this->localizationHelper,
+            $this->integrationIconProvider
+        );
     }
 
     public function testBuildReturnsCorrectObjectWithLabel()
@@ -42,6 +57,13 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
         $label = 'test';
         $channel = $this->getChannel();
         $identifier = 'flat_rate_1';
+        $iconUri = 'bundles/icon-uri.png';
+
+        $this->integrationIconProvider
+            ->expects(static::once())
+            ->method('getIcon')
+            ->with($channel)
+            ->willReturn($iconUri);
 
         $this->localizationHelper->expects(static::once())
             ->method('getLocalizedValue')
@@ -58,6 +80,7 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
         static::assertSame($identifier, $method->getIdentifier());
         static::assertSame($label, $method->getLabel());
         static::assertTrue($method->isEnabled());
+        static::assertSame($iconUri, $method->getIcon());
     }
 
     /**

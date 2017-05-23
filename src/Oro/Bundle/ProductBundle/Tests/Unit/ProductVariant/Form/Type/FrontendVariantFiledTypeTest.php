@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
@@ -36,8 +37,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /** @var ProductVariantTypeHandlerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $productVariantTypeHandlerRegistry;
 
-    /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $customFieldProvider;
+    /** @var VariantFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $variantFieldProvider;
 
     /**
      * {@inheritdoc}
@@ -52,12 +53,12 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
         $this->productVariantTypeHandlerRegistry = $this->createMock(ProductVariantTypeHandlerRegistry::class);
 
-        $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
+        $this->variantFieldProvider = $this->createMock(VariantFieldProvider::class);
 
         $this->type = new FrontendVariantFiledType(
             $this->productVariantAvailabilityProvider,
             $this->productVariantTypeHandlerRegistry,
-            $this->customFieldProvider,
+            $this->variantFieldProvider,
             $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
@@ -68,7 +69,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->productVariantAvailabilityProvider, $this->customFieldProvider, $this->type);
+        unset($this->productVariantAvailabilityProvider, $this->variantFieldProvider, $this->type);
     }
 
     public function testGetName()
@@ -159,22 +160,13 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ]);
 
         $customFields = [
-            self::FIELD_COLOR => [
-                'type' => 'enum',
-                'is_serialized' => false,
-                'label' => self::FIELD_COLOR
-            ],
-            self::FIELD_NEW => [
-                'type' => 'boolean',
-                'is_serialized' => false,
-                'label' => self::FIELD_NEW
-            ]
+            self::FIELD_COLOR => new VariantField(self::FIELD_COLOR, self::FIELD_COLOR),
+            self::FIELD_NEW => new VariantField(self::FIELD_NEW, self::FIELD_NEW)
         ];
-        $this->customFieldProvider->expects($this->once())
+        $this->variantFieldProvider->expects($this->once())
             ->method('getVariantFields')
-            ->with(Product::class)
+            ->with($attributeFamily)
             ->willReturn($customFields);
-
 
         $form = $this->factory->create($this->type, $defaultVariant, $options);
 

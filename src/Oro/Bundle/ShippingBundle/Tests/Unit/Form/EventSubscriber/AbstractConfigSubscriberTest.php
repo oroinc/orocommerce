@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroChoiceType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
@@ -18,9 +19,11 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
@@ -28,6 +31,7 @@ use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Asset\Packages as AssetHelper;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -166,11 +170,17 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodChoicesProviderInterface */
         $choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodIconProviderInterface */
+        $iconProvider = $this->createMock(ShippingMethodIconProviderInterface::class);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|AssetHelper */
+        $assetHelper = $this->createMock(AssetHelper::class);
+
         return [
             new PreloadedExtension(
                 [
                     ShippingMethodsConfigsRuleType::class
-                    => new ShippingMethodsConfigsRuleType($choicesProvider, $translator),
+                    => new ShippingMethodsConfigsRuleType(),
                     ShippingMethodConfigCollectionType::class
                     => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
                     ShippingMethodConfigType::class
@@ -185,6 +195,13 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
                     CollectionType::NAME => new CollectionType(),
                     ShippingMethodsConfigsRuleDestinationType::NAME => new ShippingMethodsConfigsRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()
+                    ),
+                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
+                    OroChoiceType::class => new OroChoiceType(),
+                    ShippingMethodSelectType::class => new ShippingMethodSelectType(
+                        $choicesProvider,
+                        $iconProvider,
+                        $assetHelper
                     ),
                     'oro_country' => new CountryType(),
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),

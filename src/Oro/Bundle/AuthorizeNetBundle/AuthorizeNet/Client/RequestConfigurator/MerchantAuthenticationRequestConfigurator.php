@@ -12,7 +12,7 @@ class MerchantAuthenticationRequestConfigurator implements RequestConfiguratorIn
      */
     public function getPriority()
     {
-        return 10;
+        return 0;
     }
 
     /**
