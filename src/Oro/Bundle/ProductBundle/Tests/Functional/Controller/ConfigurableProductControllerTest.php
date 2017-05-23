@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Schema\OroFrontendTestFrameworkBundleInstaller;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadVariantFields;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- *
  * @dbIsolationPerTest
  */
 class ConfigurableProductControllerTest extends WebTestCase
@@ -30,9 +29,7 @@ class ConfigurableProductControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadProductData::class]);
-
-        $this->createExtendedFields();
+        $this->loadFixtures([LoadProductData::class, LoadVariantFields::class]);
     }
 
     /** {@inheritdoc} */
@@ -61,11 +58,18 @@ class ConfigurableProductControllerTest extends WebTestCase
             $crawler->filterXPath("//select/option[contains(text(),'Configurable')]")->count()
         );
 
+        /** @var AttributeFamily $defaultAttributeFamily */
+        $defaultAttributeFamily = $this->getContainer()
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityRepository(AttributeFamily::class)
+            ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'oro_product_create';
         $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
         $formValues['oro_product_step_one']['type'] = Product::TYPE_CONFIGURABLE;
+        $formValues['oro_product_step_one']['attributeFamily'] = $defaultAttributeFamily->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
@@ -83,12 +87,7 @@ class ConfigurableProductControllerTest extends WebTestCase
         $this->assertContains('Category: '.self::CATEGORY_NAME, $crawler->html());
 
         $this->assertContains(
-            self::EXTENDED_FIELD_COLOR,
-            $crawler->filterXPath("//*[@data-ftid='oro_product_variantFields']")->html()
-        );
-
-        $this->assertContains(
-            self::EXTENDED_FIELD_SIZE,
+            OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME,
             $crawler->filterXPath("//*[@data-ftid='oro_product_variantFields']")->html()
         );
     }
@@ -99,74 +98,8 @@ class ConfigurableProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
         $this->assertContains(
-            self::EXTENDED_FIELD_COLOR,
+            OroFrontendTestFrameworkBundleInstaller::VARIANT_FIELD_NAME,
             $crawler->filterXPath("//*[@data-ftid='oro_product_variantFields']")->html()
         );
-
-        $this->assertContains(
-            self::EXTENDED_FIELD_SIZE,
-            $crawler->filterXPath("//*[@data-ftid='oro_product_variantFields']")->html()
-        );
-    }
-
-    /**
-     * @param ConfigManager $configManager
-     * @param FieldConfigModel $fieldModel
-     * @param array $options
-     */
-    private function updateFieldConfigs(ConfigManager $configManager, FieldConfigModel $fieldModel, $options)
-    {
-        $className = $fieldModel->getEntity()->getClassName();
-        $fieldName = $fieldModel->getFieldName();
-        foreach ($options as $scope => $scopeValues) {
-            $configProvider = $configManager->getProvider($scope);
-            $config = $configProvider->getConfig($className, $fieldName);
-            $hasChanges = false;
-            foreach ($scopeValues as $code => $val) {
-                if (!$config->is($code, $val)) {
-                    $config->set($code, $val);
-                    $hasChanges = true;
-                }
-            }
-            if ($hasChanges) {
-                $configManager->persist($config);
-                $indexedValues = $configProvider->getPropertyConfig()->getIndexedValues($config->getId());
-                $fieldModel->fromArray($config->getId()->getScope(), $config->all(), $indexedValues);
-            }
-        }
-    }
-
-    private function createExtendedFields()
-    {
-        $configManager = $this->getContainer()->get('oro_entity_config.config_manager');
-
-        $this->createExtendedField($configManager, self::EXTENDED_FIELD_COLOR, 'boolean');
-        $this->createExtendedField($configManager, self::EXTENDED_FIELD_SIZE, 'boolean');
-
-        $configManager->getEntityManager()->flush();
-        $configManager->clear();
-    }
-
-    /**
-     * @param ConfigManager $configManager
-     * @param string $fieldName
-     * @param string $fieldType
-     */
-    private function createExtendedField(ConfigManager $configManager, $fieldName, $fieldType)
-    {
-        $field = $configManager->createConfigFieldModel(Product::class, $fieldName, $fieldType);
-        $options = [
-            'extend' => [
-                'owner' => ExtendScope::OWNER_CUSTOM,
-                'is_extend' => true
-            ],
-            'entity' => [
-                'label' => $fieldName
-            ]
-        ];
-        $field->setCreated(new \DateTime());
-
-        $this->updateFieldConfigs($configManager, $field, $options);
-        $configManager->getEntityManager()->persist($field);
     }
 }

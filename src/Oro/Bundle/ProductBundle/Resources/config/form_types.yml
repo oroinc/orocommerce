@@ -100,8 +100,7 @@ services:
     oro_product.form.type.custom_variant_fields_collection:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType'
         arguments:
-            - '@oro_product.provider.custom_field_provider'
-            - '%oro_product.entity.product.class%'
+            - '@oro_product.provider.variant_field_provider'
         tags:
             - { name: form.type, alias: oro_product_custom_variant_fields_collection }
 
@@ -183,7 +182,7 @@ services:
         arguments:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_product.product_variant.registry.product_variant_type_handler_factory'
-            - '@oro_product.provider.custom_field_provider'
+            - '@oro_product.provider.variant_field_provider'
             - '@property_accessor'
             - '%oro_product.entity.product.class%'
         tags:
@@ -198,13 +197,6 @@ services:
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
 
-    oro_product.form.type.extension.enum_value_for_product:
-        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
-
     oro_product.form.type.extension.product_collection:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
         arguments:
@@ -212,6 +204,14 @@ services:
             - '%oro_web_catalog.type.content_variant_collection.class%'
         tags:
             - { name: form.type_extension, extended_type: '%oro_web_catalog.type.content_variant_collection.class%' }
+
+    oro_product.form.type.extension.enum_value_for_product:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity_config.config_manager'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
 
     oro_product.form.extension.attribute_config_extension:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'

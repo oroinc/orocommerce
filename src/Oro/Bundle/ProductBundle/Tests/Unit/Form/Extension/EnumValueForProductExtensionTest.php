@@ -13,7 +13,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,6 +39,9 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $productRepository;
 
+    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    private $configManager;
+
     /**
      * {@inheritdoc}
      */
@@ -51,7 +57,11 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new EnumValueForProductExtension($this->doctrineHelper);
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->extension = new EnumValueForProductExtension($this->doctrineHelper, $this->configManager);
     }
 
     /**
@@ -182,6 +192,18 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn([]);
 
+        $attributeConfigProvider = $this->getAttributeProvider();
+        $attributeConfig = $this->createMock(ConfigInterface::class);
+
+        $attributeConfig->expects($this->once())
+            ->method('is')
+            ->with('is_attribute')
+            ->willReturn(true);
+
+        $attributeConfigProvider->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($attributeConfig);
+
         $this->extension->buildView($view, $this->form, []);
 
         $this->assertArrayNotHasKey('tooltip', $view->vars);
@@ -220,6 +242,18 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($products);
 
+        $attributeConfigProvider = $this->getAttributeProvider();
+        $attributeConfig = $this->createMock(ConfigInterface::class);
+
+        $attributeConfig->expects($this->once())
+            ->method('is')
+            ->with('is_attribute')
+            ->willReturn(true);
+
+        $attributeConfigProvider->expects($this->once())
+            ->method('getConfig')
+            ->willReturn($attributeConfig);
+
         $this->extension->buildView($view, $this->form, []);
 
         $this->assertArrayHasKey('tooltip', $view->vars);
@@ -232,6 +266,23 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertArrayHasKey('allow_delete', $view->vars);
         $this->assertFalse($view->vars['allow_delete']);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
+     */
+    private function getAttributeProvider()
+    {
+        $attributeConfigProvider = $this->getMockBuilder(ConfigProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->configManager->expects($this->once())
+            ->method('getProvider')
+            ->with('attribute')
+            ->willReturn($attributeConfigProvider);
+
+        return $attributeConfigProvider;
     }
 
     /**

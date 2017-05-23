@@ -151,7 +151,8 @@
     {% if productHasVariants %}
 
         {% set dataGridParameters = {
-            'parentProduct': entity.id
+            'parentProduct': entity.id,
+            'attributeFamily': entity.attributeFamily.id
         } %}
 
         {% if form.variantLinks.appendVariants.vars.value|length != 0 %}

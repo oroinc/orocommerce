@@ -23,7 +23,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 /**
  * @dbIsolationPerTest
  * @group CommunityEdition
- * @group segfault
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
