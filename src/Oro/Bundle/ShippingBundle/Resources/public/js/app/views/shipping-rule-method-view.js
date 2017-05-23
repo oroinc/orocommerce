@@ -105,7 +105,6 @@ define(function(require) {
             var self = this;
 
             this.bindShortMethodInfo();
-            this.$buttonSelector.on('click', _.bind(this.changeHandler, this));
 
             _.each(this.$formElements, function(element) {
                 $(element).parent().on('content:remove', _.throttle(_.bind(this.removeHandler, this)));
