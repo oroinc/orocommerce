@@ -15,6 +15,7 @@ use Oro\Bundle\DPDBundle\Method\DPDHandlerInterface;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethodProvider;
 use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
+use Oro\Bundle\DPDBundle\Transaction\File\Name\Provider\TransactionFileNameProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -56,6 +57,11 @@ class OrderShippingDPDHandlerTest extends \PHPUnit_Framework_TestCase
     protected $dpdHandler;
 
     /**
+     * @var TransactionFileNameProviderInterface|\PHPUnit_Framework_MockObject_MockObject|
+     */
+    protected $transactionFileNameProvider;
+
+    /**
      * @var OrderShippingDPDHandler
      */
     protected $handler;
@@ -69,31 +75,23 @@ class OrderShippingDPDHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->manager = $this->createMock(ObjectManager::class);
 
-        /* @var \PHPUnit_Framework_MockObject_MockObject|Registry $managerRegistry */
-        $this->managerRegistry = $this->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->managerRegistry = $this->createMock(Registry::class);
 
-        $this->fileManager = $this->getMockBuilder(FileManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fileManager = $this->createMock(FileManager::class);
 
-        $this->dpdHandler = $this->getMockBuilder(DPDHandlerInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->dpdHandler = $this->createMock(DPDHandlerInterface::class);
 
-        $this->shippingMethod = $this->getMockBuilder(DPDShippingMethod::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingMethod = $this->createMock(DPDShippingMethod::class);
 
-        $this->shippingMethodProvider = $this->getMockBuilder(DPDShippingMethodProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingMethodProvider = $this->createMock(DPDShippingMethodProvider::class);
+
+        $this->transactionFileNameProvider = $this->createMock(TransactionFileNameProviderInterface::class);
 
         $this->handler = new OrderShippingDPDHandler(
             $this->managerRegistry,
             $this->fileManager,
-            $this->shippingMethodProvider
+            $this->shippingMethodProvider,
+            $this->transactionFileNameProvider
         );
     }
 
@@ -166,6 +164,13 @@ class OrderShippingDPDHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('shipDate')
             ->willReturn($shipDateForm);
 
+        $filename = 'Shipping - order.pdf';
+
+        $this->transactionFileNameProvider->expects(static::once())
+            ->method('getTransactionFileName')
+            ->with($order, $response)
+            ->willReturn($filename);
+
         $result = $this->handler->shipOrder($order, $form);
 
         $this->assertArrayHasKey('successful', $result);
@@ -179,6 +184,8 @@ class OrderShippingDPDHandlerTest extends \PHPUnit_Framework_TestCase
         $dpdTransaction = $result['transaction'];
         $this->assertInstanceOf(DPDTransaction::class, $dpdTransaction);
         $this->assertEquals($file, $dpdTransaction->getLabelFile()->getFile());
+
+        $this->assertEquals($filename, $dpdTransaction->getLabelFile()->getOriginalFilename());
     }
 
     /**
@@ -287,43 +294,6 @@ class OrderShippingDPDHandlerTest extends \PHPUnit_Framework_TestCase
 
         $nextPickupDay = $this->handler->getNextPickupDay($order);
         $this->assertEquals($pickupDate, $nextPickupDay);
-    }
-
-    public function testLinkLabelToOrder()
-    {
-        /** @var Order $order */
-        $order = $this->getEntity(
-            Order::class,
-            [
-                'id' => 1,
-            ]
-        );
-
-        $this->managerRegistry->expects(static::once())
-            ->method('getManagerForClass')
-            ->with(Attachment::class)
-            ->willReturn($this->manager);
-
-        /** @var Attachment $persistedAttachment */
-        $persistedAttachment = null;
-        $this->manager
-            ->expects(self::once())
-            ->method('persist')
-            ->with($this->isInstanceOf(Attachment::class))
-            ->willReturnCallback(
-                function ($entity) use (&$persistedAttachment) {
-                    $persistedAttachment = $entity;
-                }
-            );
-
-        $file = new ComponentFile(__DIR__.'/../Fixtures/attachment/test_label.txt');
-        $dpdTransaction = new DPDTransaction();
-        $dpdTransaction->setLabelFile((new File())->setFile($file));
-        $this->handler->linkLabelToOrder($order, $dpdTransaction, 'a label comment');
-
-        $this->assertNotNull($persistedAttachment);
-        $this->assertEquals($dpdTransaction->getLabelFile(), $persistedAttachment->getFile());
-        $this->assertEquals('a label comment', $persistedAttachment->getComment());
     }
 
     public function testAddTrackingNumbersToOrder()

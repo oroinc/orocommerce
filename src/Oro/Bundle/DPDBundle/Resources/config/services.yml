@@ -97,6 +97,7 @@ services:
             - '@doctrine'
             - '@oro_attachment.file_manager'
             - '@oro_dpd.shipping_method_provider.dpd'
+            - '@oro_dpd.transaction.file.name.provider'
 
     oro_dpd.validator.remove_used_shipping_service:
         class: 'Oro\Bundle\DPDBundle\Validator\Constraints\RemoveUsedShippingServiceValidator'
