@@ -30,9 +30,13 @@ define(function(require) {
 
         $buttonSelector: null,
 
+        $grid: null,
+
         $buttonSelectorAll: null,
 
         $formParent: null,
+
+        currency: null,
 
         requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag'],
 
@@ -47,6 +51,7 @@ define(function(require) {
             this.checkOptions();
             this.checkForm();
             this.$formParent = this.form.parents('#main');
+            this.$grid = this.form.find('.shipping-methods-grid');
             this.$methodSelect = $(this.el).find(this.options.methodSelectSelector).data().inputWidget.$el;
             this.$allMethodsOptions = this.$methodSelect.find('option[value][value!=""]').clone();
             this.$buttonSelector = $(this.el).find(options.buttonSelector);
@@ -57,6 +62,9 @@ define(function(require) {
                 this.$formParent.data('methodCount', this.$formElements.length - 1);
             }
 
+            this.setMethodCurrency();
+            this._simpleSetInfoMethod();
+            this._groupedSetInfoMethod();
             this.bindEvents();
             this.updateMethodSelector();
         },
@@ -96,12 +104,12 @@ define(function(require) {
         bindEvents: function() {
             var self = this;
 
-            this.$formElements.each(function(index, element) {
-                $(element).parent().on('content:remove', function(e) {
-                    self.updateMethodSelector(element);
-                    self.enableMethodSelector();
-                });
-            });
+            this.bindShortMethodInfo();
+            this.$buttonSelector.on('click', _.bind(this.changeHandler, this));
+
+            _.each(this.$formElements, function(element) {
+                $(element).parent().on('content:remove', _.throttle(_.bind(this.removeHandler, this)));
+            }, this);
 
             this.$methodSelect.on('change select2-selecting', function() {
                 if (!$(this).select2('data')) {
@@ -149,6 +157,14 @@ define(function(require) {
             });
 
             this.$formParent.data('methodCount', methodCount);
+        },
+
+        removeHandler: function(element) {
+            this.updateMethodSelector(element);
+            this.enableMethodSelector();
+            if (this.$formElements.length === 0) {
+                this.$grid.remove();
+            }
         },
 
         updateFormElements: function() {
@@ -214,19 +230,121 @@ define(function(require) {
         },
 
         disableAddButton: function() {
-            $(this.el).children('.btn.add-method').addClass('disabled');
+            $(this.el).children(this.options.buttonSelector).addClass('disabled');
         },
 
         enableAddButton: function() {
-            $(this.el).children('.btn.add-method').removeClass('disabled');
+            $(this.el).children(this.options.buttonSelector).removeClass('disabled');
         },
 
         getMethod: function(element) {
             return $(element).find('input[data-name="field__method"]').val();
         },
 
-        dispose: function() {
+        /**
+         * Set currency label for each needed elements
+         */
+        setMethodCurrency: function() {
+            var self = this;
+            this.currency = $('.shipping-rules-currency option:selected').text();
+            var currencyText = ', ' + this.currency;
+            var targetInput = $('.oro-shipping-rule-method-configs-collection input[type=text]');
 
+            targetInput.parents('.control-group-number').find('label').each(function() {
+                var labelText = $(this).text();
+
+                if (labelText) {
+                    $(this).find('em').before(currencyText);
+                } else {
+                    $(this).prepend(self.currency);
+                }
+            });
+        },
+
+        /**
+         * Set short info about each simple method
+         *
+         * @param {jQuery} methodContainer
+         */
+        _simpleSetInfoMethod: function(methodContainer) {
+            if (_.isUndefined(methodContainer)) {
+                methodContainer = $('[data-method-view="simple"]');
+            }
+
+            methodContainer.each(_.bind(function(index, method) {
+                var methodsInfo = $(method).find('.shipping-method-config__info');
+                var inputContainers = $(method).find('.control-group-number');
+                var selectValue = $(method).find('.control-group-choice option:selected').text();
+                var selectLabel = $(method).find('.control-group-choice label').contents().eq(0).text();
+
+                methodsInfo.empty();
+
+                inputContainers.each(_.bind(function(index, input) {
+                    var labelText = $(input).find('label').contents().eq(0).text();
+                    var inputText = $(input).find('input').val();
+                    if (inputText) {
+                        $('<span>')
+                            .text(labelText + ': ' + this.currency + inputText)
+                            .appendTo(methodsInfo);
+                    }
+                }, this));
+
+                methodsInfo.append(
+                    $('<span>').text(selectLabel + ': ' +  selectValue)
+                );
+            }, this));
+        },
+
+        /**
+         * Set short info about each grouped method
+         *
+         * @param {jQuery} methodContainer
+         */
+        _groupedSetInfoMethod: function(methodContainer) {
+            var activeMethodCheckbox = $('.shipping-method-config-grid__active-checkbox:checked');
+            if (_.isUndefined(methodContainer)) {
+                methodContainer = activeMethodCheckbox.closest('[data-method-view]');
+            }
+
+            var methodsInfo = methodContainer.find('.shipping-method-config__info');
+
+            if (methodContainer) {
+                methodsInfo.empty();
+            }
+
+            activeMethodCheckbox.each(_.bind(function(index, checkbox) {
+                var methodContainer = $(checkbox).closest('.control-group-oro_shipping_method_type_config');
+                var methodLabel = methodContainer.find('.control-label.wrap label').contents().eq(0).text();
+                var methodSurcharge = methodContainer.find('.shipping-method-config-grid__surcharge input').val();
+
+                methodSurcharge = methodSurcharge ? ': ' + this.currency + methodSurcharge : '';
+                $('<span>')
+                    .text(methodLabel + methodSurcharge)
+                    .appendTo(methodsInfo);
+            }, this));
+        },
+
+        /**
+         * Bind events for each target elements related with
+         */
+        bindShortMethodInfo: function() {
+            var activeMethodCheckbox = $([
+                    '.shipping-method-config-grid__active-checkbox',
+                    '.shipping-method-config-grid__surcharge input',
+                    '.shipping-method-config-grid__surcharge select'
+                ].join(', '));
+
+            activeMethodCheckbox.on('change', _.bind(function(e) {
+                var targetMethodContainer = $(e.target).closest('[data-method-view]');
+                var method = this['_' + targetMethodContainer.data('method-view') + 'SetInfoMethod'];
+
+                if (method) {
+                    method.call(this, targetMethodContainer);
+                }
+            }, this));
+        },
+
+        dispose: function() {
             mediator.off('page:beforeChange', this._cleanUpDataBeforeRedirect, this);
 
             delete this.$methodSelect;

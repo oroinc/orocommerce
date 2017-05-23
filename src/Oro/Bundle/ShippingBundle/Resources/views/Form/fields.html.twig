@@ -1,4 +1,5 @@
 {% macro shipping_origin_block(form, disabled) %}
+    {{ dump(form.vars.required) }}
     {% set attrs = {'attr': {'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode }, disabled: disabled } %}
     {{ form_row(form, attrs) }}
 {% endmacro %}
@@ -166,33 +167,74 @@
 {% endblock %}
 
 {% block oro_shipping_method_config_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
 
-    {% if form.method.vars.value %}
-        <div class="control-group control-group-choice">
-            <div class="control-label wrap">
-                {{ form_label(form.method) }}
+    {% set collapseView =  layout_attr_defaults(attr, {
+        component: 'oroui/js/app/components/jquery-widget-component',
+        widgetModule: 'oroui/js/widget/collapse-widget',
+        trigger: '[data-collapse-trigger-shipping-method]',
+        container: '[data-collapse-container-shipping-method]',
+        globalTrigger: '[data-collapse-global-trigger-shipping-method]',
+        open: true
+    }) %}
+
+    <div class="shipping-method-config collapse-view"
+         data-page-component-module="oroui/js/app/components/viewport-component"
+         data-page-component-options="{{ collapseView|json_encode }}"
+         data-method-view="{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }}">
+        {% if form.method.vars.value %}
+            <div class="shipping-method-config__header"
+                 data-collapse-trigger-shipping-method>
+                <div class="shipping-method-config__item">
+                    <i class="fa-plus-square-o"></i>
+                    {{ methods_labels[form.method.vars.value]|trans }}
+                </div>
+                <div class="shipping-method-config__info"></div>
             </div>
-            <div class="controls">
-                <input type="text" disabled="disabled" value="{{ methods_labels[form.method.vars.value]|trans }}"/>
-                {{ form_widget(form.method) }}
-                {{ ShipRuleMacro.renderShippingMethodDisabledFlag(form.method.vars.value) }}
+        {% endif %}
+
+        <div class="shipping-method-config__body"
+             data-collapse-container-shipping-method>
+            <div class="shipping-method-config__global-surcharge">
+                {% if form.typeConfigs.vars.is_grouped %}
+                    {{ UI.tooltip('oro.shipping.shipping_methods_table.surcharge.tooltip', {}, 'right') }}
+                {% endif %}
+                {{ form_widget(form.options) }}
             </div>
-        </div>
-    {% endif %}
-    {{ form_widget(form.typeConfigs) }}
-    <div class="control-group control-group-choice">
-        <div class="controls">
-            {{ form_errors(form.typeConfigs) }}
+            {{ form_widget(form.typeConfigs) }}
+            <div class="control-group control-group-choice">
+                <div class="controls">
+                    {{ form_errors(form.typeConfigs) }}
+                </div>
+            </div>
+            {{ form_rest(form) }}
         </div>
     </div>
-    {{ form_widget(form.options) }}
-    {{ form_rest(form) }}
 {% endblock %}
 
 {% block oro_shipping_method_type_config_collection_widget %}
     {% if is_grouped %}
-        {{- block('collection_widget') -}}
+        <h4>{{ 'oro.shipping.shipping_methods_table.additional_options.label'|trans }}</h4>
+        <div class="shipping-method-config-grid">
+            <div class="shipping-method-config-grid__header">
+                <div class="shipping-method-config-grid__header-item">
+                    {{ 'oro.shipping.shipping_methods_table.option.label'|trans }}
+                </div>
+
+                <div class="shipping-method-config-grid__header-item">
+                    {{ 'oro.shipping.shipping_methods_table.surcharge.label'|trans }}
+                </div>
+
+                <div class="shipping-method-config-grid__header-item">
+                    {{ 'oro.shipping.shipping_methods_table.status.label'|trans }}
+                </div>
+            </div>
+
+            <div class="shipping-method-config-grid__body">
+                <div>{{- block('collection_widget') -}}</div>
+            </div>
+        </div>
     {% else %}
         {% if prototype is defined %}
             {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
@@ -210,12 +252,32 @@
 {% endblock %}
 
 {% block oro_shipping_method_type_config_widget %}
-    {% if form.enabled is defined %}
-        {{ form_row(form.enabled) }}
+    <div data-validation-ignore="" class="shipping-method-config-grid__surcharge">
+        {% if form.parent.vars.is_grouped %}
+            {% for child in form.options %}
+                <div class="control-group method-options-surcharge control-group-number">
+                    <label>
+                        {{- form_widget(child) -}}
+                    </label>
+                    {{ form_errors(child) }}
+                </div>
+            {% endfor %}
+            {#{{- form_rest(form.options) -}}#}
+        {% else %}
+            {{ form_widget(form.options) }}
+        {% endif %}
+    </div>
+
+    {% if form.vars.value and form.parent.vars.is_grouped %}
+        <div class="shipping-method-config-grid__active">
+            <label class="shipping-method-config-grid__active-label">
+                {{ form_widget(form.enabled, {'attr': {'class': 'shipping-method-config-grid__active-checkbox'}}) }}
+                <span class="shipping-method-config-grid__active-label-text">
+                    {{ 'oro.shipping.shipping_methods_table.active.label'|trans }}
+                </span>
+            </label>
+        </div>
     {% endif %}
-<div data-validation-ignore="">
-    {{ form_widget(form.options) }}
-</div>
     {{ form_rest(form) }}
 {% endblock %}
 

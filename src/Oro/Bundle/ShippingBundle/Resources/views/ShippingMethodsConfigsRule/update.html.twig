@@ -73,6 +73,22 @@
             </span>
         </div>
     {% endif %}
+
+   {% if form.vars.value.methodConfigs|length != 0 %}
+       <div class="shipping-methods-grid">
+           <div class="shipping-methods-grid__header">
+               <div class="shipping-methods-grid__header-method"
+                    data-collapse-global-trigger-shipping-method>
+                   <i class="fa-plus-square-o"></i>
+                   {{ 'oro.shipping.shipping_methods_table.method.label'|trans }}
+               </div>
+               <div>{{ 'oro.shipping.shipping_methods_table.options.label'|trans }}</div>
+           </div>
+           <div>
+               {{ form_widget(form.methodConfigs, {'attr': {'class': 'oro-shipping-rule-method-configs-collection row-oro'}}) }}
+           </div>
+       </div>
+   {% endif %}
 {% endblock %}
 
 {% block content_data %}
@@ -88,7 +104,7 @@
                         form_row(form.rule.enabled),
                         form_row(form.rule.name),
                         form_row(form.rule.sortOrder),
-                        form_row(form.currency),
+                        form_row(form.currency, {'attr': {'class': 'shipping-rules-currency'}}),
                         form_row(form.rule.stopProcessing),
                     ]
                 },
@@ -119,9 +135,9 @@
             'subblocks': [
                 {
                     'data': [
-                        form_widget(form.methodConfigs, {'attr': {'class': 'oro-shipping-rule-collection oro-shipping-rule-method-configs-collection row-oro'}}),
-                        form_errors(form.methodConfigs),
-                        block('oro_shipping_rule_add_method_widget')
+                        block('oro_shipping_rule_add_method_widget'),
+                        form_widget(form.methodConfigs, {'attr': {'class': 'oro-shipping-rule-method-configs-collection row-oro'}}),
+                        form_errors(form.methodConfigs)
                     ]
                 }
             ]
