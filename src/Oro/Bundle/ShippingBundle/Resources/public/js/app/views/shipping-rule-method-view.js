@@ -8,14 +8,18 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
 
     ShippingRuleMethodsView = BaseView.extend({
-
         /**
          * @param options Object
          */
         options: {
             methodSelectSelector: '.oro-shipping-rule-add-method-select .oro-select2',
             buttonSelector: '.add-method',
+            buttonSelectorAll: '.add-all-methods',
             updateFlag: null
+        },
+
+        events: {
+            'click .add-all-methods, .add-method': '_createAddRequest'
         },
 
         $methodSelect: null,
@@ -25,6 +29,8 @@ define(function(require) {
         $formElements: null,
 
         $buttonSelector: null,
+
+        $buttonSelectorAll: null,
 
         $formParent: null,
 
@@ -44,6 +50,7 @@ define(function(require) {
             this.$methodSelect = $(this.el).find(this.options.methodSelectSelector).data().inputWidget.$el;
             this.$allMethodsOptions = this.$methodSelect.find('option[value][value!=""]').clone();
             this.$buttonSelector = $(this.el).find(options.buttonSelector);
+            this.$buttonSelectorAll = $(this.el).find(options.buttonSelectorAll);
             this.updateFormElements();
 
             if (_.isUndefined(this.$formParent.data('methodCount'))) {
@@ -89,8 +96,6 @@ define(function(require) {
         bindEvents: function() {
             var self = this;
 
-            this.$buttonSelector.on('click', _.bind(this.changeHandler, this));
-
             this.$formElements.each(function(index, element) {
                 $(element).parent().on('content:remove', function(e) {
                     self.updateMethodSelector(element);
@@ -109,28 +114,37 @@ define(function(require) {
             mediator.on('page:beforeChange', this._cleanUpDataBeforeRedirect, this);
         },
 
-        /**
-         * Check whenever form change and shows confirmation
-         */
-        changeHandler: function() {
+        _createAddRequest: function(e) {
             this.updateFormElements();
-            var $form = this.form;
-            var data = $form.serializeArray();
-            var url = $form.attr('action');
-            var value = this.$methodSelect.val();
+            var data = this.form.serializeArray();
             var methodCount = this.$formParent.data('methodCount');
-            methodCount++;
-            data.push({
-                'name': 'oro_shipping_methods_configs_rule[methodConfigs][' + methodCount + '][method]',
-                'value': value
-            });
+
+            if ($(e.target).hasClass('add-all-methods')) {
+                Array.prototype.push.apply(data, this.$methodSelect.find('option[value][value!=""]').get().map(
+                    function(option) {
+                        methodCount++;
+                        return {
+                            'name': 'oro_shipping_methods_configs_rule[methodConfigs][' + methodCount + '][method]',
+                            'value': option.value
+                        };
+                    })
+                );
+            } else if ($(e.target).hasClass('add-method')) {
+                methodCount++;
+                data.push({
+                    'name': 'oro_shipping_methods_configs_rule[methodConfigs][' + methodCount + '][method]',
+                    'value': this.$methodSelect.val()
+                });
+            }
+
             data.push({
                 'name': this.options.updateFlag,
                 'value': true
             });
+
             mediator.execute('submitPage', {
-                url: url,
-                type: $form.attr('method'),
+                url: this.form.attr('action'),
+                type: this.form.attr('method'),
                 data: $.param(data)
             });
 
@@ -155,15 +169,19 @@ define(function(require) {
                 methods.push($(element).find('input[data-name="field__method"]').val());
             });
 
+            this.$buttonSelectorAll.toggle((this.$allMethodsOptions.length - methods.length) > 1);
+
             if (methods.length >= this.$allMethodsOptions.length) {
                 this.disableMethodSelector();
                 return;
             }
+
             if (!this.$methodSelect.val()) {
                 this.disableAddButton();
             } else {
                 this.enableAddButton();
             }
+
             this.$methodSelect.empty(); // remove old options
             this.$allMethodsOptions.each(function(i, option) {
                 var value = $(option).val();

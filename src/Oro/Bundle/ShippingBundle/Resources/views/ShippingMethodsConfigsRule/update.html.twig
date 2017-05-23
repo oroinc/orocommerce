@@ -61,6 +61,9 @@
         <a class="btn add-method" href="javascript: void(0);">
             {{ form.vars.add_label|default('oro.form.collection.add')|trans }}
         </a>
+        <a class="btn add-all-methods btn-primary" href="javascript: void(0);">
+            {{ form.vars.add_label|default('oro.form.collection.add_all')|trans }}
+        </a>
     </div>
 
     {% if form.method.vars.choices|length == 0 %}
