@@ -31,14 +31,12 @@ define(function(require) {
         options: {
             matchedPriceEnabled: true,
             precision: 4,
-            editable: false
+            editable: true
         },
 
         templates: {
             priceOverridden: '#product-prices-price-overridden-template'
         },
-
-        storedValues: {},
 
         /**
          * @inheritDoc
@@ -55,15 +53,6 @@ define(function(require) {
          */
         deferredInitialize: function(options) {
             ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
-
-            if (!this.options.editable) {
-                this.getElement('priceValue').prop('disabled', true);
-                var productId = this.model.get('id');
-                if (!_.isUndefined(productId) && productId.length && this.model.get('price')) {
-                    // store current values
-                    this.storedValues = _.extend({}, this.model.attributes);
-                }
-            }
         },
 
         /**
@@ -71,7 +60,6 @@ define(function(require) {
          */
         dispose: function(options) {
             delete this.templates;
-            delete this.storedValues;
             ProductPricesEditableView.__super__.dispose.apply(this, arguments);
         },
 
@@ -108,7 +96,7 @@ define(function(require) {
 
         initPriceOverridden: function() {
             this.priceOverriddenInitialized = true;
-            if (!this.options.matchedPriceEnabled) {
+            if (!this.options.matchedPriceEnabled || !this.options.editable) {
                 return;
             }
             var $priceOverridden = $(_.template(

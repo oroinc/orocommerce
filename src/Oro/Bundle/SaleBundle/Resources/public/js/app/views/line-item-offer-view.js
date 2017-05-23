@@ -50,12 +50,9 @@ define(function(require) {
 
             if (units) {
                 _.each(this.options.allUnits, _.bind(function(unit) {
-                    if ($select.find('option[value=' + unit.code + ']').length ||
-                        (-1 === $.inArray(unit.code, units))
-                    ) {
-                        return;
+                    if (-1 !== $.inArray(unit.code, units)) {
+                        $select.append($('<option/>').val(unit.code).text(unit.label));
                     }
-                    $select.append($('<option/>').val(unit.code).text(unit.label));
                 }));
                 $select.val(value);
                 if ($select.val() === null) {

@@ -23,11 +23,22 @@ define(function(require) {
             'quantity updatePriceValue': ['change', 'updatePriceValue']
         }),
 
+        storedValues: {},
+
         /**
          * @inheritDoc
          */
         deferredInitialize: function(options) {
             LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
+
+            if (!this.options.editable) {
+                this.getElement('priceValue').prop('disabled', true);
+                var productId = this.model.get('id');
+                if (!_.isUndefined(productId) && productId.length && this.model.get('price')) {
+                    // store current values
+                    this.storedValues = _.extend({}, this.model.attributes);
+                }
+            }
 
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
             mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
@@ -50,24 +61,6 @@ define(function(require) {
                     _.bind(this.refreshTierPrices, this)
                 );
             }
-        },
-
-        changePricesCurrency: function() {
-            this.setTierPrices(this.tierPrices);
-
-            var price;
-            if (this.storedValues &&
-                this.model.get('id') === this.storedValues.id &&
-                this.model.get('unit') === this.storedValues.unit &&
-                this.model.get('quantity') === this.storedValues.quantity &&
-                this.model.get('currency') === this.storedValues.currency
-            ) {
-                price = this.storedValues;
-            } else {
-                price = this.findPrice();
-            }
-            this.setPriceValue(price ? price.price : null);
-            this.getElement('priceValue').addClass('matched-price');
         },
 
         /**
@@ -100,12 +93,12 @@ define(function(require) {
          */
         refreshTierPrices: function(tierPrices) {
             var productId = this.model.get('id');
-            if (productId && !_.isUndefined(tierPrices) && _.isUndefined(tierPrices[productId])) {
-                return;
-            }
             this.setTierPrices(tierPrices, false);
             if (!this.options.editable) {
-                this.filterValues(true);
+                this.filterValues();
+                if (productId) {
+                    this.updatePriceValue();
+                }
             }
         },
 
@@ -125,7 +118,7 @@ define(function(require) {
             }
         },
 
-        filterValues: function(keepSelected) {
+        filterValues: function() {
             var productId = this.model.get('id');
             var prices = {};
             if (!_.isUndefined(productId) && productId.length !== 0) {
@@ -146,6 +139,7 @@ define(function(require) {
                 units.push(this.model.get('unit'));
             }
 
+            // we always filter only initial list of currencies
             this.getElement('currency')
                 .find('option')
                 .filter(function() {
@@ -181,6 +175,8 @@ define(function(require) {
             }
 
             mediator.off(null, null, this);
+
+            delete this.storedValues;
 
             LineItemProductPricesView.__super__.dispose.call(this);
         }
