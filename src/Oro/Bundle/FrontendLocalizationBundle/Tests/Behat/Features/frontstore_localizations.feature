@@ -1,5 +1,5 @@
 @ticket-BAP-14671
-@fixture-frontstore-localizations.yml
+@fixture-frontstore-customer.yml
 Feature: FrontStore language switcher
   In order to manage available localizations for language switcher
   As Administrator
@@ -7,23 +7,43 @@ Feature: FrontStore language switcher
   As Frontend User
   I need to be able to switch between Localizations
 
-  Scenario: Manage localizations
+  Scenario: Feature Background
     Given I login as administrator
-    And I go to System/Localization/Localizations
-    And I click Edit Netherlands in grid
-    And click "Fallback Status"
-    When I fill "Localization Create Form" with:
-      | Name                | Dutch |
-      | Title Default Value | Dutch |
-      | Title Use           | false |
-      | Title English       | NL    |
-    And I save and close form
-    Then go to System/Localization/Localizations
-    And I should see "Netherlands" in grid with following data:
-      | Title               | Dutch                       |
-      | Parent localization | N/A                         |
-      | Language            | Dutch (Netherlands) - nl_NL |
-      | Formatting          | Dutch (Netherlands) - nl_NL |
+    And go to System/ Localization/ Languages
+
+  Scenario Outline: Add Languages
+    And click "Add Language"
+    And fill in "Language" with "<Language Full Name>"
+    And click "Add Language" in modal window
+    Then I should see "Language has been added" flash message
+    And click "Enable" on row "<Language Short Name>" in grid
+    Then I should see "Language has been enabled" flash message
+
+    Examples:
+      | Language Full Name          | Language Short Name |
+      | Dutch (Netherlands) - nl_NL | Dutch               |
+      | Japanese (Japan) - ja_JP    | Japanese            |
+
+  Scenario: Update cache
+    Given go to System/ Localization/ Translations
+    When click "Update Cache"
+    Then I should see "Translation Cache has been updated" flash message
+
+  Scenario Outline: Add Localizations
+    Given I go to System/ Localization/ Localizations
+    And click "Create Localization"
+    And fill "Create Localization Form" with:
+      | Name       | <Language Short Name> |
+      | Title      | <Language Short Name> |
+      | Language   | <Language Full Name>  |
+      | Formatting | <Language Full Name>  |
+    When I save and close form
+    Then I should see "Localization has been saved" flash message
+
+    Examples:
+      | Language Full Name  | Language Short Name |
+      | Dutch (Netherlands) | Dutch               |
+      | Japanese (Japan)    | Japanese            |
 
   Scenario: Enable Localizations at System Configuration
     Given I open Localization Config page
@@ -36,12 +56,12 @@ Feature: FrontStore language switcher
     Given I am on homepage
     When I press "Localization Switcher"
     Then I should see that localization switcher contains localizations:
+      | Dutch    |
       | English  |
-      | NL       |
       | Japanese |
     And I should see that "English" localization is active
 
-    When I select "NL" localization
+    When I select "Dutch" localization
     And I press "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | English  |
@@ -61,12 +81,12 @@ Feature: FrontStore language switcher
     Given I signed in as AmandaRCole@example.org on the store frontend
     When I press "Localization Switcher"
     Then I should see that localization switcher contains localizations:
+      | Dutch    |
       | English  |
-      | NL       |
       | Japanese |
     And I should see that "English" localization is active
 
-    When I select "NL" localization
+    When I select "Dutch" localization
     And I press "Localization Switcher"
     Then I should see that localization switcher contains localizations:
       | English  |
