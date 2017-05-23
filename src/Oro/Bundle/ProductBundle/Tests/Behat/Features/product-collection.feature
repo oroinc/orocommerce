@@ -19,14 +19,17 @@ Feature:
     And I click "Add Product Collection"
     And I click "Content Variants"
     Then I should see 1 elements "Product Collection Variant Label"
-    And I should not see an "Product Collection Preview Grid" element
+    Then I should see an "Product Collection Preview Grid" element
+    And I should see "No records found"
 
   Scenario: Saving Product Collection with empty filters results in validation error
     When I click "Save"
-    Then I should see "Filters should not be blank."
+    Then I should see "Should be specified filters or added some products manually."
 
   Scenario: Apply filters
     When I click "Content Variants"
+    And I click on "Advanced Filter"
+    And I should see "DRAG TO SELECT"
     And I drag and drop "Field Condition" on "Drop condition here"
     And I click "Choose a field.."
     And I click on "SKU"
@@ -77,6 +80,7 @@ Feature:
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
+    And I click on "Advanced Filter"
     And type "PSKU" in "value"
     And I click on "Preview"
     Then I should see following grid:
@@ -95,8 +99,10 @@ Feature:
       | PSKU1 | Product 1 |
 
   Scenario: Adding Product Collection with duplicated name results in validation error
-    When I click on "Show Variants Dropdown"
+    When I click "Content Variants"
+    And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
+    And I click on "Advanced Filter"
     And I drag and drop "Field Condition" on "Drop condition here"
     And I click "Choose a field.."
     And I click on "SKU"
@@ -117,6 +123,7 @@ Feature:
       | First Product Collection Segment Name  | Some Custom Segment Name |
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
+    And I click on "Advanced Filter"
     And I drag and drop "Field Condition" on "Drop condition here"
     And I click "Choose a field.."
     And I click on "SKU"
@@ -211,6 +218,7 @@ Feature:
   Scenario: Confirmation cancel after save changed not applied filters
     Given I proceed as the Admin
     And I click "Content Variants"
+    And I click on "Advanced Filter"
     When type "PSKU1" in "value"
     And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
@@ -232,14 +240,17 @@ Feature:
 
   Scenario: Confirmation cancel, after save changed not applied filters several product collections
     When I click "Content Variants"
+    And I click on "Advanced Filter"
     And type "PSKU2" in "value"
     Then I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
+    And I click on "Advanced Filter"
     And I drag and drop "Field Condition" on "Drop condition here"
     And I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU" in "value"
     And I click "Content Variants"
+    And I click on "Advanced Filter"
     Then I should see 2 elements "Product Collection Variant Label"
     And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
@@ -251,10 +262,11 @@ Feature:
   Scenario: Reset Product Collection after filters change
     When I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
-    When type "TEST" in "value"
+    And I click on "Advanced Filter"
+    When type "SKU42" in "value"
     And I click "Preview"
     And I click on "Reset"
-    Then I should not see "TEST"
+    Then I should not see "SKU42"
     And I click "Preview"
     Then I should see "PSKU1"
     And I click "Cancel"

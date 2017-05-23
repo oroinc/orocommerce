@@ -50,7 +50,10 @@ oro_behat_extension:
       selector: ".content-variant-add-btn-container .dropdown-toggle"
 
     Product Collection Preview Grid:
-      selector: 'div[class*="product-collection-grid-widget-container-"]'
+      selector: 'div[id*="grid-product-collection-grid-"]'
+
+    AdvancedFilter:
+      selector: '.collapse-view__trigger.btn .fa-filter'
 
     Field Condition:
       selector: 'li[data-widget="fieldCondition"]'
@@ -61,7 +64,7 @@ oro_behat_extension:
     Choose a field..:
       selector: "#select2-drop-mask"
 
-    Apply the Query:
+    Preview:
       selector:
         type: xpath
         locator: '//a[contains(@class, "btn") and contains(., "Preview")]'
