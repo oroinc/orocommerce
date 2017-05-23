@@ -105,6 +105,7 @@ workflows:
             enter_payment:
                 order: 40
                 allowed_transitions:
+                    - payment_error
                     - continue_to_order_review
                     - back_to_billing_address
                     - back_to_shipping_address
@@ -114,6 +115,8 @@ workflows:
                 allowed_transitions:
                     - continue_to_request_approval
                     - place_order
+                    - finish_checkout
+                    - payment_error
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
@@ -132,6 +135,8 @@ workflows:
                 order: 70
                 allowed_transitions:
                     - approve_order
+                    - finish_checkout
+                    - payment_error
                     - place_order_with_inactive_possibility
                     - back_to_billing_address
                     - back_to_billing_address
@@ -384,12 +389,13 @@ workflows:
                     is_checkout_back: true
 
             place_order:
-                step_to: order_created
+                step_to: order_review
                 transition_definition: place_order_definition
                 display_type: page
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     attribute_fields:
                         remove_source: ~
@@ -399,7 +405,7 @@ workflows:
                             form_type: textarea
 
             place_order_with_inactive_possibility:
-                step_to: order_created
+                step_to: approve_request
                 transition_definition: place_order_definition
                 display_type: page
                 is_unavailable_hidden: false
@@ -425,6 +431,7 @@ workflows:
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     form_init:
                         - '@generate_checkout_state_snapshot':
@@ -435,6 +442,16 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+
+            finish_checkout:
+                step_to: order_created
+                transition_definition: finish_checkout_definition
+                is_hidden: true
+
+            payment_error:
+                step_to: enter_payment
+                transition_definition: unblock_and_recalculate_definition
+                is_hidden: true
 
         transition_definitions:
             start_from_quickorderform_definition:
@@ -996,6 +1013,13 @@ workflows:
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
                                     id: $checkout.id
+                                    transition: 'finish_checkout'
+                            - '@assign_url':
+                                attribute: $.result.failureUrl
+                                route: oro_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'payment_error'
                             - '@payment_purchase':
                                 attribute: $.result.responseData
                                 object:  $order
@@ -1004,6 +1028,8 @@ workflows:
                                 paymentMethod: $payment_method
                                 transactionOptions:
                                     successUrl: $.result.successUrl
+                                    failureUrl: $.result.failureUrl
+                                    checkoutId: $checkout.id
                             - '@redirect':
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
@@ -1293,6 +1319,23 @@ workflows:
                             payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
                 actions:
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.actualCheckoutState
+                        attribute: $state_token
+                    - '@assign_value': [$internal_state_token, $state_token]
+
+            finish_checkout_definition:
+                conditions:
+                    '@and':
+                        - '@not_empty': [$order]
+
+            unblock_and_recalculate_definition:
+                actions:
+                    - '@assign_value': [$payment_method, null]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
