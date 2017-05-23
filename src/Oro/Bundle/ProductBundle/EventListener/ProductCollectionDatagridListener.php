@@ -93,7 +93,7 @@ class ProductCollectionDatagridListener
         $dataGridQueryBuilder = $dataSource->getQueryBuilder();
 
         $definition = json_decode($requestData[self::DEFINITION_KEY], true);
-        if (empty($definition['filters']) && !$requestData[self::INCLUDED_KEY]) {
+        if (!$this->definitionConverter->hasFilters($definition) && !$requestData[self::INCLUDED_KEY]) {
             $dataGridQueryBuilder->andWhere('1 = 0');
             return;
         }

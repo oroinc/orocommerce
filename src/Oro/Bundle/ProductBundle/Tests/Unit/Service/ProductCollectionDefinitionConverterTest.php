@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Service;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Service;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;

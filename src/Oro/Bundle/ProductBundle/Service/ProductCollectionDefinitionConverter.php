@@ -30,12 +30,12 @@ class ProductCollectionDefinitionConverter
     {
         $definition = $this->normalizeDefinition($rawDefinition);
 
-        if (!empty($definition['filters'])) {
+        if ($this->hasFilters($definition)) {
             $definition['filters'] = [$definition['filters']];
         }
 
         if ($included) {
-            if (!empty($definition['filters'])) {
+            if ($this->hasFilters($definition)) {
                 $definition['filters'][] = 'OR';
             }
             $definition['filters'][] = $this->getFilter(
@@ -46,7 +46,7 @@ class ProductCollectionDefinitionConverter
         }
 
         if ($excluded) {
-            if (!empty($definition['filters'])) {
+            if ($this->hasFilters($definition)) {
                 $definition['filters'][] = 'AND';
             }
             $definition['filters'][] = $this->getFilter(
@@ -77,7 +77,7 @@ class ProductCollectionDefinitionConverter
         $definition = $this->normalizeDefinition($rawDefinition);
         $included = null;
         $excluded = null;
-        if (!empty($definition['filters'])) {
+        if ($this->hasFilters($definition)) {
             $included = $this->getValueFromFilter(self::INCLUDED_FILTER_ALIAS, $definition['filters']);
             $excluded = $this->getValueFromFilter(self::EXCLUDED_FILTER_ALIAS, $definition['filters']);
             $definition['filters'] = $this->getUserDefinedFilter($definition);
@@ -88,6 +88,16 @@ class ProductCollectionDefinitionConverter
             self::INCLUDED_FILTER_KEY => $included,
             self::EXCLUDED_FILTER_KEY => $excluded
         ];
+    }
+
+    /**
+     * @param mixed $definition
+     *
+     * @return bool
+     */
+    public function hasFilters($definition)
+    {
+        return !empty($definition['filters']);
     }
 
     /**
@@ -146,7 +156,7 @@ class ProductCollectionDefinitionConverter
      * @param array $definition
      * @return array
      */
-    protected function getUserDefinedFilter(array $definition): array
+    private function getUserDefinedFilter(array $definition): array
     {
         if (isset($definition['filters'][0])
             && is_array($definition['filters'][0])
