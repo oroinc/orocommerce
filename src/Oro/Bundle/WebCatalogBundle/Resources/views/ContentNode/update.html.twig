@@ -64,7 +64,6 @@
     {% set id = 'web-catalog-tree-edit' %}
 
     {% set formRows = [
-        form_row(form.parentNode),
         form_row(form.titles),
         form_row(form.rewriteVariantTitle),
     ] %}
@@ -77,12 +76,13 @@
         {% set scopes %}
         <div data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 view: 'orowebcatalog/js/app/views/scope-toggle-view',
+                 view: 'oroscope/js/app/views/scope-toggle-view',
                  selectors: {
                      useParentScopeSelector: '#' ~ form.parentScopeUsed.vars.id,
                      scopesSelector: '.scope-elements'
                  }
              }|json_encode }}"
+             data-layout="separate"
         >
             {{ form_row(form.parentScopeUsed) }}
             <div class="scope-elements">

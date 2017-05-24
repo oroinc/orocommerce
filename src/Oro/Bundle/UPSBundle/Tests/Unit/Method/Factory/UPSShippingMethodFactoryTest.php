@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\Factory;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
@@ -49,10 +50,18 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
     private $methodTypeFactory;
 
     /**
-     * @var UPSShippingMethodFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIconProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $integrationIconProvider;
+
+    /**
+     * @var UPSShippingMethodFactory
      */
     private $factory;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         $this->transport = $this->createMock(UPSTransport::class);
@@ -61,11 +70,13 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $this->shippingPriceCache = $this->createMock(ShippingPriceCache::class);
         $this->methodIdentifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
         $this->methodTypeFactory = $this->createMock(UPSShippingMethodTypeFactoryInterface::class);
+        $this->integrationIconProvider = $this->createMock(IntegrationIconProviderInterface::class);
 
         $this->factory = new UPSShippingMethodFactory(
             $this->transport,
             $this->priceRequestFactory,
             $this->localizationHelper,
+            $this->integrationIconProvider,
             $this->shippingPriceCache,
             $this->methodIdentifierGenerator,
             $this->methodTypeFactory
@@ -74,6 +85,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
+        $iconUri = 'bundles/icon-uri.png';
         $identifier = 'ups_1';
         $labelsCollection = $this->createMock(Collection::class);
 
@@ -92,6 +104,12 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $channel->expects($this->any())
             ->method('isEnabled')
             ->willReturn(true);
+
+        $this->integrationIconProvider
+            ->expects(static::once())
+            ->method('getIcon')
+            ->with($channel)
+            ->willReturn($iconUri);
 
         $type1 = $this->createMock(UPSShippingMethodType::class);
         $type2 = $this->createMock(UPSShippingMethodType::class);
@@ -131,6 +149,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new UPSShippingMethod(
             $identifier,
             'en',
+            $iconUri,
             [$type1, $type2],
             $settings,
             $this->transport,

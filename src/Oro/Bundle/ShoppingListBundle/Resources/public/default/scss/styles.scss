@@ -3,6 +3,9 @@
 @import 'components/products-widget';
 @import 'components/shopping-list-widget';
 @import 'components/matrix-order-widget';
+@import 'components/cart';
+@import 'components/cart-list-empty';
+@import 'components/cart-order-title';
 
 @import 'components/shopping-lists-outer/shopping-lists-outer';
 @import 'components/shopping-lists/shopping-lists';
@@ -15,5 +18,6 @@
 @import 'components/shopping-list-view';
 @import 'components/shopping-list-navigation';
 @import 'components/shopping-list-owner';
+@import 'components/shopping-list-view-options';
 
 @import './components/shopping-list-dropdown/shopping-list-dropdown';

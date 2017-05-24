@@ -20,26 +20,6 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
         $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes']);
     }
 
-    public function testFindOneByProduct()
-    {
-        /** @var Product $product5 */
-        $product5 = $this->getReference(LoadProductData::PRODUCT_5);
-        $this->assertNull($this->getRepository()->findOneByProduct($product5));
-
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $expectedTaxCode = $this->getRepository()->findOneByProduct($product1);
-
-        /** @var ProductTaxCode $taxCode1 */
-        $taxCode1 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
-        $this->assertEquals($expectedTaxCode->getId(), $taxCode1->getId());
-    }
-
-    public function testFindNewProduct()
-    {
-        $this->assertEmpty($this->getRepository()->findOneByProduct(new Product()));
-    }
-
     public function testFindByCodes()
     {
         /** @var ProductTaxCode $taxCode1 */

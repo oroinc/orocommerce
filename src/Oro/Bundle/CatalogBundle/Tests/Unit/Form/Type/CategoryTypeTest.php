@@ -70,15 +70,6 @@ class CategoryTypeTest extends FormIntegrationTestCase
         $builder->expects($this->at(0))
             ->method('add')
             ->with(
-                'parentCategory',
-                EntityIdentifierType::NAME,
-                ['class' => self::DATA_CLASS, 'multiple' => false]
-            )
-            ->will($this->returnSelf());
-
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with(
                 'titles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
@@ -89,7 +80,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(2))
+        $builder->expects($this->at(1))
             ->method('add')
             ->with(
                 'shortDescriptions',
@@ -98,7 +89,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(3))
+        $builder->expects($this->at(2))
             ->method('add')
             ->with(
                 'longDescriptions',
@@ -107,7 +98,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(4))
+        $builder->expects($this->at(3))
             ->method('add')
             ->with(
                 'appendProducts',
@@ -116,7 +107,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(5))
+        $builder->expects($this->at(4))
             ->method('add')
             ->with(
                 'removeProducts',
@@ -125,7 +116,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(6))
+        $builder->expects($this->at(5))
             ->method('add')
             ->with(
                 'smallImage',
@@ -133,7 +124,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 ['label' => 'oro.catalog.category.small_image.label', 'required' => false]
             )->will($this->returnSelf());
 
-        $builder->expects($this->at(7))
+        $builder->expects($this->at(6))
             ->method('add')
             ->with(
                 'largeImage',
@@ -141,7 +132,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 ['label' => 'oro.catalog.category.large_image.label', 'required' => false]
             )->will($this->returnSelf());
 
-        $builder->expects($this->at(8))
+        $builder->expects($this->at(7))
             ->method('add')
             ->with(
                 'defaultProductOptions',
@@ -149,7 +140,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 ['required' => false]
             )->will($this->returnSelf());
 
-        $builder->expects($this->at(9))
+        $builder->expects($this->at(8))
             ->method('add')
             ->with(
                 'slugPrototypesWithRedirect',

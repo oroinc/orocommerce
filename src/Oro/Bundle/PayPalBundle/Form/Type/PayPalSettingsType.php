@@ -247,6 +247,7 @@ class PayPalSettingsType extends AbstractType
      */
     protected function transformWithEncodedValue(FormBuilderInterface $builder, $field, $decrypt = true)
     {
+        // TODO: BB-9260 Reuse EncryptionTransformer
         $builder->get($field)->addModelTransformer(new CallbackTransformer(
             function ($value) use ($decrypt) {
                 if ($decrypt === true) {

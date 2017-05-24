@@ -56,7 +56,11 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            this.transit(e, {method: 'POST', data: this.$form.serialize()});
+            this.$form.validate();
+
+            if (this.$form.valid()) {
+                this.transit(e, {method: 'POST'});
+            }
         },
 
         transit: function(e, data) {
@@ -75,6 +79,9 @@ define(function(require) {
             data = data || {method: 'GET'};
             data.url = url;
             data.errorHandlerMessage = false;
+            if (this.$form) {
+                data.data = this.$form.serialize();
+            }
             $.ajax(data)
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this));
@@ -85,6 +92,7 @@ define(function(require) {
 
             if (response.hasOwnProperty('responseData')) {
                 var eventData = {stopped: false, responseData: response.responseData};
+                // FIXME: Inconsistent event name. This is not place-order logic, just "Continue"
                 mediator.trigger('checkout:place-order:response', eventData);
                 if (eventData.stopped) { return; }
             }

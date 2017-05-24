@@ -23,10 +23,6 @@ oro_behat_extension:
         PageTitle:
             selector: "title"
 
-        Modal Cancel Button:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-            selector: 'div.modal-footer a.cancel'
-
         Content Block Form:
             selector: 'form[name="oro_cms_content_block"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

@@ -25,17 +25,6 @@ class CustomerTaxCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($this->createCustomerTaxCode(), $properties);
     }
 
-    /**
-     * Test CustomerTaxCode relations
-     */
-    public function testRelations()
-    {
-        $this->assertPropertyCollections($this->createCustomerTaxCode(), [
-            ['customers', new Customer()],
-            ['customerGroups', new CustomerGroup()],
-        ]);
-    }
-
     public function testToString()
     {
         $entity = new CustomerTaxCode();
