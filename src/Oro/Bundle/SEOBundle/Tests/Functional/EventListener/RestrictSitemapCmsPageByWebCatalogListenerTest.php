@@ -46,8 +46,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
             return $page->getId();
         }, $qb->getQuery()->getResult());
 
-        // All page are available including not test fixtures `About` and `Contact Us` pages
-        $this->assertCount(4, $actual);
+        $this->assertCount(3, $actual);
         $expected = [
             $this->getReference(LoadPageData::PAGE_1),
             $this->getReference(LoadPageData::PAGE_2),
