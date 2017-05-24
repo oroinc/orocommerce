@@ -388,7 +388,7 @@
                             {% set excludedGridWidgetAlias = 'product-collection-excluded-products-grid-' ~ scope %}
                             {% set excludedWidgetRouteParameters = {
                                 'gridName': excludedProductsGridName,
-                                'params': {'selectedProducts': form.excludedProducts.vars.value|split(',')},
+                                'params': {'selectedProducts': form.excludedProducts.vars.value},
                                 'renderParams': {'routerEnabled': false},
                                 'renderParamsTypes': {'routerEnabled': 'bool'}
                             } %}
@@ -429,7 +429,7 @@
                             {% set includedGridWidgetAlias = 'product-collection-included-products-grid-' ~ scope %}
                             {% set includedWidgetRouteParameters = {
                                 'gridName': includedProductsGridName,
-                                'params': {'selectedProducts': form.includedProducts.vars.value|split(',')},
+                                'params': {'selectedProducts': form.includedProducts.vars.value},
                                 'renderParams': {'routerEnabled': false},
                                 'renderParamsTypes': {'routerEnabled': 'bool'}
                             } %}

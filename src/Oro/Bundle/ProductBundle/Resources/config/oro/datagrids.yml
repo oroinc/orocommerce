@@ -133,7 +133,7 @@ datagrids:
                         - product.id IN (:selectedProducts)
             bind_parameters:
                 selectedProducts:
-                    default: [0]
+                    default: 0
 
     product-collection-add-products-grid:
         extends: products-select-grid-base
@@ -160,7 +160,7 @@ datagrids:
                         - NOT (product.id IN (:hiddenProducts))
             bind_parameters:
                 hiddenProducts:
-                    default: [0]
+                    default: 0
         columns:
             isSelected:
                 label:         oro.product.content_variant.ui.selected

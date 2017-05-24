@@ -107,7 +107,7 @@ define(function(require) {
             var val = $(this.options.hiddenProductsSelector).val();
 
             if (val) {
-                widgetData.hiddenProducts = val.split(',');
+                widgetData.hiddenProducts = val;
             }
 
             return widgetData;

@@ -17,7 +17,6 @@ define(function(require) {
             includedControlsBlockAlias: null,
             excludedProductsGridName: null,
             includedProductsGridName: null,
-            delimiter: ',',
             wait: 100,
             selectors: {
                 excluded: null,
@@ -152,7 +151,7 @@ define(function(require) {
                 reload: reload,
                 params: {}
             };
-            parameters.params[gridName] = {selectedProducts: value.split(this.options.delimiter)};
+            parameters.params[gridName] = {selectedProducts: value};
 
             mediator.trigger('grid-sidebar:change:' + controlsBlockAlias, parameters);
         },
