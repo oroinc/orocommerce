@@ -207,6 +207,7 @@ services:
         class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
         arguments:
             - '@translator'
+            - '@oro_product.related_products.config_provider'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-quick-update, method: onProductEdit }

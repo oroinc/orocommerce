@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\RelatedProductsConfigProvider;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class RelatedItemsProductEditListener
@@ -17,12 +19,16 @@ class RelatedItemsProductEditListener
     /** @var TranslatorInterface */
     private $translator;
 
+    /** @var AbstractRelatedItemConfigProvider */
+    private $configProvider;
+
     /**
      * @param TranslatorInterface $translator
      */
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, RelatedProductsConfigProvider $configProvider)
     {
         $this->translator = $translator;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -30,6 +36,10 @@ class RelatedItemsProductEditListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
+        if (!$this->configProvider->isEnabled()) {
+            return;
+        }
+
         $twigEnv = $event->getEnvironment();
         $relatedProductsTemplate = $twigEnv->render(
             '@OroProduct/Product/RelatedItems/relatedItems.html.twig',
