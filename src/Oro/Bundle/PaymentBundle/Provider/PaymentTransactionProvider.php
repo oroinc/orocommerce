@@ -156,7 +156,7 @@ class PaymentTransactionProvider
 
     /**
      * @param string $paymentMethod
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getActiveValidatePaymentTransaction($paymentMethod)
     {

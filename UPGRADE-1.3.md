@@ -24,3 +24,10 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Provider\VariantFieldProvider` was added it introduces logic to fetch variant field for certain family
   calling `getVariantFields(AttributeFamily $attributeFamily)` method
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
+
+PaymentBundle
+-------------
+- Class `Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent`
+    - method `getTypedEventName` was removed
+- Class `Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener`
+    - constant `FAILED_SHIPPING_ADDRESS_URL_KEY` was removed
