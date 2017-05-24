@@ -1,5 +1,4 @@
 {% macro shipping_origin_block(form, disabled) %}
-    {{ dump(form.vars.required) }}
     {% set attrs = {'attr': {'data-validation': (form.vars.required ? { NotBlank: null } : {})|json_encode }, disabled: disabled } %}
     {{ form_row(form, attrs) }}
 {% endmacro %}
@@ -188,7 +187,10 @@
                  data-collapse-trigger-shipping-method>
                 <div class="shipping-method-config__item">
                     <i class="fa-plus-square-o"></i>
-                    {{ methods_labels[form.method.vars.value]|trans }}
+                    {% set icon = methods_icons[form.method.vars.value]|default('') %}
+                    {% set label = methods_labels[form.method.vars.value]|trans %}
+                    {% if icon %}<img src="{{ asset(icon) }}" alt="{{ label }}" title="{{ label }}"/>{% endif %}
+                    {{ label }}
                 </div>
                 <div class="shipping-method-config__info"></div>
             </div>
