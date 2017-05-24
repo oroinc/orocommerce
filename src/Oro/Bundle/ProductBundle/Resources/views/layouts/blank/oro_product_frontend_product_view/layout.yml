@@ -1,8 +1,4 @@
 layout:
-    imports:
-        -
-            id: oro_product_variant_form
-            root: product_view_variant_field_container
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
@@ -30,8 +26,6 @@ layout:
                 product_view_content_container:
                     blockType: container
                 product_view_specification_container:
-                    blockType: container
-                product_view_variant_field_container:
                     blockType: container
                 product_view_line_item_container:
                     blockType: container
@@ -69,8 +63,7 @@ layout:
                             product_view_content_container:
                                 product_view_specification_container: ~
                                 product_view_description_container:
-                                    product_view_line_item_container:
-                                        product_view_variant_field_container: ~
+                                    product_view_line_item_container: ~
                                 product_view_attribute_group_general: ~
                                 product_view_main_attributes_container: ~
                         product_view_additional_container: ~

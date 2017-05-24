@@ -2,18 +2,13 @@
 
 namespace Oro\Bundle\TaxBundle\Entity\Repository;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
-use Doctrine\Common\Cache\ArrayCache;
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Inflector\Inflector;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Oro\Bundle\TaxBundle\Model\TaxCode;
+
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 abstract class AbstractTaxCodeRepository extends EntityRepository
 {
@@ -28,23 +23,6 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
      * @var PropertyAccessor
      */
     private $propertyAccessor;
-
-    /**
-     * @var CacheProvider
-     */
-    private $queryResultCache;
-
-    /**
-     * @return CacheProvider
-     */
-    private function getQueryResultCache()
-    {
-        if (!$this->queryResultCache) {
-            $this->queryResultCache = new ArrayCache();
-        }
-
-        return $this->queryResultCache;
-    }
 
     /**
      * @param array $codes
@@ -109,43 +87,13 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
 
     /**
      * @param string $type
-     * @param array $ids
-     * @return QueryBuilder
-     */
-    protected function getFindManyByEntitiesQueryBuilder($type, array $ids)
-    {
-        $type = (string)$type;
-
-        $alias = sprintf('%s%s', $type, self::ALIAS_SUFFIX);
-        $field = $this->getInflector()->camelize($this->getInflector()->pluralize($type));
-
-        $queryBuilder = $this->createQueryBuilder($alias);
-
-        return $queryBuilder
-            ->select($alias, $field)
-            ->join(sprintf('%s.%s', $alias, $field), $field)
-            ->where($queryBuilder->expr()->in(sprintf('%s.id', $field), ':ids'))
-            ->setParameter('ids', $ids);
-    }
-
-    /**
-     * @param string $type
      * @param object $object
      *
      * @return null|AbstractTaxCode
      */
     public function findOneByEntity($type, $object)
     {
-        $ids = $this->getObjectIds($object);
-
-        if (!$ids) {
-            return null;
-        }
-
-        return $this->getFindOneByEntityQuery($type, reset($ids))
-            ->setResultCacheDriver($this->getQueryResultCache())
-            ->useResultCache(true)
-            ->getOneOrNullResult();
+        return $object->getTaxCode();
     }
 
     /**
@@ -155,87 +103,11 @@ abstract class AbstractTaxCodeRepository extends EntityRepository
      */
     public function findManyByEntities($type, array $objects)
     {
-        $notEmptyIds = [];
-        $objectIds = [];
+        $result = [];
         foreach ($objects as $object) {
-            $compositeId = $this->getObjectIds($object);
-
-            if (!$compositeId) {
-                $objectId = null;
-            } else {
-                $objectId = reset($compositeId);
-                $notEmptyIds[] = $objectId;
-            }
-
-            $objectIds[] = $objectId;
+            $result[] = $object->getTaxCode();
         }
 
-        $taxCodes = $this->getFindManyByEntitiesQueryBuilder($type, $notEmptyIds)
-            ->getQuery()
-            ->setResultCacheDriver($this->getQueryResultCache())
-            ->useResultCache(true)
-            ->getResult();
-
-        return $this->arrangeTaxCodes($objectIds, $taxCodes, $type);
-    }
-
-    /**
-     * @return bool
-     */
-    public function clearCachedQueries()
-    {
-        return $this->getQueryResultCache()->deleteAll();
-    }
-
-    /**
-     * @param array $objectIds
-     * @param array|AbstractTaxCode[] $taxCodes
-     * @param string $type
-     * @return array
-     */
-    private function arrangeTaxCodes(array $objectIds, array $taxCodes, $type)
-    {
-        $results = array_fill(0, count($objectIds), null);
-        $index = 0;
-        foreach ($objectIds as $objectId) {
-            $results[$index++] = $this->findTaxCodeByObjectId($taxCodes, $type, $objectId);
-        }
-
-        return $results;
-    }
-
-    /**
-     * @param array $taxCodes
-     * @param $type
-     * @param $objectId
-     * @return TaxCode
-     */
-    private function findTaxCodeByObjectId(array $taxCodes, $type, $objectId)
-    {
-        foreach ($taxCodes as $taxCode) {
-            $collectionName = $this->getInflector()->pluralize($type);
-            $collection = $this->getPropertyAccessor()->getValue($taxCode, $collectionName);
-
-            foreach ($collection as $item) {
-                $itemIds = $this->getObjectIds($item);
-
-                if (reset($itemIds) === $objectId) {
-                    return $taxCode;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param object $object
-     * @return array
-     */
-    private function getObjectIds($object)
-    {
-        return $this->getEntityManager()
-            ->getClassMetadata(ClassUtils::getClass($object))
-            ->getIdentifierValues($object);
+        return $result;
     }
 }
