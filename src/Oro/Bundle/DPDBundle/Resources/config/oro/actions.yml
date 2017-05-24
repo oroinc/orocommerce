@@ -86,7 +86,7 @@ operations:
                     - '@call_service_method':
                         service: oro_dpd.order.attachment.factory
                         method: createAttachmentFromDPDTransaction
-                        method_parameters: [$.data, '$.result[transaction]']
+                        method_parameters: ['$.result[transaction]']
                         attribute: $.orderAttachment
                     - '@call_service_method':
                         service: oro_dpd.handler.order_shipping_dpd
