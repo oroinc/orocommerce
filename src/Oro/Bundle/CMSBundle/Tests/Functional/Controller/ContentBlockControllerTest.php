@@ -7,6 +7,9 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @group segfault
+ */
 class ContentBlockControllerTest extends WebTestCase
 {
     const CONTENT_BLOCK_ALIAS = 'content-block-alias';
