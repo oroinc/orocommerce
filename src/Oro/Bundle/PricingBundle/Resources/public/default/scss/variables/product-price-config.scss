@@ -16,11 +16,13 @@ $product-price-label-width: 43%;
 
 $product-price-unit-short-display: none;
 
+$product-price-max-width: 250px !default;
+$product-price-margin: 0 auto !default;
+$product-price-listed-text-align: left !default;
 $product-price-listed-box-width: 57%;
 $product-price-listed-box-float: right;
 $product-price-listed-box-clear: both;
 
-$product-price-simple-hint-widht: auto !default;
 $product-price-simple-main-box-float: none !default;
 $product-price-simple-label-display: none !default;
 $product-price-simple-label-display: none !default;
