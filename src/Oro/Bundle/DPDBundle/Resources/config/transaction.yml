@@ -1,9 +1,0 @@
-parameters:
-    oro_dpd.transaction.file.name.message.id: 'oro.dpd.transaction.file.name.message.id'
-
-services:
-    oro_dpd.transaction.file.name.provider:
-        class: 'Oro\Bundle\DPDBundle\Transaction\File\Name\Provider\Basic\BasicTransactionFileNameProvider'
-        arguments:
-            - '%oro_dpd.transaction.file.name.message.id%'
-            - '@translator'
