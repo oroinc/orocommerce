@@ -14,7 +14,6 @@ class RedirectListener
 {
     const SUCCESS_URL_KEY = 'successUrl';
     const FAILURE_URL_KEY = 'failureUrl';
-    const FAILED_SHIPPING_ADDRESS_URL_KEY = 'failedShippingAddressUrl';
 
     /** @var Session */
     protected $session;
