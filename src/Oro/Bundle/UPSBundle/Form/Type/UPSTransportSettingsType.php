@@ -83,14 +83,15 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'testMode',
+            'upsTestMode',
             CheckboxType::class,
             [
                 'label' => 'oro.ups.transport.test_mode.label',
+                'required' => false,
             ]
         );
         $builder->add(
-            'apiUser',
+            'upsApiUser',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_user.label',
@@ -98,7 +99,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'apiPassword',
+            'upsApiPassword',
             OroEncodedPlaceholderPasswordType::class,
             [
                 'label' => 'oro.ups.transport.api_password.label',
@@ -106,7 +107,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'apiKey',
+            'upsApiKey',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_key.label',
@@ -114,7 +115,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'shippingAccountName',
+            'upsShippingAccountName',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_name.label',
@@ -122,7 +123,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'shippingAccountNumber',
+            'upsShippingAccountNumber',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_number.label',
@@ -130,7 +131,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'pickupType',
+            'upsPickupType',
             ChoiceType::class,
             [
                 'label' => 'oro.ups.transport.pickup_type.label',
@@ -146,7 +147,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'unitOfWeight',
+            'upsUnitOfWeight',
             ChoiceType::class,
             [
                 'label' => 'oro.ups.transport.unit_of_weight.label',
@@ -158,7 +159,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'country',
+            'upsCountry',
             CountryType::class,
             [
                 'label' => 'oro.ups.transport.country.label',
@@ -187,7 +188,7 @@ class UPSTransportSettingsType extends AbstractType
         /** @var UPSTransport $transport */
         $transport = $event->getData();
 
-        if ($transport && null === $transport->getCountry()) {
+        if ($transport && null === $transport->getUpsCountry()) {
             $countryCode = $this
                 ->shippingOriginProvider
                 ->getSystemShippingOrigin()
@@ -195,7 +196,7 @@ class UPSTransportSettingsType extends AbstractType
 
             $country = $this->getCountry($countryCode);
             if (null !== $country) {
-                $transport->setCountry($country);
+                $transport->setUpsCountry($country);
                 $event->setData($transport);
             }
         }
