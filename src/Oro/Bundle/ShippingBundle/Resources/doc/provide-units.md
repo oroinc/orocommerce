@@ -1,4 +1,4 @@
-#Expand Units of Length, Units of Weight and Freight Classes#
+# Expand Units of Length, Units of Weight and Freight Classes#
 
 To expand "units" and/or "freight classes", first of all must be implemented migration ([example](#example-migration)), that contain all expected "units" and/or "freight classes" definitions.
 The migration must extend "LoadUnitsAndFreightClassesData" and should have the following properties regarding required items.
