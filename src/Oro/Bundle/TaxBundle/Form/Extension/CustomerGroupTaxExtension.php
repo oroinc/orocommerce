@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 
@@ -49,13 +48,7 @@ class CustomerGroupTaxExtension extends AbstractTaxExtension
         AbstractTaxCode $taxCode = null,
         AbstractTaxCode $taxCodeNew = null
     ) {
-        if ($taxCode) {
-            $taxCode->removeCustomerGroup($customerGroup);
-        }
-
-        if ($taxCodeNew) {
-            $taxCodeNew->addCustomerGroup($customerGroup);
-        }
+        $customerGroup->setTaxCode($taxCodeNew);
     }
 
     /**
@@ -64,9 +57,6 @@ class CustomerGroupTaxExtension extends AbstractTaxExtension
      */
     protected function getTaxCode($object)
     {
-        /** @var CustomerTaxCodeRepository $repository */
-        $repository = $this->getRepository();
-
-        return $repository->findOneByCustomerGroup($object);
+        return $object->getTaxCode();
     }
 }

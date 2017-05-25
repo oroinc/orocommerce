@@ -11,6 +11,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\UserBundle\Entity\Role;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
 
 class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
@@ -66,13 +68,16 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
      */
     private function loadCustomerTaxCodes(ObjectManager $manager, $customerTaxCodes)
     {
+        $owner = $this->getAdminUser($manager);
         foreach ($customerTaxCodes as $code => $data) {
             $taxCode = $this->entitiesFactory->createCustomerTaxCode($code, $data['description'], $manager, $this);
+            $taxCode->setOwner($owner);
+            $taxCode->setOrganization($owner->getOrganization());
             if (isset($data['customers'])) {
                 foreach ($data['customers'] as $customerName) {
                     $customer = $manager->getRepository('OroCustomerBundle:Customer')->findOneByName($customerName);
                     if (null !== $customer) {
-                        $taxCode->addCustomer($customer);
+                        $customer->setTaxCode($taxCode);
                     }
                 }
             }
@@ -80,7 +85,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
                 foreach ($data['customer_groups'] as $groupName) {
                     $group = $manager->getRepository('OroCustomerBundle:CustomerGroup')->findOneByName($groupName);
                     if (null !== $group) {
-                        $taxCode->addCustomerGroup($group);
+                        $group->setTaxCode($taxCode);
                     }
                 }
             }
@@ -102,7 +107,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
             foreach ($data['products'] as $sku) {
                 $product = $manager->getRepository('OroProductBundle:Product')->findOneBySku($sku);
                 if ($product) {
-                    $taxCode->addProduct($product);
+                    $product->setTaxCode($taxCode);
                 }
             }
         }
@@ -209,4 +214,29 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
         return $manager->getRepository('OroAddressBundle:Region')->findOneBy(['country' => $country, 'code' => $code]);
     }
     //endregion
+
+    /**
+     * @param ObjectManager $manager
+     * @return User
+     * @throws \InvalidArgumentException
+     */
+    private function getAdminUser(ObjectManager $manager)
+    {
+        $repository = $manager->getRepository(Role::class);
+        $role       = $repository->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
+
+        if (!$role) {
+            throw new \InvalidArgumentException('Administrator role should exist.');
+        }
+
+        $user = $repository->getFirstMatchedUser($role);
+
+        if (!$user) {
+            throw new \InvalidArgumentException(
+                'Administrator user should exist to load tax codes demo data.'
+            );
+        }
+
+        return $user;
+    }
 }

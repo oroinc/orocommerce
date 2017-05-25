@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
@@ -41,6 +43,7 @@ class ProductControllerTest extends WebTestCase
             ->resetIndex();
 
         $this->loadFixtures([
+            LoadLocalizationData::class,
             LoadFrontendProductData::class,
             LoadCombinedPriceLists::class,
         ]);
@@ -104,6 +107,23 @@ class ProductControllerTest extends WebTestCase
         $response = $this->client->requestFrontendGrid(ProductController::GRID_NAME, [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
+    }
+
+    public function testFrontendProductGridFilterBySku()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+
+        $response = $this->client->requestFrontendGrid(
+            'frontend-product-search-grid',
+            [
+                'frontend-product-search-grid[_filter][sku][type]' => TextFilterType::TYPE_CONTAINS,
+                'frontend-product-search-grid[_filter][sku][value]' => $product->getSku(),
+            ],
+            true
+        );
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertCount(1, $result['data']);
+        $this->assertEquals($product->getSku(), $result['data'][0]['sku']);
     }
 
     public function testViewProductWithRequestQuoteAvailable()

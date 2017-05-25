@@ -25,51 +25,43 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 
     public function testOnPostSubmitNewCustomerGroup()
     {
-        $this->prepareDoctrineHelper(true, true);
-
-        $customer = $this->createTaxCodeTarget();
-        $event = $this->createEvent($customer);
-
         $taxCode = $this->createTaxCode(1);
 
+        $customerGroup = $this->createTaxCodeTarget();
+        $customerGroup->expects($this->once())->method('setTaxCode')->with($taxCode);
+        $event = $this->createEvent($customerGroup);
+
         $this->assertTaxCodeAdd($event, $taxCode);
-        $this->entityRepository->expects($this->once())
-            ->method($this->getRepositoryFindMethod());
 
         $this->getExtension()->onPostSubmit($event);
-
-        $this->assertEquals([$customer], $taxCode->getCustomerGroups()->toArray());
     }
 
     public function testOnPostSubmitExistingCustomerGroup()
     {
-        $this->prepareDoctrineHelper(true, true);
-
         $customerGroup = $this->createTaxCodeTarget(1);
         $event = $this->createEvent($customerGroup);
 
         $newTaxCode = $this->createTaxCode(1);
         $taxCodeWithCustomerGroup = $this->createTaxCode(2);
-        $taxCodeWithCustomerGroup->addCustomerGroup($customerGroup);
+        $customerGroup->method('getTaxCode')->willReturn($taxCodeWithCustomerGroup);
+        $customerGroup->expects($this->once())->method('setTaxCode')->with($newTaxCode);
 
         $this->assertTaxCodeAdd($event, $newTaxCode);
-        $this->entityRepository->expects($this->once())
-            ->method($this->getRepositoryFindMethod())
-            ->will($this->returnValue($taxCodeWithCustomerGroup));
 
         $this->getExtension()->onPostSubmit($event);
-
-        $this->assertEquals([$customerGroup], $newTaxCode->getCustomerGroups()->toArray());
-        $this->assertEquals([], $taxCodeWithCustomerGroup->getCustomerGroups()->toArray());
     }
 
     /**
      * @param int|null $id
-     * @return CustomerGroup
+     * @return CustomerGroup|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createTaxCodeTarget($id = null)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => $id]);
+        $mock = $this->getMockBuilder(CustomerGroup::class)
+            ->setMethods(['getTaxCode', 'setTaxCode', 'getId'])
+            ->getMock();
+        $mock->method('getId')->willReturn($id);
+        return $mock;
     }
 
     /**

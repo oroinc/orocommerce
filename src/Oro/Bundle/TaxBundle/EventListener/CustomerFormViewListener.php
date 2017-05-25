@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 
 class CustomerFormViewListener extends AbstractFormViewListener
 {
@@ -19,13 +18,11 @@ class CustomerFormViewListener extends AbstractFormViewListener
             return;
         }
 
-        /** @var CustomerTaxCodeRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-        $entity = $repository->findOneByCustomer($customer);
+        $entity = $customer->getTaxCode();
 
         $groupCustomerTaxCode = null;
         if (!$entity && $customer->getGroup()) {
-            $groupCustomerTaxCode = $repository->findOneByCustomerGroup($customer->getGroup());
+            $groupCustomerTaxCode = $customer->getGroup()->getTaxCode();
         }
 
         $template = $event->getEnvironment()->render(

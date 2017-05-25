@@ -17,6 +17,9 @@ PaymentBundle
 - Class `Oro\Bundle\PaymentBundle\Action\CaptureAction` was removed, `Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction` should be used instead
 - Class `Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
+    - constant `FAILED_SHIPPING_ADDRESS_URL_KEY` was removed
+- Class `Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent`
+    - method `getTypedEventName` was removed
 
 PricingBundle
 -------------
@@ -103,6 +106,17 @@ CustomerBundle
     - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewRepository` with replaced getOwnerFieldName() and getUserFieldName() to `customerUserOwner` and `customerUser`
 - `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewUserRepository`
     - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewUserRepository` with replaced getUserFieldName() to `customerUser`
+
+ShoppingListBundle
+------------------
+- `Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider`
+    - changed signature of `__construct` method, third argument `Oro\Bundle\SecurityBundle\SecurityFacade` $securityFacade replaced with `Oro\Bundle\SecurityProBundle\ORM\Walker\AclHelper` $aclHelper
+- `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository`
+    - signature of method `getProductItemsWithShoppingListNames` changed
+        - $customerUser parameter is removed
+        - now method takes two parameters `Oro\Bundle\SecurityProBundle\ORM\Walker\AclHelper` $aclHelper and array of `Oro\Bundle\ProductBundle\Entity\Product` $products
+- `Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener`
+    - changed signature of `__construct` method, first argument `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage` $tokenStorage replaced with - `Oro\Bundle\SecurityBundle\SecurityFacade` $securityFacade
 
 ShippingBundle
 --------------

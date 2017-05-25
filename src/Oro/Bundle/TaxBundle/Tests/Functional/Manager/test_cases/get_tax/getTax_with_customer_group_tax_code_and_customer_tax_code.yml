@@ -10,6 +10,11 @@ databaseBefore:
         customer.with_group:
             name: customer.with_group
             group: { class: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', query: { name: 'customer_group.group1' } }
+            taxCode: '@customer_tax_code.customer_tax_code'
+    'Oro\Bundle\CustomerBundle\Entity\CustomerGroup':
+        customer_group.group1:
+            name: customer_group.group1
+            taxCode: '@customer_tax_code.customer_tax_code'
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: simple_order
@@ -40,12 +45,9 @@ databaseBefore:
     'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
         customer_tax_code.group_tax_code:
             code: customer_tax_code.group_tax_code
-            customerGroups:
-                - { class: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', query: { name: 'customer_group.group1' } }
         customer_tax_code.customer_tax_code:
             code: customer_tax_code.customer_tax_code
-            customers:
-                - '@customer.with_group'
+
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         new_jurisdiction:
             code: new_jurisdiction

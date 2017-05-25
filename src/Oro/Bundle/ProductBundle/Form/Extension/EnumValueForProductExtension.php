@@ -11,7 +11,11 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType;
 use Oro\Bundle\EntityExtendBundle\Form\Util\EnumTypeHelper;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 
+/**
+ * Restored this class in - #BB-9332
+ */
 class EnumValueForProductExtension extends AbstractTypeExtension
 {
     const PRODUCT_SKU_IN_TOOLTIP = 10;
@@ -19,12 +23,17 @@ class EnumValueForProductExtension extends AbstractTypeExtension
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
+    /** @var ConfigManager */
+    private $configManager;
+
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param ConfigManager $configManager
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
     {
         $this->doctrineHelper = $doctrineHelper;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -48,9 +57,7 @@ class EnumValueForProductExtension extends AbstractTypeExtension
         /** @var FieldConfigId $configId */
         $configId = $form->getParent()->getConfig()->getOption('config_id');
 
-        if (!$configId || !$configId instanceof FieldConfigId ||
-            !is_a($configId->getClassName(), Product::class, true)
-        ) {
+        if (!$this->isValidAttributeEnum($configId)) {
             return;
         }
 
@@ -70,6 +77,29 @@ class EnumValueForProductExtension extends AbstractTypeExtension
             $view->vars['tooltip_parameters'] = ['%skuList%' => $tooltipParameterMessage];
             $view->vars['allow_delete'] = false;
         }
+    }
+
+    /**
+     * @param FieldConfigId|null $configId
+     * @return bool
+     */
+    private function isValidAttributeEnum($configId)
+    {
+
+        if (!$configId || !$configId instanceof FieldConfigId ||
+            !is_a($configId->getClassName(), Product::class, true)
+        ) {
+            return false;
+        }
+
+        $attributeConfigProvider = $this->configManager->getProvider('attribute');
+        $attributeConfig = $attributeConfigProvider->getConfig($configId->getClassName(), $configId->getFieldName());
+
+        if (!$attributeConfig->is('is_attribute')) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -9,33 +9,10 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 
 abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
 {
-    /**
-     * @var CustomerTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $entityRepository;
-
-    /**
-     * @param bool $expectsManager
-     * @param bool $expectsRepository
-     */
-    protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false)
-    {
-        $this->entityRepository = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper->expects($expectsRepository ? $this->once() : $this->never())
-            ->method('getEntityRepository')
-            ->with('OroTaxBundle:CustomerTaxCode')
-            ->willReturn($this->entityRepository);
-    }
-
     public function testBuildForm()
     {
         $customerTaxExtension = $this->getExtension();
@@ -68,20 +45,15 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
 
     public function testOnPostSetDataExistingEntity()
     {
-        $this->prepareDoctrineHelper(false, true);
-
         $customer = $this->createTaxCodeTarget(1);
         $event = $this->createEvent($customer);
 
         $taxCode = $this->createTaxCode();
-
-        $this->entityRepository->expects($this->once())
-            ->method($this->getRepositoryFindMethod())
-            ->with($customer)
-            ->willReturn($taxCode);
-
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
         $taxCodeForm = $event->getForm()->get('taxCode');
+
+        $customer->method('getTaxCode')->willReturn($taxCode);
+
         $taxCodeForm->expects($this->once())
             ->method('setData')
             ->with($taxCode);
@@ -97,13 +69,6 @@ abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
     {
         return $this->getEntity('Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => $id]);
     }
-
-    /**
-     * Return name of method which find TaxCode entity
-     *
-     * @return string
-     */
-    abstract protected function getRepositoryFindMethod();
 
     /**
      * Return testable collection of CustomerTaxCode

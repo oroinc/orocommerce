@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -21,34 +19,32 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $lineItemRepository;
 
+    /** @var AclHelper */
+    protected $aclHelper;
+
     /** @var ProductShoppingListsDataProvider */
     protected $provider;
-
-    /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $securityFacade;
 
     protected function setUp()
     {
         $this->shoppingListManager = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+            ->getMockBuilder(ShoppingListManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->lineItemRepository = $this
-            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->getMockBuilder(LineItemRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->aclHelper = $this->getMockBuilder(AclHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new ProductShoppingListsDataProvider(
             $this->shoppingListManager,
             $this->lineItemRepository,
-            $this->securityFacade
+            $this->aclHelper
         );
     }
 
@@ -57,8 +53,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         unset(
             $this->provider,
             $this->shoppingListManager,
-            $this->lineItemRepository,
-            $this->securityFacade
+            $this->lineItemRepository
         );
     }
 
@@ -82,17 +77,10 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        /** @var  CustomerUser $customerUser */
-        $customerUser = new CustomerUser();
-
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
             ->method('getProductItemsWithShoppingListNames')
-            ->with([$product], $customerUser)
+            ->with($this->aclHelper, [$product])
             ->willReturn($lineItems);
-
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
-            ->willReturn($customerUser);
 
         $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
     }

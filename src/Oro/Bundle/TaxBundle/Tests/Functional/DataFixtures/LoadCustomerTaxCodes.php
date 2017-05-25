@@ -93,13 +93,13 @@ class LoadCustomerTaxCodes extends AbstractFixture implements DependentFixtureIn
         foreach ($customerRefs as $customerRef) {
             /** @var Customer $customer */
             $customer = $this->getReference($customerRef);
-            $customerTaxCode->addCustomer($customer);
+            $customer->setTaxCode($customerTaxCode);
         }
 
         foreach ($customerGroupsRefs as $customerGroupRef) {
             /** @var CustomerGroup $customer */
-            $customer = $this->getReference($customerGroupRef);
-            $customerTaxCode->addCustomerGroup($customer);
+            $customerGroup = $this->getReference($customerGroupRef);
+            $customerGroup->setTaxCode($customerTaxCode);
         }
 
         $manager->persist($customerTaxCode);
