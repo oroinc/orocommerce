@@ -87,7 +87,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -611,9 +611,10 @@ class OroProductBundleInstaller implements
     private function createRelatedProductsTable(Schema $schema)
     {
         $table = $schema->createTable(self::RELATED_PRODUCTS_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
         $table->addColumn('related_product_id', 'integer', ['notnull' => true]);
-        $table->setPrimaryKey(['product_id', 'related_product_id']);
+        $table->setPrimaryKey(['id']);
         $table->addIndex(['product_id'], 'IDX_B0C000714584665A', []);
         $table->addIndex(['related_product_id'], 'IDX_B0C00071CF496EEA', []);
 

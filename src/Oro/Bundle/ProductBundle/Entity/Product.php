@@ -471,24 +471,6 @@ class Product extends ExtendProduct implements
     protected $images;
 
     /**
-     * @var Collection|Product[]
-     *
-     * @ORM\ManyToMany(targetEntity="Product", inversedBy="relatedByProducts")
-     * @ORM\JoinTable(name="oro_product_related_products",
-     *    joinColumns={@ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")},
-     *    inverseJoinColumns={@ORM\JoinColumn(name="related_product_id", referencedColumnName="id", onDelete="CASCADE")}
-     * )
-     */
-    protected $relatedToProducts;
-
-    /**
-     * @var Collection|Product[]
-     *
-     * @ORM\ManyToMany(targetEntity="Product", mappedBy="relatedToProducts")
-     */
-    protected $relatedByProducts;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=32, nullable=false)
@@ -555,9 +537,6 @@ class Product extends ExtendProduct implements
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
         $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
-
-        $this->relatedToProducts = new ArrayCollection();
-        $this->relatedByProducts = new ArrayCollection();
     }
 
     /**
@@ -1282,71 +1261,5 @@ class Product extends ExtendProduct implements
         $this->featured = (bool)$featured;
 
         return $this;
-    }
-
-    /**
-     * @param Product $relatedProduct
-     *
-     * @return Product
-     */
-    public function addRelatedToProduct(Product $relatedProduct)
-    {
-        $this->relatedToProducts[] = $relatedProduct;
-        $relatedProduct->addRelatedByProduct($this);
-
-        return $this;
-    }
-
-    /**
-     * @param Product $relatedProduct
-     *
-     * @return Product
-     */
-    public function removeRelatedToProduct(Product $relatedProduct)
-    {
-        $this->relatedToProducts->removeElement($relatedProduct);
-        $relatedProduct->removeRelatedByProduct($this);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getRelatedToProducts()
-    {
-        return $this->relatedToProducts;
-    }
-
-    /**
-     * @param Product $relatedProduct
-     *
-     * @return Product
-     */
-    public function addRelatedByProduct(Product $relatedProduct)
-    {
-        $this->relatedByProducts[] = $relatedProduct;
-
-        return $this;
-    }
-
-    /**
-     * @param Product $relatedProduct
-     *
-     * @return Product
-     */
-    public function removeRelatedByProduct(Product $relatedProduct)
-    {
-        $this->relatedByProducts->removeElement($relatedProduct);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getRelatedByProducts()
-    {
-        return $this->relatedByProducts;
     }
 }
