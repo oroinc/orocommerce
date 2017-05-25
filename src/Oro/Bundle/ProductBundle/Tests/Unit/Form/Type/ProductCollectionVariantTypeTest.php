@@ -291,6 +291,13 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
             'included_products_grid' => 'included_grid',
             'excluded_products_grid' => 'excluded_grid',
         ];
+
+        $hasFilters = true;
+        $this->definitionConverter
+            ->expects($this->any())
+            ->method('hasFilters')
+            ->with($segmentDefinition)
+            ->willReturn($hasFilters);
         $view->children['productCollectionSegment']
             ->children['definition']->vars['full_name'] = $segmentDefinitionFieldName;
         $view->children['productCollectionSegment']
@@ -302,5 +309,6 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         $this->assertEquals('excluded_grid', $view->vars['excludedProductsGrid']);
         $this->assertEquals($segmentDefinition, $view->vars['segmentDefinition']);
         $this->assertEquals($segmentDefinitionFieldName, $view->vars['segmentDefinitionFieldName']);
+        $this->assertEquals($hasFilters, $view->vars['hasFilters']);
     }
 }

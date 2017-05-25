@@ -107,8 +107,20 @@ datagrids:
         source:
             skip_acl_apply: true
 
-    product-collection-grid:
+    product-collection-base-grid:
         extends: products-select-grid-base
+        columns:
+            type:
+                renderable: true
+            createdAt:
+                renderable: false
+            updatedAt:
+                renderable: false
+        options:
+            routerEnabled: false
+
+    product-collection-grid:
+        extends: product-collection-base-grid
         options:
             toolbarOptions:
                 pageSize:
@@ -121,7 +133,7 @@ datagrids:
                 icon:          remove
 
     product-collection-selected-products-grid:
-        extends: products-select-grid-base
+        extends: product-collection-base-grid
         options:
             toolbarOptions:
                 pageSize:
@@ -136,7 +148,7 @@ datagrids:
                     default: 0
 
     product-collection-add-products-grid:
-        extends: products-select-grid-base
+        extends: product-collection-base-grid
         options:
             toolbarOptions:
                 pageSize:

@@ -603,4 +603,40 @@ class ProductCollectionDefinitionConverterTest extends \PHPUnit_Framework_TestCa
             ],
         ];
     }
+
+    /**
+     * @dataProvider hasFiltersProvider
+     * @param mixed $definition
+     * @param bool $expectedResult
+     */
+    public function testHasFilters($definition, $expectedResult)
+    {
+        $result = $this->definitionConverter->hasFilters($definition);
+        $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function hasFiltersProvider()
+    {
+        return [
+            'when definition is array without filters' => [
+                'definition' => ['someKey'],
+                'expectedResult' => false,
+            ],
+            'when definition is json without filters' => [
+                'definition' => json_encode(['someKey']),
+                'expectedResult' => false,
+            ],
+            'when definition is array with filters' => [
+                'definition' => ['filters' => ['some filter']],
+                'expectedResult' => true,
+            ],
+            'when definition is json with filters' => [
+                'definition' => json_encode(['filters' => ['some filter']]),
+                'expectedResult' => true,
+            ],
+        ];
+    }
 }

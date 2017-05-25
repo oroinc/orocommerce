@@ -156,6 +156,7 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
         $segmentDefinitionView = $view->children[self::PRODUCT_COLLECTION_SEGMENT]->children['definition'];
         $view->vars['segmentDefinitionFieldName'] = $segmentDefinitionView->vars['full_name'];
         $view->vars['segmentDefinition'] = $segmentDefinitionView->vars['value'];
+        $view->vars['hasFilters'] = $this->definitionConverter->hasFilters($view->vars['segmentDefinition']);
     }
 
     /**

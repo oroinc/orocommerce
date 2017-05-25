@@ -248,8 +248,6 @@
     {% set gridName = oro_datagrid_build_fullname(form.vars.results_grid, scope) %}
     {% set widgetRouteParameters = {
         'gridName': gridName,
-        'renderParams': {'routerEnabled': false},
-        'renderParamsTypes': {'routerEnabled': 'bool'},
         ('sd_' ~ gridName): form.vars.segmentDefinition,
         ('sd_' ~ gridName ~ ':incl'): form.includedProducts.vars.value,
         ('sd_' ~ gridName ~ ':excl'): form.excludedProducts.vars.value
@@ -335,7 +333,7 @@
                                  data-page-component-options="{{ {
                                      widgetModule: 'oroui/js/widget/collapse-widget',
                                      openClass: 'expanded',
-                                     open: false
+                                     open: hasFilters
                                  }|json_encode() }}"
                             >
                                 <div class="top-frame">
@@ -388,9 +386,7 @@
                             {% set excludedGridWidgetAlias = 'product-collection-excluded-products-grid-' ~ scope %}
                             {% set excludedWidgetRouteParameters = {
                                 'gridName': excludedProductsGridName,
-                                'params': {'selectedProducts': form.excludedProducts.vars.value},
-                                'renderParams': {'routerEnabled': false},
-                                'renderParamsTypes': {'routerEnabled': 'bool'}
+                                'params': {'selectedProducts': form.excludedProducts.vars.value}
                             } %}
 
                             {% set excludedGridSidebarComponentOptions = {
@@ -429,9 +425,7 @@
                             {% set includedGridWidgetAlias = 'product-collection-included-products-grid-' ~ scope %}
                             {% set includedWidgetRouteParameters = {
                                 'gridName': includedProductsGridName,
-                                'params': {'selectedProducts': form.includedProducts.vars.value},
-                                'renderParams': {'routerEnabled': false},
-                                'renderParamsTypes': {'routerEnabled': 'bool'}
+                                'params': {'selectedProducts': form.includedProducts.vars.value}
                             } %}
 
                             {% set includedGridSidebarComponentOptions = {

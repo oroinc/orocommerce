@@ -97,6 +97,10 @@ class ProductCollectionDefinitionConverter
      */
     public function hasFilters($definition)
     {
+        if (!is_array($definition)) {
+            $definition = $this->normalizeDefinition($definition);
+        }
+
         return !empty($definition['filters']);
     }
 
