@@ -195,6 +195,8 @@ oro:
                 backend_inventory_statuses_visibility.title: 'Management Console'
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
+                related_items.title: 'Related Items'
+                upsell_products.title: 'Up-sell Items'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
                 product_images.title: 'Product Images'
@@ -204,6 +206,10 @@ oro:
                 quick_order.title: Quick Order Form
                 quick_order_form.title: Quick Order Form
             fields:
+                enable_upsell_products.label: 'Enable Up-sell Items'
+                max_number_of_upsell_products:
+                    label: 'Maximum Number of Assigned Items'
+                    tooltip: 'You may use this option to set the limit on the number of cross-sell items that the catalog managers can link.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'

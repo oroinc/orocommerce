@@ -12,6 +12,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = 'oro_product';
+    const UPSELL_PRODUCTS_ENABLED = 'upsell_products_enabled';
+    const MAX_NUMER_OF_UPSELL_PRODUCTS = 'max_number_of_upsell_products';
     const SINGLE_UNIT_MODE = 'single_unit_mode';
     const SINGLE_UNIT_MODE_SHOW_CODE = 'single_unit_mode_show_code';
     const DEFAULT_UNIT = 'default_unit';
@@ -36,6 +38,8 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
+                self::UPSELL_PRODUCTS_ENABLED => ['value' => true],
+                self::MAX_NUMER_OF_UPSELL_PRODUCTS => ['value' => 5],
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
                 self::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
                 self::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],
