@@ -246,11 +246,21 @@
     {% set controlsBlockAlias = 'product-collection-grid-control-' ~ scope %}
 
     {% set gridName = oro_datagrid_build_fullname(form.vars.results_grid, scope) %}
+    {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, scope) %}
+    {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, scope) %}
     {% set widgetRouteParameters = {
         'gridName': gridName,
         ('sd_' ~ gridName): form.vars.segmentDefinition,
         ('sd_' ~ gridName ~ ':incl'): form.includedProducts.vars.value,
         ('sd_' ~ gridName ~ ':excl'): form.excludedProducts.vars.value
+    } %}
+    {% set excludedWidgetRouteParameters = {
+        'gridName': excludedProductsGridName,
+        'params': {'selectedProducts': form.excludedProducts.vars.value}
+    } %}
+    {% set includedWidgetRouteParameters = {
+        'gridName': includedProductsGridName,
+        'params': {'selectedProducts': form.includedProducts.vars.value}
     } %}
 
     {% set gridSidebarComponentOptions = {
@@ -259,8 +269,6 @@
         'widgetRouteParameters': widgetRouteParameters
     } %}
 
-    {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, scope) %}
-    {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, scope) %}
     {% set excludedControlsBlockAlias = 'product-collection-excluded-grid-control-' ~ scope %}
     {% set includedControlsBlockAlias = 'product-collection-included-grid-control-' ~ scope %}
     {% set excludedProductsElementId = '#' ~ form.excludedProducts.vars.id %}
@@ -302,16 +310,19 @@
                         <li class="active">
                             <a href="#{{ 'filtered_products' ~ scope}}" data-toggle="tab">
                                 {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
+                                (<span data-role="filtered_products_counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', widgetRouteParameters)) }}</span>)
                             </a>
                         </li>
                         <li>
                             <a href="#{{ 'excluded_products' ~ scope}}" data-toggle="tab">
                                 {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
+                                (<span data-role="excluded_products_counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', excludedWidgetRouteParameters)) }}</span>)
                             </a>
                         </li>
                         <li>
                             <a href="#{{ 'included_products' ~ scope}}" data-toggle="tab">
                                 {{ 'oro.product.content_variant.ui.included_products'|trans }}
+                                (<span data-role="included_products_counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', includedWidgetRouteParameters)) }}</span>)
                             </a>
                         </li>
                         <li class="pull-right">
@@ -370,6 +381,7 @@
                                 }) }}
                             </div>
                         </div>
+
                         <div class="tab-pane" id="{{ 'excluded_products' ~ scope}}">
                             <div class="top-frame">
                                 <div class="control-group">
@@ -384,11 +396,6 @@
                             </div>
 
                             {% set excludedGridWidgetAlias = 'product-collection-excluded-products-grid-' ~ scope %}
-                            {% set excludedWidgetRouteParameters = {
-                                'gridName': excludedProductsGridName,
-                                'params': {'selectedProducts': form.excludedProducts.vars.value}
-                            } %}
-
                             {% set excludedGridSidebarComponentOptions = {
                                 'sidebarAlias': excludedControlsBlockAlias,
                                 'widgetAlias': excludedGridWidgetAlias,
@@ -409,6 +416,7 @@
                             </div>
 
                         </div>
+
                         <div class="tab-pane" id="{{ 'included_products' ~ scope}}">
                             <div class="top-frame">
                                 <div class="control-group">
@@ -423,11 +431,6 @@
                             </div>
 
                             {% set includedGridWidgetAlias = 'product-collection-included-products-grid-' ~ scope %}
-                            {% set includedWidgetRouteParameters = {
-                                'gridName': includedProductsGridName,
-                                'params': {'selectedProducts': form.includedProducts.vars.value}
-                            } %}
-
                             {% set includedGridSidebarComponentOptions = {
                                 'sidebarAlias': includedControlsBlockAlias,
                                 'widgetAlias': includedGridWidgetAlias,

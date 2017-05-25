@@ -952,6 +952,13 @@ services:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.provider.serialized_field_provider'
 
+    oro_product.provider.grid_count_provider:
+        class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
+        arguments:
+            - '@oro_datagrid.datagrid.manager'
+            - '@oro_security.security_facade'
+            - '@oro_datagrid.extension.pager.orm.pager'
+
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
         public: false
