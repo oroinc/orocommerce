@@ -1,6 +1,6 @@
 include:
-    - Payment.yml
-    - Shipping.yml
+    - ../../../../../CheckoutBundle/Tests/Behat/Features/Fixtures/Payment.yml
+    - ../../../../../CheckoutBundle/Tests/Behat/Features/Fixtures/Shipping.yml
 
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
     price:
@@ -8,8 +8,23 @@ Oro\Bundle\CurrencyBundle\Entity\Price(local):
         currency: 'USD'
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
-    customer:
-        name: 'Company A'
+    customer1:
+        name: 'Company 1'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+    customer2:
+        name: 'Company 2'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+    customer3:
+        name: 'Company 3'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+    customer4:
+        name: 'Company 4'
         organization: '@organization'
         owner: '@admin'
         payment_term_7c4f1e8e: '@paymentTerm'
@@ -24,7 +39,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         lastName: 'Cole'
         enabled: '1'
         confirmed: '1'
-        customer: '@customer'
+        customer: '@customer4'
         organization: '@organization'
         role: ['@buyer']
         owner: '@admin'
@@ -48,12 +63,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
-    shoppinglist:
-        label: 'List 1'
-        customerUser: '@amanda'
-        organization: '@organization'
-    shoppinglist2:
-        label: 'List 2'
+    shoppinglistThreshold:
+        label: 'List Threshold'
         customerUser: '@amanda'
         organization: '@organization'
 
@@ -63,28 +74,15 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         quantity: '5'
         unit: '@item'
         customerUser: '@amanda'
-        shoppingList: '@shoppinglist'
-        organization: '@organization'
-    lineitem2:
-        product: '@product'
-        quantity: '10'
-        unit: '@item'
-        customerUser: '@amanda'
-        shoppingList: '@shoppinglist2'
+        shoppingList: '@shoppinglistThreshold'
         organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal:
-        __construct: ['@shoppinglist','USD']
-        shoppingList: '@shoppinglist'
+        __construct: ['@shoppinglistThreshold','USD']
+        shoppingList: '@shoppinglistThreshold'
         currency: 'USD'
-        subtotalValue: '10'
-        valid: true
-    shoppingListTotal2:
-        __construct: ['@shoppinglist2','USD']
-        shoppingList: '@shoppinglist2'
-        currency: 'USD'
-        subtotalValue: '15'
+        subtotalValue: '10000'
         valid: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
@@ -110,7 +108,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     priceListToCustomer:
-        customer: '@customer'
+        customer: '@customer4'
         pricelist: '@pricelistShipping'
         website: '@website1'
         sortOrder: 200
@@ -132,13 +130,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         productSku: 'SKU123'
         quantity: 5
         unit: '@item'
-        value: 2
+        value: 2000
         currency: 'USD'
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
     combinedPriceListToCustomer:
         pricelist: '@combinedPriceList'
-        customer: '@customer'
+        customer: '@customer4'
         website: '@website1'
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
