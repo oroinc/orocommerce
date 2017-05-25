@@ -66,8 +66,19 @@ class ProductController extends Controller
             }
         }
 
+        $parentProduct = null;
+        $parentProductId = $request->get('parentProductId');
+        if ($parentProductId) {
+            /** @var Product $parentProduct */
+            $parentProduct = $this->getDoctrine()
+                ->getManagerForClass('OroProductBundle:Product')
+                ->getRepository('OroProductBundle:Product')
+                ->find($parentProductId);
+        }
+
+        $templateProduct = $parentProduct ? $parentProduct : $product;
         $pageTemplate = $this->get('oro_product.provider.page_template_provider')
-            ->getPageTemplate($product, 'oro_product_frontend_product_view');
+            ->getPageTemplate($templateProduct, 'oro_product_frontend_product_view');
 
         return  [
             'data' => $data,
