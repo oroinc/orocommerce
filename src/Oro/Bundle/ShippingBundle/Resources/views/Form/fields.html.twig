@@ -169,35 +169,33 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
 
-    {% set collapseView =  layout_attr_defaults(attr, {
-        component: 'oroui/js/app/components/jquery-widget-component',
+    {% set collapseView = {
         widgetModule: 'oroui/js/widget/collapse-widget',
-        trigger: '[data-collapse-trigger-shipping-method]',
-        container: '[data-collapse-container-shipping-method]',
-        globalTrigger: '[data-collapse-global-trigger-shipping-method]',
+        group: 'shipping-method',
         open: true
-    }) %}
+    } %}
 
     <div class="shipping-method-config collapse-view"
-         data-page-component-module="oroui/js/app/components/viewport-component"
+         data-page-component-module="oroui/js/app/components/jquery-widget-component"
          data-page-component-options="{{ collapseView|json_encode }}"
          data-method-view="{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }}">
         {% if form.method.vars.value %}
             <div class="shipping-method-config__header"
-                 data-collapse-trigger-shipping-method>
+                 data-collapse-trigger>
                 <div class="shipping-method-config__item">
                     <i class="fa-plus-square-o"></i>
                     {% set icon = methods_icons[form.method.vars.value]|default('') %}
                     {% set label = methods_labels[form.method.vars.value]|trans %}
                     {% if icon %}<img src="{{ asset(icon) }}" alt="{{ label }}" title="{{ label }}"/>{% endif %}
                     {{ label }}
+                    {{ ShipRuleMacro.renderShippingMethodDisabledFlag(form.method.vars.value) }}
                 </div>
                 <div class="shipping-method-config__info"></div>
             </div>
         {% endif %}
 
         <div class="shipping-method-config__body"
-             data-collapse-container-shipping-method>
+             data-collapse-container>
             <div class="shipping-method-config__global-surcharge">
                 {% if form.typeConfigs.vars.is_grouped %}
                     {{ UI.tooltip('oro.shipping.shipping_methods_table.surcharge.tooltip', {}, 'right') }}
@@ -264,7 +262,6 @@
                     {{ form_errors(child) }}
                 </div>
             {% endfor %}
-            {#{{- form_rest(form.options) -}}#}
         {% else %}
             {{ form_widget(form.options) }}
         {% endif %}
@@ -288,4 +285,28 @@
     {{ form_row(form.region) }}
     {{ form_row(form.postalCodes) }}
     {{ form_rest(form) }}
+{% endblock %}
+
+{% block oro_shipping_method_config_collection_widget %}
+    {% if form|length != 0 %}
+        <div class="shipping-methods-grid">
+            <div class="shipping-methods-grid__header">
+                {% set collapseView = {
+                    widgetModule: 'oroui/js/widget/collapse-group-widget',
+                    group: 'shipping-method'
+                } %}
+                <div class="shipping-methods-grid__header-method"
+                     data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                     data-page-component-options="{{ collapseView|json_encode }}">
+                    <i class="fa-plus-square-o"></i>
+                    {{ 'oro.shipping.shipping_methods_table.method.label'|trans }}
+                </div>
+                <div>{{ 'oro.shipping.shipping_methods_table.options.label'|trans }}</div>
+            </div>
+            <div>
+                {{ form_widget(form, {'attr': {'class': 'oro-shipping-rule-method-configs-collection row-oro'}}) }}
+                {{ form_errors(form) }}
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

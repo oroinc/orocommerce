@@ -83,12 +83,12 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
 
         $expected = [
             'empty_value' => null,
+            'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
             'choices' => self::METHODS,
             'choice_attr' => function () {
             },
             'configs' => [
-                'result_template_twig' => 'OroShippingBundle:Form:type/result.html.twig',
-                'selection_template_twig' => 'OroShippingBundle:Form:type/selection.html.twig',
+                'showIcon' => true,
             ]
         ];
 

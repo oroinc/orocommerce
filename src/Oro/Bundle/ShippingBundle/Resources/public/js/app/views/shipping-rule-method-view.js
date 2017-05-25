@@ -58,19 +58,11 @@ define(function(require) {
             this.$buttonSelectorAll = $(this.el).find(options.buttonSelectorAll);
             this.updateFormElements();
 
-            if (_.isUndefined(this.$formParent.data('methodCount'))) {
-                this.$formParent.data('methodCount', this.$formElements.length - 1);
-            }
-
             this.setMethodCurrency();
             this._simpleSetInfoMethod();
             this._groupedSetInfoMethod();
             this.bindEvents();
             this.updateMethodSelector();
-        },
-
-        _cleanUpDataBeforeRedirect: function() {
-            this.$formParent.removeData('methodCount');
         },
 
         /**
@@ -91,11 +83,10 @@ define(function(require) {
          * Check if form present
          */
         checkForm: function() {
-            this.form = $(this.el).parents('form:first').get(0);
-            if (this.form === undefined) {
+            this.form = $(this.el).closest('form');
+            if (!this.form.length) {
                 throw new TypeError('Form not found');
             }
-            this.form = $(this.form);
         },
 
         /**
@@ -117,14 +108,12 @@ define(function(require) {
                     self.enableAddButton();
                 }
             });
-
-            mediator.on('page:beforeChange', this._cleanUpDataBeforeRedirect, this);
         },
 
         _createAddRequest: function(e) {
             this.updateFormElements();
             var data = this.form.serializeArray();
-            var methodCount = this.$formParent.data('methodCount');
+            var methodCount = this.$formElements.length - 1;
 
             if ($(e.target).hasClass('add-all-methods')) {
                 Array.prototype.push.apply(data, this.$methodSelect.find('option[value][value!=""]').get().map(
@@ -154,8 +143,6 @@ define(function(require) {
                 type: this.form.attr('method'),
                 data: $.param(data)
             });
-
-            this.$formParent.data('methodCount', methodCount);
         },
 
         removeHandler: function(element) {
@@ -245,7 +232,7 @@ define(function(require) {
          */
         setMethodCurrency: function() {
             var self = this;
-            this.currency = $('.shipping-rules-currency option:selected').text();
+            this.currency = this.form.find('[data-name="field__currency"] option:selected').text();
             var currencyText = ', ' + this.currency;
             var targetInput = $('.oro-shipping-rule-method-configs-collection input[type=text]');
 
@@ -344,8 +331,6 @@ define(function(require) {
         },
 
         dispose: function() {
-            mediator.off('page:beforeChange', this._cleanUpDataBeforeRedirect, this);
-
             delete this.$methodSelect;
             delete this.$allMethodsOptions;
             delete this.$formElements;
