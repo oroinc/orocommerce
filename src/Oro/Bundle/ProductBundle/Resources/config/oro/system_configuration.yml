@@ -39,8 +39,8 @@ system_configuration:
         product_collections:
             title: oro.product.system_configuration.groups.product_collections.title
             icon: 'fa-list'
-        product_collections_indexation:
-            title: oro.product.system_configuration.groups.product_collections_indexation.title
+        product_collections_general:
+            title: oro.product.system_configuration.groups.product_collections_general.title
 
     fields:
         oro_product.unit_rounding_type:
@@ -179,6 +179,16 @@ system_configuration:
                     0 */12 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_twelve_hours.label
                     0 0 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_day.label
 
+        oro_product.product_collections_mass_action_limitation:
+            data_type: integer
+            type: integer
+            options:
+                label: oro.product.system_configuration.fields.product_collection_mass_action_limitation.label
+                tooltip: oro.product.system_configuration.fields.product_collection_mass_action_limitation.tooltip
+                constraints:
+                    - GreaterThan:
+                        value: 0
+
     tree:
         system_configuration:
             platform:
@@ -226,9 +236,10 @@ system_configuration:
                             product_collections:
                                 priority: 0
                                 children:
-                                    product_collections_indexation:
+                                    product_collections_general:
                                         children:
                                             - oro_product.product_collections_indexation_cron_schedule
+                                            - oro_product.product_collections_mass_action_limitation
                     product_inventory:
                         priority: 650
                         children:
