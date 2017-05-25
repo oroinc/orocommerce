@@ -40,12 +40,11 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
+            this.$itemsContainer = this.$el.find(this.options.selectors.itemsContainer);
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },
 
         handleLayoutInit: function() {
-            this.$itemsContainer = this.$el.find(this.options.selectors.itemsContainer);
-
             this.$el
                 .on('content:changed', _.bind(this.onContentChanged, this));
 
