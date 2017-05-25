@@ -87,6 +87,7 @@ class UPSTransportSettingsType extends AbstractType
             CheckboxType::class,
             [
                 'label' => 'oro.ups.transport.test_mode.label',
+                'required' => false,
             ]
         );
         $builder->add(
