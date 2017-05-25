@@ -38,8 +38,12 @@
                 }
             }
 
-            .form__col {
+            .form__col,
+            .form-row {
                 margin-left: $list-theme-product-view-line-item-form-margin-left-desktop;
+                &:first-child {
+                    margin-left: 0;
+                }
             }
         }
 
