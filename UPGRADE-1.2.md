@@ -17,6 +17,9 @@ PaymentBundle
 - Class `Oro\Bundle\PaymentBundle\Action\CaptureAction` was removed, `Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction` should be used instead
 - Class `Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
+    - constant `FAILED_SHIPPING_ADDRESS_URL_KEY` was removed
+- Class `Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent`
+    - method `getTypedEventName` was removed
 - Method `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::computeStatus` was deprecated, `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::getPaymentStatus` should be used instead
 
 PricingBundle
