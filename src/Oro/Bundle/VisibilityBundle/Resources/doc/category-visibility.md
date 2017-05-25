@@ -7,19 +7,19 @@ customer or customer group. Category visibility related to the product visibilit
 ### General Information
 As product visibility category visibility has same 3 levels.
 
-####Visibility to all:
+#### Visibility to all:
 * **Parent Category** - `Default value`. Value is taken from the parent category
 * **Config** - The value is taken from the system configuration parameter "Category Visibility to Customers"
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
-####Visibility to Customer Groups:
+#### Visibility to Customer Groups:
 * **Visibility to All**  - `Default value`. Fallback to Visibility to All value
 * **Parent Category** - Value is taken from the parent category for selected customer group
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
-####Visibility to Customers:
+#### Visibility to Customers:
 * **Customer Group** - `Default value`. Fallback to Visibility to Customer Groups
 * **Visibility to All** - Fallback to Visibility to All value
 * **Parent Category** - Value is taken from the parent category for selected customer
@@ -30,7 +30,7 @@ As well as for the product visibility there are entities in database for each li
 `CategoryVisibility`, `CustomerGroupCategoryVisibility`, `CustomerCategoryVisibility` each of which implements 
 `VisibilityInterface` interface.
 
-####Addition information:
+#### Addition information:
 
 * If default value is selected then the entity is not written to the database.
 * If category doesn't have parent category then "Parent Category" option is not available for all levels. 
@@ -61,7 +61,7 @@ Also each row in cache tables stores one on the data sources:
 
 Here is a list of possible cases that require to update the cache:
 
-#####Category Visibility to All
+##### Category Visibility to All
 | `CategoryVisibilityResolved`     | **Parent Category**                          | **Config** | **Hidden**                                    | **Visible**                                  |
 |----------------------------------|----------------------------------------------|------------|-----------------------------------------------|----------------------------------------------|
 | **category (FK) (PK)**           | Get category from current category visibility|      X     | Get category from current category visibility | Get category from current category visibility|
@@ -70,7 +70,7 @@ Here is a list of possible cases that require to update the cache:
 | **visibility**                   | Get parent category visibility from cache    |      X     |             ::VISIBILITY_HIDDEN               |             ::VISIBILITY_VISIBLE             |
 | **source**                       |           ::SOURCE_PARENT_CATEGORY           |      X     |               ::SOURCE_STATIC                 |               ::SOURCE_STATIC                |
 
-#####Category Visibility to Customer Group
+##### Category Visibility to Customer Group
 | `CustomerGroupCategoryVisibilityResolved` | **Visibility to All** | **Parent Category**                                              | **Hidden**                                                 | **Visible**                                                |
 |------------------------------------------|-----------------------|------------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------------|
 | **category (FK) (PK)**                   |          X            | Get category from current customer group category visibility      | Get category from current customer group category visibility| Get category from current customer group category visibility|
@@ -79,7 +79,7 @@ Here is a list of possible cases that require to update the cache:
 | **visibility**                           |          X            | Get parent category visibility from cache for this customer group |                     ::VISIBILITY_HIDDEN                    |                   ::VISIBILITY_VISIBLE                     |
 | **source**                               |          X            |           ::SOURCE_PARENT_CATEGORY                               |                       ::SOURCE_STATIC                      |                     ::SOURCE_STATIC                        |
 
-#####Category Visibility to Customer
+##### Category Visibility to Customer
 | `CustomerCategoryVisibilityResolved`     | **Customer Group** | **Visibility to All**                                       | **Parent Category**                                        | **Hidden**                                           | **Visible**                                          |
 |-----------------------------------------|-------------------|-------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
 | **category (FK) (PK)**                  |         X         | Get category from current customer group category visibility | Get category from current customer category visibility      | Get category from current customer category visibility| Get category from current customer category visibility|
@@ -129,6 +129,6 @@ And `CustomerGroupCategoryVisibilityResolved` for child category should be:
 | **source**                               |                  ::SOURCE_PARENT_CATEGORY                        |
 
     
-####Cache builders
+#### Cache builders
 To build category visibility cache there are cache builders similar to [product cache builders](./product-visibility.md#cache-builders).
 To update the cache for all visibility levels developer should run command `product:visibility:cache:build`.

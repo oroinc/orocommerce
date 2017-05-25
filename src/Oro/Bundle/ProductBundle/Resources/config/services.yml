@@ -157,6 +157,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_collection_validator }
 
+    oro_product.validator.not_empty_configurable_attributes:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator'
+        public: true
+        arguments:
+            - '@oro_product.provider.variant_field_provider'
+        tags:
+            - { name: validator.constraint_validator, alias: not_empty_configurable_attributes }
+
     oro_product.component_processor.filter:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false
@@ -287,10 +295,12 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@oro_product.provider.custom_field_provider"
+            - "@oro_product.provider.variant_field_provider"
             - '%oro_product.entity.product.class%'
             - '%oro_product.entity.product_variant_link.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfterEditGrid }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
@@ -933,3 +943,10 @@ services:
             - '@oro_redirect.url_storage_cache'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
+
+    oro_product.provider.variant_field_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\VariantFieldProvider'
+        public: false
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity_config.provider.serialized_field_provider'

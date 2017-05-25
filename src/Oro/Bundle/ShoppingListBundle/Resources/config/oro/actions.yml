@@ -216,6 +216,10 @@ operations:
             confirmation:
                 title: oro.frontend.shoppinglist.messages.delete_title
                 component: oroui/js/delete-confirmation
+        actions:
+            - '@redirect':
+                parameters:
+                    route: oro_shopping_list_frontend_view
 
     oro_shoppinglist_delete_line_item:
         extends: DELETE

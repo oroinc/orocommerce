@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;
 
@@ -34,7 +36,6 @@ class ProductWithPricesTest extends WebTestCase
     const DEFAULT_NAME = 'default name';
 
     const CATEGORY_ID = 1;
-    const ATTRIBUTE_FAMILY_ID = 1;
 
     /**
      * {@inheritDoc}
@@ -44,6 +45,19 @@ class ProductWithPricesTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+    }
+
+    /**
+     * @return AttributeFamily
+     */
+    private function getDefaultFamily()
+    {
+        $defaultFamily = $this->getContainer()
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityRepositoryForClass(AttributeFamily::class)
+            ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+
+        return $defaultFamily;
     }
 
     /**
@@ -57,7 +71,7 @@ class ProductWithPricesTest extends WebTestCase
         $formValues['input_action'] = 'oro_product_create';
         $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
         $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
-        $formValues['oro_product_step_one']['attributeFamily'] = self::ATTRIBUTE_FAMILY_ID;
+        $formValues['oro_product_step_one']['attributeFamily'] = $this->getDefaultFamily()->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);

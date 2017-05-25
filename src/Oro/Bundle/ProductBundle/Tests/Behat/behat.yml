@@ -6,12 +6,12 @@ oro_behat_extension:
       selector: "select[name='oro_product[primaryUnitPrecision][unit]']"
     ProductAdditionalUnitField:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
+    OptionCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
 
     Configurable Attributes:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
-      selector:
-        type: 'xpath'
-        locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
+      selector: 'div[id^="oro_product_variantFields"]'
 
     ProductForm:
       selector: 'div#container'
@@ -29,6 +29,13 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
             element: Configurable Attributes
+
+    Product Family Form:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Label: 'oro_attribute_family[labels][values][default]'
 
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"
@@ -102,6 +109,9 @@ oro_behat_extension:
 
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
+
+    Color Product Attribute:
+      selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
   suites:
     OroProductBundle:
