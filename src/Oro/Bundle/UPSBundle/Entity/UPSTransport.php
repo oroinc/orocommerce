@@ -32,56 +32,56 @@ class UPSTransport extends Transport
      *
      * @ORM\Column(name="ups_test_mode", type="boolean", nullable=false, options={"default"=false})
      */
-    protected $testMode = false;
+    protected $upsTestMode = false;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ups_api_user", type="string", length=255, nullable=false)
      */
-    protected $apiUser;
+    protected $upsApiUser;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ups_api_password", type="string", length=255, nullable=false)
      */
-    protected $apiPassword;
+    protected $upsApiPassword;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ups_api_key", type="string", length=255, nullable=false)
      */
-    protected $apiKey;
+    protected $upsApiKey;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ups_shipping_account_number", type="string", length=100, nullable=false)
      */
-    protected $shippingAccountNumber;
+    protected $upsShippingAccountNumber;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ups_shipping_account_name", type="string", length=255, nullable=false)
      */
-    protected $shippingAccountName;
+    protected $upsShippingAccountName;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ups_pickup_type", type="string", length=2, nullable=false)
      */
-    protected $pickupType;
+    protected $upsPickupType;
 
     /**
      * @var string
      *
      * @ORM\Column(name="ups_unit_of_weight", type="string", length=3, nullable=false)
      */
-    protected $unitOfWeight;
+    protected $upsUnitOfWeight;
 
     /**
      * @var Country
@@ -89,7 +89,7 @@ class UPSTransport extends Transport
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
      * @ORM\JoinColumn(name="ups_country_code", referencedColumnName="iso2_code")
      */
-    protected $country;
+    protected $upsCountry;
 
     /**
      * @var Collection|ShippingService[]
@@ -135,7 +135,7 @@ class UPSTransport extends Transport
      *
      * @ORM\Column(name="ups_invalidate_cache_at", type="datetime", nullable=true)
      */
-    protected $invalidateCacheAt;
+    protected $upsInvalidateCacheAt;
 
     /**
      * @var ParameterBag
@@ -151,9 +151,9 @@ class UPSTransport extends Transport
     /**
      * @return bool
      */
-    public function isTestMode()
+    public function isUpsTestMode()
     {
-        return $this->testMode;
+        return $this->upsTestMode;
     }
 
     /**
@@ -161,9 +161,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setTestMode($testMode)
+    public function setUpsTestMode($testMode)
     {
-        $this->testMode = $testMode;
+        $this->upsTestMode = $testMode;
 
         return $this;
     }
@@ -173,9 +173,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setApiUser($apiUser)
+    public function setUpsApiUser($apiUser)
     {
-        $this->apiUser = $apiUser;
+        $this->upsApiUser = $apiUser;
 
         return $this;
     }
@@ -183,9 +183,9 @@ class UPSTransport extends Transport
     /**
      * @return string
      */
-    public function getApiUser()
+    public function getUpsApiUser()
     {
-        return $this->apiUser;
+        return $this->upsApiUser;
     }
 
     /**
@@ -193,9 +193,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setApiPassword($apiPassword)
+    public function setUpsApiPassword($apiPassword)
     {
-        $this->apiPassword = $apiPassword;
+        $this->upsApiPassword = $apiPassword;
 
         return $this;
     }
@@ -203,9 +203,9 @@ class UPSTransport extends Transport
     /**
      * @return string
      */
-    public function getApiPassword()
+    public function getUpsApiPassword()
     {
-        return $this->apiPassword;
+        return $this->upsApiPassword;
     }
 
     /**
@@ -213,9 +213,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setApiKey($apiKey)
+    public function setUpsApiKey($apiKey)
     {
-        $this->apiKey = $apiKey;
+        $this->upsApiKey = $apiKey;
 
         return $this;
     }
@@ -223,9 +223,9 @@ class UPSTransport extends Transport
     /**
      * @return string
      */
-    public function getApiKey()
+    public function getUpsApiKey()
     {
-        return $this->apiKey;
+        return $this->upsApiKey;
     }
 
     /**
@@ -233,9 +233,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setShippingAccountNumber($shippingAccountNumber)
+    public function setUpsShippingAccountNumber($shippingAccountNumber)
     {
-        $this->shippingAccountNumber = $shippingAccountNumber;
+        $this->upsShippingAccountNumber = $shippingAccountNumber;
 
         return $this;
     }
@@ -243,9 +243,9 @@ class UPSTransport extends Transport
     /**
      * @return string
      */
-    public function getShippingAccountNumber()
+    public function getUpsShippingAccountNumber()
     {
-        return $this->shippingAccountNumber;
+        return $this->upsShippingAccountNumber;
     }
 
     /**
@@ -253,9 +253,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setShippingAccountName($shippingAccountName)
+    public function setUpsShippingAccountName($shippingAccountName)
     {
-        $this->shippingAccountName = $shippingAccountName;
+        $this->upsShippingAccountName = $shippingAccountName;
 
         return $this;
     }
@@ -263,9 +263,9 @@ class UPSTransport extends Transport
     /**
      * @return string
      */
-    public function getShippingAccountName()
+    public function getUpsShippingAccountName()
     {
-        return $this->shippingAccountName;
+        return $this->upsShippingAccountName;
     }
 
     /**
@@ -273,9 +273,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setPickupType($pickupType)
+    public function setUpsPickupType($pickupType)
     {
-        $this->pickupType = $pickupType;
+        $this->upsPickupType = $pickupType;
 
         return $this;
     }
@@ -283,9 +283,9 @@ class UPSTransport extends Transport
     /**
      * @return string
      */
-    public function getPickupType()
+    public function getUpsPickupType()
     {
-        return $this->pickupType;
+        return $this->upsPickupType;
     }
 
     /**
@@ -293,9 +293,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setUnitOfWeight($unitOfWeight)
+    public function setUpsUnitOfWeight($unitOfWeight)
     {
-        $this->unitOfWeight = $unitOfWeight;
+        $this->upsUnitOfWeight = $unitOfWeight;
 
         return $this;
     }
@@ -303,9 +303,9 @@ class UPSTransport extends Transport
     /**
      * @return string
      */
-    public function getUnitOfWeight()
+    public function getUpsUnitOfWeight()
     {
-        return $this->unitOfWeight;
+        return $this->upsUnitOfWeight;
     }
 
     /**
@@ -313,18 +313,18 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setCountry(Country $country = null)
+    public function setUpsCountry(Country $country = null)
     {
-        $this->country = $country;
+        $this->upsCountry = $country;
         return $this;
     }
 
     /**
      * @return Country
      */
-    public function getCountry()
+    public function getUpsCountry()
     {
-        return $this->country;
+        return $this->upsCountry;
     }
 
     /**
@@ -426,16 +426,16 @@ class UPSTransport extends Transport
         if (null === $this->settings) {
             $this->settings = new ParameterBag(
                 [
-                    'api_user' => $this->getApiUser(),
-                    'api_password' => $this->getApiPassword(),
-                    'api_key' => $this->getApiKey(),
-                    'test_mode' => $this->isTestMode(),
-                    'shipping_account_name' => $this->getShippingAccountName(),
-                    'shipping_account_number' => $this->getShippingAccountNumber(),
-                    'pickup_type' => $this->getPickupType(),
-                    'unit_of_weight' => $this->getUnitOfWeight(),
-                    'country' => $this->getCountry(),
-                    'invalidate_cache_at' => $this->getInvalidateCacheAt(),
+                    'api_user' => $this->getUpsApiUser(),
+                    'api_password' => $this->getUpsApiPassword(),
+                    'api_key' => $this->getUpsApiKey(),
+                    'test_mode' => $this->isUpsTestMode(),
+                    'shipping_account_name' => $this->getUpsShippingAccountName(),
+                    'shipping_account_number' => $this->getUpsShippingAccountNumber(),
+                    'pickup_type' => $this->getUpsPickupType(),
+                    'unit_of_weight' => $this->getUpsUnitOfWeight(),
+                    'country' => $this->getUpsCountry(),
+                    'invalidate_cache_at' => $this->getUpsInvalidateCacheAt(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
                     'labels' => $this->getLabels()->toArray()
                 ]
@@ -452,9 +452,9 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null)
+    public function setUpsInvalidateCacheAt(\DateTime $invalidateCacheAt = null)
     {
-        $this->invalidateCacheAt = $invalidateCacheAt;
+        $this->upsInvalidateCacheAt = $invalidateCacheAt;
 
         return $this;
     }
@@ -464,8 +464,8 @@ class UPSTransport extends Transport
      *
      * @return \DateTime
      */
-    public function getInvalidateCacheAt()
+    public function getUpsInvalidateCacheAt()
     {
-        return $this->invalidateCacheAt;
+        return $this->upsInvalidateCacheAt;
     }
 }

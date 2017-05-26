@@ -188,7 +188,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             UPSSettings::class,
             [
                 'id' => '123',
-                'testMode' => $testMode,
+                'upsTestMode' => $testMode,
             ]
         );
 

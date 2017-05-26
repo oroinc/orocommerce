@@ -1,9 +1,22 @@
 include:
     - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
 
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localNewCategory']
+        setParentCategory: [1]
+        addProduct: ['@product1']
+
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
+        organization: '@organization'
+        owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
         addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
@@ -12,6 +25,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     locvalue1:
         string: 'Product 1'
+    localNewCategory:
+        string: 'NewCategory'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
