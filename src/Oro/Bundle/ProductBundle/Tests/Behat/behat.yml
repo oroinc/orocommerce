@@ -69,6 +69,13 @@ oro_behat_extension:
         type: xpath
         locator: '//a[contains(@class, "btn") and contains(., "Preview")]'
 
+    AddButton:
+      selector: 'div.tab-pane.active a:contains("Add")'
+
+    AddProductsPopupGrid:
+      selector: 'div.ui-dialog div.grid-container'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     Reset:
       selector: "a.btn.filter-reset"
 
@@ -86,8 +93,12 @@ oro_behat_extension:
           Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
           Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
-          First Product Collection Segment Name: 'oro_web_catalog_content_node[contentVariants][0][productCollectionSegment][name]'
-          Second Product Collection Segment Name: 'oro_web_catalog_content_node[contentVariants][1][productCollectionSegment][name]'
+          Product Collection Segment Name:
+            type: css
+            locator: '.content-variant-item.content-variant-item-default [id*="productCollectionSegment_name"]'
+          Default Product Collection Segment Name:
+            type: css
+            locator: '.content-variant-item:not([class*="content-variant-item-default"]) [id*="productCollectionSegment_name"]'
 
     Remove Variant Button:
       selector: 'button.removeVariantBtn'
