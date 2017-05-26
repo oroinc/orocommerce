@@ -265,6 +265,11 @@ oro:
                     add_to_exclude: Exclude
                     remove_from_included: Reset to Default
                     remove_from_excluded: Remove
+            mass_action:
+                get_selected_product_ids:
+                    response:
+                        failed: A limit of selected products was exceeded. Do you want to force add your selection?
+                        success: Products were successfully added.
 
         ui:
             duplicate: Duplicate

@@ -976,3 +976,8 @@ services:
             - [setParameterName,  ['hiddenProducts']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-grid, method: onBuildAfter }
+
+    oro_product.datagrid.extension.mass_action.get_selected_product_ids_mass_action_handler:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\GetSelectedProductIdsMassActionHandler
+        arguments:
+            - '@oro_config.manager'
