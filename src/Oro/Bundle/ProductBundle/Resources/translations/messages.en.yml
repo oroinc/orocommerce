@@ -312,6 +312,10 @@ oro:
         field_is_used_as_variant_field:
             message: "Cannot remove field because it's used as a variant field in the following configurable products: %skuList%"
 
+        sticker:
+            new_arrival: 'New Arrival'
+            top_selling: 'Top Selling'
+
     product_unit.each:
         label:
             full: each

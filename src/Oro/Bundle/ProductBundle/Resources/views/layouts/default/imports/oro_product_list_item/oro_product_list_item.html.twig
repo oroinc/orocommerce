@@ -23,6 +23,7 @@
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"
            style="background-image: url('{{ Image.url(productImage, 'product_large') }}')">
         </a>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 

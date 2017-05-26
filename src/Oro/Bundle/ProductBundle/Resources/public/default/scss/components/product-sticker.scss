@@ -1,0 +1,15 @@
+// @theme: default;
+
+.product-sticker {
+    &--icon {
+        position: absolute;
+        z-index: z('base');
+
+        &-new_arrival {
+            width: 59px;
+            height: 57px;
+
+            background: $product-sticker-icon-new-arrival-background;
+        }
+    }
+}

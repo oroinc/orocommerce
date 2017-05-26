@@ -32,6 +32,7 @@
     <div {{ block('block_attributes') }}>
         {% set image = product.image is defined ? product.image : noImageUrl %}
         <a href="{{ product.view_link }}" class="view-product" style="background-image: url('{{ image }}')"></a>
+        {{ block('container_widget') }}
     </div>
 {% endblock %}
 

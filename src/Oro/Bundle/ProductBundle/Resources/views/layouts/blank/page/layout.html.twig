@@ -1,0 +1,51 @@
+{% block product_sticker_widget %}
+    {# Demo data!!! Please remove this piece of code when BE part will be done!!! #}
+    {% set product = {
+        stickers: [
+            {type: 'new_arrival'}
+        ]
+    } %}
+
+    {% if 
+        product is defined and
+        product.stickers is defined and
+        product.stickers|length
+    %}
+
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-sticker'
+        }) %}
+
+        {% if mode == 'icon' %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-sticker--icon'
+            }) %}
+        {% elseif mode == 'text' %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-sticker--text'
+            }) %}
+        {% endif %}
+
+        {% set def_attr = attr %}
+        
+        {% for sticker in product.stickers %}
+            {% set attr = def_attr %}
+
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-sticker--' ~ mode ~ '-' ~ sticker.type
+            }) %}
+
+            {% if mode == 'icon' %}
+                {% set attr = layout_attr_defaults(attr, {
+                    '~class': ' product-sticker--' ~ position
+                }) %}
+            {% endif %}
+            
+            <div {{ block('block_attributes') }}>
+                {%- if mode == 'text' -%}
+                    {{- ('oro.product.sticker.' ~ sticker.type)|trans -}}
+                {%- endif -%}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

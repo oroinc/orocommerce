@@ -9,4 +9,5 @@ styles:
         - 'bundles/oroproduct/blank/scss/variables/product-view-media-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-quantity-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/sku-config.scss'
+        - 'bundles/oroproduct/blank/scss/variables/product-sticker-config.scss'
         - 'bundles/oroproduct/blank/scss/styles.scss'
