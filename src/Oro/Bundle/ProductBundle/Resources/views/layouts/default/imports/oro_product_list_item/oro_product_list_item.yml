@@ -32,8 +32,6 @@ layout:
                     blockType: container
                 __product_sku:
                     blockType: container
-                __product_highlight:
-                    blockType: container
                 __product_mfg:
                     blockType: block
                     options:
