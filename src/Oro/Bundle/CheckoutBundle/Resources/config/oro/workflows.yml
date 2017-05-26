@@ -53,8 +53,6 @@ workflows:
                 type: string
             edit_order_link:
                 type: string
-            user_input:
-                type: array
             payment_in_progress:
                 type: bool
             payment_validate:
@@ -62,7 +60,7 @@ workflows:
             payment_save_for_later:
                 type: bool
             additional_data:
-                type: array
+                type: string
             state_token:
                 type: string
             internal_state_token:
@@ -703,7 +701,6 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
-                                user_input: $user_input
                     - '@call_service_method':
                         service: oro_checkout.factory.payment_context_factory
                         method: create
@@ -979,6 +976,7 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                                     failedShippingAddressUrl: $.result.failedShippingAddressUrl
+                                    additionalData: $additional_data
                                     checkoutId: $checkout.id
                             - '@assign_value': [$payment_in_progress, true]
                     - '@extendable':
