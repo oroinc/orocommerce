@@ -28,13 +28,11 @@ layout:
                     blockType: container
                 __product_primary_content_container:
                     blockType: container
-                __product_number:
-                    blockType: block
                 __product_specification:
                     blockType: container
-                __product_sku_container:
-                    blockType: container
                 __product_sku:
+                    blockType: container
+                __product_highlight:
                     blockType: container
                 __product_mfg:
                     blockType: block
@@ -66,11 +64,9 @@ layout:
                             __product_quick_view: ~
                         __product_title: ~
                         __product_primary_content_container:
-                            __product_number: ~
                             __product_specification:
-                                __product_sku_container:
-                                    __product_sku: ~
-                                    __product_mfg: ~
+                                __product_sku: ~
+                                __product_mfg: ~
                                 __product_sticker_new_text: ~
                             __product_short_description: ~
                             __product_details: ~

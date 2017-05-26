@@ -59,34 +59,21 @@
     </div>
 {% endblock %}
 
-{% block __oro_product_list_item__product_number_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__number product-item__number_{{ class_prefix }}'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        Item #: <span class="red">{{ product.sku }}</span>
-    </div>
-{% endblock %}
-
 {% block __oro_product_list_item__product_specification_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__specification product__specification_{{ class_prefix }} mb2-md'
+        '~class': ' product__specification product__specification--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block __oro_product_list_item__product_sku_container_widget %}
+{% block __oro_product_list_item__product_sku_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' mb0-md mb0-sm'
+        '~class': ' product-item__number product-item__number--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block __oro_product_list_item__product_sku_widget %}
-    <div>
-        {{ 'oro.product.frontend.index.item'|trans }} <span class="red">{{ product.sku }}</span>
+        {%- spaceless -%}
+            {{ 'oro.product.frontend.index.item'|trans }} <span class="red">{{- product.sku -}}</span>
+        {%- endspaceless -%}
     </div>
 {% endblock %}
 

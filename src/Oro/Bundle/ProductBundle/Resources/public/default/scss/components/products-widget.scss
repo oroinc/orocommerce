@@ -405,16 +405,6 @@
     }
   }
 
-  &__number {
-    &_list-view {
-      display: none;
-    }
-
-    &_no-image-view {
-      display: none;
-    }
-  }
-
   &__title {
     $product-item__title_gallery-view-font-s: 15px;
     $product-item__title_gallery-view-line-h: 1.35;

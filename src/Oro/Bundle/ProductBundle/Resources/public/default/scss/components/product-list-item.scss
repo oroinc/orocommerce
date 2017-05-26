@@ -105,15 +105,12 @@
     }
 
     &__specification {
-        max-width: 205px;
-        margin: 0 0 20px;
-
-        &_gallery-view {
-            display: none;
+        &--list-view {
+            margin: 0 0 ($offset-y-m * 2);
         }
 
-        &_no-image-view {
-            margin-bottom: 10px !important;
+        &--no-image-view {
+            margin: 0 0 $offset-y-m;
 
             &.product__specification_delivery {
                 display: none;
@@ -122,7 +119,7 @@
             .product-item--compact & {
                 display: inline-block;
                 width: 100%;
-                margin-bottom: 0 !important;
+                margin: 0;
             }
         }
     }
@@ -159,7 +156,7 @@
         }
 
         &__specification {
-            &_list-view {
+            &--list-view {
                 margin: 0;
 
                 &.product__specification_delivery {
@@ -167,17 +164,9 @@
                 }
             }
 
-            &_no-image-view {
-                margin: 0 !important;
+            &--no-image-view {
+                margin: 0;
             }
-        }
-    }
-}
-
-@include breakpoint('tablet-small') {
-    .product {
-        &__specification {
-            max-width: 100%;
         }
     }
 }
