@@ -2,21 +2,14 @@ include:
     - '@OroProductBundle:product_collections_web_catalog.yml'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    localProduct1Name:
-        string: 'Product 1'
-
-    localProduct2Name:
-        string: 'Product 2'
+    localProduct{1..12}Name:
+        string: 'Product <current()>'
 
     localProductAttributeFamily:
         string: 'Product Attribute Family'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    productUnitPrevision1:
-        unit: '@item'
-        precision: '1'
-
-    productUnitPrevision2:
+    productUnitPrecision{1..12}:
         unit: '@item'
         precision: '1'
 
@@ -29,21 +22,11 @@ Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
         owner: '@admin'
 
 Oro\Bundle\ProductBundle\Entity\Product:
-    product1:
+    product{1..12}:
         type: 'simple'
-        sku: 'PSKU1'
-        primaryUnitPrecision: '@productUnitPrevision1'
-        addName: ['@localProduct1Name']
-        inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
-        organization: '@organization'
-        attributeFamily: '@productAttributeFamily'
-
-    product2:
-        type: 'simple'
-        sku: 'PSKU2'
-        primaryUnitPrecision: '@productUnitPrevision2'
-        addName: ['@localProduct2Name']
+        sku: 'PSKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        addName: ['@localProduct<current()>Name']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
