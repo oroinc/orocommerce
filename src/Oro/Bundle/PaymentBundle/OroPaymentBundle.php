@@ -6,6 +6,7 @@ use Oro\Bundle\PaymentBundle\DBAL\Types\SecureArrayType;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\CompositePaymentMethodProviderCompilerPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewProvidersPass;
+use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\SupportsEntityPaymentContextFactoriesPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -26,6 +27,7 @@ class OroPaymentBundle extends Bundle
         $container->addCompilerPass(new PaymentMethodProvidersPass());
         $container->addCompilerPass(new PaymentMethodViewProvidersPass());
         $container->addCompilerPass(new CompositePaymentMethodProviderCompilerPass());
+        $container->addCompilerPass(new SupportsEntityPaymentContextFactoriesPass());
         parent::build($container);
     }
 

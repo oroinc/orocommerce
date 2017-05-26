@@ -25,6 +25,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     protected static $valueMapping = [
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
+        'Value'=> 'paymentMethod',
         'Delete the shopping list' => 'oro_workflow_transition[remove_source]'
     ];
 
