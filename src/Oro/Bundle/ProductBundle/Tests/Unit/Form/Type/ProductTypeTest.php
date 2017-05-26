@@ -30,9 +30,10 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantField;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
@@ -42,6 +43,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantFieldsCollectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
@@ -50,6 +52,7 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\PreloadedExtension;
@@ -98,6 +101,11 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $images = [];
 
     /**
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productUnitLabelFormatter;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -124,6 +132,10 @@ class ProductTypeTest extends FormIntegrationTestCase
         $image2->setImage(new File());
 
         $this->images = [$image1, $image2];
+
+        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         parent::setUp();
     }
@@ -192,6 +204,13 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $entityType = new EntityType(
+            [
+                'item' => (new ProductUnit())->setCode('item'),
+                'kg' => (new ProductUnit())->setCode('kg')
+            ]
+        );
+
         return [
             new PreloadedExtension(
                 [
@@ -201,13 +220,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductPrimaryUnitPrecisionType::NAME => $productPrimaryUnitPrecision,
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
-                        [
-                            'item' => (new ProductUnit())->setCode('item'),
-                            'kg' => (new ProductUnit())->setCode('kg')
-                        ],
-                        ProductUnitSelectionType::NAME
-                    ),
+                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    'entity' => $entityType,
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     ProductCustomVariantFieldsCollectionType::NAME => new ProductCustomVariantFieldsCollectionType(
                         $variantFieldProvider
