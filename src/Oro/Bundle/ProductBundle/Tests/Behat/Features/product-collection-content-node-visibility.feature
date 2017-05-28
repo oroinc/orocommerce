@@ -33,7 +33,7 @@ Feature:
     And I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU1" in "value"
-    And I click on "Preview"
+    And I click on "Preview Results"
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU1 | Product 1 |
