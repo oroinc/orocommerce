@@ -64,13 +64,10 @@ oro_behat_extension:
     Choose a field..:
       selector: "#select2-drop-mask"
 
-    PreviewResults:
+    Preview:
       selector:
         type: xpath
-        locator: '//a[contains(@class, "btn") and contains(., "Preview Results")]'
-
-    SegmentNameTooltip:
-      selector: 'div.control-label:contains("Segment name") i.tooltip-icon'
+        locator: '//a[contains(@class, "btn") and contains(., "Preview")]'
 
     AddButton:
       selector: 'div.tab-pane.active a:contains("Add")'

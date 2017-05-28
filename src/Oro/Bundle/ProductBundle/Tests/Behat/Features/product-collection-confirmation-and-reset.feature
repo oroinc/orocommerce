@@ -9,6 +9,7 @@ Feature:
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
+    And I click on "Advanced Filter"
     When type "PSKU2" in "value"
     And I save form
     Then I should see text matching "You have changes in the Filters section that have not been applied"
@@ -29,6 +30,7 @@ Feature:
 
   Scenario: Confirmation cancel, after save changed not applied filters several product collections
     When I click "Content Variants"
+    And I click on "Advanced Filter"
     And type "PSKU1" in "value"
     Then I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
@@ -50,10 +52,11 @@ Feature:
   Scenario: Reset Product Collection after filters change
     When I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
+    And I click on "Advanced Filter"
     When type "SKU42" in "value"
-    And I click "Preview Results"
+    And I click "Preview"
     And I click on "Reset"
     Then I should not see "SKU42"
-    And I click "Preview Results"
+    And I click "Preview"
     Then I should see "PSKU2"
     And I click "Cancel"

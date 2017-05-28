@@ -16,8 +16,9 @@ Feature:
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
-    And I type "PSKU" in "value"
-    And I click on "Preview Results"
+    And I click on "Advanced Filter"
+    And type "PSKU" in "value"
+    And I click on "Preview"
     Then I should see following grid:
       | SKU   | NAME      |
       | PSKU2 | Product 2 |

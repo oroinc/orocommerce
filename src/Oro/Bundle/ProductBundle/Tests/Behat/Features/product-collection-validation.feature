@@ -32,7 +32,7 @@ Feature:
     And I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU" in "value"
-    And I click on "Preview Results"
+    And I click on "Preview"
     And I save form
     Then I should see "Content Node has been saved" flash message
 

@@ -73,7 +73,6 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
                     'segment_entity' => Product::class,
                     'segment_columns' => ['id', 'sku'],
                     'segment_name_template' => 'Product Collection %s',
-                    'segment_name_tooltip' => 'oro.product.content_variant.product_collection.segment_name_tooltip',
                     'add_name_field' => true,
                     'name_field_required' => false,
                     'required' => true,

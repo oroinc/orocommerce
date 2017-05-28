@@ -19,8 +19,7 @@ Feature:
     And I click "Add Product Collection"
     And I click "Content Variants"
     Then I should see 1 elements "Product Collection Variant Label"
-    And I should see 1 elements "Segment Name Tooltip"
-    And I should see an "Product Collection Preview Grid" element
+    Then I should see an "Product Collection Preview Grid" element
     And I should see "No records found"
 
   Scenario: Use Advanced Filter
@@ -31,7 +30,7 @@ Feature:
     And I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU1" in "value"
-    And I click on "Preview Results"
+    And I click on "Preview"
     And I should see following grid:
       | SKU   | NAME      |
       | PSKU1 | Product 1 |
