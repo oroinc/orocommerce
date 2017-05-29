@@ -1,12 +1,12 @@
-// @theme: default
+// @theme: default;
 
 .product {
     &__view-details-link {
-        &_gallery-view {
+        &--gallery-view {
             display: none;
         }
 
-        &_no-image-view {
+        &--no-image-view {
             .product-item--compact & {
                 display: inline-block;
             }
@@ -112,7 +112,7 @@
         &--no-image-view {
             margin: 0 0 $offset-y-m;
 
-            &.product__specification_delivery {
+            &.product__specification--delivery {
                 display: none;
             }
 
@@ -125,48 +125,16 @@
     }
 
     &__description {
-        &_gallery-view {
+        &--gallery-view {
             display: none;
         }
 
-        &_no-image-view {
+        &--no-image-view {
             display: none;
         }
 
         p {
             margin: 0 0 15px;
-        }
-    }
-}
-
-@media (max-width: $screen-sm) {
-    .product {
-        &__view-details-link {
-            &_list-view {
-                display: none;
-            }
-
-            &_no-image-view {
-                display: none;
-
-                .product-item--compact & {
-                    display: none;
-                }
-            }
-        }
-
-        &__specification {
-            &--list-view {
-                margin: 0;
-
-                &.product__specification_delivery {
-                    display: none;
-                }
-            }
-
-            &--no-image-view {
-                margin: 0;
-            }
         }
     }
 }
@@ -182,13 +150,41 @@
         }
 
         &__description {
-            &_list-view {
+            &--list-view {
                 font-size: $base-font-size;
                 line-height: $base-line-height;
 
                 height: $base-font-size * $base-line-height * 2;
 
                 overflow: hidden;
+            }
+        }
+
+        &__view-details-link {
+            &--list-view {
+                display: none;
+            }
+
+            &--no-image-view {
+                display: none;
+
+                .product-item--compact & {
+                    display: none;
+                }
+            }
+        }
+
+        &__specification {
+            &--list-view {
+                margin: 0;
+
+                &.product__specification--delivery {
+                    display: none;
+                }
+            }
+
+            &--no-image-view {
+                margin: 0;
             }
         }
     }
