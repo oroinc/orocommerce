@@ -39,6 +39,7 @@ class OroProductBundleInstaller implements
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'oro_product_variant_link';
     const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'oro_product_short_desc';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
+    const UPSELL_PRODUCTS_TABLE_NAME = 'oro_product_upsell_products';
 
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
@@ -86,7 +87,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_14';
     }
 
     /**
@@ -105,6 +106,7 @@ class OroProductBundleInstaller implements
         $this->createOroProductImageTypeTable($schema);
         $this->createOroProductSlugTable($schema);
         $this->createOroProductSlugPrototypeTable($schema);
+        $this->createRelatedProductsTable($schema);
 
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
@@ -600,6 +602,33 @@ class OroProductBundleInstaller implements
                     'configName' => 'oro_frontend.page_templates',
                 ],
             ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function createRelatedProductsTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::UPSELL_PRODUCTS_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('upsell_product_id', 'integer', ['notnull' => true]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['product_id'], 'idx_oro_product_upsell_products_product_id', []);
+        $table->addIndex(['upsell_product_id'], 'idx_oro_product_upsell_products_upsell_product_id', []);
+        $table->addUniqueIndex(['product_id', 'upsell_product_id'], 'idx_oro_product_upsell_products_unique');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['upsell_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }
