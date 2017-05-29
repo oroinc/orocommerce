@@ -43,11 +43,6 @@ layout:
             parentId: product_datagrid_row_product_short_description
 
         - '@setOption':
-            id: product_datagrid_toolbar
-            optionName: attr.class
-            optionValue: 'catalog__filter-controls'
-
-        - '@setOption':
             id: product_datagrid_toolbar_sorting
             optionName: visible
             optionValue: true

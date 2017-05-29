@@ -21,7 +21,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery', 'jquery.validate
             var now = new Date();
 
             if (year.length) {
-                if (parseInt(year, 10) === now.getFullYear() % 100) {
+                if (parseInt(year, 10) % 100 === now.getFullYear() % 100) {
                     return parseInt(month, 10) >= now.getMonth() + 1;
                 }
             }

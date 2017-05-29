@@ -853,12 +853,6 @@ services:
         tags:
             - { name: security.voter, priority: 500 }
 
-    oro_product.event_listener.product_datagrid_attribute_save:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductAttributeSaveListener'
-        arguments: []
-        tags:
-            - { name: kernel.event_listener, event: oro.entity_config.entity.attribute.before_save, method: onBeforeSave }
-
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         arguments:
