@@ -12,6 +12,7 @@ use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,6 +21,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
@@ -36,11 +38,25 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
     private $definitionConverter;
 
     /**
-     * @param ProductCollectionDefinitionConverter $definitionConverter
+     * @var PropertyAccessor
      */
-    public function __construct(ProductCollectionDefinitionConverter $definitionConverter)
-    {
+    private $propertyAccessor;
+
+    /**
+     * @var PropertyPathMapper
+     */
+    private $propertyPathMapper;
+
+    /**
+     * @param ProductCollectionDefinitionConverter $definitionConverter
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(
+        ProductCollectionDefinitionConverter $definitionConverter,
+        PropertyAccessor $propertyAccessor
+    ) {
         $this->definitionConverter = $definitionConverter;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -164,6 +180,7 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
      */
     public function mapDataToForms($data, $forms)
     {
+        $this->getPropertyPathMapper()->mapDataToForms($data, $forms);
         /** @var Form[]|\Traversable $forms */
         $forms = iterator_to_array($forms);
 
@@ -192,6 +209,7 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
      */
     public function mapFormsToData($forms, &$data)
     {
+        $this->getPropertyPathMapper()->mapFormsToData($forms, $data);
         /** @var Form[]|\Traversable $forms */
         $forms = iterator_to_array($forms);
 
@@ -207,5 +225,17 @@ class ProductCollectionVariantType extends AbstractType implements DataMapperInt
         $segment->setDefinition($segmentDefinition);
 
         $data->setProductCollectionSegment($segment);
+    }
+
+    /**
+     * @return PropertyPathMapper
+     */
+    private function getPropertyPathMapper()
+    {
+        if (!$this->propertyPathMapper) {
+            $this->propertyPathMapper = new PropertyPathMapper($this->propertyAccessor);
+        }
+
+        return $this->propertyPathMapper;
     }
 }

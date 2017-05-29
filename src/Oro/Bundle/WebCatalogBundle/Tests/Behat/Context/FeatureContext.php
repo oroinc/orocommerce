@@ -35,7 +35,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         $websiteManager = $this->getContainer()->get('oro_website.manager');
 
         /** @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.website');
+        $configManager = $this->getContainer()->get('oro_config.global');
         $website = $websiteManager->getDefaultWebsite();
         $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId(), $website);
         $configManager->flush($website);

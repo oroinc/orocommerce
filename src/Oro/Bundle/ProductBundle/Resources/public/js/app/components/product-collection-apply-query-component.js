@@ -155,6 +155,9 @@ define(function(require) {
             mediator.on(this.applyQueryEventName, _.bind(this.applyQuery, this));
             this._initializeInclusionExclusionSubComponent();
             this._initializeSelectedProductGridsSubComponent();
+
+            mediator.on('condition-builder:options:prepare', this.onConditionBuilderOptionsPrepare, this);
+            this._enableHiddenFieldValidation();
         },
 
         /**
@@ -196,7 +199,9 @@ define(function(require) {
          */
         onApplyQuery: function(e) {
             e.preventDefault();
-            mediator.trigger(this.applyQueryEventName);
+            if (this._isConditionBuilderValid()) {
+                mediator.trigger(this.applyQueryEventName);
+            }
         },
 
         applyQuery: function() {
@@ -226,6 +231,20 @@ define(function(require) {
             if (this.$included.val()) {
                 data.result = true;
             }
+        },
+
+        /**
+         * @param {Object} options
+         */
+        onConditionBuilderOptionsPrepare: function(options) {
+            options.validation = {
+                'condition-item': {
+                    NotBlank: {message: 'oro.product.product_collection.blank_condition_item'}
+                },
+                'conditions-group': {
+                    NotBlank: {message: 'oro.product.product_collection.blank_condition_group'}
+                }
+            };
         },
 
         _checkOptions: function() {
@@ -351,6 +370,43 @@ define(function(require) {
                 }
             };
             this.selectedProductGridSubComponent = new SelectedProductGridSubComponent(options);
+        },
+
+        /**
+         * @return {Boolean}
+         * @private
+         */
+        _isConditionBuilderValid: function() {
+            var $form = this.$conditionBuilder.closest('form');
+            if (!$form.data('validator')) {
+                return true;
+            }
+
+            $form.valid();
+
+            var invalidElements = $form.validate().invalidElements();
+            if (!invalidElements.length) {
+                return true;
+            }
+
+            var conditionBuilderInvalidElements = _.filter(invalidElements, _.bind(function(value) {
+                return $(value).parents(this.options.selectors.conditionBuilder).length;
+            }, this));
+
+            return !conditionBuilderInvalidElements.length;
+        },
+
+        /**
+         * If conditionBuilder located in oro-tabs, change form's setting in order to validate hidden fields too.
+         * Because of it can be hidden.
+         *
+         * @private
+         */
+        _enableHiddenFieldValidation: function() {
+            var $form = this.$conditionBuilder.closest('form');
+            if ($form.data('validator') && this.$conditionBuilder.parents('.oro-tabs')) {
+                $form.validate().settings.ignore = '';
+            }
         },
 
         dispose: function() {

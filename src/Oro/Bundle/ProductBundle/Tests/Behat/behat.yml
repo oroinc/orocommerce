@@ -78,6 +78,10 @@ oro_behat_extension:
     AddButton:
       selector: 'div.tab-pane.active a:contains("Add")'
 
+    ActiveGrid:
+      selector: 'div.tab-pane.active div.grid-container'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     AddProductsPopupGrid:
       selector: 'div.ui-dialog div.grid-container'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -105,6 +109,9 @@ oro_behat_extension:
           Default Product Collection Segment Name:
             type: css
             locator: '.content-variant-item:not([class*="content-variant-item-default"]) [id*="productCollectionSegment_name"]'
+
+    RemoveFilterButton:
+      selector: '.conditions-group .condition a.close'
 
     Remove Variant Button:
       selector: 'button.removeVariantBtn'

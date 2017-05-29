@@ -23,13 +23,22 @@ Feature:
     And I save form
     Then I should see "Content Node has been saved" flash message
 
-  Scenario: Saving another one Product Collection with filled just filters, is allowed
+  Scenario: Preview Another Product Collection with invalid state of Condition Builder, result in validation error
     When I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I click "Content Variants"
     And I click on "Advanced Filter"
     And I drag and drop "Field Condition" on "Drop condition here"
-    And I click "Choose a field.."
+    And I click on "Preview"
+    Then I should see "Conditions in filters should not be blank."
+
+  Scenario: Saving Another Product Collection with invalid state of Condition Builder, result in validation error
+    When I save form
+    Then I should not see text matching "You have changes in the Filters section that have not been applied"
+    And I should see "Conditions in filters should not be blank."
+
+  Scenario: Saving Another Product Collection with filled just filters, is allowed
+    When I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU" in "value"
     And I click on "Preview"
