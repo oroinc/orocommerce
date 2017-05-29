@@ -18,14 +18,14 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         static::assertPropertyAccessors(new UPSTransport(), [
-            ['testMode', true],
-            ['apiUser', 'some string'],
-            ['apiPassword', 'some string'],
-            ['apiKey', 'some string'],
-            ['shippingAccountNumber', 'some string'],
-            ['shippingAccountName', 'some string'],
-            ['country', new Country('US')],
-            ['invalidateCacheAt', new \DateTime('2020-01-01')],
+            ['upsTestMode', true],
+            ['upsApiUser', 'some string'],
+            ['upsApiPassword', 'some string'],
+            ['upsApiKey', 'some string'],
+            ['upsShippingAccountNumber', 'some string'],
+            ['upsShippingAccountName', 'some string'],
+            ['upsCountry', new Country('US')],
+            ['upsInvalidateCacheAt', new \DateTime('2020-01-01')],
         ]);
         static::assertPropertyCollections(new UPSTransport(), [
             ['applicableShippingServices', new ShippingService()],
@@ -38,16 +38,16 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         $entity = $this->getEntity(
             'Oro\Bundle\UPSBundle\Entity\UPSTransport',
             [
-                'testMode' => true,
-                'apiUser' => 'some user',
-                'apiPassword' => 'some password',
-                'apiKey' => 'some key',
-                'shippingAccountNumber' => 'some number',
-                'shippingAccountName' => 'some name',
-                'pickupType' => '01',
-                'unitOfWeight' => 'LPS',
-                'country' => new Country('US'),
-                'invalidate_cache_at' => new \DateTime('2020-01-01'),
+                'upsTestMode' => true,
+                'upsApiUser' => 'some user',
+                'upsApiPassword' => 'some password',
+                'upsApiKey' => 'some key',
+                'upsShippingAccountNumber' => 'some number',
+                'upsShippingAccountName' => 'some name',
+                'upsPickupType' => '01',
+                'upsUnitOfWeight' => 'LPS',
+                'upsCountry' => new Country('US'),
+                'upsInvalidateCacheAt' => new \DateTime('2020-01-01'),
                 'applicableShippingServices' => [new ShippingService()],
                 'labels' => [(new LocalizedFallbackValue())->setString('UPS')],
             ]
