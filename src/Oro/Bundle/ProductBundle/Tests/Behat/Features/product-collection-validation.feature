@@ -41,7 +41,7 @@ Feature:
     When I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU" in "value"
-    And I click on "Preview"
+    And I click on "Preview Results"
     And I save form
     Then I should see "Content Node has been saved" flash message
 
@@ -51,6 +51,7 @@ Feature:
       | Product Collection Segment Name         | Some Product Collection Name |
       | Default Product Collection Segment Name | Some Product Collection Name |
     And I save form
+    And I click "Content Variants"
     Then I should see "Content Node Form" validation errors:
       | Default Product Collection Segment Name | This name already in use |
 
@@ -66,5 +67,6 @@ Feature:
       | Product Collection Segment Name         | Same Name |
       | Default Product Collection Segment Name | Same Name |
     And I save form
+    And I click "Content Variants"
     Then I should see "Content Node Form" validation errors:
       | Default Product Collection Segment Name | This name already in use |

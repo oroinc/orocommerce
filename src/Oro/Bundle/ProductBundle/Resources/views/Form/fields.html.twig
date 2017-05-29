@@ -283,7 +283,12 @@
         'includedControlsBlockAlias': includedControlsBlockAlias,
     } %}
 
-    {{ form_row(form.productCollectionSegment.name) }}
+    {% set productCollectionSegmentOptions = {} %}
+    {% if form.vars.value is null or form.vars.value.id is null %}
+        {% set productCollectionSegmentOptions = {'attr': {placeholder: 'oro.product.content_variant.product_collection.segment_name_placeholder'| trans}} %}
+    {% endif %}
+
+    {{ form_row(form.productCollectionSegment.name, productCollectionSegmentOptions) }}
 
     <div id="{{ form.vars.id }}" data-role="grid-sidebar-component-container">
         {# --Apply Query component start-- #}

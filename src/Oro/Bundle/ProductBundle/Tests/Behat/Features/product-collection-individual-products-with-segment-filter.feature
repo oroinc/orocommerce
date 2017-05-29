@@ -19,7 +19,7 @@ Feature:
     And I click "Choose a field.."
     And I click on "SKU"
     And type "PSKU1" in "value"
-    And I click on "Preview"
+    And I click on "Preview Results"
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
       | PSKU12 | Product 12 |
@@ -110,5 +110,5 @@ Feature:
 
   Scenario: No records found if grid filter is empty and no Manually added products exist
     When I click on "Remove Filter Button"
-    And I click on "Preview"
+    And I click on "Preview Results"
     Then I should see "No records found"
