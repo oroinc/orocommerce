@@ -58,6 +58,14 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postRemove }
 
+    oro_pricing.listener.product_unit_precision_on_post_remove:
+        class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener'
+        public: false
+        calls:
+            - [setPriceAttributeClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }
+
     oro_pricing.user_currency_manager:
         class: 'Oro\Bundle\PricingBundle\Manager\UserCurrencyManager'
         arguments:
