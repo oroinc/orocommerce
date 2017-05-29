@@ -29,7 +29,7 @@ Feature:
     And I click "Content Variants"
     And I click on "Advanced Filter"
     And I drag and drop "Field Condition" on "Drop condition here"
-    And I click on "Preview"
+    And I click on "Preview Results"
     Then I should see "Conditions in filters should not be blank."
 
   Scenario: Saving Another Product Collection with invalid state of Condition Builder, result in validation error
