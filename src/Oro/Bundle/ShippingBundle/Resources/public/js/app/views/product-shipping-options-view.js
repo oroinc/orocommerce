@@ -6,6 +6,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
+    var mediator = require('oroui/js/mediator');
 
     return BaseView.extend({
         /**
@@ -26,8 +27,7 @@ define(function(require) {
          * @property {Object}
          */
         listen: {
-            'product:precision:remove mediator': 'onPrecisionRemoved',
-            'product:precision:add mediator': 'onContentChanged'
+            'product:precision:remove mediator': 'onPrecisionRemoved'
         },
 
         /**
@@ -47,6 +47,8 @@ define(function(require) {
         handleLayoutInit: function() {
             this.$el
                 .on('content:changed', _.bind(this.onContentChanged, this));
+
+            mediator.on('product:precision:add', this.onContentChanged, this);
 
             this.$itemsContainer
                 .on('click', '.removeRow', _.bind(this.onRemoveRowClick, this))

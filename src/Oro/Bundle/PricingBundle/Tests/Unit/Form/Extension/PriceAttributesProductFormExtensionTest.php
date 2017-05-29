@@ -75,7 +75,6 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-
         $em = $this->createMock(ObjectManager::class);
 
         $priceRepository = $this->createMock(ObjectRepository::class);
@@ -279,5 +278,11 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
                 ]
             ]
         ]);
+    }
+
+    public function testGetExtendedType()
+    {
+        $extension = new PriceAttributesProductFormExtension($this->registry);
+        $this->assertEquals(ProductType::NAME, $extension->getExtendedType());
     }
 }

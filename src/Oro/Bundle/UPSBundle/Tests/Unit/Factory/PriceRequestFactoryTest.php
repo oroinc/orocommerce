@@ -78,13 +78,13 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $this->transport = $this->getEntity(
             UPSTransport::class,
             [
-                'apiUser' => 'some user',
-                'apiPassword' => 'some password',
-                'apiKey' => 'some key',
-                'shippingAccountNumber' => 'some number',
-                'shippingAccountName' => 'some name',
-                'pickupType' => '01',
-                'country' => new Country('US'),
+                'upsApiUser' => 'some user',
+                'upsApiPassword' => 'some password',
+                'upsApiKey' => 'some key',
+                'upsShippingAccountNumber' => 'some number',
+                'upsShippingAccountName' => 'some name',
+                'upsPickupType' => '01',
+                'upsCountry' => new Country('US'),
                 'applicableShippingServices' => [new ShippingService()]
             ]
         );
@@ -130,7 +130,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->with('some password')
             ->willReturn('some password');
 
-        $this->transport->setUnitOfWeight($unitOfWeight);
+        $this->transport->setUpsUnitOfWeight($unitOfWeight);
 
         $lineItems = [];
         $allProductsShippingOptions = [];
