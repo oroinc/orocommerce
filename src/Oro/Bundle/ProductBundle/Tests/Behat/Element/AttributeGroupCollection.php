@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 class AttributeGroupCollection extends CollectionField
 {
     /**
-     * @param array $values
+     * {@inheritdoc}
      */
     public function setValue($values)
     {

@@ -50,7 +50,7 @@ define(function(require) {
                 .on('click', '.removeLineItem', _.bind(this.onRemoveRow, this))
                 .on('change', this.options.unitSelect, _.bind(this.onSelectChange, this));
 
-            this.options._sourceElement.trigger('content:changed');
+            mediator.on('page:afterChange', this.onChange, this);
         },
 
         /**

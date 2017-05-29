@@ -60,7 +60,7 @@ Feature: Process order submission with Authorize.Net integration
       | CVV              | 123              |
     And I click "Continue"
     And I press "Submit Order"
-    Then I should see "We were unable to process your payment. Please verify your payment information and try again, or try another payment method." flash message
+    Then I should see "We were unable to process your payment. Please verify your payment information and try again." flash message
 
   Scenario: Successful order payment with AuthorizeNet
     Given There are products in the system available for order
