@@ -308,21 +308,21 @@
                 <div class="oro-tabs">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#{{ 'filtered_products' ~ scope}}" data-toggle="tab">
+                            <a href="#{{ 'filtered_products' ~ scope}}" data-toggle="tab" data-role="tab-filtered">
                                 {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
-                                (<span data-role="filtered_products_counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', widgetRouteParameters)) }}</span>)
+                                (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', widgetRouteParameters)) }}</span>)
                             </a>
                         </li>
                         <li>
-                            <a href="#{{ 'excluded_products' ~ scope}}" data-toggle="tab">
+                            <a href="#{{ 'excluded_products' ~ scope}}" data-toggle="tab" data-role="tab-excluded">
                                 {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
-                                (<span data-role="excluded_products_counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', excludedWidgetRouteParameters)) }}</span>)
+                                (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', excludedWidgetRouteParameters)) }}</span>)
                             </a>
                         </li>
                         <li>
-                            <a href="#{{ 'included_products' ~ scope}}" data-toggle="tab">
+                            <a href="#{{ 'included_products' ~ scope}}" data-toggle="tab" data-role="tab-included">
                                 {{ 'oro.product.content_variant.ui.included_products'|trans }}
-                                (<span data-role="included_products_counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', includedWidgetRouteParameters)) }}</span>)
+                                (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', includedWidgetRouteParameters)) }}</span>)
                             </a>
                         </li>
                         <li class="pull-right">
