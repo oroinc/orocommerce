@@ -36,6 +36,15 @@ services:
         tags:
             - { name: form.type, alias: oro_product_unit_selection }
 
+    oro_product.form.type.product_primary_unit_selection:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType'
+        arguments:
+            - '@oro_product.formatter.product_unit_label'
+        calls:
+            - [setEntityClass, ['%oro_product.entity.product_unit.class%']]
+        tags:
+            - { name: form.type, alias: oro_product_unit_select }
+
     oro_product.form.type.quantity_type:
         class: 'Oro\Bundle\ProductBundle\Form\Type\QuantityType'
         arguments:
@@ -188,15 +197,6 @@ services:
             - '%oro_product.entity.product.class%'
         tags:
             - { name: form.type, alias: oro_product_product_variant_frontend_variant_field }
-
-    oro_product.form.type.extension.choices_primary_unit_selection:
-        class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
-        arguments:
-            - 'unit'
-            - 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
-            - "@oro_product.visibility.product_unit_fields_settings"
-        tags:
-            - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
 
     oro_product.form.type.extension.enum_value_for_product:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
