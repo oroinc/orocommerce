@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\DataTransformer\EncryptionTransformer;
-use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
 use Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\CardTypesDataProviderInterface;
 use Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\SecurityBundle\Form\DataTransformer\Factory\CryptedDataTransformerFactoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -32,11 +31,6 @@ class AuthorizeNetSettingsType extends AbstractType
     protected $translator;
 
     /**
-     * @var SymmetricCrypterInterface
-     */
-    protected $encoder;
-
-    /**
      * @var CardTypesDataProviderInterface
      */
     protected $cardTypesDataProvider;
@@ -46,21 +40,25 @@ class AuthorizeNetSettingsType extends AbstractType
      */
     protected $paymentActionsDataProvider;
 
+    /**
+     * @var CryptedDataTransformerFactoryInterface
+     */
+    protected $cryptedDataTransformerFactory;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param SymmetricCrypterInterface $encoder
-     * @param CardTypesDataProviderInterface $cardTypesDataProvider
-     * @param PaymentActionsDataProviderInterface $paymentActionsDataProvider
+     * @param TranslatorInterface                    $translator
+     * @param CryptedDataTransformerFactoryInterface $cryptedDataTransformerFactory
+     * @param CardTypesDataProviderInterface         $cardTypesDataProvider
+     * @param PaymentActionsDataProviderInterface    $paymentActionsDataProvider
      */
     public function __construct(
         TranslatorInterface $translator,
-        SymmetricCrypterInterface $encoder,
+        CryptedDataTransformerFactoryInterface $cryptedDataTransformerFactory,
         CardTypesDataProviderInterface $cardTypesDataProvider,
         PaymentActionsDataProviderInterface $paymentActionsDataProvider
     ) {
         $this->translator = $translator;
-        $this->encoder = $encoder;
+        $this->cryptedDataTransformerFactory = $cryptedDataTransformerFactory;
         $this->cardTypesDataProvider = $cardTypesDataProvider;
         $this->paymentActionsDataProvider = $paymentActionsDataProvider;
     }
@@ -168,8 +166,6 @@ class AuthorizeNetSettingsType extends AbstractType
      */
     protected function transformWithEncodedValue(FormBuilderInterface $builder, $field)
     {
-        // TODO: BB-9260 BAP-14664
-        // TODO: It would be great to have extension which adds this transformer by setting some option
-        $builder->get($field)->addModelTransformer(new EncryptionTransformer($this->encoder));
+        $builder->get($field)->addModelTransformer($this->cryptedDataTransformerFactory->create());
     }
 }
