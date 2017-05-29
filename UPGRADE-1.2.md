@@ -1,5 +1,10 @@
 UPGRADE FROM 1.1 to 1.2
 
+InventoryBundle
+---------------
+- Class `Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener`
+    - changed signature of `__construct` method. Parameter `RequestStack $requestStack` removed.
+
 MoneyOrderBundle
 ----------------
 - `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`

@@ -13,12 +13,13 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
+
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderEventListener
 {
@@ -87,23 +88,27 @@ class CreateOrderEventListener
      */
     public function onBeforeOrderCreate(ExtendableConditionEvent $event)
     {
-        if (!$this->isCorrectShoppingListContext($event->getContext())) {
+        if (!$this->isCorrectCheckoutContext($event->getContext())) {
             return;
         }
 
-        $lineItems = $event->getContext()->getEntity()->getSource()->getShoppingList()->getLineItems();
-        /** @var LineItem $lineItem */
+        $lineItems = $event->getContext()->getEntity()->getSource()->getEntity()->getLineItems();
+        /** @var CheckoutLineItemInterface $lineItem */
         foreach ($lineItems as $lineItem) {
-            if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
+            $product = $lineItem->getProduct();
+            if (!$this->quantityManager->shouldDecrement($product)) {
                 continue;
             }
 
-            $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
+            $productUnit = $lineItem->getProductUnit();
+            $quantity = $lineItem->getQuantity();
+
+            $inventoryLevel = $this->getInventoryLevel($product, $productUnit);
             if (!$inventoryLevel) {
                 throw new InventoryLevelNotFoundException();
             }
 
-            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $lineItem->getQuantity())) {
+            if (!$this->quantityManager->hasEnoughQuantity($inventoryLevel, $quantity)) {
                 $event->addError('');
                 return;
             }
@@ -140,12 +145,12 @@ class CreateOrderEventListener
      * @param mixed $context
      * @return bool
      */
-    protected function isCorrectShoppingListContext($context)
+    protected function isCorrectCheckoutContext($context)
     {
         return ($context instanceof WorkflowItem
             && $context->getEntity() instanceof Checkout
             && $context->getEntity()->getSource() instanceof CheckoutSource
-            && $context->getEntity()->getSource()->getShoppingList() instanceof ShoppingList
+            && $context->getEntity()->getSource()->getEntity() instanceof CheckoutLineItemsHolderInterface
         );
     }
 }
