@@ -24,11 +24,11 @@ class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit_Framework_Te
             ->willReturn(self::PASS);
 
         $transport = new UPSTransport();
-        $transport->setApiKey(self::KEY)
-            ->setApiUser(self::USERNAME)
-            ->setApiPassword(self::PASS)
-            ->setCountry(new Country(self::COUNTRY_CODE))
-            ->setUnitOfWeight(self::WEIGHT_UNIT)
+        $transport->setUpsApiKey(self::KEY)
+            ->setUpsApiUser(self::USERNAME)
+            ->setUpsApiPassword(self::PASS)
+            ->setUpsCountry(new Country(self::COUNTRY_CODE))
+            ->setUpsUnitOfWeight(self::WEIGHT_UNIT)
         ;
 
         $expected = new UpsClientRequest([
