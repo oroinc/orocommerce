@@ -6,22 +6,18 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
-use Oro\Bundle\ProductBundle\Service\SingleUnitModeService;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision';
-
     /**
      * @var ProductPrimaryUnitPrecisionType
      */
@@ -33,22 +29,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $units = ['item', 'kg'];
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SingleUnitModeService
-     */
-    protected $singleUnitModeService;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SystemDefaultProductUnitProvider
-     */
-    protected $defaultProductUnitProvider;
-
-    /**
-     * @var ProductUnitLabelFormatter
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productUnitLabelFormatter;
 
@@ -57,24 +38,12 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->singleUnitModeService = $this->getMockBuilder(SingleUnitModeService::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->defaultProductUnitProvider = $this->getMockBuilder(SystemDefaultProductUnitProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator
-            ->expects(static::any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($id, array $params) {
-                    return isset($params['{title}']) ? $id . ':' . $params['{title}'] : $id;
-                }
-            );
-        $this->productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
         $this->formType = new ProductPrimaryUnitPrecisionType();
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(ProductUnitPrecision::class);
+        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         parent::setUp();
     }
 
@@ -87,12 +56,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionType(
-                        $this->productUnitLabelFormatter,
-                        $this->translator,
-                        $this->singleUnitModeService,
-                        $this->defaultProductUnitProvider
-                    ),
+                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
                     'entity' => $entityType
                 ],
                 [
@@ -122,6 +86,7 @@ class ProductPrimaryUnitPrecisionTypeTest extends FormIntegrationTestCase
         $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());
 
         $form->submit($submittedData);
+
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }

@@ -6,6 +6,30 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
     name: Common Business Unit
     organization: '@organization'
 
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product1'
+    locvalue2:
+        string: 'Control Product'
+    locvalue3:
+        string: 'Product3'
+    localNewCategory:
+        string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@each'
+        precision: '1'
+    precision2:
+        unit: '@each'
+        precision: '1'
+    precision3:
+        unit: '@item'
+        precision: '1'
+    precision4:
+        unit: '@each'
+        precision: '1'
+
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
         addTitle: ['@localNewCategory']
@@ -15,20 +39,43 @@ Oro\Bundle\CatalogBundle\Entity\Category:
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
         sku: 'PSKU1'
+        type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
+        unitPrecisions: []
+        attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+    product2:
+        sku: 'CONTROL1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision2'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+    product3:
+        sku: 'SKU003'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision4'
+        addUnitPrecision: ['@precision3']
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue3']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
 
-Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    locvalue1:
-        string: 'Product 1'
-    localNewCategory:
-        string: 'NewCategory'
-
-Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    precision1:
-        unit: '@item'
-        precision: '1'
+Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+    taxCode1:
+        code: 'TaxCode1'
+        description: 'Tax Code 1'
+        products:
+            - '@product1'
+    taxCode2:
+        code: 'TaxCode2'
+        description: 'Tax Code 2'

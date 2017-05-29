@@ -39,6 +39,12 @@ oro_behat_extension:
     EntityConfigForm:
       selector: "form[name='oro_entity_config_type']"
 
+    ProductPriceCollection:
+      class: 'Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection'
+
+    AdditionalUnitCollection:
+      class: 'Oro\Bundle\ProductBundle\Tests\Behat\Element\AdditionalUnitCollection'
+
     Show Variants Dropdown:
       selector: ".content-variant-add-btn-container .dropdown-toggle"
 
