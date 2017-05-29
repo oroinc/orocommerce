@@ -99,22 +99,33 @@ define(function(require) {
             this._addTo(this.$excluded, ids);
         },
 
+        _changeValue: function($el, ids, filterCallback) {
+            if (!_.isArray(ids)) {
+                return;
+            }
+
+            var currentState = $el.val().split(this.options.delimiter).concat(ids);
+            currentState = _.filter(currentState, filterCallback);
+
+            var newVal = currentState.sort().join(this.options.delimiter);
+            if ($el.val() != newVal) {
+                $el.val(newVal).trigger('change');
+            }
+        },
+
         /**
          * @param {jQuery.Element} $to
          * @param {Array} ids
          * @private
          */
         _addTo: function($to, ids) {
-            if (!_.isArray(ids)) {
-                return;
-            }
-
-            var currentState = $to.val().split(this.options.delimiter).concat(ids);
-            currentState = _.filter(currentState, function(value, index, array) {
-                return _.indexOf(array, value) === index && value !== '';
-            });
-
-            $to.val(currentState.join(this.options.delimiter)).trigger('change');
+            return this._changeValue(
+                $to,
+                ids,
+                function(value, index, array) {
+                    return value !== '' && _.indexOf(array, value) === index;
+                }
+            );
         },
 
         /**
@@ -137,16 +148,13 @@ define(function(require) {
          * @private
          */
         _removeFrom: function($from, ids) {
-            if (!_.isArray(ids)) {
-                return;
-            }
-
-            var currentState = $from.val().split(this.options.delimiter);
-            currentState = _.filter(currentState, function(value) {
-                return _.indexOf(ids, value) < 0 && value !== '';
-            });
-
-            $from.val(currentState.join(this.options.delimiter)).trigger('change');
+            return this._changeValue(
+                $from,
+                ids,
+                function(value, index, array) {
+                    return value === '' || _.indexOf(array, value) < 0;
+                }
+            );
         },
 
         dispose: function() {
