@@ -36,6 +36,10 @@ oro:
             label: Is Featured
             yes: Yes
             no: No
+        new_arrival:
+            label: New Arrival
+            yes: Yes
+            no: No
         time_period.label: Time Period
         page_template.label: Page Template
         slugs:
