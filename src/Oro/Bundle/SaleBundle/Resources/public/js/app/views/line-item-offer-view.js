@@ -11,6 +11,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            'allUnits': [],
             $: {
                 product: ''
             }
@@ -27,6 +28,41 @@ define(function(require) {
             }, this));
 
             LineItemOfferView.__super__.initialize.apply(this, arguments);
+
+            // get all units
+            _.each(this.getElement('unit').find('option'), _.bind(function(elem) {
+                this.options.allUnits.push({ code: elem.value, label: elem.text });
+            }, this));
+            this.model.on('product:unit:filter-values', _.bind(this.filterUnits, this));
+        },
+
+        /**
+         * @param {Array} units
+         */
+        filterUnits: function(units) {
+            var $select = this.getElement('unit');
+            var value = $select.val();
+
+            $select
+                .val(null)
+                .find('option')
+                .remove();
+
+            if (units) {
+                _.each(this.options.allUnits, _.bind(function(unit) {
+                    if (-1 !== $.inArray(unit.code, units)) {
+                        $select.append($('<option/>').val(unit.code).text(unit.label));
+                    }
+                }));
+                $select.val(value);
+                if ($select.val() === null) {
+                    $select.val(units[0]);
+                }
+            }
+
+            $select
+                .trigger('value:changed')
+                .trigger('change');
         }
     });
 
