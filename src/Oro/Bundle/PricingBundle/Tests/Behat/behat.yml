@@ -6,5 +6,30 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - OroDataGridBundle::GridContext
+        - OroProductBundle::FeatureContext
+        - OroFormBundle::FormContext
+        - OroApplicationBundle::CommerceMainContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
+
+  elements:
+    AddPrice:
+      selector: '.product-price-collection .add-list-item'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    UnassignPriceList:
+      selector: '.pricing-price-list .removeRow'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    ProductPriceForm:
+      selector:
+        type: xpath
+        locator: '(//div[@id="product_prices"]//DIV[@class="row-oro oro-multiselect-holder"])[last()]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Currency:
+            type: xpath
+            locator: '(//select[@class="price-currency"])[last()]'
+            element: Select2Choices
+
+
