@@ -46,6 +46,11 @@ FlatRateShippingBundle
 * The `FlatRateMethodProvider::$methods`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php#L28 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider::$methods")</sup> property was removed.
 * The `FlatRateMethodFromChannelBuilder`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/FlatRateShippingBundle/Builder/FlatRateMethodFromChannelBuilder.php#L64 "Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder")</sup> was deprecated, use `FlatRateMethodFromChannelFactory`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/FlatRateShippingBundle/Factory/FlatRateMethodFromChannelFactory.php "Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory")</sup> instead.
 
+InventoryBundle
+---------------
+- Class `Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener`
+    - changed signature of `__construct` method. Parameter `RequestStack $requestStack` removed.
+
 MoneyOrderBundle
 ----------------
 - The class `MoneyOrder`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/MoneyOrderBundle/Method/MoneyOrder.php "Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder")</sup> constant `TYPE` was removed.

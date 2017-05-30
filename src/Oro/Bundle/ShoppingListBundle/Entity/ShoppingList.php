@@ -17,6 +17,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
  * @ORM\Table(
@@ -74,7 +75,8 @@ class ShoppingList extends ExtendShoppingList implements
     CustomerOwnerAwareInterface,
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface,
-    \JsonSerializable
+    \JsonSerializable,
+    CheckoutLineItemsHolderInterface
 {
     use DatesAwareTrait;
     use FrontendCustomerUserAwareTrait;
