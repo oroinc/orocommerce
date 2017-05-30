@@ -3,27 +3,31 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
+use Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener;
 
-class ShippingMethodConfigDataListenerTest extends \PHPUnit_Framework_TestCase
+class ShippingRuleViewMethodTemplateListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @internal
+     */
+    const TEMPLATE = 'FooBundle::bar.html.twig';
+
     /**
      * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $provider;
+    private $provider;
 
     /**
-     * @var ShippingMethodConfigDataListener
+     * @var ShippingRuleViewMethodTemplateListener
      */
-    protected $listener;
+    private $listener;
 
     public function setUp()
     {
-        $this->provider = $this->getMockBuilder(ShippingMethodProviderInterface::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->provider = $this->createMock(ShippingMethodProviderInterface::class);
 
-        $this->listener = new ShippingMethodConfigDataListener($this->provider);
+        $this->listener = new ShippingRuleViewMethodTemplateListener(self::TEMPLATE, $this->provider);
     }
 
     public function testOnGetConfigData()
@@ -39,7 +43,7 @@ class ShippingMethodConfigDataListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onGetConfigData($event);
 
-        self::assertEquals(ShippingMethodConfigDataListener::TEMPLATE, $event->getTemplate());
+        self::assertEquals(self::TEMPLATE, $event->getTemplate());
     }
 
     public function testOnGetConfigDataNoMethod()
