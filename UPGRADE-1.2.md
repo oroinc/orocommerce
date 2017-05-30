@@ -1,5 +1,10 @@
 UPGRADE FROM 1.1 to 1.2
 
+InventoryBundle
+---------------
+- Class `Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener`
+    - changed signature of `__construct` method. Parameter `RequestStack $requestStack` removed.
+
 MoneyOrderBundle
 ----------------
 - `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`
@@ -20,6 +25,7 @@ PaymentBundle
     - constant `FAILED_SHIPPING_ADDRESS_URL_KEY` was removed
 - Class `Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent`
     - method `getTypedEventName` was removed
+- Method `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::computeStatus` was deprecated, `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::getPaymentStatus` should be used instead
 
 PricingBundle
 -------------
@@ -41,6 +47,17 @@ UPSBundle
 - Class `Oro\Bundle\UPSBundle\Controller`
     - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
     - method `validateConnection` was renamed to `validateConnectionAction`
+- Class `Oro\Bundle\UPSBundle\Entity\UPSTransport`
+    - property `testMode` is renamed to `upsTestMode`, accessor methods became `isUpsTestMode()`, `setUpsTestMode()`
+    - property `apiUser` is renamed to `upsApiUser`, accessor methods became `getUpsApiUser()`, `setUpsApiUser()`
+    - property `apiPassword` is renamed to `upsApiPassword`, accessor methods became `getUpsApiPassword()`, `setUpsApiPassword()`
+    - property `apiKey` is renamed to `upsApiKey`, accessor methods became `getUpsApiKey()`, `setUpsApiKey()`
+    - property `shippingAccountNumber` is renamed to `upsShippingAccountNumber`, accessor methods became `getUpsShippingAccountNumber()`, `setUpsShippingAccountNumber()`
+    - property `shippingAccountName` is renamed to `upsShippingAccountName`, accessor methods became `getUpsShippingAccountName()`, `setUpsShippingAccountName()`
+    - property `pickupType` is renamed to `upsPickupType`, accessor methods became `getUpsPickupType()`, `setUpsPickupType()`
+    - property `unitOfWeight` is renamed to `upsUnitOfWeight`, accessor methods became `getUpsUnitOfWeight()`, `setUpsUnitOfWeight()`
+    - property `country` is renamed to `upsCountry`, accessor methods became `getUpsCountry()`, `setUpsCountry()`
+    - property `invalidateCacheAt` is renamed to `upsInvalidateCacheAt`, accessor methods became `getUpsInvalidateCacheAt()`, `setUpsInvalidateCacheAt()`
 
 OroCMSBundle
 ------------
