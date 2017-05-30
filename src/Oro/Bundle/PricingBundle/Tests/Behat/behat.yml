@@ -19,7 +19,6 @@ oro_behat_extension:
     UnassignPriceList:
       selector: '.pricing-price-list .removeRow'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-
     ProductPriceForm:
       selector:
         type: xpath
@@ -31,5 +30,7 @@ oro_behat_extension:
             type: xpath
             locator: '(//select[@class="price-currency"])[last()]'
             element: Select2Choices
-
+    PriceSelectionStrategyForm:
+      selector: '.control-group-oro_pricing_list_strategy_selection'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
 

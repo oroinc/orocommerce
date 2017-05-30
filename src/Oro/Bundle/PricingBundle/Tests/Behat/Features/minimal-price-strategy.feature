@@ -72,14 +72,6 @@ Feature: Minimum Price Selection Strategies
 
   Scenario: Change price list for customer
     Given I operate as the Manager
-    When I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Catalog" on configuration sidebar
-    And I click "Pricing" on configuration sidebar
-    And I fill form with:
-      | Pricing Strategy     | Minimal prices |
-    And I submit form
-    Then I should see "Configuration saved" flash message
     When I go to Customers/Customers
     And click Edit first customer in grid
     And I choose Price List "Default Price List" in 1 row
@@ -135,7 +127,8 @@ Feature: Minimum Price Selection Strategies
     And I click "Commerce" on configuration sidebar
     And I click "Catalog" on configuration sidebar
     And I click "Pricing" on configuration sidebar
-    And I fill form with:
+    And I fill "PriceSelectionStrategyForm" with:
+      | Use Default          | false             |
       | Pricing Strategy     | Merge by priority |
     And I submit form
     Then I should see "Configuration saved" flash message
@@ -157,11 +150,6 @@ Feature: Minimum Price Selection Strategies
 
   Scenario: Unassign price list from customer
     Given I operate as the Manager
-    When I go to Customers/Customer Groups
-    And click Edit Group with PriceList in grid
-    And I choose Price List "priceListForGroup" in 1 row
-    And I submit form
-    Then I should see "Customer Group has been saved" flash message
     When I go to Customers/Customers
     And click Edit first customer in grid
     And click "UnassignPriceList"
