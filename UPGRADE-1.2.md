@@ -1,5 +1,10 @@
 UPGRADE FROM 1.1 to 1.2
 
+InventoryBundle
+---------------
+- Class `Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener`
+    - changed signature of `__construct` method. Parameter `RequestStack $requestStack` removed.
+
 MoneyOrderBundle
 ----------------
 - `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`
@@ -20,6 +25,7 @@ PaymentBundle
     - constant `FAILED_SHIPPING_ADDRESS_URL_KEY` was removed
 - Class `Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent`
     - method `getTypedEventName` was removed
+- Method `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::computeStatus` was deprecated, `\Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::getPaymentStatus` should be used instead
 
 PricingBundle
 -------------
