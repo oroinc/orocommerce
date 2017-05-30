@@ -93,24 +93,27 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects(static::exactly(2))
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects($this->exactly(2))
             ->method('setDefaults')
-            ->with(static::isType('array'))
-            ->willReturnOnConsecutiveCalls(
+            ->withConsecutive(
                 [
-                    'product' => null,
-                    'product_holder' => null,
-                    'product_field' => 'product',
+                    [
+                        'product' => null,
+                        'product_holder' => null,
+                        'product_field' => 'product',
+                    ]
                 ],
                 [
-                    'class' => 'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                    'property' => 'code',
-                    'compact' => false,
-                    'choices_updated' => false,
-                    'required' => true,
-                    'empty_label' => 'oro.product.productunit.removed',
-                    'sell' => null,
+                    [
+                        'class' => ProductUnit::class,
+                        'property' => 'code',
+                        'compact' => false,
+                        'choices_updated' => false,
+                        'required' => true,
+                        'empty_label' => 'oro.product.productunit.removed',
+                        'sell' => null,
+                    ]
                 ]
             );
 

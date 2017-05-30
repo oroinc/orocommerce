@@ -16,12 +16,13 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
+
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -110,6 +111,7 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testWrongContext()
     {
         $workflowData = $this->createMock(WorkflowData::class);
+        /** @var ExtendableActionEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(ExtendableActionEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -308,10 +310,10 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $workflowItem = $this->createMock(WorkflowItem::class);
         $checkout = $this->createMock(Checkout::class);
         $checkoutSource = $this->createMock(CheckoutSourceStub::class);
-        $shoppingList = $this->createMock(ShoppingList::class);
+        $checkoutLineItemsHolder = $this->createMock(CheckoutLineItemsHolderInterface::class);
         $product = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
-        $lineItem = $this->createMock(LineItem::class);
+        $lineItem = $this->createMock(CheckoutLineItemInterface::class);
         $lineItem->expects($this->any())
             ->method('getProduct')
             ->willReturn($product);
@@ -325,9 +327,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getSource')
             ->willReturn($checkoutSource);
         $checkoutSource->expects($this->any())
-            ->method('getShoppingList')
-            ->willReturn($shoppingList);
-        $shoppingList->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($checkoutLineItemsHolder);
+        $checkoutLineItemsHolder->expects($this->once())
             ->method('getLineItems')
             ->willReturn([$lineItem]);
         $workflowItem->expects($this->any())
