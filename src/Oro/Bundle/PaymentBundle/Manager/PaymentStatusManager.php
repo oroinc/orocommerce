@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Manager;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -49,20 +47,12 @@ class PaymentStatusManager
             'entityIdentifier' => $entityId
         ]);
 
-        $transactions = new ArrayCollection([$transaction]);
-        $status = $this->statusProvider->computeStatus($object, $transactions);
-
         if (!$paymentStatusEntity) {
             $paymentStatusEntity = new PaymentStatus();
             $paymentStatusEntity->setEntityClass($entityClass);
             $paymentStatusEntity->setEntityIdentifier($entityId);
-        } elseif ($status !== PaymentStatusProvider::FULL) {
-            $transactions = new ArrayCollection($this->paymentTransactionProvider->getPaymentTransactions($object));
-            if (!$transactions->contains($transaction)) {
-                $transactions->add($transaction);
-            }
-            $status = $this->statusProvider->computeStatus($object, $transactions);
         }
+        $status = $this->statusProvider->getPaymentStatus($object);
         $paymentStatusEntity->setPaymentStatus($status);
         $em = $this->doctrineHelper->getEntityManager(PaymentStatus::class);
         $em->persist($paymentStatusEntity);

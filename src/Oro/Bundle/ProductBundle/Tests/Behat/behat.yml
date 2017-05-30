@@ -11,9 +11,7 @@ oro_behat_extension:
 
     Configurable Attributes:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
-      selector:
-        type: 'xpath'
-        locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
+      selector: 'div[id^="oro_product_variantFields"]'
 
     ProductForm:
       selector: 'div#container'
@@ -39,9 +37,6 @@ oro_behat_extension:
         mapping:
           Label: 'oro_attribute_family[labels][values][default]'
 
-    Configurable Attributes:
-      selector: 'div[id^="oro_product_variantFields"]'
-
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"
 
@@ -50,6 +45,12 @@ oro_behat_extension:
 
     EntityConfigForm:
       selector: "form[name='oro_entity_config_type']"
+
+    ProductPriceCollection:
+      class: 'Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductPriceCollection'
+
+    AdditionalUnitCollection:
+      class: 'Oro\Bundle\ProductBundle\Tests\Behat\Element\AdditionalUnitCollection'
 
     Show Variants Dropdown:
       selector: ".content-variant-add-btn-container .dropdown-toggle"
@@ -114,6 +115,9 @@ oro_behat_extension:
 
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
+
+    Color Product Attribute:
+      selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
   suites:
     OroProductBundle:

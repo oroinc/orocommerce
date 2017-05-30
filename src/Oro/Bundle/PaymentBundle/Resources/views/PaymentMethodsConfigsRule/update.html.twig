@@ -117,7 +117,7 @@
     ] %}
 
     {% set data = {
-        'formErrors': form_errors(form),
+        'formErrors': form_errors(form)|nl2br,
         'dataBlocks': dataBlocks
     } %}
 

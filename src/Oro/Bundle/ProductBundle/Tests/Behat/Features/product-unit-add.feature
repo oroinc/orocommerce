@@ -1,0 +1,26 @@
+@fixture-Products.yml
+Feature: I need to make sure that "+Add' button" is not present on edit product page after adding all types of units and reopening the page
+  In order to prevent to the "+Add' button from appearing for Additional Units if all type of units are added
+  As administrator
+  I need to make sure that "+Add' button" is not present on edit product page after I add all types of units and reopen the page
+
+    #   Scenario: Preconditions
+    #   I should have:
+    #   Product:
+    #   SKU     Name         Unit of Quantity   Additional Units
+    #   003     Product_01   each               item
+
+  Scenario: If add all "Additional Units" for product and reopen the page there should be no "+Add" button
+    Given I login as administrator
+    And I go to Products/ Products
+    And click edit "SKU003" in grid
+    When set Additional Unit with:
+      | Unit     | Precision | Rate |
+      | Hour     | 0         | 10   |
+      | Kilogram | 0         | 10   |
+      | Piece    | 0         | 10   |
+      | Set      | 0         | 10   |
+    Then I should not see "Add" in the ".add-list-item" element
+    And I save and close form
+    When I press "Edit"
+    Then I should not see "Add" in the ".add-list-item" element
