@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\PricingStrategy;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -46,7 +47,7 @@ class MergePricesCombiningStrategyTest extends WebTestCase
             ]
         );
         $this->resolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
-            ->getCurrentStrategy();
+            ->get(MergePricesCombiningStrategy::NAME);
     }
 
     /**
@@ -445,6 +446,10 @@ class MergePricesCombiningStrategyTest extends WebTestCase
         return $actualPrices;
     }
 
+    /**
+     * @param $reference
+     * @return null|BaseProductPrice
+     */
     protected function getPriceByReference($reference)
     {
         $criteria = LoadProductPricesForCombination::$data[$reference];

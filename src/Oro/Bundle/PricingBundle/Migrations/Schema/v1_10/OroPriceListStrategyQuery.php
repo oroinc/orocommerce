@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_10;
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Psr\Log\LoggerInterface;
 
@@ -34,43 +35,34 @@ class OroPriceListStrategyQuery extends ParametrizedMigrationQuery
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $this->updatePriceListConfigPriority($logger, $dryRun);
-    }
+        $query = 'INSERT INTO oro_config_value
+    (config_id, name, section, text_value, object_value, array_value, type, created_at, updated_at)
+SELECT
+    c.id,
+    :name,
+    :section,
+    :text_value,
+    :object_value,
+    :array_value,
+    :type,
+    :created_at,
+    :created_at
+FROM oro_config c
+WHERE c.entity = :entity';
 
-
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function updatePriceListConfigPriority(LoggerInterface $logger, $dryRun = false)
-    {
-        $selectQuery = 'SELECT id, array_value FROM oro_config_value WHERE name = :name AND section = :section LIMIT 1';
-        $selectQueryParameters = [
-            'name' => 'price_strategy',
-            'section' => 'oro_pricing'
-        ];
-        $selectQueryTypes = [
-            'name' => Type::STRING,
-            'section' => Type::STRING
-        ];
-
-        $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
-        $result = $this->connection->fetchColumn($selectQuery, $selectQueryParameters, 0, $selectQueryTypes);
-
-        $updateQuery = 'UPDATE oro_config_value SET array_value = :array_value WHERE id = :id';
-        $updateQueryParameters = [
-            'text_value' => MergePricesCombiningStrategy::NAME,
-            'id' => $result
-        ];
-        $updateQueryTypes = [
-            'array_value' => 'array',
-            'id' => 'integer'
-        ];
-
-        $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
+        $this->logQuery($logger, $query);
         if (!$dryRun) {
-            $this->connection->executeUpdate($updateQuery, $updateQueryParameters, $updateQueryTypes);
+            $statement = $this->connection->prepare($query);
+            $statement->bindValue(':entity', 'app', Type::STRING);
+            $statement->bindValue(':name', Configuration::PRICE_LIST_STRATEGIES, Type::STRING);
+            $statement->bindValue(':section', Configuration::ROOT_NODE, Type::STRING);
+            $statement->bindValue(':text_value', MergePricesCombiningStrategy::NAME, Type::TEXT);
+            $statement->bindValue(':object_value', null, Type::OBJECT);
+            $statement->bindValue(':array_value', null, Type::TARRAY);
+            $statement->bindValue(':type', 'scalar', Type::STRING);
+            $now = (new \DateTime())->setTimezone(new \DateTimeZone('UTC'));
+            $statement->bindValue(':created_at', $now, Type::DATETIME);
+            $statement->execute();
         }
     }
 }

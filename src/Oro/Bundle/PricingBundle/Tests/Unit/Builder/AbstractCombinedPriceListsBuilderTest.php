@@ -14,9 +14,16 @@ use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var StrategyRegister|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $strategyRegister;
+
     /**
      * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
      */

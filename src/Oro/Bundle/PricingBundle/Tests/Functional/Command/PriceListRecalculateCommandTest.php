@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
+use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -18,6 +19,8 @@ class PriceListRecalculateCommandTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        self::getContainer()->get('oro_config.global')
+            ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
         $this->loadFixtures([
             LoadPriceListRelations::class,
             LoadProductPrices::class,
@@ -114,7 +117,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'customer.level_1_1' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 14,
+                'expectedCount' => 22,  // 14 + 8 = customer.level_1_1 + website2
                 'website' => [],
                 'customerGroup' => [],
                 'customer' => ['customer.level_1_1']
