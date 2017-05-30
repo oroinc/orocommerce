@@ -15,7 +15,6 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class PriceAttributesProductFormExtension extends AbstractTypeExtension
 {
@@ -77,11 +76,16 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
         $formData = [];
         foreach ($existingPrices as $price) {
             $formData[$price->getPriceList()->getId()][] = $price;
-            $neededPricesKey = array_search([
-                'attribute' => $price->getPriceList(),
-                'currency' => $price->getPrice()->getCurrency(),
-                'unit' => $price->getUnit()
-            ], $neededPrices, false);
+            $neededPricesKey = array_search(
+                [
+                    'attribute' => $price->getPriceList(),
+                    'currency' => $price->getPrice()->getCurrency(),
+                    'unit' => $price->getUnit()
+                ],
+                $neededPrices,
+                true
+            );
+
             if (false !== $neededPricesKey) {
                 unset($neededPrices[$neededPricesKey]);
             }
@@ -100,19 +104,11 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
-        /** @var Product $product */
-        $product = $event->getData();
-        $units = $product->getAvailableUnitCodes();
         $data = $event->getForm()->get(self::PRODUCT_PRICE_ATTRIBUTES_PRICES)->getData();
 
         foreach ($data as $attributePrices) {
             /** @var PriceAttributeProductPrice $price */
             foreach ($attributePrices as $price) {
-                //don't process prices for deleted units
-                if (!in_array($price->getUnit()->getCode(), $units, true)) {
-                    continue;
-                }
-
                 //remove nullable prices
                 if (!$price->getPrice()->getValue()) {
                     if (null !== $price->getId()) {
@@ -132,7 +128,7 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
     /**
      * @param array $newInstanceData
      * @param Product $product
-     * @return ProductPrice
+     * @return PriceAttributeProductPrice
      */
     protected function createPrice(array $newInstanceData, Product $product)
     {

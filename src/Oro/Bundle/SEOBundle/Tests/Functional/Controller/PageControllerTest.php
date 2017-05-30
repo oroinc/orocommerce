@@ -57,18 +57,7 @@ class PageControllerTest extends WebTestCase
      */
     protected function getPageId()
     {
-        $class = $this->getContainer()->getParameter('oro_cms.entity.page.class');
-        /** @var EntityRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')->getManagerForClass($class)->getRepository($class);
-        $qb = $repository->createQueryBuilder('page');
-
-        return $qb
-            ->select('page.id')
-            ->innerJoin('page.slugPrototypes', 'slugPrototypes')
-            ->andWhere('slugPrototypes.string = :slug')
-            ->setParameter('slug', 'about')
-            ->getQuery()
-            ->getSingleScalarResult();
+        return $this->getReference(LoadPageData::PAGE_1)->getId();
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller\Api\Rest;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
@@ -26,7 +27,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $taxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_3);
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $this->assertFalse($taxCode->getProducts()->contains($product));
+        $this->assertNotEquals($taxCode, $product->getTaxCode());
 
         $this->client->request(
             'PATCH',
@@ -37,7 +38,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         );
 
         $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertTrue($taxCode->getProducts()->contains($product));
+        $this->assertEquals($taxCode, $product->getTaxCode());
     }
 
     public function testPatchActionWithNotFoundProduct()
@@ -58,7 +59,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         $taxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
         $product = $this->getReference(LoadProductData::PRODUCT_2);
 
-        $this->assertTrue($taxCode->getProducts()->contains($product));
+        $this->assertEquals($taxCode, $product->getTaxCode());
 
         $this->client->request(
             'PATCH',
@@ -75,6 +76,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
         /** @var ProductTaxCodeRepository $taxCodeRepository */
         $taxCodeRepository = $doctrineHelper->getEntityRepositoryForClass(ProductTaxCode::class);
         $taxCodeFromDb = $taxCodeRepository->find($taxCode->getId());
-        $this->assertFalse($taxCodeFromDb->getProducts()->contains($product));
+        $product = $doctrineHelper->getEntity(Product::class, $product->getId());
+        $this->assertNotEquals($taxCodeFromDb, $product->getTaxCode());
     }
 }

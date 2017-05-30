@@ -91,7 +91,7 @@ define(function(require) {
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute)) {
+                if (!this.model.has(attribute) || !_.isEmpty(value)) {
                     this.model.set(attribute, value);
                 }
             }, this);

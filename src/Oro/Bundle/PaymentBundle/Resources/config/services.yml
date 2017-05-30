@@ -280,3 +280,15 @@ services:
     oro_payment.provider.result_messages:
         class: 'Oro\Bundle\PaymentBundle\Provider\DefaultPaymentResultMessageProvider'
         public: false
+
+    oro_payment.context.factory.composite_supports_entity:
+        class: 'Oro\Bundle\PaymentBundle\Context\Factory\CompositeSupportsEntityPaymentContextFactory'
+        arguments:
+            - []
+        public: false
+        lazy: true
+
+    oro_payment.context.factory.transaction_payment_context:
+        class: 'Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory'
+        arguments:
+            - '@oro_payment.context.factory.composite_supports_entity'

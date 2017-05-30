@@ -4,20 +4,30 @@ namespace Oro\Bundle\TaxBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroTaxBundleInstaller implements Installation
+class OroTaxBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
+
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -27,8 +37,6 @@ class OroTaxBundleInstaller implements Installation
     {
         /** Tables generation **/
         $this->createOroTaxTable($schema);
-        $this->createOroTaxAccGrpTcAccGrpTable($schema);
-        $this->createOroTaxAccTaxCodeAccTable($schema);
         $this->createOroTaxAccountTaxCodeTable($schema);
         $this->createOroTaxJurisdictionTable($schema);
         $this->createOroTaxProdTaxCodeProdTable($schema);
@@ -38,13 +46,13 @@ class OroTaxBundleInstaller implements Installation
         $this->createOroTaxValueTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroTaxAccGrpTcAccGrpForeignKeys($schema);
-        $this->addOroTaxAccTaxCodeAccForeignKeys($schema);
         $this->addOroTaxJurisdictionForeignKeys($schema);
         $this->addOroTaxProdTaxCodeProdForeignKeys($schema);
         $this->addOroTaxRuleForeignKeys($schema);
         $this->addOroTaxZipCodeForeignKeys($schema);
         $this->addOroCustomerTaxCodeForeignKeys($schema);
+
+        $this->addCustomerExtendFields($schema);
     }
 
     /**
@@ -63,34 +71,6 @@ class OroTaxBundleInstaller implements Installation
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_E132B24377153098');
-    }
-
-    /**
-     * Create oro_tax_cus_grp_tc_cus_grp table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroTaxAccGrpTcAccGrpTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_tax_cus_grp_tc_cus_grp');
-        $table->addColumn('customer_group_tax_code_id', 'integer', []);
-        $table->addColumn('customer_group_id', 'integer', []);
-        $table->setPrimaryKey(['customer_group_tax_code_id', 'customer_group_id']);
-        $table->addUniqueIndex(['customer_group_id'], 'UNIQ_D3457B7869A3BF1');
-    }
-
-    /**
-     * Create oro_tax_cus_tax_code_cus table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroTaxAccTaxCodeAccTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_tax_cus_tax_code_cus');
-        $table->addColumn('customer_tax_code_id', 'integer', []);
-        $table->addColumn('customer_id', 'integer', []);
-        $table->setPrimaryKey(['customer_tax_code_id', 'customer_id']);
-        $table->addUniqueIndex(['customer_id'], 'UNIQ_53167F2A9B6B5FBA');
     }
 
     /**
@@ -220,50 +200,6 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add oro_tax_cus_grp_tc_cus_grp foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_tax_cus_grp_tc_cus_grp');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_customer_group'),
-            ['customer_group_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_tax_customer_tax_code'),
-            ['customer_group_tax_code_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_tax_cus_tax_code_cus foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroTaxAccTaxCodeAccForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_tax_cus_tax_code_cus');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_tax_customer_tax_code'),
-            ['customer_tax_code_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_customer'),
-            ['customer_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
      * Add oro_tax_jurisdiction foreign keys.
      *
      * @param Schema $schema
@@ -375,6 +311,104 @@ class OroTaxBundleInstaller implements Installation
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Sets the ExtendExtension
+     *
+     * @param ExtendExtension $extendExtension
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addCustomerExtendFields(Schema $schema)
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_customer',
+            'taxCode',
+            'oro_tax_customer_tax_code',
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'entity' => ['label' => 'oro.tax.customertaxcode.entity_label'],
+                'extend' => [
+                    'is_extend' => false,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['persist'],
+                    'nullable' => true,
+                ],
+                'datagrid' => [
+                    'is_visible' => false
+                ],
+                'form' => [
+                    'is_enabled' => false
+                ],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => true],
+                'dataaudit' => ['auditable' => true],
+                'importexport' => ['excluded' => true],
+            ]
+        );
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_customer_group',
+            'taxCode',
+            'oro_tax_customer_tax_code',
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'entity' => ['label' => 'oro.tax.customertaxcode.entity_label'],
+                'extend' => [
+                    'is_extend' => false,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['persist'],
+                    'nullable' => true,
+                ],
+                'datagrid' => [
+                    'is_visible' => false
+                ],
+                'form' => [
+                    'is_enabled' => false
+                ],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => true],
+                'dataaudit' => ['auditable' => true],
+                'importexport' => ['excluded' => true],
+            ]
+        );
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_product',
+            'taxCode',
+            'oro_tax_product_tax_code',
+            'id',
+            [
+                ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                'entity' => ['label' => 'oro.tax.producttaxcode.entity_label'],
+                'extend' => [
+                    'is_extend' => false,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['persist'],
+                    'nullable' => true,
+                ],
+                'datagrid' => [
+                    'is_visible' => false
+                ],
+                'form' => [
+                    'is_enabled' => false
+                ],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => true],
+                'dataaudit' => ['auditable' => true],
+                'importexport' => ['excluded' => true],
+            ]
         );
     }
 }

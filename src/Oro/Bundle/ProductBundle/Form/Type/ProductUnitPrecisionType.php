@@ -36,22 +36,18 @@ class ProductUnitPrecisionType extends AbstractType
         $builder
             ->add('precision', 'integer', ['type' => 'text', 'required' => false])
             ->add('conversionRate', 'number', ['required' => false])
-            ->add('sell', 'checkbox', ['required' => false])
-        ;
+            ->add('sell', 'checkbox', ['required' => false]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $unitPrecision = $event->getData();
             $form = $event->getForm();
 
             if ($unitPrecision instanceof ProductUnitPrecision && $unitPrecision->getUnit()) {
-                if ($unitPrecision->getId()) {
-                    $disabled = true;
-                } else {
-                    $disabled = false;
-                }
+                $disabled = $unitPrecision->getId() ? true : false;
+
                 $form->add(
                     'unit_disabled',
-                    ProductUnitSelectionType::NAME,
+                    ProductUnitSelectType::NAME,
                     [
                        'compact' => $options['compact'],
                        'disabled' => $disabled,
@@ -59,9 +55,13 @@ class ProductUnitPrecisionType extends AbstractType
                        'data' => $unitPrecision->getUnit()
                     ]
                 );
-                $form->add('unit', ProductUnitSelectionType::NAME, ['attr' => ['class' => 'hidden-unit']]);
+
+                $form->add('unit', ProductUnitSelectType::NAME, [
+                    'attr' => ['class' => 'hidden-unit'],
+                    'product' => $unitPrecision->getProduct(),
+                ]);
             } else {
-                $form->add('unit', ProductUnitSelectionType::NAME, ['compact' => $options['compact']]);
+                $form->add('unit', ProductUnitSelectType::NAME, ['compact' => $options['compact']]);
             }
         });
     }

@@ -3,7 +3,9 @@
         '~class': " form__col"
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+    <div>
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
