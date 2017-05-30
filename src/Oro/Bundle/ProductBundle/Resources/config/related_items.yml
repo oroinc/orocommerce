@@ -1,20 +1,19 @@
 services:
-    oro_product.related_products.strategy:
-        class: Oro\Bundle\ProductBundle\RelatedItem\Strategy\DatabaseStrategy
-        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_products.config_provider']
-
-    oro_product.related_items.config_provider:
+    oro_product.related_item.abstract_config_provider:
         abstract: true
         public: false
-        class: Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\AbstractRelatedItemConfigProvider
+        class: Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider
         arguments: ['@oro_config.manager']
 
-    oro_product.related_products.config_provider:
-        parent: oro_product.related_items.config_provider
-        public: true
-        class: Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\RelatedProductsConfigProvider
+    oro_product.related_item.related_product.config_provider:
+        parent: oro_product.related_item.abstract_config_provider
+        class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider
 
-    oro_product.related_products.assigner:
+    oro_product.related_item.related_product.assigner_strategy:
         public: false
-        class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProductAssigner
-        arguments: ['@oro_product.related_products.config_provider']
+        class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy
+        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']
+
+    oro.product.related_item.related_product.finder_strategy:
+        class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy
+        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']

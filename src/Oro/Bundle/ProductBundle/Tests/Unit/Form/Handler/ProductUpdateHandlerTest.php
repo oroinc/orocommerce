@@ -10,7 +10,7 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Tests\Unit\Model\UpdateHandlerTest;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProductAssigner;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\UIBundle\Route\Router;
 
@@ -66,7 +66,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
      */
     protected $actionGroupRegistry;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|RelatedProductAssigner */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AssignerDatabaseStrategy */
     protected $relatedProductAssigner;
 
     /**
@@ -96,7 +96,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->method('generate')
             ->willReturn('generated_redirect_url');
 
-        $this->relatedProductAssigner = $this->getMockBuilder(RelatedProductAssigner::class)
+        $this->relatedProductAssigner = $this->getMockBuilder(AssignerDatabaseStrategy::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -315,7 +315,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
 
 
         $this->relatedProductAssigner->expects($this->once())
-            ->method('assignRelation')
+            ->method('addRelation')
             ->with($entity, $relatedEntity);
 
         $expected = $this->assertSaveData($form, $entity);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Entity\RelatedItems;
+namespace Oro\Bundle\ProductBundle\Entity\RelatedItem;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -8,10 +8,16 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @ORM\Table(
- *     name="oro_product_related_products"
+ *     name="oro_product_related_products",
+ *     indexes={
+ *          @ORM\Index(name="idx_oro_product_related_products_product_id", columns={"product_id"}),
+ *          @ORM\Index(name="idx_oro_product_related_products_related_product_id", columns={"related_product_id"}),
+ *          @ORM\Index(name="idx_oro_product_related_products_unique", columns={"product_id", "related_product_id"})
+ *     }
  * )
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository")
  */
-class RelatedProducts
+class RelatedProduct
 {
     /**
      * @ORM\Id

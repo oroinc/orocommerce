@@ -1,9 +1,12 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider;
+namespace Oro\Bundle\ProductBundle\RelatedItem;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+/**
+ * @codeCoverageIgnore There is no point to test these getters
+ */
 abstract class AbstractRelatedItemConfigProvider
 {
     /**

@@ -399,42 +399,6 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertInstanceOf(Product::class, $result[0]);
     }
 
-    public function testFindAllRelatedUnidirectional()
-    {
-        $product = $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_3));
-        $expectedRelatedProducts = [
-            $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_1)),
-            $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_2)),
-        ];
-        $relatedProducts = $this->repository->findRelated($product->getId(), false, 10);
-
-        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
-    }
-
-    public function testFindRelatedUnidirectionalWithLimit()
-    {
-        $product = $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_3));
-        $expectedRelatedProducts = [
-            $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_1)),
-        ];
-        $relatedProducts = $this->repository->findRelated($product->getId(), false, 1);
-
-        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
-    }
-
-    public function testFindRelatedBidirectional()
-    {
-        $product = $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_3));
-        $expectedRelatedProducts = [
-            $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_1)),
-            $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_2)),
-            $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_4)),
-        ];
-        $relatedProducts = $this->repository->findRelated($product->getId(), true, 10);
-
-        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
-    }
-
     public function testFindByAttributeValue()
     {
         $result = $this->repository->findByAttributeValue(Product::TYPE_SIMPLE, 'sku', 'product-1', false);

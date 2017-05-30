@@ -1,23 +1,24 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedProducts;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\RelatedProduct;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\RelatedProductsConfigProvider;
-use Oro\Bundle\ProductBundle\RelatedItem\Strategy\DatabaseStrategy;
-
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
+class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /**
-     * @var DatabaseStrategy
+     * @var FinderDatabaseStrategy
      */
     private $strategy;
 
@@ -29,7 +30,7 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $productRepository;
+    private $repository;
 
     /**
      * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
@@ -43,7 +44,7 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
+        $this->repository = $this->getMockBuilder(RelatedProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -55,24 +56,29 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->doctrineHelper
+            ->expects($this->any())
+            ->method('getEntityRepository')
+            ->with(RelatedProduct::class)
+            ->willReturn($this->repository);
+
         $this->configProvider = $this->getMockBuilder(RelatedProductsConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->strategy = new DatabaseStrategy(
+        $this->strategy = new FinderDatabaseStrategy(
             $this->doctrineHelper,
             $this->configProvider
         );
     }
 
-    public function testGetRelatedProductsIfTheyExist()
+    public function testFindRelatedProductsIfTheyExist()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
 
-        $this->doctrineHelperShouldReturnProductRepository();
         $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), $this->anything(), $expectedResult);
 
         $this->relatedProductFunctionalityShouldBeEnabled();
@@ -81,28 +87,27 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->findRelatedProducts($productA)
+            $this->strategy->find($productA)
         );
     }
 
-    public function testGetNoRelatedProductsIfFunctionalityIsDisabled()
+    public function testFindNoRelatedProductsIfFunctionalityIsDisabled()
     {
         $productA = $this->getProduct(['id' => 1]);
 
         $this->doctrineHelperShouldNotBeAskedForRepository();
         $this->relatedProductFunctionalityShouldBeDisabled();
 
-        $this->assertCount(0, $this->strategy->findRelatedProducts($productA));
+        $this->assertCount(0, $this->strategy->find($productA));
     }
 
-    public function testGetRelatedProductsWithLimit()
+    public function testFindRelatedProductsWithLimit()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult =[$productB, $productC];
 
-        $this->doctrineHelperShouldReturnProductRepository();
         $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), 2, $expectedResult);
 
         $this->relatedProductFunctionalityShouldBeEnabled();
@@ -111,18 +116,17 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->findRelatedProducts($productA)
+            $this->strategy->find($productA)
         );
     }
 
-    public function testGetRelatedProductsBidirectional()
+    public function testFindRelatedProductsBidirectional()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
 
-        $this->doctrineHelperShouldReturnProductRepository();
         $this->andProductRepositoryShouldFindRelated($productA, true, $this->anything(), $expectedResult);
 
         $this->relatedProductFunctionalityShouldBeEnabled();
@@ -131,18 +135,17 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->findRelatedProducts($productA)
+            $this->strategy->find($productA)
         );
     }
 
-    public function testGetRelatedProductsNonBidirectional()
+    public function testFindRelatedProductsNonBidirectional()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
 
-        $this->doctrineHelperShouldReturnProductRepository();
         $this->andProductRepositoryShouldFindRelated($productA, false, $this->anything(), $expectedResult);
 
         $this->relatedProductFunctionalityShouldBeEnabled();
@@ -151,23 +154,8 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->findRelatedProducts($productA)
+            $this->strategy->find($productA)
         );
-    }
-
-    private function doctrineHelperShouldReturnProductRepository()
-    {
-        $this->doctrineHelper
-            ->expects($this->any())
-            ->method('getEntityManager')
-            ->with(Product::class)
-            ->willReturn($this->entityManager);
-
-        $this->entityManager
-            ->expects($this->any())
-            ->method('getRepository')
-            ->with(Product::class)
-            ->willReturn($this->productRepository);
     }
 
     private function doctrineHelperShouldNotBeAskedForRepository()
@@ -190,7 +178,7 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $limit,
         array $related
     ) {
-        $this->productRepository
+        $this->repository
             ->expects($this->once())
             ->method('findRelated')
             ->with($product->getId(), $bidirectional, $limit)
@@ -241,7 +229,7 @@ class DatabaseStrategyTest extends \PHPUnit_Framework_TestCase
      * @param array $properties
      * @return Product
      */
-    private function getProduct($properties = [])
+    private function getProduct(array $properties = [])
     {
         return $this->getEntity(Product::class, $properties);
     }

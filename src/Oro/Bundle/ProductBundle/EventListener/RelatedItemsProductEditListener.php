@@ -4,8 +4,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\AbstractRelatedItemConfigProvider;
-use Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider\RelatedProductsConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -23,9 +22,10 @@ class RelatedItemsProductEditListener
     private $configProvider;
 
     /**
-     * @param TranslatorInterface $translator
+     * @param TranslatorInterface               $translator
+     * @param AbstractRelatedItemConfigProvider $configProvider
      */
-    public function __construct(TranslatorInterface $translator, RelatedProductsConfigProvider $configProvider)
+    public function __construct(TranslatorInterface $translator, AbstractRelatedItemConfigProvider $configProvider)
     {
         $this->translator = $translator;
         $this->configProvider = $configProvider;

@@ -1,9 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\RelatedItem\ConfigProvider;
+namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 
+/**
+ * @codeCoverageIgnore There is no point to test these getters
+ */
 class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
 {
     /**

@@ -40,11 +40,13 @@ class ProductController extends Controller
         $pageTemplate = $this->get('oro_product.provider.page_template_provider')
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
 
+        $relatedProductsEnabled = $this->get('oro_product.related_item.related_product.config_provider')->isEnabled();
+
         return [
             'entity' => $product,
             'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
             'pageTemplate' => $pageTemplate,
-            'relatedProductsEnabled' => $this->get('oro_product.related_products.config_provider')->isEnabled()
+            'relatedProductsEnabled' => $relatedProductsEnabled,
         ];
     }
 
@@ -168,7 +170,7 @@ class ProductController extends Controller
      */
     public function quickUpdateAction(Product $product)
     {
-        if (!$this->get('oro_product.related_products.config_provider')->isEnabled()) {
+        if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
             throw $this->createNotFoundException();
         }
         return $this->update($product);

@@ -18,6 +18,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
@@ -123,7 +124,11 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
             if (isset($item['related_products'])) {
                 foreach ($item['related_products'] as $relatedProduct) {
                     if (isset($productsList[$relatedProduct])) {
-                        $product->addRelatedToProduct($productsList[$relatedProduct]);
+                        $relatedProducts = new RelatedProduct();
+                        $relatedProducts->setProduct($product)
+                            ->setRelatedProduct($productsList[$relatedProduct]);
+
+                        $manager->persist($relatedProducts);
                     }
                 }
             }

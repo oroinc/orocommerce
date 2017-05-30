@@ -12,7 +12,8 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProductAssigner;
+use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy;
 
 class ProductUpdateHandler extends UpdateHandler
 {
@@ -27,7 +28,7 @@ class ProductUpdateHandler extends UpdateHandler
     /** @var SymfonyRouter */
     private $symfonyRouter;
 
-    /** @var RelatedProductAssigner */
+    /** @var AssignerStrategyInterface|AssignerDatabaseStrategy */
     private $relatedProductAssigner;
 
     /**
@@ -55,20 +56,20 @@ class ProductUpdateHandler extends UpdateHandler
     }
 
     /**
-     * @param RelatedProductAssigner $relatedProductAssigner
+     * @param AssignerStrategyInterface $relatedProductAssigner
      */
-    public function setRelatedProductAssigner(RelatedProductAssigner $relatedProductAssigner)
+    public function setRelatedProductAssigner(AssignerStrategyInterface $relatedProductAssigner)
     {
         $this->relatedProductAssigner = $relatedProductAssigner;
     }
 
     /**
-     * @param FormInterface $form
-     * @param Product $entity
+     * @param FormInterface  $form
+     * @param Product        $entity
      * @param array|callable $saveAndStayRoute
      * @param array|callable $saveAndCloseRoute
-     * @param string $saveMessage
-     * @param null $resultCallback
+     * @param string         $saveMessage
+     * @param null           $resultCallback
      * @return array|RedirectResponse
      */
     protected function processSave(
@@ -117,15 +118,15 @@ class ProductUpdateHandler extends UpdateHandler
 
     /**
      * @param FormInterface $form
-     * @param Product $entity
+     * @param Product       $entity
      */
     private function onSuccess(FormInterface $form, Product $entity)
     {
         $appendRelated = $form->get('appendRelated')->getData();
         $removeRelated = $form->get('removeRelated')->getData();
 
-        $this->addRelatedProducts($entity, $appendRelated);
         $this->removeRelatedProducts($entity, $removeRelated);
+        $this->addRelatedProducts($entity, $appendRelated);
 
         if (!empty($appendRelated) || !empty($removeRelated)) {
             $this->doctrineHelper
@@ -135,28 +136,24 @@ class ProductUpdateHandler extends UpdateHandler
     }
 
     /**
-     * @param Product $product
+     * @param Product   $product
      * @param Product[] $productsToAppend
      */
     private function addRelatedProducts(Product $product, array $productsToAppend)
     {
-        if (!empty($productsToAppend)) {
-            foreach ($productsToAppend as $productToAppend) {
-                $this->relatedProductAssigner->assignRelation($product, $productToAppend);
-            }
+        foreach ($productsToAppend as $productToAppend) {
+            $this->relatedProductAssigner->addRelation($product, $productToAppend);
         }
     }
 
     /**
-     * @param Product $product
+     * @param Product   $product
      * @param Product[] $productsToRemove
      */
     private function removeRelatedProducts(Product $product, array $productsToRemove)
     {
-        if (!empty($productsToRemove)) {
-            foreach ($productsToRemove as $productToRemove) {
-                $this->relatedProductAssigner->removeRelation($product, $productToRemove);
-            }
+        foreach ($productsToRemove as $productToRemove) {
+            $this->relatedProductAssigner->removeRelation($product, $productToRemove);
         }
     }
 }

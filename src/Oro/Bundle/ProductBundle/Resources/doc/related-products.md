@@ -21,20 +21,20 @@ provides you configuration for Related Products.
 
 ##### isEnabled()
 ```php
-$this->get('oro_product.related_products.config_provider')->isEnabled();
+$this->get('oro_product.related_item.related_product.config_provider')->isEnabled();
 ```
 Returns information if related products functionality is enabled.
 
 
 ##### getLimit()
 ```php
-$this->get('oro_product.related_products.config_provider')->getLimit();
+$this->get('oro_product.related_item.related_product.config_provider')->getLimit();
 ```
 Returns integer describing how many relation there can be for one product.
 
 ##### isBidirectional()
 ```php
-$this->get('oro_product.related_products.config_provider')->isBidirectional();
+$this->get('oro_product.related_item.related_product.config_provider')->isBidirectional();
 ```
 Imagine that you have product A, and product B that is related to A.
 If bidirectional is set to true, then product A will also be considered as related
