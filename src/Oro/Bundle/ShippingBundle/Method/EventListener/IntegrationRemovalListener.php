@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ShippingBundle\Method\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDeleteEvent;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRemovalEventDispatcherInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class IntegrationRemovalListener
 {
@@ -14,7 +14,7 @@ class IntegrationRemovalListener
     private $channelType;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
     private $identifierGenerator;
 
@@ -25,12 +25,12 @@ class IntegrationRemovalListener
 
     /**
      * @param string                                        $channelType
-     * @param IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
+     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
      * @param MethodRemovalEventDispatcherInterface         $dispatcher
      */
     public function __construct(
         $channelType,
-        IntegrationMethodIdentifierGeneratorInterface $identifierGenerator,
+        IntegrationIdentifierGeneratorInterface $identifierGenerator,
         MethodRemovalEventDispatcherInterface $dispatcher
     ) {
         $this->channelType = $channelType;
