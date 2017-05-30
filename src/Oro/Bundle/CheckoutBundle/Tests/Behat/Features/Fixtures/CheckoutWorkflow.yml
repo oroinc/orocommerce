@@ -1,0 +1,297 @@
+Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition:
+    custom_checkout_workflow:
+        name: 'custom_checkout_workflow'
+        label: 'Checkout Workflow'
+        relatedEntity: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+        entityAttributeName: 'checkout'
+        stepsDisplayOrdered: true
+        active: true
+        exclusiveRecordGroups:
+            - b2b_checkout_flow
+        applications:
+            - commerce
+        configuration:
+            force_autostart: false
+            scopes: {  }
+            datagrids: {  }
+            disable_operations: {  }
+            entity_restrictions: {  }
+            init_routes:
+               oro_shopping_list_frontend_view:
+                   - start_from_shoppinglist
+            attributes:
+                allow_manual_source_remove:
+                    type: boolean
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.allow_manual_source_remove.label
+                remove_source:
+                    type: boolean
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.remove_source.label
+                auto_remove_source:
+                    type: boolean
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.auto_remove_source.label
+                source_remove_label:
+                    type: string
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.source_remove_label.label
+                edit_order_link:
+                    type: string
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.edit_order_link.label
+                text_data:
+                    type: string
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.text_data.label
+                state_token:
+                    type: string
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.state_token.label
+                internal_state_token:
+                    type: string
+                    property_path: null
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.internal_state_token.label
+                order:
+                    type: entity
+                    options:
+                       class: Oro\Bundle\OrderBundle\Entity\Order
+                    property_path: null
+                    label: oro.workflow.custom_checkout_workflow.attribute.order.label
+                po_number:
+                    type: null
+                    property_path: checkout.poNumber
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.po_number.label
+                ship_until:
+                    type: null
+                    property_path: checkout.shipUntil
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.ship_until.label
+                customer_notes:
+                    type: null
+                    property_path: checkout.customerNotes
+                    options: {  }
+                    label: oro.workflow.custom_checkout_workflow.attribute.customer_notes.label
+
+            steps:
+                order_review:
+                    order: 10
+                    allowed_transitions:
+                        - continue_to_order_created
+                    is_final: false
+                    _is_start: false
+                    entity_acl: {  }
+                    position: {  }
+                    label: 'Order Review'
+
+                order_created:
+                    order: 100
+                    is_final: true
+                    _is_start: false
+                    entity_acl: {  }
+                    allowed_transitions: {  }
+                    position: {  }
+                    label: 'Order Created'
+
+            transitions:
+                __start__:
+                    is_start: true
+                    is_hidden: true
+                    step_to: order_review
+                    transition_definition: __start___definition
+                    is_unavailable_hidden: false
+                    acl_message: null
+                    frontend_options: {  }
+                    form_type: oro_workflow_transition
+                    display_type: dialog
+                    destination_page: ''
+                    form_options: {  }
+                    page_template: null
+                    dialog_template: null
+                    init_entities: {  }
+                    init_routes: {  }
+                    init_datagrids: {  }
+                    init_context_attribute: init_context
+                    message_parameters: {  }
+                    triggers: {  }
+                    label: 'Create Order (Custom)'
+                    button_label: oro.workflow.custom_checkout_workflow.transition.__start__.button_label
+                    button_title: oro.workflow.custom_checkout_workflow.transition.__start__.button_title
+                    message: oro.workflow.custom_checkout_workflow.transition.__start__.warning_message
+
+                start_from_shoppinglist:
+                    is_start: true
+                    step_to: order_review
+                    is_unavailable_hidden: true
+                    transition_definition: start_from_shoppinglist_definition
+                    frontend_options:
+                        icon: fa-briefcase
+                    init_routes:
+                        - oro_shopping_list_frontend_view
+                    acl_resource:
+                        - CHECKOUT_CREATE
+                        - $.result.shoppingList
+                    is_hidden: false
+                    acl_message: null
+                    form_type: oro_workflow_transition
+                    display_type: dialog
+                    destination_page: ''
+                    form_options: {  }
+                    page_template: null
+                    dialog_template: null
+                    init_entities: {  }
+                    init_datagrids: {  }
+                    init_context_attribute: init_context
+                    message_parameters: {  }
+                    triggers: {  }
+                    label: 'Create Order (Custom)'
+                    button_label: oro.workflow.custom_checkout_workflow.transition.start_from_shoppinglist.button_label
+                    button_title: oro.workflow.custom_checkout_workflow.transition.start_from_shoppinglist.button_title
+                    message: oro.workflow.custom_checkout_workflow.transition.start_from_shoppinglist.warning_message
+
+                continue_to_order_created:
+                    step_to: order_created
+                    transition_definition: continue_to_order_created_definition
+                    display_type: page
+                    frontend_options:
+                        is_checkout_continue: true
+                        is_checkout_show_errors: true
+                    form_options:
+                        form_init:
+                            -
+                                '@generate_checkout_state_snapshot':
+                                    entity: $checkout
+                                    attribute: $.result.initCheckoutState
+                        attribute_fields:
+                            remove_source: ~
+                            po_number: ~
+                            ship_until: ~
+                            customer_notes:
+                                form_type: textarea
+                                options:
+                                    label: 'Text'
+                                    required: true
+                                    constraints:
+                                        - NotBlank: ~
+                            state_token:
+                                form_type: hidden
+                                options:
+                                    data: $internal_state_token
+                                    label: oro.workflow.custom_checkout_workflow.transition.continue_to_order_created.attribute.state_token.label
+                    is_start: false
+                    is_hidden: false
+                    is_unavailable_hidden: false
+                    acl_message: null
+                    form_type: oro_workflow_transition
+                    destination_page: ''
+                    page_template: null
+                    dialog_template: null
+                    init_entities: {  }
+                    init_routes: {  }
+                    init_datagrids: {  }
+                    init_context_attribute: init_context
+                    message_parameters: {  }
+                    triggers: {  }
+                    label: 'Continue'
+                    button_label: oro.workflow.custom_checkout_workflow.transition.continue_to_order_created.button_label
+                    button_title: oro.workflow.custom_checkout_workflow.transition.continue_to_order_created.button_title
+                    message: oro.workflow.custom_checkout_workflow.transition.continue_to_order_created.warning_message
+
+            transition_definitions:
+                start_from_shoppinglist_definition:
+                    preactions:
+                        -
+                            '@find_entity':
+                                conditions:
+                                    '@not_empty': $init_context
+                                parameters:
+                                    class: $init_context.entityClass
+                                    identifier: $init_context.entityId
+                                    attribute: $.result.shoppingList
+                    preconditions:
+                        '@has_elements': $.result.shoppingList.lineItems
+                    actions:
+                        -
+                            '@run_action_group':
+                                action_group: start_shoppinglist_checkout
+                                parameters_mapping:
+                                    shoppingList: $.result.shoppingList
+                                    showErrors: true
+                                    validateOnStartCheckout: false
+                                results:
+                                    data.checkout: $.checkout
+                                    result.redirectUrl: $.redirectUrl
+                        - '@assign_value': [$checkout.paymentMethod, 'payment_term_2']
+                        - '@flush_entity': $checkout
+                    conditions: {  }
+
+                __start___definition:
+                    actions:
+                        -
+                            '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.startCheckoutState
+                        -
+                            '@save_checkout_state':
+                                entity: $checkout
+                                state: $.result.startCheckoutState
+                                attribute: $state_token
+                        -
+                            '@assign_value':
+                                - $internal_state_token
+                                - $state_token
+                    preactions: {  }
+                    preconditions: {  }
+                    conditions: {  }
+
+                continue_to_order_created_definition:
+                    preconditions: {  }
+                    actions:
+                        - '@get_class_name':
+                            object: $checkout.sourceEntity.sourceDocument
+                            attribute: $.result.sourceDocumentEntityClassName
+                        - '@call_service_method':
+                            service: oro_payment_term.provider.payment_term
+                            method: getCurrentPaymentTerm
+                            attribute: $.result.paymentTerm
+                        - '@get_order_line_items':
+                            attribute: $.result.lineItems
+                            checkout: $checkout
+                        - '@create_order':
+                            attribute: $order
+                            checkout: $checkout
+                            data:
+                                sourceEntityClass: $.result.sourceDocumentEntityClassName
+                                paymentTerm: $.result.paymentTerm
+                                lineItems: $.result.lineItems
+                        - '@flush_entity': $order
+                        - '@redirect':
+                            route: oro_checkout_frontend_checkout
+                            route_parameters:
+                                id: $checkout.id
+                    preactions: {  }
+                    conditions: {  }
+
+Oro\Bundle\WorkflowBundle\Entity\WorkflowStep:
+    custom_checkout_workflow_order_review:
+        name: order_review
+        label: 'Order Review'
+        stepOrder: 10
+        final: false
+        definition: '@custom_checkout_workflow'
+
+    custom_checkout_workflow_order_created:
+        name: order_created
+        label: 'Order Created'
+        stepOrder: 100
+        final: true
+        definition: '@custom_checkout_workflow'

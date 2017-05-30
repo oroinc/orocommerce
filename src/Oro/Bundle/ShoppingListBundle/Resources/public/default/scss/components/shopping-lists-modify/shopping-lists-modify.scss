@@ -1,25 +1,19 @@
 // @theme: default
 
 .shopping-lists-modify {
-    margin: 0 -16px 0 -10px;
-    padding: 0;
-
-    white-space: nowrap;
+    @include clearfix();
 
     &__text,
-    &__select,
-    &__badges {
+    &__select {
         display: inline-block;
 
         vertical-align: middle;
     }
 
     &__badges {
-        position: absolute;
-        top: 50%;
-        right: 10px;
-
-        transform: translateY(-50%);
+        float: right;
+        margin-top: 3px;
+        margin-left: 4px;
     }
 
     &__text {
@@ -35,14 +29,13 @@
         min-width: 66px;
     }
 
-    &__edit,
-    &__remove {
-        margin-left: 4px;
-    }
-
     &__edit {
         display: inline-block;
         vertical-align: middle;
+
+        &:not(:first-child) {
+            margin-left: 4px;
+        }
     }
 
     &__button {
@@ -75,17 +68,8 @@
 
 @include breakpoint('mobile') {
     .shopping-lists-modify {
-        &__select {
-            width: 65px;
-        }
-
-        &__badges {
-            right: 5px;
-        }
-
         &__input {
-            width: 40px;
-            padding: 7px 2px;
+            width: 35px;
             text-align: center;
         }
 
@@ -95,7 +79,7 @@
         }
 
         .select2-container a.select2-choice {
-            padding: 8px 6px;
+            padding: 8px 5px;
             margin-right: -2px;
         }
     }

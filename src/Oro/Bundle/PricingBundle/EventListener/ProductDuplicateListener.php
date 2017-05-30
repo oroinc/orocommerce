@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicateListener
@@ -17,6 +19,16 @@ class ProductDuplicateListener
      * @var string
      */
     protected $productPriceClass;
+
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
+    /**
+     * @var PriceManager
+     */
+    protected $priceManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -35,6 +47,14 @@ class ProductDuplicateListener
     }
 
     /**
+     * @param PriceManager $priceManager
+     */
+    public function setPriceManager(PriceManager $priceManager)
+    {
+        $this->priceManager = $priceManager;
+    }
+
+    /**
      * Copy product prices
      *
      * @param ProductDuplicateAfterEvent $event
@@ -44,16 +64,15 @@ class ProductDuplicateListener
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
 
-        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($sourceProduct);
-        $objectManager = $this->doctrineHelper->getEntityManager($this->productPriceClass);
+        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $sourceProduct);
 
         foreach ($productPrices as $productPrice) {
             $productPriceCopy = clone $productPrice;
             $productPriceCopy->setProduct($product);
-            $objectManager->persist($productPriceCopy);
+            $this->priceManager->persist($productPriceCopy);
         }
 
-        $objectManager->flush();
+        $this->priceManager->flush();
     }
 
     /**
@@ -62,5 +81,13 @@ class ProductDuplicateListener
     protected function getProductPriceRepository()
     {
         return $this->doctrineHelper->getEntityRepository($this->productPriceClass);
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     */
+    public function setShardManager(ShardManager $shardManager)
+    {
+        $this->shardManager = $shardManager;
     }
 }

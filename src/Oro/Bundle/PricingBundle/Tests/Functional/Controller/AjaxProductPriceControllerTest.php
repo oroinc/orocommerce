@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Symfony\Component\DomCrawler\Form;
 
 class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
+    use ProductPriceReference;
+
     /**
      * @var string
      */
@@ -45,23 +48,25 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     public function testUpdate()
     {
         $this->loadFixtures([
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+            LoadProductPrices::class
         ]);
         /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.3');
+        $productPrice = $this->getReferenceRepository()->getReferences()[LoadProductPrices::PRODUCT_PRICE_3];
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
 
+        $url = $this->getUrl(
+            'oro_product_price_update_widget',
+            [
+                'id' => $productPrice->getId(),
+                'priceList' => $productPrice->getPriceList()->getId(),
+                '_widgetContainer' => 'dialog',
+                '_wid' => 'test-uuid'
+            ]
+        );
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl(
-                'oro_product_price_update_widget',
-                [
-                    'id' => $productPrice->getId(),
-                    '_widgetContainer' => 'dialog',
-                    '_wid' => 'test-uuid'
-                ]
-            )
+            $url
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -84,8 +89,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);
         /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.3');
-        $productPriceEUR = $this->getReference('product_price.11');
+
+        $productPrice = $this->getPriceByReference(LoadProductPrices::PRODUCT_PRICE_1);
+        $productPriceEUR = $this->getPriceByReference(LoadProductPrices::PRODUCT_PRICE_2);
 
         $crawler = $this->client->request(
             'GET',
@@ -93,6 +99,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 'oro_product_price_update_widget',
                 [
                     'id' => $productPriceEUR->getId(),
+                    'priceList' => $productPriceEUR->getPriceList()->getId(),
                     '_widgetContainer' => 'dialog',
                     '_wid' => 'test-uuid'
                 ]
@@ -126,7 +133,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertRegExp('/"savedId":\s*null/i', $html);
+        $this->assertRegExp('/"savedId":[\s\d-]*/i', $html);
         $error = $this->getContainer()->get('translator')
             ->trans($message, [], 'validators');
         $this->assertContains($error, $html);
@@ -144,7 +151,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertRegExp('/"savedId":\s*\d+/i', $html);
+        $this->assertRegExp('/"savedId":"[\w\d-]+"/i', $html);
     }
 
     /**

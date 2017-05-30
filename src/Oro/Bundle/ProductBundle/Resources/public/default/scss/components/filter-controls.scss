@@ -1,33 +1,9 @@
+// @theme: default;
+
 .catalog__filter-controls {
-  display: -webkit-flex;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: stretch;
-  align-items: center;
-  margin: 0 !important; //override platform mobile styles
-  padding: 10px 0 !important; //override platform mobile styles
-
-  font-size: 0;
-
   &__item {
-    -webkit-flex-grow: 1;
     flex-grow: 1;
     margin-right: $offset-y-s;
-
-    &.catalog__filter-controls__item_filter {
-      flex-grow: 0;
-      flex-basis: 260px;
-
-      @media (min-width: 992px) and (max-width: 1250px) {
-        flex-basis: 100%;
-        margin: 0 0 10px;
-      }
-
-      @media (max-width: $screen-md) {
-        flex-basis: 55%;
-        margin: 0 0 10px;
-      }
-    }
 
     &.sorting {
       flex-grow: 0;
@@ -83,7 +59,6 @@
   }
 }
 
-
 @include breakpoint('tablet') {
   .catalog__filter-controls {
     .pagination-container {
@@ -114,7 +89,7 @@
     &__item {
       flex-grow: inherit;
 
-        margin-right: $offset-y-s;
+      margin-right: $offset-y-s;
 
       &.oro-pagination {
         text-align: left;
@@ -125,24 +100,20 @@
 
 @include breakpoint('mobile') {
   .catalog__filter-controls {
-      .action-selectbox_custom_in-pager {
-          display: inline-block;
+    &__item {
+      margin-right: 0;
+    }
 
-          .select2-container {
-              a.select2-choice {
-                  max-width: 60px;
+    .action-selectbox_custom_in-pager {
+      display: inline-block;
 
-                  padding: 8px 4px !important;
-              }
-          }
+      .select2-container {
+        a.select2-choice {
+          max-width: 60px;
+
+          padding: 8px 4px !important;
+        }
       }
     }
-}
-
-@include breakpoint('mobile-landscape') {
-    .catalog__filter-controls {
-        &__item {
-            margin-right: 0;
-        }
-    }
+  }
 }

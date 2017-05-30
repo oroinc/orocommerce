@@ -93,6 +93,7 @@ class CustomerGroupCategoryVisibilityRepositoryTest extends WebTestCase
                 'expectedCustomerGroups' => [
                     'customer_group.group1',
                     'customer_group.group3',
+                    'customer_group.anonymous'
                 ]
             ],
         ];

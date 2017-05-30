@@ -4,8 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
+use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -108,6 +110,140 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Validate unique variant field values when changing simple products or extended fields BB-7110
+     *
+     * I click on info tooltip for selected Enum value
+     *
+     * Example: I click info tooltip for enum value "Red"
+     *
+     * @When /^I click info tooltip for enum value "(?P<name>[\w\s]+)"$/
+     *
+     */
+    public function iClickTooltipOnEnumValue($name)
+    {
+        $entityConfigForm = $this->createElement('EntityConfigForm');
+
+        $enumInputContainer = $entityConfigForm->find(
+            'xpath',
+            sprintf(
+                '//input[@value="%s"]/../../..',
+                $name
+            )
+        );
+
+        $i = $enumInputContainer->find(
+            'xpath',
+            'i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]'
+        );
+        $i->click();
+    }
+
+    /**
+     * Validate unique variant field values when changing simple products or extended fields BB-7110
+     *
+     * Selected Enum value is unique and used in Configurable product.
+     * I should see info tooltip for the selected enum value
+     *
+     * Example: I should see info tooltip for enum value "Red"
+     *
+     * @Then /^(?:|I should )see info tooltip for enum value "(?P<name>[^"]+)"$/
+     *
+     */
+    public function iSeeTooltipForEnumValue($name)
+    {
+        $entityConfigForm = $this->createElement('EntityConfigForm');
+
+        // @codingStandardsIgnoreStart
+        $enumInputWithTooltip = $entityConfigForm->find(
+            'xpath',
+            sprintf(
+                '//input[@value="%s"]/../../../i[contains(@class, "fa-info-circle") and contains(@class, "tooltip-icon")]',
+                $name
+            )
+        );
+        // @codingStandardsIgnoreEnd
+
+        static::assertNotEmpty($enumInputWithTooltip);
+    }
+
+    /**
+     * Validate unique variant field values when changing simple products or extended fields BB-7110
+     *
+     * On the "Product" entity I delete enum value
+     *
+     * Example: I delete enum value by name "Green"
+     *
+     * @When /^I delete enum value by name "(?P<name>[\w\s]+)"$/
+     *
+     */
+    public function iDeleteEnumValueByName($name)
+    {
+        $entityConfigForm = $this->createElement('EntityConfigForm');
+
+        $enumInputContainer = $entityConfigForm->find(
+            'xpath',
+            sprintf(
+                '//input[@value="%s"]/../../..',
+                $name
+            )
+        );
+
+        $x = $enumInputContainer->find(
+            'xpath',
+            'button[contains(@class, "removeRow")]'
+        );
+        $x->press();
+    }
+
+    /**
+     * Validate unique variant field values when changing simple products or extended fields BB-7110
+     *
+     * I should not see selected enum value on Product attribute edit page
+     *
+     * Example: I should not see enum value "Green"
+     *
+     * @Then /^I should not see enum value "(?P<name>[\w\s]+)"$/
+     *
+     */
+    public function iShouldNotSeeEnumValue($name)
+    {
+        $entityConfigForm = $this->createElement('EntityConfigForm');
+
+        $enumInputContainer = $entityConfigForm->find(
+            'xpath',
+            sprintf(
+                '//input[@value="%s"]',
+                $name
+            )
+        );
+
+        self::assertEmpty($enumInputContainer);
+    }
+
+    /**
+     * Assert popup
+     * Example: Then I should see "At least one of the fields First name, Last name must be defined." popup
+     *
+     * @Then /^(?:|I should )see "(?P<title>[^"]+)" popup$/
+     */
+    public function iShouldSeePopup($title)
+    {
+        $popup = $this->spin(function (MinkAwareContext $context) {
+            return $context->getSession()->getPage()->find('css', '.popover-content');
+        });
+
+        self::assertNotFalse($popup, 'Popup not found on page');
+        $message = $popup->getText();
+        $popup->find('css', 'i.popover-close')->click();
+
+        self::assertContains($title, $message, sprintf(
+            'Expect that "%s" error message contains "%s" string, but it isn\'t',
+            $message,
+            $title
+        ));
+    }
+
+    /**
      * @Then I go to product with sku :productSku edit page
      *
      * @param string $productSku
@@ -156,6 +292,65 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @When I add price :price to Price Attribute :priceAttribute
+     *
+     * @param string $priceAttributeName
+     * @param int $price
+     */
+    public function addPriceToAdditionalPriceAttribute($priceAttributeName, $price)
+    {
+        /** @var Form $form */
+        $form = $this->createElement('ProductForm');
+
+        /** @var NodeElement $label */
+        $labels = $form->findAll('xpath', '//div[@class="price-attributes-collection"]/div/div/label');
+
+        $savedLabel = false;
+        foreach ($labels as $label) {
+            if (trim($label->getText()) === $priceAttributeName) {
+                $label->getParent()->getParent()
+                    ->find('xpath', '//input[contains(@id, "productPriceAttributesPrices")]')
+                    ->setValue($price);
+
+                $savedLabel = true;
+            }
+        }
+
+        if (!$savedLabel) {
+            self::fail(sprintf('Can not find label with text %s', $priceAttributeName));
+        }
+    }
+
+    /**
+     * @When I clear Price Attribute :priceAttribute
+     *
+     * @param string $priceAttributeName
+     */
+    public function clearPriceToAdditionalPriceAttribute($priceAttributeName)
+    {
+        /** @var Form $form */
+        $form = $this->createElement('ProductForm');
+
+        /** @var NodeElement $label */
+        $labels = $form->findAll('xpath', '//div[@class="price-attributes-collection"]/div/div/label');
+
+        $savedLabel = false;
+        foreach ($labels as $label) {
+            if (trim($label->getText()) === $priceAttributeName) {
+                $label->getParent()->getParent()
+                    ->find('xpath', '//input[contains(@id, "productPriceAttributesPrices")]')
+                    ->setValue(' ');
+
+                $savedLabel = true;
+            }
+        }
+
+        if (!$savedLabel) {
+            self::fail(sprintf('Can not find label with text %s', $priceAttributeName));
+        }
+    }
+
+    /**
      * Example: Then I save product with next data:
      *            | Name                | Name      |
      *            | SKU                 | SKU       |
@@ -176,7 +371,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I should see value ":value" in ":elementName" options
+     * @Then /^I should see value "(?P<value>[^"]+)" in "(?P<elementName>[^"]+)" options$/
      *
      * @param string $value
      * @param string $elementName
@@ -189,7 +384,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I should not see value ":value" in ":elementName" options
+     * @Then /^I should not see value "(?P<value>[^"]+)" in "(?P<elementName>[^"]+)" options$/
      *
      * @param string $value
      * @param string $elementName

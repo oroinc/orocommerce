@@ -68,7 +68,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.total.base.label
                     currency_field: currency
             paymentMethods:
                 label: oro.order.payment_method.label
@@ -97,7 +96,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
                 renderable: false
             shippingMethod:
@@ -175,7 +173,7 @@ datagrids:
                     data_name: order1.currency
                     options:
                         field_options:
-                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_currency.config.currency->getCurrencies"
                 subtotal:
                     type:      currency
                     data_name: subtotal
@@ -225,7 +223,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
                 renderable: false
             total:
@@ -234,7 +231,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.total.base.label
                     currency_field: currency
             customerName:
                 label:         oro.order.customer.label
@@ -328,7 +324,7 @@ datagrids:
                     data_name: order1.currency
                     options:
                         field_options:
-                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_currency.config.currency->getCurrencies"
                 subtotal:
                     type:      currency
                     data_name: subtotal
@@ -409,7 +405,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
                 renderable: false
             total:
@@ -418,7 +413,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.total.base.label
                     currency_field: currency
             lineItemsCount:
                 label:         oro.order.line_items_count.label
@@ -666,7 +660,6 @@ datagrids:
             query:
                 select:
                     - calendarDate.date as cDate
-                    - orderAlias.createdAt as createdAt
                     - lineitem.productUnitCode as unitCode
                     - SUM (lineitem.quantity) as qtySold
                     - product.sku as sku
@@ -690,7 +683,7 @@ datagrids:
                             conditionType: WITH
                             condition: lineitem.product = product.id
 
-                groupBy: cDate, sku, product.id, unitCode, createdAt
+                groupBy: cDate, sku, product.id, unitCode
         properties:
             productName:
                 type: localized_value
@@ -716,9 +709,9 @@ datagrids:
                 sku:
                     data_name: product.sku
                 cDate:
-                    data_name: calendarDate.date
+                    data_name: cDate
                 dateGrouping:
-                    data_name: calendarDate.date
+                    data_name: cDate
                 qtySold:
                     data_name: qtySold
                 productName:

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -20,6 +21,8 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
  */
 class RequestControllerTest extends WebTestCase
 {
+    use ProductPriceReference;
+
     const PHONE = '2-(999)507-4625';
     const COMPANY = 'google';
     const ROLE = 'CEO';
@@ -186,7 +189,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['hideButtonEdit'])) {
-            $buttonEdit = $crawler->filter('.oro-customer-user-role__controls-list')->html();
+            $buttonEdit = $crawler->filter('.controls-list')->html();
             static::assertNotContains('edit', $buttonEdit);
         }
     }
@@ -599,7 +602,7 @@ class RequestControllerTest extends WebTestCase
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 
         /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.1');
+        $productPrice = $this->getPriceByReference('product_price.1');
 
         $parameters = [
             'input_action' => 'save_and_stay',

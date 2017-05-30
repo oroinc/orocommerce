@@ -24,7 +24,8 @@
             reloadEvents: ['shopping-list:refresh', 'frontend:item:delete'],
         },
         '~class': " header-row__toggle header-row__wrapper",
-        'data-header-row-toggle': ''
+        'data-header-row-toggle': '',
+        'data-options': '{"attachToParent": "true"}'
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="header-row__dropdown"
@@ -54,14 +55,15 @@
         'data-page-component-options': {
             'currentClass': currentClass
         },
+        'data-scroll': 'true',
         '~class': " shopping-list-widget__container"
     }) %}
 
     <div {{ block('block_attributes') }}>
         {% for shoppingList in shoppingLists -%}
             {% do block|merge_context({
-                shoppingList: shoppingList,
-                shoppingListProducts: shoppingListProducts,
+            shoppingList: shoppingList,
+            shoppingListProducts: shoppingListProducts,
             }) %}
             {{ block('container_widget') }}
         {%- endfor %}
@@ -101,12 +103,12 @@
                     {% endif %}
                 </span>
             </span>
-            <span class="shopping-list-dropdown__desc">
+            <span class="shopping-list-dropdown__products">
                 {% for product in shoppingListProducts[shoppingList.id]|default([]) %}
                     {% if loop.index == 3 %}
                         <span class="shopping-list-dropdown__ellipsis">...</span>
                     {% else %}
-                        {{ product.name }}
+                        <span class="shopping-list-dropdown__products__item">{{ product.name }}</span>
                     {% endif %}
                 {% endfor %}
             </span>
@@ -117,15 +119,17 @@
 
 {% block shopping_list_dropdown_create_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.clientLink({
-        'aCss': 'shopping-list-widget__create-btn',
-        'iCss': 'fa-plus-circle',
-        'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
-        'widget' : {
-            'type' : 'shopping-list-create',
-            'options': {
-                'createOnly': true
+    <div class="header-row__dropdown-footer">
+        {{ UI.clientLink({
+            'aCss': 'shopping-list-widget__create-btn',
+            'iCss': 'fa-plus-circle',
+            'label' : 'oro.frontend.shoppinglist.view.create_new_shopping_list.label'|trans,
+            'widget' : {
+                'type' : 'shopping-list-create',
+                'options': {
+                    'createOnly': true
+                }
             }
-        }
-    }) }}
+        }) }}
+    </div>
 {% endblock %}

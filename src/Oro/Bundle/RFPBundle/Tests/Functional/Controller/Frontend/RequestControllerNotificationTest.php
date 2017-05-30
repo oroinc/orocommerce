@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -17,6 +18,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class RequestControllerNotificationTest extends WebTestCase
 {
+    use ProductPriceReference;
+
     const PHONE = '2-(999)507-4625';
     const COMPANY = 'google';
     const ROLE = 'CEO';
@@ -207,7 +210,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 
         /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.1');
+        $productPrice = $this->getPriceByReference('product_price.1');
 
         $parameters = [
             'input_action' => 'save_and_stay',

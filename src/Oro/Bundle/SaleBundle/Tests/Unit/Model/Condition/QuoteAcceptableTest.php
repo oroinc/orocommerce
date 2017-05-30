@@ -151,6 +151,7 @@ class QuoteAcceptableTest extends \PHPUnit_Framework_TestCase
         $quote = $this->createMock(Quote::class);
         $quote->expects($this->any())->method('isAcceptable')->willReturn($isAcceptable);
         $quote->expects($this->any())->method('getQid')->willReturn(42);
+        $quote->expects($this->any())->method('getQuoteProducts')->willReturn([]);
 
         return $quote;
     }

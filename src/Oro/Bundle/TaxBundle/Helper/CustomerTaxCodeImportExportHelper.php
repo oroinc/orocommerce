@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Helper;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityNotFoundException;
+
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
@@ -33,8 +36,7 @@ class CustomerTaxCodeImportExportHelper
         $customerTaxCodes = [];
 
         foreach ($customers as $customer) {
-            $customerTaxCodes[$customer->getId()] = $this->getCustomerTaxCodeRepository()
-                ->findOneByCustomer($customer);
+            $customerTaxCodes[$customer->getId()] = $customer->getTaxCode();
         }
 
         return $customerTaxCodes;
@@ -54,10 +56,42 @@ class CustomerTaxCodeImportExportHelper
     }
 
     /**
+     * @param array $data
+     * @return null|CustomerTaxCode
+     * @throws EntityNotFoundException
+     */
+    public function denormalizeCustomerTaxCode(array $data)
+    {
+        if (!isset($data['tax_code'], $data['tax_code']['code'])) {
+            return null;
+        }
+
+        $taxCodeCode = $data['tax_code']['code'];
+
+        /** @var CustomerTaxCode $taxCode */
+        $taxCode = $this->getCustomerTaxCodeRepository()
+            ->findOneBy(['code' => $taxCodeCode]);
+
+        if ($taxCode === null) {
+            throw new EntityNotFoundException("Can't find CustomerTaxCode with code: \"{$taxCodeCode}\"");
+        }
+
+        return $taxCode;
+    }
+
+    /**
      * @return \Doctrine\ORM\EntityRepository|CustomerTaxCodeRepository
      */
     private function getCustomerTaxCodeRepository()
     {
         return $this->doctrineHelper->getEntityRepository(CustomerTaxCode::class);
+    }
+
+    /**
+     * @return EntityManager
+     */
+    private function getEntityManager()
+    {
+        return $this->doctrineHelper->getEntityManager(CustomerTaxCode::class);
     }
 }

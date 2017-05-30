@@ -14,10 +14,9 @@ layout:
         - '@addTree':
             items:
                 cms_page_content:
-                    blockType: text
+                    blockType: text_with_placeholders
                     options:
                         text: '=data["page"].getContent()'
-                        escape: false
             tree:
                 page_content:
                     cms_page_content: ~

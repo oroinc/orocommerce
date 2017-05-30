@@ -8,7 +8,6 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerType;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 
 class CustomerTaxExtension extends AbstractTaxExtension
@@ -46,13 +45,7 @@ class CustomerTaxExtension extends AbstractTaxExtension
      */
     protected function handleTaxCode($customer, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
     {
-        if ($taxCode) {
-            $taxCode->removeCustomer($customer);
-        }
-
-        if ($taxCodeNew) {
-            $taxCodeNew->addCustomer($customer);
-        }
+        $customer->setTaxCode($taxCodeNew);
     }
 
     /**
@@ -61,9 +54,6 @@ class CustomerTaxExtension extends AbstractTaxExtension
      */
     protected function getTaxCode($object)
     {
-        /** @var CustomerTaxCodeRepository $repository */
-        $repository = $this->getRepository();
-
-        return $repository->findOneByCustomer($object);
+        return $object->getTaxCode();
     }
 }

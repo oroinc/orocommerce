@@ -1,0 +1,5 @@
+oro:
+    authorize_net:
+        errors:
+            accept_js:
+                communication_err: 'Authorize.Net communication error.'

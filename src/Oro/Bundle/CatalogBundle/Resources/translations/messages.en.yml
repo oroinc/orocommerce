@@ -72,3 +72,8 @@ oro:
         fallback:
             category.label: 'Category Defaults'
             parent_category.label: 'Parent Category'
+
+        feature:
+            frontend_master_catalog:
+                label: Frontend Master Catalog
+                description: Frontend Master Catalog functionality allows to show categories structure on frontend page

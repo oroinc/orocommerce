@@ -41,8 +41,25 @@ class PaymentTransactionRepository extends EntityRepository
      */
     public function findByPaymentMethod($paymentMethod)
     {
-        return $this->findBy([
-            'paymentMethod' => $paymentMethod,
-        ]);
+        return $this->findBy(['paymentMethod' => $paymentMethod]);
+    }
+
+    /**
+     * @param PaymentTransaction $transaction
+     * @param string             $action
+     *
+     * @return PaymentTransaction[]
+     */
+    public function findSuccessfulRelatedTransactionsByAction(
+        PaymentTransaction $transaction,
+        $action
+    ) {
+        return $this->findBy(
+            [
+                'sourcePaymentTransaction' => $transaction,
+                'action' => $action,
+                'successful' => true
+            ]
+        );
     }
 }

@@ -11,24 +11,23 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
+use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 
-class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
+class TransitionProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|WorkflowManager
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|WorkflowManager */
     protected $workflowManager;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TransitionProvider
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TransitionProvider */
     protected $provider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TransitionOptionsResolver */
+    protected $optionsResolver;
 
     protected function setUp()
     {
-        $this->workflowManager = $this->getMockBuilder(WorkflowManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->workflowManager = $this->createMock(WorkflowManager::class);
+        $this->optionsResolver = $this->createMock(TransitionOptionsResolver::class);
 
         $this->provider = new TransitionProvider($this->workflowManager);
     }
@@ -50,13 +49,11 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
 
-        $transitionWithoutForm = new Transition();
-        $transitionWithoutForm->setName('transition1');
+        $transitionWithoutForm = $this->createTransition('transition1');
 
-        $continueTransition = new Transition();
-        $continueTransition->setName('transition3');
-        $continueTransition->setFrontendOptions(['is_checkout_continue' => true]);
-        $continueTransition->setFormType('transition_type');
+        $continueTransition = $this->createTransition('transition3')
+            ->setFrontendOptions(['is_checkout_continue' => true])
+            ->setFormType('transition_type');
 
         $transitions = [
             $transitionWithoutForm,
@@ -82,20 +79,17 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
 
-        $transitionWithoutForm = new Transition();
-        $transitionWithoutForm->setName('transition1');
+        $transitionWithoutForm = $this->createTransition('transition1');
 
-        $continueTransition1 = new Transition();
-        $continueTransition1->setName('transition3');
-        $continueTransition1->setFrontendOptions(['is_checkout_continue' => true]);
-        $continueTransition1->setFormType('transition_type');
-        $continueTransition1->setUnavailableHidden(true);
+        $continueTransition1 = $this->createTransition('transition3')
+            ->setFrontendOptions(['is_checkout_continue' => true])
+            ->setFormType('transition_type')
+            ->setUnavailableHidden(true);
 
-        $continueTransition2 = new Transition();
-        $continueTransition2->setName('transition4');
-        $continueTransition2->setFrontendOptions(['is_checkout_continue' => true]);
-        $continueTransition2->setFormType('transition_type');
-        $continueTransition1->setUnavailableHidden(true);
+        $continueTransition2 = $this->createTransition('transition4')
+            ->setFrontendOptions(['is_checkout_continue' => true])
+            ->setFormType('transition_type')
+            ->setUnavailableHidden(true);
 
         $transitions = [
             $transitionWithoutForm,
@@ -170,16 +164,14 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
 
-        $transition = new Transition();
-        $transition->setName('transition1');
+        $transition = $this->createTransition('transition1');
 
         $step = new Step();
         $step->setName('to_step');
         $step->setOrder(10);
-        $backTransition = new Transition();
-        $backTransition->setName('transition3');
-        $backTransition->setFrontendOptions(['is_checkout_back' => true]);
-        $backTransition->setStepTo($step);
+        $backTransition = $this->createTransition('transition3')
+            ->setFrontendOptions(['is_checkout_back' => true])
+            ->setStepTo($step);
 
         $transitions = [
             $transition,
@@ -192,5 +184,17 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($transitions));
 
         return [$workflowItem, $backTransition];
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return Transition
+     */
+    protected function createTransition($name)
+    {
+        $transition = new Transition($this->optionsResolver);
+
+        return $transition->setName($name);
     }
 }

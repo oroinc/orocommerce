@@ -58,7 +58,8 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                     'fields' => [
                         [
                             'name' => 'pageFirstField',
-                            'type' => 'text'
+                            'type' => 'text',
+                            'default_search_field' => true
                         ]
                     ]
                 ]
@@ -95,6 +96,18 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                         ]
                     ]
                 ]
+            ],
+            [
+                'Oro\Product' => [
+                    'alias' => 'ProductThirdAlias',
+                    'fields' => [
+                        [
+                            'name'  => 'productThirdField',
+                            'type'  => 'text',
+                            'store' => false
+                        ]
+                    ]
+                ]
             ]
         ];
 
@@ -104,7 +117,8 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                 'fields' => [
                     'pageFirstField' => [
                         'name' => 'pageFirstField',
-                        'type' => 'text'
+                        'type' => 'text',
+                        'default_search_field' => true
                     ],
                     'pageSecondField' => [
                         'name' => 'pageSecondField',
@@ -113,7 +127,7 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'Oro\Product' => [
-                'alias' => 'ProductSecondAlias',
+                'alias' => 'ProductThirdAlias',
                 'fields' => [
                     'productFirstField' => [
                         'name' => 'productFirstField',
@@ -123,6 +137,11 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                         'name' => 'productSecondField',
                         'type' => 'decimal'
                     ],
+                    'productThirdField' => [
+                        'name'  => 'productThirdField',
+                        'type'  => 'text',
+                        'store' => false
+                    ]
                 ]
             ]
         ];

@@ -1,0 +1,24 @@
+Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings:
+    properties:
+        creditCardLabels:
+            - NotBlank: ~
+        creditCardShortLabels:
+            - NotBlank: ~
+        creditCardPaymentAction:
+            - NotBlank: ~
+            - Valid: ~
+        allowedCreditCardTypes:
+            - NotBlank: ~
+            - Valid: ~
+        apiLoginId:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        transactionKey:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        clientKey:
+            - NotBlank: ~
+            - Length:
+                max: 255

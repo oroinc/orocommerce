@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
+    var mediator = require('oroui/js/mediator');
     var BaseModel = require('oroui/js/app/models/base/model');
     var PricesHelper = require('oropricing/js/app/prices-helper');
     var _ = require('underscore');
@@ -90,7 +91,7 @@ define(function(require) {
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute)) {
+                if (!this.model.has(attribute) || !_.isEmpty(value)) {
                     this.model.set(attribute, value);
                 }
             }, this);
@@ -221,6 +222,7 @@ define(function(require) {
                 this.getElement('price').removeClass('hidden');
             }
             this.renderHint();
+            mediator.trigger('layout:reposition');
         }
     }));
 

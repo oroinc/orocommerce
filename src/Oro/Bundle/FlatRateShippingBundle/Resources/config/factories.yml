@@ -1,0 +1,8 @@
+services:
+    oro_flat_rate_shipping.factory.method:
+        class: 'Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory'
+        public: false
+        arguments:
+            - '@oro_flat_rate_shipping.method.identifier_generator.method'
+            - '@oro_locale.helper.localization'
+            - '@oro_integration.provider.integration_icon'

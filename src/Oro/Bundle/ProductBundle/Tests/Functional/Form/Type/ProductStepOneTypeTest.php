@@ -8,16 +8,22 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 
 class ProductStepOneTypeTest extends WebTestCase
 {
     const CATEGORY_ID = 1;
-    const ATTRIBUTE_FAMILY_ID = 1;
 
     /**
      * @var FormFactoryInterface
      */
     protected $formFactory;
+
+    /**
+     * @var $defaultFamily AttributeFamily;
+     */
+    protected $defaultFamily;
 
     /**
      * @var CsrfTokenManagerInterface
@@ -27,6 +33,11 @@ class ProductStepOneTypeTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+
+        $this->defaultFamily = $this->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityRepositoryForClass(AttributeFamily::class)
+            ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadCategoryProductData::class]);
 
@@ -43,6 +54,7 @@ class ProductStepOneTypeTest extends WebTestCase
     public function testSubmit(array $submitData, $isValid)
     {
         $submitData['_token'] = $this->tokenManager->getToken('product')->getValue();
+        $submitData['attributeFamily'] = $this->defaultFamily->getId();
         // submit form
         $form = $this->formFactory->create(ProductStepOneType::NAME, null);
         $form->submit($submitData);
@@ -72,7 +84,6 @@ class ProductStepOneTypeTest extends WebTestCase
                 'submitData' => [
                     'category' => self::CATEGORY_ID,
                     'type' => 'simple',
-                    'attributeFamily' => self::ATTRIBUTE_FAMILY_ID
                 ],
                 'isValid' => true
             ],
@@ -80,17 +91,15 @@ class ProductStepOneTypeTest extends WebTestCase
                 'submitData' => [
                     'category' => self::CATEGORY_ID,
                     'type' => 'wrong_type',
-                    'attributeFamily' => self::ATTRIBUTE_FAMILY_ID
                 ],
                 'isValid' => false
             ],
-            'type configurable' => [
+            'type configurable with family without attributes' => [
                 'submitData' => [
                     'category' => self::CATEGORY_ID,
                     'type' => 'configurable',
-                    'attributeFamily' => self::ATTRIBUTE_FAMILY_ID
                 ],
-                'isValid' => true
+                'isValid' => false
             ]
         ];
     }

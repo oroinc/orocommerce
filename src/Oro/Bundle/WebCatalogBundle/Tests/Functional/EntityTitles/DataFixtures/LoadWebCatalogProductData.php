@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures;
 
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
@@ -33,7 +34,7 @@ class LoadWebCatalogProductData extends AbstractLoadWebCatalogData
      */
     protected function getContentVariantType()
     {
-        return 'product_page';
+        return ProductPageContentVariantType::TYPE;
     }
 
     /**

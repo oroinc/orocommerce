@@ -5,12 +5,15 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
+use Oro\Component\Website\WebsiteInterface;
 
 class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInterface
 {
@@ -22,13 +25,23 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
     protected $scopeManager;
 
     /**
+     * @var DoctrineHelper
+     */
+    private $doctrineHelper;
+
+    /**
      * @param ConfigManager $configManager
      * @param ScopeManager $scopeManager
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(ConfigManager $configManager, ScopeManager $scopeManager)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        ScopeManager $scopeManager,
+        DoctrineHelper $doctrineHelper
+    ) {
         $this->configManager = $configManager;
         $this->scopeManager = $scopeManager;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -41,6 +54,28 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
         $visibilities[] = $this->getCustomerProductVisibilityResolvedTerm($queryBuilder);
 
         $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param WebsiteInterface $website
+     */
+    public function restrictForAnonymous(QueryBuilder $queryBuilder, WebsiteInterface $website)
+    {
+        $productVisibilityTerm = $this->getProductVisibilityResolvedTermByWebsite(
+            $queryBuilder,
+            $website
+        );
+        $anonymousGroupVisibilityTerm = implode('+', [
+            $productVisibilityTerm,
+            $this->getCustomerGroupProductVisibilityResolvedTermByWebsite(
+                $queryBuilder,
+                $this->getAnonymousCustomerGroup(),
+                $website
+            )
+        ]);
+
+        $queryBuilder->andWhere($queryBuilder->expr()->gt($anonymousGroupVisibilityTerm, 0));
     }
 
     /**
@@ -144,5 +179,20 @@ TERM;
             $this->getProductConfigValue(),
             $customerFallback
         );
+    }
+
+    /**
+     * @return CustomerGroup|null
+     */
+    private function getAnonymousCustomerGroup()
+    {
+        $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_customer_group');
+
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->doctrineHelper
+            ->getEntityRepository(CustomerGroup::class)
+            ->find($anonymousGroupId);
+
+        return $customerGroup;
     }
 }

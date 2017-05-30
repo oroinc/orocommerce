@@ -1,7 +1,15 @@
+@ticket-BB-7164
+@automatically-ticket-tagged
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-Checkout.yml
+@fixture-InventoryLevel.yml
+@community-edition-only
 Feature: Checkout workflow
+  In order to create order on front store
+  As a buyer
+  I want to start and complete checkout
+
   Scenario: Create order from Shopping List 1
     Given There is EUR currency in the system configuration
       And AmandaRCole@example.org customer user has Buyer role

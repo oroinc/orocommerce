@@ -69,6 +69,15 @@
 
 @include breakpoint('mobile-landscape') {
     .shopping-lists-popup {
+        &__quantity {
+            width: $shopping-lists-popup-quantity-width-mobile;
+            padding: $shopping-lists-popup-quantity-inner-offset-mobile;
+        }
+
+        &__list {
+            width: $shopping-lists-popup-list-width-mobile;
+        }
+
         &__footer & {
             &__list {
                 width: $shopping-lists-popup-footer-list-width-mobile;
@@ -77,6 +86,7 @@
 
             &__quantity {
                 width: $shopping-lists-popup-footer-quantity-width-mobile;
+                padding: $shopping-lists-popup-footer-quantity-inner-offset-mobile;
             }
         }
     }

@@ -95,7 +95,7 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit_Framework_
             ->will($this->returnValueMap($registryMapValues));
 
         $this->repository->expects(self::once())
-             ->method('getConfigsWithEnabledRuleAndMethod')
+             ->method('getEnabledRulesByMethod')
              ->willReturn($configMocks);
 
         $this->decorator->handleMethodDisable($disabledMethodId);

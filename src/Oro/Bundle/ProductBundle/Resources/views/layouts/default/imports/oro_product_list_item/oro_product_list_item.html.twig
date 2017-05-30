@@ -97,9 +97,18 @@
 
 {% block __oro_product_list_item__product_short_description_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product__description product__description_{{ class_prefix }}'
+        '~class': ' product__description product__description_{{ class_prefix }}',
+        'data-page-component-module': "oroui/js/app/components/viewport-component",
+        '~data-page-component-options': {
+            viewport: {
+                maxScreenType: 'mobile-landscape'
+            },
+            component: 'oroui/js/app/components/jquery-widget-component',
+            widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget'
+        }|json_encode
     }) %}
-    <div {{ block('block_attributes') }}>
+
+    <div {{ block('block_attributes') }} >
         <p>{{ product.shortDescription }}</p>
     </div>
 {% endblock %}
@@ -110,7 +119,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product">
-            <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="fa-angle-right"></i>
+            {{ 'oro.product.frontend.index.view_details'|trans }}<i class="fa-angle-right fa--link-r"></i>
         </a>
     </div>
 {% endblock %}

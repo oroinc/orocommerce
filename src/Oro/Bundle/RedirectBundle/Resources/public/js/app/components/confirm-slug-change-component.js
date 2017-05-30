@@ -78,7 +78,7 @@ define(function(require) {
                 this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
                 this.$createRedirectCheckbox = this.$form.find(this.options.createRedirectCheckbox);
                 this._saveSlugFieldsInitialState();
-                this.$form.off('submit').on('submit', _.bind(this.onSubmit, this));
+                this.$form.off('submit', $.proxy(this.onSubmit, this)).on('submit', $.proxy(this.onSubmit, this));
             }
         },
 
@@ -99,6 +99,7 @@ define(function(require) {
                 return true;
             }
 
+            event.stopImmediatePropagation();
             this._removeConfirmModal();
 
             this.loadSlugListAndShowConfirmModal();
@@ -167,7 +168,7 @@ define(function(require) {
             this._removeConfirmModal();
 
             if (this.$form) {
-                this.$form.off('submit');
+                this.$form.off('submit', $.proxy(this.onSubmit, this));
             }
             mediator.off(null, null, this);
 

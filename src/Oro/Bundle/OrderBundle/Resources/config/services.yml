@@ -348,7 +348,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
 
-
     oro_order.converter.shipping_prices:
         class: 'Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter'
 
@@ -358,3 +357,13 @@ services:
             - '@oro_product.layout.data_provider.configurable_products'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }
+
+    oro_order.factory.supports_order_payment_context:
+        class: 'Oro\Bundle\OrderBundle\Factory\SupportsOrderPaymentContextFactory'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_order.factory.payment_context'
+        tags:
+            - { name: oro_payment.supports_entity_payment_context_factory }
+        public: false
+        lazy: true

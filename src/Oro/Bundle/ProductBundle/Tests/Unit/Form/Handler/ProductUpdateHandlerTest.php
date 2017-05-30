@@ -134,7 +134,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->with(Router::ACTION_PARAMETER)
             ->will($this->returnValue(ProductUpdateHandler::ACTION_SAVE_AND_DUPLICATE));
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->with($entity)
             ->will($this->returnValue($this->entityManager));

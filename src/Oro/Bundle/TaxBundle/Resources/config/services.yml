@@ -24,6 +24,15 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
 
+    oro_tax.form.autocomplete.product_tax_code.entity_search_handler:
+        class: Oro\Bundle\TaxBundle\Autocomplete\SearchHandler
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %oro_tax.entity.product_tax_code.class%
+            - ["code"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code_entity_search }
+
     oro_tax.form.autocomplete.customer_tax_code.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
@@ -109,7 +118,6 @@ services:
     oro_tax.event_listener.customer_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.customer_tax_code.class%'
             - '%oro_customer.entity.customer.class%'
         tags:
@@ -118,7 +126,6 @@ services:
     oro_tax.event_listener.customer_grid_groups:
         class: 'Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.customer_tax_code.class%'
             - '%oro_customer.entity.customer_group.class%'
         tags:
@@ -127,7 +134,6 @@ services:
     oro_tax.event_listener.customer_group_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.customer_tax_code.class%'
             - '%oro_customer.entity.customer_group.class%'
         tags:
@@ -136,7 +142,6 @@ services:
     oro_tax.event_listener.product_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\ProductTaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.product_tax_code.class%'
             - '%oro_product.entity.product.class%'
         tags:
@@ -563,6 +568,7 @@ services:
     oro_tax.event_listener.import_export_tax_subscriber:
         class: %oro_tax.event_subscriber.import_export_tax_subscriber.class%
         arguments:
+            - '@translator'
             - '@oro_tax.manager.oro.customer_tax_code_manager'
             - '%oro_customer.entity.customer.class%'
         tags:

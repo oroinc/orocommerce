@@ -8,12 +8,17 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 
 /**
  * @ORM\Table(name="oro_quote_product_demand")
  * @ORM\Entity
  */
-class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface, PriceTypeAwareInterface
+class QuoteProductDemand implements
+    PriceAwareInterface,
+    QuantityAwareInterface,
+    PriceTypeAwareInterface,
+    CheckoutLineItemInterface
 {
     /**
      * @var int
@@ -135,5 +140,46 @@ class QuoteProductDemand implements PriceAwareInterface, QuantityAwareInterface,
     public function getPriceType()
     {
         return $this->getQuoteProductOffer()->getPriceType();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProduct()
+    {
+        return $this->getQuoteProductOffer()->getProduct();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductSku()
+    {
+        return $this->getQuoteProductOffer()->getProductSku();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnit()
+    {
+        return $this->getQuoteProductOffer()->getProductUnit();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnitCode()
+    {
+        return $this->getQuoteProductOffer()->getProductUnitCode();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParentProduct()
+    {
+        // QuoteProductOffer doesn't support configurable products
+        return null;
     }
 }

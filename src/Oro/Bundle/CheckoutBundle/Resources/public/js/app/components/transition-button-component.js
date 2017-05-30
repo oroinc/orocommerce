@@ -37,13 +37,19 @@ define(function(require) {
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
             }
-            this.onReady();
+            this.enableTransitionButton();
+            mediator.on('checkout:transition-button:enable', this.enableTransitionButton, this);
+            mediator.on('checkout:transition-button:disable', this.disableTransitionButton, this);
         },
 
-        onReady: function() {
+        enableTransitionButton: function() {
             if (this.options.enabled) {
                 this.$el.prop('disabled', false);
             }
+        },
+
+        disableTransitionButton: function() {
+            this.$el.prop('disabled', 'disabled');
         },
 
         initializeTriggers: function() {
@@ -56,7 +62,11 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            this.transit(e, {method: 'POST', data: this.$form.serialize()});
+            this.$form.validate();
+
+            if (this.$form.valid()) {
+                this.transit(e, {method: 'POST'});
+            }
         },
 
         transit: function(e, data) {
@@ -75,6 +85,9 @@ define(function(require) {
             data = data || {method: 'GET'};
             data.url = url;
             data.errorHandlerMessage = false;
+            if (this.$form) {
+                data.data = this.$form.serialize();
+            }
             $.ajax(data)
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this));
@@ -85,6 +98,7 @@ define(function(require) {
 
             if (response.hasOwnProperty('responseData')) {
                 var eventData = {stopped: false, responseData: response.responseData};
+                // FIXME: Inconsistent event name. This is not place-order logic, just "Continue"
                 mediator.trigger('checkout:place-order:response', eventData);
                 if (eventData.stopped) { return; }
             }
@@ -146,6 +160,9 @@ define(function(require) {
             }
             this.$el.off('click', $.proxy(this.transit, this));
             this.$transitionTriggers.off('click', $.proxy(this.transit, this));
+
+            mediator.off('checkout:transition-button:enable', this.enableTransitionButton, this);
+            mediator.off('checkout:transition-button:disable', this.disableTransitionButton, this);
 
             TransitionButtonComponent.__super__.dispose.call(this);
         }

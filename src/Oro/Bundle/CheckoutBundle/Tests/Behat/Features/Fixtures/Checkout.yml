@@ -1,46 +1,6 @@
-Oro\Bundle\RuleBundle\Entity\Rule:
-    paymentRule:
-        name: 'Default'
-        enabled: true
-        sortOrder: 1
-    shippingRule:
-        name: 'Default'
-        enabled: true
-        sortOrder: 1
-
-Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
-    paymentMethodConfig:
-        type: '<("payment_term_".@paymentTermIntegration->id)>'
-
-Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
-    paymentMethodsConfigsRule:
-        rule: '@paymentRule'
-        methodConfigs: ['@paymentMethodConfig']
-        currency: 'USD'
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
-    shippingMethodTypeConfig:
-        type: 'primary'
-        enabled: true
-        options:
-            price: 1.5
-            type: 'per_order'
-            handling_fee: 1.5
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
-    shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
-        typeConfigs: ['@shippingMethodTypeConfig']
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
-    shippingMethodsConfigsRule:
-        rule: '@shippingRule'
-        methodConfigs: ['@shippingMethodConfig']
-        currency: 'USD'
-
-Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
-    paymentTerm:
-        label: net 10
+include:
+    - Payment.yml
+    - Shipping.yml
 
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
     price:
@@ -85,10 +45,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
         label: 'List 1'
+        customerUser: '@amanda'
+        organization: '@organization'
+    shoppinglist2:
+        label: 'List 2'
         customerUser: '@amanda'
         organization: '@organization'
 
@@ -100,6 +65,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
         organization: '@organization'
+    lineitem2:
+        product: '@product'
+        quantity: '10'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal:
@@ -107,6 +79,12 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         shoppingList: '@shoppinglist'
         currency: 'USD'
         subtotalValue: '10'
+        valid: true
+    shoppingListTotal2:
+        __construct: ['@shoppinglist2','USD']
+        shoppingList: '@shoppinglist2'
+        currency: 'USD'
+        subtotalValue: '15'
         valid: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:

@@ -39,7 +39,7 @@
 
     {% set hideShipping = false %}
     {% if billingAddress %}
-        {% set typedAddress  = billingAddress.customerAddress %}
+        {% set typedAddress = billingAddress.customerAddress %}
         {% if typedAddress is empty %}
             {% set typedAddress  = billingAddress.customerUserAddress %}
         {% endif %}

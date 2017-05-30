@@ -20,9 +20,7 @@ class OrderPaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentProvider = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentProvider = $this->createMock(PaymentStatusProvider::class);
 
         $this->provider = new OrderPaymentStatusProvider($this->paymentProvider);
     }
