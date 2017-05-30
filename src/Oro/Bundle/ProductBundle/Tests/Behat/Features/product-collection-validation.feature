@@ -11,8 +11,8 @@ Feature:
     And I click on "Show Variants Dropdown"
     And I click "Add Product Collection"
     And I click "Content Variants"
-#    And I click "Save"
-#    Then I should see "Should be specified filters or added some products manually."
+    And I click "Save"
+    Then I should see "Should be specified filters or added some products manually."
 
   Scenario: Saving Product Collection with added just manual products, is allowed
     When I click "All Added"
@@ -28,14 +28,14 @@ Feature:
     And I click "Add Product Collection"
     And I click "Content Variants"
     And I click on "Advanced Filter"
-#    And I drag and drop "Field Condition" on "Drop condition here"
-#    And I click on "Preview Results"
-#    Then I should see "Conditions in filters should not be blank."
+    And I drag and drop "Field Condition" on "Drop condition here"
+    And I click on "Preview Results"
+    Then I should see "Conditions in filters should not be blank."
 
   Scenario: Saving Another Product Collection with invalid state of Condition Builder, result in validation error
-#    When I save form
-#    Then I should not see text matching "You have changes in the Filters section that have not been applied"
-#    And I should see "Conditions in filters should not be blank."
+    When I save form
+    Then I should not see text matching "You have changes in the Filters section that have not been applied"
+    And I should see "Conditions in filters should not be blank."
 
   Scenario: Saving Another Product Collection with filled just filters, is allowed
     When I click "Choose a field.."
