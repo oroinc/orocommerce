@@ -18,7 +18,7 @@
     {% endset %}
 
     {{ productRelatedSelectFields }}
-    {{ dataGrid.renderGrid('products-related-products-select', {'productId': productId}) }}
+    {{ dataGrid.renderGrid('products-related-products-select', {'productId': product.id, 'relatedProducts': get_related_products_ids(product)}) }}
 
     <div class="widget-actions form-actions">
         <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>

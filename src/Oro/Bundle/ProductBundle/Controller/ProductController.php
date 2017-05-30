@@ -317,11 +317,12 @@ class ProductController extends Controller
      * )
      * @Template(template="OroProductBundle:Product:selectRelatedProducts.html.twig")
      *
-     * @param int $id
+     * @param Product $product
+     *
      * @return array
      */
-    public function getPossibleProductsForRelatedProductsAction($id)
+    public function getPossibleProductsForRelatedProductsAction(Product $product)
     {
-        return ['productId' => $id];
+        return ['product' => $product];
     }
 }

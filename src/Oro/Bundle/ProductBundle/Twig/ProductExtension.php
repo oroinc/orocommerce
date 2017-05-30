@@ -44,11 +44,34 @@ class ProductExtension extends \Twig_Extension
                 'is_configurable_product_type',
                 [$this, 'isConfigurableType']
             ),
+            new \Twig_SimpleFunction(
+                'get_related_products_ids',
+                [$this, 'getRelatedProductsIds']
+            ),
         ];
     }
 
     /**
+     * @param Product $product
+     *
+     * @return Product[]
+     */
+    public function getRelatedProductsIds(Product $product)
+    {
+        /** @var Product[] $related */
+        $related = $this->container->get('oro.product.related_item.related_product.finder_strategy')->find($product);
+        $ids = [];
+
+        foreach ($related as $relatedProduct) {
+            $ids[] = $relatedProduct->getId();
+        }
+
+        return $ids;
+    }
+
+    /**
      * @param string $productType
+     *
      * @return bool
      */
     public function isConfigurableType($productType)
@@ -59,6 +82,7 @@ class ProductExtension extends \Twig_Extension
     /**
      * @param bool $numericalOnly
      * @param bool $withRelations
+     *
      * @return array
      */
     public function getAutocompleteData($numericalOnly = false, $withRelations = true)

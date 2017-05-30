@@ -347,7 +347,6 @@ datagrids:
                     - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
-                        - { join: product.relatedByProducts, alias: related}
                         - { join: product.inventory_status, alias: productInventoryStatus}
         columns:
             sku:
@@ -433,9 +432,9 @@ datagrids:
             query:
                 where:
                     and:
-                        - 'related.id = :productId'
+                        - 'product.id IN(:relatedProducts)'
             bind_parameters:
-                - productId
+                - relatedProducts
 
     products-related-items-edit:
         acl_resource: oro_product_update
@@ -454,10 +453,12 @@ datagrids:
             query:
                 where:
                     or:
-                        - 'related.id = :productId AND product.id NOT IN (:data_not_in)'
+                        - 'product.id IN (:relatedProducts) AND product.id NOT IN (:data_not_in)'
                         - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
             bind_parameters:
-                - productId
+                -
+                  name: relatedProducts
+                  default: []
         actions:
             delete:
                 type:          frontend
@@ -488,7 +489,7 @@ datagrids:
                 select:
                     - >
                       (
-                        CASE WHEN (:productId MEMBER OF product.relatedByProducts OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                        CASE WHEN (product.id IN (:relatedProducts) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
                         THEN true ELSE false END
                       ) as isRelated
                 where:
@@ -496,6 +497,7 @@ datagrids:
                         - product.id != :productId
             bind_parameters:
                 - productId
+                - relatedProducts
         columns:
             isRelated:
                 label: oro.product.is_related.label

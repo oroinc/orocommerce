@@ -137,7 +137,7 @@
                 'priority': 0,
                 'subblocks': [{
                     'data': [
-                        dataGrid.renderGrid('products-related-items-view', {'productId': entity.id}),
+                        dataGrid.renderGrid('products-related-items-view', {'relatedProducts': get_related_products_ids(entity)}),
                         placeholder('oro_product_related_items_view', {'entity':  entity})
                     ]
                 }]
