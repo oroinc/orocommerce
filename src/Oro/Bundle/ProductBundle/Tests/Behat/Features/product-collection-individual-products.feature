@@ -4,7 +4,7 @@ Feature:
   As an Administrator
   I want to have ability of adding individual products into Product Collection variant
 
-  Scenario: Add condition on SKU using Advanced Filter
+  Scenario: Add product collection
     Given I login as administrator
     And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
@@ -152,4 +152,3 @@ Feature:
       | PSKU5  | Product 5  |
       | PSKU3  | Product 3  |
       | PSKU2  | Product 2  |
-
