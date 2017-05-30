@@ -175,10 +175,10 @@
         open: true
     } %}
 
-    <div class="shipping-method-config collapse-view"
+    <div class="shipping-method-config shipping-method-config-{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }} collapse-view"
          data-page-component-module="oroui/js/app/components/jquery-widget-component"
          data-page-component-options="{{ collapseView|json_encode }}"
-         data-method-view="{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }}">
+         data-role="method-view">
         {% if form.method.vars.value %}
             <div class="shipping-method-config__header"
                  data-collapse-trigger>
@@ -190,7 +190,7 @@
                     {{ label }}
                     {{ ShipRuleMacro.renderShippingMethodDisabledFlag(form.method.vars.value) }}
                 </div>
-                <div class="shipping-method-config__info"></div>
+                <div class="shipping-method-config__info" data-role="method-preview"></div>
             </div>
         {% endif %}
 

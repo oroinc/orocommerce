@@ -8,334 +8,246 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
 
     ShippingRuleMethodsView = BaseView.extend({
-        /**
-         * @param options Object
-         */
         options: {
-            methodSelectSelector: '.oro-shipping-rule-add-method-select .oro-select2',
-            buttonSelector: '.add-method',
-            buttonSelectorAll: '.add-all-methods',
+            addSelector: '.add-method',
+            addAllSelector: '.add-all-methods',
+            gridSelector: '.shipping-methods-grid',
+            methodSelectSelector: '[name="oro_shipping_methods_configs_rule[method]"]',
+            methodSelector: 'input[data-name="field__method"]',
+            methodViewSelector: '[data-role="method-view"]',
+            methodPreviewSelector: '[data-role="method-preview"]',
+            currencySelector: 'select[data-name="field__currency"]',
+            currencyFieldsSelector: 'input:text[name]',
+            previewFieldsSelector: 'input:text[name],select[name]',
+            enabledFieldSelector: '[data-name="field__enabled"]',
+            additionalOptionSelector: '.control-group-oro_shipping_method_type_config',
             updateFlag: null
         },
 
         events: {
-            'click .add-all-methods, .add-method': '_createAddRequest'
+            'click .add-all-methods': '_onAddAllClick',
+            'click .add-method': '_onAddClick',
+            'change [name="oro_shipping_methods_configs_rule[method]"]': '_onMethodChange',
+            'content:remove': '_onMethodRemove',
+            'change :input': '_onInputsChange'
         },
+
+        methods: null,
+
+        $form: null,
+
+        $currency: null,
 
         $methodSelect: null,
 
-        $allMethodsOptions: null,
+        $methodSelectClone: null,
 
-        $formElements: null,
+        $add: null,
 
-        $buttonSelector: null,
+        $addAll: null,
 
-        $grid: null,
-
-        $buttonSelectorAll: null,
-
-        $formParent: null,
-
-        currency: null,
-
-        requiredOptions: ['methodSelectSelector', 'buttonSelector', 'updateFlag'],
-
-        /**
-         * Initialize view
-         *
-         * @param {object} options
-         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.checkOptions();
-            this.checkForm();
-            this.$formParent = this.form.parents('#main');
-            this.$grid = this.form.find('.shipping-methods-grid');
-            this.$methodSelect = $(this.el).find(this.options.methodSelectSelector).data().inputWidget.$el;
-            this.$allMethodsOptions = this.$methodSelect.find('option[value][value!=""]').clone();
-            this.$buttonSelector = $(this.el).find(options.buttonSelector);
-            this.$buttonSelectorAll = $(this.el).find(options.buttonSelectorAll);
-            this.updateFormElements();
+            this.$form = $(this.el).closest('form');
+            this.$currency = this.$form.find(this.options.currencySelector);
+            this.$methodSelect = this.$(this.options.methodSelectSelector);
+            this.$methodSelectClone = this.$methodSelect.find('option[value!=""]').clone();
+            this.$add = this.$(this.options.addSelector);
+            this.$addAll = this.$(this.options.addAllSelector);
 
-            this.setMethodCurrency();
-            this._simpleSetInfoMethod();
-            this._groupedSetInfoMethod();
             this.bindEvents();
-            this.updateMethodSelector();
+
+            this.updateMethodsList();
+            this.updateMethodSelect();
+            this.updateLabels();
+            this.updateMethodPreview();
         },
 
-        /**
-         * Check required options of the component
-         */
-        checkOptions: function() {
-            var self = this;
-            var requiredMissed = this.requiredOptions.filter(function(option) {
-                return _.isUndefined(self.options[option]);
-            });
-
-            if (requiredMissed.length) {
-                throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
-            }
-        },
-
-        /**
-         * Check if form present
-         */
-        checkForm: function() {
-            this.form = $(this.el).closest('form');
-            if (!this.form.length) {
-                throw new TypeError('Form not found');
-            }
-        },
-
-        /**
-         * Bind events of select2 elements
-         */
         bindEvents: function() {
-            var self = this;
-
-            this.bindShortMethodInfo();
-
-            _.each(this.$formElements, function(element) {
-                $(element).parent().on('content:remove', _.throttle(_.bind(this.removeHandler, this)));
-            }, this);
-
-            this.$methodSelect.on('change select2-selecting', function() {
-                if (!$(this).select2('data')) {
-                    self.disableAddButton();
-                } else {
-                    self.enableAddButton();
-                }
-            });
+            this.$form.on(
+                'change' + this.eventNamespace(),
+                this.options.currencySelector,
+                _.bind(this._onCurrencyChange, this)
+            );
         },
 
-        _createAddRequest: function(e) {
-            this.updateFormElements();
-            var data = this.form.serializeArray();
-            var methodCount = this.$formElements.length - 1;
+        _onMethodChange: function() {
+            this.toggleAddButton();
+        },
 
-            if ($(e.target).hasClass('add-all-methods')) {
-                Array.prototype.push.apply(data, this.$methodSelect.find('option[value][value!=""]').get().map(
-                    function(option) {
-                        methodCount++;
-                        return {
-                            'name': 'oro_shipping_methods_configs_rule[methodConfigs][' + methodCount + '][method]',
-                            'value': option.value
-                        };
-                    })
-                );
-            } else if ($(e.target).hasClass('add-method')) {
-                methodCount++;
-                data.push({
-                    'name': 'oro_shipping_methods_configs_rule[methodConfigs][' + methodCount + '][method]',
-                    'value': this.$methodSelect.val()
-                });
+        _onAddAllClick: function() {
+            this.createAddRequest(true);
+        },
+
+        _onAddClick: function() {
+            this.createAddRequest(false);
+        },
+
+        _onInputsChange: function(e) {
+            var $method = $(e.target).closest(this.options.methodViewSelector);
+            if ($method.length) {
+                this.updateMethodPreview($method);
             }
+        },
 
+        _onCurrencyChange: function() {
+            this.updateLabels();
+            this.updateMethodPreview();
+        },
+
+        _onMethodRemove: function(e) {
+            var removedMethod = $(e.target).find(this.options.methodSelector).val();
+            this.updateMethodsList(removedMethod);
+            this.updateMethodSelect();
+
+            if (this.methods.length === 0) {
+                this.$(this.options.gridSelector).remove();
+            }
+        },
+
+        toggleAddButton: function() {
+            this.$add.toggleClass('disabled', _.isEmpty(this.$methodSelect.val()));
+        },
+
+        createAddRequest: function(addAll) {
+            var methodCount = this.methods.length - 1;
+            var addMethod = function(option) {
+                methodCount++;
+                return {
+                    name: 'oro_shipping_methods_configs_rule[methodConfigs][' + methodCount + '][method]',
+                    value: option.value
+                };
+            };
+
+            var data = this.$form.serializeArray();
+            if (addAll) {
+                data.push.apply(data, this.$methodSelect.find('option[value][value!=""]').get().map(addMethod));
+            } else {
+                data.push(addMethod(this.$methodSelect.get(0)));
+            }
             data.push({
-                'name': this.options.updateFlag,
-                'value': true
+                name: this.options.updateFlag,
+                value: true
             });
 
             mediator.execute('submitPage', {
-                url: this.form.attr('action'),
-                type: this.form.attr('method'),
+                url: this.$form.attr('action'),
+                type: this.$form.attr('method'),
                 data: $.param(data)
             });
         },
 
-        removeHandler: function(element) {
-            this.updateMethodSelector(element);
-            this.enableMethodSelector();
-            if (this.$formElements.length === 0) {
-                this.$grid.remove();
-            }
-        },
-
-        updateFormElements: function() {
-            this.$formElements = this.form.find(
-                '.oro-shipping-rule-method-configs-collection .row-oro.oro-multiselect-holder'
-            );
-        },
-
-        updateMethodSelector: function(removedElement) {
-            var self = this;
-            var methods = [];
-            this.updateFormElements();
-
-            this.$formElements.each(function(index, element) {
-                if (removedElement && self.getMethod(element) === self.getMethod(removedElement)) {
-                    return;
+        updateMethodsList: function(removedMethod) {
+            this.methods = [];
+            _.each(this.$(this.options.methodSelector), function(option) {
+                if (!removedMethod || option.value !== removedMethod) {
+                    this.methods.push(option.value);
                 }
-                methods.push($(element).find('input[data-name="field__method"]').val());
-            });
+            }, this);
+        },
 
-            this.$buttonSelectorAll.toggle((this.$allMethodsOptions.length - methods.length) > 1);
+        updateMethodSelect: function() {
+            this.$methodSelect.empty();
+            _.each(this.$methodSelectClone, function(option) {
+                if (_.indexOf(this.methods, option.value) === -1) {
+                    this.$methodSelect.append($(option).clone());
+                }
+            }, this);
 
-            if (methods.length >= this.$allMethodsOptions.length) {
-                this.disableMethodSelector();
+            var length = this.$methodSelect.find('option').length;
+            this.$methodSelect.prop('disabled', length === 0);
+            this.$methodSelect.inputWidget('refresh');
+            this.$methodSelect.inputWidget('val', '');
+
+            this.$addAll.toggle(length > 1);
+            this.toggleAddButton();
+        },
+
+        updateLabels: function() {
+            var currency = this.$currency.find('option:selected').text();
+            _.each(this.$(this.options.currencyFieldsSelector), function(field) {
+                var $field = $(field);
+                $field.data('currency', currency);
+
+                var $label = this.$('label[for="' + field.id + '"]');
+                if (!$label.length) {
+                    $label = $field.closest(this.options.additionalOptionSelector).find('label:first');
+                    $label.attr('for', field.id);
+                }
+
+                var $parent = $field.parent();
+                if ($parent.is('label')) {
+                    $label = $parent;
+                }
+
+                $label.find('.currency').remove();
+                if ($label.text()) {
+                    $label.find('em').before('<span class="currency">, ' + currency + '</span>');
+                } else {
+                    $label.prepend('<span class="currency">' + currency + '</span>');
+                }
+            }, this);
+        },
+
+        updateMethodPreview: function($method) {
+            if (_.isUndefined($method)) {
+                _.each(this.$(this.options.methodViewSelector), function(method) {
+                    this.updateMethodPreview($(method));
+                }, this);
                 return;
             }
 
-            if (!this.$methodSelect.val()) {
-                this.disableAddButton();
-            } else {
-                this.enableAddButton();
-            }
-
-            this.$methodSelect.empty(); // remove old options
-            this.$allMethodsOptions.each(function(i, option) {
-                var value = $(option).val();
-                if ($.inArray(value, methods) === -1) {
-                    self.$methodSelect.append(self.createOption(value));
+            var disabled = [];
+            $method.find(this.options.enabledFieldSelector).each(function() {
+                if ($(this).is(':checkbox') && !this.checked) {
+                    disabled.push(this.name.replace(/\[enabled\]$/, ''));
                 }
             });
 
-            this.$methodSelect.inputWidget('refresh');
-            $(this.el).show();
-        },
-
-        /**
-         * @param {String} value
-         *
-         * @return {jQuery}
-         */
-        createOption: function(value) {
-            return this.$allMethodsOptions.filter('[value="' + value + '"]').clone();
-        },
-
-        disableMethodSelector: function() {
-            this.$methodSelect.prop('disabled', true);
-            this.disableAddButton();
-        },
-
-        enableMethodSelector: function() {
-            this.$methodSelect.prop('disabled', false);
-            this.enableAddButton();
-        },
-
-        disableAddButton: function() {
-            $(this.el).children(this.options.buttonSelector).addClass('disabled');
-        },
-
-        enableAddButton: function() {
-            $(this.el).children(this.options.buttonSelector).removeClass('disabled');
-        },
-
-        getMethod: function(element) {
-            return $(element).find('input[data-name="field__method"]').val();
-        },
-
-        /**
-         * Set currency label for each needed elements
-         */
-        setMethodCurrency: function() {
-            var self = this;
-            this.currency = this.form.find('[data-name="field__currency"] option:selected').text();
-            var currencyText = ', ' + this.currency;
-            var targetInput = $('.oro-shipping-rule-method-configs-collection input[type=text]');
-
-            targetInput.parents('.control-group-number').find('label').each(function() {
-                var labelText = $(this).text();
-
-                if (labelText) {
-                    $(this).find('em').before(currencyText);
-                } else {
-                    $(this).prepend(self.currency);
+            var $preview = $method.find(this.options.methodPreviewSelector);
+            $preview.empty();
+            _.each($method.find(this.options.previewFieldsSelector), function(field) {
+                var $field = $(field);
+                var value = _.trim(field.value);
+                if (value.length === 0) {
+                    return;
                 }
-            });
-        },
 
-        /**
-         * Set short info about each simple method
-         *
-         * @param {jQuery} methodContainer
-         */
-        _simpleSetInfoMethod: function(methodContainer) {
-            if (_.isUndefined(methodContainer)) {
-                methodContainer = $('[data-method-view="simple"]');
-            }
-
-            methodContainer.each(_.bind(function(index, method) {
-                var methodsInfo = $(method).find('.shipping-method-config__info');
-                var inputContainers = $(method).find('.control-group-number');
-                var selectValue = $(method).find('.control-group-choice option:selected').text();
-                var selectLabel = $(method).find('.control-group-choice label').contents().eq(0).text();
-
-                methodsInfo.empty();
-
-                inputContainers.each(_.bind(function(index, input) {
-                    var labelText = $(input).find('label').contents().eq(0).text();
-                    var inputText = $(input).find('input').val();
-                    if (inputText) {
-                        $('<span>')
-                            .text(labelText + ': ' + this.currency + inputText)
-                            .appendTo(methodsInfo);
-                    }
-                }, this));
-
-                methodsInfo.append(
-                    $('<span>').text(selectLabel + ': ' +  selectValue)
-                );
-            }, this));
-        },
-
-        /**
-         * Set short info about each grouped method
-         *
-         * @param {jQuery} methodContainer
-         */
-        _groupedSetInfoMethod: function(methodContainer) {
-            var activeMethodCheckbox = $('.shipping-method-config-grid__active-checkbox:checked');
-            if (_.isUndefined(methodContainer)) {
-                methodContainer = activeMethodCheckbox.closest('[data-method-view]');
-            }
-
-            var methodsInfo = methodContainer.find('.shipping-method-config__info');
-
-            if (methodContainer) {
-                methodsInfo.empty();
-            }
-
-            activeMethodCheckbox.each(_.bind(function(index, checkbox) {
-                var methodContainer = $(checkbox).closest('.control-group-oro_shipping_method_type_config');
-                var methodLabel = methodContainer.find('.control-label.wrap label').contents().eq(0).text();
-                var methodSurcharge = methodContainer.find('.shipping-method-config-grid__surcharge input').val();
-
-                methodSurcharge = methodSurcharge ? ': ' + this.currency + methodSurcharge : '';
-                $('<span>')
-                    .text(methodLabel + methodSurcharge)
-                    .appendTo(methodsInfo);
-            }, this));
-        },
-
-        /**
-         * Bind events for each target elements related with
-         */
-        bindShortMethodInfo: function() {
-            var activeMethodCheckbox = $([
-                    '.shipping-method-config-grid__active-checkbox',
-                    '.shipping-method-config-grid__surcharge input',
-                    '.shipping-method-config-grid__surcharge select'
-                ].join(', '));
-
-            activeMethodCheckbox.on('change', _.bind(function(e) {
-                var targetMethodContainer = $(e.target).closest('[data-method-view]');
-                var method = this['_' + targetMethodContainer.data('method-view') + 'SetInfoMethod'];
-
-                if (method) {
-                    method.call(this, targetMethodContainer);
+                var isDisabled = _.filter(disabled, function(name) {
+                    return field.name.indexOf(name) !== -1;
+                }).length > 0;
+                if (isDisabled) {
+                    return;
                 }
-            }, this));
+
+                if ($field.is('select')) {
+                    value = $field.find('option:selected').text();
+                }
+
+                var $label = this.$('label[for="' + field.id + '"]');
+                var label = $label.contents().eq(0).text() + ': ' + ($field.data('currency') || '');
+
+                $preview.append('<span>' + label + value + '</span>');
+            }, this);
         },
 
         dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$form.off(this.eventNamespace());
+
+            delete this.methods;
+            delete this.options;
+
+            delete this.$form;
+            delete this.$currency;
             delete this.$methodSelect;
-            delete this.$allMethodsOptions;
-            delete this.$formElements;
-            delete this.$buttonSelector;
-            delete this.$formParent;
+            delete this.$methodSelectClone;
+            delete this.$add;
+            delete this.$addAll;
 
             ShippingRuleMethodsView.__super__.dispose.apply(this, arguments);
         }
