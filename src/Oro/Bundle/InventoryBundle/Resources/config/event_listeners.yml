@@ -111,7 +111,6 @@ services:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_entity.doctrine_helper'
             - '@translator'
-            - '@request_stack'
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate, priority: 10 }
 

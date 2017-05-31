@@ -111,10 +111,13 @@ define(function(require) {
 
             var currentState = $to.val().split(this.options.delimiter).concat(ids);
             currentState = _.filter(currentState, function(value, index, array) {
-                return _.indexOf(array, value) === index && value !== '';
+                return value !== '';
             });
 
-            $to.val(currentState.join(this.options.delimiter)).trigger('change');
+            var newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
+            if ($to.val() !== newVal) {
+                $to.val(newVal).trigger('change');
+            }
         },
 
         /**
@@ -143,10 +146,13 @@ define(function(require) {
 
             var currentState = $from.val().split(this.options.delimiter);
             currentState = _.filter(currentState, function(value) {
-                return _.indexOf(ids, value) < 0 && value !== '';
+                return value !== '' && _.indexOf(ids, value) < 0;
             });
 
-            $from.val(currentState.join(this.options.delimiter)).trigger('change');
+            var newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
+            if ($from.val() !== newVal) {
+                $from.val(newVal).trigger('change');
+            }
         },
 
         dispose: function() {

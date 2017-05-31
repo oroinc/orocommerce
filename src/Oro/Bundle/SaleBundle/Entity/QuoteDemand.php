@@ -14,6 +14,7 @@ use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
  *
@@ -45,7 +46,8 @@ class QuoteDemand implements
     LineItemsAwareInterface,
     ShippingAwareInterface,
     SubtotalAwareInterface,
-    CustomerOwnerAwareInterface
+    CustomerOwnerAwareInterface,
+    CheckoutLineItemsHolderInterface
 {
     use AuditableFrontendCustomerUserAwareTrait;
 

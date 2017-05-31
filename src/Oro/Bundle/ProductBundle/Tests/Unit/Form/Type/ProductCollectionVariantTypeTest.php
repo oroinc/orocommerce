@@ -24,6 +24,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -55,6 +56,11 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
     private $definitionConverter;
 
     /**
+     * @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $propertyAccessor;
+
+    /**
      * @var ProductCollectionVariantType
      */
     protected $type;
@@ -69,9 +75,10 @@ class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->definitionConverter = $this->createMock(ProductCollectionDefinitionConverter::class);
+        $this->propertyAccessor = $this->createMock(PropertyAccessor::class);
 
         parent::setUp();
-        $this->type = new ProductCollectionVariantType($this->definitionConverter);
+        $this->type = new ProductCollectionVariantType($this->definitionConverter, $this->propertyAccessor);
     }
 
     /**

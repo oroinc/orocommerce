@@ -68,7 +68,7 @@ class ShippingPriceCache
     public function savePrice(ShippingPriceCacheKey $key, Price $price)
     {
         $interval = 0;
-        $invalidateCacheAt = $key->getTransport()->getInvalidateCacheAt();
+        $invalidateCacheAt = $key->getTransport()->getUpsInvalidateCacheAt();
         if ($invalidateCacheAt) {
             $interval = $invalidateCacheAt->getTimestamp() - time();
         }
@@ -113,8 +113,8 @@ class ShippingPriceCache
     {
         $this->setNamespace($key->getTransport()->getId());
         $invalidateAt = '';
-        if ($key->getTransport() && $key->getTransport()->getInvalidateCacheAt()) {
-            $invalidateAt = $key->getTransport()->getInvalidateCacheAt()->getTimestamp();
+        if ($key->getTransport() && $key->getTransport()->getUpsInvalidateCacheAt()) {
+            $invalidateAt = $key->getTransport()->getUpsInvalidateCacheAt()->getTimestamp();
         }
         return implode('_', [
             $key->generateKey(),
