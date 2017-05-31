@@ -9,6 +9,8 @@ system_configuration:
         pricing:
             title: oro.pricing.system_configuration.groups.pricing.title
             icon: 'fa-credit-card'
+        price_strategies:
+            title: oro.pricing.system_configuration.groups.price_strategies.title
     fields:
         oro_pricing.default_price_lists:
             data_type: array
@@ -57,7 +59,15 @@ system_configuration:
                     - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
                     - Type:
                         type: float
-
+        oro_pricing.price_strategy:
+            data_type: string
+            type: oro_pricing_list_strategy_selection
+            options:
+                label: oro.pricing.system_configuration.fields.pricing_strategy.label
+                required: true
+                multiple: false
+                constraints:
+                    - NotBlank: ~
     tree:
         system_configuration:
             commerce:
@@ -80,3 +90,7 @@ system_configuration:
                                         priority: 50
                                         children:
                                             - oro_pricing.offset_of_processing_cpl_prices
+                                    price_strategies:
+                                        priority: 25
+                                        children:
+                                            - oro_pricing.price_strategy

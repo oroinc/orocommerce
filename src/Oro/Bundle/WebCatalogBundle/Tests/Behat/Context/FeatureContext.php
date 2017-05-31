@@ -18,11 +18,12 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
     use KernelDictionary;
 
     /**
-     * @Given /^I set "(?P<webCatalogName>[\w\s]+)" as default web catalog$/
+     * @Given /^I set "(?P<webCatalogName>[\w\s]+)" as default web catalog for (?P<scopeName>(global|website)) scope$/
      *
      * @param string $webCatalogName
+     * @param string $scopeName
      */
-    public function setDefaultWebCatalog($webCatalogName)
+    public function setDefaultWebCatalog($webCatalogName, $scopeName)
     {
         $webCatalogRepository = $this->getContainer()
             ->get('oro_entity.doctrine_helper')
@@ -32,12 +33,21 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
 
         static::assertNotNull($webCatalog, sprintf('Web Catalog with name "%s" not found', $webCatalogName));
 
-        $websiteManager = $this->getContainer()->get('oro_website.manager');
+        switch ($scopeName) {
+            case 'global':
+                /** @var ConfigManager $configManager */
+                $configManager = $this->getContainer()->get('oro_config.global');
+                $scope = null;
+                break;
+            case 'website':
+                /** @var ConfigManager $configManager */
+                $configManager = $this->getContainer()->get('oro_config.website');
+                $websiteManager = $this->getContainer()->get('oro_website.manager');
+                $scope = $websiteManager->getDefaultWebsite();
+                break;
+        }
 
-        /** @var ConfigManager $configManager */
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $website = $websiteManager->getDefaultWebsite();
-        $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId(), $website);
-        $configManager->flush($website);
+        $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId(), $scope);
+        $configManager->flush($scope);
     }
 }

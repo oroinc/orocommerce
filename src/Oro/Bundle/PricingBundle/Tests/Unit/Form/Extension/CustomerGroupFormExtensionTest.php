@@ -19,6 +19,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener;
 use Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 
 class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
 {
@@ -37,6 +40,14 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
         $provider = new PriceListCollectionTypeExtensionsProvider();
         $websiteScopedDataType = (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType();
 
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_pricing.price_strategy')
+            ->willReturn(MergePricesCombiningStrategy::NAME);
+
         $extensions = [
             new PreloadedExtension(
                 [
@@ -46,7 +57,8 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                 ],
                 [
                     CustomerGroupType::NAME => [new CustomerGroupFormExtension($listener)],
-                    ['form' => [new SortableExtension()]]
+                    'form' => [new SortableExtension()],
+                    PriceListSelectWithPriorityType::NAME => [new PriceListFormExtension($configManager)]
                 ]
             )
         ];
@@ -86,13 +98,13 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
                                         => (string)PriceListSelectTypeStub::PRICE_LIST_1,
                                     SortableExtension::POSITION_FIELD_NAME => '200',
-                                    PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true,
+                                    PriceListFormExtension::MERGE_ALLOWED_FIELD => true,
                                 ],
                                 [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
                                         => (string)PriceListSelectTypeStub::PRICE_LIST_2,
                                     SortableExtension::POSITION_FIELD_NAME => '100',
-                                    PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false,
+                                    PriceListFormExtension::MERGE_ALLOWED_FIELD => false,
                                 ]
                             ],
                     ],

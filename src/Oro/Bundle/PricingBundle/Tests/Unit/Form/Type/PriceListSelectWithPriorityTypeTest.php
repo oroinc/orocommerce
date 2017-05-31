@@ -6,7 +6,6 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
-use Symfony\Component\Form\Forms;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -15,24 +14,12 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 
 class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var PriceListSelectWithPriorityType
-     */
-    protected $formType;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        $this->formType = new PriceListSelectWithPriorityType();
-
-        parent::setUp();
-    }
-
     /**
      * @return array
      */
@@ -40,13 +27,25 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType([]);
 
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_pricing.price_strategy')
+            ->willReturn(MergePricesCombiningStrategy::NAME);
+
         return [
             new PreloadedExtension(
                 [
+                    PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityType(),
                     $entityType->getName() => $entityType,
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                 ],
-                ['form' => [new SortableExtension()]]
+                [
+                    'form' => [new SortableExtension()],
+                    PriceListSelectWithPriorityType::NAME => [new PriceListFormExtension($configManager)]
+                ]
             ),
             new ValidatorExtension(Validation::createValidator()),
         ];
@@ -60,7 +59,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, array $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
+        $form = $this->factory->create(PriceListSelectWithPriorityType::NAME, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -86,7 +85,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
-                    'mergeAllowed' => true,
+                    PriceListFormExtension::MERGE_ALLOWED_FIELD => true,
                 ],
                 'expectedData' => (new BasePriceListRelation())
                     ->setSortOrder(100)
@@ -98,7 +97,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
-                    'mergeAllowed' => false,
+                    PriceListFormExtension::MERGE_ALLOWED_FIELD => false,
                 ],
                 'expectedData' => (new BasePriceListRelation())
                     ->setSortOrder(100)
@@ -114,7 +113,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
-                    'mergeAllowed' => true,
+                    PriceListFormExtension::MERGE_ALLOWED_FIELD => true,
                 ],
 
                 'expectedData' => (new BasePriceListRelation())
@@ -131,7 +130,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
-                    'mergeAllowed' => false,
+                    PriceListFormExtension::MERGE_ALLOWED_FIELD => false,
                 ],
                 'expectedData' => (new BasePriceListRelation())
                     ->setSortOrder(100)
@@ -146,7 +145,8 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(PriceListSelectWithPriorityType::NAME, $this->formType->getName());
+        $type = new PriceListSelectWithPriorityType();
+        $this->assertEquals(PriceListSelectWithPriorityType::NAME, $type->getName());
     }
 
     /**

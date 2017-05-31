@@ -6,14 +6,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -40,9 +39,9 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $registry;
 
     /**
-     * @var ProductPriceBuilder
+     * @var StrategyRegister
      */
-    protected $priceResolver;
+    protected $strategyRegister;
 
     /**
      * @var EventDispatcherInterface
@@ -67,7 +66,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
-     * @param CombinedProductPriceResolver $priceResolver
+     * @param StrategyRegister $strategyRegister
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
      * @param DatabaseExceptionHelper $databaseExceptionHelper
@@ -76,7 +75,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
         ManagerRegistry $registry,
-        CombinedProductPriceResolver $priceResolver,
+        StrategyRegister $strategyRegister,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
         DatabaseExceptionHelper $databaseExceptionHelper,
@@ -84,7 +83,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     ) {
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
-        $this->priceResolver = $priceResolver;
+        $this->strategyRegister = $strategyRegister;
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
         $this->databaseExceptionHelper = $databaseExceptionHelper;
@@ -112,7 +111,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $builtCPLs = [];
 
             foreach ($iterator as $combinedPriceList) {
-                $this->priceResolver->combinePrices($combinedPriceList, $trigger->getProduct());
+                $this->strategyRegister->getCurrentStrategy()
+                    ->combinePrices($combinedPriceList, $trigger->getProduct());
                 $builtCPLs[$combinedPriceList->getId()] = true;
             }
             if ($builtCPLs) {
