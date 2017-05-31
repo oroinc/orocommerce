@@ -125,35 +125,13 @@ class ProductUpdateHandler extends UpdateHandler
         $appendRelated = $form->get('appendRelated')->getData();
         $removeRelated = $form->get('removeRelated')->getData();
 
-        $this->removeRelatedProducts($entity, $removeRelated);
-        $this->addRelatedProducts($entity, $appendRelated);
+        $this->relatedProductAssigner->removeRelations($entity, $removeRelated);
+        $this->relatedProductAssigner->addRelations($entity, $appendRelated);
 
         if (!empty($appendRelated) || !empty($removeRelated)) {
             $this->doctrineHelper
                 ->getEntityManager($entity)
                 ->flush();
-        }
-    }
-
-    /**
-     * @param Product   $product
-     * @param Product[] $productsToAppend
-     */
-    private function addRelatedProducts(Product $product, array $productsToAppend)
-    {
-        foreach ($productsToAppend as $productToAppend) {
-            $this->relatedProductAssigner->addRelation($product, $productToAppend);
-        }
-    }
-
-    /**
-     * @param Product   $product
-     * @param Product[] $productsToRemove
-     */
-    private function removeRelatedProducts(Product $product, array $productsToRemove)
-    {
-        foreach ($productsToRemove as $productToRemove) {
-            $this->relatedProductAssigner->removeRelation($product, $productToRemove);
         }
     }
 }

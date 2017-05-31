@@ -315,8 +315,8 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
 
 
         $this->relatedProductAssigner->expects($this->once())
-            ->method('addRelation')
-            ->with($entity, $relatedEntity);
+            ->method('addRelations')
+            ->with($entity, [$relatedEntity]);
 
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
@@ -366,8 +366,8 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->method('flush');
 
         $this->relatedProductAssigner->expects($this->once())
-            ->method('removeRelation')
-            ->with($entity, $relatedEntity);
+            ->method('removeRelations')
+            ->with($entity, [$relatedEntity]);
 
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;

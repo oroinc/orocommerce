@@ -76,114 +76,94 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assigner = new AssignerDatabaseStrategy($this->doctrineHelper, $this->configProvider);
     }
 
-    public function testProductCanBeAssignedToTheOther()
+    public function testProductsCanBeAssignedToTheOther()
     {
-        $productA = new Product();
-        $productB = new Product();
+        $productFrom = new Product();
+        $productTo = new Product();
 
-        $this->updateScheduledInsertions([]);
         $this->relationDoesNotExistInDatabase();
         $this->getLimitShouldReturn(1);
         $this->relatedProductsAreEnabled();
-        $this->newRelationShouldBePersisted($this->createRelatedProducts($productA, $productB));
+        $this->newRelationShouldBePersisted($this->createRelatedProduct($productFrom, $productTo));
 
-        $this->assigner->addRelation($productA, $productB);
+        $this->assigner->addRelations($productFrom, [$productTo]);
+    }
+
+    public function testManyProductsCanBeAssignedToProduct()
+    {
+        $productFrom = new Product();
+        $productsTo = [new Product(), new Product()];
+
+        $this->relationDoesNotExistInDatabase();
+        $this->getLimitShouldReturn(2);
+        $this->relatedProductsAreEnabled();
+        $this->newRelationsShouldBePersisted(2);
+
+        $this->assigner->addRelations($productFrom, $productsTo);
     }
 
     public function testProductCannotBeAssignedToItself()
     {
-        $productA = new Product();
+        $productFrom = new Product();
         $this->relatedProductsAreEnabled();
+        $this->getLimitShouldReturn(1);
         $this->relationDoesNotExistInDatabase();
         $this->newRelationShouldNotBePersisted();
 
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->assigner->addRelation($productA, $productA);
-    }
-
-    public function testProductWillNotBeAssignedIfRelationIsAlreadyScheduledForInsertion()
-    {
-        $productFrom = new Product();
-        $productTo = new Product();
-
-        $relatedProduct = $this->createRelatedProducts($productFrom, $productTo);
-
-        $this->getLimitShouldReturn(2);
-        $this->relatedProductsAreEnabled();
-        $this->relationDoesNotExistInDatabase();
-        $this->newRelationShouldNotBePersisted();
-        $this->updateScheduledInsertions([$relatedProduct]);
-
-        $this->assigner->addRelation($productFrom, $productTo);
+        $this->assigner->addRelations($productFrom, [$productFrom]);
     }
 
     public function testProductWillNotBeAssignedIfRelationAlreadyExistsInDatabase()
     {
-        $productA = new Product();
-        $productB = new Product();
-        $this->updateScheduledInsertions([]);
+        $productFrom = new Product();
+        $productTo = new Product();
 
         $this->getLimitShouldReturn(2);
         $this->relationExistsInDatabase();
         $this->relatedProductsAreEnabled();
         $this->newRelationShouldNotBePersisted();
 
-        $this->assigner->addRelation($productA, $productB);
-    }
-
-    public function testProductCanBeUnassignedFromScheduledRelation()
-    {
-        $productA = new Product();
-        $productB = new Product();
-        $relatedProducts = $this->createRelatedProducts($productA, $productB);
-        $this->getLimitShouldReturn(2);
-        $this->relatedProductsAreEnabled();
-        $this->updateScheduledInsertions([$relatedProducts]);
-        $this->scheduledRelationShouldBeDetached($relatedProducts);
-
-        $this->assigner->removeRelation($productA, $productB);
+        $this->assigner->addRelations($productFrom, [$productTo]);
     }
 
     public function testProductCanBeUnassignedFromDatabaseRelation()
     {
-        $productA = new Product();
-        $productB = new Product();
-        $relatedProducts = $this->createRelatedProducts($productA, $productB);
+        $productFrom = new Product();
+        $productTo = new Product();
+        $relatedProducts = $this->createRelatedProduct($productFrom, $productTo);
         $this->getLimitShouldReturn(2);
         $this->relatedProductsAreEnabled();
-        $this->updateScheduledInsertions([]);
-        $this->findOneByShouldReturnRelation($productA, $productB, $relatedProducts);
+        $this->findOneByShouldReturnRelation($productFrom, $productTo, $relatedProducts);
         $this->scheduledRelationShouldBeRemoved($relatedProducts);
 
-        $this->assigner->removeRelation($productA, $productB);
+        $this->assigner->removeRelations($productFrom, [$productTo]);
     }
 
     public function testNothingHappensWhenTryToRemoveNonExistingRelation()
     {
-        $productA = new Product();
-        $productB = new Product();
+        $productFrom = new Product();
+        $productTo = new Product();
 
         $this->relatedProductsAreEnabled();
-        $this->updateScheduledInsertions([[]]);
-        $this->findOneByShouldReturnNull($productA, $productB);
+        $this->findOneByShouldReturnNull($productFrom, $productTo);
 
-        $this->assigner->removeRelation($productA, $productB);
+        $this->assigner->removeRelations($productFrom, [$productTo]);
     }
 
     public function testThrowExceptionWhenTryToExceedRelationLimitForAProduct()
     {
-        $productA = new Product();
-        $productB = new Product();
-        $productC = new Product();
+        $productFrom = new Product();
+        $productsTo = [new Product(), new Product()];
+
         $this->getLimitShouldReturn(1);
         $this->relatedProductsAreEnabled();
         $this->repositoryShouldReturnCountRelationsForProduct(0);
-        $this->updateScheduledInsertions([$this->createRelatedProducts($productA, $productC)]);
 
         $this->expectException(\OverflowException::class);
 
-        $this->assigner->addRelation($productA, $productB);
+        $this->assigner->addRelations($productFrom, $productsTo);
     }
 
     public function testThrowExceptionWhenTryToExceedRelationLimitWhenSomeRelationsExistInDatabase()
@@ -194,23 +174,22 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->getLimitShouldReturn(1);
         $this->relatedProductsAreEnabled();
         $this->repositoryShouldReturnCountRelationsForProduct(1);
-        $this->updateScheduledInsertions([]);
 
         $this->expectException(\OverflowException::class);
 
-        $this->assigner->addRelation($productFrom, $productTo);
+        $this->assigner->addRelations($productFrom, [$productTo]);
     }
 
     public function testRelationCannotBeAssignedIfRelatedProductIsDisable()
     {
-        $productA = new Product();
-        $productB = new Product();
+        $productFrom = new Product();
+        $productTo = new Product();
         $this->getLimitShouldReturn(1);
         $this->relatedProductsAreDisabled();
 
         $this->expectException(\LogicException::class);
 
-        $this->assigner->addRelation($productA, $productB);
+        $this->assigner->addRelations($productFrom, [$productTo]);
     }
 
     /**
@@ -238,44 +217,42 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param RelatedProduct $expectedRelatedProducts
+     * @param RelatedProduct $expectedRelatedProduct
      * @param int            $howManyTimes
      */
-    private function newRelationShouldBePersisted(RelatedProduct $expectedRelatedProducts, $howManyTimes = 1)
+    private function newRelationShouldBePersisted(RelatedProduct $expectedRelatedProduct, $howManyTimes = 1)
     {
         $this->entityManager->expects($this->exactly($howManyTimes))
             ->method('persist')
-            ->with($this->callback(function (RelatedProduct $relatedProducts) use ($expectedRelatedProducts) {
-                return $relatedProducts->getProduct() === $expectedRelatedProducts->getProduct()
-                    && $relatedProducts->getRelatedProduct() === $expectedRelatedProducts->getRelatedProduct();
+            ->with($this->callback(function (RelatedProduct $relatedProducts) use ($expectedRelatedProduct) {
+                return $relatedProducts->getProduct() === $expectedRelatedProduct->getProduct()
+                    && $relatedProducts->getRelatedProduct() === $expectedRelatedProduct->getRelatedProduct();
             }));
+    }
+
+    /**
+     * @param int $howManyTimes
+     */
+    private function newRelationsShouldBePersisted($howManyTimes)
+    {
+        $this->entityManager->expects($this->exactly($howManyTimes))->method('persist');
     }
 
     private function newRelationShouldNotBePersisted()
     {
-        $this->entityManager->expects($this->never())
-            ->method('persist');
+        $this->entityManager->expects($this->never())->method('persist');
+        $this->entityManager->expects($this->never())->method('flush');
     }
 
     /**
-     * @param Product $productA
-     * @param Product $productB
+     * @param Product $productFrom
+     * @param Product $productTo
      * @return RelatedProduct
      */
-    private function createRelatedProducts(Product $productA, Product $productB)
+    private function createRelatedProduct(Product $productFrom, Product $productTo)
     {
-        return (new RelatedProduct())->setProduct($productA)
-            ->setRelatedProduct($productB);
-    }
-
-    /**
-     * @param array $scheduledInsertions
-     */
-    private function updateScheduledInsertions(array $scheduledInsertions)
-    {
-        $this->unitOfWork->expects($this->any())
-            ->method('getScheduledEntityInsertions')
-            ->willReturn($scheduledInsertions);
+        return (new RelatedProduct())->setProduct($productFrom)
+            ->setRelatedProduct($productTo);
     }
 
     private function relationDoesNotExistInDatabase()
@@ -295,16 +272,6 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $relatedProducts
      */
-    private function scheduledRelationShouldBeDetached($relatedProducts)
-    {
-        $this->entityManager->expects($this->once())
-            ->method('detach')
-            ->with($relatedProducts);
-    }
-
-    /**
-     * @param $relatedProducts
-     */
     private function scheduledRelationShouldBeRemoved($relatedProducts)
     {
         $this->entityManager->expects($this->once())
@@ -313,18 +280,18 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Product        $productA
-     * @param Product        $productB
+     * @param Product        $productFrom
+     * @param Product        $productTo
      * @param RelatedProduct $relatedProducts
      */
     private function findOneByShouldReturnRelation(
-        Product $productA,
-        Product $productB,
+        Product $productFrom,
+        Product $productTo,
         RelatedProduct $relatedProducts = null
     ) {
         $this->relatedProductsRepository->expects($this->any())
             ->method('findOneBy')
-            ->with(['product' => $productA, 'relatedProduct', $productB], null)
+            ->with(['product' => $productFrom, 'relatedProduct', $productTo], null)
             ->willReturn($relatedProducts);
     }
 

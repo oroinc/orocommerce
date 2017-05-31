@@ -40,42 +40,47 @@ class AssignerDatabaseStrategy implements AssignerStrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function addRelation(Product $productFrom, Product $productTo)
+    public function addRelations(Product $productFrom, array $productsTo)
     {
-        $this->validateRelation($productFrom, $productTo);
+        $productsTo = $this->validateRelations($productFrom, $productsTo);
 
-        if ($this->relationAlreadyExists($productFrom, $productTo)) {
+        if (count($productsTo) === 0) {
             return;
         }
 
-        $relatedProduct = new RelatedProduct();
-        $relatedProduct->setProduct($productFrom)
-            ->setRelatedProduct($productTo);
+        foreach ($productsTo as $productTo) {
+            $this->addRelation($productFrom, $productTo);
+        }
 
-        $this->getEntityManager()->persist($relatedProduct);
+        $this->getEntityManager()->flush();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function removeRelation(Product $productFrom, Product $productTo)
+    public function removeRelations(Product $productFrom, array $productsTo)
     {
-        $persistedRelation = $this->findPersistedRelation($productFrom, $productTo);
-
-        if ($persistedRelation !== null) {
-            $this->getEntityManager()->detach($persistedRelation);
-
-            return;
+        foreach ($productsTo as $productTo) {
+            $this->removeRelation($productFrom, $productTo);
         }
 
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param Product $productFrom
+     * @param Product $productTo
+     */
+    private function removeRelation(Product $productFrom, Product $productTo)
+    {
         $persistedRelation = $this->getRelatedProductsRepository()
             ->findOneBy(['product' => $productFrom, 'relatedProduct', $productTo]);
 
-        if ($persistedRelation !== null) {
-            $this->getEntityManager()->remove($persistedRelation);
-
+        if ($persistedRelation === null) {
             return;
         }
+
+        $this->getEntityManager()->remove($persistedRelation);
     }
 
     /**
@@ -85,65 +90,54 @@ class AssignerDatabaseStrategy implements AssignerStrategyInterface
      */
     private function relationAlreadyExists(Product $productFrom, Product $productTo)
     {
-        return $this->findPersistedRelation($productFrom, $productTo) !== null
-            || $this->relationExistsInDatabase($productFrom, $productTo);
-    }
-
-    /**
-     * @param Product $productFrom
-     * @param Product $productTo
-     * @return RelatedProduct|null
-     */
-    private function findPersistedRelation(Product $productFrom, Product $productTo)
-    {
-        $uow = $this->getEntityManager()->getUnitOfWork();
-
-        foreach ($this->getCreatedEntities($uow) as $persistingRelation) {
-            if (!$persistingRelation instanceof RelatedProduct) {
-                continue;
-            }
-
-            if ($persistingRelation->getProduct() === $productFrom
-                && $persistingRelation->getRelatedProduct() === $productTo
-            ) {
-                return $persistingRelation;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param Product $productFrom
-     * @param Product $productTo
-     * @return bool
-     */
-    private function relationExistsInDatabase(Product $productFrom, Product $productTo)
-    {
         return $this->getRelatedProductsRepository()->exists($productFrom, $productTo);
     }
 
     /**
      * @param Product $productFrom
      * @param Product $productTo
-     * @throws \LogicException when functionality is disabled
-     * @throws \InvalidArgumentException when user tries add related product to itself
-     * @throws \OverflowException when user tries to add more products that limit allows
      */
-    private function validateRelation(Product $productFrom, Product $productTo)
+    private function addRelation(Product $productFrom, Product $productTo)
+    {
+        $relatedProduct = new RelatedProduct();
+        $relatedProduct->setProduct($productFrom)
+            ->setRelatedProduct($productTo);
+
+        $this->getEntityManager()->persist($relatedProduct);
+    }
+
+    /**
+     * @param Product   $productFrom
+     * @param Product[] $productsTo
+     *
+     * @throws \LogicException when functionality is disabled
+     * @throws \OverflowException when user tries to add more products that limit allows
+     * @throws \InvalidArgumentException When user tries to add related product to itself
+     *
+     * @return Product[]
+     */
+    private function validateRelations(Product $productFrom, array $productsTo)
     {
         if (!$this->configProvider->isEnabled()) {
             throw new \LogicException('Related Products functionality is disabled.');
         }
 
-        if ($productFrom === $productTo) {
-            throw new \InvalidArgumentException('It is not possible to create relations from product to itself.');
+        $newRelations = [];
+        foreach ($productsTo as $productTo) {
+            if (!$this->validateRelation($productFrom, $productTo)) {
+                continue;
+            }
+            $newRelations[] = $productTo;
         }
 
-        $numberOfRelations = $this->getNumberOfScheduledRelationsForProduct($productFrom);
-        $numberOfRelations += $this->getRelatedProductsRepository()->countRelationsForProduct($productFrom->getId());
+        if (count($newRelations) === 0) {
+            return [];
+        }
 
-        if ($numberOfRelations >= $this->configProvider->getLimit()) {
+        $numberOfRelations = $this->getRelatedProductsRepository()->countRelationsForProduct($productFrom->getId());
+        $numberOfRelations += count($newRelations);
+
+        if ($numberOfRelations > $this->configProvider->getLimit()) {
             throw new \OverflowException(
                 sprintf(
                     'It is not possible to add more related products to %s, because of the limit of relations.',
@@ -151,28 +145,29 @@ class AssignerDatabaseStrategy implements AssignerStrategyInterface
                 )
             );
         }
+
+        return $newRelations;
     }
 
     /**
      * @param Product $productFrom
-     * @return int
+     * @param Product $productTo
+     *
+     * @throws \InvalidArgumentException When user tries to add related product to itself
+     *
+     * @return bool
      */
-    private function getNumberOfScheduledRelationsForProduct(Product $productFrom)
+    private function validateRelation(Product $productFrom, Product $productTo)
     {
-        $numberOfRelations = 0;
-        $uow = $this->getEntityManager()->getUnitOfWork();
-
-        foreach ($this->getCreatedEntities($uow) as $persistingRelation) {
-            if (!$persistingRelation instanceof RelatedProduct) {
-                continue;
-            }
-
-            if ($persistingRelation->getProduct() === $productFrom) {
-                $numberOfRelations++;
-            }
+        if ($productFrom === $productTo) {
+            throw new \InvalidArgumentException('It is not possible to create relations from product to itself.');
         }
 
-        return $numberOfRelations;
+        if ($this->relationAlreadyExists($productFrom, $productTo)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

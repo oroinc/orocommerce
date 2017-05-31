@@ -11,17 +11,17 @@ interface AssignerStrategyInterface
 {
     /**
      * @param Product $productFrom
-     * @param Product $productTo
+     * @param Product[] $productsTo
      *
      * @throws \LogicException When functionality is disabled
      * @throws \InvalidArgumentException When user tries to add related product to itself
      * @throws \OverflowException When user tries to add more products than limit allows
      */
-    public function addRelation(Product $productFrom, Product $productTo);
+    public function addRelations(Product $productFrom, array $productsTo);
 
     /**
      * @param Product $productFrom
-     * @param Product $productTo
+     * @param Product[] $productsTo
      */
-    public function removeRelation(Product $productFrom, Product $productTo);
+    public function removeRelations(Product $productFrom, array $productsTo);
 }
