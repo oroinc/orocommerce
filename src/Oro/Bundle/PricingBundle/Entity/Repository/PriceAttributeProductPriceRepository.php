@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
 {
@@ -38,5 +40,29 @@ class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Product $product
+     * @param ProductUnit $unit
+     * @return mixed
+     */
+    public function removeByUnitProduct(Product $product, ProductUnit $unit)
+    {
+        $qb = $this->createQueryBuilder('productPrice');
+
+        $qb->delete()
+            ->where(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('productPrice.unit', ':unit'),
+                    $qb->expr()->eq('productPrice.product', ':product')
+                )
+            )
+            ->setParameters([
+                'unit' => $unit,
+                'product' => $product
+            ]);
+
+        return $qb->getQuery()->execute();
     }
 }

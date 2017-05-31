@@ -40,7 +40,7 @@ class CustomerCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBu
             $this->combinedPriceListProvider,
             $this->garbageCollector,
             $this->cplScheduleResolver,
-            $this->priceResolver,
+            $this->strategyRegister,
             $this->triggerHandler
         );
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);

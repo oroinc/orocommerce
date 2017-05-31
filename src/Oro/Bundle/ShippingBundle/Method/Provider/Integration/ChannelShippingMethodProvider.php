@@ -43,7 +43,7 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
      * @param IntegrationShippingMethodFactoryInterface $methodFactory
      */
     public function __construct(
-        string $channelType,
+        $channelType,
         DoctrineHelper $doctrineHelper,
         IntegrationShippingMethodFactoryInterface $methodFactory
     ) {

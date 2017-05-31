@@ -36,6 +36,15 @@ services:
         tags:
             - { name: form.type, alias: oro_product_unit_selection }
 
+    oro_product.form.type.product_primary_unit_selection:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType'
+        arguments:
+            - '@oro_product.formatter.product_unit_label'
+        calls:
+            - [setEntityClass, ['%oro_product.entity.product_unit.class%']]
+        tags:
+            - { name: form.type, alias: oro_product_unit_select }
+
     oro_product.form.type.quantity_type:
         class: 'Oro\Bundle\ProductBundle\Form\Type\QuantityType'
         arguments:
@@ -188,14 +197,13 @@ services:
         tags:
             - { name: form.type, alias: oro_product_product_variant_frontend_variant_field }
 
-    oro_product.form.type.extension.choices_primary_unit_selection:
-        class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
+    oro_product.form.type.extension.enum_value_for_product:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
         arguments:
-            - 'unit'
-            - 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
-            - "@oro_product.visibility.product_unit_fields_settings"
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity_config.config_manager'
         tags:
-            - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
 
     oro_product.form.type.extension.product_collection:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductCollectionExtension'
@@ -205,11 +213,7 @@ services:
         tags:
             - { name: form.type_extension, extended_type: '%oro_web_catalog.type.content_variant_collection.class%' }
 
-    oro_product.form.type.extension.enum_value_for_product:
-        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_entity_config.config_manager'
+    oro_product.form.extension.attribute_config_extension:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'
         tags:
-            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }
-
+            - { name: form.type_extension, alias: oro_entity_config_type }

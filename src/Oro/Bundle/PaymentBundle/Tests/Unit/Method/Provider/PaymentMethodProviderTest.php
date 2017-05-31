@@ -8,15 +8,14 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
 
 class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $paymentMethodProvidersRegistryMock;
+    private $paymentMethodProviderMock;
 
     /**
      * @var PaymentMethodsConfigsRulesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -30,7 +29,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodProvidersRegistryMock = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
+        $this->paymentMethodProviderMock = $this->createMock(PaymentMethodProviderInterface::class);
 
         $this->paymentMethodsConfigsRulesProviderMock = $this
             ->getMockBuilder(PaymentMethodsConfigsRulesProviderInterface::class)
@@ -57,25 +56,23 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
         $payPalMethodMock = $this->createPaymentMethodMock('PayPal');
         $someOtherTypeMethodMock = $this->createPaymentMethodMock('SomeOtherType');
 
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
-
-        $paymentMethodProvider
-            ->expects($this->exactly(3))
-            ->method('getPaymentMethod')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['SomeType', $someTypeMethodMock],
-                        ['PayPal', $payPalMethodMock],
-                        ['SomeOtherType', $someOtherTypeMethodMock],
-                    ]
-                )
-            );
-
-        $this->paymentMethodProvidersRegistryMock
+        $this->paymentMethodProviderMock
             ->expects($this->any())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
+            ->method('hasPaymentMethod')
+            ->willReturnMap([
+                ['SomeType', true],
+                ['PayPal', true],
+                ['SomeOtherType', true],
+            ]);
+
+        $this->paymentMethodProviderMock
+            ->expects($this->any())
+            ->method('getPaymentMethod')
+            ->willReturnMap([
+                ['SomeType', $someTypeMethodMock],
+                ['PayPal', $payPalMethodMock],
+                ['SomeOtherType', $someOtherTypeMethodMock],
+            ]);
 
         $expectedPaymentMethodsMocks = [
             'SomeType' => $someTypeMethodMock,
@@ -84,7 +81,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
         ];
 
         $provider = new PaymentMethodProvider(
-            $this->paymentMethodProvidersRegistryMock,
+            $this->paymentMethodProviderMock,
             $this->paymentMethodsConfigsRulesProviderMock
         );
 
