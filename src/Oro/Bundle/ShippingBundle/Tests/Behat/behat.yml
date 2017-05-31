@@ -1,5 +1,8 @@
 oro_behat_extension:
   elements:
+    Shipping Method Config Type Field:
+      class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShippingMethodConfigType
+
     CheckoutTotalTrigger:
       selector: '.checkout-order-summary__header [data-collapse-trigger]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -21,7 +24,10 @@ oro_behat_extension:
           Name: 'oro_shipping_methods_configs_rule[rule][name]'
           Sort Order: 'oro_shipping_methods_configs_rule[rule][sortOrder]'
           Currency: 'oro_shipping_methods_configs_rule[currency]'
-          Method: 'oro_shipping_methods_configs_rule[method]'
+          Method:
+            type: 'css'
+            locator: 'select[name="oro_shipping_methods_configs_rule[method]"]'
+            element: Shipping Method Config Type Field
           Country: 'oro_shipping_methods_configs_rule[destinations][0][country]'
           Country1: 'oro_shipping_methods_configs_rule[destinations][1][country]'
           Country2: 'oro_shipping_methods_configs_rule[destinations][2][country]'
