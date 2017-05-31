@@ -6,18 +6,15 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Yaml\Yaml;
-
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
@@ -26,8 +23,10 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -213,6 +212,14 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
             $variant->setCmsPage($page);
         } elseif ($type === SystemPageContentVariantType::TYPE) {
             $variant->setSystemPageRoute($params['route']);
+        } elseif ($type === ProductCollectionContentVariantType::TYPE
+            && method_exists($variant, 'setProductCollectionSegment')
+        ) {
+            $segment = $this->container
+                ->get('doctrine')
+                ->getRepository(Segment::class)
+                ->findOneByName($params['title']);
+            $variant->setProductCollectionSegment($segment);
         }
         
         return $variant;
