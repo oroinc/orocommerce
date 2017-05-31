@@ -9,3 +9,8 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Products categories")]/parent::li/ul/li[contains(@class, "jstree-node")]/a[contains(., "Lighting Products")]'
+
+        Products categories:
+            selector:
+                type: xpath
+                locator: '//span[contains(@class, "breadcrumbs__item")]/a[contains(., "Products categories")]'
