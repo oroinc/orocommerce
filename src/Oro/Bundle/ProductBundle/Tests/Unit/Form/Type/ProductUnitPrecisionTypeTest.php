@@ -8,21 +8,25 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision';
-
     /**
      * @var ProductUnitPrecisionType
      */
     protected $formType;
+
+    /**
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productUnitLabelFormatter;
 
     /**
      * {@inheritdoc}
@@ -30,7 +34,11 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new ProductUnitPrecisionType();
-        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setDataClass(ProductUnitPrecision::class);
+        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         parent::setUp();
     }
 
@@ -39,15 +47,18 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $entityType = new EntityType(
+            [
+                'item' => (new ProductUnit())->setCode('item'),
+                'kg' => (new ProductUnit())->setCode('kg')
+            ]
+        );
+
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
-                        [
-                            'item' => (new ProductUnit())->setCode('item'),
-                            'kg' => (new ProductUnit())->setCode('kg')
-                        ]
-                    )
+                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    'entity' => $entityType
                 ],
                 [
                     'form' => [new IntegerExtension()]

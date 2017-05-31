@@ -25,6 +25,11 @@ ProductBundle
   calling `getVariantFields(AttributeFamily $attributeFamily)` method
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
 
+PaymentBundle
+-------------
+- Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
+- Previously deprecated class`Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` is removed, `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` should be used instead.
+
 CheckoutBundle
 --------------
-- Layout "oro_payment_method_order_review" is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
+- Layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.

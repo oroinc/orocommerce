@@ -78,6 +78,8 @@ workflows:
                     class: DateTime
             requested_for_approve:
                 type: bool
+            additional_data:
+                type: string
             state_token:
                 type: string
             internal_state_token:
@@ -306,6 +308,9 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        additional_data:
+                            form_type: hidden
+
             continue_to_request_approval:
                 step_to: request_approval
                 transition_definition: continue_to_request_approval_definition
@@ -1030,6 +1035,7 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                                     checkoutId: $checkout.id
+                                    additionalData: $additional_data
                             - '@redirect':
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:

@@ -266,6 +266,22 @@ class PaymentStatusProviderTest extends \PHPUnit_Framework_TestCase
                 100,
                 PaymentStatusProvider::FULL,
             ],
+            'invoiced has higher priority than authorized' => [
+                [
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setAction(PaymentMethodInterface::INVOICE)
+                        ->setAmount(100),
+                    (new PaymentTransaction())
+                        ->setSuccessful(true)
+                        ->setActive(true)
+                        ->setAction(PaymentMethodInterface::AUTHORIZE)
+                        ->setAmount(100),
+                ],
+                100,
+                PaymentStatusProvider::INVOICED,
+            ],
             'full has higher priority than authorized' => [
                 [
                     (new PaymentTransaction())

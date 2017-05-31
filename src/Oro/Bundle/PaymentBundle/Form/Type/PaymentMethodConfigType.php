@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -18,9 +17,9 @@ class PaymentMethodConfigType extends AbstractType
     const NAME = 'oro_payment_method_config';
 
     /**
-     * @var PaymentMethodProvidersRegistryInterface
+     * @var PaymentMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $methodProvider;
 
     /**
      * @var PaymentMethodViewProviderInterface
@@ -28,14 +27,14 @@ class PaymentMethodConfigType extends AbstractType
     protected $methodViewProvider;
 
     /**
-     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
-     * @param PaymentMethodViewProviderInterface      $methodViewProvider
+     * @param PaymentMethodProviderInterface $methodProvider
+     * @param PaymentMethodViewProviderInterface $methodViewProvider
      */
     public function __construct(
-        PaymentMethodProvidersRegistryInterface $methodRegistry,
+        PaymentMethodProviderInterface $methodProvider,
         PaymentMethodViewProviderInterface $methodViewProvider
     ) {
-        $this->methodRegistry = $methodRegistry;
+        $this->methodProvider = $methodProvider;
         $this->methodViewProvider = $methodViewProvider;
     }
 
@@ -61,19 +60,15 @@ class PaymentMethodConfigType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['methods_labels'] = array_reduce(
-            $this->methodRegistry->getPaymentMethodProviders(),
-            function (array $result, PaymentMethodProviderInterface $provider) {
-                foreach ($provider->getPaymentMethods() as $method) {
-                    $methodId = $method->getIdentifier();
-                    $result[$methodId] = $this
-                        ->methodViewProvider->getPaymentMethodView($methodId)
-                        ->getAdminLabel();
-                }
-                return $result;
-            },
-            []
-        );
+        $result = [];
+        foreach ($this->methodProvider->getPaymentMethods() as $method) {
+            $methodId = $method->getIdentifier();
+            $result[$methodId] = $this
+                ->methodViewProvider->getPaymentMethodView($methodId)
+                ->getAdminLabel();
+        }
+
+        $view->vars['methods_labels'] = $result;
     }
 
     /**

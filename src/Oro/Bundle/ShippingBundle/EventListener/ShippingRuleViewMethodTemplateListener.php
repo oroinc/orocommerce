@@ -1,24 +1,29 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\EventListener;
+namespace Oro\Bundle\ShippingBundle\EventListener;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
-class ShippingMethodConfigDataListener
+class ShippingRuleViewMethodTemplateListener
 {
-    const TEMPLATE = 'OroUPSBundle::UPSMethodWithOptions.html.twig';
+    /**
+     * @var string
+     */
+    private $template;
 
     /**
      * @var ShippingMethodProviderInterface
      */
-    protected $provider;
+    private $provider;
 
     /**
+     * @param string                          $template
      * @param ShippingMethodProviderInterface $provider
      */
-    public function __construct(ShippingMethodProviderInterface $provider)
+    public function __construct($template, ShippingMethodProviderInterface $provider)
     {
+        $this->template = $template;
         $this->provider = $provider;
     }
 
@@ -28,7 +33,7 @@ class ShippingMethodConfigDataListener
     public function onGetConfigData(ShippingMethodConfigDataEvent $event)
     {
         if ($this->provider->hasShippingMethod($event->getMethodIdentifier())) {
-            $event->setTemplate(static::TEMPLATE);
+            $event->setTemplate($this->template);
         }
     }
 }

@@ -189,8 +189,8 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             $this->crypter
                 ->expects($this->once())
                 ->method('encryptData')
-                ->with($submittedData['apiPassword'])
-                ->willReturn($submittedData['apiPassword']);
+                ->with($submittedData['upsApiPassword'])
+                ->willReturn($submittedData['upsApiPassword']);
         }
 
         $shippingOrigin = new ShippingOrigin(
@@ -268,28 +268,28 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     'labels' => [
                         'values' => [ 'default' => 'first label'],
                     ],
-                    'testMode' => true,
-                    'apiUser' => 'user',
-                    'apiPassword' => 'password',
-                    'apiKey' => 'key',
-                    'shippingAccountName' => 'name',
-                    'shippingAccountNumber' => 'number',
-                    'pickupType' => '01',
-                    'unitOfWeight' => 'KGS',
-                    'country' => 'US',
+                    'upsTestMode' => true,
+                    'upsApiUser' => 'user',
+                    'upsApiPassword' => 'password',
+                    'upsApiKey' => 'key',
+                    'upsShippingAccountName' => 'name',
+                    'upsShippingAccountNumber' => 'number',
+                    'upsPickupType' => '01',
+                    'upsUnitOfWeight' => 'KGS',
+                    'upsCountry' => 'US',
                     'applicableShippingServices' => [1]
                 ],
                 'isValid' => true,
                 'expectedData' => (new UPSTransport())
-                    ->setTestMode(true)
-                    ->setApiUser('user')
-                    ->setApiPassword('password')
-                    ->setApiKey('key')
-                    ->setShippingAccountName('name')
-                    ->setShippingAccountNumber('number')
-                    ->setPickupType('01')
-                    ->setUnitOfWeight('KGS')
-                    ->setCountry(new Country('US'))
+                    ->setUpsTestMode(true)
+                    ->setUpsApiUser('user')
+                    ->setUpsApiPassword('password')
+                    ->setUpsApiKey('key')
+                    ->setUpsShippingAccountName('name')
+                    ->setUpsShippingAccountNumber('number')
+                    ->setUpsPickupType('01')
+                    ->setUpsUnitOfWeight('KGS')
+                    ->setUpsCountry(new Country('US'))
                     ->addApplicableShippingService($expectedShippingService)
                     ->addLabel((new LocalizedFallbackValue())->setString('first label'))
             ]
