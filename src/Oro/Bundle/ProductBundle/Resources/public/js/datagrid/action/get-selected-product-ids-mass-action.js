@@ -32,6 +32,11 @@ define([
         initialize: function() {
             GetSelectedProductIdsMassAction.__super__.initialize.apply(this, arguments);
             this.eventName = this.datagrid.toolbarOptions.selectedProducts.eventName;
+            mediator.on('get-selected-products-mass-action-run', this.runAction, this);
+        },
+
+        runAction: function() {
+            this.run({});
         },
 
         /**
@@ -112,6 +117,8 @@ define([
             delete this.forcedConfirmDialog;
 
             GetSelectedProductIdsMassAction.__super__.dispose.call(this);
+
+            mediator.off(null, null, this);
         }
     });
 
