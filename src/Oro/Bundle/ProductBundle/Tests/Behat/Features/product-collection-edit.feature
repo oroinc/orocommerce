@@ -8,7 +8,7 @@ Feature:
     Given sessions active:
       | Admin  | first_session  |
       | Buyer  | second_session |
-    And I set "Default Web Catalog" as default web catalog
+    And I set "Default Web Catalog" as default web catalog for website scope
 
   Scenario: Product Collection can be edited
     Given I proceed as the Admin
