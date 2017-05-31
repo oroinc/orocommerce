@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -64,6 +65,14 @@ class ProductUpdateHandler extends UpdateHandler
     }
 
     /**
+     * {@inheritDoc}
+     */
+    protected function saveForm(FormInterface $form, $data)
+    {
+        return parent::saveForm($form, $data) && $this->saveRelatedProducts($form, $data);
+    }
+
+    /**
      * @param FormInterface  $form
      * @param Product        $entity
      * @param array|callable $saveAndStayRoute
@@ -80,8 +89,6 @@ class ProductUpdateHandler extends UpdateHandler
         $saveMessage,
         $resultCallback = null
     ) {
-        $this->onSuccess($form, $entity);
-
         $result = parent::processSave(
             $form,
             $entity,
@@ -119,19 +126,40 @@ class ProductUpdateHandler extends UpdateHandler
     /**
      * @param FormInterface $form
      * @param Product       $entity
+     * @return bool
      */
-    private function onSuccess(FormInterface $form, Product $entity)
+    private function saveRelatedProducts(FormInterface $form, Product $entity)
     {
-        $appendRelated = $form->get('appendRelated')->getData();
-        $removeRelated = $form->get('removeRelated')->getData();
+        $appendRelatedFormItem = $form->get('appendRelated');
+        $removeRelatedFormItem = $form->get('removeRelated');
+        $appendRelated = $appendRelatedFormItem->getData();
+        $removeRelated = $removeRelatedFormItem->getData();
 
         $this->relatedProductAssigner->removeRelations($entity, $removeRelated);
-        $this->relatedProductAssigner->addRelations($entity, $appendRelated);
 
-        if (!empty($appendRelated) || !empty($removeRelated)) {
-            $this->doctrineHelper
-                ->getEntityManager($entity)
-                ->flush();
+        try {
+            $this->relatedProductAssigner->addRelations($entity, $appendRelated);
+        } catch (\InvalidArgumentException $e) {
+            $this->addFormError($appendRelatedFormItem, $e->getMessage());
+        } catch (\LogicException $e) {
+            $this->addFormError($appendRelatedFormItem, $e->getMessage());
+        } catch (\OverflowException $e) {
+            $this->addFormError($appendRelatedFormItem, $e->getMessage());
         }
+
+        return $form->getErrors()->count() === 0;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string $message
+     */
+    private function addFormError(FormInterface $form, $message)
+    {
+        $form->addError(
+            new FormError(
+                $this->translator->trans($message, [], 'validators')
+            )
+        );
     }
 }

@@ -8,6 +8,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Handler\FormHandler;
 use Oro\Bundle\FormBundle\Tests\Unit\Model\UpdateHandlerTest;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy;
@@ -17,6 +18,8 @@ use Oro\Bundle\UIBundle\Route\Router;
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -165,6 +168,9 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
                 ['appendRelated', $this->getSubForm()],
                 ['removeRelated', $this->getSubForm()],
             ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
 
         $flashBag = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface')
             ->getMock();
@@ -295,10 +301,15 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
                 ['appendRelated', $this->getSubForm([$relatedEntity])],
                 ['removeRelated', $this->getSubForm()],
             ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
 
-        $handler = $this->getMockBuilder('Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub')
+        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
+            ->disableOriginalConstructor()
             ->getMock();
-        $handler->expects($this->once())
+        $formHandlerMock->expects($this->once())
             ->method('process')
             ->with($entity)
             ->will($this->returnValue(true));
@@ -310,24 +321,29 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->method('getEntityManager')
             ->with($entity)
             ->will($this->returnValue($this->entityManager));
-        $this->entityManager->expects($this->once())
-            ->method('flush');
-
 
         $this->relatedProductAssigner->expects($this->once())
             ->method('addRelations')
             ->with($entity, [$relatedEntity]);
 
+        $handler = new ProductUpdateHandler(
+            $this->requestStack,
+            $this->session,
+            $this->router,
+            $this->doctrineHelper,
+            $formHandlerMock
+        );
+        $handler->setRelatedProductAssigner($this->relatedProductAssigner);
+
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
-        $result = $this->handler->handleUpdate(
+        $result = $handler->handleUpdate(
             $entity,
             $form,
             ['route' => 'test_update'],
             ['route' => 'test_view'],
-            'Saved',
-            $handler
+            'Saved'
         );
         $this->assertEquals($expected, $result);
     }
@@ -347,10 +363,83 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
                 ['appendRelated', $this->getSubForm()],
                 ['removeRelated', $this->getSubForm([$relatedEntity])],
             ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
 
-        $handler = $this->getMockBuilder('Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub')
+        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
+            ->disableOriginalConstructor()
             ->getMock();
-        $handler->expects($this->once())
+        $formHandlerMock->expects($this->once())
+            ->method('process')
+            ->with($entity)
+            ->will($this->returnValue(true));
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->will($this->returnValue(1));
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManager')
+            ->with($entity)
+            ->will($this->returnValue($this->entityManager));
+
+        $this->relatedProductAssigner->expects($this->once())
+            ->method('removeRelations')
+            ->with($entity, [$relatedEntity]);
+
+        $expected = $this->assertSaveData($form, $entity);
+        $expected['savedId'] = 1;
+
+        $handler = new ProductUpdateHandler(
+            $this->requestStack,
+            $this->session,
+            $this->router,
+            $this->doctrineHelper,
+            $formHandlerMock
+        );
+        $handler->setRelatedProductAssigner($this->relatedProductAssigner);
+
+        $result = $handler->handleUpdate(
+            $entity,
+            $form,
+            ['route' => 'test_update'],
+            ['route' => 'test_view'],
+            'Saved'
+        );
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testSaveHandlerAddRelatedProductsFailsWhenFunctionalityIsDisabled()
+    {
+        $entity = $this->getProductMock(0);
+        $relatedEntity = $this->getProductMock(0);
+
+        $appendRelatedSubForm = $this->getSubForm([$relatedEntity]);
+        $appendRelatedSubForm->expects($this->once())
+            ->method('addError')
+            ->with($this->isInstanceOf(FormError::class));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['appendRelated', $appendRelatedSubForm],
+                ['removeRelated', $this->getSubForm()],
+            ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
+
+        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $formHandlerMock->expects($this->once())
             ->method('process')
             ->with($entity)
             ->will($this->returnValue(true));
@@ -362,23 +451,169 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->method('getEntityManager')
             ->with($entity)
             ->will($this->returnValue($this->entityManager));
-        $this->entityManager->expects($this->once())
-            ->method('flush');
 
         $this->relatedProductAssigner->expects($this->once())
-            ->method('removeRelations')
-            ->with($entity, [$relatedEntity]);
+            ->method('addRelations')
+            ->with($entity, [$relatedEntity])
+            ->willThrowException(new \LogicException());
+
+        $handler = new ProductUpdateHandler(
+            $this->requestStack,
+            $this->session,
+            $this->router,
+            $this->doctrineHelper,
+            $formHandlerMock
+        );
+        $handler->setRelatedProductAssigner($this->relatedProductAssigner);
+        $handler->setTranslator($this->translator);
 
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
 
-        $result = $this->handler->handleUpdate(
+        $result = $handler->handleUpdate(
             $entity,
             $form,
             ['route' => 'test_update'],
             ['route' => 'test_view'],
-            'Saved',
-            $handler
+            'Saved'
+        );
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testSaveHandlerAddRelatedProductsFailsWhenTryingAddProductToItself()
+    {
+        $entity = $this->getProductMock(0);
+        $relatedEntity = $this->getProductMock(0);
+
+        $appendRelatedSubForm = $this->getSubForm([$relatedEntity]);
+        $appendRelatedSubForm->expects($this->once())
+            ->method('addError')
+            ->with($this->isInstanceOf(FormError::class));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['appendRelated', $appendRelatedSubForm],
+                ['removeRelated', $this->getSubForm()],
+            ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
+
+        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $formHandlerMock->expects($this->once())
+            ->method('process')
+            ->with($entity)
+            ->will($this->returnValue(true));
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->will($this->returnValue(1));
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManager')
+            ->with($entity)
+            ->will($this->returnValue($this->entityManager));
+
+        $this->relatedProductAssigner->expects($this->once())
+            ->method('addRelations')
+            ->with($entity, [$relatedEntity])
+            ->willThrowException(new \InvalidArgumentException());
+
+        $handler = new ProductUpdateHandler(
+            $this->requestStack,
+            $this->session,
+            $this->router,
+            $this->doctrineHelper,
+            $formHandlerMock
+        );
+        $handler->setRelatedProductAssigner($this->relatedProductAssigner);
+        $handler->setTranslator($this->translator);
+
+        $expected = $this->assertSaveData($form, $entity);
+        $expected['savedId'] = 1;
+
+        $result = $handler->handleUpdate(
+            $entity,
+            $form,
+            ['route' => 'test_update'],
+            ['route' => 'test_view'],
+            'Saved'
+        );
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testSaveHandlerAddRelatedProductsFailsWhenTryingAddProductOverLimit()
+    {
+        $entity = $this->getProductMock(0);
+        $relatedEntity = $this->getProductMock(0);
+
+        $appendRelatedSubForm = $this->getSubForm([$relatedEntity]);
+        $appendRelatedSubForm->expects($this->once())
+            ->method('addError')
+            ->with($this->isInstanceOf(FormError::class));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['appendRelated', $appendRelatedSubForm],
+                ['removeRelated', $this->getSubForm()],
+            ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
+
+        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $formHandlerMock->expects($this->once())
+            ->method('process')
+            ->with($entity)
+            ->will($this->returnValue(true));
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->will($this->returnValue(1));
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManager')
+            ->with($entity)
+            ->will($this->returnValue($this->entityManager));
+
+        $this->relatedProductAssigner->expects($this->once())
+            ->method('addRelations')
+            ->with($entity, [$relatedEntity])
+            ->willThrowException(new \OverflowException());
+
+        $handler = new ProductUpdateHandler(
+            $this->requestStack,
+            $this->session,
+            $this->router,
+            $this->doctrineHelper,
+            $formHandlerMock
+        );
+        $handler->setRelatedProductAssigner($this->relatedProductAssigner);
+        $handler->setTranslator($this->translator);
+
+        $expected = $this->assertSaveData($form, $entity);
+        $expected['savedId'] = 1;
+
+        $result = $handler->handleUpdate(
+            $entity,
+            $form,
+            ['route' => 'test_update'],
+            ['route' => 'test_view'],
+            'Saved'
         );
         $this->assertEquals($expected, $result);
     }
@@ -391,6 +626,9 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
                 ['appendRelated', $this->getSubForm()],
                 ['removeRelated', $this->getSubForm()],
             ]);
+        $this->form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($this->form, []));
 
         parent::testUpdateWorksWithValidForm();
     }
@@ -403,6 +641,9 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
                 ['appendRelated', $this->getSubForm()],
                 ['removeRelated', $this->getSubForm()],
             ]);
+        $this->form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($this->form, []));
 
         parent::testHandleUpdateWorksWithValidForm();
     }
