@@ -154,31 +154,20 @@ datagrids:
                 pageSize:
                     default_per_page: 10
             routerEnabled: false
-            rowSelection:
-                dataField: id
-                columnName: isSelected
-                selectors:
-                    included: '#appendProducts'
-                    excluded: '#removeProducts'
         source:
             query:
-                select:
-                    - >
-                      (CASE WHEN (product.id IN (:data_in) AND product.id NOT IN (:data_not_in))
-                      THEN true ELSE false
-                      END) as isSelected
                 where:
                     and:
                         - NOT (product.id IN (:hiddenProducts))
             bind_parameters:
                 hiddenProducts:
                     default: 0
-        columns:
-            isSelected:
-                label:         oro.product.content_variant.ui.selected
-                editable:      true
-                frontend_type: boolean
-                order: -1
+        mass_actions:
+            get-selected-product-ids:
+                type: get-selected-product-ids
+                label: oro.product.grid.action.product_collection.add_individual_product
+                icon: plus
+                data_identifier: product.id
 
     product-collection-included-products-grid:
         extends: product-collection-selected-products-grid

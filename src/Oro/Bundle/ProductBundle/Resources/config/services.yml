@@ -975,3 +975,9 @@ services:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\GetSelectedProductIdsMassActionHandler
         arguments:
             - '@oro_config.manager'
+
+    oro_product.datagrid.extension.mass_action.action.get_selected_product_ids_mass_action:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\GetSelectedProductIdsMassAction
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: get-selected-product-ids }

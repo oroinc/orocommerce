@@ -3,7 +3,7 @@
 
     <div class="btn-group">
         {{ UI.clientLink({
-            'dataUrl': path('oro_add_products_widget'),
+            'dataUrl': path('oro_add_products_widget', {eventName: eventName}),
             'label': 'oro.product.content_variant.ui.add'|trans,
             'class': 'btn',
             'title': hint,

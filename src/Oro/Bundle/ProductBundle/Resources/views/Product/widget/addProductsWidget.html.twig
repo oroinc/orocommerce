@@ -2,10 +2,16 @@
 
 <div class="widget-content">
     {% block widget_content %}
-        <input type="hidden" id="appendProducts">
-        <input type="hidden" id="removeProducts">
-
-        {{ dataGrid.renderGrid('product-collection-add-products-grid', parameters, {'enableViews': false, 'enableToggleFilters': false}) }}
+        {% set renderParams = {
+            'enableViews': false,
+            'enableToggleFilters': false,
+            'toolbarOptions': {
+                'selectedProducts': {
+                    'eventName': eventName
+                }
+            }
+        } %}
+        {{ dataGrid.renderGrid('product-collection-add-products-grid', parameters, renderParams) }}
 
         <fieldset class="form-horizontal">
             <div class="widget-actions form-actions" style="display: none;">

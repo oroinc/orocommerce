@@ -265,6 +265,7 @@ oro:
                     add_to_exclude: Exclude
                     remove_from_included: Reset to Default
                     remove_from_excluded: Remove
+                    add_individual_product: Add
             mass_action:
                 get_selected_product_ids:
                     response:

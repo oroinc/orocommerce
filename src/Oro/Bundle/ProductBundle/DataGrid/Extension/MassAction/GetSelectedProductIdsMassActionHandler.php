@@ -9,6 +9,9 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Handler checks that count of selected products do not exceed limitation and returns product ids from given grid.
+ */
 class GetSelectedProductIdsMassActionHandler implements MassActionHandlerInterface
 {
     const FAILED_RESPONSE_MESSAGE = 'oro.product.grid.mass_action.get_selected_product_ids.response.failed';
@@ -40,9 +43,8 @@ class GetSelectedProductIdsMassActionHandler implements MassActionHandlerInterfa
         }
 
         $ids = [];
-        /** @var Product $product */
-        foreach ($args->getResults() as $product) {
-            $ids[] = $product->getId();
+        foreach ($args->getResults() as $resultRecord) {
+            $ids[] = $resultRecord->getValue('id');
         }
 
         return new MassActionResponse(true, self::SUCCESS_RESPONSE_MESSAGE, ['ids' => $ids]);
