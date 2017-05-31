@@ -82,8 +82,6 @@ oro:
             options.label: Options
             additional_options.label: Additional Options
             option.label: Option
-            surcharge.label: Surcharge
-            surcharge.tooltip: The payment method surcharge applies to the shipping cost whenever this shipping method is selected. Additional options surcharge may apply on top of the payment method surcharge.
             status.label: Status
             active.label: Active
 
