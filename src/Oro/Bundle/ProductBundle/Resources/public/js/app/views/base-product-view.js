@@ -81,6 +81,7 @@ define(function(require) {
             mediator.trigger('layout-subtree:update:product', {
                 layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {
                     id: productId,
+                    parentProductId: this.model.get('parentProduct'),
                     ignoreProductVariant: true
                 }),
                 layoutSubtreeCallback: _.bind(this.afterProductChanged, this)

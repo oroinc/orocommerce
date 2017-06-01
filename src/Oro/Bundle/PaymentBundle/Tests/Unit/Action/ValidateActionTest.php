@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 use Oro\Bundle\PaymentBundle\Action\ValidateAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -56,23 +55,17 @@ class ValidateActionTest extends AbstractActionTest
             ->with($options['paymentMethod'], PaymentMethodInterface::VALIDATE, $options['object'])
             ->willReturn($paymentTransaction);
 
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
-
-        $paymentMethodProvider->expects($this->atLeastOnce())
+        $this->paymentMethodProvider
+            ->expects($this->atLeastOnce())
             ->method('hasPaymentMethod')
             ->with($options['paymentMethod'])
             ->willReturn(true);
 
-        $paymentMethodProvider
+        $this->paymentMethodProvider
             ->expects($this->atLeastOnce())
             ->method('getPaymentMethod')
             ->with($options['paymentMethod'])
             ->willReturn($paymentMethod);
-
-        $this->paymentMethodProvidersRegistry
-            ->expects($this->atLeastOnce())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
 
         $this->paymentTransactionProvider
             ->expects($this->once())
@@ -189,7 +182,7 @@ class ValidateActionTest extends AbstractActionTest
     {
         return new ValidateAction(
             $this->contextAccessor,
-            $this->paymentMethodProvidersRegistry,
+            $this->paymentMethodProvider,
             $this->paymentTransactionProvider,
             $this->router
         );

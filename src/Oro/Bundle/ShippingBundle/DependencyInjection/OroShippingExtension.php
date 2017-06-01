@@ -26,6 +26,7 @@ class OroShippingExtension extends Extension
         $loader->load('shipping_methods.yml');
         $loader->load('mass_action.yml');
         $loader->load('block_types.yml');
+        $loader->load('method_event_listeners.yml');
     }
 
     /**

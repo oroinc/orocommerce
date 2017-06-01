@@ -9,7 +9,9 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\AuthorizeNetBundle\Entity\AuthorizeNetSettings;
 use Oro\Bundle\AuthorizeNetBundle\Form\Type\AuthorizeNetSettingsType;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\SecurityBundle\Form\DataTransformer\Factory\CryptedDataTransformerFactoryInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,9 +32,9 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CryptedDataTransformerFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $encoder;
+    private $cryptedDataTransformerFactory;
 
     public function setUp()
     {
@@ -61,10 +63,10 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
                 ]
             );
 
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
+        $this->cryptedDataTransformerFactory = $this->createMock(CryptedDataTransformerFactoryInterface::class);
         $this->formType = new AuthorizeNetSettingsType(
             $translator,
-            $this->encoder,
+            $this->cryptedDataTransformerFactory,
             $cardTypesDataProvider,
             $actionsDataProvider
         );
@@ -76,12 +78,13 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $localizedType = new LocalizedFallbackValueCollectionTypeStub();
+        $encoder = $this->createEncoderMock();
 
         return [
             new PreloadedExtension(
                 [
                     $localizedType->getName() => $localizedType,
-                    new OroEncodedPlaceholderPasswordType($this->encoder),
+                    new OroEncodedPlaceholderPasswordType($encoder),
                 ],
                 []
             ),
@@ -108,16 +111,12 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
             'authNetRequireCVVEntry' => false,
         ];
 
-        $this->encoder
-            ->expects($this->any())
-            ->method('encryptData')
-            ->willReturnMap(
-                [
-                    [$submitData['apiLoginId'], $submitData['apiLoginId']],
-                    [$submitData['transactionKey'], $submitData['transactionKey']],
-                    [$submitData['clientKey'], $submitData['clientKey']],
-                ]
-            );
+        $this->cryptedDataTransformerFactory
+            ->expects(static::any())
+            ->method('create')
+            ->willReturnCallback(function () {
+                return $this->createMock(DataTransformerInterface::class);
+            });
 
         $authorizeNetSettings = new AuthorizeNetSettings();
 
@@ -142,5 +141,13 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
             );
 
         $this->formType->configureOptions($resolver);
+    }
+
+    /**
+     * @return SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createEncoderMock()
+    {
+        return $this->createMock(SymmetricCrypterInterface::class);
     }
 }

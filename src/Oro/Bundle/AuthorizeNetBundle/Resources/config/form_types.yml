@@ -3,7 +3,7 @@ services:
         class: Oro\Bundle\AuthorizeNetBundle\Form\Type\AuthorizeNetSettingsType
         arguments:
             - '@translator.default'
-            - '@oro_security.encoder.mcrypt'
+            - '@oro_security.form.data_transformer.factory.crypted_data'
             - '@oro_authorize_net.settings.card_type.provider'
             - '@oro_authorize_net.settings.payment_action.provider'
         tags:

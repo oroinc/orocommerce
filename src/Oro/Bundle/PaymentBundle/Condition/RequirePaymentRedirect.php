@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Condition;
 
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
@@ -22,9 +22,9 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     const NAME = 'require_payment_redirect';
 
     /**
-     * @var PaymentMethodProvidersRegistryInterface
+     * @var PaymentMethodProviderInterface
      */
-    private $paymentMethodRegistry;
+    private $paymentMethodProvider;
 
     /**
      * @var string
@@ -37,14 +37,14 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     private $eventDispatcher;
 
     /**
-     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -76,21 +76,19 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     protected function isConditionAllowed($context)
     {
         $paymentMethodIdentifier = $this->resolveValue($context, $this->paymentMethod);
-        foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
-            if ($provider->hasPaymentMethod($paymentMethodIdentifier)) {
-                $paymentMethod = $provider->getPaymentMethod($paymentMethodIdentifier);
-                $event = new RequirePaymentRedirectEvent($paymentMethod);
-                $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
-                $this->eventDispatcher->dispatch(
-                    sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodIdentifier),
-                    $event
-                );
-
-                return $event->isRedirectRequired();
-            }
+        if (!$this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
+            return false;
         }
 
-        return false;
+        $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodIdentifier);
+        $event = new RequirePaymentRedirectEvent($paymentMethod);
+        $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodIdentifier),
+            $event
+        );
+
+        return $event->isRedirectRequired();
     }
 
     /**
