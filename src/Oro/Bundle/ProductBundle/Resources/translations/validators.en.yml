@@ -49,3 +49,6 @@ oro:
 
         product_collection:
             unique_segment_name.message: 'This name already in use'
+            blank_filters_or_included: "Should be specified filters or added some products manually."
+            blank_condition_item: "Conditions in filters should not be blank."
+            blank_condition_group: "Conditions groups in filters should not be blank."
