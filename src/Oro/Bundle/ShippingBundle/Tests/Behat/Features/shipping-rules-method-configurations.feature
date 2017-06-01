@@ -17,15 +17,15 @@ Feature: Applying shipping rules
     And fill "Shipping Rule" with:
       | Enable     | true       |
       | Name       | Flat Rate  |
-      | Sort Order | 1    |
-      | Currency   | $    |
+      | Sort Order | 1          |
+      | Currency   | $          |
     And click "Add All"
     And fill "Flat Rate Shipping Rule Form" with:
-      | Type          | Per Item          |
-      | Price         | 1.5               |
-      | Type1          | Per Order        |
-      | Price1         | 2               |
-      | HandlingFee1         | 3               |
+      | Type          | Per Item  |
+      | Price         | 1.5       |
+      | Type1         | Per Order |
+      | Price1        | 2         |
+      | HandlingFee1  | 3         |
     When save and close form
     Then should see "Shipping rule has been saved" flash message
 
@@ -42,9 +42,9 @@ Feature: Applying shipping rules
     Then I should see "Flat Rate Disabled"
     Then I should see "Price: $2.0000Handling Fee: $3.0000Type: Per Order"
     And fill "Flat Rate Shipping Rule Form" with:
-      | HandlingFee1         |                |
+      | HandlingFee1 | |
     And fill "Shipping Rule" with:
-      | Currency   | €    |
+      | Currency | € |
     Then I should see "Price: €2.0000Type: Per Order"
     And I click "Flat Rate Shipping Method Icon"
     Then I should not see "Flat Rate Shipping Method Body"
