@@ -32,12 +32,8 @@ PaymentBundle
 
 ShippingBundle
 -------------
-- Create files
-    - `shipping-methods-grid.less`
-- Updated files
-    - `style.less`
-    - `translations/messages.en.yml` - added new translations for shipping methods table
-    - `views/Form/fields.html.twig` - added shipping datagrid table markup
-    - `ShippingMethodsConfigsRule/update.html.twig` - added collapse markup and updated fields attributes
-    - `widget/collapse-widget.js` - extended jQueryUI collapse widget, add global trigger
-    - `views/shipping-rule-method-view.js` - extended and refactored shipping rule component, add functionality for add/delete new shipping methods
+ - redesign of Shipping Rule edit/create pages - changed Shipping Method Configurations block templates and functionality
+ - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType` - added `methods_icons` variable
+ - `oroshipping/js/app/views/shipping-rule-method-view` - changed options, functions, functionality
+ - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
+ - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
