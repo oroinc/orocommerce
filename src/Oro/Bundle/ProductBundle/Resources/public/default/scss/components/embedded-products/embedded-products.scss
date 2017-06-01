@@ -1,31 +1,27 @@
-$featured-products-width: 30px;
-$featured-products-edge: 84px;
-$featured-products-gap-width: 27px;
-$featured-products-count: 4;
-$featured-products-height: 249px;
+// @theme: default
 
-.featured-products {
+.embedded-products {
     & .embedded-list__container--slider {
         & .slick-arrow {
-            top: calc(((100vw - #{$featured-products-width + $featured-products-edge}) / #{$featured-products-count} - #{$featured-products-gap-width}) / 2);
+            top: calc(((100vw - #{$embedded-products-width + $embedded-products-edge}) / #{$embedded-products-count} - #{$embedded-products-gap-width}) / 2);
 
             margin-top: 24px;
 
             transform: translate(0, -50%);
 
-            @media screen and (min-width: ($featured-products-height + $featured-products-gap-width) * $featured-products-count + $featured-products-edge + $featured-products-width) {
-                top: $featured-products-height / 2;
+            @media screen and (min-width: ($embedded-products-height + $embedded-products-gap-width) * $embedded-products-count + $embedded-products-edge + $embedded-products-width) {
+                top: $embedded-products-height / 2;
             }
         }
     }
 
     & .embedded-list__item {
-        width: 25%;
+        width: $embedded-products-item-width-desktop;
     }
 }
 
 @include breakpoint('desktop') {
-    .featured-products {
+    .embedded-products {
         & .embedded-list {
             margin: 0 42px;
         }
@@ -39,15 +35,15 @@ $featured-products-height: 249px;
 
 
 @include breakpoint('tablet-small') {
-    .featured-products {
+    .embedded-products {
         & .embedded-list__item {
-            width: 33.33%;
+            width: $embedded-products-item-width-tablet-small;
         }
     }
 }
 
 @include breakpoint('mobile-landscape') {
-    .featured-products {
+    .embedded-products {
         & .embedded-list__container--slider {
             margin: 0 0 0 -16px;
         }
@@ -59,15 +55,15 @@ $featured-products-height: 249px;
         }
 
         & .embedded-list__item {
-            width: 50%;
+            width: $embedded-products-item-width-mobile-landscape;
         }
     }
 }
 
 @include breakpoint('mobile') {
-    .featured-products {
+    .embedded-products {
         & .embedded-list__item {
-            width: 100%;
+            width: $embedded-products-item-width-mobile;
         }
     }
 }
