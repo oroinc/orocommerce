@@ -2,17 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
+use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 /**
@@ -22,6 +27,38 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
+
+    /**
+     * @var OroMainContext
+     */
+    private $oroMainContext;
+
+    /**
+     * @var GridContext
+     */
+    private $gridContext;
+
+    /**
+     * @var ConfigContext
+     */
+    private $configContext;
+
+    /**
+     * @var FormContext
+     */
+    private $formContext;
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+        $this->oroMainContext = $environment->getContext(OroMainContext::class);
+        $this->gridContext = $environment->getContext(GridContext::class);
+        $this->configContext = $environment->getContext(ConfigContext::class);
+        $this->formContext = $environment->getContext(FormContext::class);
+    }
 
     /**
      * @When I fill product name field with :productName value
@@ -394,6 +431,48 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function shouldNotSeeValueInElementOptions($value, $elementName)
     {
         static::assertFalse(in_array($value, $this->getOptionsForElement($elementName), true));
+    }
+
+    /**
+     * @Given /^(?:|I )am on Content Node page and added Product Collection variant$/
+     */
+    public function iAmOnContentNodePageAndAddedProductCollectionVariant()
+    {
+        $this->oroMainContext->iOpenTheMenuAndClick('Marketing/Web Catalogs');
+        $this->waitForAjax();
+        $this->gridContext->clickActionInRow('Default Web Catalog', 'Edit Content Tree');
+        $this->waitForAjax();
+        $this->oroMainContext->iClickOn('Show Variants Dropdown');
+        $this->oroMainContext->pressButton('Add Product Collection');
+        $this->oroMainContext->pressButton('Content Variants');
+        $this->oroMainContext->assertPageContainsNumElements(1, 'Product Collection Variant Label');
+    }
+
+    /**
+     * @Given /^(?:|I )set "Mass action limit" in Product Collections settings to the "(?P<limit>[^"]+)"$/
+     *
+     * @param string $limit
+     */
+    public function iSetMassActionLimitInProductCollectionsSettings($limit)
+    {
+        $this->iOnProductCollectionsSettingsPage();
+        $this->formContext->uncheckUseDefaultForField("Mass action limit");
+        $this->oroMainContext->fillField("Mass action limit", $limit);
+        $this->oroMainContext->pressButton('Save settings');
+        $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
+    }
+
+    /**
+     * @Given /^I am on Product Collections settings page$/
+     */
+    public function iOnProductCollectionsSettingsPage()
+    {
+        $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
+        $this->waitForAjax();
+        $this->configContext->clickLinkOnConfigurationSidebar('Commerce');
+        $this->configContext->clickLinkOnConfigurationSidebar('Product');
+        $this->configContext->clickLinkOnConfigurationSidebar('Product Collections');
+        $this->waitForAjax();
     }
 
     /**

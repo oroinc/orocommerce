@@ -188,6 +188,7 @@ system_configuration:
                 constraints:
                     - GreaterThan:
                         value: 0
+                    - Type: integer
 
     tree:
         system_configuration:

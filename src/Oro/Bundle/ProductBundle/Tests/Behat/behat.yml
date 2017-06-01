@@ -149,6 +149,17 @@ oro_behat_extension:
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
+    MassActionLimit:
+      selector: 'input[id*="mass_action_limitation_value"]'
+
+    ProductCollectionAddProductsFilters:
+      selector: 'div[id^="grid-product-collection-add-products-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    ProductCollectionAddProductsFilterStringItem:
+      selector: 'div[id^="grid-product-collection-add-products-grid"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
+
   suites:
     OroProductBundle:
       contexts:
@@ -161,5 +172,6 @@ oro_behat_extension:
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features'
