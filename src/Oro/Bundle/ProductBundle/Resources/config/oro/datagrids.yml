@@ -102,13 +102,13 @@ datagrids:
                         field_options:
                             choices: "@oro_product.provider.product_type_provider->getAvailableProductTypes"
                 newArrival:
-                    type: choice
+                    type: boolean
                     data_name: product.newArrival
                     options:
                         field_options:
                             choices:
-                                - oro.product.new_arrival.no
-                                - oro.product.new_arrival.yes
+                                1: oro.product.new_arrival.yes
+                                2: oro.product.new_arrival.no
                     enabled: false
                 createdAt:
                     type:      datetime
