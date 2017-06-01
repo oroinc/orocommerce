@@ -1,30 +1,30 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Resolver;
+namespace Oro\Bundle\PricingBundle\PricingStrategy;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Output\OutputInterface;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class CombinedProductPriceResolver
+abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyInterface
 {
+
     /**
      * @var CombinedPriceListTriggerHandler
      */
     protected $triggerHandler;
 
     /**
-     * @var ManagerRegistry
+     * @var Registry
      */
     protected $registry;
 
@@ -58,12 +58,12 @@ class CombinedProductPriceResolver
     protected $output;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param Registry $registry
+     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
      * @param CombinedPriceListTriggerHandler $triggerHandler
      */
     public function __construct(
-        ManagerRegistry $registry,
+        Registry $registry,
         InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
         CombinedPriceListTriggerHandler $triggerHandler
     ) {
@@ -90,7 +90,7 @@ class CombinedProductPriceResolver
 
     /**
      * @param CombinedPriceList $combinedPriceList
-     * @param Product $product
+     * @param Product|null $product
      * @param int|null $startTimestamp
      */
     public function combinePrices(CombinedPriceList $combinedPriceList, Product $product = null, $startTimestamp = null)
@@ -127,13 +127,7 @@ class CombinedProductPriceResolver
                 );
                 $progressBar->display();
             }
-            $combinedPriceRepository->insertPricesByPriceList(
-                $this->insertFromSelectQueryExecutor,
-                $combinedPriceList,
-                $priceListRelation->getPriceList(),
-                $priceListRelation->isMergeAllowed(),
-                $product
-            );
+            $this->processRelation($combinedPriceList, $priceListRelation, $product);
         }
         if (!$product) {
             $combinedPriceList->setPricesCalculated(true);
@@ -205,4 +199,15 @@ class CombinedProductPriceResolver
 
         return $this;
     }
+
+    /**
+     * @param CombinedPriceList $combinedPriceList
+     * @param CombinedPriceListToPriceList $priceListRelation
+     * @param Product|null $product
+     */
+    abstract protected function processRelation(
+        CombinedPriceList $combinedPriceList,
+        CombinedPriceListToPriceList $priceListRelation,
+        Product $product = null
+    );
 }

@@ -68,7 +68,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         owner: '@business_unit'
         organization: '@organization'
-
+        attributeFamily: '@defaultProductFamily'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
@@ -95,6 +95,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist2'
         organization: '@organization'
+
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal:
         __construct: ['@shoppinglist','USD']
@@ -108,6 +109,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         currency: 'USD'
         subtotalValue: '10'
         valid: true
+
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
     address:
         country: '@germany'
@@ -146,6 +148,11 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         value: 5
         currency: 'USD'
 
+Oro\Bundle\PricingBundle\Entity\CombinedPriceList:
+    combinedPriceList:
+        name: 'combinedPriceList'
+        enabled: true
+
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
    combinedProductPrice:
         pricelist: '@combinedPriceList'
@@ -166,6 +173,11 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
     combinedPriceListToWebsite:
         pricelist: '@combinedPriceList'
         website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct:
+        product: '@product'
+        pricelist: '@pricelistShipping'
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
     customerUserSetting:

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Oro\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Psr\Log\LoggerInterface;
@@ -15,8 +15,8 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject */
     protected $contextAccessor;
 
-    /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodProvidersRegistry;
+    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvider;
 
     /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTransactionProvider;
@@ -37,7 +37,7 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     {
         $this->contextAccessor = $this->createMock('Oro\Component\ConfigExpression\ContextAccessor');
 
-        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
         $this->paymentTransactionProvider = $this
             ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')
@@ -56,18 +56,6 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->action->setDispatcher($this->dispatcher);
-    }
-
-    protected function tearDown()
-    {
-        unset(
-            $this->action,
-            $this->dispatcher,
-            $this->contextAccessor,
-            $this->paymentMethodProvidersRegistry,
-            $this->paymentTransactionProvider,
-            $this->router
-        );
     }
 
     /**
