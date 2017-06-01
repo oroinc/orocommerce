@@ -17,7 +17,6 @@ define([
          * @inheritDoc
          */
         initialize: function(options) {
-
             this.grid = options.grid;
 
             mediator.on('product:save-related-items', this.updateRelatedProductsGrid, this);

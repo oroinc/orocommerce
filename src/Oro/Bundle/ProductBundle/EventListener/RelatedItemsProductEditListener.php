@@ -45,7 +45,8 @@ class RelatedItemsProductEditListener
             '@OroProduct/Product/RelatedItems/relatedItems.html.twig',
             [
                 'form' => $event->getFormView(),
-                'entity' => $event->getEntity()
+                'entity' => $event->getEntity(),
+                'relatedProductsLimit' => $this->configProvider->getLimit()
             ]
         );
         $this->addEditPageBlock($event->getScrollData(), $relatedProductsTemplate);

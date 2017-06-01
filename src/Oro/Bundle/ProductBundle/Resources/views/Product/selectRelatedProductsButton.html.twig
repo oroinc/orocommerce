@@ -1,6 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-<div class="pull-right btn-group icons-holder">
+<div class="pull-right">
     {{ UI.clientLink({
         'dataUrl': path('oro_product_possible_products_for_related_products', {'id': entity.id}),
         'aCss': 'btn no-hash',
@@ -9,16 +9,15 @@
             'type' : 'related-items',
             'options' : {
                 'dialogOptions' : {
-                    'title': 'oro.product.widgets.select_related_products.title'|trans({'{{ sku }}': entity.sku, '{{ name }}': entity.sku}),
+                    'title': 'oro.product.widgets.select_related_products.title'|trans({'{{ sku }}': entity.sku, '{{ name }}': entity.name}),
                     'modal': true,
                     'resizable': false,
                     'width': 820,
                     'autoResize': true,
                 },
-                'appendedIdsField': '[data-name="productAppendRelatedSelect"]',
-                'removedIdsField': '[data-name="productRemoveRelatedSelect"]',
-                'appendedRelatedIdsField': '[data-name="field__append-related"]',
-                'removedRelatedIdsField': '[data-name="field__remove-related"]'
+                'itemsLimit': relatedProductsLimit,
+                'itemsIdsToAdd': '#productAppendRelated',
+                'itemsIdsToRemove': '#productRemoveRelated',
             }
         }
     }) }}

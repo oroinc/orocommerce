@@ -25,6 +25,9 @@
 
 {{ form_widget(form.appendRelated, {'id': 'productAppendRelated'}) }}
 {{ form_widget(form.removeRelated, {'id': 'productRemoveRelated'}) }}
-{{ placeholder('oro_product_related_products_buttons', {'entity':  entity}) }}
+{{ placeholder('oro_product_related_products_buttons', {
+    'entity':  entity,
+    'relatedProductsLimit': relatedProductsLimit
+}) }}
 {{ dataGrid.renderGrid('products-related-items-edit', relatedGridParams) }}
 {{ placeholder('oro_product_related_items_edit', {'entity':  entity}) }}

@@ -186,6 +186,7 @@ oro:
             select_related_products:
               title: Select related products for {{ sku }} - {{ name }}
               label: Select related products
+              limit_has_been_reached: Limit of related products has been reached
             select_products: Select products
 
         controller:
