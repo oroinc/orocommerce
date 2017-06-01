@@ -376,8 +376,6 @@ datagrids:
                 label:         oro.product.names.label
             shortDescription:
                 label:         oro.product.short_descriptions.label
-            newArrival:
-                label:         oro.product.new_arrival.label
         filters:
             columns:
                 all_text:
@@ -400,6 +398,7 @@ datagrids:
                 type:  url
                 route: oro_product_frontend_product_view
                 params: [ id ]
+            newArrival: ~
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
