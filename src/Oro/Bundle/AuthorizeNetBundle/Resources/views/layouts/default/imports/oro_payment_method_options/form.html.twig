@@ -6,12 +6,14 @@
 
     {%- set type = type|default('password') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    <span class="tooltip-container">
-        <a href="javascript: void(0);" class="tooltip-trigger">{{ 'oro.authorize_net.credit_card.whats_this'|trans }}</a>
-        <span class="tooltip top tooltip--animated">
-            <span class="tooltip-inner">{{ 'oro.authorize_net.credit_card.tooltip'|trans|nl2br }}</span>
-        </span>
-    </span>
+    <a href="javascript: void(0);"
+       data-toggle="tooltip"
+       data-title="{{ 'oro.authorize_net.credit_card.tooltip'|trans }}"
+       data-html="true"
+       data-container="body"
+    >
+        {{ 'oro.authorize_net.credit_card.whats_this'|trans }}
+    </a>
 {% endblock %}
 
 {% block _oro_authorize_net_credit_card_widget %}
