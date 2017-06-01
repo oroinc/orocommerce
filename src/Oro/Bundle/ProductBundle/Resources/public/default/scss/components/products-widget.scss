@@ -708,10 +708,10 @@
   }
 
   &_list-view {
-    display: table;
-    width: 100%;
     padding: 30px 0;
     border-bottom: 1px solid get-color('additional', 'light');
+
+    @include clearfix();
 
     &:last-child {
       border-bottom: 0;

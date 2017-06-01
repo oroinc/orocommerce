@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\NameStrategyInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
@@ -22,6 +23,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ProductCollectionDatagridListener
 {
     const SEGMENT_DEFINITION_PARAMETER_KEY = 'sd_';
+    const DEFINITION_KEY = 'definition';
+    const INCLUDED_KEY = 'included';
+    const EXCLUDED_KEY = 'excluded';
 
     /**
      * @var RequestStack
@@ -44,21 +48,29 @@ class ProductCollectionDatagridListener
     private $nameStrategy;
 
     /**
+     * @var ProductCollectionDefinitionConverter
+     */
+    private $definitionConverter;
+
+    /**
      * @param RequestStack $requestStack
      * @param SegmentManager $segmentManager
      * @param ManagerRegistry $registry
      * @param NameStrategyInterface $nameStrategy
+     * @param ProductCollectionDefinitionConverter $definitionConverter
      */
     public function __construct(
         RequestStack $requestStack,
         SegmentManager $segmentManager,
         ManagerRegistry $registry,
-        NameStrategyInterface $nameStrategy
+        NameStrategyInterface $nameStrategy,
+        ProductCollectionDefinitionConverter $definitionConverter
     ) {
         $this->requestStack = $requestStack;
         $this->segmentManager = $segmentManager;
         $this->registry = $registry;
         $this->nameStrategy = $nameStrategy;
+        $this->definitionConverter = $definitionConverter;
     }
 
     /**
@@ -77,9 +89,17 @@ class ProductCollectionDatagridListener
             return;
         }
 
-        $segmentDefinition = $this->getSegmentDefinition($dataGrid, $request);
+        $requestData = $this->getRequestData($dataGrid, $request);
+        $dataGridQueryBuilder = $dataSource->getQueryBuilder();
+
+        $definition = json_decode($requestData[self::DEFINITION_KEY], true);
+        if (!$this->definitionConverter->hasFilters($definition) && !$requestData[self::INCLUDED_KEY]) {
+            $dataGridQueryBuilder->andWhere('1 = 0');
+            return;
+        }
+
+        $segmentDefinition = $this->getSegmentDefinition($requestData);
         if ($segmentDefinition) {
-            $dataGridQueryBuilder = $dataSource->getQueryBuilder();
             $this->addFilterBySegment($dataGridQueryBuilder, $segmentDefinition);
         }
     }
@@ -103,20 +123,36 @@ class ProductCollectionDatagridListener
     }
 
     /**
-     * @param DatagridInterface $dataGrid
-     * @param Request $request
+     * @param array $requestData
+     *
      * @return null|string
      */
-    private function getSegmentDefinition(DatagridInterface $dataGrid, Request $request)
+    private function getSegmentDefinition(array $requestData)
+    {
+        return $this->definitionConverter->putConditionsInDefinition(
+            $requestData[self::DEFINITION_KEY],
+            $requestData[self::EXCLUDED_KEY],
+            $requestData[self::INCLUDED_KEY]
+        );
+    }
+
+
+    /**
+     * @param DatagridInterface $dataGrid
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function getRequestData(DatagridInterface $dataGrid, Request $request): array
     {
         $scope = $dataGrid->getScope();
         $gridFullName = $this->nameStrategy->buildGridFullName($dataGrid->getName(), $scope);
-        $segmentDefinition = $request->get(self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName);
+        $dataParameterName = self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName;
 
-        if (!$segmentDefinition && !$scope) {
-            $segmentDefinition = $request->get(self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName . ':0');
-        }
-
-        return $segmentDefinition;
+        return [
+            self::DEFINITION_KEY => $request->get($dataParameterName),
+            self::INCLUDED_KEY => $request->get($dataParameterName . ':incl'),
+            self::EXCLUDED_KEY => $request->get($dataParameterName . ':excl'),
+        ];
     }
 }
