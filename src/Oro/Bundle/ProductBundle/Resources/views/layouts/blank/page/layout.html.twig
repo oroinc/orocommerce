@@ -1,12 +1,5 @@
 {% block product_sticker_widget %}
-    {# Demo data!!! Please remove this piece of code when BE part will be done!!! #}
-    {% set product = {
-        stickers: [
-            {type: 'new_arrival'}
-        ]
-    } %}
-
-    {% if 
+    {% if
         product is defined and
         product.stickers is defined and
         product.stickers|length
@@ -27,7 +20,7 @@
         {% endif %}
 
         {% set def_attr = attr %}
-        
+
         {% for sticker in product.stickers %}
             {% set attr = def_attr %}
 
@@ -40,7 +33,7 @@
                     '~class': ' product-sticker--' ~ position
                 }) %}
             {% endif %}
-            
+
             <div {{ block('block_attributes') }}>
                 {%- if mode == 'text' -%}
                     {{- ('oro.product.sticker.' ~ sticker.type)|trans -}}

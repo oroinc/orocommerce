@@ -178,6 +178,9 @@ datagrids:
             status:
                 inline_editing:
                     enable: true
+            newArrival:
+                inline_editing:
+                    enable: true
 
     product-product-variants-base:
         acl_resource: oro_product_view
@@ -360,6 +363,7 @@ datagrids:
             query:
                 select:
                     - text.sku as sku
+                    - integer.new_arrival as newArrival
                     - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
                     - text.type as type
@@ -372,6 +376,8 @@ datagrids:
                 label:         oro.product.names.label
             shortDescription:
                 label:         oro.product.short_descriptions.label
+            newArrival:
+                label:         oro.product.new_arrival.label
         filters:
             columns:
                 all_text:
