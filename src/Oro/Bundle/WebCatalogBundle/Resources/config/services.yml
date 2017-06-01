@@ -266,6 +266,7 @@ services:
             - '@doctrine'
             - '@oro_locale.helper.localization'
             - '@request_stack'
+            - '@oro_catalog.layout.data_provider.category_breadcrumb'
         tags:
             - { name: layout.data_provider, alias: web_catalog_breadcrumbs }
 

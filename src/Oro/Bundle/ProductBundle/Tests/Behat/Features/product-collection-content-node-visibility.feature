@@ -8,7 +8,7 @@ Feature:
     Given sessions active:
       | Admin  | first_session  |
       | Buyer  | second_session |
-    And I set "Default Web Catalog" as default web catalog
+    And I set "Default Web Catalog" as default web catalog for website scope
 
   Scenario: Add Product Collection variant to newly create Content Node
     Given I proceed as the Admin

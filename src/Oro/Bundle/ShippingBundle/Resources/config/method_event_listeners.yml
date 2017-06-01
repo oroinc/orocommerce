@@ -1,0 +1,28 @@
+services:
+    oro_shipping.disable_integration_listener:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener'
+        abstract: true
+
+    oro_shipping.remove_integration_listener:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener'
+        abstract: true
+
+    oro_shipping.admin_view.method_template.listener:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener'
+        abstract: true
+
+    oro_shipping.method.event_listener.type_removal:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodAndTypeRemovalListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@logger'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.method_removal, method: onMethodRemove }
+            - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }
+
+    oro_shipping.method.event_listener.method_renaming:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodRenamingListener'
+        arguments:
+            - '@oro_shipping.repository.shipping_method_config'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.method_renaming, method: onMethodRename}

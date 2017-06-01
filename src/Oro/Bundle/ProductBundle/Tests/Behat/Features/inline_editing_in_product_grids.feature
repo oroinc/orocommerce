@@ -1,6 +1,4 @@
 @fixture-Product_tax_codes_Inline_edit.yml
-@skip
-@BB-9797
 Feature: Inline Editing in Products Grids
   In order to quickly edit product information
   As an Administrator
