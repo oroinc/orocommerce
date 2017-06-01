@@ -1,0 +1,18 @@
+include:
+    - '@OroProductBundle:product_collection_add.yml'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    productCollection1Segment:
+        name: 'Product Collection #1'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"PSKU1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
+    productCollection1:
+        node: '@nodeRoot'
+        type: 'product_collection'
+        default: true
+        productCollectionSegment: '@productCollection1Segment'

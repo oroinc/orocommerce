@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -16,8 +15,54 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
         ]);
     }
 
-    public function testOnBuildAfter()
+    /**
+     * @dataProvider requestAndResultDataProvider
+     *
+     * @param array $request
+     * @param array $expectedFilteredProducts
+     */
+    public function testOnBuildAfter($request, $expectedFilteredProducts)
     {
+        // convert reference names array into string with Ids, in order to support exclude&include args
+        $request = array_map(
+            function ($content) {
+                if (is_array($content)) {
+                    $result = [];
+                    foreach ($content as $productName) {
+                        $result[] = $this->getReference($productName)->getId();
+                    }
+                    $content = implode(',', $result);
+                }
+                return $content;
+            },
+            $request
+        );
+
+        $this->client->request('GET', $this->getUrl('oro_datagrid_index', $request));
+        $result = $this->client->getResponse();
+
+        $data = json_decode($result->getContent(), true);
+        $filteredProductsSku = array_map(
+            function (array $item) {
+                return $item['sku'];
+            },
+            $data['data']
+        );
+
+        $expectedFilteredProductsSku = array_map(
+            function ($productName) {
+                return $this->getReference($productName)->getSku();
+            },
+            $expectedFilteredProducts
+        );
+
+        $this->assertCount(count($expectedFilteredProductsSku), $filteredProductsSku);
+        $this->assertEquals($expectedFilteredProductsSku, $filteredProductsSku);
+    }
+
+    public function requestAndResultDataProvider()
+    {
+        $gridName = 'product-collection-grid:scope_0';
         $segmentDefinition = '{
             "columns":[{
                 "name": "id",
@@ -36,27 +81,53 @@ class ProductCollectionDatagridListenerTest extends WebTestCase
             }]
         }';
 
-        $gridName = 'product-collection-grid';
-        $this->client->request(
-            'GET',
-            $this->getUrl(
-                'oro_datagrid_index',
-                [
+        return [
+            'just definition' => [
+                'request' => [
                     'gridName' => $gridName,
-                    'sd_' . $gridName . ':0' => $segmentDefinition
+                    'sd_' . $gridName => $segmentDefinition
+                ],
+                'expectedFilteredProducts' => [
+                    LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_1,
                 ]
-            )
-        );
-
-        $result = $this->client->getResponse();
-        $data = json_decode($result->getContent(), true);
-
-        $filteredProducts = $data['data'];
-        $this->assertCount(4, $filteredProducts);
-        foreach ($filteredProducts as $productItem) {
-            /** @var Product $product */
-            $product = $this->getReference($productItem['sku']);
-            $this->assertTrue($product->getFeatured());
-        }
+            ],
+            'definition with excluded&included' => [
+                'request' => [
+                    'gridName' => $gridName,
+                    'sd_' . $gridName => $segmentDefinition,
+                    'sd_' . $gridName . ':excl' => [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2],
+                    'sd_' . $gridName . ':incl' => [LoadProductData::PRODUCT_5],
+                ],
+                'expectedFilteredProducts' => [
+                    LoadProductData::PRODUCT_5,
+                    LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_3,
+                ]
+            ],
+            'without definition just included' => [
+                'request' => [
+                    'gridName' => $gridName,
+                    'sd_' . $gridName . ':incl' => [LoadProductData::PRODUCT_5],
+                ],
+                'expectedFilteredProductsSku' => [LoadProductData::PRODUCT_5]
+            ],
+            'empty definition and empty included&excluded' => [
+                'request' => [
+                    'gridName' => $gridName,
+                    'sd_' . $gridName => '{}'
+                ],
+                'expectedFilteredProducts' => []
+            ],
+            'definition with just excluded' => [
+                'request' => [
+                    'gridName' => $gridName,
+                    'sd_' . $gridName . ':excl' => [LoadProductData::PRODUCT_1],
+                ],
+                'expectedFilteredProducts' => []
+            ],
+        ];
     }
 }
