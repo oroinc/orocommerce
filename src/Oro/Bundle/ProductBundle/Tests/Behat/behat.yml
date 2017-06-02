@@ -173,6 +173,7 @@ oro_behat_extension:
     OroProductBundle:
       contexts:
         - OroApplicationBundle::CommerceMainContext
+        - OroConfigBundle::FeatureContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
