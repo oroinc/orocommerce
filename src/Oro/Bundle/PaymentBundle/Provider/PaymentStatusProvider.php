@@ -12,10 +12,11 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 class PaymentStatusProvider
 {
     const FULL = 'full';
-    const AUTHORIZED = 'authorized';
-    const PENDING = 'pending';
-    const DECLINED = 'declined';
     const PARTIALLY = 'partially';
+    const INVOICED = 'invoiced';
+    const AUTHORIZED = 'authorized';
+    const DECLINED = 'declined';
+    const PENDING = 'pending';
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
@@ -36,24 +37,36 @@ class PaymentStatusProvider
     }
 
     /**
-     * @param object $object
+     * @param object $entity
      * @return string
      */
-    public function getPaymentStatus($object)
+    public function getPaymentStatus($entity)
     {
-        $paymentTransactions = new ArrayCollection($this->paymentTransactionProvider->getPaymentTransactions($object));
-        
-        return $this->computeStatus($object, $paymentTransactions);
+        $paymentTransactions = new ArrayCollection($this->paymentTransactionProvider->getPaymentTransactions($entity));
+
+        return $this->getStatusByEntityAndTransactions($entity, $paymentTransactions);
     }
 
     /**
-     * @param object $object
+     * @deprecated since 1.2, will be removed in 1.3. Use PaymentStatusProvider::getPaymentStatus instead
+     *
+     * @param object $entity
      * @param ArrayCollection $paymentTransactions
      * @return string
      */
-    public function computeStatus($object, ArrayCollection $paymentTransactions)
+    public function computeStatus($entity, ArrayCollection $paymentTransactions)
     {
-        $total = $this->totalProcessorProvider->getTotal($object);
+        return $this->getStatusByEntityAndTransactions($entity, $paymentTransactions);
+    }
+
+    /**
+     * @param object $entity
+     * @param ArrayCollection $paymentTransactions
+     * @return string
+     */
+    private function getStatusByEntityAndTransactions($entity, ArrayCollection $paymentTransactions)
+    {
+        $total = $this->totalProcessorProvider->getTotal($entity);
 
         if ($this->hasSuccessfulTransactions($paymentTransactions, $total)) {
             return self::FULL;
@@ -61,6 +74,10 @@ class PaymentStatusProvider
 
         if ($this->hasPartialTransactions($paymentTransactions, $total)) {
             return self::PARTIALLY;
+        }
+
+        if ($this->hasInvoiceTransactions($paymentTransactions)) {
+            return self::INVOICED;
         }
 
         if ($this->hasAuthorizeTransactions($paymentTransactions)) {
@@ -73,7 +90,7 @@ class PaymentStatusProvider
 
         return self::PENDING;
     }
-    
+
     /**
      * @param ArrayCollection $paymentTransactions
      * @return ArrayCollection
@@ -169,5 +186,26 @@ class PaymentStatusProvider
                     return !$paymentTransaction->isSuccessful() && !$paymentTransaction->isActive();
                 }
             )->count() === $paymentTransactions->count();
+    }
+
+    /**
+     * @param ArrayCollection $paymentTransactions
+     * @return bool
+     */
+    protected function hasInvoiceTransactions(ArrayCollection $paymentTransactions)
+    {
+        return false === $paymentTransactions
+                ->filter(
+                    function (PaymentTransaction $paymentTransaction) {
+                        if ($paymentTransaction->isClone()) {
+                            return false;
+                        }
+
+                        return $paymentTransaction->isActive()
+                            && $paymentTransaction->isSuccessful()
+                            && $paymentTransaction->getAction() === PaymentMethodInterface::INVOICE;
+                    }
+                )
+                ->isEmpty();
     }
 }

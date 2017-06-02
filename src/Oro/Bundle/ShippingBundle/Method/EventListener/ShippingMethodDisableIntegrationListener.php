@@ -3,13 +3,13 @@
 namespace Oro\Bundle\ShippingBundle\Method\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class ShippingMethodDisableIntegrationListener
 {
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
     private $methodIdentifierGenerator;
 
@@ -20,12 +20,12 @@ class ShippingMethodDisableIntegrationListener
 
     /**
      * @param string                                        $channelType
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
+     * @param IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param ShippingMethodDisableHandlerInterface         $shippingMethodDisableHandler
      */
     public function __construct(
         $channelType,
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
+        IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
         ShippingMethodDisableHandlerInterface $shippingMethodDisableHandler
     ) {
         $this->channelType = $channelType;

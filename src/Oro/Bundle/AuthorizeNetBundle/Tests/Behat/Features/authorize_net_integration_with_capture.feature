@@ -49,11 +49,11 @@ Feature: Process order submission with Authorize.Net integration
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-  Scenario: Create new Payment Rule for Authorize.Net integration
+  Scenario: Successful capture of authorized order
     Given I login as administrator
     When I go to Sales/Orders
     And I click View Payment authorized in grid
     And I click "Capture"
     Then I should see "Charge The Customer" modal window
     When I click "Yes, Charge" in modal window
-    Then I should see "The payment has been captured successfully" flash message
+    Then I should see "The payment of $13.00 has been captured successfully" flash message

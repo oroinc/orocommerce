@@ -126,12 +126,96 @@ datagrids:
         source:
             skip_acl_apply: true
 
-    product-collection-grid:
+    product-collection-base-grid:
         extends: products-select-grid-base
+        columns:
+            type:
+                renderable: true
+            createdAt:
+                renderable: false
+            updatedAt:
+                renderable: false
+        options:
+            routerEnabled: false
+
+    product-collection-grid:
+        extends: product-collection-base-grid
         options:
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
+        actions:
+            add_to_excluded:
+                type:          trigger-event
+                event_name:    product-collection-add-to-excluded
+                label:         oro.product.grid.action.product_collection.add_to_exclude
+                icon:          remove
+
+    product-collection-selected-products-grid:
+        extends: product-collection-base-grid
+        options:
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+        source:
+            query:
+                where:
+                    and:
+                        - product.id IN (:selectedProducts)
+            bind_parameters:
+                selectedProducts:
+                    default: 0
+
+    product-collection-add-products-grid:
+        extends: product-collection-base-grid
+        options:
+            toolbarOptions:
+                pageSize:
+                    default_per_page: 10
+            routerEnabled: false
+            rowSelection:
+                dataField: id
+                columnName: isSelected
+                selectors:
+                    included: '#appendProducts'
+                    excluded: '#removeProducts'
+        source:
+            query:
+                select:
+                    - >
+                      (CASE WHEN (product.id IN (:data_in) AND product.id NOT IN (:data_not_in))
+                      THEN true ELSE false
+                      END) as isSelected
+                where:
+                    and:
+                        - NOT (product.id IN (:hiddenProducts))
+            bind_parameters:
+                hiddenProducts:
+                    default: 0
+        columns:
+            isSelected:
+                label:         oro.product.content_variant.ui.selected
+                editable:      true
+                frontend_type: boolean
+                order: -1
+
+    product-collection-included-products-grid:
+        extends: product-collection-selected-products-grid
+        actions:
+            remove_from_included:
+                type:          trigger-event
+                event_name:    product-collection-remove-from-included
+                label:         oro.product.grid.action.product_collection.remove_from_included
+                icon:          undo
+
+    product-collection-excluded-products-grid:
+        extends: product-collection-selected-products-grid
+        actions:
+            remove_from_excluded:
+                type:          trigger-event
+                event_name:    product-collection-remove-from-excluded
+                label:         oro.product.grid.action.product_collection.remove_from_excluded
+                icon:          trash
 
     products-grid:
         extends: products-select-grid-base

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
@@ -20,21 +20,27 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
 
     const NAME = 'payment_method_supports';
 
-    /** @var PaymentMethodProvidersRegistryInterface */
-    protected $paymentMethodRegistry;
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    protected $paymentMethodProvider;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $paymentMethod;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $actionName;
 
     /**
-     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
-    public function __construct(PaymentMethodProvidersRegistryInterface $paymentMethodRegistry)
+    public function __construct(PaymentMethodProviderInterface $paymentMethodProvider)
     {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -64,13 +70,10 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
         $paymentMethod = $this->resolveValue($context, $this->paymentMethod, false);
         $actionName = $this->resolveValue($context, $this->actionName, false);
 
-        try {
-            foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
-                if ($provider->hasPaymentMethod($paymentMethod)) {
-                    return $provider->getPaymentMethod($paymentMethod)->supports($actionName);
-                }
-            }
-        } catch (\InvalidArgumentException $e) {
+        if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethod)) {
+            return $this->paymentMethodProvider
+                ->getPaymentMethod($paymentMethod)
+                ->supports($actionName);
         }
 
         return false;
