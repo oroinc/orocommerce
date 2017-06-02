@@ -43,6 +43,7 @@ services:
         public: false
         scope: prototype
         arguments:
+            - '@oro_paypal.paypal.payflow.host_address_provider'
             - '@oro_paypal.paypal.payflow.client.nvp'
             - '@oro_paypal.paypal.payflow_gateway.request.registry'
             - '@oro_paypal.paypal.payflow.processor.registry'
@@ -68,6 +69,7 @@ services:
         public: false
         scope: prototype
         arguments:
+            - '@oro_paypal.paypal.payflow.host_address_provider'
             - '@oro_paypal.paypal.payflow.client.nvp'
             - '@oro_paypal.paypal.payflow_express_checkout.request.registry'
             - '@oro_paypal.paypal.payflow.processor.registry'
@@ -83,3 +85,7 @@ services:
         class: 'Guzzle\Http\Client'
         public: false
         lazy: true
+
+    oro_paypal.paypal.payflow.host_address_provider:
+        class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider'
+        public: false
