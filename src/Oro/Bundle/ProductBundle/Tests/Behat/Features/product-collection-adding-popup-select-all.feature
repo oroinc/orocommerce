@@ -13,7 +13,7 @@ Feature:
     And I click "Add Button"
     And I check all records in grid
     And I click "Add" in modal window
-    And I should see "A limit of selected products was exceeded. Do you want to force add your selection?"
+    And I should see "A limit of selected products (5) was exceeded. Do you want to force add your selection?"
     And I click "Yes"
     Then I should see following grid:
       | SKU    | NAME      |
