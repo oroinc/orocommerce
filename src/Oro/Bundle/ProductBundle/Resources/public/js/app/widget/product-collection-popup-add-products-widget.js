@@ -16,12 +16,7 @@ define(function(require) {
         /**
          * @property {Array}
          */
-        requiredOptions: ['eventName', 'hiddenProductsSelector'],
-
-        /**
-         * @property {Array}
-         */
-        currentSelection: null,
+        requiredOptions: ['gridName', 'hiddenProductsSelector'],
 
         /**
          * @inheritDoc
@@ -36,7 +31,8 @@ define(function(require) {
                 actionElement.on('click', _.bind(this._triggerEvent, this));
             }, this));
 
-            mediator.on(this.options.eventName, this._closeDialogWidget, this);
+            mediator.on('product-collection-add-to-excluded', this._closeDialogWidget, this);
+            mediator.on('product-collection-add-to-included', this._closeDialogWidget, this);
         },
 
         /**
@@ -55,7 +51,7 @@ define(function(require) {
          * @private
          */
         _triggerEvent: function() {
-            mediator.trigger('get-selected-products-mass-action-run');
+            mediator.trigger('get-selected-products-mass-action-run:' + this.options.gridName);
         },
 
         /**

@@ -6,22 +6,24 @@ use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\Ajax\AjaxMassAction;
 
 /**
- * Defines default options for getting product ids mass action.
+ * Defines default options for triggering event for product ids mass action.
  */
-class GetSelectedProductIdsMassAction extends AjaxMassAction
+class TriggerEventForSelectedProductIdsMassAction extends AjaxMassAction
 {
+    protected $requiredOptions = ['handler', 'event_name'];
+
     /**
      * {@inheritDoc}
      */
     public function setOptions(ActionConfiguration $options)
     {
         if (!isset($options['frontend_type'])) {
-            $options['frontend_type'] = 'get-selected-product-ids-mass';
+            $options['frontend_type'] = 'trigger-event-for-selected-product-ids-mass';
         }
 
         if (!isset($options['handler'])) {
             $options['handler'] =
-                'oro_product.datagrid.extension.mass_action.get_selected_product_ids_mass_action_handler';
+                'oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler';
         }
 
         if (!isset($options['frontend_handle'])) {

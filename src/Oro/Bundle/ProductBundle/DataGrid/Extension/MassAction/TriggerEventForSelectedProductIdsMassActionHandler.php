@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 /**
  * Handler checks that count of selected products do not exceed limitation and returns product ids from given grid.
  */
-class GetSelectedProductIdsMassActionHandler implements MassActionHandlerInterface
+class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHandlerInterface
 {
     const FAILED_RESPONSE_MESSAGE = 'oro.product.grid.mass_action.get_selected_product_ids.response.failed';
     const SUCCESS_RESPONSE_MESSAGE = 'oro.product.grid.mass_action.get_selected_product_ids.response.success';

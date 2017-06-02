@@ -231,7 +231,7 @@ oro:
                         every_day.label: Every day
                 product_collection_mass_action_limitation:
                     label: 'Mass action limit'
-                    tooltip: 'This limitation prevents the addition of too many products when using mass action.'
+                    tooltip: 'This limitation prevents the handling of too many products when using mass action.'
                 product_image_watermark_file.label: 'File'
                 product_image_watermark_size:
                     label: 'Size'

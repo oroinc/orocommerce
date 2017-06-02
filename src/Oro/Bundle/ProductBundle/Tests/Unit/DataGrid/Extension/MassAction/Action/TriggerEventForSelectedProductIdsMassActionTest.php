@@ -3,18 +3,18 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DataGrid\Extension\Action\MassAction;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
-use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\GetSelectedProductIdsMassAction;
+use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction;
 
-class GetSelectedProductIdsMassActionTest extends \PHPUnit_Framework_TestCase
+class TriggerEventForSelectedProductIdsMassActionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var GetSelectedProductIdsMassAction
+     * @var TriggerEventForSelectedProductIdsMassAction
      */
     private $action;
 
     protected function setUp()
     {
-        $this->action = new GetSelectedProductIdsMassAction();
+        $this->action = new TriggerEventForSelectedProductIdsMassAction();
     }
 
     /**
@@ -26,10 +26,7 @@ class GetSelectedProductIdsMassActionTest extends \PHPUnit_Framework_TestCase
     {
         $this->action->setOptions(ActionConfiguration::create($source));
 
-        $actual = $this->action->getOptions();
-        foreach ($expected as $name => $value) {
-            $this->assertEquals($value, $actual->offsetGet($name));
-        }
+        $this->assertEquals($expected, $this->action->getOptions()->toArray());
     }
 
     /**
@@ -37,6 +34,9 @@ class GetSelectedProductIdsMassActionTest extends \PHPUnit_Framework_TestCase
      */
     public function setOptionsDataProvider()
     {
+        $handler =
+            'oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler';
+
         return [
             'with custom options' => [
                 'source' => [
@@ -44,6 +44,7 @@ class GetSelectedProductIdsMassActionTest extends \PHPUnit_Framework_TestCase
                     'frontend_type' => 'test_type',
                     'frontend_handle' => 'test_frontend_handle',
                     'data_identifier' => 'some.id',
+                    'event_name' => 'event_name',
                 ],
                 'expected' => [
                     'handler' => 'test.handler',
@@ -51,19 +52,27 @@ class GetSelectedProductIdsMassActionTest extends \PHPUnit_Framework_TestCase
                     'frontend_handle' => 'test_frontend_handle',
                     'confirmation' => false,
                     'data_identifier' => 'some.id',
+                    'event_name' => 'event_name',
+                    'reloadData' => false,
+                    'route' => 'oro_datagrid_mass_action',
+                    'route_parameters' => []
                 ],
             ],
             'just default options' => [
                 'source' => [
                     'data_identifier' => 'product.id',
+                    'event_name' => 'event_name',
                 ],
                 'expected' => [
-                    'handler'
-                        => 'oro_product.datagrid.extension.mass_action.get_selected_product_ids_mass_action_handler',
-                    'frontend_type' => 'get-selected-product-ids-mass',
+                    'handler' => $handler,
+                    'frontend_type' => 'trigger-event-for-selected-product-ids-mass',
                     'frontend_handle' => 'ajax',
                     'confirmation' => false,
                     'data_identifier' => 'product.id',
+                    'event_name' => 'event_name',
+                    'reloadData' => false,
+                    'route' => 'oro_datagrid_mass_action',
+                    'route_parameters' => []
                 ],
             ],
         ];

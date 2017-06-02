@@ -8,9 +8,9 @@ use Oro\Bundle\DataGridBundle\Datasource\Orm\IterableResult;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\MassActionInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
-use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\GetSelectedProductIdsMassActionHandler;
+use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler;
 
-class GetSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
+class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
@@ -18,14 +18,14 @@ class GetSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_Test
     private $configManager;
 
     /**
-     * @var GetSelectedProductIdsMassActionHandler
+     * @var TriggerEventForSelectedProductIdsMassActionHandler
      */
     private $handler;
 
     protected function setUp()
     {
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->handler = new GetSelectedProductIdsMassActionHandler($this->configManager);
+        $this->handler = new TriggerEventForSelectedProductIdsMassActionHandler($this->configManager);
     }
 
     public function testHandleWhenExceedLimitationAndNoForceParameter()
@@ -49,7 +49,7 @@ class GetSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_Test
 
         $expectedResponse = new MassActionResponse(
             false,
-            GetSelectedProductIdsMassActionHandler::FAILED_RESPONSE_MESSAGE
+            TriggerEventForSelectedProductIdsMassActionHandler::FAILED_RESPONSE_MESSAGE
         );
         $this->assertEquals($expectedResponse, $response);
     }
@@ -72,7 +72,7 @@ class GetSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_Test
 
         $expectedResponse = new MassActionResponse(
             true,
-            GetSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE,
+            TriggerEventForSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE,
             ['ids' => []]
         );
         $this->assertEquals($expectedResponse, $response);
@@ -99,7 +99,7 @@ class GetSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_Test
 
         $expectedResponse = new MassActionResponse(
             true,
-            GetSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE,
+            TriggerEventForSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE,
             ['ids' => []]
         );
         $this->assertEquals($expectedResponse, $response);

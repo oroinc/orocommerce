@@ -7,9 +7,9 @@ define([
 ], function(MassAction, mediator, StandardConfirmation, _, __) {
     'use strict';
 
-    var GetSelectedProductIdsMassAction;
+    var TriggerEventForSelectedProductIdsMassAction;
 
-    GetSelectedProductIdsMassAction = MassAction.extend({
+    TriggerEventForSelectedProductIdsMassAction = MassAction.extend({
 
         /**
          * @param {Boolean}
@@ -22,17 +22,11 @@ define([
         forcedConfirmDialog: null,
 
         /**
-         * @param {String}
-         */
-        eventName: null,
-
-        /**
          * @inheritdoc
          */
         initialize: function() {
-            GetSelectedProductIdsMassAction.__super__.initialize.apply(this, arguments);
-            this.eventName = this.datagrid.toolbarOptions.selectedProducts.eventName;
-            mediator.on('get-selected-products-mass-action-run', this.runAction, this);
+            TriggerEventForSelectedProductIdsMassAction.__super__.initialize.apply(this, arguments);
+            mediator.on('get-selected-products-mass-action-run:' + this.datagrid.name, this.runAction, this);
         },
 
         runAction: function() {
@@ -56,7 +50,7 @@ define([
          * @inheritdoc
          */
         getActionParameters: function() {
-            var params = GetSelectedProductIdsMassAction.__super__.getActionParameters.call(this);
+            var params = TriggerEventForSelectedProductIdsMassAction.__super__.getActionParameters.call(this);
             params.force = +this.force;
 
             return params;
@@ -67,7 +61,11 @@ define([
          * @private
          */
         _triggerSelectEvent: function(ids) {
-            mediator.trigger(this.eventName, ids);
+            var scope = this.datagrid.getGridScope();
+            if (scope) {
+                mediator.trigger(this.event_name + ':' + scope, ids);
+            }
+            mediator.trigger(this.event_name, ids);
         },
 
         /**
@@ -116,11 +114,11 @@ define([
 
             delete this.forcedConfirmDialog;
 
-            GetSelectedProductIdsMassAction.__super__.dispose.call(this);
+            TriggerEventForSelectedProductIdsMassAction.__super__.dispose.call(this);
 
             mediator.off(null, null, this);
         }
     });
 
-    return GetSelectedProductIdsMassAction;
+    return TriggerEventForSelectedProductIdsMassAction;
 });

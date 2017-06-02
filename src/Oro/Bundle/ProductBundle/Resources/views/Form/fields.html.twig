@@ -284,7 +284,7 @@
         'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
         'controlsBlockAlias': controlsBlockAlias,
         'gridName': gridName,
-        'sidebarComponentContainerId': form.vars.id,
+        'scope': scope,
         'excludedProductsGridName': excludedProductsGrid,
         'includedProductsGridName': includedProductsGrid,
         'excludedControlsBlockAlias': excludedControlsBlockAlias,
@@ -342,8 +342,6 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active" id="{{ 'filtered_products' ~ scope}}">
-                            {% set addToIncludedEvent = 'product-collection-add-to-included:' ~ form.vars.id %}
-                            {% set addToExcludedEvent = 'product-collection-add-to-excluded:' ~ form.vars.id %}
                             <div class="collapse-view"
                                  data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                  data-page-component-options="{{ {
@@ -359,7 +357,7 @@
                                                 <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
                                             </div>
                                             {{ ProductCollection.popupButton(
-                                                addToIncludedEvent,
+                                                oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
                                                 includedProductsElementId,
                                                 'oro.product.content_variant.ui.hint.add_to_included'|trans
                                             ) }}
@@ -392,7 +390,7 @@
                                 <div class="control-group">
                                     <div class="pull-right">
                                         {{ ProductCollection.popupButton(
-                                            addToExcludedEvent,
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-excluded-grid', scope),
                                             excludedProductsElementId,
                                             'oro.product.content_variant.ui.hint.add_to_excluded'|trans
                                         ) }}
@@ -427,7 +425,7 @@
                                 <div class="control-group">
                                     <div class="pull-right">
                                         {{ ProductCollection.popupButton(
-                                            addToIncludedEvent,
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
                                             includedProductsElementId,
                                             'oro.product.content_variant.ui.hint.add_to_included'|trans
                                         ) }}

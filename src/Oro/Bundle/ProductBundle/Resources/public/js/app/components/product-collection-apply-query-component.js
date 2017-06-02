@@ -25,7 +25,7 @@ define(function(require) {
             segmentDefinitionSelectorTemplate: 'input[name="%s"]',
             controlsBlockAlias: null,
             gridName: null,
-            sidebarComponentContainerId: null,
+            scope: null,
             excludedControlsBlockAlias: null,
             includedControlsBlockAlias: null,
             excludedProductsGridName: null,
@@ -46,7 +46,7 @@ define(function(require) {
             'segmentDefinitionFieldName',
             'controlsBlockAlias',
             'gridName',
-            'sidebarComponentContainerId',
+            'scope',
             'excludedControlsBlockAlias',
             'includedControlsBlockAlias',
             'excludedProductsGridName',
@@ -343,7 +343,7 @@ define(function(require) {
         _initializeInclusionExclusionSubComponent: function() {
             var options = {
                 _sourceElement: this.options._sourceElement,
-                sidebarComponentContainerId: this.options.sidebarComponentContainerId,
+                scope: this.options.scope,
                 selectors: {
                     included: this.options.selectors.included,
                     excluded: this.options.selectors.excluded

@@ -969,15 +969,15 @@ services:
         calls:
             - [setParameterName,  ['hiddenProducts']]
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-base-grid, method: onBuildAfter }
 
-    oro_product.datagrid.extension.mass_action.get_selected_product_ids_mass_action_handler:
-        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\GetSelectedProductIdsMassActionHandler
+    oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler
         arguments:
             - '@oro_config.manager'
 
-    oro_product.datagrid.extension.mass_action.action.get_selected_product_ids_mass_action:
-        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\GetSelectedProductIdsMassAction
+    oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
         shared: false
         tags:
-            - { name: oro_datagrid.extension.mass_action.type, type: get-selected-product-ids }
+            - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }
