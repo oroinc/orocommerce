@@ -80,7 +80,7 @@ Feature:
     Given I am on Content Node page and added Product Collection variant
     And I click "All Added"
     And I click "Add Button"
-    And I filter Name as is equal to "Product 1" in "Product Collection Add Products" grid
+    And I filter Name as is equal to "Product 1" in "Add Products Popup Grid" grid
     And I check all records in grid
     And I click "Add" in modal window
     Then I should see following grid:

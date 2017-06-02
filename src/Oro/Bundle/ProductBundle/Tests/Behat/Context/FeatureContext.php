@@ -434,6 +434,23 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then /^I should see (?P<counterValue>\d+) for "(?P<counterType>[\w\s]+)" counter$/
+     *
+     * @param string $counterType
+     * @param int $counterValue
+     */
+    public function iShouldSeeCounterValue($counterType, $counterValue)
+    {
+        $counterElement = $this->createElement(sprintf('%s Counter', $counterType));
+
+        static::assertEquals(
+            $counterValue,
+            $counterElement->getText(),
+            sprintf('Counter value "%s" doesn\'t match expected "%s"', $counterValue, $counterElement->getText())
+        );
+    }
+
+    /**
      * @Given /^(?:|I )am on Content Node page and added Product Collection variant$/
      */
     public function iAmOnContentNodePageAndAddedProductCollectionVariant()

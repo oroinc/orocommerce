@@ -70,6 +70,19 @@ oro_behat_extension:
     Choose a field..:
       selector: "#select2-drop-mask"
 
+    AllAddedCounter:
+      selector: 'a[data-role="tab-filtered"] span[data-role="counter"]'
+
+    ExcludedCounter:
+      selector: 'a[data-role="tab-excluded"] span[data-role="counter"]'
+
+    ManuallyAddedCounter:
+      selector: 'a[data-role="tab-included"] span[data-role="counter"]'
+
+    ActiveGridFilters:
+      selector: 'div.tab-pane.active div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
     PreviewResults:
       selector:
         type: xpath
@@ -94,6 +107,10 @@ oro_behat_extension:
     AddProductsPopupGrid:
       selector: 'div.ui-dialog div.grid-container'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    AddProductsPopupGridFilters:
+      selector: 'div.ui-dialog div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Reset:
       selector: "a.btn.filter-reset"
@@ -151,14 +168,6 @@ oro_behat_extension:
 
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
-
-    ProductCollectionAddProductsFilters:
-      selector: 'div[id^="grid-product-collection-add-products-grid"] div.filter-box'
-      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
-
-    ProductCollectionAddProductsFilterStringItem:
-      selector: 'div[id^="grid-product-collection-add-products-grid"] div.filter-item'
-      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
   suites:
     OroProductBundle:
