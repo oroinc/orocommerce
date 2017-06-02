@@ -134,6 +134,31 @@ oro_behat_extension:
       selector: 'button[name="oro_website_search_search_button"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Galery View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"gallery-view")]'
+    NoImage View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"no-image-view")]'
+    List View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"list-view")]'
+
+    NewArrivalStiker:
+      selector: '.product-sticker--icon-new_arrival'
+
+    NewArrivalText:
+      selector: '.product-sticker--text-new_arrival'
+
+    ViewDetails:
+      selector: 'a.view-product'
+
+    ProductItem:
+      selector: 'div.product-item'
+
     Product Collection Variant Label:
       selector:
         type: 'xpath'

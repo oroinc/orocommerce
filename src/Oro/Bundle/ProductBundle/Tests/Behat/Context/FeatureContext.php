@@ -459,4 +459,37 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
         );
     }
+
+    /**
+     * @Then /^(?:|I )should see "([^"]*)" for "([^"]*)" product$/
+     */
+    public function shouldSeeForProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        self::assertTrue($element->isValid());
+    }
+
+    /**
+     * @Then /^(?:|I )should not see "([^"]*)" for "([^"]*)" product$/
+     */
+    public function shouldNotSeeForProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        self::assertFalse($element->isValid());
+    }
+
+    /**
+     * @Then /^(?:|I )click "([^"]*)" for "([^"]*)" product$/
+     */
+    public function clickElementforSelectedProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        $element->click();
+    }
 }
