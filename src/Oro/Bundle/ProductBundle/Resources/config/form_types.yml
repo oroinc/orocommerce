@@ -183,6 +183,9 @@ services:
 
     oro_product.form.type.product_collection_content_variant:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType
+        arguments:
+            - '@oro_product.service.product_collection_definition_converter'
+            - '@property_accessor'
         tags:
             - { name: form.type, alias: oro_product_collection_variant }
 

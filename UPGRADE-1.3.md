@@ -37,3 +37,11 @@ ShippingBundle
  - `oroshipping/js/app/views/shipping-rule-method-view` - changed options, functions, functionality
  - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
  - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
+
+PayPalBundle
+--------------
+- Class `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway`
+    - constants `PRODUCTION_HOST_ADDRESS`, `PILOT_HOST_ADDRESS`, `PRODUCTION_FORM_ACTION`, `PILOT_FORM_ACTION` removed.
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface` added. It is used to get required parameters instead of constants.
+- Class `Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListen`
+    - property `$allowedIPs` changed from `private` to `protected`
