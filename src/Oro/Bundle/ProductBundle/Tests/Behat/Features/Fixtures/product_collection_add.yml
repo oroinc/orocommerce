@@ -1,5 +1,5 @@
 include:
-    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+    - '@OroProductBundle:product_collections_web_catalog.yml'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localProduct1Name:
@@ -7,15 +7,6 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
     localProduct2Name:
         string: 'Product 2'
-
-    localValueRootNode:
-        string: 'Root Node'
-
-    localMetaKeyword:
-        text: 'CollectionMetaKeyword'
-
-    localMetaDescription:
-        text: 'CollectionMetaDescription'
 
     localProductAttributeFamily:
         string: 'Product Attribute Family'
@@ -57,17 +48,3 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         attributeFamily: '@productAttributeFamily'
-
-Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
-    webCatalog:
-        name: 'Default Web Catalog'
-        description: 'Default Web Catalog description'
-        organization: '@organization'
-        owner: '@business_unit'
-
-Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
-    nodeRoot:
-        addTitle: ['@localValueRootNode']
-        addMetaKeyword: ['@localMetaKeyword']
-        addMetaDescription: ['@localMetaDescription']
-        webCatalog: '@webCatalog'
