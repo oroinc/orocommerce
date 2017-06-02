@@ -69,18 +69,18 @@ class PurchaseAction extends AbstractPaymentMethodAction
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     *
      * @return bool
      */
     protected function isPaymentMethodSupportsValidation(PaymentTransaction $paymentTransaction)
     {
-        $methodIdentifier = $paymentTransaction->getPaymentMethod();
-        foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
-            if ($provider->hasPaymentMethod($methodIdentifier)) {
-                return $provider
-                    ->getPaymentMethod($paymentTransaction->getPaymentMethod())
-                    ->supports(PaymentMethodInterface::VALIDATE);
-            }
+        $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
+        if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
+            return $this->paymentMethodProvider
+                ->getPaymentMethod($paymentMethodIdentifier)
+                ->supports(PaymentMethodInterface::VALIDATE);
         }
+
         return false;
     }
 

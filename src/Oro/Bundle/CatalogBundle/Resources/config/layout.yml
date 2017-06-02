@@ -32,6 +32,7 @@ services:
             - "@oro_catalog.layout.data_provider.category"
             - '@oro_locale.helper.localization'
             - '@router'
+            - '@request_stack'
         tags:
             - { name: layout.data_provider, alias: category_breadcrumbs }
 

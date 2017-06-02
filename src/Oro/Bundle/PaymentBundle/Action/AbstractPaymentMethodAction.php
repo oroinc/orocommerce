@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Action;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -16,8 +16,8 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 {
     use LoggerAwareTrait;
 
-    /** @var PaymentMethodProvidersRegistryInterface */
-    protected $paymentMethodRegistry;
+    /** @var PaymentMethodProviderInterface */
+    protected $paymentMethodProvider;
 
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
@@ -39,19 +39,19 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
     /**
      * @param ContextAccessor $contextAccessor
-     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      * @param PaymentTransactionProvider $paymentTransactionProvider
      * @param RouterInterface $router
      */
     public function __construct(
         ContextAccessor $contextAccessor,
-        PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentTransactionProvider $paymentTransactionProvider,
         RouterInterface $router
     ) {
         parent::__construct($contextAccessor);
 
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentTransactionProvider = $paymentTransactionProvider;
         $this->router = $router;
     }
@@ -174,12 +174,10 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
     {
         try {
             $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
-            foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
-                if ($provider->hasPaymentMethod($paymentMethodIdentifier)) {
-                    return $provider
-                        ->getPaymentMethod($paymentMethodIdentifier)
-                        ->execute($paymentTransaction->getAction(), $paymentTransaction);
-                }
+            if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
+                return $this->paymentMethodProvider
+                    ->getPaymentMethod($paymentMethodIdentifier)
+                    ->execute($paymentTransaction->getAction(), $paymentTransaction);
             }
         } catch (\Exception $e) {
             if ($this->logger) {

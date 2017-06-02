@@ -6,7 +6,6 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;

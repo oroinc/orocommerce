@@ -48,7 +48,7 @@ services:
     oro_payment.method.provider.method_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider'
         arguments:
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.payment_methods_configs.rules_provider_basic'
 
     oro_payment.provider.methods_provider:
@@ -94,7 +94,7 @@ services:
         abstract: true
         arguments:
             - '@oro_action.expression.context_accessor'
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.provider.payment_transaction'
             - '@router'
         calls:
@@ -158,7 +158,7 @@ services:
     oro_payment.condition.payment_method_supports:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
         arguments:
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
         tags:
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
@@ -192,15 +192,10 @@ services:
     oro_payment.condition.require_payment_redirect:
         class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
             - '@event_dispatcher'
         tags:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
-
-    oro_payment.payment_method_provider.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
-        public: false
-        deprecated: 'The "%service_id%" service is deprecated since 1.1. Use "oro_payment.payment_method.composite_provider" instead'
 
     oro_payment.payment_method.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'

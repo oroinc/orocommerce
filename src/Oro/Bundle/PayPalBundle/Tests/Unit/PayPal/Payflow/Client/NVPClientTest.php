@@ -8,6 +8,7 @@ use Guzzle\Http\Message\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\NVPClient;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\NVP\EncoderInterface;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 
 class NVPClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,7 +65,7 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
         $this->httpClient
             ->expects($this->once())
             ->method('post')
-            ->with(Gateway::PILOT_HOST_ADDRESS, [], $encodedData)
+            ->with(HostAddressProvider::PILOT_HOST_ADDRESS, [], $encodedData)
             ->willReturn($request);
 
         $this->encoder
@@ -73,7 +74,7 @@ class NVPClientTest extends \PHPUnit_Framework_TestCase
             ->with($responseString)
             ->willReturn($responseArray);
 
-        $this->assertEquals($responseArray, $this->client->send(Gateway::PILOT_HOST_ADDRESS, $options));
+        $this->assertEquals($responseArray, $this->client->send(HostAddressProvider::PILOT_HOST_ADDRESS, $options));
     }
 
     /**
