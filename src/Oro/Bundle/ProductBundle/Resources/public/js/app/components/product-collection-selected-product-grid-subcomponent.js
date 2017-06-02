@@ -275,7 +275,6 @@ define(function(require) {
          */
         _refreshGrid: function(controlsBlockAlias, gridName, value, reload) {
             var parameters = {
-                ignoreVisibility: true,
                 updateUrl: false,
                 reload: reload,
                 params: {}

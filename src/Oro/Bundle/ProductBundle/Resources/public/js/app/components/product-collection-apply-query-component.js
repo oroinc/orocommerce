@@ -271,7 +271,6 @@ define(function(require) {
          */
         _applyQuery: function(reload) {
             var parameters = {
-                ignoreVisibility: true,
                 updateUrl: false,
                 reload: reload,
                 params: {}
