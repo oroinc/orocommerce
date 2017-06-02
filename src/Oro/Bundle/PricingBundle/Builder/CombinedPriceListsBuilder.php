@@ -5,10 +5,10 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
-use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
 class CombinedPriceListsBuilder
 {
@@ -45,9 +45,9 @@ class CombinedPriceListsBuilder
     protected $scheduleResolver;
 
     /**
-     * @var CombinedProductPriceResolver
+     * @var StrategyRegister
      */
-    protected $priceResolver;
+    protected $priceStrategyRegister;
 
     /**
      * @var bool
@@ -60,7 +60,7 @@ class CombinedPriceListsBuilder
      * @param CombinedPriceListProvider $combinedPriceListProvider
      * @param CombinedPriceListGarbageCollector $garbageCollector
      * @param CombinedPriceListScheduleResolver $scheduleResolver
-     * @param CombinedProductPriceResolver $priceResolver
+     * @param StrategyRegister $priceStrategyRegister
      */
     public function __construct(
         ConfigManager $configManager,
@@ -68,14 +68,14 @@ class CombinedPriceListsBuilder
         CombinedPriceListProvider $combinedPriceListProvider,
         CombinedPriceListGarbageCollector $garbageCollector,
         CombinedPriceListScheduleResolver $scheduleResolver,
-        CombinedProductPriceResolver $priceResolver
+        StrategyRegister $priceStrategyRegister
     ) {
         $this->configManager = $configManager;
         $this->priceListCollectionProvider = $priceListCollectionProvider;
         $this->combinedPriceListProvider = $combinedPriceListProvider;
         $this->garbageCollector = $garbageCollector;
         $this->scheduleResolver = $scheduleResolver;
-        $this->priceResolver = $priceResolver;
+        $this->priceStrategyRegister = $priceStrategyRegister;
     }
 
     /**
@@ -123,7 +123,7 @@ class CombinedPriceListsBuilder
             $activeCpl = $cpl;
         }
         if ($forceTimestamp !== null || !$activeCpl->isPricesCalculated()) {
-            $this->priceResolver->combinePrices($activeCpl, null, $forceTimestamp);
+            $this->priceStrategyRegister->getCurrentStrategy()->combinePrices($activeCpl, null, $forceTimestamp);
         }
         $actualCplConfigKey = Configuration::getConfigKeyToPriceList();
         $fullCplConfigKey = Configuration::getConfigKeyToFullPriceList();

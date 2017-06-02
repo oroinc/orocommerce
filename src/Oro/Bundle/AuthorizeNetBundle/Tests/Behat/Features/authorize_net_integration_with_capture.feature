@@ -49,7 +49,7 @@ Feature: Process order submission with Authorize.Net integration
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
-  Scenario: Create new Payment Rule for Authorize.Net integration
+  Scenario: Successful capture of authorized order
     Given I login as administrator
     When I go to Sales/Orders
     And I click View Payment authorized in grid

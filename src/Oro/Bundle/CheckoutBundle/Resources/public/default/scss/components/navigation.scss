@@ -33,25 +33,23 @@
     }
 
     &__icon {
-        $icon-size: 30px;
+        $checkout-navigation-icon-size: 30px !default;
 
         position: absolute;
         top: 0;
-        left: -$icon-size / 2;
+        left: -$checkout-navigation-icon-size / 2;
 
         font-weight: 700;
 
-        @include badge($icon-size, 16px, get-color('additional', 'middle'));
+        @include badge($checkout-navigation-icon-size, 16px, get-color('additional', 'middle'));
 
         &--current {
             background-color: get-color('primary', 'base');
         }
 
         &--complete {
-            $icon-complete: #7ea6a4 !default;
-
             color: get-color('additional', 'ultra');
-            background-color: $icon-complete;
+            background-color: get-color('secondary', 'light');
         }
 
     }
