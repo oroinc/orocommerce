@@ -23,6 +23,10 @@ class Configuration implements ConfigurationInterface
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
     const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
+    const NEW_ARRIVALS_PRODUCT_SEGMENT_ID = 'new_arrivals_products_segment_id';
+    const NEW_ARRIVALS_MAX_ITEMS = 'new_arrivals_max_items';
+    const NEW_ARRIVALS_MIX_ITEMS = 'new_arrivals_min_items';
+    const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
 
     /**
      * {@inheritDoc}
@@ -53,7 +57,11 @@ class Configuration implements ConfigurationInterface
                 self::FEATURED_PRODUCTS_SEGMENT_ID => ['value' => null],
                 self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 self::DIRECT_URL_PREFIX => ['value' => ''],
-                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE]
+                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
+                self::NEW_ARRIVALS_PRODUCT_SEGMENT_ID => ['value' => null],
+                self::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
+                self::NEW_ARRIVALS_MIX_ITEMS => ['type' => 'integer', 'value' => 3],
+                self::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
             ]
         );
 

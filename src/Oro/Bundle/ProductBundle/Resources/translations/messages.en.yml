@@ -203,6 +203,8 @@ oro:
                 featured_products_segment.title: 'Featured Products Segment'
                 quick_order.title: Quick Order Form
                 quick_order_form.title: Quick Order Form
+                promotions.title: Promotions
+                new_arrivals.title: New Arrivals
             fields:
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
@@ -246,6 +248,21 @@ oro:
                         Only segments with type "Product" are listed here.
                 page_template.label: Page Template
                 product_direct_url_prefix.label: 'Product URL prefix'
+                new_arrivals_products_segment:
+                    label: Product Segment
+                    tooltip: |
+                        Selected segment will be used as "New Arrivals" block data source.
+                        To modify existing or create new segment go to "Reports & Segments > Manage Segments" section.
+                        Only segments with type "Product" are listed here.
+                new_arrivals_max_items:
+                    label: Maximum Items
+                    tooltip: Show not more than the specified number of items (additionaly limits the list of items retrieved from the selected segment after filtering out the products that are not visible to the current user).
+                new_arrivals_min_items:
+                    label: Minimum Items
+                    tooltip: Hide the "News Arrivals" block completely if the number of items is less than the specified value.
+                new_arrivals_use_slider_on_mobile:
+                    label: Use Slider On Mobile
+                    tooltip: When slider is enabled, the "New Arrivals" block will occupy less screen space, while showing larger product images.
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

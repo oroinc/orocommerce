@@ -88,7 +88,23 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'product_collections_indexation_cron_schedule' => [
                     'value' => '0 * * * *',
                     'scope' => 'app'
-                ]
+                ],
+                'new_arrivals_products_segment_id' => [
+                    'value' => null,
+                    'scope' => 'app',
+                ],
+                'new_arrivals_max_items' => [
+                    'value' => 4,
+                    'scope' => 'app',
+                ],
+                'new_arrivals_min_items' => [
+                    'value' => 3,
+                    'scope' => 'app',
+                ],
+                'new_arrivals_use_slider_on_mobile' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
             ]
         ];
 
