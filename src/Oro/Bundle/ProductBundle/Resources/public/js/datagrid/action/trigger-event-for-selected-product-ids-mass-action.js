@@ -66,6 +66,7 @@ define([
                 mediator.trigger(this.event_name + ':' + scope, ids);
             }
             mediator.trigger(this.event_name, ids);
+            this.datagrid.resetSelectionState();
         },
 
         /**
