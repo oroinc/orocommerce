@@ -16,7 +16,7 @@ Feature:
     When I click "Excluded"
     And I click on "Add Button"
     Then I should see "Add Products"
-    When I click Add mass action
+    When I click Add mass action in "Add Products Popup" grid
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 
@@ -30,10 +30,10 @@ Feature:
   Scenario: Check Add button for Excluded tab popup when several products from several pages selected
     When I click on "Add Button"
     Then I should see "Add Products"
-    When I check PSKU11 record in "Add Products Popup Grid"
-    And I check PSKU4 record in "Add Products Popup Grid"
-    And I press next page button in grid "Add Products Popup Grid"
-    And I check PSKU2 record in "Add Products Popup Grid"
+    When I check PSKU11 record in "Add Products Popup" grid
+    And I check PSKU4 record in "Add Products Popup" grid
+    And I press next page button in grid "Add Products Popup"
+    And I check PSKU2 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
@@ -45,7 +45,7 @@ Feature:
     When I click "Manually Added"
     And I click on "Add Button"
     Then I should see "Add Products"
-    When I click Add mass action
+    When I click Add mass action in "Add Products Popup" grid
     Then I should see following "Active Grid" grid:
       | SKU | NAME |
 
@@ -59,11 +59,11 @@ Feature:
   Scenario: Check Add button for Manually Added tab popup when several products from several pages selected
     When I click on "Add Button"
     Then I should see "Add Products"
-    When I check PSKU12 record in "Add Products Popup Grid"
-    And I check PSKU7 record in "Add Products Popup Grid"
-    And I press next page button in grid "Add Products Popup Grid"
-    And I check PSKU1 record in "Add Products Popup Grid"
-    And I click Add mass action
+    When I check PSKU12 record in "Add Products Popup" grid
+    And I check PSKU7 record in "Add Products Popup" grid
+    And I press next page button in grid "Add Products Popup"
+    And I check PSKU1 record in "Add Products Popup" grid
+    And I click Add mass action in "Add Products Popup" grid
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |
       | PSKU12 | Product 12 |

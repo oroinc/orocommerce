@@ -493,6 +493,19 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Given /^I have all products available in (?P<tab>[\s\w]+) tab, and focused on it$/
+     */
+    public function iHaveAllProductsAvailableInTabAndFocusedOnIt($tab)
+    {
+        $this->oroMainContext->pressButton($tab);
+        $this->oroMainContext->pressButton('Add Button');
+        $this->waitForAjax();
+        $this->gridContext->iCheckAllRecordsInGrid('AddProductsPopup');
+        $this->oroMainContext->pressButtonInModalWindow('Add');
+        $this->waitForAjax();
+    }
+
+    /**
      * @param string $elementName
      *
      * @return array

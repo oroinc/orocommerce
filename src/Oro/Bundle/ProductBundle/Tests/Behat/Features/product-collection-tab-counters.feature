@@ -40,9 +40,9 @@ Feature:
     When I click "Manually Added"
     And I click "Add Button"
     Then I should see "Add Products"
-    And I check PSKU3 record in "Add Products Popup Grid"
-    And I check PSKU4 record in "Add Products Popup Grid"
-    And I check PSKU7 record in "Add Products Popup Grid"
+    And I check PSKU3 record in "Add Products Popup" grid
+    And I check PSKU4 record in "Add Products Popup" grid
+    And I check PSKU7 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -59,8 +59,8 @@ Feature:
       | SKU | NAME |
     When I click "Add Button"
     Then I should see "Add Products"
-    And I check PSKU3 record in "Add Products Popup Grid"
-    And I check PSKU4 record in "Add Products Popup Grid"
+    And I check PSKU3 record in "Add Products Popup" grid
+    And I check PSKU4 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -98,7 +98,7 @@ Feature:
       | PSKU3 | Product 3 |
     When I click "Add Button"
     Then I should see "Add Products"
-    And I check PSKU11 record in "Add Products Popup Grid"
+    And I check PSKU11 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU    | NAME       |

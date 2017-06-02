@@ -104,11 +104,11 @@ oro_behat_extension:
       selector: 'div.tab-pane.active div.grid-container'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    AddProductsPopupGrid:
+    AddProductsPopup:
       selector: 'div.ui-dialog div.grid-container'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    AddProductsPopupGridFilters:
+    AddProductsPopupFilters:
       selector: 'div.ui-dialog div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
@@ -169,11 +169,13 @@ oro_behat_extension:
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
 
+    GridPagination:
+      selector: 'div.tab-pane.active div.toolbar div.pagination input'
+
   suites:
     OroProductBundle:
       contexts:
         - OroApplicationBundle::CommerceMainContext
-        - OroConfigBundle::FeatureContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
