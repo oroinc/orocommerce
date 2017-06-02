@@ -1,0 +1,36 @@
+services:
+    oro_promotion.rule_filtration.service:
+        extends: oro_rule.rule_filtration.service
+
+    oro_promotion.rule_filtration.scope_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        arguments:
+            - '@oro_promotion.rule_filtration.scope_decorator.inner'
+
+    oro_promotion.rule_filtration.schedule_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        arguments:
+            - '@oro_promotion.rule_filtration.schedule_decorator.inner'
+
+    oro_promotion.rule_filtration.coupon_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        arguments:
+            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+
+    oro_promotion.context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\ContextDataConverter
+
+    oro_promotion.promotion_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_promotion.rule_filtration.service'
+            - '@oro_promotion.context_data_converter'
+
+    oro_promotion.discount_factory:
+        class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
+        arguments:
+            - '@service_container'

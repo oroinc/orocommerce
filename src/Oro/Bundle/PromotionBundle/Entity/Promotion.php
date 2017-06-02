@@ -12,6 +12,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PromotionBundle\Model\ExtendPromotion;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
@@ -198,4 +199,15 @@ class Promotion extends ExtendPromotion implements
      * )
      */
     protected $coupons;
+
+    /**
+     * @var Segment
+     *
+     * @ORM\ManyToOne(
+     *     targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment",
+     *     cascade={"persist", "remove"}
+     * )
+     * @ORM\JoinColumn(name="products_segment_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     */
+    protected $productsSegment;
 }

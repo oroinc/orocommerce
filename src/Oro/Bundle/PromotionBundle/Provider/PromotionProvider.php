@@ -1,10 +1,9 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\RuleFiltration;
+namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\PromotionBundle\Context\ContextConverterInterface;
-use Oro\Bundle\PromotionBundle\Context\PromotionContextInterface;
+use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
@@ -22,37 +21,38 @@ class PromotionProvider
     private $ruleFiltrationService;
 
     /**
-     * @var ContextConverterInterface
+     * @var ContextDataConverterInterface
      */
-    private $contextConverter;
+    private $contextDataConverter;
 
     /**
      * @param ManagerRegistry $registry
      * @param RuleFiltrationServiceInterface $ruleFiltrationService
-     * @param ContextConverterInterface $contextConverter
+     * @param ContextDataConverterInterface $contextDataConverter
      */
     public function __construct(
         ManagerRegistry $registry,
         RuleFiltrationServiceInterface $ruleFiltrationService,
-        ContextConverterInterface $contextConverter
+        ContextDataConverterInterface $contextDataConverter
     ) {
         $this->registry = $registry;
         $this->ruleFiltrationService = $ruleFiltrationService;
-        $this->contextConverter = $contextConverter;
+        $this->contextDataConverter = $contextDataConverter;
     }
 
     /**
-     * @param PromotionContextInterface $context
+     * @param object $sourceEntity
      * @return array|RuleOwnerInterface[]
      */
-    public function getPromotions(PromotionContextInterface $context): array
+    public function getPromotions($sourceEntity): array
     {
         $promotions = $this->registry
             ->getManagerForClass(Promotion::class)
             ->getRepository(Promotion::class)
             ->findAll();
 
-        $contextData = $this->contextConverter->convert($context);
+        $contextData = $this->contextDataConverter->getContextData($sourceEntity);
+
         return $this->ruleFiltrationService->getFilteredRuleOwners($promotions, $contextData);
     }
 }

@@ -3,9 +3,12 @@
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 
 class DiscountSubtotalProvider implements SubtotalProviderInterface
 {
+    const NAME = 'oro_promotion.subtotal_discount_cost';
+
     /**
      * @var PromotionProvider
      */
@@ -22,9 +25,9 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
-        // TODO: Implement getName() method.
+        return self::NAME;
     }
 
     /**
