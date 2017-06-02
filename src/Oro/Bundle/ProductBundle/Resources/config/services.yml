@@ -865,6 +865,7 @@ services:
             - '@oro_segment.segment_manager'
             - '@doctrine'
             - '@oro_datagrid.datagrid.name_strategy'
+            - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
 
@@ -954,3 +955,21 @@ services:
         arguments:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.provider.serialized_field_provider'
+
+    oro_product.service.product_collection_definition_converter:
+        class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
+        public: false
+
+    oro_product.event_listener.product_collection_datagrid_parameters_for_selected_products_grid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener
+        calls:
+            - [setParameterName,  ['selectedProducts']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-selected-products-grid, method: onBuildAfter }
+
+    oro_product.event_listener.product_collection_datagrid_parameters_for_add_products_grid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener
+        calls:
+            - [setParameterName,  ['hiddenProducts']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-grid, method: onBuildAfter }

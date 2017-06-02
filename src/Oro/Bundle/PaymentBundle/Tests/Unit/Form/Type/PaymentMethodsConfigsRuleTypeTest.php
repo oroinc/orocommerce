@@ -22,7 +22,6 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -41,9 +40,9 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
     protected $formType;
 
     /**
-     * @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentMethodProvidersRegistry;
+    protected $paymentMethodProvider;
 
     /**
      * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -58,7 +57,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
         parent::setUp();
         $this->createMocks();
         $this->formType = new PaymentMethodsConfigsRuleType(
-            $this->paymentMethodProvidersRegistry,
+            $this->paymentMethodProvider,
             $this->compositePaymentMethodViewProvider
         );
     }
@@ -136,7 +135,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
 
         $this->createMocks();
 
-        $subscriber = new RuleMethodConfigCollectionSubscriber($this->paymentMethodProvidersRegistry);
+        $subscriber = new RuleMethodConfigCollectionSubscriber($this->paymentMethodProvider);
 
         return [
             new PreloadedExtension(
@@ -145,7 +144,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
                     RuleType::BLOCK_PREFIX => new RuleType(),
                     PaymentMethodConfigType::NAME =>
                         new PaymentMethodConfigType(
-                            $this->paymentMethodProvidersRegistry,
+                            $this->paymentMethodProvider,
                             $this->compositePaymentMethodViewProvider
                         ),
                     PaymentMethodsConfigsRuleDestinationType::NAME =>
@@ -154,8 +153,8 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
                         new PaymentMethodConfigCollectionType($subscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $currencyProvider,
-                        $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),
-                        $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
+                        $this->createMock(LocaleSettings::class),
+                        $this->createMock(CurrencyNameHelper::class)
                     ),
                     'oro_country' => new CountryType(),
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
@@ -170,12 +169,8 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
 
     protected function createMocks()
     {
-
         $this->compositePaymentMethodViewProvider = $this
             ->getMockBuilder(CompositePaymentMethodViewProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->paymentMethodProvidersRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -189,30 +184,29 @@ class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRule
         $paymentMethodView = $this->getMockBuilder(PaymentMethodViewInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $paymentMethodView->expects(static::any())->method('getAdminLabel')->willReturn(self::ADMIN_LABEL);
+        $paymentMethodView
+            ->expects(static::any())
+            ->method('getAdminLabel')
+            ->willReturn(self::ADMIN_LABEL);
 
-        /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)
+        $this->paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $paymentMethodProvider
+        $this->paymentMethodProvider
             ->expects(static::any())
             ->method('getPaymentMethods')
             ->willReturn([$paymentMethod]);
-        $paymentMethodProvider
+        $this->paymentMethodProvider
             ->expects(static::any())
             ->method('hasPaymentMethod')
             ->with(self::PAYMENT_TYPE)
             ->willReturn(true);
-        $paymentMethodProvider
+        $this->paymentMethodProvider
             ->expects(static::any())
             ->method('getPaymentMethod')
             ->with(self::PAYMENT_TYPE)
             ->willReturn($paymentMethod);
 
-        $this->paymentMethodProvidersRegistry->expects(static::any())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
         $this->compositePaymentMethodViewProvider->expects(static::any())
             ->method('getPaymentMethodView')
             ->with(self::PAYMENT_TYPE)

@@ -10,6 +10,7 @@ config:
         'oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component': 'bundles/oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component.js'
         'tinymce/plugins/fullscreen/plugin.min': 'empty:'
         'oro/quick-add-import-widget': 'bundles/oroproduct/js/app/widget/quick-add-import-widget.js'
+        'oro/product-collection-popup-add-products-widget': 'bundles/oroproduct/js/app/widget/product-collection-popup-add-products-widget.js'
         'oroproduct/js/app/components/quick-add-copy-paste-form-component': 'bundles/oroproduct/js/app/components/quick-add-copy-paste-form-component.js'
         'oroproduct/js/app/components/quick-add-import-validation-component': 'bundles/oroproduct/js/app/components/quick-add-import-validation-component.js'
         'oroproduct/js/app/components/redirect-component': 'bundles/oroproduct/js/app/components/redirect-component.js'
@@ -37,6 +38,8 @@ config:
         'oroproduct/js/app/components/product-variant-field-component': 'bundles/oroproduct/js/app/components/product-variant-field-component.js'
         'oroproduct/js/app/components/product-collection-apply-query-component': 'bundles/oroproduct/js/app/components/product-collection-apply-query-component.js'
         'oro/related-items-widget': 'bundles/oroproduct/js/app/widget/related-items-widget.js'
+        'oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent': 'bundles/oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent.js'
+        'oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent': 'bundles/oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

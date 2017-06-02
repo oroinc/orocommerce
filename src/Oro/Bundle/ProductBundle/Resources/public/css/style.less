@@ -151,7 +151,7 @@ table.unit-table {
   }
 }
 
-.web-catalog-page-data {
+.web-catalog-page-data, .oro-content-variant-collection {
   .scope-collection {
     div[data-validation-optional-group=""] {
       display: block;
@@ -166,6 +166,32 @@ table.unit-table {
       margin-left: 0;
       margin-right: 0;
     }
+  }
+
+  .oro-tabs {
+    .tab-pane {
+      min-height: 0;
+    }
+  }
+
+  .collapse-view {
+    .filter {
+      display: none;
+    }
+
+    &.expanded {
+      .filter {
+        display: block;
+      }
+    }
+  }
+
+  .tab-content {
+    border: none;
+  }
+
+  .nav-tabs {
+    width: 100%;
   }
 
   .grid-toolbar {
@@ -236,6 +262,17 @@ table.unit-table {
       .controls {
         margin-left: 0;
       }
+    }
+  }
+}
+
+.collapse-view {
+  &.expanded {
+    .collapse-view__trigger {
+      background-image: none;
+      background-color: #e6e6e6;
+      outline: 0;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)
     }
   }
 }

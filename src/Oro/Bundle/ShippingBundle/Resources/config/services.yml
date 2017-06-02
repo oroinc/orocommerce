@@ -396,15 +396,6 @@ services:
         arguments:
             - '@event_dispatcher'
 
-    oro_shipping.method.event_listener.type_removal:
-        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodAndTypeRemovalListener'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@logger'
-        tags:
-            - { name: kernel.event_listener, event: oro_shipping.method_removal, method: onMethodRemove }
-            - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }
-
     oro_shipping.helper.filtered_datagrid_route:
         class: 'Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper'
         arguments:
@@ -456,13 +447,6 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig'
-
-    oro_shipping.method.event_listener.method_renaming:
-        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodRenamingListener'
-        arguments:
-            - '@oro_shipping.repository.shipping_method_config'
-        tags:
-            - { name: kernel.event_listener, event: oro_shipping.method_renaming, method: onMethodRename}
 
     oro_shipping.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
