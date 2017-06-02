@@ -1,0 +1,8 @@
+oro_permissions:
+    DUPLICATE_SHOPPING_LIST:
+        label: oro.shoppinglist.permission.duplicate_shopping_list.label
+        apply_to_all: false
+        apply_to_entities:
+            - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
+        group_names:
+            - 'commerce'

@@ -112,7 +112,8 @@ oro:
 
         privilege:
             category.shopping.label: 'Shopping'
-
+        permission:
+            duplicate_shopping_list.label: Duplicate
     frontend:
         shoppinglist:
             quick_order:
