@@ -6,10 +6,36 @@
         z-index: z('base');
 
         &-new_arrival {
-            width: 59px;
-            height: 57px;
+            width: $product-sticker-icon-size;
+            height: $product-sticker-icon-size;
 
             background: $product-sticker-icon-new-arrival-background;
+            background-size: $product-sticker-icon-new-arrival-background-size;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .product-sticker {
+        &--top-right {
+            top: $product-sticker-icon-top-right-tablet-small-pos-top;
+            right: $product-sticker-icon-top-right-tablet-small-pos-right;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-sticker {
+        &--icon {
+            &-new_arrival {
+                width: $product-sticker-icon-size-mobile-landscape;
+                height: $product-sticker-icon-size-mobile-landscape;
+            }
+        }
+
+        &--top-right {
+            top: $product-sticker-icon-top-right-mobile-landscape-pos-top;
+            right: $product-sticker-icon-top-right-mobile-landscape-pos-right;
         }
     }
 }
