@@ -2,9 +2,8 @@ define([
     'oro/datagrid/action/mass-action',
     'oroui/js/mediator',
     'oroui/js/standart-confirmation',
-    'underscore',
-    'orotranslation/js/translator'
-], function(MassAction, mediator, StandardConfirmation, _, __) {
+    'underscore'
+], function(MassAction, mediator, StandardConfirmation, _) {
     'use strict';
 
     var TriggerEventForSelectedProductIdsMassAction;
@@ -90,7 +89,7 @@ define([
          */
         _getForcedConfirmDialog: function(message) {
             if (!this.forcedConfirmDialog) {
-                this.forcedConfirmDialog = new StandardConfirmation({content: __(message)});
+                this.forcedConfirmDialog = new StandardConfirmation({content: message});
                 this.forcedConfirmDialog.on('ok', _.bind(this.onForcedConfirmDialogOk, this));
             }
 

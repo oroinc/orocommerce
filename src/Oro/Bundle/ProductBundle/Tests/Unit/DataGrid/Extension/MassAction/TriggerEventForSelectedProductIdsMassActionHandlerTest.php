@@ -9,6 +9,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\MassActionInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,6 +19,11 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
     private $configManager;
 
     /**
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $translator;
+
+    /**
      * @var TriggerEventForSelectedProductIdsMassActionHandler
      */
     private $handler;
@@ -25,15 +31,20 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
     protected function setUp()
     {
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->handler = new TriggerEventForSelectedProductIdsMassActionHandler($this->configManager);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->handler = new TriggerEventForSelectedProductIdsMassActionHandler(
+            $this->configManager,
+            $this->translator
+        );
     }
 
     public function testHandleWhenExceedLimitationAndNoForceParameter()
     {
+        $limit = 100;
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_product.product_collections_mass_action_limitation')
-            ->willReturn(100);
+            ->willReturn($limit);
         /** @var MassActionInterface|\PHPUnit_Framework_MockObject_MockObject $massAction */
         $massAction = $this->createMock(MassActionInterface::class);
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
@@ -43,14 +54,16 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
         $iterableResult->expects($this->once())
             ->method('count')
             ->willReturn(200);
+        $translatedMessage = 'some translated message';
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(TriggerEventForSelectedProductIdsMassActionHandler::FAILED_RESPONSE_MESSAGE, ['%limit%' => $limit])
+            ->willReturn($translatedMessage);
 
         $args = new MassActionHandlerArgs($massAction, $datagrid, $iterableResult, ['force' => false]);
         $response = $this->handler->handle($args);
 
-        $expectedResponse = new MassActionResponse(
-            false,
-            TriggerEventForSelectedProductIdsMassActionHandler::FAILED_RESPONSE_MESSAGE
-        );
+        $expectedResponse = new MassActionResponse(false, $translatedMessage);
         $this->assertEquals($expectedResponse, $response);
     }
 
@@ -66,15 +79,16 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
         $datagrid = $this->createMock(DatagridInterface::class);
         /** @var IterableResult|\PHPUnit_Framework_MockObject_MockObject $iterableResult */
         $iterableResult = $this->createMock(IterableResult::class);
+        $translatedMessage = 'some translated message';
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(TriggerEventForSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE)
+            ->willReturn($translatedMessage);
 
         $args = new MassActionHandlerArgs($massAction, $datagrid, $iterableResult, ['force' => true]);
         $response = $this->handler->handle($args);
 
-        $expectedResponse = new MassActionResponse(
-            true,
-            TriggerEventForSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE,
-            ['ids' => []]
-        );
+        $expectedResponse = new MassActionResponse(true, $translatedMessage, ['ids' => []]);
         $this->assertEquals($expectedResponse, $response);
     }
 
@@ -93,15 +107,16 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit_Fr
         $iterableResult->expects($this->once())
             ->method('count')
             ->willReturn(100);
+        $translatedMessage = 'some translated message';
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(TriggerEventForSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE)
+            ->willReturn($translatedMessage);
 
         $args = new MassActionHandlerArgs($massAction, $datagrid, $iterableResult, ['force' => false]);
         $response = $this->handler->handle($args);
 
-        $expectedResponse = new MassActionResponse(
-            true,
-            TriggerEventForSelectedProductIdsMassActionHandler::SUCCESS_RESPONSE_MESSAGE,
-            ['ids' => []]
-        );
+        $expectedResponse = new MassActionResponse(true, $translatedMessage, ['ids' => []]);
         $this->assertEquals($expectedResponse, $response);
     }
 }

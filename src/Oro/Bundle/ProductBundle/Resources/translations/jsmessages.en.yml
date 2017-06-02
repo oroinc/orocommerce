@@ -8,11 +8,6 @@ oro:
                     desc: descending
                 pagination:
                     label: %start%-%end% out of %total%
-            mass_action:
-                get_selected_product_ids:
-                    response:
-                        failed: A limit of selected products was exceeded. Do you want to force add your selection?
-                        success: Products were successfully added.
 
         productunit:
             delete.confirmation: Are you sure you want to delete this unit precision?

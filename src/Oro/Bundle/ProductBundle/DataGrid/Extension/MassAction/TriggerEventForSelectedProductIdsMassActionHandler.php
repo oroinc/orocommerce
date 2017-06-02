@@ -7,6 +7,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Handler checks that count of selected products do not exceed limitation and returns product ids from given grid.
@@ -22,11 +23,17 @@ class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHa
     private $configManager;
 
     /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
      * @param ConfigManager $configManager
      */
-    public function __construct(ConfigManager $configManager)
+    public function __construct(ConfigManager $configManager, TranslatorInterface $translator)
     {
         $this->configManager = $configManager;
+        $this->translator = $translator;
     }
 
     /**
@@ -38,7 +45,8 @@ class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHa
         $massActionLimit = $this->configManager->get($configKey);
         $data = $args->getData();
         if (empty($data['force']) && $args->getResults()->count() > $massActionLimit) {
-            return new MassActionResponse(false, self::FAILED_RESPONSE_MESSAGE);
+            $message = $this->translator->trans(self::FAILED_RESPONSE_MESSAGE, ['%limit%' => $massActionLimit]);
+            return new MassActionResponse(false, $message);
         }
 
         $ids = [];
@@ -46,6 +54,6 @@ class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHa
             $ids[] = $resultRecord->getValue('id');
         }
 
-        return new MassActionResponse(true, self::SUCCESS_RESPONSE_MESSAGE, ['ids' => $ids]);
+        return new MassActionResponse(true, $this->translator->trans(self::SUCCESS_RESPONSE_MESSAGE), ['ids' => $ids]);
     }
 }

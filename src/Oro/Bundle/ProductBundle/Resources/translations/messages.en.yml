@@ -270,7 +270,7 @@ oro:
             mass_action:
                 get_selected_product_ids:
                     response:
-                        failed: A limit of selected products was exceeded. Do you want to force add your selection?
+                        failed: A limit of selected products (%limit%) was exceeded. Do you want to force add your selection?
                         success: Products were successfully added.
 
         ui:

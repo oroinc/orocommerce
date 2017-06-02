@@ -975,6 +975,7 @@ services:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler
         arguments:
             - '@oro_config.manager'
+            - '@translator'
 
     oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
         class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
