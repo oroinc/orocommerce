@@ -30,7 +30,7 @@ Feature:
     When I click "Excluded"
     And I click "Add Button"
     Then I should see "Add Products"
-    And I click on PSKU12 in grid "Add Products Popup Grid"
+    And I click on PSKU12 in grid "Add Products Popup"
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
@@ -49,7 +49,7 @@ Feature:
       | PSKU12 | Product 12 |
     When I click "Add Button"
     Then I should see "Add Products"
-    And I should see following "Add Products Popup Grid" grid:
+    And I should see following "Add Products Popup" grid:
       | SKU    | NAME       |
       | PSKU11 | Product 11 |
       | PSKU10 | Product 10 |

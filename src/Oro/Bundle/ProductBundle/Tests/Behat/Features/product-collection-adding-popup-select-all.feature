@@ -6,12 +6,11 @@ Feature:
 
   Scenario: Add with help of "select all" grid feature, more products than allowed to add at once
     Given I login as administrator
-    And I set "Default Web Catalog" as default web catalog for website scope
     And I set "Mass action limit" in Product Collections settings to the "5"
     And I am on Content Node page and added Product Collection variant
     When I click "All Added"
     And I click "Add Button"
-    And I check all records in grid
+    And I check all records in "Add Products Popup" grid
     And I click "Add" in modal window
     And I should see "A limit of selected products (5) was exceeded. Do you want to force add your selection?"
     And I click "Yes"
@@ -35,7 +34,7 @@ Feature:
     And I am on Content Node page and added Product Collection variant
     And I click "All Added"
     And I click "Add Button"
-    And I check all records in grid
+    And I check all records in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following grid:
       | SKU    | NAME      |
@@ -52,15 +51,14 @@ Feature:
     And number of records should be 12
     Then I click "Cancel"
 
-  #ToDo unskip after BB-9860
   Scenario: Add with help of "select all" grid feature, with unchecked products, and do add from second page
     Given I am on Content Node page and added Product Collection variant
     And I click "All Added"
     And I click "Add Button"
-    And I check all records in grid
+    And I check all records in "Add Products Popup" grid
     And I uncheck PSKU11 record in grid
     And I uncheck PSKU12 record in grid
-    And I press next page button in grid "Add Products Popup Grid"
+    And I press next page button in grid "Add Products Popup"
     And I uncheck PSKU2 record in grid
     And I click "Add" in modal window
     Then I should see following grid:
@@ -80,8 +78,8 @@ Feature:
     Given I am on Content Node page and added Product Collection variant
     And I click "All Added"
     And I click "Add Button"
-    And I filter Name as is equal to "Product 1" in "Add Products Popup Grid" grid
-    And I check all records in grid
+    And I filter Name as is equal to "Product 1" in "Add Products Popup" grid
+    And I check all records in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following grid:
       | SKU    | NAME      |
@@ -92,8 +90,8 @@ Feature:
     Given I am on Content Node page and added Product Collection variant
     And I click "All Added"
     And I click "Add Button"
-    And I press next page button in grid "Add Products Popup Grid"
-    And I check All Visible records in grid
+    And I press next page button in grid "Add Products Popup"
+    And I check All Visible records in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following grid:
       | SKU    | NAME      |

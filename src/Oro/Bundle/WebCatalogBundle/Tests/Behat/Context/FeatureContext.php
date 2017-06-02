@@ -64,6 +64,7 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
         $this->oroMainContext->fillField('Web Catalog System Config Select', $webCatalogName);
 
         $this->formContext->iSaveForm();
+        $this->waitForAjax();
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
     }
 }
