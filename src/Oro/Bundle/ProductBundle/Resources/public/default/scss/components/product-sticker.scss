@@ -6,8 +6,8 @@
         z-index: z('base');
 
         &-new_arrival {
-            width: 28%;
-            height: 28%;
+            width: $product-sticker-icon-size;
+            height: $product-sticker-icon-size;
 
             background: $product-sticker-icon-new-arrival-background;
             background-size: $product-sticker-icon-new-arrival-background-size;
@@ -26,6 +26,13 @@
 
 @include breakpoint('mobile-landscape') {
     .product-sticker {
+        &--icon {
+            &-new_arrival {
+                width: $product-sticker-icon-size-mobile-landscape;
+                height: $product-sticker-icon-size-mobile-landscape;
+            }
+        }
+
         &--top-right {
             top: $product-sticker-icon-top-right-mobile-landscape-pos-top;
             right: $product-sticker-icon-top-right-mobile-landscape-pos-right;
