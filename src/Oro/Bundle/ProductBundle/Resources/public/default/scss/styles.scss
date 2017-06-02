@@ -6,8 +6,8 @@
 @import './components/filter-controls';
 @import './components/grid';
 @import './components/quick-order';
-@import './components/featured-products/featured-products.scss';
-@import './components/featured-product/featured-product.scss';
+@import './components/featured-products';
+@import './components/featured-product';
 @import './components/product-view-layout';
 @import './components/line-item-form';
 @import './components/product-view-quantity';
@@ -15,5 +15,5 @@
 @import './components/products-widget';
 
 //Page templates of product page
-@import './page-templates/two-columns-theme';
-@import './page-templates/list-theme';
+@import './components/page-templates/two-columns-theme';
+@import './components/page-templates/list-theme';
