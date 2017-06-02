@@ -6,7 +6,7 @@ Feature:
 
   Scenario: Add with help of "select all" grid feature, more products than allowed to add at once
     Given I login as administrator
-    And I set "Default Web Catalog" as default web catalog
+    And I set "Default Web Catalog" as default web catalog for website scope
     And I set "Mass action limit" in Product Collections settings to the "5"
     And I am on Content Node page and added Product Collection variant
     When I click "All Added"
@@ -53,7 +53,6 @@ Feature:
     Then I click "Cancel"
 
   #ToDo unskip after BB-9860
-  @skip
   Scenario: Add with help of "select all" grid feature, with unchecked products, and do add from second page
     Given I am on Content Node page and added Product Collection variant
     And I click "All Added"
@@ -74,7 +73,7 @@ Feature:
       | PSKU5  | Product 5 |
       | PSKU4  | Product 4 |
       | PSKU3  | Product 3 |
-      | PSKU3  | Product 1 |
+      | PSKU1  | Product 1 |
     Then I click "Cancel"
 
   Scenario: Add with help of "select all", products from grid that is filtered with grid's controls
