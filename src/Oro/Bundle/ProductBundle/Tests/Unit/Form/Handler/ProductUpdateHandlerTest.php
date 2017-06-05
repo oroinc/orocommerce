@@ -26,6 +26,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductUpdateHandlerTest extends UpdateHandlerTest
 {
     const PRODUCT_ID = 1;
@@ -416,24 +419,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $entity = $this->getProductMock(0);
         $relatedEntity = $this->getProductMock(0);
 
-        $appendRelatedSubForm = $this->getSubForm([$relatedEntity]);
-        $appendRelatedSubForm->expects($this->once())
-            ->method('addError')
-            ->with($this->isInstanceOf(FormError::class));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                ['appendRelated', $appendRelatedSubForm],
-                ['removeRelated', $this->getSubForm()],
-            ]);
-        $form->expects($this->any())
-            ->method('getErrors')
-            ->willReturn(new FormErrorIterator($form, []));
+        $form = $this->getFormThatReturnsNoErrors($relatedEntity);
 
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
         $formHandlerMock = $this->getMockBuilder(FormHandler::class)
@@ -485,24 +471,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $entity = $this->getProductMock(0);
         $relatedEntity = $this->getProductMock(0);
 
-        $appendRelatedSubForm = $this->getSubForm([$relatedEntity]);
-        $appendRelatedSubForm->expects($this->once())
-            ->method('addError')
-            ->with($this->isInstanceOf(FormError::class));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                ['appendRelated', $appendRelatedSubForm],
-                ['removeRelated', $this->getSubForm()],
-            ]);
-        $form->expects($this->any())
-            ->method('getErrors')
-            ->willReturn(new FormErrorIterator($form, []));
+        $form = $this->getFormThatReturnsNoErrors($relatedEntity);
 
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
         $formHandlerMock = $this->getMockBuilder(FormHandler::class)
@@ -554,24 +523,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $entity = $this->getProductMock(0);
         $relatedEntity = $this->getProductMock(0);
 
-        $appendRelatedSubForm = $this->getSubForm([$relatedEntity]);
-        $appendRelatedSubForm->expects($this->once())
-            ->method('addError')
-            ->with($this->isInstanceOf(FormError::class));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                ['appendRelated', $appendRelatedSubForm],
-                ['removeRelated', $this->getSubForm()],
-            ]);
-        $form->expects($this->any())
-            ->method('getErrors')
-            ->willReturn(new FormErrorIterator($form, []));
+        $form = $this->getFormThatReturnsNoErrors($relatedEntity);
 
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
         $formHandlerMock = $this->getMockBuilder(FormHandler::class)
@@ -731,6 +683,33 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->method('getData')
             ->will($this->returnValue($data));
 
+        return $form;
+    }
+
+    /**
+     * @param $relatedEntity
+     * @return \PHPUnit_Framework_MockObject_MockObject|Form
+     */
+    private function getFormThatReturnsNoErrors($relatedEntity)
+    {
+        $appendRelatedSubForm = $this->getSubForm([$relatedEntity]);
+        $appendRelatedSubForm->expects($this->once())
+            ->method('addError')
+            ->with($this->isInstanceOf(FormError::class));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['appendRelated', $appendRelatedSubForm],
+                ['removeRelated', $this->getSubForm()],
+            ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
         return $form;
     }
 }

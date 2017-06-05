@@ -48,6 +48,7 @@ class RelatedProductRepository extends EntityRepository
             ->leftJoin(RelatedProduct::class, 'rp_r', Join::WITH, 'rp_r.relatedProduct = p.id')
             ->where('rp_r.product = :id')
             ->setParameter(':id', $id)
+            ->orderBy('p.id')
             ->setMaxResults($limit);
 
 

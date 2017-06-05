@@ -13,6 +13,10 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
 
+    Grid On Popup:
+      selector: 'div[data-page-component-name="products-related-products-select"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
     ProductForm:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -29,6 +33,18 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
             element: Configurable Attributes
+          Color: 'oro_product[Color]'
+          Size: 'oro_product[Size]'
+
+    RelatedProductsConfig:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Maximum Number Of Assigned Items Use Default: 'related_items[oro_product___max_number_of_related_products][use_parent_scope_value]'
+          Maximum Number Of Assigned Items: 'related_items[oro_product___max_number_of_related_products][value]'
+          Enable Related Products Use Default: 'related_items[oro_product___related_products_enabled][use_parent_scope_value]'
+          Enable Related Products: 'related_items[oro_product___related_products_enabled][value]'
 
     Product Family Form:
       selector: 'div#container'
@@ -60,6 +76,9 @@ oro_behat_extension:
 
     AdvancedFilter:
       selector: '.collapse-view__trigger.btn .fa-filter'
+
+    Enable Related Products:
+      selector: '[name="related_items[oro_product___related_products_enabled][value]"]'
 
     Field Condition:
       selector: 'li[data-widget="fieldCondition"]'
@@ -161,5 +180,6 @@ oro_behat_extension:
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features'

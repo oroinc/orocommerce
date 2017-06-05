@@ -615,8 +615,9 @@ class OroProductBundleInstaller implements
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
         $table->addColumn('related_product_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['product_id'], 'IDX_B0C000714584665A', []);
-        $table->addIndex(['related_product_id'], 'IDX_B0C00071CF496EEA', []);
+        $table->addIndex(['product_id'], 'idx_oro_product_related_products_product_id', []);
+        $table->addIndex(['related_product_id'], 'idx_oro_product_related_products_related_product_id', []);
+        $table->addUniqueIndex(['product_id', 'related_product_id'], 'idx_oro_product_related_products_unique');
 
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),

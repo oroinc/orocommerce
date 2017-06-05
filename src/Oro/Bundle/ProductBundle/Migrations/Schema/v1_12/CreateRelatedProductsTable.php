@@ -21,7 +21,7 @@ class CreateRelatedProductsTable implements Migration
         $table->setPrimaryKey(['id']);
         $table->addIndex(['product_id'], 'idx_oro_product_related_products_product_id', []);
         $table->addIndex(['related_product_id'], 'idx_oro_product_related_products_related_product_id', []);
-        $table->addUniqueIndex(['product_id, related_product_id'], 'idx_oro_product_related_products_unique');
+        $table->addUniqueIndex(['product_id', 'related_product_id'], 'idx_oro_product_related_products_unique');
 
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),

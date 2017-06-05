@@ -74,7 +74,7 @@ class AssignerDatabaseStrategy implements AssignerStrategyInterface
     private function removeRelation(Product $productFrom, Product $productTo)
     {
         $persistedRelation = $this->getRelatedProductsRepository()
-            ->findOneBy(['product' => $productFrom, 'relatedProduct', $productTo]);
+            ->findOneBy(['product' => $productFrom, 'relatedProduct' => $productTo]);
 
         if ($persistedRelation === null) {
             return;

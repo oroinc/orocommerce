@@ -518,7 +518,9 @@ datagrids:
                     and:
                         - 'product.id IN(:relatedProducts)'
             bind_parameters:
-                - relatedProducts
+                -
+                  name: relatedProducts
+                  default: []
 
     products-related-items-edit:
         acl_resource: oro_product_update
@@ -581,7 +583,9 @@ datagrids:
                         - product.id != :productId
             bind_parameters:
                 - productId
-                - relatedProducts
+                -
+                  name: relatedProducts
+                  default: []
         columns:
             isRelated:
                 label: oro.product.is_related.label
