@@ -177,7 +177,7 @@ define(function(require) {
                         currentValue = '';
                     }
 
-                    option.remove();
+                    $(option).remove();
                 }
             });
 
