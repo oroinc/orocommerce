@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
@@ -24,13 +25,23 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
     private $configProvider;
 
     /**
+     * @var FrontendHelper
+     */
+    private $frontendHelper;
+
+    /**
      * @param DoctrineHelper                    $doctrineHelper
      * @param AbstractRelatedItemConfigProvider $configProvider
+     * @param FrontendHelper                    $frontendHelper
      */
-    public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        AbstractRelatedItemConfigProvider $configProvider,
+        FrontendHelper $frontendHelper
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configProvider = $configProvider;
+        $this->frontendHelper = $frontendHelper;
     }
 
     /**
@@ -42,11 +53,13 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
             return [];
         }
 
+        $frontedRequest = $this->frontendHelper->isFrontendRequest();
+
         return $this->getRelatedProductsRepository()
             ->findRelated(
                 $product->getId(),
-                $this->configProvider->isBidirectional(),
-                $this->configProvider->getLimit()
+                $frontedRequest ? $this->configProvider->isBidirectional() : false,
+                $frontedRequest ? $this->configProvider->getLimit() : null
             );
     }
 

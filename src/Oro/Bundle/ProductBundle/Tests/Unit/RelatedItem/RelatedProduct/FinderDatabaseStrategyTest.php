@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\RelatedProduct;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -38,6 +39,11 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private $entityManager;
 
     /**
+     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $frontendHelper;
+
+    /**
      * @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $configProvider;
@@ -66,24 +72,29 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->frontendHelper = $this->getMockBuilder(FrontendHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->strategy = new FinderDatabaseStrategy(
             $this->doctrineHelper,
-            $this->configProvider
+            $this->configProvider,
+            $this->frontendHelper
         );
     }
 
-    public function testFindRelatedProductsIfTheyExist()
+    public function testFindProductsIfTheyExist()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
 
-        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), $this->anything(), $expectedResult);
-
         $this->relatedProductFunctionalityShouldBeEnabled();
+        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(3);
         $this->andShouldNotBeBidirectional();
+        $this->andRequestCameFromFrontend();
 
         $this->assertSame(
             $expectedResult,
@@ -101,18 +112,18 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(0, $this->strategy->find($productA));
     }
 
-    public function testFindRelatedProductsWithLimit()
+    public function testFindProductsWithLimit()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult =[$productB, $productC];
 
-        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), 2, $expectedResult);
-
         $this->relatedProductFunctionalityShouldBeEnabled();
+        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), 2, $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
+        $this->andRequestCameFromFrontend();
 
         $this->assertSame(
             $expectedResult,
@@ -120,18 +131,18 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFindRelatedProductsBidirectional()
+    public function testFindProductsBidirectional()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
 
-        $this->andProductRepositoryShouldFindRelated($productA, true, $this->anything(), $expectedResult);
-
         $this->relatedProductFunctionalityShouldBeEnabled();
+        $this->andProductRepositoryShouldFindRelated($productA, true, $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldBeBidirectional();
+        $this->andRequestCameFromFrontend();
 
         $this->assertSame(
             $expectedResult,
@@ -139,18 +150,35 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFindRelatedProductsNonBidirectional()
+    public function testFindProductsNonBidirectional()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
 
-        $this->andProductRepositoryShouldFindRelated($productA, false, $this->anything(), $expectedResult);
-
         $this->relatedProductFunctionalityShouldBeEnabled();
+        $this->andProductRepositoryShouldFindRelated($productA, false, $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
+        $this->andRequestCameFromFrontend();
+
+        $this->assertSame(
+            $expectedResult,
+            $this->strategy->find($productA)
+        );
+    }
+
+    public function testFindShouldIgnoredConfigManagerForBackend()
+    {
+        $productA = $this->getProduct(['id' => 1]);
+        $productB = $this->getProduct(['id' => 2]);
+        $productC = $this->getProduct(['id' => 3]);
+        $expectedResult = [$productB, $productC];
+
+        $this->relatedProductFunctionalityShouldBeEnabled();
+        $this->andProductRepositoryShouldFindRelated($productA, false, null, $expectedResult);
+        $this->andRequestCameFromBackend();
 
         $this->assertSame(
             $expectedResult,
@@ -169,7 +197,7 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @param Product $product
      * @param bool|\PHPUnit_Framework_Constraint_IsAnything $bidirectional
-     * @param int|\PHPUnit_Framework_Constraint_IsAnything $limit
+     * @param null|int|\PHPUnit_Framework_Constraint_IsAnything $limit
      * @param array $related
      */
     private function andProductRepositoryShouldFindRelated(
@@ -232,5 +260,21 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private function getProduct(array $properties = [])
     {
         return $this->getEntity(Product::class, $properties);
+    }
+
+    private function andRequestCameFromFrontend()
+    {
+        $this->frontendHelper
+            ->expects($this->any())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+    }
+
+    private function andRequestCameFromBackend()
+    {
+        $this->frontendHelper
+            ->expects($this->any())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
     }
 }

@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 

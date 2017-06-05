@@ -37,10 +37,10 @@ class RelatedProductRepository extends EntityRepository
     /**
      * @param int $id
      * @param bool $bidirectional
-     * @param int $limit
+     * @param int|null $limit
      * @return Product[]
      */
-    public function findRelated($id, $bidirectional, $limit)
+    public function findRelated($id, $bidirectional, $limit = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->from('OroProductBundle:Product', 'p')
@@ -48,9 +48,11 @@ class RelatedProductRepository extends EntityRepository
             ->leftJoin(RelatedProduct::class, 'rp_r', Join::WITH, 'rp_r.relatedProduct = p.id')
             ->where('rp_r.product = :id')
             ->setParameter(':id', $id)
-            ->orderBy('p.id')
-            ->setMaxResults($limit);
+            ->orderBy('p.id');
 
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
 
         if ($bidirectional) {
             $qb->leftJoin(RelatedProduct::class, 'rp_l', Join::WITH, 'rp_l.product = p.id')

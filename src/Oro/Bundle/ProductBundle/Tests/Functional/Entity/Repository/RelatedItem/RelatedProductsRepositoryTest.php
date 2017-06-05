@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository\RelatedItem;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
@@ -79,6 +79,19 @@ class RelatedProductsRepositoryTest extends WebTestCase
             $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
         ];
         $relatedProducts = $this->repository->findRelated($product->getId(), false, 1);
+
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
+    public function testFindRelatedUnidirectionalWithoutLimit()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_1)),
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_2)),
+        ];
+        $relatedProducts = $this->repository->findRelated($product->getId(), false);
 
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
     }

@@ -16,4 +16,7 @@ services:
 
     oro.product.related_item.related_product.finder_strategy:
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy
-        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_product.related_item.related_product.config_provider'
+            - '@oro_frontend.request.frontend_helper'
