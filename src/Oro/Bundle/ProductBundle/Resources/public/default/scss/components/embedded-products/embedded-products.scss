@@ -1,8 +1,10 @@
 // @theme: default
 
 .embedded-products {
-    & .embedded-list__container--slider {
-        & .slick-arrow {
+    .embedded-list-slider {
+        margin: $embedded-products-slider-offset;
+
+        .slick-arrow {
             top: calc(((100vw - #{$embedded-products-width + $embedded-products-edge}) / #{$embedded-products-count} - #{$embedded-products-gap-width}) / 2);
 
             margin-top: 24px;
@@ -14,29 +16,28 @@
             }
         }
     }
-
-    & .embedded-list__item {
-        width: $embedded-products-item-width-desktop;
-    }
 }
 
 @include breakpoint('desktop') {
     .embedded-products {
-        & .embedded-list {
-            margin: 0 42px;
-        }
+        .embedded-list {
+            padding: 0 ($embedded-list-slider-btn-arrow-width + $offset-x-m);
 
-        & .embedded-list__label {
-            margin-left: -42px;
-            margin-right: -42px;
+            &__label {
+                margin-left: -($embedded-list-slider-btn-arrow-width + $offset-x-m);
+                margin-right: -($embedded-list-slider-btn-arrow-width + $offset-x-m);
+            }
+
+            &__item {
+                width: $embedded-products-item-width-desktop;
+            }
         }
     }
 }
 
-
 @include breakpoint('tablet-small') {
     .embedded-products {
-        & .embedded-list__item {
+        .embedded-list__item {
             width: $embedded-products-item-width-tablet-small;
         }
     }
@@ -44,17 +45,11 @@
 
 @include breakpoint('mobile-landscape') {
     .embedded-products {
-        & .embedded-list__container--slider {
-            margin: 0 0 0 -16px;
+        .embedded-list-slider {
+            margin: $embedded-products-mobile-landscape-slider-offset;
         }
 
-        & .embedded-list__container--slider::before {
-            left: 0;
-
-            width: 16px;
-        }
-
-        & .embedded-list__item {
+        .embedded-list__item {
             width: $embedded-products-item-width-mobile-landscape;
         }
     }
@@ -62,7 +57,7 @@
 
 @include breakpoint('mobile') {
     .embedded-products {
-        & .embedded-list__item {
+        .embedded-list__item {
             width: $embedded-products-item-width-mobile;
         }
     }

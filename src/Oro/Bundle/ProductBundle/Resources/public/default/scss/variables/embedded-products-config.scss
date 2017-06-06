@@ -5,15 +5,18 @@ $embedded-products-edge: 84px;
 $embedded-products-gap-width: 27px;
 $embedded-products-count: 4;
 $embedded-products-height: 249px;
+$embedded-products-embedded-list-offset: 42px;
 
 // desktop
 $embedded-products-item-width-desktop: 25%;
+$embedded-products-slider-offset: 0 -#{$embedded-product-side-offset};
 
 // tablet-small
 $embedded-products-item-width-tablet-small: 33%;
 
 // mobile-landscape
 $embedded-products-item-width-mobile-landscape: 50%;
+$embedded-products-mobile-landscape-slider-offset: 0 -#{$embedded-product-mobile-landscape-side-offset};
 
 // mobile
 $embedded-products-item-width-mobile: 100%;
