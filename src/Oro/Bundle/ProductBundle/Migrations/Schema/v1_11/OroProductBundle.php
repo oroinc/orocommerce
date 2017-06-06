@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_12;
+namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_11;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -10,8 +10,10 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddProductCollectionToWebCatalog implements Migration, ExtendExtensionAwareInterface
+class OroProductBundle implements Migration, ExtendExtensionAwareInterface
 {
+    const PRODUCT_TABLE_NAME = 'oro_product';
+
     /**
      * @var ExtendExtension
      */
@@ -30,6 +32,9 @@ class AddProductCollectionToWebCatalog implements Migration, ExtendExtensionAwar
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table->addColumn('is_featured', 'boolean', ['default' => false]);
+
         $this->createRelationToSegmentFromContentVariant($schema);
     }
 
