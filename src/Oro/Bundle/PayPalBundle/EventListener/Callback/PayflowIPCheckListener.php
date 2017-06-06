@@ -13,7 +13,7 @@ class PayflowIPCheckListener
     /**
      * @var string[]
      */
-    private $allowedIPs = [
+    protected $allowedIPs = [
         // Payflow Silent Post
         '173.0.81.1',
         '173.0.81.33',
