@@ -42,7 +42,8 @@ Feature: Applying shipping rules
     Then I should see "Flat Rate Disabled"
     Then I should see "Price: $2.0000Handling Fee: $3.0000Type: Per Order"
     And fill "Flat Rate Shipping Rule Form" with:
-      | HandlingFee1 | |
+      | HandlingFee |  |
+    And I click on empty space
     And fill "Shipping Rule" with:
       | Currency | € |
     Then I should see "Price: €2.0000Type: Per Order"
