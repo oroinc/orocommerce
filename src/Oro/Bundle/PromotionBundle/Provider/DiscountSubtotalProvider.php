@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 
 class DiscountSubtotalProvider implements SubtotalProviderInterface
@@ -10,16 +11,16 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
     const NAME = 'oro_promotion.subtotal_discount_cost';
 
     /**
-     * @var PromotionProvider
+     * @var PromotionRunner
      */
-    private $promotionProvider;
+    private $promotionRunner;
 
     /**
-     * @param PromotionProvider $promotionProvider
+     * @param PromotionRunner $promotionRunner
      */
-    public function __construct(PromotionProvider $promotionProvider)
+    public function __construct(PromotionRunner $promotionRunner)
     {
-        $this->promotionProvider = $promotionProvider;
+        $this->promotionRunner = $promotionRunner;
     }
 
     /**
@@ -35,7 +36,8 @@ class DiscountSubtotalProvider implements SubtotalProviderInterface
      */
     public function getSubtotal($entity)
     {
-        // TODO: Implement getSubtotal() method.
+        $discountContext = $this->promotionRunner->processor($entity);
+
     }
 
     /**

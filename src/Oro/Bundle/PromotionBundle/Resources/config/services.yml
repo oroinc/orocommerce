@@ -5,20 +5,27 @@ services:
     oro_promotion.rule_filtration.scope_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
         decorates: oro_promotion.rule_filtration.service
+        public: false
         arguments:
             - '@oro_promotion.rule_filtration.scope_decorator.inner'
 
     oro_promotion.rule_filtration.schedule_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
         decorates: oro_promotion.rule_filtration.service
+        public: false
         arguments:
             - '@oro_promotion.rule_filtration.schedule_decorator.inner'
 
     oro_promotion.rule_filtration.coupon_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
         decorates: oro_promotion.rule_filtration.service
+        public: false
         arguments:
             - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+
+    oro_promotion.rule_filtration.matching_items:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
+        public: false
 
     oro_promotion.context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverter
@@ -34,3 +41,8 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
         arguments:
             - '@service_container'
+
+    oro_promotion.discount_type_to_form_type_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountConfigurationFormTypeProvider
+#        calls:
+#            - ['addType', ['order', 'oro_promotion.form.discount.order_form_type']]
