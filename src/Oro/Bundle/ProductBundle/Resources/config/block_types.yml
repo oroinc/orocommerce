@@ -72,6 +72,7 @@ services:
                     -
                         mode: {default: 'icon'}
                         position: {default: 'top-right'}
+                        product: {default: []}
             - [setName, ['product_sticker']]
         tags:
             - { name: layout.block_type, alias: product_sticker }

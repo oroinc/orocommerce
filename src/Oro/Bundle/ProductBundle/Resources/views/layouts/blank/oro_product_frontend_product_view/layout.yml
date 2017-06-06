@@ -21,6 +21,13 @@ layout:
                     blockType: container
                 product_view_aside_container:
                     blockType: container
+                product_view_gallery_container:
+                    blockType: container
+                product_sticker_new:
+                    blockType: product_sticker
+                    options:
+                        mode: text
+                        product: '=data["product"]'
                 product_view_main_container:
                     blockType: container
                 product_view_content_container:
@@ -55,9 +62,11 @@ layout:
                 page_content:
                     product_view_container:
                         product_view_primary_wrapper:
-                            product_view_primary_container: ~
+                            product_view_primary_container:
+                                product_sticker_new: ~
                             product_view_aside_container:
-                                product_view_attribute_group_images: ~
+                                product_view_gallery_container:
+                                    product_view_attribute_group_images: ~
                                 product_media_popup: ~
                         product_view_main_container:
                             product_view_content_container:

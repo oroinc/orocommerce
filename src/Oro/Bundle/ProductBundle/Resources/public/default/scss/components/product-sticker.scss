@@ -2,15 +2,20 @@
 
 .product-sticker {
     &--icon {
-        position: absolute;
-        z-index: z('base');
+        z-index: z('base') + 1;
+
+        @include aspect-ratio($position: absolute);
 
         &-new_arrival {
             width: $product-sticker-icon-size;
-            height: $product-sticker-icon-size;
 
             background: $product-sticker-icon-new-arrival-background;
             background-size: $product-sticker-icon-new-arrival-background-size;
+        }
+
+        &-static-size {
+            width: $product-sticker-icon-static-size;
+            height: $product-sticker-icon-static-size;
         }
     }
 }
@@ -26,13 +31,6 @@
 
 @include breakpoint('mobile-landscape') {
     .product-sticker {
-        &--icon {
-            &-new_arrival {
-                width: $product-sticker-icon-size-mobile-landscape;
-                height: $product-sticker-icon-size-mobile-landscape;
-            }
-        }
-
         &--top-right {
             top: $product-sticker-icon-top-right-mobile-landscape-pos-top;
             right: $product-sticker-icon-top-right-mobile-landscape-pos-right;
