@@ -237,6 +237,58 @@ operations:
                 method: recalculateTotals
                 method_parameters: [$.data.shoppingList, true]
 
+    oro_shoppinglist_duplicate:
+        label: oro.shoppinglist.duplicate.list.label
+        acl_resource: ['DUPLICATE_SHOPPING_LIST', $.data]
+        groups:
+            - update_navButtons
+        routes:
+            - oro_shopping_list_frontend_view
+        button_options:
+            class: btn--action
+            icon: fa-clone
+        actions:
+            - '@create_datetime':
+                attribute: $.now
+            - '@call_method':
+                object: $.now
+                method: format
+                method_parameters:
+                    - 'Y-m-d H:i'
+                attribute: $.copyDate
+            - '@format_string':
+                attribute: $.newName
+                string: '%%priceListName%% (copied %%copyDate%%)'
+                arguments:
+                    priceListName: $.data.label
+                    copyDate: $.copyDate
+            - '@get_active_user': $.currentUser
+            - '@duplicate':
+                attribute: $.newShoppingList
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[collection], [propertyName, [totals]]]
+                  - [[collection], [propertyName, [lineItems]]]
+                  - [[replaceValue, $.currentUser], [propertyName, [customerUser]]]
+                  - [[replaceValue, $.currentUser.customer], [propertyName, [customer]]]
+                  - [[replaceValue, $.currentUser.owner], [propertyName, [owner]]]
+                  - [[replaceValue, $.currentUser.organization], [propertyName, [organization]]]
+                  - [[keep], [propertyName, [website]]]
+                  - [[shallowCopy], [propertyType, ['\DateTime']]]
+                  - [[keep], [propertyType, ['%oro_product.entity.product.class%']]]
+                  - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
+            - '@assign_value': [$.newShoppingList.label, $.newName]
+            - '@assign_value': [$.newShoppingList.current, false]
+            - '@flush_entity': $.newShoppingList
+            - '@flash_message':
+                  message: oro.shoppinglist.duplicate.success.message
+                  type: 'success'
+                  message_parameters:
+                    'shoppinglist': $.data.label
+            - '@redirect':
+                route: 'oro_shopping_list_frontend_view'
+                route_parameters:
+                    id: $.newShoppingList.id
 action_groups:
     oro_shoppinglist_frontend_addlineitem:
         parameters:

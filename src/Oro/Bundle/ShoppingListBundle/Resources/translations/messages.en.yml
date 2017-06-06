@@ -114,6 +114,10 @@ oro:
             category.shopping.label: 'Shopping'
         permission:
             duplicate_shopping_list.label: Duplicate
+        duplicate:
+            success.message: 'Shopping list "%shoppinglist%" has been duplicated'
+            list.label: Duplicate List
+
     frontend:
         shoppinglist:
             quick_order:
