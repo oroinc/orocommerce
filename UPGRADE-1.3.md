@@ -30,6 +30,15 @@ PaymentBundle
 - Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
 - Previously deprecated class`Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` is removed, `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` should be used instead.
 
+PayPalBundle
+--------------
+- Class `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway`
+    - constants `PRODUCTION_HOST_ADDRESS`, `PILOT_HOST_ADDRESS`, `PRODUCTION_FORM_ACTION`, `PILOT_FORM_ACTION` removed.
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface` added. It is used to get required parameters instead of constants.
+- Class `Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListen`
+    - property `$allowedIPs` changed from `private` to `protected`
+
+
 CheckoutBundle
 --------------
 - Layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.

@@ -48,7 +48,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->combinedPriceListProvider,
             $this->garbageCollector,
             $this->cplScheduleResolver,
-            $this->priceResolver,
+            $this->strategyRegister,
             $this->triggerHandler
         );
         $this->builder->setCustomerGroupCombinedPriceListsBuilder($this->customerGroupBuilder);

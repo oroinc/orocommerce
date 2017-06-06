@@ -283,4 +283,18 @@ class ProductController extends Controller
             'slugsData' => $slugsData,
         ]);
     }
+
+    /**
+     * @Route("/add-products-widget", name="oro_add_products_widget")
+     * @AclAncestor("oro_product_view")
+     * @Template
+     */
+    public function addProductsWidgetAction(Request $request)
+    {
+        $hiddenProducts = $request->get('hiddenProducts');
+
+        return [
+            'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : []
+        ];
+    }
 }

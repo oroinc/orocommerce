@@ -214,7 +214,7 @@ define(function(require) {
             this.options._sourceElement.find(this.options.unitSelect).each(function() {
                 var select = $(this);
                 var option = select.find('option[value="' + value + '"]');
-                if (option !== undefined) {
+                if (option.length) {
                     option.remove();
                 }
             });

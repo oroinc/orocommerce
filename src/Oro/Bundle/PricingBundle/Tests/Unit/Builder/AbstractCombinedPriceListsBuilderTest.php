@@ -4,18 +4,26 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListGarbageCollector;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\PricingStrategy\PriceCombiningStrategyInterface;
+use Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
-use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var StrategyRegister|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $strategyRegister;
+
     /**
      * @var CombinedPriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -87,9 +95,9 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
     protected $cplScheduleResolver;
 
     /**
-     * @var CombinedProductPriceResolver
+     * @var PriceCombiningStrategyInterface
      */
-    protected $priceResolver;
+    protected $combiningStrategy;
 
     /**
      * @return string
@@ -187,11 +195,9 @@ abstract class AbstractCombinedPriceListsBuilderTest extends \PHPUnit_Framework_
         $this->cplScheduleResolver = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
-        $className = 'Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver';
-        $this->priceResolver = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->combiningStrategy = self::createMock(PriceCombiningStrategyInterface::class);
+        $this->strategyRegister = self::createMock(StrategyRegister::class);
+        $this->strategyRegister->method('getCurrentStrategy')->willReturn($this->combiningStrategy);
         $this->triggerHandler = $this->getMockBuilder(CombinedPriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();

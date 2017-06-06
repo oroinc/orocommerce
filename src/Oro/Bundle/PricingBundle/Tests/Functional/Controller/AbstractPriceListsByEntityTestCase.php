@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -52,6 +53,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
+        self::getContainer()->get('oro_config.global')
+            ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
         $this->loadFixtures(
             [
                 'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
