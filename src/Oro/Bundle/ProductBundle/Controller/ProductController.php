@@ -157,37 +157,34 @@ class ProductController extends Controller
     /**
      * Quick edit product form
      *
-     * @Route("/quick-update/{id}", name="oro_product_quick_update", requirements={"id"="\d+"})
+     * @Route("/related-items-update/{id}", name="oro_product_related_items_update", requirements={"id"="\d+"})
      * @Template
-     * @Acl(
-     *      id="oro_product_quick_update",
-     *      type="entity",
-     *      class="OroProductBundle:Product",
-     *      permission="EDIT"
-     * )
+     * @AclAncestor("oro_product_update")
      * @param Product $product
+     *
      * @return array|RedirectResponse
      */
-    public function quickUpdateAction(Product $product)
+    public function updateRelatedItemsAction(Product $product)
     {
         if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
             throw $this->createNotFoundException();
         }
-        return $this->update($product);
+
+        return $this->update($product, 'oro_product_related_items_update');
     }
 
     /**
      * @param Product $product
      * @return array|RedirectResponse
      */
-    protected function update(Product $product)
+    protected function update(Product $product, $routeName = 'oro_product_update')
     {
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->createForm(ProductType::NAME, $product),
-            function (Product $product) {
+            function (Product $product) use ($routeName) {
                 return [
-                    'route' => 'oro_product_update',
+                    'route' => $routeName,
                     'parameters' => ['id' => $product->getId()]
                 ];
             },

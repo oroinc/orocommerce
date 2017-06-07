@@ -4,7 +4,7 @@
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
-{% set formAction = entity.id ? path('oro_product_update', { 'id': entity.id }) : path('oro_product_create')  %}
+{% set formAction = entity.id ? path('oro_product_related_items_update', { 'id': entity.id }) : path('oro_product_create')  %}
 
 {% block navButtons %}
     {{ parent() }}
@@ -42,7 +42,7 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
-    {% set id = 'product-quick-update' %}
+    {% set id = 'product-related-items-update' %}
     {% set dataBlocks = {} %}
 
     {% set data = {
