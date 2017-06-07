@@ -43,7 +43,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'max_number_of_related_products' => [
-                    'value' => 5,
+                    'value' => 25,
                     'scope' => 'app'
                 ],
                 'unit_rounding_type' => [

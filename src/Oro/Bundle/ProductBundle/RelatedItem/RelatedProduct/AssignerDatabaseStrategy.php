@@ -11,12 +11,9 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
-use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
 
 class AssignerDatabaseStrategy implements AssignerStrategyInterface
 {
-    use ChangedEntityGeneratorTrait;
-
     /**
      * @var AbstractRelatedItemConfigProvider
      */
