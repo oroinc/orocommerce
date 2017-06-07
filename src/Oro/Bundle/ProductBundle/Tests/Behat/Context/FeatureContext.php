@@ -8,6 +8,7 @@ use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -412,5 +413,50 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return $options;
+    }
+
+    /**
+     * @Then I go to product with sku :productSku on frontend
+     *
+     * @param string $productSku
+     */
+    public function goToProductViewOnFronted($productSku)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $product = $em->getRepository('OroProductBundle:Product')->findOneBySku($productSku);
+
+        if (!$product) {
+            self::fail(sprintf('Can not find product with SKU %s', $productSku));
+        }
+
+        $path = $this->getContainer()->get('router')->generate(
+            'oro_product_frontend_product_view',
+            ['id' => $product->getId()]
+        );
+
+        $this->visitPath($path);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @Then /^I should not see tag "(?P<tag>[^"]+)" inside "(?P<element>[^"]+)" element$/
+     *
+     * @param string $tag
+     * @param string $element
+     */
+    public function iShouldNotSeeTagInsideElement($tag, $element)
+    {
+        $page = $this->getSession()->getPage();
+
+        $result = $page->find(
+            'xpath',
+            '//*[@id="' . $element . '"]/' . $tag
+        );
+
+        static::assertTrue(
+            is_null($result),
+            sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
+        );
     }
 }
