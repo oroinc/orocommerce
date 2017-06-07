@@ -1,0 +1,7 @@
+layout:
+    actions: []
+
+    # Layout "oro_payment_method_order_review" is deprecated since v1.3,
+    # will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
+    imports:
+        - 'oro_payment_method_order_review'
