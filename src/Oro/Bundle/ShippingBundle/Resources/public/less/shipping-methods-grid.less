@@ -124,10 +124,6 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-
-    span:not(:first-child):before {
-      content: ', ';
-    }
   }
 
   &__global-options {
@@ -286,6 +282,12 @@
 
       .control-group.control-group-oro_shipping_method_type_config {
         padding: 0 10px;
+      }
+    }
+
+    &-grouped {
+      .shipping-method-config__body {
+        padding: 5px 10px;
       }
     }
 

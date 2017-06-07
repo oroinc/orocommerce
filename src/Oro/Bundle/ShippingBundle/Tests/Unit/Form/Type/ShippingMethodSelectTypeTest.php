@@ -89,6 +89,7 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
             },
             'configs' => [
                 'showIcon' => true,
+                'minimumResultsForSearch' => 1,
             ]
         ];
 

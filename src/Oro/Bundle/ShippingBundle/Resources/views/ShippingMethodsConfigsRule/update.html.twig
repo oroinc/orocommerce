@@ -46,10 +46,12 @@
 {% endblock navButtons %}
 
 {% block oro_shipping_rule_methods %}
+    {% set updateFlag = constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingMethodsConfigsRuleHandler::UPDATE_FLAG') %}
     <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'oroshipping/js/app/views/shipping-rule-method-view',
-             updateFlag: constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingMethodsConfigsRuleHandler::UPDATE_FLAG')
+             updateFlag: updateFlag,
+             focus: app.request.get(updateFlag) ? true : false
          }|json_encode }}"
     >
         {{ block('oro_shipping_rule_add_method_widget') }}
