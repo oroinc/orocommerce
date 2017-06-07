@@ -1,6 +1,10 @@
 UPGRADE FROM 1.2 to 1.3
 =======================
 
+AuthorizeNetBundle
+------------------
+- AuthorizeNetBundle extracted into individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
+
 WebsiteSearchBundle
 -------------------
 - Class `Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataListener` was replaced with `Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataFixturesListener`

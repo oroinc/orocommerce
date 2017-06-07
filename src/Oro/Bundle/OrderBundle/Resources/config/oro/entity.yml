@@ -4,3 +4,14 @@ oro_entity:
         - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: totalCurrency }
         - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: baseTotalValue }
         - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: baseSubtotalValue }
+
+    virtual_fields:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            contactInformation:
+                query:
+                    select:
+                        expr:         user.email
+                        return_type:  string
+                    join:
+                        left:
+                            - { join: entity.customerUser, alias: user }
