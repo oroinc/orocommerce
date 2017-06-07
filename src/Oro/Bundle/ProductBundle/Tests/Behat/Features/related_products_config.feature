@@ -20,8 +20,7 @@ Feature: Configuring related products
     And I should not see "Grid"
 
   Scenario: Limit should be restricted
-    Given I login as administrator
-    And go to System/ Configuration
+    Given go to System/ Configuration
     And I click "Commerce"
     And I click "Catalog"
     And I click "Related Items" on configuration sidebar
@@ -33,7 +32,7 @@ Feature: Configuring related products
     When go to Products/ Products
     And I click Edit Product 1 in grid
     And I click "Select related products"
-    And I select following records in Grid On Popup:
+    And I select following records in SelectRelatedProductsGrid:
       | PSKU2 |
       | PSKU3 |
       | PSKU4 |

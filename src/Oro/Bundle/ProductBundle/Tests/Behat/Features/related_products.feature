@@ -10,7 +10,8 @@ Feature: Editing related products
     When go to Products/ Products
     And I click Edit "Product 1" in grid
     And I click "Select related products"
-    Then I should see following "Grid On Popup" grid:
+    And I filter SKU as contains "PSKU" in "SelectRelatedProductsGrid"
+    Then I should see following "SelectRelatedProductsGrid" grid:
       | SKU    | NAME      |
       | PSKU2  | Product 2 |
       | PSKU3  | Product 3 |
@@ -21,14 +22,15 @@ Feature: Editing related products
     Given go to Products/ Products
     And I click Edit "Product 1" in grid
     And I click "Select related products"
-    And I should see following "Grid On Popup" grid:
+    And I should see following "SelectRelatedProductsGrid" grid:
       | Is Related  | SKU    | NAME      |
       | 0           | PSKU2  | Product 2 |
       | 0           | PSKU3  | Product 3 |
-    When I select following records in Grid On Popup:
+    When I select following records in SelectRelatedProductsGrid:
       | PSKU2 |
       | PSKU3 |
     And I click "Select products"
+    And I filter SKU as contains "PSKU" in "RelatedProductsEditGrid"
     And I should see following grid:
       | SKU    | NAME      |
       | PSKU2  | Product 2 |
@@ -48,7 +50,7 @@ Feature: Editing related products
       | PSKU2  | Product 2 |
       | PSKU3  | Product 3 |
     When I click "Select related products"
-    Then I should see following "Grid On Popup" grid:
+    Then I should see following "SelectRelatedProductsGrid" grid:
       | Is Related  | SKU    | NAME      |
       | 1           | PSKU2  | Product 2 |
       | 1           | PSKU3  | Product 3 |
@@ -56,11 +58,11 @@ Feature: Editing related products
     And I click "Cancel"
 
   Scenario: Change relation with quick edit
-    And go to Products/ Products
+    Given go to Products/ Products
     And I click View Product 1 in grid
     And I click "Quick edit"
     And I click "Select related products"
-    When I select following records in Grid On Popup:
+    When I select following records in SelectRelatedProductsGrid:
       | PSKU4 |
     And I click "Select products"
     And I select following records in grid:
@@ -73,7 +75,7 @@ Feature: Editing related products
       | PSKU4  | Product 4 |
 
   Scenario: Canceling edit will not affect related products
-    And go to Products/ Products
+    Given go to Products/ Products
     And I click Edit Product 1 in grid
     And I should see following grid:
       | SKU    | NAME      |
@@ -88,3 +90,9 @@ Feature: Editing related products
       | SKU    | NAME      |
       | PSKU3  | Product 3 |
       | PSKU4  | Product 4 |
+
+  Scenario: Related products of inverse side should not be visible in admin panel
+    Given go to Products/ Products
+    And "Assign In Both Directions" option for related products is enabled
+    When I click View PSKU3 in grid
+    Then there is no records in RelatedProductsViewGrid

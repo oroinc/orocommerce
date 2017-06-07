@@ -13,9 +13,57 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
 
-    Grid On Popup:
+    SelectRelatedProductsGrid:
       selector: 'div[data-page-component-name="products-related-products-select"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    RelatedProductsEditGrid:
+      selector: 'div[data-page-component-name="products-related-items-edit"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    RelatedProductsViewGrid:
+      selector: 'div[data-page-component-name="products-related-items-view"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    SelectRelatedProductsGridFilters:
+      selector: 'div[data-page-component-name="products-related-products-select"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    SelectRelatedProductsGridToolbarActions:
+        selector: 'div[data-page-component-name="products-related-products-select"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    SelectRelatedProductsGridFiltersState:
+        selector: 'div[data-page-component-name="products-related-products-select"] div.filters-state'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    SelectRelatedProductsGridFilterItem:
+      selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    SelectRelatedProductsGridFilterStringItem:
+      selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
+
+    RelatedProductsEditGridFilters:
+      selector: 'div[data-page-component-name="products-related-items-edit"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    RelatedProductsEditGridToolbarActions:
+        selector: 'div[data-page-component-name="products-related-items-edit"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    RelatedProductsEditGridFiltersState:
+        selector: 'div[data-page-component-name="products-related-items-edit"] div.filters-state'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    RelatedProductsEditGridFilterItem:
+      selector: 'div[data-page-component-name="products-related-items-edit"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    RelatedProductsEditGridFilterStringItem:
+      selector: 'div[data-page-component-name="products-related-items-edit"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
     ProductForm:
       selector: 'div#container'
