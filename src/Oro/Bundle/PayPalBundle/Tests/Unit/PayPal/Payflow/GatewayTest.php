@@ -4,10 +4,12 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\PayPal\Payflow;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProvider;
 
 class GatewayTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,6 +25,9 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
     /** @var ClientInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $client;
 
+    /** @var HostAddressProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $hostAddressProvider;
+
     protected function setUp()
     {
         $this->processorRegistry = $this->createMock(
@@ -36,7 +41,26 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
 
         $this->client = $this->createMock('Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface');
 
-        $this->gateway = new Gateway($this->client, $this->requestRegistry, $this->processorRegistry);
+        $this->hostAddressProvider = $this->createMock(HostAddressProviderInterface::class);
+        $this->hostAddressProvider->expects($this->any())
+            ->method('getHostAddress')
+            ->will($this->returnValueMap([
+                [true, HostAddressProvider::PILOT_HOST_ADDRESS],
+                [false, HostAddressProvider::PRODUCTION_HOST_ADDRESS]
+            ]));
+        $this->hostAddressProvider->expects($this->any())
+            ->method('getFormAction')
+            ->will($this->returnValueMap([
+                [true, HostAddressProvider::PILOT_FORM_ACTION],
+                [false, HostAddressProvider::PRODUCTION_FORM_ACTION]
+            ]));
+
+        $this->gateway = new Gateway(
+            $this->hostAddressProvider,
+            $this->client,
+            $this->requestRegistry,
+            $this->processorRegistry
+        );
     }
 
     protected function tearDown()
@@ -86,7 +110,7 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
         $this->client
             ->expects($this->once())
             ->method('send')
-            ->with(Gateway::PILOT_HOST_ADDRESS)
+            ->with(HostAddressProvider::PILOT_HOST_ADDRESS)
             ->willReturn($responseData);
 
         $this->gateway->setTestMode(true);
@@ -99,10 +123,10 @@ class GatewayTest extends \PHPUnit_Framework_TestCase
     public function testGetFormAction()
     {
         $this->gateway->setTestMode(true);
-        $this->assertEquals(Gateway::PILOT_FORM_ACTION, $this->gateway->getFormAction());
+        $this->assertEquals(HostAddressProvider::PILOT_FORM_ACTION, $this->gateway->getFormAction());
 
         $this->gateway->setTestMode(false);
-        $this->assertEquals(Gateway::PRODUCTION_FORM_ACTION, $this->gateway->getFormAction());
+        $this->assertEquals(HostAddressProvider::PRODUCTION_FORM_ACTION, $this->gateway->getFormAction());
     }
 
     /**

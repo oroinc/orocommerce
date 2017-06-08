@@ -13,3 +13,11 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _sticky_element_toolbar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'sticky_element_toolbar',
+        '~class': ' sticky-panel__toolbar toolbar-sticky-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}

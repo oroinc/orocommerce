@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle;
 
+use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\PricesStrategyPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\ProductExpressionServicesPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\SubtotalProviderPass;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
@@ -31,5 +32,6 @@ class OroPricingBundle extends Bundle
 
         $container->addCompilerPass(new SubtotalProviderPass());
         $container->addCompilerPass(new ProductExpressionServicesPass());
+        $container->addCompilerPass(new PricesStrategyPass());
     }
 }

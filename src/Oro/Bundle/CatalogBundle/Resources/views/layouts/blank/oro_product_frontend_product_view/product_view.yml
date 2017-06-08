@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@add':
+            id: breadcrumbs
+            parentId: page_main_header
+            blockType: breadcrumbs
+            options:
+                breadcrumbs: '=data["category_breadcrumbs"].getItemsForProduct(context["category_id"], data["locale"].getLocalizedValue(data["product"].getNames()))'
