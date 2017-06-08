@@ -487,8 +487,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
         $this->waitForAjax();
-        $this->configContext->clickLinkOnConfigurationSidebar('Commerce');
-        $this->configContext->clickLinkOnConfigurationSidebar('Product');
         $this->configContext->clickLinkOnConfigurationSidebar('Product Collections');
         $this->waitForAjax();
     }
