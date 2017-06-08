@@ -26,7 +26,6 @@ class OroPaymentExtensionTest extends ExtensionTestCase
             'oro_payment.payment_methods_configs.rules_provider_basic',
             'oro_payment.expression_language.decorated_product_line_item_factory',
             'oro_payment.datagrid.payment_rule_actions_visibility_provider',
-            'oro_payment.payment_method_provider.registry',
             'oro_payment.mass_action.status.enable',
             'oro_payment.mass_action.status.disable',
             'oro_payment.mass_action.status_handler',

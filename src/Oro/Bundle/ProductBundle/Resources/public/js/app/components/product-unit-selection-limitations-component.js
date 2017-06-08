@@ -50,7 +50,7 @@ define(function(require) {
                 .on('click', '.removeLineItem', _.bind(this.onRemoveRow, this))
                 .on('change', this.options.unitSelect, _.bind(this.onSelectChange, this));
 
-            this.options._sourceElement.trigger('content:changed');
+            mediator.on('page:afterChange', this.onChange, this);
         },
 
         /**
@@ -214,7 +214,7 @@ define(function(require) {
             this.options._sourceElement.find(this.options.unitSelect).each(function() {
                 var select = $(this);
                 var option = select.find('option[value="' + value + '"]');
-                if (option !== undefined) {
+                if (option.length) {
                     option.remove();
                 }
             });

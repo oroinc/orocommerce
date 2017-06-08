@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit;
 
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
@@ -26,12 +27,13 @@ class OroProductBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(5, $passes);
+        $this->assertCount(6, $passes);
         $this->assertInstanceOf(ComponentProcessorPass::class, $passes[0]);
         $this->assertInstanceOf(ProductDataStorageSessionBagPass::class, $passes[1]);
         $this->assertInstanceOf(TwigSandboxConfigurationPass::class, $passes[2]);
         $this->assertInstanceOf(DefaultProductUnitProvidersCompilerPass::class, $passes[3]);
         $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[4]);
+        $this->assertInstanceOf(ProductCollectionCompilerPass::class, $passes[5]);
         $this->assertAttributeEquals(
             [
                 Product::class => [

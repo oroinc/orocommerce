@@ -1,3 +1,5 @@
+@ticket-BB-7258
+@automatically-ticket-tagged
 Feature: Product primary and additional unit precisions dependency
   In order to prevent possibility to select same unit for primary and additional unit precisions
   As administrator

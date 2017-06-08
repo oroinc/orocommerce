@@ -20,8 +20,8 @@
         data-layout="deferred-initialize">
         {{ form_widget(form) }}
         <div class="request-form-lineitem-unit--remove">
-            <button type="button" class="removeRow item-remove button-icon gray fs18">
-                <i class="fa-trash"></i>
+            <button type="button" class="removeRow item-remove button--plain">
+                <i class="fa-trash fa--large fa--no-offset"></i>
             </button>
         </div>
     </div>
@@ -134,6 +134,7 @@
                     <label for="{{ 'lineItem-'~prototype_name }}" class="custom-checkbox">
                         <input type="checkbox"
                                name="{{ 'lineItem'~id }}"
+                               data-role="field__comment-checkbox"
                                id="{{ 'lineItem-'~prototype_name }}"{% if notes is not empty %} checked="checked"{% endif %}
                                class="custom-checkbox__input custom-checkbox__input"
                         >

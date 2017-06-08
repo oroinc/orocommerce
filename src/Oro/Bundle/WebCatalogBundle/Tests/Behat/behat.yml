@@ -10,7 +10,30 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul/li[contains(@class, "jstree-node")]/a[contains(., "Clearance")]'
 
-        Clearance after Products:
+        By Brand:
             selector:
                 type: xpath
-                locator: '//a[contains(., "Products")]/parent::li[contains(@class, "jstree-node")]/following-sibling::li[contains(@class, "jstree-node")]/a[contains(., "Clearance")]'
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "By Brand")]'
+
+        Content Node:
+            selector: 'form[name="oro_web_catalog_content_node"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Title: 'oro_web_catalog_content_node[titles][values][default]'
+                    Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+
+        Content Variant:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[name="oro_web_catalog_content_node"] div[data-content="0"]'
+            options:
+                mapping:
+                    Product:
+                        type: 'css'
+                        locator: 'input[name="oro_web_catalog_content_node[contentVariants][0][productPageProduct]"]'
+                        element: Select2Entity
+
+        Headlamps category:
+            selector:
+                type: xpath
+                locator: '//div[contains(@class, "embedded-list")]/a[contains(., "Headlamps")]'

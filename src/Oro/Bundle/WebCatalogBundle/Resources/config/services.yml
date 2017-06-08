@@ -2,6 +2,7 @@ parameters:
     oro_web_catalog.entity.web_catalog.class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
     oro_web_catalog.entity.content_node.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
     oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
+    oro_web_catalog.type.content_variant_collection.class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType
 
 services:
     oro_web_catalog.provider.web_catalog_usage_provider:
@@ -188,8 +189,6 @@ services:
 
     oro_web_catalog.form.extension.page_variant_type:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension
-        arguments:
-            - '@doctrine'
         tags:
             - { name: form.type_extension, extended_type: Oro\Component\WebCatalog\Form\PageVariantType }
 
@@ -267,6 +266,7 @@ services:
             - '@doctrine'
             - '@oro_locale.helper.localization'
             - '@request_stack'
+            - '@oro_catalog.layout.data_provider.category_breadcrumb'
         tags:
             - { name: layout.data_provider, alias: web_catalog_breadcrumbs }
 

@@ -25,7 +25,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     /**
@@ -70,7 +70,9 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('source_payment_transaction', 'integer', ['notnull' => false]);
         $table->addColumn('request', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
         $table->addColumn('response', 'secure_array', ['notnull' => false, 'comment' => '(DC2Type:secure_array)']);
-        $table->addColumn('transaction_options', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->addColumn('transaction_options', 'secure_array', [
+            'notnull' => false, 'comment' => '(DC2Type:secure_array)'
+        ]);
         $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);

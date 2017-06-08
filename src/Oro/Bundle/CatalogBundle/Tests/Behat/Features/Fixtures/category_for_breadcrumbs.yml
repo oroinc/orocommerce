@@ -1,0 +1,40 @@
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryHeadlamps:
+        addTitle: ['@localValueHeadlamps']
+        setParentCategory: [1]
+        products: ['@product220LumenHeadlamp']
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product220LumenHeadlamp:
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@precision1'
+        addName: ['@localValue220LumenHeadlamp']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        attributeFamily: '@productAttributeFamily'
+        owner: '@business_unit'
+        organization: '@organization'
+        type: 'simple'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code'
+        addLabel: ['@localProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueHeadlamps:
+        string: 'Headlamps'
+
+    localValue220LumenHeadlamp:
+        string: '220 Lumen Rechargeable Headlamp'
+
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'

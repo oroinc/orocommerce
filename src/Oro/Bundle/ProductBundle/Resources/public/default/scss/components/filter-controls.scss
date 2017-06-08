@@ -1,33 +1,9 @@
+// @theme: default;
+
 .catalog__filter-controls {
-  display: -webkit-flex;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: stretch;
-  align-items: center;
-  margin: 0 !important; //override platform mobile styles
-  padding: 10px 0 !important; //override platform mobile styles
-
-  font-size: 0;
-
   &__item {
-    -webkit-flex-grow: 1;
     flex-grow: 1;
     margin-right: $offset-y-s;
-
-    &.catalog__filter-controls__item_filter {
-      flex-grow: 0;
-      flex-basis: 260px;
-
-      @media (min-width: 992px) and (max-width: 1250px) {
-        flex-basis: 100%;
-        margin: 0 0 10px;
-      }
-
-      @media (max-width: $screen-md) {
-        flex-basis: 55%;
-        margin: 0 0 10px;
-      }
-    }
 
     &.sorting {
       flex-grow: 0;
@@ -53,6 +29,14 @@
         min-width: 64px;
       }
     }
+  }
+
+  &.toolbar-sticky-container {
+      max-width: 1400px;
+      margin: 0 auto !important;
+      padding: $offset-x-m $offset-y-m !important;
+
+      background: get-color('additional', 'base');
   }
 }
 
@@ -82,7 +66,6 @@
     flex-shrink: 0;
   }
 }
-
 
 @include breakpoint('tablet') {
   .catalog__filter-controls {
@@ -114,7 +97,7 @@
     &__item {
       flex-grow: inherit;
 
-        margin-right: $offset-y-s;
+      margin-right: $offset-y-s;
 
       &.oro-pagination {
         text-align: left;
@@ -134,9 +117,9 @@
 
       .select2-container {
         a.select2-choice {
-            max-width: 60px;
+          max-width: 60px;
 
-            padding: 8px 4px !important;
+          padding: 8px 4px !important;
         }
       }
     }

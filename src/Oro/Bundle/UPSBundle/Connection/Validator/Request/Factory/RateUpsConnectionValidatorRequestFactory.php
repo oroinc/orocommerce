@@ -47,11 +47,11 @@ class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidator
         return [
             'UPSSecurity' => [
                 'UsernameToken' => [
-                    'Username' => $transport->getApiUser(),
-                    'Password' => $this->crypter->decryptData($transport->getApiPassword()),
+                    'Username' => $transport->getUpsApiUser(),
+                    'Password' => $this->crypter->decryptData($transport->getUpsApiPassword()),
                 ],
                 'ServiceAccessToken' => [
-                    'AccessLicenseNumber' => $transport->getApiKey(),
+                    'AccessLicenseNumber' => $transport->getUpsApiKey(),
                 ],
             ],
             'RateRequest' => [
@@ -63,21 +63,21 @@ class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidator
                         'Name' => 'Company2',
                         'Address' => [
                             'PostalCode' => '0000000000000000',
-                            'CountryCode' => $transport->getCountry()->getIso2Code(),
+                            'CountryCode' => $transport->getUpsCountry()->getIso2Code(),
                         ]
                     ],
                     'ShipTo' => [
                         'Name' => 'Company1',
                         'Address' =>[
                             'PostalCode' => '0000000000000000',
-                            'CountryCode' => $transport->getCountry()->getIso2Code(),
+                            'CountryCode' => $transport->getUpsCountry()->getIso2Code(),
                         ]
                     ],
                     'ShipFrom' => [
                         'Name' => 'Company2',
                         'Address' =>[
                             'PostalCode' => '0000000000000000',
-                            'CountryCode' => $transport->getCountry()->getIso2Code(),
+                            'CountryCode' => $transport->getUpsCountry()->getIso2Code(),
                         ]
                     ],
                     'Package' => [
@@ -87,7 +87,7 @@ class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidator
                             ],
                             'PackageWeight' => [
                                 'UnitOfMeasurement' => [
-                                    'Code' => $transport->getUnitOfWeight(),
+                                    'Code' => $transport->getUpsUnitOfWeight(),
                                 ],
                                 'Weight' => '10',
                             ],

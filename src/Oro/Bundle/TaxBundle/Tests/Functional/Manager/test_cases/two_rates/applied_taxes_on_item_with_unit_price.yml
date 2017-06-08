@@ -20,12 +20,16 @@ databaseBefore:
     'Oro\Bundle\ProductBundle\Entity\Product':
         product_1:
             sku: product_1
+            taxCode: '@product_tax_code'
         product_2:
             sku: product_2
+            taxCode: '@product_tax_code'
         product_3:
             sku: product_3
+            taxCode: '@product_tax_code'
         product_4:
             sku: product_4
+            taxCode: '@product_tax_code'
     'Oro\Bundle\CurrencyBundle\Entity\Price':
         usd_price_3.42:
             value: 3.42
@@ -67,11 +71,6 @@ databaseBefore:
     'Oro\Bundle\TaxBundle\Entity\ProductTaxCode':
         product_tax_code:
             code: product_tax_code
-            products:
-                - '@product_1'
-                - '@product_2'
-                - '@product_3'
-                - '@product_4'
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule_1:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }

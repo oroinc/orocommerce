@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class PaymentTransactionCaptureActionTest extends AbstractActionTest
@@ -48,24 +47,17 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             ->with(PaymentMethodInterface::CAPTURE, $capturePaymentTransaction)
             ->will($responseValue);
 
-        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-
-        $paymentMethodProvider
+        $this->paymentMethodProvider
             ->expects(static::once())
             ->method('hasPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn(true);
 
-        $paymentMethodProvider
+        $this->paymentMethodProvider
             ->expects(static::once())
             ->method('getPaymentMethod')
             ->with($authorizationPaymentTransaction->getPaymentMethod())
             ->willReturn($paymentMethod);
-
-        $this->paymentMethodProvidersRegistry
-            ->expects(static::once())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
 
         $this->paymentTransactionProvider
             ->expects(static::exactly(2))
@@ -110,7 +102,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
                 'expected' => [
                     'transaction' => 10,
                     'successful' => false,
-                    'message' => null,
+                    'message' => 'oro.payment.message.error',
                     'testOption' => 'testOption',
                     'testResponse' => 'testResponse',
                 ],
@@ -132,7 +124,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
                 'expected' => [
                     'transaction' => 10,
                     'successful' => false,
-                    'message' => null,
+                    'message' => 'oro.payment.message.error',
                     'testOption' => 'testOption',
                 ],
             ],
@@ -176,7 +168,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
     {
         return new PaymentTransactionCaptureAction(
             $this->contextAccessor,
-            $this->paymentMethodProvidersRegistry,
+            $this->paymentMethodProvider,
             $this->paymentTransactionProvider,
             $this->router
         );

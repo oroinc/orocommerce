@@ -35,7 +35,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
         $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'invalidateCacheAt' => $invalidateCacheAt,
+            'upsInvalidateCacheAt' => $invalidateCacheAt,
         ]), new PriceRequest(), 'method_id', 'type_id');
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
@@ -58,7 +58,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
         $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'invalidateCacheAt' => $invalidateCacheAt,
+            'upsInvalidateCacheAt' => $invalidateCacheAt,
         ]), new PriceRequest(), 'method_id', 'type_id');
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
@@ -77,7 +77,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
         $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'invalidateCacheAt' => $invalidateCacheAt,
+            'upsInvalidateCacheAt' => $invalidateCacheAt,
         ]), new PriceRequest(), 'method_id', 'type_id');
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
@@ -93,7 +93,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     {
         $invalidateCacheAt = new \DateTime('+30 minutes');
         $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'invalidateCacheAt' => $invalidateCacheAt,
+            'upsInvalidateCacheAt' => $invalidateCacheAt,
         ]), new PriceRequest(), 'method_id', 'type_id');
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 
@@ -115,7 +115,7 @@ class ShippingPriceCacheTest extends \PHPUnit_Framework_TestCase
     {
         $invalidateCacheAt = new \DateTime($invalidateCacheAt);
         $key = $this->cache->createKey($this->getEntity(UPSTransport::class, [
-            'invalidateCacheAt' => $invalidateCacheAt,
+            'upsInvalidateCacheAt' => $invalidateCacheAt,
         ]), new PriceRequest(), 'method_id', 'type_id');
         $stringKey = $key->generateKey().'_'.$invalidateCacheAt->getTimestamp();
 

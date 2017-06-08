@@ -39,6 +39,8 @@ oro:
 
         result:
             error: Payment failed
+            error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
+            error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'
 
         security.transaction: Work with payments
         capture: Capture
@@ -50,6 +52,10 @@ oro:
             pending: Pending payment
             declined: Payment declined
             partially: Paid partially
+            invoiced: Invoiced
+
+        message:
+            error: 'General error. We were unable to process action.'
 
         paymentmethodconfig:
             entity_label: Payment Method Config
@@ -105,6 +111,7 @@ oro:
                 validate.label: Validate
                 capture.label: Capture
                 purchase.label: Purchase
+                invoice.label: Invoice
 
         sections:
             general: 'General Information'

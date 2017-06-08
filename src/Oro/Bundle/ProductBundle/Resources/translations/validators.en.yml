@@ -14,6 +14,7 @@ oro:
 
         attribute_family:
             used_in_product_variant_field.message: "Attributes %names% used as configurable attributes in products: %products%"
+            empty_configurable_attributes.message: "Can't save product. Product family \"%attributeFamily%\" should contain at least one configurable attribute."
 
         product_variant_field:
             unique_variants_combination_simple_product.message: "The values of additional fields provided cannot be saved because they will violate unique constraint of variant fields in these configurable products: %products%"
@@ -45,3 +46,9 @@ oro:
         product_image:
             not_blank: 'The file cannot be blank'
             type_restriction: 'You cannot choose more than %maxNumber% images with type "%type%"'
+
+        product_collection:
+            unique_segment_name.message: 'This name already in use'
+            blank_filters_or_included: "Should be specified filters or added some products manually."
+            blank_condition_item: "Conditions in filters should not be blank."
+            blank_condition_group: "Conditions groups in filters should not be blank."

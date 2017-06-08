@@ -8,6 +8,7 @@ use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -292,6 +293,65 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @When I add price :price to Price Attribute :priceAttribute
+     *
+     * @param string $priceAttributeName
+     * @param int $price
+     */
+    public function addPriceToAdditionalPriceAttribute($priceAttributeName, $price)
+    {
+        /** @var Form $form */
+        $form = $this->createElement('ProductForm');
+
+        /** @var NodeElement $label */
+        $labels = $form->findAll('xpath', '//div[@class="price-attributes-collection"]/div/div/label');
+
+        $savedLabel = false;
+        foreach ($labels as $label) {
+            if (trim($label->getText()) === $priceAttributeName) {
+                $label->getParent()->getParent()
+                    ->find('xpath', '//input[contains(@id, "productPriceAttributesPrices")]')
+                    ->setValue($price);
+
+                $savedLabel = true;
+            }
+        }
+
+        if (!$savedLabel) {
+            self::fail(sprintf('Can not find label with text %s', $priceAttributeName));
+        }
+    }
+
+    /**
+     * @When I clear Price Attribute :priceAttribute
+     *
+     * @param string $priceAttributeName
+     */
+    public function clearPriceToAdditionalPriceAttribute($priceAttributeName)
+    {
+        /** @var Form $form */
+        $form = $this->createElement('ProductForm');
+
+        /** @var NodeElement $label */
+        $labels = $form->findAll('xpath', '//div[@class="price-attributes-collection"]/div/div/label');
+
+        $savedLabel = false;
+        foreach ($labels as $label) {
+            if (trim($label->getText()) === $priceAttributeName) {
+                $label->getParent()->getParent()
+                    ->find('xpath', '//input[contains(@id, "productPriceAttributesPrices")]')
+                    ->setValue(' ');
+
+                $savedLabel = true;
+            }
+        }
+
+        if (!$savedLabel) {
+            self::fail(sprintf('Can not find label with text %s', $priceAttributeName));
+        }
+    }
+
+    /**
      * Example: Then I save product with next data:
      *            | Name                | Name      |
      *            | SKU                 | SKU       |
@@ -312,7 +372,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I should see value ":value" in ":elementName" options
+     * @Then /^I should see value "(?P<value>[^"]+)" in "(?P<elementName>[^"]+)" options$/
      *
      * @param string $value
      * @param string $elementName
@@ -325,7 +385,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I should not see value ":value" in ":elementName" options
+     * @Then /^I should not see value "(?P<value>[^"]+)" in "(?P<elementName>[^"]+)" options$/
      *
      * @param string $value
      * @param string $elementName
@@ -353,5 +413,50 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return $options;
+    }
+
+    /**
+     * @Then I go to product with sku :productSku on frontend
+     *
+     * @param string $productSku
+     */
+    public function goToProductViewOnFronted($productSku)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $product = $em->getRepository('OroProductBundle:Product')->findOneBySku($productSku);
+
+        if (!$product) {
+            self::fail(sprintf('Can not find product with SKU %s', $productSku));
+        }
+
+        $path = $this->getContainer()->get('router')->generate(
+            'oro_product_frontend_product_view',
+            ['id' => $product->getId()]
+        );
+
+        $this->visitPath($path);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @Then /^I should not see tag "(?P<tag>[^"]+)" inside "(?P<element>[^"]+)" element$/
+     *
+     * @param string $tag
+     * @param string $element
+     */
+    public function iShouldNotSeeTagInsideElement($tag, $element)
+    {
+        $page = $this->getSession()->getPage();
+
+        $result = $page->find(
+            'xpath',
+            '//*[@id="' . $element . '"]/' . $tag
+        );
+
+        static::assertTrue(
+            is_null($result),
+            sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
+        );
     }
 }
