@@ -1,56 +1,120 @@
 // @theme: default
 
 .embedded-products {
+    // Slider mode
     .embedded-list-slider {
-        margin: $embedded-products-slider-offset;
+        display: block;
 
         .slick-arrow {
-            top: calc(((100vw - #{$embedded-products-width + $embedded-products-edge}) / #{$embedded-products-count} - #{$embedded-products-gap-width}) / 2);
+            top: $embedded-products-slider-arrow-top;
 
             margin-top: 24px;
 
             transform: translate(0, -50%);
+        }
 
-            @media screen and (min-width: ($embedded-products-height + $embedded-products-gap-width) * $embedded-products-count + $embedded-products-edge + $embedded-products-width) {
-                top: $embedded-products-height / 2;
+        .embedded-list {
+            &__item {
+                width: (100% / $embedded-products-item-count-desktop);
+                margin-right: 0 !important;
             }
         }
+
+        .embedded-product {
+            margin: $embedded-product-slider-mode-offset;
+        }
+    }
+
+
+    // Tiles mode
+    .embedded-list {
+        &__item {
+            width: calc((100% / #{$embedded-products-item-count-desktop}) - #{$embedded-products-item-gap-desktop});
+        }
+    }
+
+    .embedded-list__container {
+        display: flex;
+        flex-wrap: wrap;
+
+        font-size: 0;
     }
 }
 
 @include breakpoint('desktop') {
     .embedded-products {
+        // Slider mode
+        .embedded-list-slider {
+            margin: 0 $embedded-list-slider-btn-arrow-width;
+        }
+
+        // Tiles mode
+
         .embedded-list {
-            padding: 0 ($embedded-list-slider-btn-arrow-width + $offset-x-m);
-
-            &__label {
-                margin-left: -($embedded-list-slider-btn-arrow-width + $offset-x-m);
-                margin-right: -($embedded-list-slider-btn-arrow-width + $offset-x-m);
-            }
-
             &__item {
-                width: $embedded-products-item-width-desktop;
+                &:not(:nth-child(#{$embedded-products-item-count-desktop}n)) {
+                    margin-right: $embedded-products-item-offset;
+                }
             }
         }
     }
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('strict-tablet') {
     .embedded-products {
-        .embedded-list__item {
-            width: $embedded-products-item-width-tablet-small;
+        // Tiles mode
+        .embedded-list {
+            &__item {
+                &:not(:nth-child(#{$embedded-products-item-count-desktop}n)) {
+                    margin-right: $embedded-products-item-offset;
+                }
+            }
         }
     }
 }
 
-@include breakpoint('mobile-landscape') {
+@include breakpoint('strict-tablet-small') {
     .embedded-products {
+        // Slider mode
+        .embedded-list-slider {
+            .embedded-list {
+                &__item {
+                    width: (100% / $embedded-products-item-width-count-tablet-small);
+                }
+            }
+        }
+
+        // Tiles mode
+        .embedded-list__item {
+            width: calc((100% / #{$embedded-products-item-width-count-tablet-small}) - #{$embedded-products-item-gap-tablet-small});
+
+            &:not(:nth-child(#{$embedded-products-item-width-count-tablet-small}n)) {
+                margin-right: $embedded-products-item-offset;
+            }
+        }
+    }
+}
+
+@include breakpoint('strict-mobile-landscape') {
+    .embedded-products {
+        // Slider mode
         .embedded-list-slider {
             margin: $embedded-products-mobile-landscape-slider-offset;
+
+            .embedded-list {
+                &__item {
+                    width: (100% / $embedded-products-item-count-mobile-landscape);
+                }
+            }
         }
 
+        // Tiles mode
         .embedded-list__item {
-            width: $embedded-products-item-width-mobile-landscape;
+            width: calc((100% / #{$embedded-products-item-count-mobile-landscape}) - #{$embedded-products-item-gap-mobile-landscape});
+
+            &:not(:nth-child(#{$embedded-products-item-count-mobile-landscape}n)) {
+                margin-right: $embedded-products-item-offset;
+            }
         }
     }
 }
@@ -58,7 +122,7 @@
 @include breakpoint('mobile') {
     .embedded-products {
         .embedded-list__item {
-            width: $embedded-products-item-width-mobile;
+            width: 100% / $embedded-products-item-count-mobile;
         }
     }
 }

@@ -1,22 +1,23 @@
 // @theme: default
 
-$embedded-products-width: 30px;
-$embedded-products-edge: 84px;
-$embedded-products-gap-width: 27px;
-$embedded-products-count: 4;
-$embedded-products-height: 249px;
-$embedded-products-embedded-list-offset: 42px;
+$embedded-products-item-offset: 25px !default;
 
 // desktop
-$embedded-products-item-width-desktop: 25%;
-$embedded-products-slider-offset: 0 -#{$embedded-product-side-offset};
+$embedded-products-slider-arrow-top: 25% !default;
+$embedded-products-item-count-desktop: 4 !default;
+$embedded-products-item-gap-desktop: ($embedded-products-item-offset) - ($embedded-products-item-offset / $embedded-products-item-count-desktop) !default;
+
+// Slider mode
+$embedded-product-slider-mode-offset: 25px $offset-x-m 0 $offset-x-m !default;
 
 // tablet-small
-$embedded-products-item-width-tablet-small: 33%;
+$embedded-products-item-width-count-tablet-small: 3 !default;
+$embedded-products-item-gap-tablet-small: ($embedded-products-item-offset) - ($embedded-products-item-offset / $embedded-products-item-width-count-tablet-small) !default;
 
 // mobile-landscape
-$embedded-products-item-width-mobile-landscape: 50%;
-$embedded-products-mobile-landscape-slider-offset: 0 -#{$embedded-product-mobile-landscape-side-offset};
+$embedded-products-item-count-mobile-landscape: 2 !default;
+$embedded-products-mobile-landscape-slider-offset: 0 -#{$offset-y-s} !default;
+$embedded-products-item-gap-mobile-landscape: ($embedded-products-item-offset) - ($embedded-products-item-offset / $embedded-products-item-count-mobile-landscape) !default;
 
 // mobile
-$embedded-products-item-width-mobile: 100%;
+$embedded-products-item-count-mobile: 1 !default;
