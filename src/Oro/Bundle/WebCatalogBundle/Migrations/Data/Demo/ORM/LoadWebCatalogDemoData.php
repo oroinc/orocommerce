@@ -53,7 +53,10 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
      */
     public function getDependencies()
     {
-        return [LoadCategoryDemoData::class];
+        return [
+            LoadCategoryDemoData::class,
+            LoadNewArrivalsSegmentsForWebCatalogDemoData::class,
+        ];
     }
     
     /**

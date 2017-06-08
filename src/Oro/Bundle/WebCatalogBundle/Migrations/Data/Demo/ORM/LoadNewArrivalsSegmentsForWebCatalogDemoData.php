@@ -1,11 +1,12 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\WebCatalogBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
@@ -14,7 +15,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
 
-class LoadNewArrivalSegmentData extends AbstractFixture implements DependentFixtureInterface
+class LoadNewArrivalsSegmentsForWebCatalogDemoData extends AbstractFixture implements DependentFixtureInterface
 {
     /**
      * @internal
@@ -22,18 +23,19 @@ class LoadNewArrivalSegmentData extends AbstractFixture implements DependentFixt
     const SEGMENT_NAME_PREFIX = 'New Arrivals / ';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
         return [
+            LoadCategoryDemoData::class,
             LoadSegmentTypes::class,
             LoadOrganizationAndBusinessUnitData::class,
         ];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
@@ -43,7 +45,7 @@ class LoadNewArrivalSegmentData extends AbstractFixture implements DependentFixt
                 $this->getOrganization($manager),
                 $this->getSegmentType($manager, SegmentType::TYPE_DYNAMIC),
                 $this->getSegmentNameFromCategoryName($categoryName),
-                $this->getDefinitionForCategoryName($categoryName)
+                $this->getSegmentDefinitionForCategoryName($categoryName)
             );
 
             $manager->persist($segment);
@@ -103,7 +105,7 @@ class LoadNewArrivalSegmentData extends AbstractFixture implements DependentFixt
      *
      * @return array
      */
-    private function getDefinitionForCategoryName($categoryName)
+    private function getSegmentDefinitionForCategoryName($categoryName)
     {
         $columnName = sprintf('category+%s::titles+%s::string', Category::class, LocalizedFallbackValue::class);
 
@@ -120,30 +122,32 @@ class LoadNewArrivalSegmentData extends AbstractFixture implements DependentFixt
                     'label' => 'sku',
                     'sorting' => null,
                     'func' => null,
-                ]
+                ],
             ],
             'filters' => [
                 [
-                    'columnName' => $columnName,
-                    'criterion' => [
-                        'filter' => 'string',
-                        'data' => [
-                            'value' => $categoryName,
-                            'type' => '1',
-                        ]
-                    ]
+                    [
+                        'columnName' => $columnName,
+                        'criterion' => [
+                            'filter' => 'string',
+                            'data' => [
+                                'value' => $categoryName,
+                                'type' => '1',
+                            ],
+                        ],
+                    ],
+                    'AND',
+                    [
+                        'columnName' => 'newArrival',
+                        'criterion' => [
+                            'filter' => 'boolean',
+                            'data' => [
+                                'value' => '1',
+                            ],
+                        ],
+                    ],
                 ],
-                'AND',
-                [
-                    'columnName' => 'newArrival',
-                    'criterion' => [
-                        'filter' => 'boolean',
-                        'data' => [
-                            'value' => '1',
-                        ]
-                    ]
-                ],
-            ]
+            ],
         ];
     }
 
