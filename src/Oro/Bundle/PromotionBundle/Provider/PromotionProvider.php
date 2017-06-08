@@ -21,19 +21,9 @@ class PromotionProvider
     private $ruleFiltrationService;
 
     /**
-     * @var RuleFiltrationServiceInterface
-     */
-    private $matchingItemsFiltrationService;
-
-    /**
      * @var ContextDataConverterInterface
      */
     private $contextDataConverter;
-
-    /**
-     * @var DiscountLineItemMatcher
-     */
-    private $discountLineItemMatcher;
 
     /**
      * @param ManagerRegistry $registry
@@ -43,15 +33,11 @@ class PromotionProvider
     public function __construct(
         ManagerRegistry $registry,
         RuleFiltrationServiceInterface $ruleFiltrationService,
-        RuleFiltrationServiceInterface $matchingItemsFiltrationService,
-        ContextDataConverterInterface $contextDataConverter,
-        DiscountLineItemMatcher $discountLineItemMatcher
+        ContextDataConverterInterface $contextDataConverter
     ) {
         $this->registry = $registry;
         $this->ruleFiltrationService = $ruleFiltrationService;
         $this->contextDataConverter = $contextDataConverter;
-        $this->discountLineItemMatcher = $discountLineItemMatcher;
-        $this->matchingItemsFiltrationService = $matchingItemsFiltrationService;
     }
 
     /**
@@ -67,9 +53,6 @@ class PromotionProvider
 
         $contextData = $this->contextDataConverter->getContextData($sourceEntity);
 
-        $promotions = $this->ruleFiltrationService->getFilteredRuleOwners($promotions, $contextData);
-        $this->discountLineItemMatcher->markApplicableItems($contextData['lineItem'], $promotions);
-
-        return $this->matchingItemsFiltrationService->getFilteredRuleOwners($promotions, $contextData);
+        return $this->ruleFiltrationService->getFilteredRuleOwners($promotions, $contextData);
     }
 }

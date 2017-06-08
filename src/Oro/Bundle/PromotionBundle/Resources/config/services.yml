@@ -1,5 +1,6 @@
 services:
     oro_promotion.rule_filtration.service:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
         extends: oro_rule.rule_filtration.service
 
     oro_promotion.rule_filtration.scope_decorator:
