@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\PayPal\Payflow;
 
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Client\ClientInterface;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Partner;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Processor\ProcessorRegistry;
@@ -12,12 +13,6 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
 
 class Gateway
 {
-    const PRODUCTION_HOST_ADDRESS = 'https://payflowpro.paypal.com';
-    const PILOT_HOST_ADDRESS = 'https://pilot-payflowpro.paypal.com';
-
-    const PRODUCTION_FORM_ACTION = 'https://payflowlink.paypal.com';
-    const PILOT_FORM_ACTION = 'https://pilot-payflowlink.paypal.com';
-
     /** @var ClientInterface */
     protected $client;
 
@@ -39,16 +34,22 @@ class Gateway
     /** @var int */
     protected $proxyPort;
 
+    /** @var HostAddressProviderInterface */
+    protected $hostAddressProvider;
+
     /**
+     * @param HostAddressProviderInterface $hostAddressProvider
      * @param ClientInterface $client
      * @param RequestRegistry $requestRegistry
      * @param ProcessorRegistry $processorRegistry
      */
     public function __construct(
+        HostAddressProviderInterface $hostAddressProvider,
         ClientInterface $client,
         RequestRegistry $requestRegistry,
         ProcessorRegistry $processorRegistry
     ) {
+        $this->hostAddressProvider = $hostAddressProvider;
         $this->client = $client;
         $this->requestRegistry = $requestRegistry;
         $this->processorRegistry = $processorRegistry;
@@ -91,7 +92,7 @@ class Gateway
      */
     public function getHostAddress()
     {
-        return $this->testMode ? self::PILOT_HOST_ADDRESS : self::PRODUCTION_HOST_ADDRESS;
+        return $this->hostAddressProvider->getHostAddress($this->testMode);
     }
 
     /**
@@ -99,7 +100,7 @@ class Gateway
      */
     public function getFormAction()
     {
-        return $this->testMode ? self::PILOT_FORM_ACTION : self::PRODUCTION_FORM_ACTION;
+        return $this->hostAddressProvider->getFormAction($this->testMode);
     }
 
     /**

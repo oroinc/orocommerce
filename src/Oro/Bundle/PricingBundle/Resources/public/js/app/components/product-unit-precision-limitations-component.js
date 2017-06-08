@@ -74,11 +74,12 @@ define(function(require) {
                     return;
                 }
 
+                var $option = $(option);
                 if (!units.hasOwnProperty(option.value)) {
                     if (option.selected !== true) {
-                        option.remove();
+                        $option.remove();
                     } else if (option.text.indexOf(' - ') < 0) {
-                        $(option).text($(option).text() + ' - ' + self.options.unitRemovedSuffix);
+                        $option.text($option.text() + ' - ' + self.options.unitRemovedSuffix);
                     }
 
                     updateRequired = true;

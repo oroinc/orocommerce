@@ -1,0 +1,37 @@
+services:
+    oro_paypal.paypal.payflow.host_address_provider:
+        class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Gateway\Host\HostAddressProviderMock'
+        public: false
+
+    oro_paypal.paypal.payflow.client.nvp:
+        class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Client\NVPClientMock'
+        public: false
+
+    oro_paypal_listener_mock:
+        class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\EventListener\PayPalOuterRedirectEventListener'
+        arguments:
+            - '@router'
+            - '@oro_entity.doctrine_helper'
+            - '@http_kernel'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    oro_paypal.event_listener.ip_check.payflow_gateway.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\EventListener\Callback\PayflowIPCheckListenerMock'
+        lazy: true
+        arguments:
+            - '@request_stack'
+            - '@oro_paypal.method.provider.payflow_gateway.credit_card'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
+
+    oro_paypal.event_listener.ip_check.payments_pro.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\EventListener\Callback\PayflowIPCheckListenerMock'
+        lazy: true
+        arguments:
+            - '@request_stack'
+            - '@oro_paypal.method.provider.payments_pro.credit_card'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
