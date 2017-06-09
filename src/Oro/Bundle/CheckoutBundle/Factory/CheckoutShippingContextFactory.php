@@ -64,18 +64,20 @@ class CheckoutShippingContextFactory
         $lineItems = $this->checkoutLineItemsManager->getData($checkout);
         $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($lineItems);
 
+        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
+            $checkout,
+            (string)$checkout->getId()
+        );
+
         $total = $this->totalProcessor->getTotal($checkout);
         $subtotal = Price::create(
             $total->getAmount(),
             $total->getCurrency()
         );
 
-        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
-            $checkout->getCurrency(),
-            $subtotal,
-            $checkout,
-            (string)$checkout->getId()
-        );
+        $shippingContextBuilder
+            ->setSubTotal($subtotal)
+            ->setCurrency($checkout->getCurrency());
 
         if (null !== $checkout->getShippingAddress()) {
             $shippingContextBuilder->setShippingAddress($checkout->getShippingAddress());
