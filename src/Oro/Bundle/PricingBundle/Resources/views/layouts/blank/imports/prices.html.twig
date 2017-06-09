@@ -29,14 +29,16 @@
 {% block product_price %}
     {% set buttonsId = id|replace({'_price': ''}) ~ '_line_item_form_buttons' %}
     {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
-    {% if productPrices %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' product-price__main'
-        }) %}
-        <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
+        {% if productPrices %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-price__main'
+            }) %}
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        {% else %}
+            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -79,13 +81,19 @@
 {% endblock %}
 
 {% block product_price_hint %}
-    <div class="product-price__hint"
-         data-name="prices-hint"
-         data-placement="bottom"
-         data-close="false"
-         data-trigger="hover"
-         data-container="body"
-         data-class="prices-hint-content">
+    {% if productPrices %}
+        {% set attr = layout_attr_defaults(attr, {
+        'data-name': 'prices-hint',
+        'data-placement': 'bottom',
+        'data-close': 'false',
+        'data-trigger': 'hover',
+        'data-container': 'body',
+        'data-class': 'prices-hint-content'
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}
+            class="product-price__hint">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
