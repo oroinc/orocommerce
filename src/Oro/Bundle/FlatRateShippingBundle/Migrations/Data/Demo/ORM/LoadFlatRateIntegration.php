@@ -144,7 +144,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
 
         $shippingRule->setRule($rule)
             ->setOrganization($this->getOrganization($manager))
-            ->setCurrency('USD')
+            ->setCurrency($this->getDefaultCurrency())
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);
@@ -177,5 +177,21 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
         return $this->container
             ->get('oro_flat_rate_shipping.method.identifier_generator.method')
             ->generateIdentifier($channel);
+    }
+
+    /**
+     * @return ConfigManager
+     */
+    private function getConfigManager()
+    {
+        return $this->container->get('oro_config.global');
+    }
+
+    /**
+     * @return string
+     */
+    private function getDefaultCurrency()
+    {
+        return $this->getConfigManager()->get(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY));
     }
 }
