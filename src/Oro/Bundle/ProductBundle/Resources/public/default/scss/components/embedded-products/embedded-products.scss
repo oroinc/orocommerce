@@ -1,6 +1,13 @@
 // @theme: default
 
 .embedded-products {
+    .embedded-list__container {
+        display: flex;
+        flex-wrap: wrap;
+
+        font-size: 0;
+    }
+
     // Slider mode
     .embedded-list-slider {
         display: block;
@@ -31,13 +38,6 @@
         &__item {
             width: calc((100% / #{$embedded-products-item-count-desktop}) - #{$embedded-products-item-gap-desktop});
         }
-    }
-
-    .embedded-list__container {
-        display: flex;
-        flex-wrap: wrap;
-
-        font-size: 0;
     }
 }
 
