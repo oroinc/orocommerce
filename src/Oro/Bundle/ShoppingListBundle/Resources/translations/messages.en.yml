@@ -108,8 +108,13 @@ oro:
                 cancel: Cancel
 
         system_configuration:
+            groups:
+                guest_shopping_list.label: 'Guest shopping list'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
+                availability_for_guests:
+                    label: 'Enable guest shopping list'
+                    tooltip: 'Allows guests to create a shopping list'
 
         privilege:
             category.shopping.label: 'Shopping'

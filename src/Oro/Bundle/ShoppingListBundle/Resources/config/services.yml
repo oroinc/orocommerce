@@ -299,3 +299,12 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'
         tags:
             - { name: validator.constraint_validator }
+
+    oro_shopping_list.voter.guest_shopping_list_voter:
+        class: 'Oro\Bundle\ShoppingListBundle\Voter\GuestShoppingListVoter'
+        arguments:
+            - '@oro_featuretoggle.voter.config_voter'
+            - '@oro_security.security_facade'
+        lazy: true
+        tags:
+            - { name: oro_featuretogle.voter }
