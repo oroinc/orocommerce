@@ -110,6 +110,11 @@ oro:
         system_configuration:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
+                default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
+                default_guest_shopping_list_owner.tooltip: 'Default owner User for Guest Shopping lists'
+            groups:
+                guest_shopping_list.title: 'Guest Shopping List'
+                guest_shopping_list_owner.title: 'Guest Shopping List Owner Settings'
 
         privilege:
             category.shopping.label: 'Shopping'
