@@ -202,6 +202,14 @@ services:
             - "@router"
             - "@translator"
 
+    oro_product.event_listener.related_items_product_edit_listener:
+        class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
+        arguments:
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-quick-update, method: onProductEdit }
+
     oro_product.event_listener.product_grid_widget:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener'
         arguments:

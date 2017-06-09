@@ -175,6 +175,8 @@ oro:
             inventory: Inventory
             images: Images
             design: Design
+            relatedItems: Related Items
+            upsellItems: Upsell items
 
         widgets:
             product_information: Product Information

@@ -44,6 +44,10 @@ class ProductExtension extends \Twig_Extension
                 'is_configurable_product_type',
                 [$this, 'isConfigurableType']
             ),
+            new \Twig_SimpleFunction(
+                'get_upsell_products_ids',
+                [$this, 'getUpsellProductsIds']
+            ),
         ];
     }
 
@@ -64,6 +68,16 @@ class ProductExtension extends \Twig_Extension
     public function getAutocompleteData($numericalOnly = false, $withRelations = true)
     {
         return $this->getAutocompleteFieldsProvider()->getAutocompleteData($numericalOnly, $withRelations);
+    }
+
+    /**
+     * @param Product $product
+     * @return int[]
+     * @TODO Correct in BB-9731
+     */
+    public function getUpsellProductsIds(Product $product)
+    {
+        return [62, 63];
     }
 
     /**

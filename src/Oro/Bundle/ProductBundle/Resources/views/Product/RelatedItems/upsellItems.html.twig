@@ -1,0 +1,31 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% set relatedGridParams = {
+    'productId': entity.id,
+    'upsellProductIds': get_upsell_products_ids(entity),
+    _parameters : {
+    data_in: [],
+    data_not_in: []
+}
+} %}
+
+{% if form.appendUpsell.vars.value is not empty %}
+    {% set relatedGridParams = relatedGridParams|merge({
+        _parameters: relatedGridParams._parameters|merge({
+            data_in: form.appendUpsell.vars.value|split(',')
+        })
+    }) %}
+{% endif %}
+{% if form.removeUpsell.vars.value is not empty %}
+    {% set relatedGridParams = relatedGridParams|merge({
+        _parameters: relatedGridParams._parameters|merge({
+            data_not_in: form.removeUpsell.vars.value|split(',')
+        })
+    }) %}
+{% endif %}
+
+{{ form_widget(form.appendUpsell, {'id': 'productAppendUpsell'}) }}
+{{ form_widget(form.removeUpsell, {'id': 'productRemoveUpsell'}) }}
+{{ placeholder('oro_product_upsell_products_buttons', {'entity':  entity}) }}
+{{ dataGrid.renderGrid('products-upsell-products-edit', relatedGridParams) }}
+{{ placeholder('oro_product_upsell_products_edit', {'entity':  entity}) }}

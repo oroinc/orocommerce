@@ -43,7 +43,8 @@ class ProductController extends Controller
         return [
             'entity' => $product,
             'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
-            'pageTemplate' => $pageTemplate
+            'pageTemplate' => $pageTemplate,
+            'upsellProductsEnabled' => true, //@TODO while doing Config Provider
         ];
     }
 
