@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
@@ -36,6 +37,10 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
      */
     private function isCouponApplied(RuleOwnerInterface $ruleOwner): bool
     {
-        return true;
+        if ($ruleOwner instanceof Promotion && $ruleOwner->isUseCoupons()) {
+            return true;
+        }
+
+        return false;
     }
 }
