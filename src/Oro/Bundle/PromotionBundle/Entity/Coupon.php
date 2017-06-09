@@ -5,9 +5,12 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="oro_promotion_coupon")
+ * @ORM\Entity()
  */
 class Coupon implements DatesAwareInterface
 {
@@ -25,7 +28,7 @@ class Coupon implements DatesAwareInterface
     /**
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }

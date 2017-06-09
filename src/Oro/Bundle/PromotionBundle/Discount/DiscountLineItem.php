@@ -72,7 +72,7 @@ class DiscountLineItem implements
         // TODO: Implement getQuantity() method.
     }
 
-    public function addDiscount53Information(DiscountInformation $discountInformation)
+    public function addDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->discounts[] = $discountInformation;
     }

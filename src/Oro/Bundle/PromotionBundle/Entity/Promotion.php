@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
@@ -18,6 +19,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(name="oro_promotion")
+ * @ORM\Entity()
  * @Config(
  *      routeName="oro_promotion_index",
  *      routeView="oro_promotion_view",
@@ -40,6 +42,9 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Promotion extends ExtendPromotion implements
     DatesAwareInterface,
@@ -63,6 +68,13 @@ class Promotion extends ExtendPromotion implements
      * )
      */
     protected $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255, nullable=false)
+     */
+    protected $name;
 
     /**
      * @var RuleInterface
@@ -93,7 +105,7 @@ class Promotion extends ExtendPromotion implements
      * @ORM\JoinTable(
      *      name="oro_promotion_label",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
@@ -120,7 +132,7 @@ class Promotion extends ExtendPromotion implements
      * @ORM\JoinTable(
      *      name="oro_promotion_description",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
@@ -144,7 +156,7 @@ class Promotion extends ExtendPromotion implements
      * )
      * @ORM\JoinTable(name="oro_promotion_scope",
      *      joinColumns={
-     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
@@ -158,11 +170,18 @@ class Promotion extends ExtendPromotion implements
      *
      * @ORM\OneToMany(
      *      targetEntity="Oro\Bundle\PromotionBundle\Entity\PromotionSchedule",
-     *      mappedBy="priceList",
+     *      mappedBy="promotion",
      *      cascade={"persist"},
      *      orphanRemoval=true
      * )
      * @ORM\OrderBy({"activeAt" = "ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $schedules;
 
@@ -174,13 +193,27 @@ class Promotion extends ExtendPromotion implements
      *     cascade={"persist", "remove"}
      * )
      * @ORM\JoinColumn(name="discount_config_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $discountConfiguration;
 
     /**
      * @var bool
      *
-     * @ORM\Column(type="bool", name="use_coupons")
+     * @ORM\Column(type="boolean", name="use_coupons")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $useCoupons = false;
 
@@ -198,6 +231,13 @@ class Promotion extends ExtendPromotion implements
      *          @ORM\JoinColumn(name="coupon_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $coupons;
 
@@ -211,4 +251,298 @@ class Promotion extends ExtendPromotion implements
      * @ORM\JoinColumn(name="products_segment_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $productsSegment;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->labels = new ArrayCollection();
+        $this->descriptions = new ArrayCollection();
+        $this->scopes = new ArrayCollection();
+        $this->schedules = new ArrayCollection();
+        $this->coupons = new ArrayCollection();
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return RuleInterface
+     */
+    public function getRule(): RuleInterface
+    {
+        return $this->rule;
+    }
+
+    /**
+     * @param RuleInterface $rule
+     * @return $this
+     */
+    public function setRule($rule)
+    {
+        $this->rule = $rule;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getLabels(): Collection
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $label
+     * @return $this
+     */
+    public function addLabel(LocalizedFallbackValue $label)
+    {
+        if (!$this->labels->contains($label)) {
+            $this->labels->add($label);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $label
+     * @return $this
+     */
+    public function removeLabel(LocalizedFallbackValue $label)
+    {
+        if ($this->labels->contains($label)) {
+            $this->labels->removeElement($label);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getDescriptions(): Collection
+    {
+        return $this->descriptions;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $description
+     * @return $this
+     */
+    public function addDescription(LocalizedFallbackValue $description)
+    {
+        if (!$this->descriptions->contains($description)) {
+            $this->descriptions->add($description);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $description
+     * @return $this
+     */
+    public function removeDescription(LocalizedFallbackValue $description)
+    {
+        if ($this->descriptions->contains($description)) {
+            $this->descriptions->removeElement($description);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Scope[]
+     */
+    public function getScopes(): Collection
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @return $this
+     */
+    public function resetScopes()
+    {
+        $this->scopes->clear();
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PromotionSchedule[]
+     */
+    public function getSchedules(): Collection
+    {
+        return $this->schedules;
+    }
+
+    /**
+     * @param PromotionSchedule $schedule
+     * @return $this
+     */
+    public function addSchedule(PromotionSchedule $schedule)
+    {
+        if (!$this->schedules->contains($schedule)) {
+            $this->schedules->add($schedule);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param PromotionSchedule $schedule
+     * @return $this
+     */
+    public function removeSchedule(PromotionSchedule $schedule)
+    {
+        if ($this->schedules->contains($schedule)) {
+            $this->schedules->removeElement($schedule);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return DiscountConfiguration
+     */
+    public function getDiscountConfiguration(): DiscountConfiguration
+    {
+        return $this->discountConfiguration;
+    }
+
+    /**
+     * @param DiscountConfiguration $discountConfiguration
+     * @return $this
+     */
+    public function setDiscountConfiguration($discountConfiguration)
+    {
+        $this->discountConfiguration = $discountConfiguration;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUseCoupons(): bool
+    {
+        return $this->useCoupons;
+    }
+
+    /**
+     * @param bool $useCoupons
+     * @return $this
+     */
+    public function setUseCoupons($useCoupons)
+    {
+        $this->useCoupons = $useCoupons;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Coupon[]
+     */
+    public function getCoupons(): Collection
+    {
+        return $this->coupons;
+    }
+
+    /**
+     * @param Coupon $coupon
+     * @return $this
+     */
+    public function addCoupon(Coupon $coupon)
+    {
+        if (!$this->coupons->contains($coupon)) {
+            $this->coupons->add($coupon);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Coupon $coupon
+     * @return $this
+     */
+    public function removeCoupon(Coupon $coupon)
+    {
+        if ($this->coupons->contains($coupon)) {
+            $this->coupons->removeElement($coupon);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Segment
+     */
+    public function getProductsSegment(): Segment
+    {
+        return $this->productsSegment;
+    }
+
+    /**
+     * @param Segment $productsSegment
+     * @return $this
+     */
+    public function setProductsSegment($productsSegment)
+    {
+        $this->productsSegment = $productsSegment;
+
+        return $this;
+    }
 }

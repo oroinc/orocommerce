@@ -7,7 +7,8 @@ use Oro\Bundle\CronBundle\Entity\ScheduleIntervalInterface;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalTrait;
 
 /**
- * @ORM\Table(name="oropromotion_schedule")
+ * @ORM\Table(name="oro_promotion_schedule")
+ * @ORM\Entity()
  */
 class PromotionSchedule implements ScheduleIntervalInterface
 {
@@ -55,7 +56,7 @@ class PromotionSchedule implements ScheduleIntervalInterface
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -63,7 +64,7 @@ class PromotionSchedule implements ScheduleIntervalInterface
     /**
      * @return Promotion
      */
-    public function getPromotion()
+    public function getPromotion(): Promotion
     {
         return $this->promotion;
     }

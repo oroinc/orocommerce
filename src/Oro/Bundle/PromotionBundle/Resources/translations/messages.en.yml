@@ -1,5 +1,42 @@
 oro:
     promotion:
+        entity_label: Promotion
+        entity_plural_label: Promotions
+        entity_description: Represents promotion information
+        id.label: ID
+        name.label: Name
+        coupons.label: Coupons
+        descriptions.label: Descriptions
+        discount_configuration.label: Discount Configuration
+        labels.label: Labels
+        organization.label: Organization
+        owner.label: Owner
+        products_segment.label: Product Segment
+        rule.label: Rule
+        schedules.label: Schedules
+        scopes.label: Scopes
+        use_coupons.label: Use Coupons
+
+        discountconfiguration:
+            entity_label: Discount Configuration
+            entity_plural_label: Discount Configurations
+            id.label: ID
+            type.label: Type
+            options.label: Options
+
+        coupon:
+            entity_label: Coupon
+            entity_plural_label: Coupons
+            id.label: ID
+
+        promotionschedule:
+            entity_label: Promotion Schedule
+            entity_plural_label: Promotion Schedules
+            id.label: ID
+            promotion.label: Promotion
+            active_at.label: Active At
+            deactivate_at.label: Deactivate At
+
         feature:
             promotion:
                 label: Promotion
@@ -11,4 +48,3 @@ oro:
                 promotion_general.title: Promotion General
             fields:
                 feature_enabled.label: Enable Promotion
-

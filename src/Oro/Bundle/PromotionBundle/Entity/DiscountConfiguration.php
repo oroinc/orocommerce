@@ -16,6 +16,7 @@ use Oro\Bundle\PromotionBundle\Model\ExtendDiscountConfiguration;
  *         )
  *     }
  * )
+ * @ORM\Entity()
  * @Config()
  */
 class DiscountConfiguration extends ExtendDiscountConfiguration
@@ -32,7 +33,7 @@ class DiscountConfiguration extends ExtendDiscountConfiguration
     /**
      * @var string
      *
-     * @ORM\Column(name="method", type="string", length=50, nullable=false)
+     * @ORM\Column(name="type", type="string", length=50, nullable=false)
      */
     protected $type;
 
@@ -46,7 +47,7 @@ class DiscountConfiguration extends ExtendDiscountConfiguration
     /**
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -54,7 +55,7 @@ class DiscountConfiguration extends ExtendDiscountConfiguration
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -73,7 +74,7 @@ class DiscountConfiguration extends ExtendDiscountConfiguration
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }
