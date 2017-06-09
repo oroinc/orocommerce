@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Context\Builder;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
@@ -71,4 +72,18 @@ interface PaymentContextBuilderInterface
      * @return self
      */
     public function setCustomerUser(CustomerUser $customerUser);
+
+    /**
+     * @param Price $subTotal
+     *
+     * @return self
+     */
+    public function setSubTotal(Price $subTotal);
+
+    /**
+     * @param string $currency
+     *
+     * @return self
+     */
+    public function setCurrency($currency);
 }
