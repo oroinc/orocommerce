@@ -55,17 +55,19 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
             return null;
         }
 
+        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
+            $order,
+            (string)$order->getId()
+        );
+
         $subtotal = Price::create(
             $order->getSubtotal(),
             $order->getCurrency()
         );
 
-        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
-            $order->getCurrency(),
-            $subtotal,
-            $order,
-            (string)$order->getId()
-        );
+        $shippingContextBuilder
+            ->setSubTotal($subtotal)
+            ->setCurrency($order->getCurrency());
 
         $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
 
