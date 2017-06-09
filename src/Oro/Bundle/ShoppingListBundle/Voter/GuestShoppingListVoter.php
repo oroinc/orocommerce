@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Voter;
 
+use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\ConfigVoter;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class GuestShoppingListVoter implements VoterInterface
 {
@@ -16,18 +18,18 @@ class GuestShoppingListVoter implements VoterInterface
     private $configVoter;
 
     /**
-     * @var SecurityFacade
+     * @var TokenStorage
      */
-    private $securityFacade;
+    private $tokenStorage;
 
     /**
      * @param ConfigVoter    $configVoter
-     * @param SecurityFacade $securityFacade
+     * @param TokenStorage   $tokenStorage
      */
-    public function __construct(ConfigVoter $configVoter, SecurityFacade $securityFacade)
+    public function __construct(ConfigVoter $configVoter, TokenStorage $tokenStorage)
     {
-        $this->configVoter    = $configVoter;
-        $this->securityFacade = $securityFacade;
+        $this->configVoter  = $configVoter;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -36,7 +38,7 @@ class GuestShoppingListVoter implements VoterInterface
     public function vote($feature, $scopeIdentifier = null)
     {
         if ($feature === self::FEATURE_NAME) {
-            if (!$this->securityFacade->hasLoggedUser()) {
+            if ($this->tokenStorage->getToken() instanceof AnonymousToken) {
                 return $this->configVoter->vote($feature, $scopeIdentifier);
             }
 

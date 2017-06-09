@@ -304,7 +304,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Voter\GuestShoppingListVoter'
         arguments:
             - '@oro_featuretoggle.voter.config_voter'
-            - '@oro_security.security_facade'
+            - '@security.token_storage'
         lazy: true
         tags:
             - { name: oro_featuretogle.voter }
