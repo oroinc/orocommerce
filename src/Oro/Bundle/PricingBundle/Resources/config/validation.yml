@@ -14,7 +14,8 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
             - NotBlank: ~
             - Valid: ~
         schedules:
-            - Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
+            - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection:
+                message: oro.pricing.validators.price_list.schedules_intersection.message
             - Valid: ~
         priceRules:
             - Valid: ~

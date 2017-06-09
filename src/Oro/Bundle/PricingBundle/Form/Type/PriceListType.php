@@ -6,9 +6,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 
 class PriceListType extends AbstractType
 {
@@ -28,11 +30,11 @@ class PriceListType extends AbstractType
             ->add('name', 'text', ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
             ->add(
                 self::SCHEDULES_FIELD,
-                CollectionType::NAME,
+                ScheduleIntervalsCollectionType::NAME,
                 [
-                    'type' => PriceListScheduleType::NAME,
-                    'by_reference' => false,
-                    'required' => false,
+                    'options' => [
+                        'data_class' => PriceListSchedule::class
+                    ]
                 ]
             )
             ->add(
