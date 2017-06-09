@@ -75,12 +75,13 @@ Feature: Managing customer user roles
     Given I proceed as the Admin
     And go to System/ Configuration
     And click "Promotions" on configuration sidebar
-    When fill "Promotions form" with:
-      |Show Stiker Default|false|
-      |Show Stiker        |true |
+    When fill "Promotions Form" with:
+      |Show On Product View Default|false|
+      |Show On Product View        |Yes  |
     And submit form
     Then I should see "Configuration saved" flash message
     And I proceed as the User
+    And I click "List View Button"
     When click "View Details" for "PSKU1" product
     Then I should see an "New Arrival Stiker" element
     And click "Sign Out"
@@ -90,15 +91,12 @@ Feature: Managing customer user roles
 
   Scenario: New Arrival Stiker on product view page - not active
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And click "Promotions" on configuration sidebar
     When fill "Promotions form" with:
-      |Show Stiker Default|true|
+      |Show On Product View Default|true|
     And submit form
     Then I should see "Configuration saved" flash message
     And I proceed as the User
-    When click "View Details" for "PSKU1" product
-    And reload the page
+    When reload the page
     Then I should not see an "New Arrival Stiker" element
     And I signed in as AmandaRCole@example.org on the store frontend
     And click "NewCategory"
