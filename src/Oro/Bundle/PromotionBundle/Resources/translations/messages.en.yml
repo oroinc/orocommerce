@@ -1,0 +1,14 @@
+oro:
+    promotion:
+        feature:
+            promotion:
+                label: Promotion
+                description: Promotion functionality allows admin users to manage promotions for Front Store customers
+
+        system_configuration:
+            groups:
+                promotion.title: Promotion
+                promotion_general.title: Promotion General
+            fields:
+                feature_enabled.label: Enable Promotion
+
