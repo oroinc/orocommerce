@@ -159,7 +159,7 @@ class ProductController extends Controller
      *
      * @Route("/related-items-update/{id}", name="oro_product_related_items_update", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("oro_product_update")
+     * @AclAncestor("oro_related_products_edit")
      * @param Product $product
      *
      * @return array|RedirectResponse

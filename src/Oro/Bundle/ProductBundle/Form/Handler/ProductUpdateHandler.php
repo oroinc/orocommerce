@@ -130,6 +130,10 @@ class ProductUpdateHandler extends UpdateHandler
      */
     private function saveRelatedProducts(FormInterface $form, Product $entity)
     {
+        if (!$form->has('appendRelated') && !$form->has('removeRelated')) {
+            return true;
+        }
+
         $appendRelatedFormItem = $form->get('appendRelated');
         $removeRelatedFormItem = $form->get('removeRelated');
         $appendRelated = $appendRelatedFormItem->getData();

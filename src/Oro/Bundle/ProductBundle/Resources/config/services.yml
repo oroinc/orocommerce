@@ -208,9 +208,11 @@ services:
         arguments:
             - '@translator'
             - '@oro_product.related_item.related_product.config_provider'
+            - '@oro_security.security_facade'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-related-items-update, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_product, method: onFormDataSet }
 
     oro_product.event_listener.product_grid_widget:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener'

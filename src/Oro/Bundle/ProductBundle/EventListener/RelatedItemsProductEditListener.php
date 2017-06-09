@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
@@ -21,14 +23,22 @@ class RelatedItemsProductEditListener
     /** @var AbstractRelatedItemConfigProvider */
     private $configProvider;
 
+    /** @var SecurityFacade */
+    private $securityFacade;
+
     /**
      * @param TranslatorInterface               $translator
      * @param AbstractRelatedItemConfigProvider $configProvider
+     * @param SecurityFacade                    $securityFacade
      */
-    public function __construct(TranslatorInterface $translator, AbstractRelatedItemConfigProvider $configProvider)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        AbstractRelatedItemConfigProvider $configProvider,
+        SecurityFacade $securityFacade
+    ) {
         $this->translator = $translator;
         $this->configProvider = $configProvider;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -36,7 +46,7 @@ class RelatedItemsProductEditListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        if (!$this->configProvider->isEnabled()) {
+        if (!$this->configProvider->isEnabled() || !$this->securityFacade->isGranted('oro_related_products_edit')) {
             return;
         }
 
@@ -50,6 +60,17 @@ class RelatedItemsProductEditListener
             ]
         );
         $this->addEditPageBlock($event->getScrollData(), $relatedProductsTemplate);
+    }
+
+    /**
+     * @param FormProcessEvent $event
+     */
+    public function onFormDataSet(FormProcessEvent $event)
+    {
+        if (!$this->securityFacade->isGranted('oro_related_products_edit')) {
+            $event->getForm()->remove('appendRelated');
+            $event->getForm()->remove('removeRelated');
+        }
     }
 
     /**

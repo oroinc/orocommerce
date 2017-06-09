@@ -167,6 +167,8 @@ oro:
                 update.label: '[Product Attribute] Edit attribute'
                 view.label: '[Product Attribute] View attributes'
                 remove.label: '[Product Attribute] Remove attribute'
+            related_products:
+                edit.label: '[Related Products] Edit related products'
 
         rounding:
             type:

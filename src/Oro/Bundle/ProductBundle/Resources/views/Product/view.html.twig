@@ -124,7 +124,7 @@
         }
     }) %}
 
-    {% if relatedProductsEnabled %}
+    {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
         {% set dataBlocks = dataBlocks|merge({
             'relatedItems': {
                 'title': 'oro.product.sections.relatedItems'|trans,

@@ -305,6 +305,12 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
                 ['removeRelated', $this->getSubForm()],
             ]);
         $form->expects($this->any())
+            ->method('has')
+            ->willReturnMap([
+                ['appendRelated', true],
+                ['removeRelated', true],
+            ]);
+        $form->expects($this->any())
             ->method('getErrors')
             ->willReturn(new FormErrorIterator($form, []));
 
@@ -365,6 +371,12 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->willReturnMap([
                 ['appendRelated', $this->getSubForm()],
                 ['removeRelated', $this->getSubForm([$relatedEntity])],
+            ]);
+        $form->expects($this->any())
+            ->method('has')
+            ->willReturnMap([
+                ['appendRelated', true],
+                ['removeRelated', true],
             ]);
         $form->expects($this->any())
             ->method('getErrors')
@@ -706,6 +718,12 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->willReturnMap([
                 ['appendRelated', $appendRelatedSubForm],
                 ['removeRelated', $this->getSubForm()],
+            ]);
+        $form->expects($this->any())
+            ->method('has')
+            ->willReturnMap([
+                ['appendRelated', true],
+                ['removeRelated', true],
             ]);
         $form->expects($this->any())
             ->method('getErrors')
