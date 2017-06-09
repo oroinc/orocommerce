@@ -3,9 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\FeatureToggleBundle\Checker\Voter\ConfigVoter;
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 
 class GuestShoppingListVoter implements VoterInterface
@@ -13,20 +12,20 @@ class GuestShoppingListVoter implements VoterInterface
     const FEATURE_NAME = 'guest_shopping_list';
 
     /**
-     * @var ConfigVoter
+     * @var VoterInterface
      */
     private $configVoter;
 
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     private $tokenStorage;
 
     /**
-     * @param ConfigVoter    $configVoter
-     * @param TokenStorage   $tokenStorage
+     * @param VoterInterface        $configVoter
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(ConfigVoter $configVoter, TokenStorage $tokenStorage)
+    public function __construct(VoterInterface $configVoter, TokenStorageInterface $tokenStorage)
     {
         $this->configVoter  = $configVoter;
         $this->tokenStorage = $tokenStorage;
@@ -42,9 +41,9 @@ class GuestShoppingListVoter implements VoterInterface
                 return $this->configVoter->vote($feature, $scopeIdentifier);
             }
 
-            return ConfigVoter::FEATURE_ENABLED;
+            return VoterInterface::FEATURE_ENABLED;
         }
 
-        return ConfigVoter::FEATURE_ABSTAIN;
+        return VoterInterface::FEATURE_ABSTAIN;
     }
 }
