@@ -43,6 +43,7 @@ oro_behat_extension:
           ZIP1: 'oro_shipping_methods_configs_rule[destinations][1][postalCodes]'
           ZIP2: 'oro_shipping_methods_configs_rule[destinations][2][postalCodes]'
           Config Enable: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'
+          HandlingFee: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
 
     Flat Rate Shipping Rule Form:
       selector: 'div#container'

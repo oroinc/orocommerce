@@ -46,7 +46,6 @@ Feature: Applying shipping rules
       | Country2      | Germany   |
       | Sort Order    | 1         |
       | Method        | Flat Rate |
-    And fill "Flat Rate Shipping Rule Form" with:
       | Price         | 2.5       |
       | Type          | Per Order |
       | HandlingFee   | 1.5       |
@@ -64,7 +63,6 @@ Feature: Applying shipping rules
       | ZIP1          | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
       | Method        | Flat Rate         |
-    And fill "Flat Rate Shipping Rule Form" with:
       | Price         | 3                 |
       | Type          | Per Order         |
       | HandlingFee   | 1.5               |
@@ -93,7 +91,6 @@ Feature: Applying shipping rules
       | ZIP1          | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
       | Method        | Flat Rate         |
-    And fill "Flat Rate Shipping Rule Form" with:
       | Type          | Per Item          |
       | Price         | 1.5               |
       | HandlingFee   | 1.5               |
@@ -107,7 +104,6 @@ Feature: Applying shipping rules
       | Currency      | EUR       |
       | Sort Order    | -1        |
       | Method        | Flat Rate |
-    And fill "Flat Rate Shipping Rule Form" with:
       | Type          | Per Order |
       | Price         | 5         |
       | HandlingFee   | 1.5       |
