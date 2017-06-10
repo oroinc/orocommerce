@@ -111,7 +111,7 @@ Feature: Quote Backoffice Default
     Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO13 in grid
-    Then I should see Quote on front store with data:
+    Then I should see Quote Frontend Page with data:
       | PO Number | PO13 |
 
   Scenario: Sent to Customer > Cancel, Quote #14. Internal status: Cancelled, customer status: N/A
@@ -136,7 +136,7 @@ Feature: Quote Backoffice Default
     Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO14 in grid
-    Then I should see Quote on front store with data:
+    Then I should see Quote Frontend Page with data:
       | PO Number | PO14 |
 
   Scenario: Sent to Customer > Expire, Quote #15. Internal status: Expired, customer status: N/A
@@ -162,7 +162,7 @@ Feature: Quote Backoffice Default
     Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO15 in grid
-    Then I should see Quote on front store with data:
+    Then I should see Quote Frontend Page with data:
       | PO Number | PO15 |
 
   Scenario: Sent to Customer > Delete, Quote #16. Internal status: Deleted, customer status: N/A
@@ -226,7 +226,7 @@ Feature: Quote Backoffice Default
     And click "Quotes"
     Then there is no "PO32" in grid
     When I click View PO17 in grid
-    Then I should see Quote on front store with data:
+    Then I should see Quote Frontend Page with data:
       | PO Number | PO17 |
     And should see "My Notes: Customer Notes17"
     And should see "Seller Notes: Seller Notes17"
@@ -273,7 +273,7 @@ Feature: Quote Backoffice Default
     And click "Quotes"
     Then there is no "PO33" in grid
     When I click View PO18 in grid
-    Then I should see Quote on front store with data:
+    Then I should see Quote Frontend Page with data:
       | PO Number | PO18 |
     And should see "This quote has expired. You may submit a new request for quote." flash message
     And should not see "My Notes: Customer Notes17"
@@ -301,7 +301,7 @@ Feature: Quote Backoffice Default
     Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO19 in grid
-    Then I should see Quote on front store with data:
+    Then I should see Quote Frontend Page with data:
       | PO Number | PO19 |
 
   Scenario: Expired > Reopen, Quote #15. Redirect to new Quote, internal status: Draft, customer status: N/A
