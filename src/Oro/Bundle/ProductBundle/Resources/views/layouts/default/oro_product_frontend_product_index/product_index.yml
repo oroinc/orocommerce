@@ -20,4 +20,9 @@ layout:
             tree:
                 page_content:
                     product_index_page:
-                        product_grid_container:
+                        product_grid_container: ~
+
+        - '@add':
+            id: sticky_element_toolbar
+            parentId: top_sticky_panel_content
+            blockType: block

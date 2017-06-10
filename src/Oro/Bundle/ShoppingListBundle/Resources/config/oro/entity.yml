@@ -1,0 +1,11 @@
+oro_entity:
+    virtual_fields:
+        Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+            contactInformation:
+                query:
+                    select:
+                        expr:         user.email
+                        return_type:  string
+                    join:
+                        left:
+                            - { join: entity.customerUser, alias: user }

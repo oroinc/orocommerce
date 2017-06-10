@@ -109,7 +109,7 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCas
                 ['quantity' => 12, 'productUnit' => $unit1, 'price' => $this->getPrice(10.5), 'product' => null]
             ),
             $this->getLineItem(
-                ['quantity' => 5, 'productUnit' => $unit2, 'price' => $this->getPrice(30.7), 'product' => $product]
+                ['quantity' => 5, 'productUnit' => $unit2, 'price' => null, 'product' => $product]
             ),
             $this->getLineItem(
                 ['quantity' => 7, 'productUnit' => $unit2, 'price' => $this->getPrice(99.9), 'product' => $product]
@@ -120,17 +120,17 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCas
             'all line items have required properties' => [
                 'lineItems' => $lineItems,
                 'expectedShippingLineItems' => [
-                    new ShippingLineItem($this->createExpected($lineItems[0])),
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[1]), ['product' => $product])),
-                    new ShippingLineItem(array_merge($this->createExpected($lineItems[2]), ['product' => $product]))
+                    new ShippingLineItem(array_merge($this->createExpected($lineItems[0]), [
+                        'price' => $lineItems[0]->getPrice(),
+                    ])),
+                    new ShippingLineItem(array_merge($this->createExpected($lineItems[1]), [
+                        'product' => $product,
+                    ])),
+                    new ShippingLineItem(array_merge($this->createExpected($lineItems[2]), [
+                        'product' => $product,
+                        'price' => $lineItems[2]->getPrice(),
+                    ]))
                 ],
-            ],
-            'some line items have no price' => [
-                'lineItems' => [
-                    $this->getLineItem(['quantity' => 12, 'productUnit' => $unit1, 'price' => $this->getPrice(10.5)]),
-                    $this->getLineItem(['quantity' => 1, 'productUnit' => $unit1, 'price' => null]),
-                ],
-                'expectedShippingLineItems' => [],
             ],
             'some line items have no product unit' => [
                 'lineItems' => [
@@ -153,7 +153,6 @@ class BasicOrderShippingLineItemConverterTest extends \PHPUnit_Framework_TestCas
             'product_holder' => $lineItem,
             'product_unit' => $lineItem->getProductUnit(),
             'product_unit_code' => $lineItem->getProductUnit()->getCode(),
-            'price' => $lineItem->getPrice(),
             'entity_id' => null
         ];
     }

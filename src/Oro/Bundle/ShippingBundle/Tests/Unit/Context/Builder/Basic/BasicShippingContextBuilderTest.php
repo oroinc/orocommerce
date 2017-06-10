@@ -127,8 +127,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->method('getSystemShippingOrigin');
 
         $builder = new BasicShippingContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId,
             $this->shippingLineItemCollectionFactoryMock,
@@ -136,6 +134,8 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         );
 
         $builder
+            ->setCurrency($currency)
+            ->setSubTotal($this->subtotalMock)
             ->setLineItems($this->lineItemsCollectionMock)
             ->setShippingAddress($this->shippingAddressMock)
             ->setBillingAddress($this->billingAddressMock)
@@ -157,7 +157,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testOptionalFields()
     {
-        $currency = 'usd';
         $entityId = '12';
         $lineItems = [];
 
@@ -173,8 +172,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->shippingOriginMock);
 
         $builder = new BasicShippingContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId,
             $this->shippingLineItemCollectionFactoryMock,
@@ -182,7 +179,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         );
 
         $expectedContext = $this->getExpectedContextWithoutOptionalFields(
-            $currency,
             $entityId,
             $this->shippingOriginMock
         );
@@ -224,8 +220,6 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->defaultShippingOriginMock);
 
         $builder = new BasicShippingContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId,
             $this->shippingLineItemCollectionFactoryMock,
@@ -233,6 +227,8 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         );
 
         $builder
+            ->setCurrency($currency)
+            ->setSubTotal($this->subtotalMock)
             ->setLineItems($this->lineItemsCollectionMock)
             ->setShippingAddress($this->shippingAddressMock)
             ->setBillingAddress($this->billingAddressMock)
@@ -286,13 +282,11 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
      *
      * @return ShippingContext
      */
-    private function getExpectedContextWithoutOptionalFields($currency, $entityId, $shippingOrigin)
+    private function getExpectedContextWithoutOptionalFields($entityId, $shippingOrigin)
     {
         $params = [
             ShippingContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,
             ShippingContext::FIELD_SHIPPING_ORIGIN => $shippingOrigin,
-            ShippingContext::FIELD_CURRENCY => $currency,
-            ShippingContext::FIELD_SUBTOTAL => $this->subtotalMock,
             ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
         ];
