@@ -57,6 +57,7 @@ class ShippingMethodSelectType extends AbstractType
             },
             'configs' => [
                 'showIcon' => true,
+                'minimumResultsForSearch' => 1,
             ]
         ]);
     }

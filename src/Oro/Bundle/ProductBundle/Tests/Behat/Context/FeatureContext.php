@@ -8,8 +8,13 @@ use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
@@ -412,5 +417,94 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return $options;
+    }
+
+    /**
+     * @When I open product with sku ":sku" on the store frontend
+     */
+    public function openProductWithSkuOnTheStoreFrontend($sku)
+    {
+        $product = $this->getRepository(Product::class)->findOneBy(['sku' => $sku]);
+
+        if (!$product) {
+            self::fail(sprintf('Can\'t find product with sku "%s"', $sku));
+        }
+
+        $this->visitPath($this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()]));
+    }
+
+    /**
+     * Assert specific template containing specified data on page.
+     * Example: Then I should see "Two Columns Page" with "Product Group" containing data:
+     *            | Color | Green |
+     *            | Size  | L     |
+     *
+     * @Then /^(?:|I )should see "(?P<templateName>[^"]*)" with "(?P<groupName>[^"]*)" containing data:$/
+     */
+    public function assertTemplateWithGroupContainsData($templateName, $groupName, TableNode $table)
+    {
+        /** @var ProductTemplate $template */
+        $template = $this->createElement($templateName);
+
+        $template->assertGroupWithValue($groupName, $table);
+    }
+
+    /**
+     * Assert prices on specific template.
+     * Example: Then I should see the following prices on "Two Columns Page":
+     *    | Listed Price: | [$10.00 / item, $445.50 / set] |
+     *    | Your Price:   | $10.00 / item                  |
+     *
+     * @Then /^(?:|I )should see the following prices on "(?P<templateName>[^"]*)":$/
+     */
+    public function assertPricesOnTemplatePage($templateName, TableNode $table)
+    {
+        /** @var ProductTemplate $template */
+        $template = $this->createElement($templateName);
+
+        $template->assertPrices($table);
+    }
+
+    /**
+     * @param string $route
+     * @param array $params
+     * @return string
+     */
+    protected function getUrl($route, $params = [])
+    {
+        return $this->getContainer()->get('router')->generate($route, $params);
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    protected function getRepository($className)
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass($className)
+            ->getRepository($className);
+    }
+
+    /**
+     * @Then /^I should not see tag "(?P<tag>[^"]+)" inside "(?P<element>[^"]+)" element$/
+     *
+     * @param string $tag
+     * @param string $element
+     */
+    public function iShouldNotSeeTagInsideElement($tag, $element)
+    {
+        $page = $this->getSession()->getPage();
+
+        $result = $page->find(
+            'xpath',
+            '//*[@id="' . $element . '"]/' . $tag
+        );
+
+        static::assertTrue(
+            is_null($result),
+            sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
+        );
     }
 }

@@ -6,6 +6,7 @@ define(function(require) {
     var $ = require('jquery');
     var BaseView = require('oroui/js/app/views/base/view');
     var mediator = require('oroui/js/mediator');
+    var layout = require('oroui/js/layout');
 
     ShippingRuleMethodsView = BaseView.extend({
         options: {
@@ -18,9 +19,11 @@ define(function(require) {
             methodPreviewSelector: '[data-role="method-preview"]',
             currencySelector: 'select[data-name="field__currency"]',
             currencyFieldsSelector: 'input:text[name]',
+            focusFieldsSelector: 'input:text[name]',
             previewFieldsSelector: 'input:text[name],select[name]',
             enabledFieldSelector: '[data-name="field__enabled"]',
             additionalOptionSelector: '.control-group-oro_shipping_method_type_config',
+            focus: false,
             updateFlag: null
         },
 
@@ -30,6 +33,10 @@ define(function(require) {
             'change [name="oro_shipping_methods_configs_rule[method]"]': '_onMethodChange',
             'content:remove': '_onMethodRemove',
             'change :input': '_onInputsChange'
+        },
+
+        listen: {
+            'page:afterChange mediator': '_onPageAfterChange'
         },
 
         methods: null,
@@ -104,6 +111,28 @@ define(function(require) {
             if (this.methods.length === 0) {
                 this.$(this.options.gridSelector).remove();
             }
+        },
+
+        _onPageAfterChange: function() {
+            this.focus();
+        },
+
+        focus: function() {
+            if (!this.options.focus) {
+                return;
+            }
+
+            var focusFieldsSelector = this.options.focusFieldsSelector;
+            this.$(this.options.methodViewSelector).each(function() {
+                var $fields = $(this).find(focusFieldsSelector);
+                var notEmptyFieldsCount = $fields.filter(function() {
+                    return this.value.length > 0;
+                }).length;
+                if (notEmptyFieldsCount === 0) {
+                    $fields.eq(0).attr('autofocus', true).focus();
+                    return false;
+                }
+            });
         },
 
         toggleAddButton: function() {
@@ -206,7 +235,7 @@ define(function(require) {
             });
 
             var $preview = $method.find(this.options.methodPreviewSelector);
-            $preview.empty();
+            var preview = [];
             _.each($method.find(this.options.previewFieldsSelector), function(field) {
                 var $field = $(field);
                 var value = _.trim(field.value);
@@ -228,8 +257,33 @@ define(function(require) {
                 var $label = this.$('label[for="' + field.id + '"]');
                 var label = $label.contents().eq(0).text() + ': ' + ($field.data('currency') || '');
 
-                $preview.append('<span>' + label + value + '</span>');
+                preview.push(label + value);
             }, this);
+
+            //replace whitespaces by &nbsp;, for tooltip overflow calculate
+            $preview.html(preview.join(', ').replace(/ /g, '&nbsp;'));
+
+            this.updatePreviewTooltip($preview, preview);
+        },
+
+        updatePreviewTooltip: function($preview, preview) {
+            if (!$preview.data('popover')) {
+                layout.initPopoverForElements($preview, {
+                    placement: 'bottom',
+                    trigger: 'hover',
+                    close: false
+                }, true);
+            }
+
+            var height = $preview.height();
+            $preview.css({
+                'word-wrap': 'break-word',
+                'overflow': 'auto',
+                'white-space': 'normal'
+            });
+            var isOverflow = $preview.height() > height;
+
+            $preview.attr('style', '').data('popover').updateContent(isOverflow ? preview.join('<br/>') : '');
         },
 
         dispose: function() {
