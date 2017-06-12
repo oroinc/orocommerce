@@ -1,4 +1,5 @@
 @fixture-products.yml
+@fixture-system_users.yml
 @feature-BB-8377
 Feature: Editing related products
   In order to propose my customer some other products
@@ -26,7 +27,7 @@ Feature: Editing related products
       | Is Related  | SKU    | NAME      |
       | 0           | PSKU2  | Product 2 |
       | 0           | PSKU3  | Product 3 |
-    When I select following records in SelectRelatedProductsGrid:
+    When I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU2 |
       | PSKU3 |
     And I click "Select products"
@@ -62,7 +63,7 @@ Feature: Editing related products
     And I click View Product 1 in grid
     And I click "Quick edit"
     And I click "Select related products"
-    When I select following records in SelectRelatedProductsGrid:
+    When I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU4 |
     And I click "Select products"
     And I select following records in grid:
@@ -96,3 +97,48 @@ Feature: Editing related products
     And "Assign In Both Directions" option for related products is enabled
     When I click View PSKU3 in grid
     Then there is no records in RelatedProductsViewGrid
+
+  Scenario: Related items should not be visible on view if user has no permission
+    Given user has following permissions
+      | Assign | Product               | None   |
+      | Create | Product               | Global |
+      | Delete | Product               | Global |
+      | Edit   | Product               | Global |
+    And I login as "CatalogManager1" user
+    When I go to Products/ Products
+      And I click View "PSKU1" in grid
+    Then I should not see "Related Items"
+
+  Scenario: Related items should not be visible in product edition if user has no permission
+    When I go to Products/ Products
+      And I click Edit "PSKU1" in grid
+    Then I should not see "Related Items"
+
+  Scenario: Disable related products functionality
+    Given I login as administrator
+    When go to System/ Configuration
+    And I click "Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Enable Related Products Use Default | false |
+      | Enable Related Products             | false |
+    And I click "Save settings"
+    Then go to Products/ Products
+    And I click Edit Product 1 in grid
+    And I should not see "Grid"
+
+  Scenario: Limit should be restricted
+    Given go to System/ Configuration
+      And I click "Related Items" on configuration sidebar
+      And I fill "RelatedProductsConfig" with:
+        | Enable Related Products                      | true  |
+        | Maximum Number Of Assigned Items Use Default | false |
+        | Maximum Number Of Assigned Items             | 2     |
+      And I click "Save settings"
+    When go to Products/ Products
+      And I click Edit Product 1 in grid
+      And I click "Select related products"
+      And I select following records in "SelectRelatedProductsGrid" grid:
+        | PSKU2 |
+        | PSKU3 |
+        | PSKU4 |
+    Then "Select products" button is disabled
