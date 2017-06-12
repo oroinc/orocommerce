@@ -16,6 +16,7 @@ oro:
         schedules.label: Schedules
         scopes.label: Scopes
         use_coupons.label: Use Coupons
+        rule.enabled.label: Status
 
         discountconfiguration:
             entity_label: Discount Configuration
