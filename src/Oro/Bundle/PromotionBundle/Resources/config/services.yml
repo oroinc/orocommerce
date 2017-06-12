@@ -61,6 +61,6 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: oro_promotion, acl_resource: oro_promotion_view }
 
     oro_promotion.discount_type_to_form_type_provider:
-        class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountConfigurationFormTypeProvider
+        class: Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider
 #        calls:
-#            - ['addType', ['order', 'oro_promotion.form.discount.order_form_type']]
+#            - ['addFormType', ['order', 'oro_promotion.form.discount.order_form_type']]
