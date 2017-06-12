@@ -26,6 +26,11 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
      */
     protected $shippingLineItemBuilderFactory;
 
+    /**
+     * @var ShippingLineItemBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $builderMock;
+
     public function setUp()
     {
         $this->shippingLineItemCollectionFactory = $this
@@ -34,6 +39,10 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
 
         $this->shippingLineItemBuilderFactory = $this
             ->getMockBuilder(ShippingLineItemBuilderFactoryInterface::class)
+            ->getMock();
+
+        $this->builderMock = $this
+            ->getMockBuilder(ShippingLineItemBuilderInterface::class)
             ->getMock();
     }
 
@@ -60,29 +69,17 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
     }
 
     /**
-     * @return ShippingLineItemBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getShippingLineItemBuilderMock()
-    {
-        return $this
-            ->getMockBuilder(ShippingLineItemBuilderInterface::class)
-            ->getMock();
-    }
-
-    /**
-     * @param int $quantity
-     * @param QuoteProductDemand|\PHPUnit_Framework_MockObject_MockObject $quoteProductOfferMock
+     * @param int                                                                       $quantity
+     * @param QuoteProductDemand|\PHPUnit_Framework_MockObject_MockObject               $quoteProductOfferMock
+     * @param ShippingLineItemBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builderMock
+     *
      * @return DoctrineShippingLineItemCollection
      */
-    protected function prepareConvertLineItems($quantity, $quoteProductOfferMock)
+    protected function prepareConvertLineItems($quantity, $quoteProductOfferMock, $builderMock)
     {
-        $builderMock = $this->getShippingLineItemBuilderMock();
-
         $product = new Product();
         $productUnit = new ProductUnit();
         $productUnitCode = 'each';
-
-        $price = Price::create(12, 'USD');
 
         $expectedLineItem = new ShippingLineItem([
             ShippingLineItem::FIELD_PRODUCT => $product,
@@ -90,11 +87,15 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
             ShippingLineItem::FIELD_PRODUCT_UNIT => $productUnit,
             ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $productUnitCode,
             ShippingLineItem::FIELD_PRODUCT_HOLDER => $quoteProductOfferMock,
-            ShippingLineItem::FIELD_PRICE => $price
         ]);
 
         $expectedLineItemsArray = [$expectedLineItem];
         $expectedLineItemsCollection = new DoctrineShippingLineItemCollection($expectedLineItemsArray);
+
+        $quoteProductOfferMock
+            ->expects($this->any())
+            ->method('getQuantity')
+            ->willReturn($quantity);
 
         $quoteProductOfferMock
             ->expects($this->exactly(2))
@@ -111,11 +112,6 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
             ->method('getProductUnitCode')
             ->willReturn($productUnitCode);
 
-        $quoteProductOfferMock
-            ->expects($this->atLeastOnce())
-            ->method('getPrice')
-            ->willReturn($price);
-
         $builderMock
             ->expects($this->once())
             ->method('setProduct')
@@ -129,7 +125,7 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
         $this->shippingLineItemBuilderFactory
             ->expects($this->once())
             ->method('createBuilder')
-            ->with($price, $productUnit, $productUnitCode, $quantity, $quoteProductOfferMock)
+            ->with($productUnit, $productUnitCode, $quantity, $quoteProductOfferMock)
             ->willReturn($builderMock);
 
         $this->shippingLineItemCollectionFactory
@@ -139,5 +135,15 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends \PHPUn
             ->willReturn($expectedLineItemsCollection);
 
         return $expectedLineItemsCollection;
+    }
+
+    /**
+     * @param string|int $amount
+     *
+     * @return Price
+     */
+    protected function createPrice($amount)
+    {
+        return Price::create($amount, 'USD');
     }
 }

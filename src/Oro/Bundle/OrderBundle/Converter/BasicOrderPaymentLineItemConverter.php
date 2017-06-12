@@ -32,7 +32,6 @@ class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverte
     }
 
     /**
-     * @param OrderLineItem[]|Collection $orderLineItems
      * {@inheritDoc}
      */
     public function convertLineItems(Collection $orderLineItems)
@@ -43,14 +42,13 @@ class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverte
 
         $paymentLineItems = [];
         foreach ($orderLineItems as $orderLineItem) {
-            if ($orderLineItem->getPrice() === null || $orderLineItem->getProductUnit() === null) {
+            if ($orderLineItem->getProductUnit() === null) {
                 $paymentLineItems = [];
 
                 break;
             }
 
             $builder = $this->paymentLineItemBuilderFactory->createBuilder(
-                $orderLineItem->getPrice(),
                 $orderLineItem->getProductUnit(),
                 $orderLineItem->getProductUnit()->getCode(),
                 $orderLineItem->getQuantity(),
@@ -59,6 +57,10 @@ class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverte
 
             if (null !== $orderLineItem->getProduct()) {
                 $builder->setProduct($orderLineItem->getProduct());
+            }
+
+            if (null !== $orderLineItem->getPrice()) {
+                $builder->setPrice($orderLineItem->getPrice());
             }
 
             $paymentLineItems[] = $builder->getResult();
