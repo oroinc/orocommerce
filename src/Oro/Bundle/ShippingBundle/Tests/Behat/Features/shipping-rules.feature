@@ -48,7 +48,7 @@ Feature: Applying shipping rules
       | Method        | Flat Rate |
       | Price         | 2.5       |
       | Type          | Per Order |
-      | HandlingFee   | 1.5       |
+      | Handling Fee  | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then Shipping Type "Flat Rate: €4.00" is shown for Buyer selection
     And  the order total is recalculated to "€14.00"
@@ -65,7 +65,7 @@ Feature: Applying shipping rules
       | Method        | Flat Rate         |
       | Price         | 3                 |
       | Type          | Per Order         |
-      | HandlingFee   | 1.5               |
+      | Handling Fee  | 1.5               |
     Given Admin User edited "Shipping Rule Second" with next data:
       | Sort Order    | 2 |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
@@ -93,7 +93,7 @@ Feature: Applying shipping rules
       | Method        | Flat Rate         |
       | Type          | Per Item          |
       | Price         | 1.5               |
-      | HandlingFee   | 1.5               |
+      | Handling Fee  | 1.5               |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then Shipping Type "Flat Rate: €9.00" is shown for Buyer selection
     And  the order total is recalculated to "€19.00"
@@ -106,7 +106,7 @@ Feature: Applying shipping rules
       | Method        | Flat Rate |
       | Type          | Per Order |
       | Price         | 5         |
-      | HandlingFee   | 1.5       |
+      | Handling Fee  | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     And Buyer created order with next shipping address:
       | Country         | Ukraine              |
