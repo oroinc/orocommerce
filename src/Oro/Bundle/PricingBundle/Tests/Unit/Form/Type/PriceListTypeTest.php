@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType;
+use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -9,7 +11,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
@@ -18,7 +19,6 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
@@ -88,7 +88,8 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     $currencySelectType->getName() => $currencySelectType,
                     $entityIdentifierType->getName() => $entityIdentifierType,
                     CollectionType::NAME => new CollectionType(),
-                    PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
+                    ScheduleIntervalsCollectionType::NAME => new ScheduleIntervalsCollectionType(),
+                    ScheduleIntervalType::NAME => new ScheduleIntervalType(),
                     OroDateTimeType::NAME => new OroDateTimeType(),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $currencyProvider,
