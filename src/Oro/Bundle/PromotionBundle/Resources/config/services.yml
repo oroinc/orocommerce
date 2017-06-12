@@ -1,3 +1,6 @@
+parameters:
+    oro_promotion.entity.promotion.class: Oro\Bundle\PromotionBundle\Entity\Promotion
+
 services:
     oro_promotion.rule_filtration.service:
         class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
@@ -42,6 +45,20 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
         arguments:
             - '@service_container'
+
+    oro_promotion.form.type.promotion_select:
+        class: Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType
+        tags:
+            - { name: form.type, alias: oro_promotion_select }
+
+    oro_promotion.form.autocomplete.promotion.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_promotion.entity.promotion.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_promotion, acl_resource: oro_promotion_view }
 
     oro_promotion.discount_type_to_form_type_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountConfigurationFormTypeProvider

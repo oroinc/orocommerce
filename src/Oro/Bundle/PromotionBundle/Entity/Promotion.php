@@ -39,7 +39,11 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
- *          }
+ *          },
+ *          "form"={
+ *              "form_type"="oro_promotion_select",
+ *              "grid_name"="promotion-select-grid"
+ *          },
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)

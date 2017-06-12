@@ -48,3 +48,6 @@ oro:
                 promotion_general.title: Promotion General
             fields:
                 feature_enabled.label: Enable Promotion
+
+        form:
+            choose: 'Choose a Promotion...'
