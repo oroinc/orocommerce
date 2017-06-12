@@ -300,6 +300,29 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
+    oro_shopping_list.event_listener.system_config:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\SystemConfigListener'
+        arguments:
+            - "@oro_shopping_list.manager.guest_shopping_list_manager"
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_shopping_list.default_guest_shopping_list_owner, method: onSettingsSaveBefore }
+
+    oro_shopping_list.entity_listener.shopping_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Entity\EntityListener\ShoppingListEntityListener'
+        public: false
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_shopping_list.manager.guest_shopping_list_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.shopping_list.class%', event: prePersist }
+
+    oro_shopping_list.manager.guest_shopping_list_manager:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
     oro_shopping_list.voter.guest_shopping_list_voter:
         class: 'Oro\Bundle\ShoppingListBundle\Voter\GuestShoppingListVoter'
         arguments:

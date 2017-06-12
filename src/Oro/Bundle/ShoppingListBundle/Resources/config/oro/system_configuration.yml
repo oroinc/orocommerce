@@ -2,7 +2,9 @@ system_configuration:
     groups:
         guest_shopping_list:
             title: oro.shoppinglist.system_configuration.groups.guest_shopping_list.label
-            icon: 'fa-cogs'
+            icon: 'fa-users'
+        guest_shopping_list_user_section:
+            title: oro.shoppinglist.system_configuration.groups.guest_shopping_list_owner.title
         guest_shopping_list.enable:
             title: oro.shoppinglist.system_configuration.groups.guest_shopping_list.label
     fields:
@@ -17,6 +19,16 @@ system_configuration:
             options:
                 label: oro.shoppinglist.system_configuration.fields.availability_for_guests.label
                 tooltip: oro.shoppinglist.system_configuration.fields.availability_for_guests.tooltip
+
+        oro_shopping_list.default_guest_shopping_list_owner:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            priority: 110
+            options:
+                label: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.title
+                tooltip: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.tooltip
+                required: true
 
     tree:
         system_configuration:
@@ -33,6 +45,9 @@ system_configuration:
                         children:
                             guest_shopping_list:
                                 children:
+                                    guest_shopping_list_user_section:
+                                        children:
+                                            - oro_shopping_list.default_guest_shopping_list_owner
                                     guest_shopping_list.enable:
                                         children:
                                             - oro_shopping_list.availability_for_guests

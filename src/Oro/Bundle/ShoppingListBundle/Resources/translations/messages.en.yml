@@ -109,9 +109,12 @@ oro:
 
         system_configuration:
             groups:
-                guest_shopping_list.label: 'Guest shopping list'
+                guest_shopping_list.label: 'Guest Shopping List'
+                guest_shopping_list_owner.title: 'Guest Shopping List Owner Settings'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Shopping Lists'
+                default_guest_shopping_list_owner.title: 'Default Guest Shopping List Owner'
+                default_guest_shopping_list_owner.tooltip: 'Default owner User for Guest Shopping lists'
                 availability_for_guests:
                     label: 'Enable guest shopping list'
                     tooltip: 'Allows guests to create a shopping list'
