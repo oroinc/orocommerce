@@ -27,8 +27,8 @@ Feature: Duplicate Lists
 
   Scenario: Create different window session
     Given sessions active:
-      | Admin          |first_session |
-      | User           |second_session|
+      | User  |first_session |
+      | Admin |second_session|
 
   Scenario: Front - user without permissions
     Given I proceed as the Admin
@@ -36,24 +36,23 @@ Feature: Duplicate Lists
     And click "Account"
     And click "Roles"
     And click edit "Buyer" in grid
-    And I wait for action
     And user have "None" permissions for "Duplicate" "Shopping List" entity
     And click "Save"
     And I proceed as the User
     And I signed in as NancyJSallee@example.org on the store frontend
-    And click "NewCategory"
+    And type "SKU" in "search"
+    And click "Search Button"
     And I wait for action
     And add "SKU1" product with "item" unit and "10" quantity to the shopping list
-    And add "SKU2" product with "set" unit and "11" quantity to the shopping list
-    When open "Shopping list" shopping list
+    And add "SKU2" product with "item" unit and "11" quantity to the shopping list
+    When open page with shopping list "Shopping List"
     Then I should not see following buttons:
-    |Duplicate List|
+      |Duplicate List|
 
   Scenario: Front - user with permissions
     Given I proceed as the Admin
     And click "Roles"
     And click edit "Customizable" in grid
-    And I wait for action
     And user have "User (Own)" permissions for "Duplicate" "Shopping List" entity
     And click "Save"
     And I proceed as the User
@@ -66,38 +65,37 @@ Feature: Duplicate Lists
     And I should see following "Shopping list" grid:
       |SKU |Quantity|Unit|
       |SKU1|10      |item|
-      |SKU2|11      |set |
+      |SKU2|11      |item|
+    And open page with shopping list "Shopping List"
+    And click "Edit Shopping List Label"
+    And type "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" in "value"
+    And click "Save"
+    And click "Sign Out"
 
   Scenario: Backend - user without permissions
-#    Given I proceed as the Admin
-#    And I login as administrator
-#    And go to Customers/Customer User Roles
-#    And click edit "Customizable" in grid
-#    And I wait for action
-#    And user have "None" permissions for "Duplicate" "Shopping List" entity
-#    And save and close form
-#    And should see "Customer User Role has been saved" flash message
-#    And I proceed as the User
-#    When reload the page
-#    Then I should not see following buttons:
-#      |Duplicate List|
-#    And I wait for action
+    Given I proceed as the User
+    And I login as "Charlie1@example.com" user
+    And go to Sales/ Shopping Lists
+    When I click view "Lorem ipsum dolor" in grid
+    Then I should not see following buttons:
+      |Duplicate List|
 
   Scenario: Backend - user with permissions
-#    Given I proceed as the Admin
-#    And go to Customers/Customer User Roles
-#    And click edit "Customizable" in grid
-#    And I wait for action
-#    And user have "User (Own)" permissions for "Duplicate" "Shopping List" entity
-#    And save and close form
-#    And should see "Customer User Role has been saved" flash message
-#    And I proceed as the User
-#    When reload the page
-#    Then I should see following buttons:
-#      |Duplicate List|
-#    When click "Duplicate List"
-#    Then should see 'Shopping list "Shopping list" has been duplicated' flash message
-#    And should see "Shopping list (copied"
-##    And should see "SKU1" product with "10" quantity and "item" unit in the shopping list
-##    And should see "SKU2" product with "11" quantity and "set" unit in the shopping list
-#    And I wait for action
+    Given user have "Organization" permissions for "Duplicate" "Shopping List" entity
+    And I proceed as the User
+    When reload the page
+    Then I should see following buttons:
+      |Duplicate List|
+    Then should see 'Shopping list "Shopping list" has been duplicated' flash message
+    And should see "Should be changed"
+    And should see following grid:
+      |SKU |Product |Quantity|Unit|
+      |SKU1|Product1|10      |item|
+      |SKU2|Product2|11      |item|
+    And click Sign out in user menu
+    And I signed in as NancyJSallee@example.org on the store frontend
+    When open page with shopping list "Should be changed"
+    Then should see following "Shopping list" grid:
+      |SKU |Quantity|Unit|
+      |SKU1|10      |item|
+      |SKU2|11      |item|

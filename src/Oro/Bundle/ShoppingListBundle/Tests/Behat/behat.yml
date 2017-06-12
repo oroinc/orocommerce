@@ -12,6 +12,7 @@ oro_behat_extension:
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'
   elements:
@@ -22,3 +23,7 @@ oro_behat_extension:
     ShoppingListTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
+
+    Edit Shopping List Label:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-role="start-editing"]'
