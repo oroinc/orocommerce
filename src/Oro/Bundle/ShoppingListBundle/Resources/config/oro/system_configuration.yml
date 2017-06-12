@@ -1,10 +1,26 @@
 system_configuration:
+    groups:
+        guest_shopping_list:
+            title: oro.shoppinglist.system_configuration.groups.guest_shopping_list.title
+            icon: 'fa-users'
+        guest_shopping_list_user_section:
+            title: oro.shoppinglist.system_configuration.groups.guest_shopping_list_owner.title
     fields:
         oro_shopping_list.backend_product_visibility:
             data_type: array
             type: oro_product_inventory_status_select
             options:
                 label: oro.shoppinglist.system_configuration.fields.backend_product_visibility.title
+
+        oro_shopping_list.default_guest_shopping_list_owner:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            priority: 110
+            options:
+                label: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.title
+                tooltip: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.tooltip
+                required: true
 
     tree:
         system_configuration:
@@ -17,3 +33,12 @@ system_configuration:
                                     backend_inventory_statuses_visibility:
                                         children:
                                             - oro_shopping_list.backend_product_visibility
+                    sales:
+                        children:
+                            guest_shopping_list:
+                                children:
+                                    guest_shopping_list_user_section:
+                                        children:
+                                            - oro_shopping_list.default_guest_shopping_list_owner
+
+
