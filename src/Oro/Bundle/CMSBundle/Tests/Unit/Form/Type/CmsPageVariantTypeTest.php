@@ -10,7 +10,7 @@ use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 
-class CategoryPageVariantTypeTest extends FormIntegrationTestCase
+class CmsPageVariantTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var CmsPageVariantType

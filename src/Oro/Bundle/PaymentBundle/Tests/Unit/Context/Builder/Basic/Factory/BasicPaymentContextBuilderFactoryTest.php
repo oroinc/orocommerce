@@ -47,7 +47,6 @@ class BasicPaymentContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateBuilder()
     {
-        $currency = 'usd';
         $entityId = '12';
 
         $builderFactory = new BasicPaymentContextBuilderFactory(
@@ -55,15 +54,11 @@ class BasicPaymentContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
         );
 
         $builder = $builderFactory->createPaymentContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId
         );
 
         $expectedBuilder = new BasicPaymentContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId,
             $this->paymentLineItemCollectionFactoryMock

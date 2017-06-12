@@ -119,10 +119,21 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
             ->method('setShippingMethod')
             ->with(self::TEST_SHIPPING_METHOD);
 
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setSubTotal')
+            ->with(Price::create($amount, $currency))
+            ->willReturnSelf();
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setCurrency')
+            ->with($currency);
+
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createPaymentContextBuilder')
-            ->with($currency, Price::create($amount, $currency), $order, (string)$order->getId())
+            ->with($order, (string)$order->getId())
             ->willReturn($this->contextBuilder);
 
         $this->factory->create($order);
@@ -176,10 +187,21 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
             ->method('setShippingMethod')
             ->with($shippingMethod);
 
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setSubTotal')
+            ->with(Price::create($amount, $currency))
+            ->willReturnSelf();
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setCurrency')
+            ->with($currency);
+
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createPaymentContextBuilder')
-            ->with($currency, Price::create($amount, $currency), $order, (string)$order->getId())
+            ->with($order, (string)$order->getId())
             ->willReturn($this->contextBuilder);
 
         $this->factory->create($order);
