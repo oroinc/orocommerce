@@ -36,9 +36,10 @@ Feature: HTML field type as product attribute
 
   Scenario: Add to default product family new attribute
     Given I go to Products/ Product Families
-    And I click edit "default_family" in grid
-    And fill "Product Family Form" with:
-      | Attributes | [HTML video] |
+    And I click Edit Default in grid
+    And set Attribute Groups with:
+      | Label | Visible | Attributes   |
+      | HTML  | true    | [HTML video] |
     When I save and close form
     Then I should see "Successfully updated" flash message
 
@@ -53,6 +54,6 @@ Feature: HTML field type as product attribute
      And I click logout in user menu
 
   Scenario: Open product view page on Front Store to see created attribute
-    Given I go to product with sku "PSKU1" on frontend
+    When I open product with sku "PSKU1" on the store frontend
     Then I should see "HTML Content here!"
     And I should not see tag "script" inside "html_escaped" element
