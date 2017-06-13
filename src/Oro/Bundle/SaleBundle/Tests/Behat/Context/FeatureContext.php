@@ -62,24 +62,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When Buyer starts checkout for a quote with :poNumber PO Number
-     * @param string $poNumber
-     */
-    public function buyerStartsCheckoutForAQuoteWithPONumber($poNumber)
-    {
-        /** @var Grid $grid */
-        $grid = $this->createElement('Grid');
-        $grid->clickActionLink($poNumber, 'View');
-        $this->waitForAjax();
-
-        $this->getPage()->clickLink('Accept and Submit to Order');
-        $this->waitForAjax();
-
-        $this->getPage()->pressButton('Submit');
-        $this->waitForAjax();
-    }
-
-    /**
      * @Then Buyer is on enter billing information checkout step
      */
     public function buyerIsOnEnterBillingInformationCheckoutStep()
