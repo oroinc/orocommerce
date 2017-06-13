@@ -37,3 +37,17 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//div[contains(@class, "embedded-list")]/a[contains(., "Headlamps")]'
+        WebCatalogSystemConfigSelect:
+            selector: '.oro-select2:contains("Choose a Web Catalog") .select2-offscreen'
+            class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select2Entity
+
+    suites:
+        OroWebCatalogBundle:
+            contexts:
+                - OroConfigBundle::FeatureContext
+                - OroDataGridBundle::GridContext
+                - OroFormBundle::FormContext
+                - OroWebCatalogBundle::FeatureContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+            paths:
+                - '@OroWebCatalogBundle/Tests/Behat/Features'

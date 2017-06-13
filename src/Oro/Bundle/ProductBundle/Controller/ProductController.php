@@ -285,16 +285,17 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/add-products-widget", name="oro_add_products_widget")
+     * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
      * @AclAncestor("oro_product_view")
      * @Template
      */
-    public function addProductsWidgetAction(Request $request)
+    public function addProductsWidgetAction(Request $request, $gridName)
     {
         $hiddenProducts = $request->get('hiddenProducts');
 
         return [
-            'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : []
+            'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : [],
+            'gridName' => $gridName,
         ];
     }
 }
