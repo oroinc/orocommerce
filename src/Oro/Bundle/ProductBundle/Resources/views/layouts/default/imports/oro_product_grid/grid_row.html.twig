@@ -1,3 +1,25 @@
+{% block _product_datagrid_row_product_sticker_new_widget %}
+    {% if
+        product is defined and
+        product.stickers is defined and
+        product.stickers|length
+    %}
+        {% set stickers = product.stickers %}
+    {% endif %}
+    {{ block_widget(block, {'stickers' : stickers|default({})}) }}
+{% endblock %}
+
+{% block _product_datagrid_row_product_sticker_new_text_widget %}
+    {% if
+        product is defined and
+        product.stickers is defined and
+        product.stickers|length
+    %}
+        {% set stickers = product.stickers %}
+    {% endif %}
+    {{ block_widget(block, {'stickers' : stickers|default({})}) }}
+{% endblock %}
+
 {% block __oro_product_grid__product_widget %}
     {% set product = datagrid_row|merge({
         getDefaultName: datagrid_row.name

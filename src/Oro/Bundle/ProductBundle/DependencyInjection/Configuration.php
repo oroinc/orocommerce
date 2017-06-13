@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
     const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
+    const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
 
     /**
      * {@inheritDoc}
@@ -53,7 +54,8 @@ class Configuration implements ConfigurationInterface
                 self::FEATURED_PRODUCTS_SEGMENT_ID => ['value' => null],
                 self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 self::DIRECT_URL_PREFIX => ['value' => ''],
-                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE]
+                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
+                self::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
             ]
         );
 

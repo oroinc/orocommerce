@@ -1,10 +1,8 @@
 {% block product_sticker_widget %}
     {% if
-        product is defined and
-        product.stickers is defined and
-        product.stickers|length
+        stickers is defined and
+        stickers|length
     %}
-
         {% set attr = layout_attr_defaults(attr, {
             '~class': ' product-sticker'
         }) %}
@@ -21,7 +19,7 @@
 
         {% set def_attr = attr %}
 
-        {% for sticker in product.stickers %}
+        {% for sticker in stickers %}
             {% set attr = def_attr %}
 
             {% set attr = layout_attr_defaults(attr, {

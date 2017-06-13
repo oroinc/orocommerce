@@ -94,6 +94,8 @@ oro:
             no_page_template: No page template
             choose: Choose Product...
             product_required: Please select a product first...
+            tooltip:
+                show_on_product_view: The new product icon will be displayed on the product view page.
         form.add_row: Add More Rows
 
         productunit:
@@ -213,6 +215,8 @@ oro:
                 featured_products_segment.title: 'Featured Products Segment'
                 quick_order.title: Quick Order Form
                 quick_order_form.title: Quick Order Form
+                new_product_icons.title: New Product Icons
+                product_promotions.title: Promotions
             fields:
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
@@ -256,6 +260,12 @@ oro:
                         Only segments with type "Product" are listed here.
                 page_template.label: Page Template
                 product_direct_url_prefix.label: 'Product URL prefix'
+                show_on_product_view:
+                    label: Show on Product View
+                    tooltip: The new product icon will be displayed on the product view page.
+                    type:
+                        yes.label: Yes
+                        no.label: No
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

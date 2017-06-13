@@ -969,3 +969,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_product.layout.data_provider.product_stickers:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductStickersProvider'
+        arguments:
+            - "@oro_config.manager"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_stickers }

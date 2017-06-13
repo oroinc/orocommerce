@@ -5,24 +5,17 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\ProductBundle\Provider\ProductNewArrivalStickerTrait;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
 class ProductStickersFrontendDatagridListener
 {
+    use ProductNewArrivalStickerTrait;
+
     /**
      * @internal
      */
     const COLUMNS_PRODUCT_STICKERS = 'stickers';
-
-    /**
-     * @internal
-     */
-    const STICKER_TYPE_FIELD_NAME = 'type';
-
-    /**
-     * @internal
-     */
-    const NEW_ARRIVAL_STICKER_TYPE = 'new_arrival';
 
     /**
      * @internal
@@ -79,18 +72,16 @@ class ProductStickersFrontendDatagridListener
     private function addNewArrivalSticker(array &$stickers, ResultRecord $record)
     {
         if ($record->getValue(self::GRID_NEW_ARRIVALS_FIELD_NAME)) {
-            $this->addSticker($stickers, self::NEW_ARRIVAL_STICKER_TYPE);
+            $this->addSticker($stickers, $this->getNewArrivalSticker());
         }
     }
 
     /**
-     * @param array  $stickers
-     * @param string $type
+     * @param array $stickers
+     * @param array $sticker
      */
-    private function addSticker(array &$stickers, $type)
+    private function addSticker(array &$stickers, array $sticker)
     {
-        $stickers[] = [
-            self::STICKER_TYPE_FIELD_NAME => $type,
-        ];
+        $stickers[] = $sticker;
     }
 }

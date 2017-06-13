@@ -27,7 +27,8 @@ layout:
                     blockType: product_sticker
                     options:
                         mode: text
-                        product: '=data["product"]'
+                        stickers: '=data["oro_product_stickers"].getStickers(data["product"])'
+                        visible: '=data["oro_product_stickers"].isStickersEnabledOnView()'
                 product_view_main_container:
                     blockType: container
                 product_view_content_container:
