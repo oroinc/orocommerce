@@ -30,7 +30,7 @@ Feature:
     When I click "Excluded"
     And I click "Add Button"
     Then I should see "Add Products"
-    And I click on PSKU12 in grid "Add Products Popup"
+    And I check PSKU12 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |

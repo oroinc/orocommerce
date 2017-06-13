@@ -17,7 +17,7 @@ Feature:
     When I click "All Added"
     And I click "Add Button"
     Then I should see "Add Products"
-    When I click on PSKU5 in grid "Add Products Popup"
+    When I check PSKU5 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -31,7 +31,7 @@ Feature:
     When I click "Manually Added"
     And I click "Add Button"
     Then I should see "Add Products"
-    When I click on PSKU4 in grid "Add Products Popup"
+    When I check PSKU4 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -47,7 +47,7 @@ Feature:
     When I click "Excluded"
     And I click "Add Button"
     Then I should see "Add Products"
-    When I click on PSKU5 in grid "Add Products Popup"
+    When I check PSKU5 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -67,7 +67,7 @@ Feature:
       | SKU   | NAME      |
       | PSKU4 | Product 4 |
     When I click "Add Button"
-    And I click on PSKU5 in grid "Add Products Popup"
+    When I check PSKU5 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
@@ -93,10 +93,10 @@ Feature:
   Scenario: Add several products from several pages from Manually Added tab
     When I click "Add Button"
     Then I should see "Add Products"
-    When I click on PSKU9 in grid "Add Products Popup"
-    And I click on PSKU7 in grid "Add Products Popup"
+    When I check PSKU9 record in "Add Products Popup" grid
+    And I check PSKU7 record in "Add Products Popup" grid
     And I press next page button in grid "Add Products Popup"
-    And I click on PSKU1 in grid "Add Products Popup"
+    And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME      |
