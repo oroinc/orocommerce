@@ -1,5 +1,3 @@
-@ticket-BB-9716
-@automatically-ticket-tagged
 @fixture-ProductPrices.yml
 Feature: Visibility of product prices in different cases
   Scenario: Empty product prices for non authorized user
@@ -15,7 +13,7 @@ Feature: Visibility of product prices in different cases
     When I click on "Product Price Hint"
     Then I should not see a "Product Price Popover" element
 
-  Scenario: Add prices for already created product and check prices visability
+  Scenario: Add prices for already created product and check prices visibility
     Given I login as administrator
     And I go to Products/ Products
     And click edit "PSKU1" in grid
@@ -27,7 +25,7 @@ Feature: Visibility of product prices in different cases
       | Currency       | $                  |
     And I submit form
     When I continue as the Buyer
-    Given I am on "/product"
+    And I am on "/product"
     And I should see that "Product Price Listed" contains "$100.00"
     When I hover on "Product Price Hint"
     Then I should see a "Product Price Popover" element
