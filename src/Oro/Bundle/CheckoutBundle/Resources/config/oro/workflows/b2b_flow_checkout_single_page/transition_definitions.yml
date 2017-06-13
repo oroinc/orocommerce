@@ -3,7 +3,7 @@ workflows:
         transition_definitions:
             save_state_definition:
                 actions:
-                    - '@assign_value': [$.result.stateSaved, true]
+                    - '@assign_value': [$.result.responseData.stateSaved, true]
                     - '@flush_entity': [$checkout]
 
             create_order_transition_definition:

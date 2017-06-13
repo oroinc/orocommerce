@@ -19,8 +19,9 @@ workflows:
             save_state:
                 step_to: checkout
                 transition_definition: save_state_definition
+                is_hidden: true
                 frontend_options:
-                    is_checkout_save_state: true
+                    is_checkout_continue: true
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
