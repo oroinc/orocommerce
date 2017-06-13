@@ -1,6 +1,5 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
-@skip
 Feature: Order submission with PayPal PayFlow Gateway and zero "authorization amount" option and "authorize required amount" options
   Scenario: Create new PayPal PayFlow Gateway Integration
     Given I login as administrator

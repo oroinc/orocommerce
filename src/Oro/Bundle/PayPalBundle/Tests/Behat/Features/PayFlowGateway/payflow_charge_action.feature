@@ -1,6 +1,5 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
-@skip
 Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Charge payment action
   Scenario: Create new PayPal PayFlow Gateway Integration
     Given I login as administrator

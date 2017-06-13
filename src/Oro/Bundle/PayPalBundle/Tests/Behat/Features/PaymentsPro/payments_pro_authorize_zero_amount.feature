@@ -1,7 +1,6 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
-@skip
-Feature: Order submission with PayPal Payments Pro and  zero "authorization amount" option
+Feature: Order submission with PayPal Payments Pro and zero "authorization amount" option
   Scenario: Create new PayPal Payments Pro Integration
     Given I login as administrator
     When I go to System/Integrations/Manage Integrations
