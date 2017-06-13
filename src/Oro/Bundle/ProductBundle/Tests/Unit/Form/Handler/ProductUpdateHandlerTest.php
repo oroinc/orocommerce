@@ -315,13 +315,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->willReturn(new FormErrorIterator($form, []));
 
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
-        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formHandlerMock->expects($this->once())
-            ->method('process')
-            ->with($entity)
-            ->will($this->returnValue(true));
+        $formHandlerMock = $this->getFormHandlerMock($entity);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($entity)
@@ -381,15 +375,8 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $form->expects($this->any())
             ->method('getErrors')
             ->willReturn(new FormErrorIterator($form, []));
+        $formHandlerMock = $this->getFormHandlerMock($entity);
 
-        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
-        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formHandlerMock->expects($this->once())
-            ->method('process')
-            ->with($entity)
-            ->will($this->returnValue(true));
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
@@ -434,13 +421,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $form = $this->getFormThatReturnsNoErrors($relatedEntity);
 
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
-        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formHandlerMock->expects($this->once())
-            ->method('process')
-            ->with($entity)
-            ->will($this->returnValue(true));
+        $formHandlerMock = $this->getFormHandlerMock($entity);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($entity)
@@ -486,13 +467,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $form = $this->getFormThatReturnsNoErrors($relatedEntity);
 
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
-        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formHandlerMock->expects($this->once())
-            ->method('process')
-            ->with($entity)
-            ->will($this->returnValue(true));
+        $formHandlerMock = $this->getFormHandlerMock($entity);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($entity)
@@ -538,13 +513,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $form = $this->getFormThatReturnsNoErrors($relatedEntity);
 
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
-        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $formHandlerMock->expects($this->once())
-            ->method('process')
-            ->with($entity)
-            ->will($this->returnValue(true));
+        $formHandlerMock = $this->getFormHandlerMock($entity);
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($entity)
@@ -728,6 +697,24 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $form->expects($this->any())
             ->method('getErrors')
             ->willReturn(new FormErrorIterator($form, []));
+
         return $form;
+    }
+
+    /**
+     * @param $entity
+     * @return FormHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getFormHandlerMock($entity)
+    {
+        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
+        $formHandlerMock = $this->getMockBuilder(FormHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $formHandlerMock->expects($this->once())
+            ->method('process')
+            ->with($entity)
+            ->will($this->returnValue(true));
+        return $formHandlerMock;
     }
 }
