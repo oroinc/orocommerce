@@ -75,21 +75,15 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     private $paymentLineItemCollectionFactory;
 
     /**
-     * @param string $currency
-     * @param Price $subTotal
-     * @param object $sourceEntity
-     * @param string $sourceEntityIdentifier
+     * @param object                                    $sourceEntity
+     * @param string                                    $sourceEntityIdentifier
      * @param PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
      */
     public function __construct(
-        $currency,
-        Price $subTotal,
         $sourceEntity,
         $sourceEntityIdentifier,
         PaymentLineItemCollectionFactoryInterface $paymentLineItemCollectionFactory
     ) {
-        $this->currency = $currency;
-        $this->subTotal = $subTotal;
         $this->sourceEntity = $sourceEntity;
         $this->sourceEntityIdentifier = $sourceEntityIdentifier;
         $this->paymentLineItemCollectionFactory = $paymentLineItemCollectionFactory;
@@ -100,35 +94,8 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
      */
     public function getResult()
     {
-        $lineItems = $this->paymentLineItemCollectionFactory->createPaymentLineItemCollection($this->lineItems);
-
-        $params = [
-            PaymentContext::FIELD_CURRENCY => $this->currency,
-            PaymentContext::FIELD_SUBTOTAL => $this->subTotal,
-            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
-            PaymentContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
-            PaymentContext::FIELD_LINE_ITEMS => $lineItems,
-        ];
-
-        if (null !== $this->billingAddress) {
-            $params[PaymentContext::FIELD_BILLING_ADDRESS] = $this->billingAddress;
-        }
-
-        if (null !== $this->shippingAddress) {
-            $params[PaymentContext::FIELD_SHIPPING_ADDRESS] = $this->shippingAddress;
-        }
-
-        if (null !== $this->shippingMethod) {
-            $params[PaymentContext::FIELD_SHIPPING_METHOD] = $this->shippingMethod;
-        }
-
-        if (null !== $this->customer) {
-            $params[PaymentContext::FIELD_CUSTOMER] = $this->customer;
-        }
-
-        if (null !== $this->customerUser) {
-            $params[PaymentContext::FIELD_CUSTOMER_USER] = $this->customerUser;
-        }
+        $params = $this->getMandatoryParams();
+        $params += $this->getOptionalParams();
 
         return new PaymentContext($params);
     }
@@ -211,5 +178,61 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         $this->customerUser = $customerUser;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSubTotal(Price $subTotal)
+    {
+        $this->subTotal = $subTotal;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    private function getMandatoryParams()
+    {
+        $lineItems = $this->paymentLineItemCollectionFactory->createPaymentLineItemCollection($this->lineItems);
+        $params = [
+            PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
+            PaymentContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
+            PaymentContext::FIELD_LINE_ITEMS => $lineItems,
+        ];
+
+        return $params;
+    }
+
+    /**
+     * @return array
+     */
+    private function getOptionalParams()
+    {
+        $optionalParams = [
+            PaymentContext::FIELD_CURRENCY => $this->currency,
+            PaymentContext::FIELD_SUBTOTAL => $this->subTotal,
+            PaymentContext::FIELD_BILLING_ADDRESS => $this->billingAddress,
+            PaymentContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddress,
+            PaymentContext::FIELD_SHIPPING_METHOD => $this->shippingMethod,
+            PaymentContext::FIELD_CUSTOMER => $this->customer,
+            PaymentContext::FIELD_CUSTOMER_USER => $this->customerUser,
+        ];
+
+        // Exclude NULL elements.
+        $optionalParams = array_diff_key($optionalParams, array_filter($optionalParams, 'is_null'));
+
+        return $optionalParams;
     }
 }

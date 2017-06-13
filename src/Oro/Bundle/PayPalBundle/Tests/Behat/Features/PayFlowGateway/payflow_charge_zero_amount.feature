@@ -1,5 +1,6 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@skip
 Feature: Process order submission with  PayPal PayFlow Gateway and enabled zero "authorization amount" option and Charge payment action
   Scenario: Create new  PayPal PayFlow Gateway Integration
     Given I login as administrator
@@ -42,7 +43,7 @@ Feature: Process order submission with  PayPal PayFlow Gateway and enabled zero 
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I fill credit card form with next data:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |
@@ -62,7 +63,7 @@ Feature: Process order submission with  PayPal PayFlow Gateway and enabled zero 
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I click "Continue"
     And I press "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
