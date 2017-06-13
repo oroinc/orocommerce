@@ -78,3 +78,9 @@ services:
         class: Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider
 #        calls:
 #            - ['addFormType', ['order', 'oro_promotion.form.discount.order_form_type']]
+
+    oro_promotion.provider.matching_products_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
+        public: false
+        arguments:
+            - '@oro_segment.segment_manager'
