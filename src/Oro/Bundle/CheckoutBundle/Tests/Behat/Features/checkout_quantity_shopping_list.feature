@@ -3,6 +3,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:SmallInventoryLevel.yml
+@skip
 Feature: Checkout from Shopping List Quantity Errors
   In order to to create order from Shopping List on front store
   As a buyer

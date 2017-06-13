@@ -1,5 +1,6 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-AuthorizeNetFixture.yml
+@skip
 Feature: Process order submission with Authorize.Net integration
   Scenario: Create new AuthorizeNet Integration
     Given I login as administrator
