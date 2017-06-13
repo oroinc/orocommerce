@@ -64,18 +64,20 @@ class CheckoutPaymentContextFactory
         $lineItems = $this->checkoutLineItemsManager->getData($checkout);
         $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($lineItems);
 
+        $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
+            $checkout,
+            (string)$checkout->getId()
+        );
+
         $total = $this->totalProcessor->getTotal($checkout);
         $subtotal = Price::create(
             $total->getAmount(),
             $total->getCurrency()
         );
 
-        $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
-            $checkout->getCurrency(),
-            $subtotal,
-            $checkout,
-            (string)$checkout->getId()
-        );
+        $paymentContextBuilder
+            ->setSubTotal($subtotal)
+            ->setCurrency($checkout->getCurrency());
 
         if (null !== $checkout->getBillingAddress()) {
             $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\BasicShippingLineItemBuilder;
@@ -14,12 +13,11 @@ class BasicShippingLineItemBuilderFactory implements ShippingLineItemBuilderFact
      * @inheritDoc
      */
     public function createBuilder(
-        Price $price,
         ProductUnit $productUnit,
         $productUnitCode,
         $quantity,
         ProductHolderInterface $productHolder
     ) {
-        return new BasicShippingLineItemBuilder($price, $productUnit, $productUnitCode, $quantity, $productHolder);
+        return new BasicShippingLineItemBuilder($productUnit, $productUnitCode, $quantity, $productHolder);
     }
 }

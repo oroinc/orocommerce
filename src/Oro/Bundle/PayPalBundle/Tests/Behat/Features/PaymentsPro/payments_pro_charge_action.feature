@@ -41,7 +41,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Charg
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I fill credit card form with next data:
       | CreditCardNumber | 5105105105105100 |
       | Month            | 11               |
@@ -57,7 +57,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Charg
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I fill credit card form with next data:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |

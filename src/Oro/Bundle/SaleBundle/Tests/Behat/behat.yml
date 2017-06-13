@@ -1,0 +1,5 @@
+oro_behat_extension:
+  elements:
+    Quote Frontend Page:
+      class: Oro\Bundle\SaleBundle\Tests\Behat\Element\QuoteFrontendPage
+      selector: '.quote'
