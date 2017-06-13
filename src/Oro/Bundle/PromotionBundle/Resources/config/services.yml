@@ -9,6 +9,7 @@ services:
     oro_promotion.rule_filtration.scope_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
         decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 0
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.scope_decorator.inner'
@@ -16,6 +17,7 @@ services:
     oro_promotion.rule_filtration.schedule_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
         decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 25
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.schedule_decorator.inner'
@@ -23,6 +25,7 @@ services:
     oro_promotion.rule_filtration.coupon_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
         decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 50
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.coupon_decorator.inner'
@@ -30,6 +33,17 @@ services:
     oro_promotion.rule_filtration.matching_items:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
         public: false
+#        TODO: Uncomment after BB-10079
+#        decorates: oro_promotion.rule_filtration.service
+#        decoration_priority: 75
+
+    oro_promotion.rule_filtration.stop_processing_decorator:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 100
+        arguments:
+            - '@oro_promotion.rule_filtration.stop_processing_decorator.inner'
 
     oro_promotion.context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverter
