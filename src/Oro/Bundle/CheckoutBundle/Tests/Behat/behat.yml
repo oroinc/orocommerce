@@ -1,4 +1,19 @@
 oro_behat_extension:
+  suites:
+    OroCheckoutBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - OroFormBundle::FormContext
+        - OroDataGridBundle::GridContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroShippingBundle::SingleCurrencyContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroCustomerBundle::CustomerUserContext
+        - OroCheckoutBundle::FeatureContext
+      paths:
+        - '@OroCheckoutBundle/Tests/Behat/Features'
   elements:
     CheckoutStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep

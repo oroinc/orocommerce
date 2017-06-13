@@ -39,7 +39,7 @@ Feature: Process order submission with Authorize.Net integration
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I fill credit card fields with next data:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |
