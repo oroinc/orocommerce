@@ -189,6 +189,14 @@ oro_behat_extension:
     RemoveFilterButton:
       selector: '.conditions-group .condition a.close'
 
+    Page Templates Form:
+      selector: 'form[name="theme"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Use Default: 'theme[oro_frontend___page_templates][use_parent_scope_value]'
+          Product Page: 'theme[oro_frontend___page_templates][value][oro_product_frontend_product_view]'
+
     Remove Variant Button:
       selector: 'button.removeVariantBtn'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -213,6 +221,38 @@ oro_behat_extension:
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
 
+    Line Item Form:
+      selector: 'div.line-item-form'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\LineItemForm
+
+    Default Page:
+      selector: '.product-view__attributes-container'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\DefaultTemplate
+
+    Short Page:
+      selector: '.product-view.short-theme'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ShortTemplate
+
+    List Page:
+      selector: '.product-view__additional'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ListTemplate
+
+    Two Columns Page:
+      selector: '.product-view__attribute-box-wrapper'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\TwoColumnsTemplate
+
+    Default Page Prices:
+      selector: '.product-prices__table'
+
+    Short Page Prices:
+      selector: '.product-view__content .product-price'
+
+    List Page Prices:
+      selector: '.product-view__content .product-price'
+
+    Two Columns Page Prices:
+      selector: '.product-view__content .product-price'
+
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
@@ -229,5 +269,6 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - OroUserBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features'

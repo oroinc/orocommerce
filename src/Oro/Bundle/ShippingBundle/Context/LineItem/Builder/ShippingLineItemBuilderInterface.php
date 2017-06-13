@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Context\LineItem\Builder;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
@@ -41,4 +42,11 @@ interface ShippingLineItemBuilderInterface
      * @return self
      */
     public function setWeight(Weight $weight);
+
+    /**
+     * @param Price $price
+     *
+     * @return self
+     */
+    public function setPrice(Price $price);
 }
