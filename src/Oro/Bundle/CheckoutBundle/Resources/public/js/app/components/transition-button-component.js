@@ -71,7 +71,7 @@ define(function(require) {
 
         transit: function(e, data) {
             e.preventDefault();
-            if (!this.options.enabled || this.inProgress) {
+            if (!this.options.enabled || this.inProgress || !this.options.transitionUrl) {
                 return;
             }
 

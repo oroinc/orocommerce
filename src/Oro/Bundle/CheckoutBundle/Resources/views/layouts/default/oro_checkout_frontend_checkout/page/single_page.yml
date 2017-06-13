@@ -1,0 +1,108 @@
+layout:
+    imports:
+        - 'oro_payment_method_options'
+        - 'oro_payment_method_order_review'
+
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/single_page.html.twig'
+
+        - '@remove':
+            id: checkout_sidebar
+
+        - '@addTree':
+            items:
+                billing_address:
+                    blockType: checkout_form_fields
+                    options:
+                        attr:
+                            class: 'checkout-billing-address'
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                shipping_address:
+                    blockType: checkout_form_fields
+                    options:
+                        attr:
+                            class: 'checkout-shipping-address'
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                shipping_methods_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['shipping-methods:refresh']
+
+                shipping_methods_hidden:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                shipping_methods:
+                    blockType: shipping_methods
+                    options:
+                        class_prefix: 'checkout'
+                        methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
+                        currentShippingMethod: '=data["checkout"].getShippingMethod()'
+                        currentShippingMethodType: '=data["checkout"].getShippingMethodType()'
+
+                shipping_methods_template:
+                    blockType: container
+
+                shipping_methods_template_methods:
+                    blockType: container
+
+                payment_methods_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['payment-methods:refresh']
+
+                payment_methods_hidden:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+                payment_methods:
+                    blockType: payment_methods
+                    options:
+                        class_prefix: 'checkout'
+                        views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
+                        currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
+
+                payment_additional_data:
+                    blockType: payment_additional_data
+                    options:
+                        visible: '=data["checkout"].getPaymentMethod()'
+                        block_name: '=data["oro_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
+                        options:
+                            payment_method: '=data["checkout"].getPaymentMethod()'
+
+                additional_options:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+
+            tree:
+                checkout_form_fields:
+                    billing_address: ~
+                    shipping_address: ~
+                    shipping_methods_wrapper:
+                        shipping_methods_hidden: ~
+                        shipping_methods:
+                            shipping_methods_template:
+                                shipping_methods_template_methods: ~
+                    payment_methods_wrapper:
+                        payment_methods_hidden: ~
+                        payment_methods: ~
+                        payment_additional_data: ~
+                    additional_options: ~
+
+    conditions: 'context["workflowStepName"]=="checkout" && !context["widget_container"]'

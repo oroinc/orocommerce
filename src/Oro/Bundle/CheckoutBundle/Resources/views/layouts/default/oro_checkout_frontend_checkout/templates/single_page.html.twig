@@ -1,0 +1,269 @@
+{% block __oro_checkout_content__checkout_information_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout"}) %}
+    <div{{ block('block_attributes') }}>
+        <div class="checkout__body">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _checkout_form_fields_widget %}
+    {{ block_widget(block) }}
+
+    {{ form_rest(form) }}
+{% endblock %}
+
+{% block _shipping_address_widget -%}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {% if workflowItem.data.get('disallow_shipping_address_edit') %}
+        <fieldset class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--offset-y grid__column--6">
+                {{ renderAddress(checkout.shippingAddress) }}
+            </div>
+        </fieldset>
+    {% else %}
+        {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
+        {% set hasCustomAddress = false %}
+        {% if form.shipping_address.id.vars.value %}
+            {% set hasCustomAddress = not form.shipping_address.vars.value.customerUserAddress and not form.shipping_address.vars.value.customerAddress %}
+        {% endif %}
+
+        <div {{ block('block_attributes') }} data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orocheckout/js/app/views/address-view',
+                 selectors: {
+                     address: '#' ~ form.shipping_address.customerAddress.vars.id,
+                     region: '#' ~ form.shipping_address.region.vars.id,
+                     fieldsContainer: '#checkout-address-fields-container',
+                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
+                 }
+             }|json_encode }}">
+
+            <div class="grid">
+                <div class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--6">
+                        {{ form_row(form.shipping_address.customerAddress) }}
+                    </div>
+                </div>
+            </div>
+
+            {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
+
+            {% if workflowItem.data.get('billing_address_has_shipping') %}
+                <fieldset class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--offset-y">
+                        {{ form_row(form.ship_to_billing_address) }}
+                    </div>
+                </fieldset>
+            {% endif %}
+        </div>
+    {% endif %}
+{%- endblock %}
+
+{% block _billing_address_widget -%}
+    <div {{ block('block_attributes') }}>
+        {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+        {% if workflowItem.data.get('disallow_billing_address_edit') %}
+            {% set billingAddress = checkout.billingAddress %}
+            <fieldset class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--offset-y grid__column--6">
+                    {{ renderAddress(checkout.billingAddress) }}
+                </div>
+            </fieldset>
+        {% else %}
+            {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
+            {% set hasCustomAddress = false %}
+            {% if form.billing_address.id.vars.value %}
+                {% set hasCustomAddress = not form.billing_address.vars.value.customerUserAddress and not form.billing_address.vars.value.customerAddress %}
+            {% endif %}
+            {% set billingAddress = form.billing_address.vars.value %}
+            <div data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ {
+                     view: 'orocheckout/js/app/views/address-view',
+                     selectors: {
+                         address: '#' ~ form.billing_address.customerAddress.vars.id,
+                         region: '#' ~ form.billing_address.region.vars.id,
+                         shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
+                         fieldsContainer: '#checkout-address-fields-container'
+                     }
+                 }|json_encode }}">
+
+                <div class="grid">
+                    <div class="grid__row grid__row--offset-none">
+                        <div class="grid__column grid__column--6">
+                            {{ form_row(form.billing_address.customerAddress) }}
+                        </div>
+                    </div>
+                </div>
+
+                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress) }}
+            </div>
+        {% endif %}
+
+        {% set hideShipping = false %}
+        {% if billingAddress %}
+            {% set typedAddress = billingAddress.customerAddress %}
+            {% if typedAddress is empty %}
+                {% set typedAddress  = billingAddress.customerUserAddress %}
+            {% endif %}
+
+            {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
+        {% endif %}
+
+        {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
+            <fieldset class="grid__row grid__row--offset-none {% if hideShipping %}hidden{% endif %}">
+                <div class="grid__column grid__column--offset-y">
+                    {{ form_row(form.ship_to_billing_address) }}
+                </div>
+            </fieldset>
+        {% endif %}
+    </div>
+{%- endblock %}
+
+{% block _shipping_methods_hidden_widget %}
+    {{ form_errors(form.shipping_method) }}
+    <div class="hidden">
+        <fieldset class="grid__row grid__row--offset-none">
+            {{ form_widget(form.shipping_method) }}
+            {{ form_widget(form.shipping_method_type) }}
+        </fieldset>
+    </div>
+            
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block _payment_methods_hidden_widget %}
+    <div class="hidden">
+        <fieldset class="grid__row grid__row--offset-none">
+            {{ form_widget(form.payment_method) }}
+        </fieldset>
+
+        {% if form.payment_save_for_later is defined %}
+            <div data-page-component-module="orocheckout/js/app/components/payment-save-for-later-component">
+                {{ form_widget(form.payment_save_for_later) }}
+            </div>
+        {% endif %}
+
+        {% if form.payment_validate is defined %}
+            <div data-page-component-module="orocheckout/js/app/components/payment-validate-component">
+                {{ form_widget(form.payment_validate) }}
+            </div>
+        {% endif %}
+        {% if form.additional_data is defined %}
+            <div data-page-component-module="orocheckout/js/app/components/payment-additional-data-component">
+                {{ form_row(form.additional_data) }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block _additional_options_widget -%}
+    <div class="collapse-view"
+         data-page-component-module="oroui/js/app/components/jquery-widget-component"
+         data-page-component-options="{{ {
+             widgetModule: 'oroui/js/widget/collapse-widget',
+             storageKey: id
+         }|json_encode() }}"
+    >
+        <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
+            <i class="collapse-view__trigger-icon fa-caret-right" data-toggle="collapse" data-target="#orderOptionsContainer"></i>
+        </span>
+        <a href="#" class="collapse-view__trigger" data-collapse-trigger>
+            {{ 'oro.checkout.workflow.view_options.label'|trans }}
+        </a>
+        <div class="order-review-options collapse-view__container" data-collapse-container>
+            <fieldset class="grid__row grid__row--offset-none"
+                      data-trigger-selector="#addShipDate"
+                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+                <div class="grid__column grid__column--offset-y grid__column--12 toggle-block">
+                    <label for="addShipDate" class="custom-checkbox toggle-block__trigger {% if checkout.shipUntil is not empty %}checked{% endif %}" data-checkbox>
+                        <input class="custom-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate" {% if checkout.shipUntil is not empty %}checked="checked"{% endif %}/>
+                        <span class="custom-checkbox__icon"></span>
+                        <span class="custom-checkbox__text">{{ "oro.checkout.order_review.shipping_date"|trans }}</span>
+                    </label>
+                    <div class="toggle-block__content">
+                        <div class="datepicker-box">
+                            <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                            {{ form_widget(form.ship_until, {
+                                'attr': {
+                                    'class': 'datepicker-box__input input',
+                                    'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans
+                                },
+                                'datePickerOptions': {
+                                    'minDate': 0
+                                }
+                            }) }}
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="grid__row grid__row--offset-none"
+                      data-trigger-selector="#addPoNumber"
+                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+                <div class="grid__column grid__column--offset-y grid__column--6 toggle-block">
+                    <label for="addPoNumber" class="custom-checkbox toggle-block__trigger {% if checkout.poNumber is not empty %}checked{% endif %}" data-checkbox>
+                        <input class="custom-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber" {% if checkout.poNumber is not empty %}checked="checked"{% endif %}/>
+                        <span class="custom-checkbox__icon"></span>
+                        <span class="custom-checkbox__text">{{ "oro.checkout.order_review.po_number"|trans }}</span>
+                    </label>
+                    <div class="toggle-block__content checkout__form__optional-ref-number">
+                        {{ form_widget(form.po_number, {'attr': {'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans}}) }}
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="grid__row grid__row--offset-none"
+                      data-trigger-selector="#addNote"
+                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+                <div class="grid__column grid__column--offset-y grid__column--6 toggle-block">
+                    <label for="addNote" class="custom-checkbox toggle-block__trigger {% if checkout.customerNotes is not empty %}checked{% endif %}" data-checkbox>
+                        <input class="custom-checkbox__input" type="checkbox" name="addNote" id="addNote" {% if checkout.customerNotes is not empty %}checked="checked"{% endif %}/>
+                        <span class="custom-checkbox__icon"></span>
+                        <span class="custom-checkbox__text">{{ "oro.checkout.order_review.note"|trans }}</span>
+                    </label>
+                    <div class="toggle-block__content checkout__form__order-not">
+                        {{ form_widget(form.customer_notes, {'attr': {'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+                    </div>
+                </div>
+            </fieldset>
+
+            {% if workflowItem.data.get('allow_manual_source_remove') %}
+                {% set removeElementOptions = {} %}
+                {% set removeLabel = workflowItem.data.get('source_remove_label') %}
+                {% if removeLabel %}
+                    {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
+                {% endif %}
+                <fieldset class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--offset-y grid__column--6">
+                        {{ form_row(form.remove_source, removeElementOptions) }}
+                    </div>
+                </fieldset>
+            {% endif %}
+        </div>
+    </div>
+{%- endblock %}
+
+{% block _checkout_button_continue_widget -%}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    
+    {{ block_widget(block) }}
+    
+    {% if transitionData is defined and transitionData %}
+        {% set transition = transitionData.transition %}
+
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'orocheckout/js/app/components/shipping-transition-button-component',
+            options: {
+                _sourceElement: '.checkout__form__submit',
+                'enabled': transitionData.isAllowed
+            }
+        }) }}></div>
+
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'orocheckout/js/app/components/payment-transition-button-component',
+            options: {
+                _sourceElement: '.checkout__form__submit',
+                'enabled': transitionData.isAllowed
+            }
+        }) }}></div>
+    {% endif %}
+{% endblock -%}
