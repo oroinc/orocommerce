@@ -1,5 +1,5 @@
 @fixture-HighlightingNewProducts.yml
-Feature: Managing customer user roles
+Feature: Highlighting new products
   In order to highlight selected new products
   As an Administrator
   I want to be able to mark certain products to be displayed as new on the store frontend
@@ -42,7 +42,7 @@ Feature: Managing customer user roles
     And save and close form
     Then I should see "Product has been saved" flash message
 
-  Scenario: New Arrival Stiker for not loged user
+  Scenario: New Arrival Stiker for a not logged in user
     Given I proceed as the User
     And I am on the homepage
     When I click "NewCategory"
@@ -56,7 +56,7 @@ Feature: Managing customer user roles
     And should see "New Arrival Text" for "PSKU1" product
     And should not see "New Arrival Text" for "PSKU2" product
 
-  Scenario: New Arrival Stiker for loged user
+  Scenario: New Arrival Stiker for logged in user
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "NewCategory"
