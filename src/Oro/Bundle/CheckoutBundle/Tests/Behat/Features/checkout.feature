@@ -5,6 +5,7 @@
 @fixture-Checkout.yml
 @fixture-InventoryLevel.yml
 @community-edition-only
+@skip
 Feature: Checkout workflow
   In order to create order on front store
   As a buyer
