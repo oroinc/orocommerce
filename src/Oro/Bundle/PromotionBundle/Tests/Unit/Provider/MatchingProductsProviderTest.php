@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
-use Oro\Bundle\PromotionBundle\Tests\Functional\Stub\DiscountLineItemStub;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
@@ -37,7 +37,7 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
         $segment = new Segment();
         $this->expectsQueryBuilderWithNoRootAlias($segment);
 
-        $this->provider->hasMatchingProducts($segment, [new DiscountLineItemStub()]);
+        $this->provider->hasMatchingProducts($segment, [new DiscountLineItem()]);
     }
 
     public function testGetMatchingProductsThrowsExceptionWhenNoRootAlias()
@@ -48,7 +48,7 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
         $segment = new Segment();
         $this->expectsQueryBuilderWithNoRootAlias($segment);
 
-        $this->provider->getMatchingProducts($segment, [new DiscountLineItemStub()]);
+        $this->provider->getMatchingProducts($segment, [new DiscountLineItem()]);
     }
 
     public function testHasMatchingProductsThrowsExceptionWhenNoQueryBuilder()
@@ -59,7 +59,7 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
         $segment = new Segment();
         $this->expectsNoQueryBuilder($segment);
 
-        $this->provider->hasMatchingProducts($segment, [new DiscountLineItemStub()]);
+        $this->provider->hasMatchingProducts($segment, [new DiscountLineItem()]);
     }
 
     public function testGetMatchingProductsThrowsExceptionWhenNoQueryBuilder()
@@ -70,7 +70,7 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
         $segment = new Segment();
         $this->expectsNoQueryBuilder($segment);
 
-        $this->provider->getMatchingProducts($segment, [new DiscountLineItemStub()]);
+        $this->provider->getMatchingProducts($segment, [new DiscountLineItem()]);
     }
 
     public function testHasMatchingProductsWhenEmptyLineItems()

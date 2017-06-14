@@ -2,38 +2,41 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-
-// TODO: Discount information should contain information about promotion (source) for example it's labels (name?)
-// TODO -> are required for rendering data on frontend
 class DiscountInformation
 {
-    const TYPE_FIXED_AMOUNT = 'fixed';
-    const TYPE_PERCENT = 'percent';
+    /**
+     * @var DiscountInterface
+     */
+    protected $discount;
 
     /**
-     * self::TYPE_FIXED_AMOUNT or self::TYPE_PERCENT
-     *
-     * @return string
+     * @var float
      */
-    public function getType()
-    {
+    protected $discountAmount;
 
+    /**
+     * @param DiscountInterface $discount
+     * @param float $amount
+     */
+    public function __construct(DiscountInterface $discount, $amount)
+    {
+        $this->discount = $discount;
+        $this->discountAmount = $amount;
     }
 
     /**
-     * @return Price
+     * @return DiscountInterface
      */
-    public function getValue()
+    public function getDiscount(): DiscountInterface
     {
-
+        return $this->discount;
     }
 
     /**
      * @return float
      */
-    public function getPercentage()
+    public function getDiscountAmount(): float
     {
-
+        return $this->discountAmount;
     }
 }
