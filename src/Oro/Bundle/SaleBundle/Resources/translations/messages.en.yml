@@ -96,6 +96,8 @@ oro:
                     choose_or_create: Select an existing address or enter a new address below
                     manual: Enter other address
                 shipping_options.label: 'Shipping Options'
+                error:
+                    price_override: 'Price overriding allowed by tier price only'
 
             datagrid:
                 customer.label: 'Quotes'

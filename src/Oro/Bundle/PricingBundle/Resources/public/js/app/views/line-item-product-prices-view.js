@@ -32,7 +32,7 @@ define(function(require) {
             LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 
             if (!this.options.editable) {
-                this.getElement('priceValue').prop('disabled', true);
+                this.getElement('priceValue').prop('readonly', true);
                 var productId = this.model.get('id');
                 if (!_.isUndefined(productId) && productId.length && this.model.get('price')) {
                     // store current values

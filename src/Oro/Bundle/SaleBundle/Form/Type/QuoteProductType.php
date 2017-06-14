@@ -92,6 +92,7 @@ class QuoteProductType extends AbstractType
     {
         $view->vars['page_component'] = $options['page_component'];
         $view->vars['page_component_options'] = $options['page_component_options'];
+        $view->vars['allow_add_free_form_items'] = $options['allow_add_free_form_items'];
     }
 
     /**
@@ -100,7 +101,6 @@ class QuoteProductType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $units = [];
-
         /* @var $products Product[] */
         $products = [];
 
@@ -141,6 +141,7 @@ class QuoteProductType extends AbstractType
             'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
             'compactUnits' => $options['compact_units'],
             'isFreeForm' => $isFreeForm,
+            'allowEditFreeForm' => $options['allow_add_free_form_items'],
         ];
     }
 
@@ -186,6 +187,7 @@ class QuoteProductType extends AbstractType
                 'add_label' => 'oro.sale.quoteproductoffer.add_label',
                 'options' => [
                     'compact_units' => $options['compact_units'],
+                    'allow_prices_override' => $options['allow_prices_override'],
                 ],
             ])
             ->add('type', 'hidden', [
@@ -212,6 +214,8 @@ class QuoteProductType extends AbstractType
             'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product',
             'compact_units' => false,
+            'allow_prices_override' => true,
+            'allow_add_free_form_items' => true,
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => ['view' => 'orosale/js/app/views/line-item-view'],
         ]);
