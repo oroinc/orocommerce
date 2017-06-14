@@ -20,11 +20,13 @@ class RuleType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $nameOptions = ['label' => 'oro.rule.name.label'];
+        if ($options['name_tooltip']) {
+            $nameOptions['tooltip'] = $options['name_tooltip'];
+        }
+
         $builder
-            ->add('name', TextareaType::class, [
-                'label' => 'oro.rule.name.label',
-                'tooltip' => $options['name_tooltip']
-            ])
+            ->add('name', TextareaType::class, $nameOptions)
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'oro.rule.enabled.label'
