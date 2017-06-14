@@ -69,6 +69,10 @@ define(function(require) {
             }
         },
 
+        /**
+         * @param {Event} e
+         * @param {Object} data
+         */
         transit: function(e, data) {
             e.preventDefault();
             if (!this.options.enabled || this.inProgress || !this.options.transitionUrl) {
@@ -78,19 +82,25 @@ define(function(require) {
             this.inProgress = true;
             mediator.execute('showLoading');
 
-            var url = this.options.transitionUrl;
-            var widgetParameters = '_widgetContainer=ajax&_wid=ajax_checkout';
-            url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
+            $.ajax(this.prepareAjaxData(data, this.options.transitionUrl))
+                .done(_.bind(this.onSuccess, this))
+                .fail(_.bind(this.onFail, this));
+        },
 
+        /**
+         * @param {Object} data
+         * @param {String} url
+         * @returns {Object}
+         */
+        prepareAjaxData: function(data, url) {
             data = data || {method: 'GET'};
-            data.url = url;
+            data.url = url + (-1 !== _.indexOf(url, '?') ? '&' : '?') + '_widgetContainer=ajax&_wid=ajax_checkout';
             data.errorHandlerMessage = false;
             if (this.$form) {
                 data.data = this.$form.serialize();
             }
-            $.ajax(data)
-                .done(_.bind(this.onSuccess, this))
-                .fail(_.bind(this.onFail, this));
+
+            return data;
         },
 
         onSuccess: function(response) {
@@ -161,8 +171,7 @@ define(function(require) {
             this.$el.off('click', $.proxy(this.transit, this));
             this.$transitionTriggers.off('click', $.proxy(this.transit, this));
 
-            mediator.off('checkout:transition-button:enable', this.enableTransitionButton, this);
-            mediator.off('checkout:transition-button:disable', this.disableTransitionButton, this);
+            mediator.off(null, null, this);
 
             TransitionButtonComponent.__super__.dispose.call(this);
         }

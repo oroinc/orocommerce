@@ -5,10 +5,11 @@
     {% set transition = transitionData.transition %}
 
     {% set pageComponentModule = transition.frontendOptions.page_component_module|default('orocheckout/js/app/components/transition-button-component') %}
-
+    {% set pageComponentOptions = transition.frontendOptions.page_component_options|default({}) %}
+    
     {{ UI.renderPageComponentAttributes({
         module: pageComponentModule,
-        options: {
+        options: pageComponentOptions|merge({
             'enabled': transitionData.isAllowed,
             'hasForm': transition.hasForm(),
             'transitionUrl': path(
@@ -18,7 +19,7 @@
                     transition: transition.name
                 }
             )
-    }
+        })
     }) }}
 {% endspaceless %}
 {% endmacro %}

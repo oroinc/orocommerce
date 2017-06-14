@@ -49,7 +49,7 @@
 
             {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
 
-            {% if workflowItem.data.get('billing_address_has_shipping') %}
+            {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
                 <fieldset class="grid__row grid__row--offset-none">
                     <div class="grid__column grid__column--offset-y">
                         {{ form_row(form.ship_to_billing_address) }}
@@ -108,14 +108,6 @@
             {% endif %}
 
             {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
-        {% endif %}
-
-        {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-            <fieldset class="grid__row grid__row--offset-none {% if hideShipping %}hidden{% endif %}">
-                <div class="grid__column grid__column--offset-y">
-                    {{ form_row(form.ship_to_billing_address) }}
-                </div>
-            </fieldset>
         {% endif %}
     </div>
 {%- endblock %}
@@ -244,9 +236,9 @@
 
 {% block _checkout_button_continue_widget -%}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    
+
     {{ block_widget(block) }}
-    
+
     {% if transitionData is defined and transitionData %}
         {% set transition = transitionData.transition %}
 
@@ -254,7 +246,8 @@
             module: 'orocheckout/js/app/components/shipping-transition-button-component',
             options: {
                 _sourceElement: '.checkout__form__submit',
-                'enabled': transitionData.isAllowed
+                'enabled': transitionData.isAllowed,
+                'hasForm': transition.hasForm()
             }
         }) }}></div>
 
@@ -262,7 +255,8 @@
             module: 'orocheckout/js/app/components/payment-transition-button-component',
             options: {
                 _sourceElement: '.checkout__form__submit',
-                'enabled': transitionData.isAllowed
+                'enabled': transitionData.isAllowed,
+                'hasForm': transition.hasForm()
             }
         }) }}></div>
     {% endif %}

@@ -62,6 +62,13 @@ workflows:
                         message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
                         type: 'warning'
 
+                    - '@assign_url':
+                        attribute: $.result.saveStateUrl
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: 'save_state'
+
                 preconditions:
                     '@and':
                         - '@equal': [$checkout_finished, false]
@@ -132,13 +139,6 @@ workflows:
                         parameters_mapping:
                             checkout: $checkout
 
-                    - '@assign_url':
-                        attribute: $.result.failedShippingAddressUrl
-                        route: oro_checkout_frontend_checkout
-                        route_parameters:
-                            id: $checkout.id
-                            transition: 'back_to_shipping_address_on_fail_address'
-
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_place_order
                         parameters_mapping:
@@ -147,6 +147,13 @@ workflows:
                             data.order: $.order
 
                     - '@assign_value': [$payment_in_progress, true]
+
+                    - '@assign_url':
+                        attribute: $.result.failedShippingAddressUrl
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $.checkout.id
+                            transition: 'payment_error'
 
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_purchase
