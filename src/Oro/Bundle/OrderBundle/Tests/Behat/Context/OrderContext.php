@@ -23,18 +23,6 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware, Kern
     }
 
     /**
-     * @Then /^I should see an Order page with (?P<message>[\w\s\#]+)$/
-     *
-     * @param string $message
-     */
-    public function titleOfOrderPage($message)
-    {
-        /* @var $page Order */
-        $page = $this->createElement('Order');
-        $page->assertTitle($message);
-    }
-
-    /**
      * @param string $path
      * @return string
      */
