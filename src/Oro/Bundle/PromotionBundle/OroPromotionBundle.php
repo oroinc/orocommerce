@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle;
 
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\DiscountContextConverterCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
@@ -18,5 +20,13 @@ class OroPromotionBundle extends Bundle
         }
 
         return $this->extension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new DiscountContextConverterCompilerPass());
     }
 }

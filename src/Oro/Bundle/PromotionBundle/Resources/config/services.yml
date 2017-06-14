@@ -60,6 +60,9 @@ services:
         arguments:
             - '@service_container'
 
+    oro_promotion.discount.context_converter.registry:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
+
     oro_promotion.form.type.promotion_select:
         class: Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType
         tags:
