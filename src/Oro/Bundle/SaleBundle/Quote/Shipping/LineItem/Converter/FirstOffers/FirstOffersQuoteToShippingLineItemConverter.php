@@ -46,13 +46,8 @@ class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLine
             }
 
             $firstQuoteProductOffer = $offers->first();
-            if (!$firstQuoteProductOffer->getPrice()) {
-                $lineItems = [];
-                break;
-            }
 
             $lineItemBuilder = $this->shippingLineItemBuilderFactory->createBuilder(
-                $firstQuoteProductOffer->getPrice(),
                 $firstQuoteProductOffer->getProductUnit(),
                 $firstQuoteProductOffer->getProductUnitCode(),
                 $firstQuoteProductOffer->getQuantity(),
@@ -61,6 +56,10 @@ class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLine
 
             if (null !== $firstQuoteProductOffer->getProduct()) {
                 $lineItemBuilder->setProduct($firstQuoteProductOffer->getProduct());
+            }
+
+            if (null !== $firstQuoteProductOffer->getPrice()) {
+                $lineItemBuilder->setPrice($firstQuoteProductOffer->getPrice());
             }
 
             $lineItems[] = $lineItemBuilder->getResult();

@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Behat\Context;
 
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -18,12 +17,11 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
     use KernelDictionary;
 
     /**
-     * @Given /^I set "(?P<webCatalogName>[\w\s]+)" as default web catalog for (?P<scopeName>(global|website)) scope$/
+     * @Given /^I set "(?P<webCatalogName>[\w\s]+)" as default web catalog$/
      *
      * @param string $webCatalogName
-     * @param string $scopeName
      */
-    public function setDefaultWebCatalog($webCatalogName, $scopeName)
+    public function setDefaultWebCatalog($webCatalogName)
     {
         $webCatalogRepository = $this->getContainer()
             ->get('oro_entity.doctrine_helper')
@@ -33,21 +31,9 @@ class FeatureContext extends OroFeatureContext implements KernelAwareContext
 
         static::assertNotNull($webCatalog, sprintf('Web Catalog with name "%s" not found', $webCatalogName));
 
-        switch ($scopeName) {
-            case 'global':
-                /** @var ConfigManager $configManager */
-                $configManager = $this->getContainer()->get('oro_config.global');
-                $scope = null;
-                break;
-            case 'website':
-                /** @var ConfigManager $configManager */
-                $configManager = $this->getContainer()->get('oro_config.website');
-                $websiteManager = $this->getContainer()->get('oro_website.manager');
-                $scope = $websiteManager->getDefaultWebsite();
-                break;
-        }
-
-        $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId(), $scope);
-        $configManager->flush($scope);
+        /** @var ConfigManager $configManager */
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
+        $configManager->flush();
     }
 }

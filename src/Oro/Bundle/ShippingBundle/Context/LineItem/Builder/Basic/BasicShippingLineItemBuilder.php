@@ -59,20 +59,17 @@ class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
     private $weight;
 
     /**
-     * @param Price $price
      * @param ProductUnit $unit
      * @param string $unitCode
      * @param int $quantity
      * @param ProductHolderInterface $productHolder
      */
     public function __construct(
-        Price $price,
         ProductUnit $unit,
         $unitCode,
         $quantity,
         ProductHolderInterface $productHolder
     ) {
-        $this->price = $price;
         $this->unit = $unit;
         $this->unitCode = $unitCode;
         $this->quantity = $quantity;
@@ -85,12 +82,11 @@ class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
     public function getResult()
     {
         $params = [
-            ShippingLineItem::FIELD_PRICE => $this->price,
             ShippingLineItem::FIELD_PRODUCT_UNIT => $this->unit,
             ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => $this->unitCode,
             ShippingLineItem::FIELD_QUANTITY => $this->quantity,
             ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
-            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => $this->productHolder->getEntityIdentifier()
+            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => $this->productHolder->getEntityIdentifier(),
         ];
 
         if (null !== $this->product) {
@@ -107,6 +103,10 @@ class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
 
         if (null !== $this->weight) {
             $params[ShippingLineItem::FIELD_WEIGHT] = $this->weight;
+        }
+
+        if (null !== $this->price) {
+            $params[ShippingLineItem::FIELD_PRICE] = $this->price;
         }
 
         return new ShippingLineItem($params);
@@ -148,6 +148,16 @@ class BasicShippingLineItemBuilder implements ShippingLineItemBuilderInterface
     public function setWeight(Weight $weight)
     {
         $this->weight = $weight;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPrice(Price $price)
+    {
+        $this->price = $price;
 
         return $this;
     }
