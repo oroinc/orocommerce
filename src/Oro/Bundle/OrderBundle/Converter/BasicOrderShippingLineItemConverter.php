@@ -43,14 +43,13 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
 
         $shippingLineItems = [];
         foreach ($orderLineItems as $orderLineItem) {
-            if ($orderLineItem->getPrice() === null || $orderLineItem->getProductUnit() === null) {
+            if ($orderLineItem->getProductUnit() === null) {
                 $shippingLineItems = [];
 
                 break;
             }
 
             $builder = $this->shippingLineItemBuilderFactory->createBuilder(
-                $orderLineItem->getPrice(),
                 $orderLineItem->getProductUnit(),
                 $orderLineItem->getProductUnit()->getCode(),
                 $orderLineItem->getQuantity(),
@@ -59,6 +58,10 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
 
             if (null !== $orderLineItem->getProduct()) {
                 $builder->setProduct($orderLineItem->getProduct());
+            }
+
+            if (null !== $orderLineItem->getPrice()) {
+                $builder->setPrice($orderLineItem->getPrice());
             }
 
             $shippingLineItems[] = $builder->getResult();

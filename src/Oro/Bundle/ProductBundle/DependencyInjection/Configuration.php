@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
     const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
+    const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
 
     /**
      * {@inheritDoc}
@@ -56,6 +57,8 @@ class Configuration implements ConfigurationInterface
                 self::DIRECT_URL_PREFIX => ['value' => ''],
                 self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
                 self::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
+                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
+                self::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
             ]
         );
 

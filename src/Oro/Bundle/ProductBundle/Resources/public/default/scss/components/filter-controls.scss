@@ -30,6 +30,14 @@
       }
     }
   }
+
+  &.toolbar-sticky-container {
+      max-width: 1400px;
+      margin: 0 auto !important;
+      padding: $offset-x-m $offset-y-m !important;
+
+      background: get-color('additional', 'base');
+  }
 }
 
 .catalog-filter {

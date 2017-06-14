@@ -168,15 +168,21 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('getResult');
 
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setSubTotal')
+            ->with(Price::create($subtotal->getAmount(), $subtotal->getCurrency()))
+            ->willReturnSelf();
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setCurrency')
+            ->with($checkout->getCurrency());
+
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createShippingContextBuilder')
-            ->with(
-                $checkout->getCurrency(),
-                Price::create($subtotal->getAmount(), $subtotal->getCurrency()),
-                $checkout,
-                (string)$checkout->getId()
-            )
+            ->with($checkout, (string)$checkout->getId())
             ->willReturn($this->contextBuilderMock);
 
         $this->checkoutLineItemsManager

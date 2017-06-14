@@ -8,7 +8,6 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Context\AbstractShippingLineItemTest;
 
 class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
 {
-
     public function setUp()
     {
         parent::setUp();
@@ -21,7 +20,6 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
     public function testFullBuild()
     {
         $builder = new BasicShippingLineItemBuilder(
-            $this->priceMock,
             $this->productUnitMock,
             self::TEST_CODE,
             self::TEST_QUANTITY,
@@ -30,6 +28,7 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
 
         $builder
             ->setProduct($this->productMock)
+            ->setPrice($this->priceMock)
             ->setProductSku(self::TEST_SKU)
             ->setDimensions($this->dimensionsMock)
             ->setWeight($this->weightMock);
@@ -44,7 +43,6 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
     public function testOptionalBuild()
     {
         $builder = new BasicShippingLineItemBuilder(
-            $this->priceMock,
             $this->productUnitMock,
             self::TEST_CODE,
             self::TEST_QUANTITY,
@@ -54,7 +52,6 @@ class BasicShippingLineItemBuilderTest extends AbstractShippingLineItemTest
         $shippingLineItem = $builder->getResult();
 
         $expectedShippingLineItem = new ShippingLineItem([
-            ShippingLineItem::FIELD_PRICE => $this->priceMock,
             ShippingLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
             ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => self::TEST_CODE,
             ShippingLineItem::FIELD_QUANTITY => self::TEST_QUANTITY,

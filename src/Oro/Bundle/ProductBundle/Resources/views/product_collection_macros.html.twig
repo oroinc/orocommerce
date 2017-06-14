@@ -1,9 +1,9 @@
-{% macro popupButton(eventName, hiddenProductsSelector, hint) -%}
+{% macro popupButton(gridName, hiddenProductsSelector, hint) -%}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     <div class="btn-group">
         {{ UI.clientLink({
-            'dataUrl': path('oro_add_products_widget'),
+            'dataUrl': path('oro_add_products_widget', {gridName: gridName}),
             'label': 'oro.product.content_variant.ui.add'|trans,
             'class': 'btn',
             'title': hint,
@@ -12,7 +12,7 @@
                 'multiple': false,
                 'options': {
                     'hiddenProductsSelector': hiddenProductsSelector,
-                    'eventName': eventName,
+                    'gridName': gridName,
                     'dialogOptions': {
                         'title': 'oro.product.content_variant.ui.add_products'|trans,
                         'dblclick': 'maximize',
