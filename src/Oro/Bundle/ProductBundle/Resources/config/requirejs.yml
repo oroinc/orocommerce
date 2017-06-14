@@ -40,6 +40,7 @@ config:
         'oro/related-items-widget': 'bundles/oroproduct/js/app/widget/related-items-widget.js'
         'oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent': 'bundles/oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent.js'
         'oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent': 'bundles/oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent.js'
+        'oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action': 'bundles/oroproduct/js/datagrid/action/trigger-event-for-selected-product-ids-mass-action.js'
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

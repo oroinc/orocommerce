@@ -131,6 +131,13 @@ datagrids:
                 event_name:    product-collection-add-to-excluded
                 label:         oro.product.grid.action.product_collection.add_to_exclude
                 icon:          remove
+        mass_actions:
+            add_to_excluded:
+                type:            trigger-event-for-selected-product-ids
+                label:           oro.product.grid.action.product_collection.add_to_exclude
+                icon:            remove
+                data_identifier: product.id
+                event_name:      product-collection-add-to-excluded
 
     product-collection-selected-products-grid:
         extends: product-collection-base-grid
@@ -147,38 +154,39 @@ datagrids:
                 selectedProducts:
                     default: 0
 
-    product-collection-add-products-grid:
+    product-collection-add-products-base-grid:
         extends: product-collection-base-grid
         options:
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
             routerEnabled: false
-            rowSelection:
-                dataField: id
-                columnName: isSelected
-                selectors:
-                    included: '#appendProducts'
-                    excluded: '#removeProducts'
         source:
             query:
-                select:
-                    - >
-                      (CASE WHEN (product.id IN (:data_in) AND product.id NOT IN (:data_not_in))
-                      THEN true ELSE false
-                      END) as isSelected
                 where:
                     and:
                         - NOT (product.id IN (:hiddenProducts))
             bind_parameters:
                 hiddenProducts:
                     default: 0
-        columns:
-            isSelected:
-                label:         oro.product.content_variant.ui.selected
-                editable:      true
-                frontend_type: boolean
-                order: -1
+        mass_actions:
+            add:
+                type: trigger-event-for-selected-product-ids
+                label: oro.product.grid.action.product_collection.add_individual_product
+                icon: plus
+                data_identifier: product.id
+
+    product-collection-add-products-to-included-grid:
+        extends: product-collection-add-products-base-grid
+        mass_actions:
+            add:
+                event_name: product-collection-add-to-included
+
+    product-collection-add-products-to-excluded-grid:
+        extends: product-collection-add-products-base-grid
+        mass_actions:
+            add:
+                event_name: product-collection-add-to-excluded
 
     product-collection-included-products-grid:
         extends: product-collection-selected-products-grid
@@ -188,6 +196,13 @@ datagrids:
                 event_name:    product-collection-remove-from-included
                 label:         oro.product.grid.action.product_collection.remove_from_included
                 icon:          undo
+        mass_actions:
+            remove_from_included:
+                type:            trigger-event-for-selected-product-ids
+                label:           oro.product.grid.action.product_collection.remove_from_included
+                icon:            undo
+                data_identifier: product.id
+                event_name:      product-collection-remove-from-included
 
     product-collection-excluded-products-grid:
         extends: product-collection-selected-products-grid
@@ -197,6 +212,13 @@ datagrids:
                 event_name:    product-collection-remove-from-excluded
                 label:         oro.product.grid.action.product_collection.remove_from_excluded
                 icon:          trash
+        mass_actions:
+            remove_from_excluded:
+                type:            trigger-event-for-selected-product-ids
+                label:           oro.product.grid.action.product_collection.remove_from_excluded
+                icon:            trash
+                data_identifier: product.id
+                event_name:      product-collection-remove-from-excluded
 
     products-grid:
         extends: products-select-grid-base

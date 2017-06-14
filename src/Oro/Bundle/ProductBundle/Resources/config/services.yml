@@ -958,6 +958,13 @@ services:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.provider.serialized_field_provider'
 
+    oro_product.provider.grid_count_provider:
+        class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
+        arguments:
+            - '@oro_datagrid.datagrid.manager'
+            - '@oro_security.security_facade'
+            - '@oro_datagrid.extension.pager.orm.pager'
+
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
         public: false
@@ -974,4 +981,16 @@ services:
         calls:
             - [setParameterName,  ['hiddenProducts']]
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-base-grid, method: onBuildAfter }
+
+    oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler
+        arguments:
+            - '@oro_config.manager'
+            - '@translator'
+
+    oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }

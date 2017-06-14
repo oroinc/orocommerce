@@ -206,7 +206,7 @@ oro:
             groups:
                 product.title: 'Product'
                 product_collections.title: 'Product Collections'
-                product_collections_indexation.title: 'Product Collections Indexation'
+                product_collections_general.title: 'General'
                 product_unit_rounding.title: 'Product Unit Rounding'
                 product_single_unit_mode.title: 'Product Single Unit Mode'
                 frontend_inventory_statuses_visibility.title: 'Store Frontend'
@@ -250,6 +250,9 @@ oro:
                         every_six_hours.label: Every six hours
                         every_twelve_hours.label: Every twelve hours
                         every_day.label: Every day
+                product_collection_mass_action_limitation:
+                    label: 'Mass action limit'
+                    tooltip: 'This limitation prevents the handling of too many products when using mass action.'
                 product_image_watermark_file.label: 'File'
                 product_image_watermark_size:
                     label: 'Size'
@@ -284,6 +287,12 @@ oro:
                     add_to_exclude: Exclude
                     remove_from_included: Reset to Default
                     remove_from_excluded: Remove
+                    add_individual_product: Add
+            mass_action:
+                get_selected_product_ids:
+                    response:
+                        failed: A limit of selected products (%limit%) was exceeded. Do you want to force add your selection?
+                        success: Products were successfully added.
 
         ui:
             duplicate: Duplicate

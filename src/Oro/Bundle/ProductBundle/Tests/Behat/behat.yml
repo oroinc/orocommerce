@@ -137,6 +137,19 @@ oro_behat_extension:
     Choose a field..:
       selector: "#select2-drop-mask"
 
+    AllAddedCounter:
+      selector: 'a[data-role="tab-filtered"] span[data-role="counter"]'
+
+    ExcludedCounter:
+      selector: 'a[data-role="tab-excluded"] span[data-role="counter"]'
+
+    ManuallyAddedCounter:
+      selector: 'a[data-role="tab-included"] span[data-role="counter"]'
+
+    ActiveGridFilters:
+      selector: 'div.tab-pane.active div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
     PreviewResults:
       selector:
         type: xpath
@@ -158,9 +171,13 @@ oro_behat_extension:
       selector: 'div.tab-pane.active div.grid-container'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    AddProductsPopupGrid:
+    AddProductsPopup:
       selector: 'div.ui-dialog div.grid-container'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    AddProductsPopupFilters:
+      selector: 'div.ui-dialog div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Reset:
       selector: "a.btn.filter-reset"
@@ -256,6 +273,12 @@ oro_behat_extension:
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
+    MassActionLimit:
+      selector: 'input[id*="mass_action_limitation_value"]'
+
+    GridPagination:
+      selector: 'div.tab-pane.active div.toolbar div.pagination input'
+
   suites:
     OroProductBundle:
       contexts:
@@ -268,7 +291,7 @@ oro_behat_extension:
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
-        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features'

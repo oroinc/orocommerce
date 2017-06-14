@@ -100,6 +100,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'product_collections_indexation_cron_schedule' => [
                     'value' => '0 * * * *',
                     'scope' => 'app'
+                ],
+                'product_collections_mass_action_limitation' => [
+                    'value' => 500,
+                    'scope' => 'app'
                 ]
             ]
         ];

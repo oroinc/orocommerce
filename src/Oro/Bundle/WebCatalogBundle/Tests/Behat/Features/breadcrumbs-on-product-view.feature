@@ -3,7 +3,7 @@ Feature: Product view page breadcrumbs
 
   Scenario: Create content nodes in web catalog and mark web catalog as default
     Given I login as administrator
-    And I set "Default Web Catalog" as default web catalog for global scope
+    And I set "Default Web Catalog" as default web catalog
     And I go to Marketing/ Web Catalogs
     And I click view Default Web Catalog in grid
     And I click "Edit Content Tree"
