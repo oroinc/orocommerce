@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
-use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class PromotionProvider
