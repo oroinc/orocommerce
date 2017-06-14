@@ -33,4 +33,13 @@ oro_behat_extension:
     PriceSelectionStrategyForm:
       selector: '.control-group-oro_pricing_list_strategy_selection'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+    Product Price Main:
+      selector: '.product-price__main'
+    Product Price Listed:
+      selector: '.product-price__listed'
+    Product Price Hint:
+      selector: '.product-price__hint'
+    Product Price Popover:
+      selector: '.prices-hint-content.popover'
+
 
