@@ -6,7 +6,7 @@ Feature: Process order submission with Authorize.Net integration
     When I go to System/Integrations/Manage Integrations
     And I click "Create Integration"
     And I select "Authorize.NET" from "Type"
-    And I fill integration fields with next data:
+    And I fill "Authorize.Net Form" with:
       | Name                      | AuthorizeNet         |
       | Label                     | Authorize            |
       | Short Label               | Au                   |
@@ -28,7 +28,7 @@ Feature: Process order submission with Authorize.Net integration
     And I fill in "Name" with "Authorize"
     And I fill in "Sort Order" with "1"
     And I select "Authorize" from "Method"
-    And click add payment method button
+    And I press "Add Method Button"
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
@@ -40,7 +40,7 @@ Feature: Process order submission with Authorize.Net integration
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
-    And I fill credit card fields with next data:
+    And I fill "Credit Card Form" with:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |
       | Year             | 2027             |
@@ -54,6 +54,6 @@ Feature: Process order submission with Authorize.Net integration
     When I go to Sales/Orders
     And I click View Payment authorized in grid
     And I click "Capture"
-    Then I should see "Charge The Customer" modal window
+    Then I should see "Charge The Customer" in the "UiWindow Title" element
     When I click "Yes, Charge" in modal window
     Then I should see "The payment has been captured successfully" flash message

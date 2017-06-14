@@ -29,62 +29,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     const PRODUCT_INVENTORY_QUANTITY = 100;
 
     /**
-     * Example: And I fill integration fields with next data:
-     * | Name                       | Authorize             |
-     * | Label                      | authorize             |
-     * | Short Label                | au_sys                |
-     * | Allowed Credit Card Types  | Visa                  |
-     * | API Login ID               | someapiloginid        |
-     * | Transaction Key            | sometransactionkey    |
-     * | Client Key                 | someclientkey         |
-     * | Require CVV Entry          | true                  |
-     * | Payment Action             | Authorize             |
-     * @Then I fill integration fields with next data:
-     *
-     * @param TableNode $table
-     *
-     * @return Form
-     */
-    public function fillIntegrationsFieldsWithNextData(TableNode $table)
-    {
-        /** @var Form $form */
-        $form = $this->createElement('AuNetForm');
-        $form->fill($table);
-
-        return $form;
-    }
-
-    /**
-     * Example: And I fill credit card fields with next data:
-     * | CreditCardNumber | 5555555555554444 |
-     * | Month            | 11               |
-     * | Year             | 19               |
-     * | CVV              | 123              |
-     * @Then I fill credit card fields with next data:
-     *
-     * @param TableNode $table
-     *
-     * @return Form
-     */
-    public function fillCreditCardFieldsWithNextData(TableNode $table)
-    {
-        /** @var Form $form */
-        $form = $this->createElement('CreditCardForm');
-        $form->fill($table);
-
-        return $form;
-    }
-
-    /**
-     * @When click add payment method button
-     */
-    public function clickAddMethodButton()
-    {
-        $createOrderButton = $this->createElement('AddMethodButton');
-        $createOrderButton->click();
-    }
-
-    /**
      * @Given There are products in the system available for order
      */
     public function setProductInventoryLevelQuantity()

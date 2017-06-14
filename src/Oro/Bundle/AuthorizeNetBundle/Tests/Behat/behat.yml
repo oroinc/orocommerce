@@ -1,6 +1,6 @@
 oro_behat_extension:
   elements:
-    AuNetForm:
+    Authorize.NetForm:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
