@@ -5,14 +5,12 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * Discounts will modify? prices, add discount information, may change structure of line items collection
- *
- * Important!!! Discount services MUST BE registered with shared: false
+ * Discount services MUST BE registered with shared: false
  */
 interface DiscountInterface
 {
-    // TODO: Discount should contain information about promotion (source) for example it's labels (name?) are required
-    // TODO -> for rendering data on frontend
+    const TYPE_AMOUNT = 'amount';
+    const TYPE_PERCENT = 'percent';
 
     /**
      * @param array $options
@@ -30,7 +28,36 @@ interface DiscountInterface
     public function __toString(): string;
 
     /**
+     * Get type of discount: TYPE_AMOUNT or TYPE_PERCENT
+     *
+     * @return string
+     */
+    public function getDiscountType(): string;
+
+    /**
+     * @return float
+     */
+    public function getDiscountValue(): float;
+
+    /**
+     * Currency ISO 4217 code
+     *
+     * @return string
+     */
+    public function getDiscountCurrency(): string;
+
+    /**
+     * Add information about discount to context
+     *
      * @param DiscountContext $discountContext
      */
     public function apply(DiscountContext $discountContext);
+
+    /**
+     * Calculate discount value for given entity
+     *
+     * @param object $entity
+     * @return float
+     */
+    public function calculate($entity): float;
 }

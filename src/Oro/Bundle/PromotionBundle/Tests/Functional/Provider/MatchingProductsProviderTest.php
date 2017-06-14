@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionSegmentData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\Stub\DiscountLineItemStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class MatchingProductsProviderTest extends WebTestCase
@@ -108,13 +108,13 @@ class MatchingProductsProviderTest extends WebTestCase
 
     /**
      * @param array $productReferences
-     * @return array|DiscountLineItemStub[]
+     * @return array|DiscountLineItem[]
      */
     private function createLineItems(array $productReferences)
     {
         $lineItems = [];
         foreach ($productReferences as $productReference) {
-            $lineItem = new DiscountLineItemStub();
+            $lineItem = new DiscountLineItem();
             $lineItem->setProduct($this->getReference($productReference));
             $lineItems[] = $lineItem;
         }

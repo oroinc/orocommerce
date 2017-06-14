@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
+use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedDiscountException;
+use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedTypeException;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -47,8 +49,7 @@ class DiscountFactory
 
         $discount = $this->container->get($this->typeToServiceMap[$type]);
         if (!$discount instanceof DiscountInterface) {
-            // TODO: maybe change exception class
-            throw new \RuntimeException(sprintf('Unsupported discount object %s', get_class($discount)));
+            throw new UnsupportedDiscountException(sprintf('Unsupported discount object %s', get_class($discount)));
         }
         $discount->configure($configuration->getOptions());
 
