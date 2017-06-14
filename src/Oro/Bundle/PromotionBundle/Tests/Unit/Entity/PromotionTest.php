@@ -23,7 +23,6 @@ class PromotionTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime('now');
         $properties = [
             ['id', 123, false],
-            ['name', 'some name', false],
             ['rule', new Rule(), false],
             ['owner', new User()],
             ['organization', new Organization()],

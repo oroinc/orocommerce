@@ -4,19 +4,39 @@ oro:
         entity_plural_label: Promotions
         entity_description: Represents promotion information
         id.label: ID
-        name.label: Name
         coupons.label: Coupons
         descriptions.label: Descriptions
+        descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration
         labels.label: Labels
+        labels.tooltip: This label will be displayed to user
+        name.tooltip: Name tooltip
         organization.label: Organization
         owner.label: Owner
         products_segment.label: Product Segment
-        rule.label: Rule
         schedules.label: Schedules
         scopes.label: Scopes
-        use_coupons.label: Use Coupons
-        rule.enabled.label: Status
+        use_coupons:
+            label: Use Coupons
+            no: No
+            yes: Yes
+        rule:
+            label: Rule
+            name.label: Name
+            enabled.label: Enabled
+            expression:
+                toggle:
+                    hide: Hide
+                    show: Show
+        dates.label: Dates
+        restrictions.label: Restrictions
+
+        blocks:
+            general: General
+            schedules: Schedules
+            conditions: Conditions
+            matching_items: Matching Items
+            store_frontend: Store Frontend
 
         discountconfiguration:
             entity_label: Discount Configuration
@@ -49,6 +69,9 @@ oro:
                 promotion_general.title: Promotion General
             fields:
                 feature_enabled.label: Enable Promotion
+
+        controller:
+            saved.message: Promotion has been saved
 
         form:
             choose: 'Choose a Promotion...'

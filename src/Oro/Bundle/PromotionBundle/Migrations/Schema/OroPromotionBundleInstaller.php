@@ -68,7 +68,6 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     {
         $table = $schema->createTable('oro_promotion');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('discount_config_id', 'integer', []);
         $table->addColumn('rule_id', 'integer', []);

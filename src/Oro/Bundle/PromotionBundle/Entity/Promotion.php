@@ -76,13 +76,6 @@ class Promotion extends ExtendPromotion implements
     protected $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255, nullable=false)
-     */
-    protected $name;
-
-    /**
      * @var RuleInterface
      *
      * @ORM\ManyToOne(
@@ -272,34 +265,15 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
-    public function getRule(): RuleInterface
+    public function getRule()
     {
         return $this->rule;
     }
@@ -318,7 +292,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
-    public function getLabels(): Collection
+    public function getLabels()
     {
         return $this->labels;
     }
@@ -352,7 +326,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
-    public function getDescriptions(): Collection
+    public function getDescriptions()
     {
         return $this->descriptions;
     }
@@ -386,7 +360,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return Collection|Scope[]
      */
-    public function getScopes(): Collection
+    public function getScopes()
     {
         return $this->scopes;
     }
@@ -430,7 +404,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return Collection|PromotionSchedule[]
      */
-    public function getSchedules(): Collection
+    public function getSchedules()
     {
         return $this->schedules;
     }
@@ -442,6 +416,7 @@ class Promotion extends ExtendPromotion implements
     public function addSchedule(PromotionSchedule $schedule)
     {
         if (!$this->schedules->contains($schedule)) {
+            $schedule->setPromotion($this);
             $this->schedules->add($schedule);
         }
 
@@ -464,7 +439,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return DiscountConfiguration
      */
-    public function getDiscountConfiguration(): DiscountConfiguration
+    public function getDiscountConfiguration()
     {
         return $this->discountConfiguration;
     }
@@ -483,7 +458,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return bool
      */
-    public function isUseCoupons(): bool
+    public function isUseCoupons()
     {
         return $this->useCoupons;
     }
@@ -502,7 +477,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return Collection|Coupon[]
      */
-    public function getCoupons(): Collection
+    public function getCoupons()
     {
         return $this->coupons;
     }
@@ -536,7 +511,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @return Segment
      */
-    public function getProductsSegment(): Segment
+    public function getProductsSegment()
     {
         return $this->productsSegment;
     }
@@ -545,7 +520,7 @@ class Promotion extends ExtendPromotion implements
      * @param Segment $productsSegment
      * @return $this
      */
-    public function setProductsSegment($productsSegment)
+    public function setProductsSegment(Segment $productsSegment)
     {
         $this->productsSegment = $productsSegment;
 

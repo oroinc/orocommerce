@@ -22,9 +22,11 @@ class RuleType extends AbstractType
     {
         $builder
             ->add('name', TextareaType::class, [
-                'label' => 'oro.rule.name.label'
+                'label' => 'oro.rule.name.label',
+                'tooltip' => $options['name_tooltip']
             ])
             ->add('enabled', CheckboxType::class, [
+                'required' => false,
                 'label' => 'oro.rule.enabled.label'
             ])
             ->add('sortOrder', IntegerType::class, [
@@ -49,6 +51,7 @@ class RuleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Rule::class,
+            'name_tooltip' => null
         ]);
     }
 

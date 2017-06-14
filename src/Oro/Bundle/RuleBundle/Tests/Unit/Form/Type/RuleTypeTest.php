@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\RuleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class RuleTypeTest extends FormIntegrationTestCase
 {
@@ -67,5 +71,32 @@ class RuleTypeTest extends FormIntegrationTestCase
                     ->setSortOrder(0)
             ],
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        $translator = $this->getMockBuilder(Translator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $configProvider = $this
+            ->getMockBuilder(ConfigProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return array_merge(
+            parent::getExtensions(),
+            [
+                new PreloadedExtension(
+                    [],
+                    [
+                        'form' => [new TooltipFormExtension($configProvider, $translator)],
+                    ]
+                ),
+            ]
+        );
     }
 }

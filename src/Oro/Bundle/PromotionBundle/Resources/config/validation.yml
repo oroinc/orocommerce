@@ -1,0 +1,17 @@
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    properties:
+        rule:
+            - Valid: ~
+        useCoupons:
+            - NotBlank: ~
+        schedules:
+            - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection: ~
+            - Valid: ~
+        scopes:
+            - Valid: ~
+        productsSegment:
+            - Valid: ~
+        labels:
+            - Valid: ~
+        descriptions:
+            - Valid: ~
