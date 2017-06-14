@@ -12,7 +12,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            sidebarComponentContainerId: null,
+            scope: null,
             delimiter: ',',
             selectors: {
                 included: null,
@@ -24,7 +24,7 @@ define(function(require) {
          * @property {Object}
          */
         requiredOptions: [
-            'sidebarComponentContainerId'
+            'scope'
         ],
 
         /**
@@ -44,19 +44,19 @@ define(function(require) {
             this.$included = this.options._sourceElement.find(this.options.selectors.included);
             this.$excluded = this.options._sourceElement.find(this.options.selectors.excluded);
             mediator.on(
-                'product-collection-add-to-included:' + this.options.sidebarComponentContainerId,
+                'product-collection-add-to-included:' + this.options.scope,
                 _.bind(this.onAddToIncluded, this)
             );
             mediator.on(
-                'product-collection-add-to-excluded:' + this.options.sidebarComponentContainerId,
+                'product-collection-add-to-excluded:' + this.options.scope,
                 _.bind(this.onAddToExcluded, this)
             );
             mediator.on(
-                'product-collection-remove-from-included:' + this.options.sidebarComponentContainerId,
+                'product-collection-remove-from-included:' + this.options.scope,
                 _.bind(this.onRemoveFromIncluded, this)
             );
             mediator.on(
-                'product-collection-remove-from-excluded:' +  this.options.sidebarComponentContainerId,
+                'product-collection-remove-from-excluded:' +  this.options.scope,
                 _.bind(this.onRemoveFromExcluded, this)
             );
         },
@@ -144,9 +144,11 @@ define(function(require) {
                 return;
             }
 
+            ids = _.map(ids, function(value) { return parseInt(value); });
+
             var currentState = $from.val().split(this.options.delimiter);
             currentState = _.filter(currentState, function(value) {
-                return value !== '' && _.indexOf(ids, value) < 0;
+                return value !== '' && _.indexOf(ids, parseInt(value)) < 0;
             });
 
             var newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
