@@ -30,7 +30,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ch
     And I fill in "Name" with "PayPalPro"
     And I fill in "Sort Order" with "1"
     And I select "PayPalFlow" from "Method"
-    And click add payment method button
+    And I press "Add Method Button"
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
