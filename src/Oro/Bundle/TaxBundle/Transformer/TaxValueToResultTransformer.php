@@ -23,7 +23,7 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     /** {@inheritdoc} */
     public function transform(TaxValue $taxValue)
     {
-        return $taxValue->getResult();
+        return new Result($taxValue->getResult()->getArrayCopy());
     }
 
     /** {@inheritdoc} */
