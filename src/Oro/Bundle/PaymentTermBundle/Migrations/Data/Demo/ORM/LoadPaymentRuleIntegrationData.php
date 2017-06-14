@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -94,7 +93,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
 
         $shippingRule->setRule($rule)
             ->setOrganization($this->getOrganization($manager))
-            ->setCurrency($this->getDefaultCurrency())
+            ->setCurrency(CurrencyConfig::DEFAULT_CURRENCY)
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);
@@ -127,21 +126,5 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         return $this->container
             ->get('oro_payment_term.config.integration_method_identifier_generator')
             ->generateIdentifier($channel);
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    private function getConfigManager()
-    {
-        return $this->container->get('oro_config.global');
-    }
-
-    /**
-     * @return string
-     */
-    private function getDefaultCurrency()
-    {
-        return $this->getConfigManager()->get(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY));
     }
 }
