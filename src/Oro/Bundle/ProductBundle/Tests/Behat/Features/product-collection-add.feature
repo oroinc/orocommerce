@@ -8,11 +8,11 @@ Feature:
     Given sessions active:
      | Admin  | first_session  |
      | Buyer  | second_session |
-    And I set "Default Web Catalog" as default web catalog for website scope
 
   Scenario: Add Product Collection variant
     Given I proceed as the Admin
     And I login as administrator
+    And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click on "Show Variants Dropdown"
