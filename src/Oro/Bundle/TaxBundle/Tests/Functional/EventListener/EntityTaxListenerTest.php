@@ -11,10 +11,10 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 
-class OrderTaxListenerTest extends WebTestCase
+class EntityTaxListenerTest extends WebTestCase
 {
-    const ORDER_CLASS = 'Oro\Bundle\OrderBundle\Entity\Order';
-    const TAX_VALUE_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxValue';
+    const ORDER_CLASS = Order::class;
+    const TAX_VALUE_CLASS = TaxValue::class;
 
     /** @var ManagerRegistry */
     protected $doctrine;

@@ -3,7 +3,6 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:SmallInventoryLevel.yml
-@skip
 Feature: Checkout from Quote Quantity Errors
   In order to to create order from Quote on front store
   As a buyer
