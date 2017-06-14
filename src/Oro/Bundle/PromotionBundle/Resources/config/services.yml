@@ -33,9 +33,11 @@ services:
     oro_promotion.rule_filtration.matching_items:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
         public: false
-#        TODO: Uncomment after BB-10079
-#        decorates: oro_promotion.rule_filtration.service
-#        decoration_priority: 75
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 75
+        arguments:
+            - '@oro_promotion.rule_filtration.matching_items.inner'
+            - '@oro_promotion.provider.matching_products_provider'
 
     oro_promotion.rule_filtration.stop_processing_decorator:
         class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
