@@ -77,3 +77,12 @@ ShippingBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+
+OrderBundle
+-----------
+- Return value of method `Oro\Bundle\OrderBundle\Manager\AbstractAddressManager:getGroupedAddresses` changed from `array` to `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection`
+- Removed protected method `Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
+
+SaleBundle
+----------
+- Removed protected method `Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead

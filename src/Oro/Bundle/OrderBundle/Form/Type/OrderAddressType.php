@@ -3,23 +3,16 @@
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 
 class OrderAddressType extends AbstractOrderAddressType
 {
     const NAME = 'oro_order_address_type';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param string $type - address type
-     * @param CustomerOwnerAwareInterface $entity
-     * @param bool $isManualEditGranted
-     * @param bool $isEditEnabled
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     protected function initCustomerAddressField(
         FormBuilderInterface $builder,
@@ -29,7 +22,8 @@ class OrderAddressType extends AbstractOrderAddressType
         $isEditEnabled
     ) {
         if ($isEditEnabled) {
-            $addresses = $this->orderAddressManager->getGroupedAddresses($entity, $type);
+            $addressCollection = $this->orderAddressManager->getGroupedAddresses($entity, $type);
+            $addresses = $addressCollection->toArray();
 
             $customerAddressOptions = [
                 'label' => false,
@@ -39,7 +33,7 @@ class OrderAddressType extends AbstractOrderAddressType
                 'configs' => ['placeholder' => 'oro.order.form.address.choose'],
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
-                    'data-default' => $this->getDefaultAddressKey($entity, $type, $addresses),
+                    'data-default' => $addressCollection->getDefaultAddressKey(),
                 ],
             ];
 
@@ -81,7 +75,7 @@ class OrderAddressType extends AbstractOrderAddressType
     }
 
     /**
-     * @return string
+     * {@inheritdoc }
      */
     public function getName()
     {

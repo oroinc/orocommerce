@@ -7,13 +7,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class AbstractAddressManager
 {
@@ -86,7 +86,7 @@ class AbstractAddressManager
     /**
      * @param CustomerOwnerAwareInterface $entity
      * @param string $type
-     * @return array
+     * @return TypedOrderAddressCollection
      */
     public function getGroupedAddresses(CustomerOwnerAwareInterface $entity, $type)
     {
@@ -111,7 +111,7 @@ class AbstractAddressManager
             }
         }
 
-        return $addresses;
+        return new TypedOrderAddressCollection($entity->getCustomerUser(), $type, $addresses);
     }
 
     /**

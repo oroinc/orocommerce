@@ -14,6 +14,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
@@ -33,6 +34,9 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
     /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
     protected $serializer;
 
+    /** @var TypedOrderAddressCollection|\PHPUnit_Framework_MockObject_MockObject */
+    protected $addressCollection;
+
     protected function setUp()
     {
         parent::setUp();
@@ -46,9 +50,12 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->orderAddressManager = $this->getMockBuilder('Oro\Bundle\OrderBundle\Manager\OrderAddressManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressCollection = $this->createMock(TypedOrderAddressCollection::class);
+
+        $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
+        $this->orderAddressManager->expects($this->any())
+            ->method('getGroupedAddresses')
+            ->willReturn($this->addressCollection);
 
         $this->serializer = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Serializer\Serializer')
             ->disableOriginalConstructor()
@@ -100,7 +107,11 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         array $formErrors = []
     ) {
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
+            ->willReturn([]);
+
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
         $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
@@ -223,8 +234,11 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         array $groupedAddresses = []
     ) {
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
             ->willReturn($groupedAddresses);
+
         $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
             ->will(
                 $this->returnCallback(
@@ -327,7 +341,10 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
         $view = new FormView();
         $view->children = ['country' => new FormView(), 'city' => new FormView(), 'customerAddress' => new FormView()];
 
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
+            ->willReturn([]);
+
         $this->orderAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
             ->willReturn(false);
 

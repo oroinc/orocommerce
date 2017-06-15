@@ -77,8 +77,13 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
     ) {
         $customerAddressIdentifier = $submittedData['customerAddress'];
         $this->serializer->expects($this->once())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
             ->willReturn(['group_name' => [$customerAddressIdentifier => $savedAddress]]);
+        $this->addressCollection->expects($this->once())
+            ->method('getDefaultAddressKey')
+            ->willReturn($customerAddressIdentifier);
 
         $this->orderAddressManager->expects($this->once())->method('getEntityByIdentifier')
             ->willReturn($savedAddress);
@@ -114,7 +119,8 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
 
     public function testSubmitWithManualPermissionWhenNoDataSubmitted()
     {
-        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
             ->willReturn([]);
 
         $formOptions =  [
