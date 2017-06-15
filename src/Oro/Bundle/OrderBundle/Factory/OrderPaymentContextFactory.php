@@ -42,17 +42,19 @@ class OrderPaymentContextFactory
             return null;
         }
 
+        $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
+            $order,
+            (string)$order->getId()
+        );
+
         $subtotal = Price::create(
             $order->getSubtotal(),
             $order->getCurrency()
         );
 
-        $paymentContextBuilder = $this->paymentContextBuilderFactory->createPaymentContextBuilder(
-            $order->getCurrency(),
-            $subtotal,
-            $order,
-            (string)$order->getId()
-        );
+        $paymentContextBuilder
+            ->setSubTotal($subtotal)
+            ->setCurrency($order->getCurrency());
 
         $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($order->getLineItems());
 

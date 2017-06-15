@@ -6,7 +6,6 @@ Feature:
 
   Scenario: Add condition on SKU using Advanced Filter
     Given I login as administrator
-    And I set "Default Web Catalog" as default web catalog for website scope
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click on "Show Variants Dropdown"
@@ -31,7 +30,7 @@ Feature:
     When I click "Excluded"
     And I click "Add Button"
     Then I should see "Add Products"
-    And I click on PSKU12 in grid "Add Products Popup Grid"
+    And I check PSKU12 record in "Add Products Popup" grid
     And I click "Add" in modal window
     Then I should see following "Active Grid" grid:
       | SKU   | NAME        |
@@ -50,7 +49,7 @@ Feature:
       | PSKU12 | Product 12 |
     When I click "Add Button"
     Then I should see "Add Products"
-    And I should see following "Add Products Popup Grid" grid:
+    And I should see following "Add Products Popup" grid:
       | SKU    | NAME       |
       | PSKU11 | Product 11 |
       | PSKU10 | Product 10 |

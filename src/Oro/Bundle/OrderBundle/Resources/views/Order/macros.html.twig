@@ -2,13 +2,19 @@
     form,
     events = {}
 ) %}
-    <div data-page-component-module="oroorder/js/app/components/possible-shipping-methods-component"
-         {% if events|length > 0 %}
-            data-page-component-options="{{ { events: events }|json_encode }}"
-         {% endif %}
+    {% set options = {view: 'oroorder/js/app/views/possible-shipping-methods-view'} %}
+    {% if events|length > 0 %}
+        {% set options = options|merge({events: events}) %}
+    {% endif %}
+    <div data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ options|json_encode }}"
          class="possible_shipping_methods_container">
         <div class="btn-group">
-            <span id="possible_shipping_methods_btn" class="btn">{{ 'oro.order.btn.calculate_shipping'|trans }}</span>
+            <span
+                data-role="possible_shipping_methods_btn"
+                id="possible_shipping_methods_btn"
+                class="btn"
+            >{{ 'oro.order.btn.calculate_shipping'|trans }}</span>
         </div>
         <div class="possible_shipping_methods_form" data-content="possible_shipping_methods_form"></div>
         {{ form_row(form.calculateShipping) }}

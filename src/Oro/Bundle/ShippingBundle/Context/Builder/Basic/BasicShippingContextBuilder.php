@@ -81,23 +81,17 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     private $shippingOriginProvider;
 
     /**
-     * @param string $currency
-     * @param Price $subTotal
      * @param object $sourceEntity
      * @param string $sourceEntityIdentifier
      * @param ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory
      * @param ShippingOriginProvider $shippingOriginProvider
      */
     public function __construct(
-        $currency,
-        Price $subTotal,
         $sourceEntity,
         $sourceEntityIdentifier,
         ShippingLineItemCollectionFactoryInterface $shippingLineItemCollectionFactory,
         ShippingOriginProvider $shippingOriginProvider
     ) {
-        $this->currency = $currency;
-        $this->subTotal = $subTotal;
         $this->sourceEntity = $sourceEntity;
         $this->sourceEntityIdentifier = $sourceEntityIdentifier;
         $this->shippingLineItemCollectionFactory = $shippingLineItemCollectionFactory;
@@ -109,40 +103,8 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
      */
     public function getResult()
     {
-        $lineItems = $this->shippingLineItemCollectionFactory->createShippingLineItemCollection($this->lineItems);
-
-        $shippingOrigin = null !== $this->shippingOrigin ?
-            $this->shippingOrigin :
-            $this->shippingOriginProvider->getSystemShippingOrigin();
-
-        $params = [
-            ShippingContext::FIELD_SHIPPING_ORIGIN => $shippingOrigin,
-            ShippingContext::FIELD_CURRENCY => $this->currency,
-            ShippingContext::FIELD_SUBTOTAL => $this->subTotal,
-            ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
-            ShippingContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
-            ShippingContext::FIELD_LINE_ITEMS => $lineItems,
-        ];
-
-        if (null !== $this->billingAddress) {
-            $params[ShippingContext::FIELD_BILLING_ADDRESS] = $this->billingAddress;
-        }
-
-        if (null !== $this->shippingAddress) {
-            $params[ShippingContext::FIELD_SHIPPING_ADDRESS] = $this->shippingAddress;
-        }
-
-        if (null !== $this->paymentMethod) {
-            $params[ShippingContext::FIELD_PAYMENT_METHOD] = $this->paymentMethod;
-        }
-
-        if (null !== $this->customer) {
-            $params[ShippingContext::FIELD_CUSTOMER] = $this->customer;
-        }
-
-        if (null !== $this->customerUser) {
-            $params[ShippingContext::FIELD_CUSTOMER_USER] = $this->customerUser;
-        }
+        $params = $this->getMandatoryParams();
+        $params += $this->getOptionalParams();
 
         return new ShippingContext($params);
     }
@@ -225,5 +187,66 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
         $this->customerUser = $customerUser;
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setSubTotal(Price $subTotal)
+    {
+        $this->subTotal = $subTotal;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getMandatoryParams()
+    {
+        $lineItems = $this->shippingLineItemCollectionFactory->createShippingLineItemCollection($this->lineItems);
+        $shippingOrigin = null !== $this->shippingOrigin ?
+            $this->shippingOrigin :
+            $this->shippingOriginProvider->getSystemShippingOrigin();
+
+        $params = [
+            ShippingContext::FIELD_SHIPPING_ORIGIN => $shippingOrigin,
+            ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntity,
+            ShippingContext::FIELD_SOURCE_ENTITY_ID => $this->sourceEntityIdentifier,
+            ShippingContext::FIELD_LINE_ITEMS => $lineItems,
+        ];
+
+        return $params;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getOptionalParams()
+    {
+        $optionalParams = [
+            ShippingContext::FIELD_CURRENCY => $this->currency,
+            ShippingContext::FIELD_SUBTOTAL => $this->subTotal,
+            ShippingContext::FIELD_BILLING_ADDRESS => $this->billingAddress,
+            ShippingContext::FIELD_SHIPPING_ADDRESS => $this->shippingAddress,
+            ShippingContext::FIELD_PAYMENT_METHOD => $this->paymentMethod,
+            ShippingContext::FIELD_CUSTOMER => $this->customer,
+            ShippingContext::FIELD_CUSTOMER_USER => $this->customerUser,
+        ];
+
+        // Exclude NULL elements.
+        $optionalParams = array_diff_key($optionalParams, array_filter($optionalParams, 'is_null'));
+
+        return $optionalParams;
     }
 }
