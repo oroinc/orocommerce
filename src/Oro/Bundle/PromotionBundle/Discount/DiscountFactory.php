@@ -49,7 +49,9 @@ class DiscountFactory
 
         $discount = $this->container->get($this->typeToServiceMap[$type]);
         if (!$discount instanceof DiscountInterface) {
-            throw new UnsupportedDiscountException(sprintf('Unsupported discount object %s', get_class($discount)));
+            throw new UnsupportedDiscountException(
+                sprintf('Discount "%s" should implement DiscountInterface.', get_class($discount))
+            );
         }
         $discount->configure($configuration->getOptions());
 
