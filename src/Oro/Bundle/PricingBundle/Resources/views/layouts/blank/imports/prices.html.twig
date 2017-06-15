@@ -29,14 +29,16 @@
 {% block product_price %}
     {% set buttonsId = id|replace({'_price': ''}) ~ '_line_item_form_buttons' %}
     {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
-    {% if productPrices %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' product-price__main'
-        }) %}
-        <div {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
+        {% if productPrices %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' product-price__main'
+            }) %}
+            <div {{ block('block_attributes') }}>
+                {{ block_widget(block) }}
+            </div>
+        {% else %}
+            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -79,13 +81,19 @@
 {% endblock %}
 
 {% block product_price_hint %}
-    <div class="product-price__hint"
-         data-name="prices-hint"
-         data-placement="bottom"
-         data-close="false"
-         data-trigger="hover"
-         data-container="body"
-         data-class="prices-hint-content">
+    {% if productPrices %}
+        {% set attr = layout_attr_defaults(attr, {
+        'data-name': 'prices-hint',
+        'data-placement': 'bottom',
+        'data-close': 'false',
+        'data-trigger': 'hover',
+        'data-container': 'body',
+        'data-class': 'prices-hint-content'
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}
+            class="product-price__hint">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -129,35 +137,35 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-price__listed'
     }) %}
-    <div {{ block('block_attributes') }}>
-        {% if productPrices %}
-            <span class="product-price__listed-label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans }}</span>
-            {% set pricesPerUnits = [] %}
-            {% for price in productPrices %}
-                {% set unit = price.unit %}
-                {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
-                    {% set pricesPerUnits = pricesPerUnits|merge({
-                        (unit): price
-                    }) %}
-                {% endif %}
-            {% endfor %}
-            {% for price in pricesPerUnits %}
-                <span class="product-price__listed-box"
-                      title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
-                    <span class="product-price__listed-value">{{ price.formatted_price }}</span>
-                    <span> / </span>
-                    <span class="product-price__unit">
-                        <span class="product-price__unit-full">
-                            {{ price.formatted_unit}}
-                        </span>
-                        <span class="product-price__unit-short">
-                            {{ price.unit}}
+    {% if productPrices %}
+        <div {{ block('block_attributes') }}>
+                <span class="product-price__listed-label">{{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans }}</span>
+                {% set pricesPerUnits = [] %}
+                {% for price in productPrices %}
+                    {% set unit = price.unit %}
+                    {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
+                        {% set pricesPerUnits = pricesPerUnits|merge({
+                            (unit): price
+                        }) %}
+                    {% endif %}
+                {% endfor %}
+                {% for price in pricesPerUnits %}
+                    <span class="product-price__listed-box"
+                          title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
+                        <span class="product-price__listed-value">{{ price.formatted_price }}</span>
+                        <span> / </span>
+                        <span class="product-price__unit">
+                            <span class="product-price__unit-full">
+                                {{ price.formatted_unit}}
+                            </span>
+                            <span class="product-price__unit-short">
+                                {{ price.unit}}
+                            </span>
                         </span>
                     </span>
-                </span>
-            {% endfor %}
-        {% endif %}
-    </div>
+                {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block product_price_table %}
