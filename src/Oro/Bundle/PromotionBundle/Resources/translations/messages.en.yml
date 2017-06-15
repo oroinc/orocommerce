@@ -75,3 +75,17 @@ oro:
 
         form:
             choose: 'Choose a Promotion...'
+            basic_discount:
+                discount:
+                    label: 'Discount'
+                    choices:
+                        order: 'Order'
+                type:
+                    label: 'Type'
+                    tooltip: 'Discount type'
+                    choices:
+                        amount: 'Fixed Amount'
+                        percent: 'Percent'
+                value:
+                    label: 'Discount Value'
+
