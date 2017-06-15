@@ -16,7 +16,7 @@ class OroPromotionExtensionTest extends ExtensionTestCase
             'oro_promotion.rule_filtration.scope_decorator',
             'oro_promotion.rule_filtration.schedule_decorator',
             'oro_promotion.rule_filtration.matching_items',
-            'oro_promotion.context_data_converter',
+            'oro_promotion.promotion.context_data_converter_registry',
             'oro_promotion.promotion_provider',
             'oro_promotion.discount_factory',
             'oro_promotion.discount_type_to_form_type_provider'
