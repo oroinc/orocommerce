@@ -14,6 +14,14 @@ services:
         arguments:
             - '@oro_promotion.rule_filtration.scope_decorator.inner'
 
+    oro_promotion.rule_filtration.currency_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\CurrencyFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 10
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.currency_decorator.inner'
+
     oro_promotion.rule_filtration.schedule_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
         decorates: oro_promotion.rule_filtration.service
@@ -21,6 +29,7 @@ services:
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.schedule_decorator.inner'
+            - '@oro_cron.checker.schedule_interval_checker'
 
     oro_promotion.rule_filtration.coupon_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
