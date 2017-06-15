@@ -122,6 +122,10 @@ oro:
         privilege:
             category.shopping.label: 'Shopping'
 
+    customer:
+        customervisitor:
+            shopping_lists.label: Shopping Lists
+
     frontend:
         shoppinglist:
             quick_order:
