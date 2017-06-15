@@ -83,6 +83,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
@@ -137,6 +140,11 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
         pricelist: '@pricelist_shipping'
         website: '@website1'
         sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceListToProduct:
+        product: '@product1'
+        pricelist: '@pricelist_shipping'
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:

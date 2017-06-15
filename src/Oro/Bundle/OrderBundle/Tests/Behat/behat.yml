@@ -11,3 +11,8 @@ oro_behat_extension:
     Order Payment Transaction Grid:
       selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+  pages:
+    OrderFrontendView:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
+      route: oro_order_frontend_view

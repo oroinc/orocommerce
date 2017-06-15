@@ -17,6 +17,9 @@ Feature: Start checkout for a quote
     And I click "Send"
 
     And I login as AmandaRCole@example.org buyer
-    When I click "Quotes"
-    And Buyer starts checkout for a quote with "PONUMBER1" PO Number
+    When I click "Account"
+    And I click "Quotes"
+    And I click view PONUMBER1 in grid
+    And I press "Accept and Submit to Order"
+    And I press "Submit"
     Then Buyer is on enter billing information checkout step

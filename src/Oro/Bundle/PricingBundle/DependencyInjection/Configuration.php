@@ -6,17 +6,20 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const ROOT_NODE = 'oro_pricing';
     const DEFAULT_PRICE_LISTS = 'default_price_lists';
     const ROUNDING_TYPE = 'rounding_type';
     const PRECISION = 'precision';
     const COMBINED_PRICE_LIST = 'combined_price_list';
     const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
     const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
+    const PRICE_LIST_STRATEGIES = 'price_strategy';
 
     /**
      * @var string
@@ -48,6 +51,7 @@ class Configuration implements ConfigurationInterface
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],
+                self::PRICE_LIST_STRATEGIES => ['type' => 'string', 'value' => MinimalPricesCombiningStrategy::NAME]
             ]
         );
 

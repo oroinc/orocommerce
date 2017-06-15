@@ -4,11 +4,10 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
-use Oro\Bundle\PaymentBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -21,9 +20,9 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
 
     /**
-     * @var PaymentMethodProvidersRegistryInterface
+     * @var PaymentMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $paymentMethodProvider;
 
     /**
      * @var PaymentMethodViewProviderInterface
@@ -31,14 +30,14 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     protected $methodViewProvider;
 
     /**
-     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      * @param PaymentMethodViewProviderInterface      $methodViewProvider
      */
     public function __construct(
-        PaymentMethodProvidersRegistryInterface $methodRegistry,
+        PaymentMethodProviderInterface $paymentMethodProvider,
         PaymentMethodViewProviderInterface $methodViewProvider
     ) {
-        $this->methodRegistry = $methodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
         $this->methodViewProvider = $methodViewProvider;
     }
 
@@ -102,17 +101,14 @@ class PaymentMethodsConfigsRuleType extends AbstractType
      */
     protected function getMethods()
     {
-        return array_reduce(
-            $this->methodRegistry->getPaymentMethodProviders(),
-            function (array $result, PaymentMethodProviderInterface $provider) {
-                foreach ($provider->getPaymentMethods() as $method) {
-                    $result[$method->getIdentifier()] = $this
-                        ->methodViewProvider->getPaymentMethodView($method->getIdentifier())
-                        ->getAdminLabel();
-                }
-                return $result;
-            },
-            []
-        );
+        $result = [];
+        foreach ($this->paymentMethodProvider->getPaymentMethods() as $method) {
+            $identifier = $method->getIdentifier();
+            $result[$identifier] = $this->methodViewProvider
+                ->getPaymentMethodView($identifier)
+                ->getAdminLabel();
+        }
+
+        return $result;
     }
 }
