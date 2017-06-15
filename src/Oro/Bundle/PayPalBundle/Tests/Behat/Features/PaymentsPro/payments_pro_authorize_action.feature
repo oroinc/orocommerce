@@ -30,7 +30,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     And I fill in "Name" with "PayPalPro"
     And I fill in "Sort Order" with "1"
     And I select "PayPalPro" from "Method"
-    And click add payment method button
+    And I press "Add Method Button"
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
@@ -70,6 +70,6 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
     And I go to Sales/Orders
     And I click View Payment authorized in grid
     And I click "Capture"
-    Then I should see "Charge The Customer" modal window
+    Then I should see "Charge The Customer" in the "UiWindow Title" element
     When I click "Yes, Charge" in modal window
     Then I should see "The payment of $13.00 has been captured successfully" flash message
