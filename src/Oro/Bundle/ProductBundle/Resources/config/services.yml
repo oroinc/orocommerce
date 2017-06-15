@@ -557,6 +557,7 @@ services:
             - '@oro_product.product.manager'
             - '@oro_config.user'
             - '@logger'
+            - '@oro.cache.memory_cache_chain'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
