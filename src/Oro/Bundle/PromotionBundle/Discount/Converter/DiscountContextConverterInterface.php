@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Discount\Context;
+namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 
