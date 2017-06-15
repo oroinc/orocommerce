@@ -45,15 +45,12 @@ services:
         arguments:
             - '@oro_promotion.rule_filtration.stop_processing_decorator.inner'
 
-    oro_promotion.context_data_converter:
-        class: Oro\Bundle\PromotionBundle\Context\ContextDataConverter
-
     oro_promotion.promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
         arguments:
             - '@doctrine'
             - '@oro_promotion.rule_filtration.service'
-            - '@oro_promotion.context_data_converter'
+            - '@oro_promotion.promotion.context_data_converter_registry'
 
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
@@ -62,6 +59,9 @@ services:
 
     oro_promotion.discount.context_converter.registry:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
+
+    oro_promotion.promotion.context_data_converter_registry:
+        class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
 
     oro_promotion.form.type.promotion_select:
         class: Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType
