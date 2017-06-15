@@ -161,8 +161,10 @@
             {% endif %}
         </a>
         {% if hasSublist %}
-            <button data-toggle="dropdown" aria-haspopup="true" class="main-menu__button-arrow">
-                <i class="fa-angle-down fa--no-offset"></i>
+            <button class="main-menu__button-arrow"
+                    data-go-to="next"
+            >
+                <i class="fa-angle-right fa--no-offset"></i>
             </button>
             {{ block(sub_block) }}
         {% endif %}
