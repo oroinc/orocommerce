@@ -246,7 +246,12 @@ oro_behat_extension:
       selector: 'div.tab-pane.active div.toolbar div.pagination input'
 
   suites:
+    # Revert by OPI-52
     OroProductBundle:
+      contexts: []
+      paths:
+        - /dev/null
+    OroProductBundleProductCollection:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
@@ -260,4 +265,34 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
       paths:
-        - '@OroProductBundle/Tests/Behat/Features'
+        - '@OroProductBundle/Tests/Behat/Features/product-collection'
+    OroProductBundleProduct:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroUserBundle::FeatureContext
+      paths:
+        - '@OroProductBundle/Tests/Behat/Features/product'
+    OroProductBundleOther:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroUserBundle::FeatureContext
+      paths:
+        - '@OroProductBundle/Tests/Behat/Features/other'
