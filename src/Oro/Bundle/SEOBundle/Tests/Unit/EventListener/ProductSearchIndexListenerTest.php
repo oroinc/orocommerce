@@ -43,9 +43,15 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $event->expects($this->exactly(16))
+        $event->expects($this->exactly(24))
             ->method('addPlaceholderField')
             ->withConsecutive(
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'Polish meta title',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
@@ -56,6 +62,12 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                     1,
                     'all_text_LOCALIZATION_ID',
                     'Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'Polish Category meta title',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
@@ -73,6 +85,12 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
+                    'English meta title',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
                     'English meta description',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
@@ -80,6 +98,12 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                     1,
                     'all_text_LOCALIZATION_ID',
                     'English meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'English Category meta title',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
@@ -142,12 +166,21 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         foreach ($entityIds as $id) {
             $product = $this->getMockBuilder(Product::class)
                 ->disableOriginalConstructor()
-                ->setMethods(['getId', 'getMetaDescription', 'getMetaKeyword'])
+                ->setMethods(['getId', 'getMetaTitle', 'getMetaDescription', 'getMetaKeyword'])
                 ->getMock();
 
             $product->expects($this->any())
                 ->method('getId')
                 ->willReturn($id);
+
+            $product->expects($this->any())
+                ->method('getMetaTitle')
+                ->willReturnMap(
+                    [
+                        [$localizations['PL'], 'Polish meta title'],
+                        [$localizations['EN'], "English meta title"],
+                    ]
+                );
 
             $product->expects($this->any())
                 ->method('getMetaDescription')
@@ -208,12 +241,21 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
     {
         $category = $this->getMockBuilder(Category::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getMetaDescription', 'getMetaKeyword'])
+            ->setMethods(['getId', 'getMetaTitle', 'getMetaDescription', 'getMetaKeyword'])
             ->getMock();
 
         $category->expects($this->any())
             ->method('getId')
             ->willReturn($categoryId);
+
+        $category->expects($this->any())
+            ->method('getMetaTitle')
+            ->willReturnMap(
+                [
+                    [$localizations['PL'], 'Polish Category meta title'],
+                    [$localizations['EN'], "English Category meta title"],
+                ]
+            );
 
         $category->expects($this->any())
             ->method('getMetaDescription')

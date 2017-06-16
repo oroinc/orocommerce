@@ -43,17 +43,27 @@ class SeoDataProvider
     }
 
     /**
-     * @param object $data
      * @param string $metaField
      * @return null|LocalizedFallbackValue
      */
-    public function getMetaInformation($data, $metaField)
+    public function getMetaInformationFromContentNode($metaField)
     {
         $node = $this->getContentNode();
         $value = null;
         if ($node) {
             $value = $this->getLocalizedMetaValue($node, $metaField);
         }
+        return $value;
+    }
+
+    /**
+     * @param object $data
+     * @param string $metaField
+     * @return null|LocalizedFallbackValue
+     */
+    public function getMetaInformation($data, $metaField)
+    {
+        $value = $this->getMetaInformationFromContentNode($metaField);
 
         $valueAsString = (string)$value;
         if ($valueAsString === null || $valueAsString === '') {

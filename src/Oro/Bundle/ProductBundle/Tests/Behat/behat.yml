@@ -127,6 +127,7 @@ oro_behat_extension:
         mapping:
           Titles: 'oro_web_catalog_content_node[titles][values][default]'
           Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
           Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
           Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
           Default Product Collection Segment Name:

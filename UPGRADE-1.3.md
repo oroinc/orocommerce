@@ -42,6 +42,11 @@ PayPalBundle
 - Class `Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListen`
     - property `$allowedIPs` changed from `private` to `protected`
 
+SEOBundle
+-------------
+- metaTitles for `Product`, `Category`, `Page`, `WebCatalog` were added. 
+MetaTitle is displayed as default view page title.
+
 PaymentBundle
 -------------
 - Subtotal and currency of payment context and its line items are optional now:
