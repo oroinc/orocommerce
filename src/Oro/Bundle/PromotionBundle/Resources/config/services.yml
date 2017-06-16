@@ -92,6 +92,18 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_promotion, acl_resource: oro_promotion_view }
 
+    oro_promotion.discount.shipping_discount:
+        class: Oro\Bundle\PromotionBundle\Discount\ShippingDiscount
+        public: false
+        shared: false
+
+    oro_promotion.discount.order_discount:
+        class: Oro\Bundle\PromotionBundle\Discount\OrderDiscount
+        public: false
+        shared: false
+        arguments:
+            - '@oro_promotion.discount.shipping_discount'
+
     oro_promotion.discount_type_to_form_type_provider:
         class: Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider
 #        calls:
