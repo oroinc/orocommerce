@@ -6,3 +6,4 @@ oro_permissions:
             - 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'
         group_names:
             - 'commerce'
+            - 'default'
