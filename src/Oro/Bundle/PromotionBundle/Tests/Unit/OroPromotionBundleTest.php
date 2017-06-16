@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit;
 
-use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\DiscountContextConverterCompilerPass;
-use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionContextConverterCompilerPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
 use Oro\Bundle\PromotionBundle\OroPromotionBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,11 +22,10 @@ class OroPromotionBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(2, $passes);
+        $this->assertCount(1, $passes);
 
         $expectedPasses = [
-            new DiscountContextConverterCompilerPass(),
-            new PromotionContextConverterCompilerPass()
+            new PromotionCompilerPass()
         ];
 
         foreach ($expectedPasses as $expectedPass) {

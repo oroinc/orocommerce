@@ -47,6 +47,7 @@ services:
 
     oro_promotion.promotion_provider:
         class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
+        public: false
         arguments:
             - '@doctrine'
             - '@oro_promotion.rule_filtration.service'
@@ -54,14 +55,28 @@ services:
 
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
+        public: false
         arguments:
             - '@service_container'
 
     oro_promotion.discount.context_converter.registry:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
+        public: false
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
+        public: false
+
+    oro_promotion.discount.strategy_registry:
+        class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry
+        public: false
+
+    oro_promotion.discount.strategy_provider:
+        class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider
+        public: false
+        arguments:
+            - '@oro_promotion.discount.strategy_registry'
+            - '@oro_config.manager'
 
     oro_promotion.form.type.promotion_select:
         class: Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType
