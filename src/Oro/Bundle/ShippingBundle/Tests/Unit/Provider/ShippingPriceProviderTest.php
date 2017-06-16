@@ -19,7 +19,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -402,6 +402,8 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
             ->with($context)
             ->willReturn($shippingRules);
 
+        $this->priceCache->expects($this->exactly($expectedPrice ? 1 : 0))->method('savePrice');
+
         $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
     }
 
@@ -457,6 +459,29 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
                     ]),
                 ],
                 'expectedData' => Price::create(12, 'USD'),
+            ],
+            'no price' => [
+                'methodId' => 'flat_rate',
+                'typeId' => 'primary',
+                'shippingRules' => [
+                    $this->getEntity(ShippingMethodsConfigsRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingMethodConfig::class, [
+                                'method' => 'flat_rate',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'primary',
+                                        'options' => [
+                                            'price' => null
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ]),
+                ],
+                'expectedData' => null,
             ],
             'several rules with same methods ans types' => [
                 'methodId' => 'integration_method',

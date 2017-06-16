@@ -4,6 +4,22 @@ workflows:
             save_state_definition:
                 actions:
                     - '@assign_value': [$.result.responseData.stateSaved, true]
+
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_update_shipping_method
+                        parameters_mapping:
+                            checkout: $checkout
+
+                    - '@tree':
+                        conditions:
+                            '@empty': $checkout.shippingCost
+                        actions:
+                            - '@unset_value': $checkout.shippingMethod
+                            - '@call_service_method':
+                                 service: oro_checkout.action.default_shipping_method_setter
+                                 method: setDefaultShippingMethod
+                                 method_parameters: [$checkout]
+
                     - '@flush_entity': [$checkout]
 
             create_order_transition_definition:

@@ -115,7 +115,10 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
                         $methodConfig->getOptions(),
                         $typesOptions[$typeId]
                     );
-                    $this->priceCache->savePrice($context, $methodId, $typeId, $price);
+
+                    if ($price) {
+                        $this->priceCache->savePrice($context, $methodId, $typeId, $price);
+                    }
 
                     return $price;
                 }
