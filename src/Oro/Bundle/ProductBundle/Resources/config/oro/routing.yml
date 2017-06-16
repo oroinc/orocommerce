@@ -8,6 +8,11 @@ oro_product_unit_ajax:
     type:         annotation
     prefix:       /product-unit
 
+oro_product_grid_count_ajax:
+    resource:     "@OroProductBundle/Controller/AjaxGetProductsCountController.php"
+    type:         annotation
+    prefix:       /product-grid
+
 oro_product_frontend_product:
     resource: "@OroProductBundle/Controller/Frontend/ProductController.php"
     type: annotation

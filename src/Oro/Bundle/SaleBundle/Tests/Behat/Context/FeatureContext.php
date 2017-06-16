@@ -5,9 +5,11 @@ namespace Oro\Bundle\SaleBundle\Tests\Behat\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
@@ -62,24 +64,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When Buyer starts checkout for a quote with :poNumber PO Number
-     * @param string $poNumber
-     */
-    public function buyerStartsCheckoutForAQuoteWithPONumber($poNumber)
-    {
-        /** @var Grid $grid */
-        $grid = $this->createElement('Grid');
-        $grid->clickActionLink($poNumber, 'View');
-        $this->waitForAjax();
-
-        $this->getPage()->clickLink('Accept and Submit to Order');
-        $this->waitForAjax();
-
-        $this->getPage()->pressButton('Submit');
-        $this->waitForAjax();
-    }
-
-    /**
      * @Then Buyer is on enter billing information checkout step
      */
     public function buyerIsOnEnterBillingInformationCheckoutStep()
@@ -87,5 +71,43 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         /** @var CheckoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
         $checkoutStep->assertTitle('Billing Information');
+    }
+
+    /**
+     * @When /^(?:|I )open Quote with qid (?P<qid>[\w\s]+)/
+     *
+     * @param string $qid
+     */
+    public function openQuote($qid)
+    {
+        $quote = $this->getQuote($qid);
+
+        $url = $this->getContainer()
+            ->get('router')
+            ->generate('oro_sale_quote_view', ['id' => $quote->getId()]);
+
+        $this->visitPath($url);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @param string $qid
+     * @return Quote
+     */
+    protected function getQuote($qid)
+    {
+        return $this->getRepository(Quote::class)->findOneBy(['qid' => $qid]);
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    protected function getRepository($className)
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass($className)
+            ->getRepository($className);
     }
 }

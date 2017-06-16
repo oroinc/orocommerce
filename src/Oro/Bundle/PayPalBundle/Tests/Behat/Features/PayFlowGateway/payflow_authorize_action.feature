@@ -30,7 +30,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I fill in "Name" with "PayPalPro"
     And I fill in "Sort Order" with "1"
     And I select "PayPalFlow" from "Method"
-    And click add payment method button
+    And I press "Add Method Button"
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
@@ -41,7 +41,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I fill credit card form with next data:
       | CreditCardNumber | 5105105105105100 |
       | Month            | 11               |
@@ -57,7 +57,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I had checked "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I fill credit card form with next data:
       | CreditCardNumber | 5424000000000015 |
       | Month            | 11               |
@@ -70,6 +70,6 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I go to Sales/Orders
     And I click View Payment authorized in grid
     And I click "Capture"
-    Then I should see "Charge The Customer" modal window
+    Then I should see "Charge The Customer" in the "UiWindow Title" element
     When I click "Yes, Charge" in modal window
     Then I should see "The payment of $13.00 has been captured successfully" flash message

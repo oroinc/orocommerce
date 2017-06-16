@@ -20,6 +20,7 @@ oro:
         total.label: Grand Total
         currency.label: Currency
         website.label: Website
+        contact_information.label: Contact Information
         btn:
             create_order: 'Create Order'
         flash:

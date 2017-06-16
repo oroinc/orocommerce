@@ -143,4 +143,65 @@ class SeoDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('product descr', (string)$this->provider->getMetaInformation($data, 'metaDescriptions'));
     }
+
+    public function testGetMetaInformationFromContentNodeWithSeoData()
+    {
+        $node = new ContentNodeStub();
+        $node->addMetaDescriptions((new LocalizedFallbackValue())->setString('descr'));
+
+        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($node);
+
+        $request = Request::create('/');
+        $request->attributes->set('_content_variant', $contentVariant);
+
+        $this->requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->localizationHelper->expects($this->any())
+            ->method('getLocalizedValue')
+            ->willReturnCallback(
+                function (Collection $values) {
+                    return $values->first();
+                }
+            );
+        $this->assertEquals('descr', (string)$this->provider->getMetaInformationFromContentNode('metaDescriptions'));
+    }
+
+    public function testGetMetaInformationFromContentNodeWithoutSeoData()
+    {
+        $node = new ContentNodeStub();
+
+        $contentVariant = $this->createMock(ContentNodeAwareInterface::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($node);
+
+        $request = Request::create('/');
+        $request->attributes->set('_content_variant', $contentVariant);
+
+        $this->requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->localizationHelper->expects($this->any())
+            ->method('getLocalizedValue')
+            ->willReturnCallback(
+                function (Collection $values) {
+                    return $values->first();
+                }
+            );
+        $this->assertEquals(null, (string)$this->provider->getMetaInformationFromContentNode('metaDescriptions'));
+    }
+
+    public function testGetMetaInformationFromContentNodeWithoutNode()
+    {
+        $request = Request::create('/');
+
+        $this->requestStack->expects($this->any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+        $this->assertEquals(null, (string)$this->provider->getMetaInformationFromContentNode('metaDescriptions'));
+    }
 }
