@@ -199,11 +199,7 @@
                 {{ form_widget(form.options) }}
             </div>
             {{ form_widget(form.typeConfigs) }}
-            <div class="control-group control-group-choice">
-                <div class="controls">
-                    {{ form_errors(form.typeConfigs) }}
-                </div>
-            </div>
+            {{ form_errors(form.typeConfigs) }}
             {{ form_rest(form) }}
         </div>
     </div>
