@@ -18,6 +18,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
  * @method LocalizedFallbackValue getDefaultShortDescription()
  * @method LocalizedFallbackValue getLongDescription(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultLongDescription()
+ * @method LocalizedFallbackValue getMetaTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
  * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
  */
