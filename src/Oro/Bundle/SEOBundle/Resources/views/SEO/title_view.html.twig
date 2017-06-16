@@ -1,0 +1,3 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{{ UI.renderProperty((labelPrefix ~ '.meta_titles.label') | trans, entity.metaTitles|localized_value) }}
