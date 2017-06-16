@@ -101,8 +101,17 @@ oro:
                 customer_user.label: 'Quotes'
 
         system_configuration:
+            groups:
+                sale_contact_info.title: 'Contacts'
+                customer_visible_contact_info.title: 'Customer Visible Contact Info'
             fields:
                 backend_product_visibility.title: 'Can Be Added to Quotes'
+                contact_info_source_display.label: 'Display'
+                contact_details.label: 'Contact Details'
+                allow_user_configuration.label: 'Allow User Configuration'
+                available_user_options.label: 'Available User Options'
+                contact_info_user_option.label: 'Customer Visible Contact Info'
+                contact_info_manual_text.label: 'Manual Contact Info'
 
         privilege:
             category.quotes.label: 'Quotes'
@@ -238,7 +247,26 @@ oro:
                 address_shipping_customer_user_use_any: "[Quote] Use any shipping address from the customer user's address book"
                 address_shipping_allow_manual: "[Quote] Enter the shipping address manually"
                 payment_term_customer_can_override: "[Quote] Override customer payment term"
-
+        form:
+            tooltip:
+                  allow_user_configuration: 'When checked, the sales representatives will be able to choose one of the options enabled below.'
+        available_customer_options:
+            type:
+                dont_display.label: "Don't Display Contact Info"
+                customer_user_owner.label: 'Customer User Owner'
+                customer_owner.label: 'Customer Owner'
+                pre_configured.label: 'Pre-Configured'
+        available_user_options:
+            type:
+                dont_display.label: "Don't Display Contact Info"
+                user_profile_data.label: 'Use User Profile Data'
+                enter_manually.label: 'Enter Manually'
+        contact_info_user_options:
+            type:
+                dont_display.label: "Don't Display Contact Info"
+                user_profile_data.label: 'Use My Profile Data'
+                enter_manually.label: 'Enter Manually'
+                use_system.label: 'Use System'
     frontend:
         sale:
             menu:

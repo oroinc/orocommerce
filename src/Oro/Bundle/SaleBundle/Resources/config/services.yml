@@ -196,3 +196,23 @@ services:
     oro_sale.storage.return_route_storage:
         class: 'Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage'
         parent: oro_product.storage.session_data_storage
+
+    oro_sale.provider.contact_info_source_options_provider:
+        class: Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider
+        public: false
+        arguments:
+           - '@oro_config.manager'
+
+    oro_sale.provider.contact_info_available_user_options_provider:
+        class: Oro\Bundle\SaleBundle\Provider\ContactInfoAvailableUserOptionsProvider
+        public: false
+        arguments:
+            - '@oro_config.manager'
+
+    oro_sale.provider.contact_info_user_options_provider:
+        class: Oro\Bundle\SaleBundle\Provider\ContactInfoUserOptionsProvider
+        public: false
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_sale.provider.contact_info_available_user_options_provider'
+            - '@oro_sale.provider.contact_info_source_options_provider'
