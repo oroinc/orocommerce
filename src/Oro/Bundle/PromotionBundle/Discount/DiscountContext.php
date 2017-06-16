@@ -10,7 +10,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     /**
      * @var DiscountLineItem[]
      */
-    protected $lineItems;
+    protected $lineItems = [];
 
     /**
      * @var array|DiscountInterface[]
@@ -52,26 +52,35 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
 
     /**
      * @param float $subtotal
+     * @return $this
      */
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
+
+        return $this;
     }
 
     /**
      * @param DiscountInterface $discount
+     * @return $this
      */
     public function addShippingDiscount(DiscountInterface $discount)
     {
         $this->shippingDiscounts[] = $discount;
+
+        return $this;
     }
 
     /**
      * @param DiscountInterface $discount
+     * @return $this
      */
     public function addSubtotalDiscount(DiscountInterface $discount)
     {
         $this->subtotalDiscounts[] = $discount;
+
+        return $this;
     }
 
     /**
@@ -84,7 +93,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
 
     /**
      * @param DiscountLineItem[] $lineItems
-     * @return DiscountContext
+     * @return $this
      */
     public function setLineItems($lineItems)
     {
@@ -119,18 +128,24 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
 
     /**
      * @param float $shippingCost
+     * @return $this
      */
     public function setShippingCost($shippingCost)
     {
         $this->shippingCost = $shippingCost;
+
+        return $this;
     }
 
     /**
      * @param DiscountInformation $discountInformation
+     * @return $this
      */
     public function addSubtotalDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->subtotalDiscountsInformation[] = $discountInformation;
+
+        return $this;
     }
 
     /**
@@ -143,10 +158,13 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
 
     /**
      * @param DiscountInformation $discountInformation
+     * @return $this
      */
     public function addShippingDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->shippingDiscountsInformation[] = $discountInformation;
+
+        return $this;
     }
 
     /**
