@@ -18,6 +18,11 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
      */
     public function mapDataToForms($data, $forms)
     {
+        // TODO: Replace with default PathMapper logic in scope of BB-10086
+        if (!$data) {
+            return;
+        }
+
         if (!$data instanceof DiscountConfiguration) {
             throw new UnexpectedTypeException($data, DiscountConfiguration::class);
         }

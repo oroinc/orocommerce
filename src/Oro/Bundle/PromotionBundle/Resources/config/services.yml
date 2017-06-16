@@ -76,6 +76,16 @@ services:
         tags:
             - { name: form.type, alias: oro_promotion_select }
 
+    oro_promotion.form.type.order_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountType
+        tags:
+            - { name: form.type, alias: oro_promotion_order_discount }
+
+    oro_promotion.form.type.discount_free_shipping:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType
+        tags:
+            - { name: form.type, alias: oro_promotion_discount_free_shipping_choice }
+
     oro_promotion.form.autocomplete.promotion.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler

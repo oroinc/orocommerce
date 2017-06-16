@@ -38,6 +38,13 @@ oro:
             matching_items: Matching Items
             store_frontend: Store Frontend
 
+        discount:
+            free_shipping:
+                label: Free Shipping
+                no: No
+                for_matching_items_only: For Matching Items Only
+                for_shipment_with_matching_items: For Shipment With Matching Items
+
         discountconfiguration:
             entity_label: Discount Configuration
             entity_plural_label: Discount Configurations
