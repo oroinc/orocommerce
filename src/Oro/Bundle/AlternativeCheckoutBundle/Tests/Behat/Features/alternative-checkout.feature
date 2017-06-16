@@ -7,15 +7,23 @@ Feature: Alternative Checkout workflow threshold
   As a buyer
   I want to start and request approval of alternative checkout
 
+  Scenario: Create different window session
+      Given sessions active:
+        | User  |first_session |
+        | Admin |second_session|
+
   Scenario: Activate Alternative Checkout workflow
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     When I go to System/ Workflows
     And I click Activate Alternative Checkout in grid
     And I press "Activate"
     Then I should see "Workflow activated" flash message
+    And click Logout in user menu
 
   Scenario: Create order with Alternative Checkout with threshold
-    Given There is EUR currency in the system configuration
+    Given I proceed as the User
+    And There is EUR currency in the system configuration
     And AmandaRCole@example.org customer user has Buyer role
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List Threshold
@@ -26,6 +34,17 @@ Feature: Alternative Checkout workflow threshold
     And I had checked "Payment Terms" on the "Payment" checkout step and press Continue
     And I had checked "Delete the shopping list" on the "Order Review" checkout step and press Request Approval
     Then I should see "You exceeded the allowable amount of $5000."
-
     When I press "Request Approval"
     Then I should see "Pending approval"
+    And I proceed as the Admin
+    When I signed in as NancyJSallee@example.org on the store frontend
+    And click "Account"
+    And click "Order History"
+    And click "Check Out" on row "Amanda Cole" in grid
+    And click "Approve Order"
+    And I proceed as the User
+    And  reload the page
+    Then I should see "Approved at"
+    And click "Submit Order"
+    And I see the "Thank You" page with "Thank You For Your Purchase!" title
+
