@@ -15,6 +15,7 @@ datagrids:
                     - productInventoryStatus.name as inventoryStatusName
                     - product.status
                     - product.type
+                    - product.newArrival
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
                 join:
@@ -37,6 +38,13 @@ datagrids:
                 label:         oro.product.type.label
                 frontend_type: select
                 choices:       "@oro_product.provider.product_type_provider->getAvailableProductTypes"
+                renderable:    false
+            newArrival:
+                label:         oro.product.new_arrival.label
+                frontend_type: select
+                choices:
+                    - oro.product.new_arrival.no
+                    - oro.product.new_arrival.yes
                 renderable:    false
             createdAt:
                 label:         oro.ui.created_at
@@ -61,6 +69,8 @@ datagrids:
                     data_name: product.status
                 type:
                     data_name: product.type
+                newArrival:
+                    data_name: product.newArrival
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -91,6 +101,15 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_type_provider->getAvailableProductTypes"
+                newArrival:
+                    type: boolean
+                    data_name: product.newArrival
+                    options:
+                        field_options:
+                            choices:
+                                1: oro.product.new_arrival.yes
+                                2: oro.product.new_arrival.no
+                    enabled: false
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -263,6 +282,9 @@ datagrids:
                     validation_rules:
                         NotBlank: true
             status:
+                inline_editing:
+                    enable: true
+            newArrival:
                 inline_editing:
                     enable: true
 
@@ -447,6 +469,7 @@ datagrids:
             query:
                 select:
                     - text.sku as sku
+                    - integer.new_arrival as newArrival
                     - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
                     - text.type as type
@@ -481,6 +504,7 @@ datagrids:
                 type:  url
                 route: oro_product_frontend_product_view
                 params: [ id ]
+            newArrival: ~
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true

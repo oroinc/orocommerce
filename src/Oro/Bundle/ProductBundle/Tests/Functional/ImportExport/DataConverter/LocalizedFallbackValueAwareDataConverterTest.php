@@ -88,8 +88,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'slugPrototypes.Spanish.value' => '',
         'slugPrototypes.English (Canada).fallback' => '',
         'slugPrototypes.English (Canada).value' => '',
-        'attributeFamily.code' => '',
-        'featured' => ''
+        'featured' => '',
+        'newArrival' => '',
     ];
 
     /**

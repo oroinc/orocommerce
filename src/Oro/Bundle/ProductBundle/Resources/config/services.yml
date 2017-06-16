@@ -557,6 +557,7 @@ services:
             - '@oro_product.product.manager'
             - '@oro_config.user'
             - '@logger'
+            - '@oro.cache.memory_cache_chain'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
@@ -982,3 +983,16 @@ services:
         shared: false
         tags:
             - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }
+
+    oro_product.event_listener.product_stickers_frontend_datagrid:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductStickersFrontendDatagridListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_product.layout.data_provider.product_stickers:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductStickersProvider'
+        arguments:
+            - "@oro_config.manager"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_stickers }

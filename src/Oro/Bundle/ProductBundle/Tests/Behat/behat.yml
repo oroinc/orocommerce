@@ -160,6 +160,31 @@ oro_behat_extension:
       selector: 'button[name="oro_website_search_search_button"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Galery View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"gallery-view")]'
+    NoImage View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"no-image-view")]'
+    List View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"list-view")]'
+
+    NewArrivalStiker:
+      selector: '.product-sticker--icon-new_arrival'
+
+    NewArrivalText:
+      selector: '.product-sticker--text-new_arrival'
+
+    ViewDetails:
+      selector: 'a.view-product'
+
+    ProductItem:
+      selector: 'div.product-item'
+
     Product Collection Variant Label:
       selector:
         type: 'xpath'
@@ -206,6 +231,14 @@ oro_behat_extension:
 
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
+
+    Promotions Form:
+      selector: 'form[name="product_promotions"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Show On Product View Default: 'product_promotions[oro_product___product_promotion_show_on_product_view][use_parent_scope_value]'
+          Show On Product View: 'product_promotions[oro_product___product_promotion_show_on_product_view][value]'
 
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
