@@ -7,14 +7,14 @@ services:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\PayPal\Payflow\Client\NVPClientMock'
         public: false
 
-    oro_paypal_listener_mock:
+    oro_paypal.test.fake_controller_mock.listener:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\EventListener\PayPalOuterRedirectEventListener'
         arguments:
             - '@router'
             - '@oro_entity.doctrine_helper'
             - '@http_kernel'
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 100 }
 
     oro_paypal.event_listener.ip_check.payflow_gateway.credit_card:
         class: 'Oro\Bundle\PayPalBundle\Tests\Behat\Mock\EventListener\Callback\PayflowIPCheckListenerMock'

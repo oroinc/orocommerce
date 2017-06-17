@@ -18,7 +18,7 @@ Feature:
     When I click "All Added"
     And I click "Add Button"
     And I should see "Add Products"
-    And I click on PSKU2 in grid "Add Products Popup Grid"
+    And I check PSKU2 record in "Add Products Popup" grid
     And I click "Add" in modal window
     And I save form
     Then I should see "Content Node has been saved" flash message

@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -14,9 +15,9 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
     use EntityTrait;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    private $authorizationChecker;
 
     /**
      * @var ProductCollectionContentVariantType
@@ -25,11 +26,9 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->type = new ProductCollectionContentVariantType($this->securityFacade);
+        $this->type = new ProductCollectionContentVariantType($this->authorizationChecker);
     }
 
     public function testGetName()
@@ -49,7 +48,7 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit_Framework_TestCas
 
     public function testIsAllowed()
     {
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_product_view')
             ->willReturn(true);

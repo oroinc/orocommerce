@@ -31,7 +31,7 @@ Feature: Inline Editing in Products Grids
     And I go to Products / Products
     When I edit "Product1" Name as "Product2" without saving
     And I press "Save changes"
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been succesfully updated" flash message
     Then I should see following records in grid:
@@ -61,7 +61,7 @@ Feature: Inline Editing in Products Grids
   Scenario: Canceling inline editing on Changing Page URLs warning pop-up
     When I edit "Product2" Name as "Product1" without saving
     And I press "Save changes"
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Cancel" in modal window
     Then I should see following records in grid:
       | Product2 |
@@ -73,13 +73,13 @@ Feature: Inline Editing in Products Grids
       | Name             | Product2     |
       | Inventory Status | Out of Stock |
       | Tax Code         | TaxCode2     |
-    And I should see "Disabled" in the ".status-disabled" element
+    And I should see "Disabled" in the "Entity Status" element
 
   Scenario: Inline editing Name field save by clicking on empty space
     And I go to Products / Products
     When I edit "Product2" Name as "Product1" without saving
     And I click on empty space
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been succesfully updated" flash message
     Then I should see following records in grid:
@@ -98,7 +98,7 @@ Feature: Inline Editing in Products Grids
   Scenario: Inline editing Name field using double click
     When I edit "Product1" Name as "Product2" by double click
     And I press "Save changes"
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been succesfully updated" flash message
     Then I should see following records in grid:
@@ -133,7 +133,7 @@ Feature: Inline Editing in Products Grids
     And I go to Products / Products
     When I edit "Product2" Name as "Product3" without saving
     And I press "Save changes"
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been succesfully updated" flash message
     Then I should see following records in grid:
@@ -149,7 +149,7 @@ Feature: Inline Editing in Products Grids
     And I go to Products / Products
     When I edit "Product3" Name as "Product4" without saving
     And I press "Save changes"
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I uncheck "Create 301 Redirect from old to new URLs"
     Then I click "Apply" in modal window
     Then I should see "Record has been succesfully updated" flash message
@@ -220,14 +220,14 @@ Feature: Inline Editing in Products Grids
     Given I go to Products / Products
     When I edit "Control Product" Name as "Product10" without saving
     And I press "Save changes"
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been succesfully updated" flash message
     Then I should see following records in grid:
       | Product10 |
     When I edit "Product6" Name as "Product10" without saving
     And I press "Save changes"
-    Then I should see "Changing Page URLs" modal window
+    Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
     Then I should see "Record has been succesfully updated" flash message
     Then I should see following records in grid:

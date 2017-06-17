@@ -16,12 +16,7 @@ define(function(require) {
         /**
          * @property {Array}
          */
-        requiredOptions: ['eventName', 'hiddenProductsSelector'],
-
-        /**
-         * @property {Array}
-         */
-        currentSelection: null,
+        requiredOptions: ['gridName', 'hiddenProductsSelector'],
 
         /**
          * @inheritDoc
@@ -33,10 +28,11 @@ define(function(require) {
             this._checkOptions();
 
             this.getAction('addProducts', 'adopted', _.bind(function(actionElement) {
-                actionElement.on('click', _.bind(this._triggerEventAndClose, this));
+                actionElement.on('click', _.bind(this._triggerEvent, this));
             }, this));
 
-            mediator.on('grid_load:complete', this._addOnSelectListener, this);
+            mediator.on('product-collection-add-to-excluded', this._closeDialogWidget, this);
+            mediator.on('product-collection-add-to-included', this._closeDialogWidget, this);
         },
 
         /**
@@ -52,50 +48,16 @@ define(function(require) {
         },
 
         /**
-         * @param {PageableCollection} collection
-         * @param {jQuery} $grid
-         *
          * @private
          */
-        _addOnSelectListener: function(collection, $grid) {
-            if (this.$el.has($grid).length) {
-                this.listenTo(collection, 'backgrid:selected', _.bind(function() {
-                    this._updateSelection(collection);
-                    this._updateActionButtonView();
-                }, this));
-            }
-        },
-
-        /**
-         * @param {PageableCollection} collection
-         *
-         * @private
-         */
-        _updateSelection: function(collection) {
-            var selection = {};
-            collection.trigger('backgrid:getSelected', selection);
-            this.currentSelection = selection.selected;
+        _triggerEvent: function() {
+            mediator.trigger('get-selected-products-mass-action-run:' + this.options.gridName);
         },
 
         /**
          * @private
          */
-        _updateActionButtonView: function() {
-            var currentSelection = this.currentSelection;
-
-            this.getAction('addProducts', 'adopted', function(actionElement) {
-                var disabled = _.isEmpty(currentSelection);
-                actionElement
-                    .prop('disabled', disabled)
-                    .toggleClass('disabled', disabled);
-            });
-        },
-
-        /**
-         * @private
-         */
-        _triggerEventAndClose: function() {
-            mediator.trigger(this.options.eventName, this.currentSelection);
+        _closeDialogWidget: function() {
             this.remove();
         },
 
@@ -117,13 +79,13 @@ define(function(require) {
          * @inheritDoc
          */
         loadContent: function() {
-            if (!arguments.length) {
+            if (arguments.length) {
+                ProductCollectionPopupAddProductsWidget.__super__.loadContent.apply(this, arguments);
+            } else {
                 var oldFirstRun = this.firstRun;
                 this.firstRun = false;
                 ProductCollectionPopupAddProductsWidget.__super__.loadContent.call(this, undefined, 'post');
                 this.firstRun = oldFirstRun;
-            } else {
-                ProductCollectionPopupAddProductsWidget.__super__.loadContent.apply(this, arguments);
             }
         },
 
@@ -135,7 +97,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('grid_load:complete', this._addOnSelectListener, this);
+            mediator.off(null, null, this);
 
             ProductCollectionPopupAddProductsWidget.__super__.dispose.call(this);
         }

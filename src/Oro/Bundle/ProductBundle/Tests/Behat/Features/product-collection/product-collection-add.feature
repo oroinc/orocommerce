@@ -8,11 +8,11 @@ Feature:
     Given sessions active:
      | Admin  | first_session  |
      | Buyer  | second_session |
-    And I set "Default Web Catalog" as default web catalog for website scope
 
   Scenario: Add Product Collection variant
     Given I proceed as the Admin
     And I login as administrator
+    And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click on "Show Variants Dropdown"
@@ -50,7 +50,8 @@ Feature:
     And I am on homepage
     Then I should see "PSKU1"
     And I should not see "PSKU2"
-    And Page title equals to "Root Node"
+    And Page title equals to "CollectionMetaTitle"
+    And Page meta title equals "CollectionMetaTitle"
     And Page meta keywords equals "CollectionMetaKeyword"
     And Page meta description equals "CollectionMetaDescription"
 
@@ -70,5 +71,6 @@ Feature:
     When I click "Edit within Web Catalog"
     Then "Content Node Form" must contains values:
       | Titles | Root Node |
+      | Meta Title | CollectionMetaTitle |
       | Meta Keywords | CollectionMetaKeyword |
       | Meta Description | CollectionMetaDescription |

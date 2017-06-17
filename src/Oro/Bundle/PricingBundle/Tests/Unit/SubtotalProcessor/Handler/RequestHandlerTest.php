@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler;
@@ -19,8 +19,8 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /** @var  \PHPUnit_Framework_MockObject_MockObject|EntityRoutingHelper */
     protected $entityRoutingHelper;
@@ -41,9 +41,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
                 ->disableOriginalConstructor()->getMock();
 
-        $this->securityFacade =
-            $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-                ->disableOriginalConstructor()->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->entityRoutingHelper =
             $this->getMockBuilder('Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper')
@@ -56,7 +54,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->requestHandler = new RequestHandler(
             $this->totalProvider,
             $this->eventDispatcher,
-            $this->securityFacade,
+            $this->authorizationChecker,
             $this->entityRoutingHelper,
             $this->doctrine
         );
@@ -84,7 +82,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             $manager = $this->initManager($repository);
 
             $this->doctrine->expects($this->once())->method('getManager')->willReturn($manager);
-            $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(true);
+            $this->authorizationChecker->expects($this->once())->method('isGranted')->willReturn(true);
         } else {
             $entity = new $correctEntityClass();
         }
@@ -149,7 +147,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
         $manager = $this->initManager($repository);
 
         $this->doctrine->expects($this->once())->method('getManager')->willReturn($manager);
-        $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(false);
+        $this->authorizationChecker->expects($this->once())->method('isGranted')->willReturn(false);
 
         $this->requestHandler->recalculateTotals($entityClassName, $entityId);
     }

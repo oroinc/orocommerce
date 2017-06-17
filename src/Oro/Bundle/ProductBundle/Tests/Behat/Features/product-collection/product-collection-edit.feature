@@ -8,11 +8,11 @@ Feature:
     Given sessions active:
       | Admin  | first_session  |
       | Buyer  | second_session |
-    And I set "Default Web Catalog" as default web catalog for website scope
 
   Scenario: Product Collection can be edited
     Given I proceed as the Admin
     And I login as administrator
+    And I set "Default Web Catalog" as default web catalog
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I click "Content Variants"
@@ -52,6 +52,7 @@ Feature:
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     And I fill "Content Node Form" with:
+      | Meta Title       | AnotherCollectionMetaTitle       |
       | Meta Keywords    | AnotherCollectionMetaKeyword     |
       | Meta Description | AnotherCollectionMetaDescription |
     And I save form
@@ -60,6 +61,7 @@ Feature:
     When I am on homepage
     Then Page meta keywords equals "AnotherCollectionMetaKeyword"
     And Page meta description equals "AnotherCollectionMetaDescription"
+    And Page meta title equals "AnotherCollectionMetaTitle"
     When I fill in "search" with "AnotherCollectionMetaKeyword"
     And I press "Search Button"
     Then I should see "PSKU1"

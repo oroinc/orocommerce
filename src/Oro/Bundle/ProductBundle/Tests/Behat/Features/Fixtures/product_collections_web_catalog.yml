@@ -5,6 +5,9 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     localValueRootNode:
         string: 'Root Node'
 
+    localMetaTitle:
+        string: 'CollectionMetaTitle'
+
     localMetaKeyword:
         text: 'CollectionMetaKeyword'
 
@@ -21,6 +24,7 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
 Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
     nodeRoot:
         addTitle: ['@localValueRootNode']
+        addMetaTitl: ['@localMetaTitle']
         addMetaKeyword: ['@localMetaKeyword']
         addMetaDescription: ['@localMetaDescription']
         webCatalog: '@webCatalog'

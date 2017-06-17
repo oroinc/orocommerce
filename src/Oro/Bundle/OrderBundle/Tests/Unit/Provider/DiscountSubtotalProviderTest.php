@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Provider\AbstractSubtotalProviderTest;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
 {
@@ -35,9 +35,9 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected $lineItemSubtotal;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     protected function setUp()
     {
@@ -61,17 +61,13 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder(
-            'Oro\Bundle\SecurityBundle\SecurityFacade'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->provider = new DiscountSubtotalProvider(
             $this->translator,
             $this->roundingService,
             $this->lineItemSubtotal,
-            $this->securityFacade,
+            $this->tokenAccessor,
             $this->currencyManager
         );
     }
@@ -150,8 +146,8 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn(ucfirst(DiscountSubtotalProvider::TYPE));
 
         $customerUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($customerUser);
 
         $order = new Order();
