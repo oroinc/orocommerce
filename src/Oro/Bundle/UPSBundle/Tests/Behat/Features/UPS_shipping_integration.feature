@@ -14,7 +14,7 @@ Feature: UPS shipping integration
       | Shipping Account Name   | Oro Inc.                  |
       | Shipping Account Number | 123                       |
       | Country                 | United States             |
-      | Shipping Services       | [UPS Ground, UPS Express] |
+      | Shipping Services       | UPS Ground                |
     And save and close form
     Then I should see "Integration saved" flash message
     And I go to System/ Shipping Rules

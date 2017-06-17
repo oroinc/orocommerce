@@ -32,7 +32,7 @@ Feature: Applying shipping rules
   Scenario: Disable first Flat Rate integration
     Given I go to System/ Integrations/ Manage Integrations
     And click deactivate "Flat Rate" in grid
-    And I should see "Deactivate Integration" modal window
+    And I should see "Deactivate Integration"
     When click "Deactivate" in modal window
     Then should see "Integration has been deactivated successfully" flash message
 
