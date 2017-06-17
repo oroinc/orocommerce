@@ -7,15 +7,15 @@ use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStr
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements ClosableInterface
 {
     /**
-     * @var SecurityFacade
+     * @var TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var BusinessUnit
@@ -46,11 +46,11 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     }
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param TokenAccessorInterface $tokenAccessor
      */
-    public function setSecurityFacade($securityFacade)
+    public function setTokenAccessor($tokenAccessor)
     {
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -129,7 +129,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         }
 
         /** @var User $user */
-        $user = $this->securityFacade->getLoggedUser();
+        $user = $this->tokenAccessor->getUser();
         if (!$user) {
             $this->owner = false;
 

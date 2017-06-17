@@ -47,7 +47,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
         if ($shoppingList === null) {
             throw $this->createNotFoundException('Can\'t find shopping list with id ' . $id);
         }
-        $isGranted = $this->get('oro_security.security_facade')->isGranted('EDIT', $shoppingList);
+        $isGranted = $this->isGranted('EDIT', $shoppingList);
         $isProcessed = false;
         $view = $this->view([], Codes::HTTP_NO_CONTENT);
         if (!$isGranted) {

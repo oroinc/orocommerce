@@ -186,7 +186,8 @@ services:
         arguments:
             - "@router"
             - "@oro_product.storage.product_data_storage"
-            - "@oro_security.security_facade"
+            - "@security.authorization_checker"
+            - "@oro_security.token_accessor"
             - "@session"
             - "@translator"
         calls:
@@ -626,7 +627,7 @@ services:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }
@@ -635,7 +636,7 @@ services:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
         tags:
             - { name: oro_web_catalog.content_variant_type }
 
@@ -951,7 +952,7 @@ services:
         class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
         arguments:
             - '@oro_datagrid.datagrid.manager'
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@oro_datagrid.extension.pager.orm.pager'
 
     oro_product.service.product_collection_definition_converter:
