@@ -1,0 +1,15 @@
+layout:
+    actions:
+        - '@move':
+            id: product_sticker_new
+            parentId: product_view_gallery_container
+
+        - '@setOption':
+            id: product_sticker_new
+            optionName: mode
+            optionValue: icon
+
+        - '@setOption':
+            id: product_sticker_new
+            optionName: attr.class
+            optionValue: 'product-sticker--icon-static-size'

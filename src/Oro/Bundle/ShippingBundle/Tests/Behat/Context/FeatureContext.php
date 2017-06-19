@@ -177,10 +177,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->fillField('Name', $shoppingRuleName);
 
         // Add method type config
-        if (in_array('Type', $table->getColumn(0), true)) {
+        $method = array_search('Method', $table->getColumn(0), true);
+        if ($method !== false) {
+            $form->fill(new TableNode([['Method', $table->getRow($method)[1]]]));
             $shippingMethodConfigAdd = $form->find('css', '.add-method');
             $shippingMethodConfigAdd->click();
             $this->waitForAjax();
+
+            $rows = $table->getRows();
+            unset($rows[$method]);
+            $table = new TableNode($rows);
         }
 
         foreach ($table->getColumn(0) as $columnItem) {

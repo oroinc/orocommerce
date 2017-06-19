@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -34,9 +35,14 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
     protected $processor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     * @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface
      */
-    private $securityFacade;
+    private $authorizationChecker;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
+     */
+    private $tokenAccessor;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorFilter
@@ -60,9 +66,8 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->componentProcessorFilter = $this
             ->getMockBuilder('Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface')
@@ -77,7 +82,8 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $this->processor = new DataStorageAwareComponentProcessor(
             $this->router,
             $this->storage,
-            $this->securityFacade,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
             $this->session,
             $this->translator
         );
@@ -164,10 +170,11 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
     public function testProcessorIsAllowed($acl, $isGranted, $hasLoggedUser, $expected)
     {
         if (null !== $acl) {
-            $this->securityFacade->expects($this->any())
-                ->method('hasLoggedUser')
+            $this->tokenAccessor->expects($this->any())
+                ->method('hasUser')
                 ->willReturn($hasLoggedUser);
-            $this->securityFacade->expects($this->any())->method('isGranted')
+            $this->authorizationChecker->expects($this->any())
+                ->method('isGranted')
                 ->with($acl)->willReturn($isGranted);
         }
 

@@ -1,0 +1,9 @@
+oro_behat_extension:
+  elements:
+    UPS Shipping Rule Form:
+      selector: "form[id^='oro_shipping_methods_configs_rule-uid']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          UPS Ground Enable: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]"
+          UPS Ground Surcharge: "oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][surcharge]"

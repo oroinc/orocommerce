@@ -54,7 +54,7 @@ class RequestACLTest extends WebTestCase
         $this->login(LoadCustomerUsersData::USER_EMAIL, LoadCustomerUsersData::USER_PASSWORD);
 
         /** @var CustomerUser $user */
-        $user = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
+        $user = $this->getContainer()->get('oro_security.token_accessor')->getUser();
         $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $user);
         $this->assertEquals(LoadCustomerUsersData::USER_EMAIL, $user->getUsername());
 
@@ -193,12 +193,12 @@ class RequestACLTest extends WebTestCase
      */
     protected function assertIsGranted($expected, Request $request)
     {
-        $securityFacade = $this->getContainer()->get('oro_security.security_facade');
+        $authorizationChecker = $this->getContainer()->get('security.authorization_checker');
 
-        $this->assertEquals($expected, $securityFacade->isGranted('VIEW', $request));
-        $this->assertEquals($expected, $securityFacade->isGranted('CREATE', $request));
-        $this->assertEquals($expected, $securityFacade->isGranted('EDIT', $request));
-        $this->assertEquals($expected, $securityFacade->isGranted('DELETE', $request));
-        $this->assertEquals($expected, $securityFacade->isGranted('ASSIGN', $request));
+        $this->assertEquals($expected, $authorizationChecker->isGranted('VIEW', $request));
+        $this->assertEquals($expected, $authorizationChecker->isGranted('CREATE', $request));
+        $this->assertEquals($expected, $authorizationChecker->isGranted('EDIT', $request));
+        $this->assertEquals($expected, $authorizationChecker->isGranted('DELETE', $request));
+        $this->assertEquals($expected, $authorizationChecker->isGranted('ASSIGN', $request));
     }
 }

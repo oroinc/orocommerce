@@ -171,9 +171,23 @@ class CheckoutGridListener
                 $record->addData(['itemsCount' => $counts[$id]]);
             }
 
-            if (isset($sources[$id]) && !$record->getValue('total')) {
-                $record->addData(['total' => $this->totalProcessor->getTotal($sources[$id])->getAmount()]);
+            if (isset($sources[$id])) {
+                $this->updateTotal($sources[$id], $record);
             }
+        }
+    }
+
+    /**
+     * @param object $entity
+     * @param ResultRecord $record
+     */
+    protected function updateTotal($entity, ResultRecord $record)
+    {
+        if ($entity instanceof QuoteDemand) {
+            $record->addData(['total' => $record->getValue('total') + $record->getValue('shippingEstimateAmount')]);
+        } elseif (!$record->getValue('total')) {
+            $total = $this->totalProcessor->getTotal($entity);
+            $record->addData(['total' => $total->getAmount() + $record->getValue('shippingEstimateAmount')]);
         }
     }
 
