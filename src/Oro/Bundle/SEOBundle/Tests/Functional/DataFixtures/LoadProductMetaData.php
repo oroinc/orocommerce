@@ -13,6 +13,7 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
 {
     use SEOMetaDataFieldsTrait;
 
+    const META_TITLES = 'metaTitles';
     const META_DESCRIPTIONS = 'metaDescriptions';
     const META_KEYWORDS = 'metaKeywords';
 
@@ -21,6 +22,7 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
      */
     public static $metadata = [
         LoadProductData::PRODUCT_1 => [
+            OroSEOBundleInstaller::METAINFORMATION_TITLES => self::META_TITLES,
             OroSEOBundleInstaller::METAINFORMATION_DESCRIPTIONS => self::META_DESCRIPTIONS,
             OroSEOBundleInstaller::METAINFORMATION_KEYWORDS => self::META_KEYWORDS,
         ]

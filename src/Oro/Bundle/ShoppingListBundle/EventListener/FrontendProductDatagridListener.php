@@ -7,8 +7,8 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -28,9 +28,9 @@ class FrontendProductDatagridListener
     protected $aclHelper;
 
     /**
-     * @var SecurityFacade
+     * @var TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var RegistryInterface
@@ -38,13 +38,16 @@ class FrontendProductDatagridListener
     protected $registry;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param TokenAccessorInterface $tokenAccessor
      * @param AclHelper $aclHelper
      * @param RegistryInterface $manager
      */
-    public function __construct(SecurityFacade $securityFacade, AclHelper $aclHelper, RegistryInterface $manager)
-    {
-        $this->securityFacade = $securityFacade;
+    public function __construct(
+        TokenAccessorInterface $tokenAccessor,
+        AclHelper $aclHelper,
+        RegistryInterface $manager
+    ) {
+        $this->tokenAccessor = $tokenAccessor;
         $this->aclHelper = $aclHelper;
         $this->registry = $manager;
     }
@@ -72,7 +75,7 @@ class FrontendProductDatagridListener
      */
     public function onResultAfter(SearchResultAfter $event)
     {
-        if (!($this->securityFacade->getLoggedUser() instanceof CustomerUser)) {
+        if (!($this->tokenAccessor->getUser() instanceof CustomerUser)) {
             return;
         }
 

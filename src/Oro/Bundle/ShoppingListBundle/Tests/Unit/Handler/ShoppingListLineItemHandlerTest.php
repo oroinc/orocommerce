@@ -9,12 +9,14 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -25,8 +27,11 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var ShoppingListLineItemHandler */
     protected $handler;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager */
     protected $shoppingListManager;
@@ -36,9 +41,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
             ->disableOriginalConstructor()
@@ -49,7 +53,8 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler = new ShoppingListLineItemHandler(
             $this->managerRegistry,
             $this->shoppingListManager,
-            $this->securityFacade
+            $this->authorizationChecker,
+            $this->tokenAccessor
         );
         $this->handler->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
         $this->handler->setShoppingListClass('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
@@ -79,11 +84,11 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateForShoppingListWithoutPermission()
     {
-        $this->securityFacade->expects($this->once())
-            ->method('hasLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
             ->willReturn(true);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);
 
@@ -95,11 +100,11 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateForShoppingListWithoutUser()
     {
-        $this->securityFacade->expects($this->once())
-            ->method('hasLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
             ->willReturn(false);
 
-        $this->securityFacade->expects($this->never())
+        $this->authorizationChecker->expects($this->never())
             ->method('isGranted');
 
         $this->handler->createForShoppingList(new ShoppingList());
@@ -115,17 +120,17 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsAllowed($isGrantedAdd, $expected, ShoppingList $shoppingList = null, $isGrantedEdit = false)
     {
-        $this->securityFacade->expects($this->once())
-            ->method('hasLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
             ->willReturn(true);
 
-        $this->securityFacade->expects($this->at(1))->method('isGranted')
+        $this->authorizationChecker->expects($this->at(0))
+            ->method('isGranted')
             ->with('oro_shopping_list_frontend_update')
             ->willReturn($isGrantedAdd);
 
         if ($shoppingList && $isGrantedAdd) {
-            $this->securityFacade
-                ->expects($this->at(2))
+            $this->authorizationChecker->expects($this->at(1))
                 ->method('isGranted')
                 ->with('EDIT', $shoppingList)
                 ->willReturn($isGrantedEdit);
@@ -175,10 +180,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getOrganization')
             ->willReturn($organization);
 
-        $this->securityFacade->expects($this->any())
-            ->method('hasLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('hasUser')
             ->willReturn(true);
-        $this->securityFacade->expects($this->any())->method('isGranted')->willReturn(true);
+        $this->authorizationChecker->expects($this->any())
+            ->method('isGranted')
+            ->willReturn(true);
 
         $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(

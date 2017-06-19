@@ -1,5 +1,8 @@
 oro_behat_extension:
   elements:
+    Shipping Method Config Type Field:
+      class: Oro\Bundle\ShippingBundle\Tests\Behat\Element\ShippingMethodConfigType
+
     CheckoutTotalTrigger:
       selector: '.checkout-order-summary__header [data-collapse-trigger]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -12,6 +15,14 @@ oro_behat_extension:
       selector: '.checkout__form span.custom-radio__text'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Flat Rate Shipping Method Icon:
+      selector: '.shipping-method-config .fa-plus-square-o'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Flat Rate Shipping Method Body:
+      selector: '.shipping-method-config .shipping-method-config__body'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
     Shipping Rule:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -21,7 +32,10 @@ oro_behat_extension:
           Name: 'oro_shipping_methods_configs_rule[rule][name]'
           Sort Order: 'oro_shipping_methods_configs_rule[rule][sortOrder]'
           Currency: 'oro_shipping_methods_configs_rule[currency]'
-          Method: 'oro_shipping_methods_configs_rule[method]'
+          Method:
+            type: 'css'
+            locator: 'select[name="oro_shipping_methods_configs_rule[method]"]'
+            element: Shipping Method Config Type Field
           Country: 'oro_shipping_methods_configs_rule[destinations][0][country]'
           Country1: 'oro_shipping_methods_configs_rule[destinations][1][country]'
           Country2: 'oro_shipping_methods_configs_rule[destinations][2][country]'
@@ -29,9 +43,18 @@ oro_behat_extension:
           ZIP1: 'oro_shipping_methods_configs_rule[destinations][1][postalCodes]'
           ZIP2: 'oro_shipping_methods_configs_rule[destinations][2][postalCodes]'
           Config Enable: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][enabled]'
+
+    Flat Rate Shipping Rule Form:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
           Price: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][price]'
+          Type: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][type]'
           HandlingFee: 'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
-          Type:  'oro_shipping_methods_configs_rule[methodConfigs][0][typeConfigs][0][options][type]'
+          Price1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][price]'
+          Type1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][type]'
+          HandlingFee1: 'oro_shipping_methods_configs_rule[methodConfigs][1][typeConfigs][0][options][handling_fee]'
 
     Address:
       selector: 'div#container'

@@ -12,7 +12,7 @@ use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Extension\Pager\Orm\Pager;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
 use Oro\Bundle\ProductBundle\Provider\GridCountProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class GridCountProviderTest extends \PHPUnit_Framework_TestCase
@@ -23,9 +23,9 @@ class GridCountProviderTest extends \PHPUnit_Framework_TestCase
     private $gridManager;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    private $authorizationChecker;
 
     /**
      * @var Pager|\PHPUnit_Framework_MockObject_MockObject
@@ -40,10 +40,10 @@ class GridCountProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->gridManager = $this->createMock(ManagerInterface::class);
-        $this->securityFacade = $this->createMock(SecurityFacade::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->pager = $this->createMock(Pager::class);
 
-        $this->provider = new GridCountProvider($this->gridManager, $this->securityFacade, $this->pager);
+        $this->provider = new GridCountProvider($this->gridManager, $this->authorizationChecker, $this->pager);
     }
 
     public function testAclException()
@@ -57,7 +57,7 @@ class GridCountProviderTest extends \PHPUnit_Framework_TestCase
         $this->gridManager->expects($this->once())
             ->method('getConfigurationForGrid')
             ->willReturn($config);
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('test_acl')
             ->willReturn(false);
@@ -112,7 +112,7 @@ class GridCountProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertDatasourceCalls($dataSource);
 
-        $this->securityFacade->expects($this->never())
+        $this->authorizationChecker->expects($this->never())
             ->method('isGranted');
 
         $this->assertEquals(42, $this->provider->getGridCount($gridName));
@@ -147,7 +147,7 @@ class GridCountProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertDatasourceCalls($dataSource);
 
-        $this->securityFacade->expects($this->never())
+        $this->authorizationChecker->expects($this->never())
             ->method('isGranted');
 
         $this->assertEquals(42, $this->provider->getGridCount($gridName));

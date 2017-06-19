@@ -1,0 +1,39 @@
+// @theme: default;
+
+.product-list {
+    &--gallery-view {
+        display: flex;
+
+        align-content: space-between;
+        flex-wrap: wrap;
+
+        margin-top: 30px;
+
+        font-size: 0;
+    }
+
+    &--no-image-view {
+        margin-top: 15px;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .product-list {
+        &--gallery-view {
+            margin-top: 20px;
+        }
+
+        &--no-image-view {
+            overflow: hidden;
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-list {
+        &--list-view,
+        &--gallery-view {
+            overflow: hidden;
+        }
+    }
+}

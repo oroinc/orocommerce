@@ -50,7 +50,8 @@ Feature:
     And I am on homepage
     Then I should see "PSKU1"
     And I should not see "PSKU2"
-    And Page title equals to "Root Node"
+    And Page title equals to "CollectionMetaTitle"
+    And Page meta title equals "CollectionMetaTitle"
     And Page meta keywords equals "CollectionMetaKeyword"
     And Page meta description equals "CollectionMetaDescription"
 
@@ -70,5 +71,6 @@ Feature:
     When I click "Edit within Web Catalog"
     Then "Content Node Form" must contains values:
       | Titles | Root Node |
+      | Meta Title | CollectionMetaTitle |
       | Meta Keywords | CollectionMetaKeyword |
       | Meta Description | CollectionMetaDescription |

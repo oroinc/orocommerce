@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Model;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
@@ -11,26 +10,23 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class RequestManager
 {
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param DoctrineHelper $doctrineHelper
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param DoctrineHelper         $doctrineHelper
      */
-    public function __construct(SecurityFacade $securityFacade, DoctrineHelper $doctrineHelper)
+    public function __construct(TokenAccessorInterface $tokenAccessor, DoctrineHelper $doctrineHelper)
     {
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -40,7 +36,7 @@ class RequestManager
     public function create()
     {
         $request = new Request();
-        $user = $this->securityFacade->getLoggedUser();
+        $user = $this->tokenAccessor->getUser();
         if ($user instanceof CustomerUser) {
             $request
                 ->setCustomerUser($user)
