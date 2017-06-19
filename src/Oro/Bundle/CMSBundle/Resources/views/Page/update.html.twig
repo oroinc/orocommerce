@@ -16,7 +16,7 @@
 
     {{ UI.cancelButton(path('oro_cms_page_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entityId or resource_granted('oro_cms_page_update') %}
+    {% if entityId or is_granted('oro_cms_page_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

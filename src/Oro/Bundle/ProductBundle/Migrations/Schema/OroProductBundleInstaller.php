@@ -87,7 +87,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_13';
     }
 
     /**
@@ -146,6 +146,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
         $table->addColumn('type', 'string', ['length' => 32]);
         $table->addColumn('is_featured', 'boolean', ['default' => false]);
+        $table->addColumn('is_new_arrival', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_oro_product_created_at', []);

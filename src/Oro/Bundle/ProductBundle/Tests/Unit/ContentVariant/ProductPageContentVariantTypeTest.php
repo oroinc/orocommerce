@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
 use Oro\Bundle\ProductBundle\Tests\Unit\ContentVariant\Stub\ContentVariantStub;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -15,9 +16,9 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    private $authorizationChecker;
 
     /**
      * @var ProductPageContentVariantType
@@ -26,11 +27,12 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->type = new ProductPageContentVariantType($this->securityFacade, $this->getPropertyAccessor());
+        $this->type = new ProductPageContentVariantType(
+            $this->authorizationChecker,
+            $this->getPropertyAccessor()
+        );
     }
 
     public function testGetName()
@@ -50,7 +52,7 @@ class ProductPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testIsAllowed()
     {
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_product_view')
             ->willReturn(true);

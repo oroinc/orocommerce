@@ -8,7 +8,7 @@
             {{ UI.renderProperty('oro.invoice.po_number.label'|trans, entity.poNumber) }}
             {{ UI.renderProperty('oro.invoice.currency.label'|trans, entity.currency) }}
 
-            {% if resource_granted('VIEW', entity.customer) %}
+            {% if is_granted('VIEW', entity.customer) %}
                 {% set customerView = UI.renderUrl(path('oro_customer_customer_view', {'id': entity.customer.id}), entity.customer|oro_format_name|default('oro.ui.empty'|trans)) %}
             {% else %}
                 {% set customerView = entity.customer|oro_format_name|trim %}
@@ -17,7 +17,7 @@
 
             {% set customerUserView = '' %}
             {% if entity.customerUser is not empty %}
-                {% if resource_granted('VIEW', entity.customerUser) %}
+                {% if is_granted('VIEW', entity.customerUser) %}
                     {% set customerUserView = UI.renderUrl(path('oro_customer_customer_user_view', {'id': entity.customerUser.id}), entity.customerUser|oro_format_name) %}
                 {% else %}
                     {% set customerUserView = entity.customerUser|oro_format_name|trim %}

@@ -50,14 +50,14 @@ Feature: Open Orders Grid
     And I show column "Shipping" in "OpenOrdersGrid" frontend grid
     And I show column "Total" in "OpenOrdersGrid" frontend grid
     And I reload the page
-    And I sort OpenOrdersGrid by Subtotal
+    And I sort "OpenOrdersGrid" by Subtotal
 
     Then I should see following "OpenOrdersGrid" grid:
       | Subtotal | Shipping | Total  |
       | $10.00   | $3.00   | $13.00 |
       | $25.00   | $3.00   | $28.00 |
 
-    When I sort OpenOrdersGrid by Subtotal again
+    When I sort "OpenOrdersGrid" by Subtotal again
     Then I should see following "OpenOrdersGrid" grid:
       | Subtotal | Shipping | Total  |
       | $25.00   | $3.00   | $28.00 |

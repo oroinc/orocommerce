@@ -4,7 +4,7 @@
 {% set pageTitle = 'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('oro_shipping_methods_configs_rule_create') %}
+    {% if is_granted('oro_shipping_methods_configs_rule_create') %}
         <div class="btn-group pull-right">
             {{ UI.addButton({
                 'path': path('oro_shipping_methods_configs_rule_create'),

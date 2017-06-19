@@ -36,6 +36,7 @@ class PageControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],
         ];
+        $parameters['oro_cms_page']['metaTitles']['values']['default'] = LoadPageMetaData::META_TITLES;
         $parameters['oro_cms_page']['metaDescriptions']['values']['default'] = LoadPageMetaData::META_DESCRIPTIONS;
         $parameters['oro_cms_page']['metaKeywords']['values']['default'] = LoadPageMetaData::META_KEYWORDS;
 
@@ -48,6 +49,7 @@ class PageControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
+        $this->assertContains(LoadPageMetaData::META_TITLES, $html);
         $this->assertContains(LoadPageMetaData::META_DESCRIPTIONS, $html);
         $this->assertContains(LoadPageMetaData::META_KEYWORDS, $html);
     }
@@ -69,6 +71,7 @@ class PageControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('SEO', $crawler->filter('.nav')->html());
+        $this->assertContains('Meta title', $crawler->html());
         $this->assertContains('Meta description', $crawler->html());
         $this->assertContains('Meta keywords', $crawler->html());
     }

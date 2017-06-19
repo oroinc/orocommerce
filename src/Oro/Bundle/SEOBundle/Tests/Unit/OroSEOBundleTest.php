@@ -23,6 +23,7 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
         $bundle->build($container);
 
         $fields = [
+            'metaTitle' => 'metaTitles',
             'metaDescription' => 'metaDescriptions',
             'metaKeyword' => 'metaKeywords'
         ];

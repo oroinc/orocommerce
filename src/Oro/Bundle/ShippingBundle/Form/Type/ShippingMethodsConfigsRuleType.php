@@ -31,9 +31,7 @@ class ShippingMethodsConfigsRuleType extends AbstractType
                 'label'                => 'oro.shipping.shippingmethodsconfigsrule.destinations.label',
                 'show_form_when_empty' => false,
             ])
-            ->add('methodConfigs', ShippingMethodConfigCollectionType::class, [
-                'required' => false,
-            ])
+            ->add('methodConfigs', ShippingMethodConfigCollectionType::class)
             ->add('method', ShippingMethodSelectType::class, [
                 'mapped' => false,
             ]);
