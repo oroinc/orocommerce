@@ -93,6 +93,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_CONFIGURABLE,
                 'inventoryStatus' => $inventoryStatus,
+                'newArrival' => true,
             ]
         );
 
@@ -165,6 +166,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             'status' => ['value' => Product::STATUS_ENABLED, 'all_text' => false],
             'type' => ['value' => Product::TYPE_CONFIGURABLE, 'all_text' => false],
             'inventory_status' => ['value' => Product::INVENTORY_STATUS_IN_STOCK, 'all_text' => false],
+            'new_arrival' => ['value' => 1, 'all_text' => false],
             'name_LOCALIZATION_ID' => [
                 [
                     'value' => new PlaceholderValue(

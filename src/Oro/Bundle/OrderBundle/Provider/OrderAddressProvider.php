@@ -5,8 +5,10 @@ namespace Oro\Bundle\OrderBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository;
@@ -47,51 +49,45 @@ class OrderAddressProvider implements AddressProviderInterface
         ],
     ];
 
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
+
+    /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var AclHelper
-     */
+    /** @var AclHelper */
     protected $aclHelper;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $customerAddressClass;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $customerUserAddressClass;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $cache = [];
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param ManagerRegistry $registry
-     * @param AclHelper $aclHelper
-     * @param string $customerAddressClass
-     * @param string $customerUserAddressClass
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface        $tokenAccessor
+     * @param ManagerRegistry               $registry
+     * @param AclHelper                     $aclHelper
+     * @param string                        $customerAddressClass
+     * @param string                        $customerUserAddressClass
      */
     public function __construct(
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor,
         ManagerRegistry $registry,
         AclHelper $aclHelper,
         $customerAddressClass,
         $customerUserAddressClass
     ) {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenAccessor = $tokenAccessor;
         $this->registry = $registry;
         $this->aclHelper = $aclHelper;
 
@@ -113,9 +109,9 @@ class OrderAddressProvider implements AddressProviderInterface
 
         $result = [];
         $repository = $this->getCustomerAddressRepository();
-        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
+        if ($this->authorizationChecker->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
             $result = $repository->getAddressesByType($customer, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGranted(sprintf('VIEW;entity:%s', $this->customerAddressClass))) {
+        } elseif ($this->authorizationChecker->isGranted(sprintf('VIEW;entity:%s', $this->customerAddressClass))) {
             $result = $repository->getDefaultAddressesByType($customer, $type, $this->aclHelper);
         }
 
@@ -138,9 +134,11 @@ class OrderAddressProvider implements AddressProviderInterface
 
         $result = [];
         $repository = $this->getCustomerUserAddressRepository();
-        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
+        if ($this->authorizationChecker->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
             $result = $repository->getAddressesByType($customerUser, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
+        } elseif ($this->authorizationChecker->isGranted(
+            $this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT)
+        )) {
             $result = $repository->getDefaultAddressesByType($customerUser, $type, $this->aclHelper);
         }
 
@@ -193,7 +191,7 @@ class OrderAddressProvider implements AddressProviderInterface
     protected function getPermission($type, $key)
     {
         $postfix = '';
-        if (!$this->securityFacade->getLoggedUser() instanceof CustomerUser) {
+        if (!$this->tokenAccessor->getUser() instanceof CustomerUser) {
             $postfix = self::ADMIN_ACL_POSTFIX;
         }
 

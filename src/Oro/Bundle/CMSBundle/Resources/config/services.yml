@@ -44,7 +44,7 @@ services:
         class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }

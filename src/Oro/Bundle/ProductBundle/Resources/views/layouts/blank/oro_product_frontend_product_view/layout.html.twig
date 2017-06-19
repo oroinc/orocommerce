@@ -49,6 +49,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_gallery_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-gallery-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_main_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__main'

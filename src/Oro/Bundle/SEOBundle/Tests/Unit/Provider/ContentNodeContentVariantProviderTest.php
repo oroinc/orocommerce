@@ -36,18 +36,23 @@ class ContentNodeContentVariantProviderTest extends \PHPUnit_Framework_TestCase
         $node = $this->getMockBuilder(ContentNodeInterface::class)
             ->setMethods(
                 [
+                    'getMetaTitles',
                     'getMetaDescriptions',
                     'getMetaKeywords'
                 ]
             )
             ->getMockForAbstractClass();
+        $node->expects($this->once())->method('getMetaTitles')->withAnyParameters()->willReturn(['array']);
         $node->expects($this->once())->method('getMetaDescriptions')->withAnyParameters()->willReturn(['array']);
         $node->expects($this->once())->method('getMetaKeywords')->willReturn(['keywords']);
 
         $result = $this->provider->getLocalizedValues($node);
-        $expectedCount = 2;
+        $expectedCount = 3;
         $this->assertCount($expectedCount, $result);
-        $this->assertEquals(['metaDescriptions'=>['array'], 'metaKeywords'=>['keywords'] ], $result);
+        $this->assertEquals([
+            'metaTitles'=>['array'],
+            'metaDescriptions'=>['array'],
+            'metaKeywords'=>['keywords'] ], $result);
     }
 
     public function testGetValues()

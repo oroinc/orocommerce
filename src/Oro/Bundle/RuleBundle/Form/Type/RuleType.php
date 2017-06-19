@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,7 +27,7 @@ class RuleType extends AbstractType
         }
 
         $builder
-            ->add('name', TextareaType::class, $nameOptions)
+            ->add('name', TextType::class, $nameOptions)
             ->add('enabled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'oro.rule.enabled.label'

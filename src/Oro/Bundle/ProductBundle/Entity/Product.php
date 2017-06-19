@@ -5,12 +5,11 @@ namespace Oro\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -519,6 +518,21 @@ class Product extends ExtendProduct implements
      *  )
      */
     protected $featured = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_new_arrival", type="boolean", options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "attribute"={
+     *              "is_attribute"=true,
+     *              "visible"=false
+     *          }
+     *      }
+     *  )
+     */
+    protected $newArrival = false;
 
     /**
      * {@inheritdoc}
@@ -1259,6 +1273,25 @@ class Product extends ExtendProduct implements
     public function setFeatured($featured)
     {
         $this->featured = (bool)$featured;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNewArrival()
+    {
+        return $this->newArrival;
+    }
+
+    /**
+     * @param bool $newArrival
+     * @return $this
+     */
+    public function setNewArrival($newArrival)
+    {
+        $this->newArrival = (bool)$newArrival;
 
         return $this;
     }
