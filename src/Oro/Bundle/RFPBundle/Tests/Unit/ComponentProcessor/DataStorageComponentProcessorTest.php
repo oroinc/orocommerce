@@ -5,11 +5,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\ComponentProcessor;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
@@ -25,9 +26,14 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $authorizationChecker;
+
+    /**
+     * @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $tokenAccessor;
 
     /**
      * @var Session|\PHPUnit_Framework_MockObject_MockObject
@@ -57,9 +63,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->session = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
@@ -74,7 +79,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $this->processor = new DataStorageComponentProcessor(
             $this->router,
             $this->storage,
-            $this->securityFacade,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
             $this->session,
             $this->translator,
             $this->requestDataStorageExtension
@@ -86,7 +92,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
         unset(
             $this->router,
             $this->storage,
-            $this->securityFacade,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
             $this->session,
             $this->translator,
             $this->requestDataStorageExtension,

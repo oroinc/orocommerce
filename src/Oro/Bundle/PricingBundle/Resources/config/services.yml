@@ -401,7 +401,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
         arguments:
             - '@request_stack'
-            - '@oro_security.security_facade'
+            - '@oro_security.token_accessor'
             - '@oro_pricing.model.price_list_tree_handler'
             - '@doctrine'
             - '@oro_customer.provider.customer_user_relations_provider'
@@ -728,7 +728,7 @@ services:
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@event_dispatcher'
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@oro_entity.routing_helper'
             - '@doctrine'
 

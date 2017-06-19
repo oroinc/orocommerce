@@ -4,35 +4,33 @@ namespace Oro\Bundle\CatalogBundle\JsTree;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 class CategoryTreeHandler extends AbstractTreeHandler
 {
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
-    /**
-     * @var CategoryTreeProvider
-     */
+    /** @var CategoryTreeProvider */
     protected $categoryTreeProvider;
 
     /**
      * {@inheritdoc}
      *
-     * @param SecurityFacade $securityFacade
+     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         $entityClass,
         ManagerRegistry $managerRegistry,
-        SecurityFacade $securityFacade,
+        TokenAccessorInterface $tokenAccessor,
         CategoryTreeProvider $categoryTreeProvider
     ) {
         parent::__construct($entityClass, $managerRegistry);
 
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
         $this->categoryTreeProvider = $categoryTreeProvider;
     }
 
@@ -42,7 +40,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
     protected function getNodes($root, $includeRoot)
     {
         return $this->categoryTreeProvider->getCategories(
-            $this->securityFacade->getLoggedUser(),
+            $this->tokenAccessor->getUser(),
             $root,
             $includeRoot
         );

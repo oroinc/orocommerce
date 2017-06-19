@@ -4,12 +4,12 @@ namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FrontendProductPricesDataProvider
@@ -20,9 +20,9 @@ class FrontendProductPricesDataProvider
     protected $productPriceProvider;
 
     /**
-     * @var SecurityFacade
+     * @var TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var UserCurrencyManager
@@ -36,18 +36,18 @@ class FrontendProductPricesDataProvider
 
     /**
      * @param ProductPriceProvider $productPriceProvider
-     * @param SecurityFacade $securityFacade
+     * @param TokenAccessorInterface $tokenAccessor
      * @param UserCurrencyManager $userCurrencyManager
      * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         ProductPriceProvider $productPriceProvider,
-        SecurityFacade $securityFacade,
+        TokenAccessorInterface $tokenAccessor,
         UserCurrencyManager $userCurrencyManager,
         PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->priceListRequestHandler = $priceListRequestHandler;
     }
@@ -59,7 +59,7 @@ class FrontendProductPricesDataProvider
     public function getProductsMatchedPrice(array $lineItems)
     {
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->securityFacade->getLoggedUser();
+        $customerUser = $this->tokenAccessor->getUser();
         if (!$customerUser) {
             return null;
         }
@@ -88,7 +88,7 @@ class FrontendProductPricesDataProvider
     public function getProductsAllPrices(array $lineItems)
     {
         /** @var CustomerUser $customerUser */
-        $customerUser = $this->securityFacade->getLoggedUser();
+        $customerUser = $this->tokenAccessor->getUser();
         if (!$customerUser) {
             return null;
         }

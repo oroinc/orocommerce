@@ -1,5 +1,5 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
-{% if resource_granted('oro_product_inventory_update') and resource_granted('EDIT', entity) %}
+{% if is_granted('oro_product_inventory_update') and is_granted('EDIT', entity) %}
     {% set dialogTitle %}
         {{ entity.sku|default('N/A'|trans) }} - {{ entity.defaultName.string|default('N/A'|trans) }} - {{ 'oro.inventory.widgets.inventory_management'|trans }}
     {% endset %}
