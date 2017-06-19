@@ -1,12 +1,12 @@
-// @theme: default
+// @theme: default;
 
 .product {
     &__view-details-link {
-        &_gallery-view {
+        &--gallery-view {
             display: none;
         }
 
-        &_no-image-view {
+        &--no-image-view {
             .product-item--compact & {
                 display: inline-block;
             }
@@ -105,79 +105,36 @@
     }
 
     &__specification {
-        max-width: 205px;
-        margin: 0 0 20px;
-
-        &_gallery-view {
-            display: none;
+        &--list-view {
+            margin: 0 0 ($offset-y-m * 2);
         }
 
-        &_no-image-view {
-            margin-bottom: 10px !important;
+        &--no-image-view {
+            margin: 0 0 $offset-y-m;
 
-            &.product__specification_delivery {
+            &.product__specification--delivery {
                 display: none;
             }
 
             .product-item--compact & {
                 display: inline-block;
                 width: 100%;
-                margin-bottom: 0 !important;
+                margin: 0;
             }
         }
     }
 
     &__description {
-        &_gallery-view {
+        &--gallery-view {
             display: none;
         }
 
-        &_no-image-view {
+        &--no-image-view {
             display: none;
         }
 
         p {
             margin: 0 0 15px;
-        }
-    }
-}
-
-@media (max-width: $screen-sm) {
-    .product {
-        &__view-details-link {
-            &_list-view {
-                display: none;
-            }
-
-            &_no-image-view {
-                display: none;
-
-                .product-item--compact & {
-                    display: none;
-                }
-            }
-        }
-
-        &__specification {
-            &_list-view {
-                margin: 0;
-
-                &.product__specification_delivery {
-                    display: none;
-                }
-            }
-
-            &_no-image-view {
-                margin: 0 !important;
-            }
-        }
-    }
-}
-
-@include breakpoint('tablet-small') {
-    .product {
-        &__specification {
-            max-width: 100%;
         }
     }
 }
@@ -193,13 +150,41 @@
         }
 
         &__description {
-            &_list-view {
+            &--list-view {
                 font-size: $base-font-size;
                 line-height: $base-line-height;
 
                 height: $base-font-size * $base-line-height * 2;
 
                 overflow: hidden;
+            }
+        }
+
+        &__view-details-link {
+            &--list-view {
+                display: none;
+            }
+
+            &--no-image-view {
+                display: none;
+
+                .product-item--compact & {
+                    display: none;
+                }
+            }
+        }
+
+        &__specification {
+            &--list-view {
+                margin: 0;
+
+                &.product__specification--delivery {
+                    display: none;
+                }
+            }
+
+            &--no-image-view {
+                margin: 0;
             }
         }
     }

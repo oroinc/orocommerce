@@ -13,7 +13,7 @@
 
 {% block navButtons %}
     {% if entityId %}
-        {% if resource_granted('oro_catalog_category_create') %}
+        {% if is_granted('oro_catalog_category_create') %}
             {{ UI.button({
                 'path' : path('oro_catalog_category_create', { 'id': entityId }),
                 'iCss': 'fa-folder',
@@ -83,7 +83,7 @@
         }] ) %}
     {% endif %}
 
-    {% if resource_granted('oro_product_update') %}
+    {% if is_granted('oro_product_update') %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.entity_plural_label'|trans,
             'subblocks':
@@ -116,7 +116,7 @@
         'key' : 'commerce-category',
         'data' : oro_category_list(),
         'nodeId' : entityId ? entityId : parentCategoryId,
-        'updateAllowed' : resource_granted('oro_catalog_category_update'),
+        'updateAllowed' : is_granted('oro_catalog_category_update'),
         'onSelectRoute' : 'oro_catalog_category_update',
         'onMoveRoute' : 'oro_catalog_category_move'
     } %}

@@ -7,7 +7,7 @@ use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Extension\Pager\Orm\Pager;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -21,9 +21,9 @@ class GridCountProvider
     private $gridManager;
 
     /**
-     * @var SecurityFacade
+     * @var AuthorizationCheckerInterface
      */
-    private $securityFacade;
+    private $authorizationChecker;
 
     /**
      * @var Pager
@@ -32,16 +32,16 @@ class GridCountProvider
 
     /**
      * @param ManagerInterface $gridManager
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      * @param Pager $pager
      */
     public function __construct(
         ManagerInterface $gridManager,
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
         Pager $pager
     ) {
         $this->gridManager = $gridManager;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
         $this->pager = $pager;
     }
 
@@ -77,7 +77,7 @@ class GridCountProvider
     {
         $gridConfig = $this->gridManager->getConfigurationForGrid($gridName);
         $acl = $gridConfig->getAclResource();
-        if ($acl && !$this->securityFacade->isGranted($acl)) {
+        if ($acl && !$this->authorizationChecker->isGranted($acl)) {
             throw new AccessDeniedException('Access denied.');
         }
     }

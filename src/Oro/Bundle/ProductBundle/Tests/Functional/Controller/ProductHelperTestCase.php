@@ -193,7 +193,7 @@ class ProductHelperTestCase extends WebTestCase
      */
     protected function getBusinessUnitId()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser()->getOwner()->getId();
+        return $this->getContainer()->get('oro_security.token_accessor')->getUser()->getOwner()->getId();
     }
 
     /**

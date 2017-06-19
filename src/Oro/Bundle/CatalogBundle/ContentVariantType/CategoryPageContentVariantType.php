@@ -4,33 +4,31 @@ namespace Oro\Bundle\CatalogBundle\ContentVariantType;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CategoryPageContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'category_page';
 
-    /**
-     * @var SecurityFacade
-     */
-    private $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    private $authorizationChecker;
 
-    /**
-     * @var PropertyAccessor
-     */
+    /** @var PropertyAccessor */
     private $propertyAccessor;
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param PropertyAccessor $propertyAccessor
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param PropertyAccessor              $propertyAccessor
      */
-    public function __construct(SecurityFacade $securityFacade, PropertyAccessor $propertyAccessor)
-    {
-        $this->securityFacade = $securityFacade;
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        PropertyAccessor $propertyAccessor
+    ) {
+        $this->authorizationChecker = $authorizationChecker;
         $this->propertyAccessor = $propertyAccessor;
     }
 
@@ -63,7 +61,7 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface
      */
     public function isAllowed()
     {
-        return $this->securityFacade->isGranted('oro_catalog_category_view');
+        return $this->authorizationChecker->isGranted('oro_catalog_category_view');
     }
 
     /**
