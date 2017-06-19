@@ -1,0 +1,16 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set pageTitle = 'oro.coupon.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_coupon_create') %}
+        <div class="btn-group pull-right">
+            {{ UI.addButton({
+                'path': path('oro_coupon_create'),
+                'entity_label': 'oro.coupon.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}
+

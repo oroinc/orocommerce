@@ -1,0 +1,26 @@
+oro:
+    coupon:
+        entity_label: Coupon
+        entity_plural_label: Coupons
+        organization.label: Organization
+        owner.label: Owner
+        id.label: Id
+        code.label: Coupon Code
+        promotion.label: Promotion
+        total_uses.label: Used
+        uses_per_coupon.label: Uses per Coupon
+        uses_per_user.label: Uses per Customer
+        menu:
+            coupon_list.description: List of existing coupons
+            shortcut_new_coupon.label: Create new coupon
+            shortcut_new_coupon.description: Create new coupon
+        sections:
+            general: General
+            additional: Additional
+        form:
+            message:
+                saved: 'Coupon has been saved'
+            tooltip:
+                coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
+                uses_per_user: 'Usage limit enforced for one customer user only'
+                uses_per_coupon: 'Total Coupon usage limit'

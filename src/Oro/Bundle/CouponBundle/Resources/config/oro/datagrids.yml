@@ -1,0 +1,87 @@
+datagrids:
+    coupons-grid:
+        extended_entity_name: Oro\Bundle\CouponBundle\Entity\Coupon
+        options:
+            entityHint: coupon
+            export: true
+        properties:
+            view_link:
+                type:  url
+                route: oro_coupon_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_coupon_view
+                rowAction:     true
+        source:
+            type: orm
+            query:
+                select:
+                    - coupon.id
+                    - coupon.code
+                    - coupon.createdAt
+                    - coupon.updatedAt
+                    - coupon.totalUses
+                    - coupon.usesPerCoupon
+                    - coupon.usesPerUser
+                from:
+                    - { table: Oro\Bundle\CouponBundle\Entity\Coupon, alias: coupon }
+        columns:
+            code:
+                label:         oro.coupon.coupon_code.label
+            usesPerCoupon:
+                label:         oro.coupon.uses_per_coupon.label
+            usesPerUser:
+                label:         oro.coupon.uses_per_user.label
+            totalUses:
+                label:         oro.coupon.total_uses.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: coupon.code
+                totalUses:
+                    data_name: coupon.totalUses
+                usesPerCoupon:
+                    data_name: coupon.usesPerCoupon
+                usesPerUser:
+                    data_name: coupon.usesPerUser
+                createdAt:
+                    data_name: coupon.createdAt
+                updatedAt:
+                    data_name: coupon.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: coupon.code
+                usesPerCoupon:
+                    type:      number
+                    data_name: coupon.usesPerCoupon
+                usesPerCoupon:
+                    type:      number
+                    data_name: coupon.usesPerCoupon
+                usesPerUser:
+                    type:      number
+                    data_name: coupon.usesPerUser
+                totalUses:
+                    type:      number
+                    data_name: coupon.totalUses
+                createdAt:
+                    type:      datetime
+                    data_name: coupon.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: coupon.updatedAt

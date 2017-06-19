@@ -1,0 +1,5 @@
+services:
+    oro_coupon.form.type.coupon:
+        class: 'Oro\Bundle\CouponBundle\Form\Type\CouponType'
+        tags:
+            - { name: form.type, alias: oro_coupon }

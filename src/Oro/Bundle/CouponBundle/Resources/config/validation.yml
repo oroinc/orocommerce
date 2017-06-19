@@ -1,0 +1,17 @@
+Oro\Bundle\CouponBundle\Entity\Coupon:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [code]
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash: ~
+        usesPerUser:
+            - Type:
+                type: integer
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Type:
+                type: integer

@@ -1,0 +1,27 @@
+navigation:
+    menu_config:
+        items:
+            coupons_tab:
+                label:           'oro.coupon.promotion.label'
+                uri:             '#'
+                position:        20
+            coupon_list:
+                label:           'oro.coupon.entity_plural_label'
+                route:           'oro_coupon_index'
+                position:        20
+                extras:
+                    description: 'oro.coupon.menu.coupon_list.description'
+
+        tree:
+            application_menu:
+                children:
+                    marketing_tab:
+                        children:
+                            coupons_tab:
+                                children:
+                                    coupon_list: ~
+
+    titles:
+        oro_coupon_index: ~
+        oro_coupon_create: 'oro.ui.create_entity'
+        oro_coupon_update: 'oro.ui.update_entity'

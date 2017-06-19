@@ -1,0 +1,37 @@
+
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%entityName%": 'oro.coupon.entity_label'|trans}}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('oro_coupon_index'),
+    'indexLabel': 'oro.coupon.entity_plural_label'|trans,
+    'entityTitle': entity.code
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set dataBlocks = {
+        'general': {
+            'title': 'oro.coupon.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'data' : {
+                        'code': UI.renderProperty('oro.coupon.code.label'|trans, entity.code),
+                        'usesPerCoupon': UI.renderProperty('oro.coupon.uses_per_coupon.label'|trans, entity.usesPerCoupon),
+                        'usesPerUser': UI.renderProperty('oro.coupon.uses_per_user.label'|trans, entity.usesPerUser),
+                    }
+                },
+            ]
+        }
+    } %}
+
+    {% set id = 'coupon-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
