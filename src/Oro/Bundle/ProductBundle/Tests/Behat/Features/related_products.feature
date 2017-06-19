@@ -124,6 +124,7 @@ Feature: Editing related products
     And I click "Save settings"
     Then go to Products/ Products
     And I click Edit Product 1 in grid
+    #I should not see "RelatedProductsViewGrid" grid
     And I should not see "Grid"
 
   Scenario: Limit should be restricted
