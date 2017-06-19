@@ -382,6 +382,18 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
     }
 
     /**
+     * @param Collection|Product[] $products
+     *
+     * @return $this
+     */
+    public function setProducts(Collection $products)
+    {
+        $this->products = $products;
+
+        return $this;
+    }
+
+    /**
      * @param Product $product
      *
      * @return $this

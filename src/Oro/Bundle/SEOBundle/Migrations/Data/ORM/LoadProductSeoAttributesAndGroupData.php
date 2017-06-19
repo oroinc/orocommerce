@@ -30,6 +30,9 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
         'metaDescriptions' => [
             'visible' => false
         ],
+        'metaTitles' => [
+            'visible' => false
+        ],
     ];
 
     /**

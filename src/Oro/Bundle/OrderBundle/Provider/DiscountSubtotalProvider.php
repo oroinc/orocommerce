@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
@@ -30,21 +30,21 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
     /** @var RoundingServiceInterface */
     protected $lineItemSubtotal;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /**
-     * @param TranslatorInterface $translator
+     * @param TranslatorInterface      $translator
      * @param RoundingServiceInterface $rounding
      * @param LineItemSubtotalProvider $lineItemSubtotal
-     * @param SecurityFacade $securityFacade
-     * @param UserCurrencyManager $currencyManager
+     * @param TokenAccessorInterface   $tokenAccessor
+     * @param UserCurrencyManager      $currencyManager
      */
     public function __construct(
         TranslatorInterface $translator,
         RoundingServiceInterface $rounding,
         LineItemSubtotalProvider $lineItemSubtotal,
-        SecurityFacade $securityFacade,
+        TokenAccessorInterface $tokenAccessor,
         UserCurrencyManager $currencyManager
     ) {
         parent::__construct($currencyManager);
@@ -52,7 +52,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
         $this->translator = $translator;
         $this->rounding = $rounding;
         $this->lineItemSubtotal = $lineItemSubtotal;
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -113,7 +113,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
      */
     protected function isFrontendUser()
     {
-        return $this->securityFacade->getLoggedUser() instanceof CustomerUser;
+        return $this->tokenAccessor->getUser() instanceof CustomerUser;
     }
 
     /**

@@ -84,7 +84,7 @@
         'subblocks': [{'data' : [orderTotals]}]
     }]) %}
 
-    {% if resource_granted('VIEW_PAYMENT_HISTORY', entity) %}
+    {% if is_granted('VIEW_PAYMENT_HISTORY', entity) %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.sections.payment_history'|trans,
             'priority': -20,

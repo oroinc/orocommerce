@@ -46,7 +46,7 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->setEntityName(Product::class);
         $this->strategy->setVariantLinkClass(ProductVariantLink::class);
         $this->strategy->setLocalizedFallbackValueClass(LocalizedFallbackValue::class);
-        $this->strategy->setSecurityFacade($container->get('oro_security.security_facade'));
+        $this->strategy->setTokenAccessor($container->get('oro_security.token_accessor'));
     }
 
     /**
