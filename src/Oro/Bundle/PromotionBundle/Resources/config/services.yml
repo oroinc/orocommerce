@@ -2,6 +2,16 @@ parameters:
     oro_promotion.entity.promotion.class: Oro\Bundle\PromotionBundle\Entity\Promotion
 
 services:
+    oro_promotion.security.acl.voter.promotion_matched_product_segment:
+        class: Oro\Bundle\PromotionBundle\Acl\Voter\PromotionMatchedProductSegmentVoter
+        public: false
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, ['%oro_segment.segment.entity.class%']]
+        tags:
+            - { name: security.voter, priority: 500 }
+
     oro_promotion.rule_filtration.service:
         class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
         extends: oro_rule.rule_filtration.service

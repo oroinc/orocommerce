@@ -20,7 +20,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(name="oro_promotion")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository")
  * @Config(
  *      routeName="oro_promotion_index",
  *      routeView="oro_promotion_view",
