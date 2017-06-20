@@ -164,24 +164,54 @@ workflows:
 
                     - '@assign_value': [$payment_in_progress, true]
 
-                    - '@assign_url':
-                        attribute: $.result.failedShippingAddressUrl
-                        route: oro_checkout_frontend_checkout
-                        route_parameters:
-                            id: $.checkout.id
-                            transition: 'payment_error'
+                    - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
+                    - '@tree':
+                        conditions:
+                            '@payment_method_supports':
+                                payment_method: $checkout.paymentMethod
+                                action: $.result.validateAction
+                        actions:
+                             # validate payment
+                            - '@assign_url':
+                                attribute: $.result.successUrl
+                                route: oro_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'finish_checkout'
+                            - '@assign_url':
+                                attribute: $.result.failureUrl
+                                route: oro_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: 'payment_error'
+                            - '@payment_validate':
+                                attribute: $.result.responseData
+                                object: $checkout
+                                paymentMethod: $checkout.paymentMethod
+                                transactionOptions:
+                                    saveForLaterUse: $payment_save_for_later
+                                    successUrl: $.result.successUrl
+                                    failureUrl: $.result.failureUrl
+                                    additionalData: $additional_data
+                                    checkoutId: $checkout.id
 
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_purchase
-                        parameters_mapping:
-                            checkout: $checkout
-                            order: $order
-                            transactionOptions:
-                                failedShippingAddressUrl: $.result.failedShippingAddressUrl
-                                additionalData: $additional_data
-                        results:
-                            result.redirectUrl: $.redirectUrl
-                            result.responseData: $.responseData
+                    - '@tree':
+                        conditions:
+                            '@not':
+                                - '@payment_method_supports':
+                                    payment_method: $checkout.paymentMethod
+                                    action: $.result.validateAction
+                        actions:
+                            # purchase, validation not supported
+                            - '@run_action_group':
+                                action_group: b2b_flow_checkout_purchase
+                                parameters_mapping:
+                                    checkout: $checkout
+                                    order: $order
+                                    transactionOptions:
+                                        additionalData: $additional_data
+                                results:
+                                    result.responseData: $.responseData
 
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -192,3 +222,48 @@ workflows:
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
                     - '@assign_value': [$.result.savedCheckoutState, $.result.actualCheckoutState]
+
+            finish_checkout_definition:
+                conditions:
+                    '@and':
+                        - '@not_empty': [$order]
+                        - '@equal': [$payment_in_progress, true]
+                actions:
+                    - '@assign_value': [$.result.successPayment, true]
+
+                    - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
+                    - '@tree':
+                        conditions:
+                            '@payment_method_supports':
+                                payment_method: $checkout.paymentMethod
+                                action: $.result.validateAction
+                        actions:
+                            # purchase after payment validate
+                            - '@run_action_group':
+                                action_group: b2b_flow_checkout_purchase
+                                parameters_mapping:
+                                    checkout: $checkout
+                                    order: $order
+                                    transactionOptions:
+                                        additionalData: $additional_data
+                                results:
+                                    result.redirectUrl: $.redirectUrl
+                                    result.responseData: $.responseData
+
+                            - '@assign_value':
+                                - $.result.successPayment
+                                - $.result.responseData[purchaseSuccessful]
+
+                    # finish checkout
+                    - '@tree':
+                        conditions:
+                            '@equal': [true, $.result.successPayment]
+                        actions:
+                            - '@run_action_group':
+                                action_group: b2b_flow_checkout_finish_checkout
+                                parameters_mapping:
+                                    checkout: $checkout
+                                    order: $order
+                                    auto_remove_source: $auto_remove_source
+                                    allow_manual_source_remove: $allow_manual_source_remove
+                                    remove_source: $remove_source

@@ -149,6 +149,14 @@
     </div>
 {% endblock %}
 
+{% block _payment_additional_data_widget %}
+    {% set blockPrefix = options.block_prefix %}
+    {% for paymentMethod,view in options.views %}
+        {% set options = {payment_method: paymentMethod} %}
+        {{ block('_' ~ blockPrefix ~ view.block) }}
+    {% endfor %}
+{% endblock %}
+
 {% block _additional_options_widget -%}
     <div class="collapse-view"
          data-page-component-module="oroui/js/app/components/jquery-widget-component"
@@ -244,15 +252,6 @@
 
         <div {{ UI.renderPageComponentAttributes({
             module: 'orocheckout/js/app/components/shipping-transition-button-component',
-            options: {
-                _sourceElement: '.checkout__form__submit',
-                'enabled': transitionData.isAllowed,
-                'hasForm': transition.hasForm()
-            }
-        }) }}></div>
-
-        <div {{ UI.renderPageComponentAttributes({
-            module: 'orocheckout/js/app/components/payment-transition-button-component',
             options: {
                 _sourceElement: '.checkout__form__submit',
                 'enabled': transitionData.isAllowed,

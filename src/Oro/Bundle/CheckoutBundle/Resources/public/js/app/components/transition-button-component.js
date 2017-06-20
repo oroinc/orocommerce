@@ -63,7 +63,7 @@ define(function(require) {
 
         onSubmit: function(e) {
             this.$form.validate();
-
+            
             if (this.$form.valid()) {
                 this.transit(e, {method: 'POST'});
             }
@@ -81,7 +81,7 @@ define(function(require) {
 
             this.inProgress = true;
             mediator.execute('showLoading');
-
+            
             $.ajax(this.prepareAjaxData(data, this.options.transitionUrl))
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this));
@@ -97,10 +97,17 @@ define(function(require) {
             data.url = url + (-1 !== _.indexOf(url, '?') ? '&' : '?') + '_widgetContainer=ajax&_wid=ajax_checkout';
             data.errorHandlerMessage = false;
             if (this.$form) {
-                data.data = this.$form.serialize();
+                data.data = this.serializeForm();
             }
 
             return data;
+        },
+        
+        /**
+         * @returns {String}
+         */
+        serializeForm: function() {
+            return this.$form.serialize();
         },
 
         onSuccess: function(response) {
@@ -112,7 +119,7 @@ define(function(require) {
                 mediator.trigger('checkout:place-order:response', eventData);
                 if (eventData.stopped) { return; }
             }
-
+            
             if (response.hasOwnProperty('redirectUrl')) {
                 mediator.execute('redirectTo', {url: response.redirectUrl}, {redirect: true});
             } else {

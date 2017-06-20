@@ -509,3 +509,18 @@ workflows:
                         state: $.result.actualCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
+
+            finish_checkout_definition:
+                conditions:
+                    '@and':
+                        - '@not_empty': [$order]
+                        - '@equal': [$payment_in_progress, true]
+                actions:
+                    - '@run_action_group':
+                        action_group: b2b_flow_checkout_finish_checkout
+                        parameters_mapping:
+                            checkout: $checkout
+                            order: $order
+                            auto_remove_source: $auto_remove_source
+                            allow_manual_source_remove: $allow_manual_source_remove
+                            remove_source: $remove_source

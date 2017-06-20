@@ -188,11 +188,18 @@ action_groups:
                 route_parameters:
                     id: $.checkout.id
                     transition: 'payment_error'
+            - '@assign_url':
+                attribute: $.failedShippingAddressUrl
+                route: oro_checkout_frontend_checkout
+                route_parameters:
+                    id: $.checkout.id
+                    transition: 'payment_error'
 
             - '@copy_values':
                 - $.paymentTransactionOptions
                 -   successUrl: $.successUrl
                     failureUrl: $.failureUrl
+                    failedShippingAddressUrl: $.failedShippingAddressUrl
                     checkoutId: $.checkout.id
                 - $.transactionOptions
 
@@ -209,31 +216,32 @@ action_groups:
 
             - '@redirect':
                 conditions:
-                    '@and':
-                        - '@equal':
-                            - $.responseData[purchaseSuccessful]
-                            - true
-                        - '@payment_method_supports':
-                            payment_method: $.checkout.paymentMethod
-                            action: 'validate'
+                    '@equal':
+                        - true
+                        - $.responseData[purchaseSuccessful]
                 route: oro_checkout_frontend_checkout
                 route_parameters:
                     id: $.checkout.id
-                    transition: finish_checkout
 
             - '@redirect':
                 conditions:
-                    '@and':
-                        - '@equal':
-                            - $.result.responseData[purchaseSuccessful]
-                            - false
-                        - '@payment_method_supports':
-                            payment_method: $.checkout.paymentMethod
-                            action: 'validate'
+                    '@equal':
+                        - false
+                        - $.responseData[purchaseSuccessful]
                 route: oro_checkout_frontend_checkout
                 route_parameters:
                     id: $.checkout.id
                     transition: payment_error
+
+            - '@flash_message':
+                conditions:
+                    '@and':
+                        - '@equal':
+                            - false
+                            - $.responseData[purchaseSuccessful]
+                        - '@not_empty': $.responseData[message]
+                message: $.responseData[message]
+                type: 'error'
 
     b2b_flow_checkout_finish_checkout:
         parameters:

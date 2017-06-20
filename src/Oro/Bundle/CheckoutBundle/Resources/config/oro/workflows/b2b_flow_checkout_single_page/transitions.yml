@@ -85,6 +85,8 @@ workflows:
                         targetEvents:
                             '.checkout-billing-address': 'payment-methods:refresh'
                             '.checkout-shipping-address': 'shipping-methods:refresh'
+                        ignoreTargets:
+                            - '.checkout-payment-methods .checkout__form__payment-container'
                 form_options:
                     form_init:
                         - '@tree':

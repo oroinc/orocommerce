@@ -47,21 +47,6 @@ workflows:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
 
-            finish_checkout_definition:
-                conditions:
-                    '@and':
-                        - '@not_empty': [$order]
-                        - '@equal': [$payment_in_progress, true]
-                actions:
-                    - '@run_action_group':
-                        action_group: b2b_flow_checkout_finish_checkout
-                        parameters_mapping:
-                            checkout: $checkout
-                            order: $order
-                            auto_remove_source: $auto_remove_source
-                            allow_manual_source_remove: $allow_manual_source_remove
-                            remove_source: $remove_source
-
             unblock_and_recalculate_definition:
                 actions:
                     - '@assign_value': [$payment_method, null]

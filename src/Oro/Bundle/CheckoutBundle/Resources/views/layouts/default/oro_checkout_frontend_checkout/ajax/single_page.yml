@@ -71,6 +71,8 @@ layout:
                 payment_methods:
                     blockType: payment_methods
                     options:
+                        attr:
+                            class: 'checkout-payment-methods'
                         class_prefix: 'checkout'
                         views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                         currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
@@ -78,10 +80,10 @@ layout:
                 payment_additional_data:
                     blockType: payment_additional_data
                     options:
-                        visible: '=data["checkout"].getPaymentMethod()'
-                        block_name: '=data["oro_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
+                        block_name: payment_additional_data
                         options:
-                            payment_method: '=data["checkout"].getPaymentMethod()'
+                            views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
+                            block_prefix: "order_review"
 
                 additional_options:
                     blockType: checkout_form_fields
