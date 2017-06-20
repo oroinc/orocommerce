@@ -87,46 +87,28 @@ define(function(require) {
          * @returns {jQuery|HTMLElement}
          */
         getContent: function() {
-            if (!this.hasOwnProperty('$content')) {
-                this.$content = $(this.options.selectors.checkoutContent);
-            }
-
-            return this.$content;
+            return $(this.options.selectors.checkoutContent);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getShippingForm: function() {
-            if (!this.hasOwnProperty('$shippingForm')) {
-                this.$shippingForm = $(this.options.selectors.shippingForm);
-            }
-
-            return this.$shippingForm;
+            return $(this.options.selectors.shippingForm);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getShippingMethodTypeSelector: function() {
-            if (!this.hasOwnProperty('$shippingMethodTypeSelector')) {
-                this.$shippingMethodTypeSelector = this.getShippingForm().find(
-                    this.options.selectors.shippingMethodTypeSelector
-                );
-            }
-
-            return this.$shippingMethodTypeSelector;
+            return this.getShippingForm().find(this.options.selectors.shippingMethodTypeSelector);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getShippingMethodTypeElement: function() {
-            if (!this.hasOwnProperty('$shippingMethodTypeElement')) {
-                this.$shippingMethodTypeElement = this.getContent().find(this.options.selectors.shippingMethodType);
-            }
-
-            return this.$shippingMethodTypeElement;
+            return this.getContent().find(this.options.selectors.shippingMethodType);
         },
 
         onFail: function() {
@@ -144,11 +126,7 @@ define(function(require) {
          * @returns {jQuery|HTMLElement}
          */
         getShippingMethodElement: function() {
-            if (!this.hasOwnProperty('$shippingMethodElement')) {
-                this.$shippingMethodElement = this.getContent().find(this.options.selectors.shippingMethod);
-            }
-
-            return this.$shippingMethodElement;
+            return this.getContent().find(this.options.selectors.shippingMethod);
         }
     });
 
