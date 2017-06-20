@@ -35,6 +35,7 @@ oro:
                     show: Show
         dates.label: Dates
         restrictions.label: Restrictions
+        segment_edit_button.label: Edit within Promotion
 
         blocks:
             general: General

@@ -152,3 +152,9 @@ services:
             - '@oro_promotion.discount_type_to_form_type_provider'
         tags:
             - { name: form.type, alias: oro_promotion_discount_configuration }
+
+    oro_promotion.repository.promotion:
+        class: Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_promotion.entity.promotion.class%'
