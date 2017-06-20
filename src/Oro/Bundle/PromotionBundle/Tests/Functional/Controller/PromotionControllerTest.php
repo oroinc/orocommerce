@@ -65,6 +65,14 @@ class PromotionControllerTest extends WebTestCase
         $this->assertContains('Promotion has been saved', $crawler->html());
     }
 
+    public function testView()
+    {
+        $promotionId = $this->getReference(LoadPromotionData::SIMPLE_PROMOTION)->getId();
+        $this->client->request('GET', $this->getUrl('oro_promotion_view', ['id' => $promotionId]));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+    }
+
     /**
      * @return int
      */

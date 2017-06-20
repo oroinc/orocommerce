@@ -6,6 +6,7 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,10 +24,24 @@ class PromotionController extends Controller
      *      class="OroPromotionBundle:Promotion",
      *      permission="VIEW"
      * )
+     * @param Promotion $promotion
+     * @return array
      */
     public function viewAction(Promotion $promotion)
     {
-        // View action
+        $segment = $promotion->getProductsSegment();
+        $this->get('oro_segment.entity_name_provider')->setCurrentItem($segment);
+        $gridName = Segment::GRID_PREFIX . $segment->getId();
+
+        if (!$this->get('oro_segment.datagrid.configuration.provider')->isConfigurationValid($gridName)) {
+            $gridName = false;
+        }
+
+        return [
+            'entity' => $promotion,
+            'gridName' => $gridName,
+            'scopeEntities' => $this->get('oro_scope.scope_manager')->getScopeEntities('promotion'),
+        ];
     }
 
     /**

@@ -210,3 +210,6 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_promotion.entity.promotion.class%'
+
+    oro_promotion.placeholder.discount_information_placeholder_filter:
+        class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter

@@ -28,13 +28,20 @@ oro:
         rule:
             label: Rule
             name.label: Name
-            enabled.label: Enabled
+            enabled:
+                label: Enabled
+                active: Active
+                inactive: Inactive
+            stop_processing:
+                yes: Yes
+                no: No
             expression:
                 toggle:
                     hide: Hide
                     show: Show
         dates.label: Dates
         restrictions.label: Restrictions
+        advanced_conditions.label: Advanced Conditions
         segment_edit_button.label: Edit within Promotion
 
         blocks:
@@ -56,8 +63,14 @@ oro:
             entity_label: Discount Configuration
             entity_plural_label: Discount Configurations
             id.label: ID
-            type.label: Type
-            options.label: Options
+            type:
+                label: Type
+                discount.label: Discount
+            options:
+                label: Options
+                type.label: Type
+                discount_value.label: Discount Value
+                free_shipping.label: Free Shipping
 
         coupon:
             entity_label: Coupon
@@ -71,6 +84,13 @@ oro:
             promotion.label: Promotion
             active_at.label: Active At
             deactivate_at.label: Deactivate At
+
+            was_activated: Was activated on %date%.
+            was_deactivated: Was deactivated on %date%.
+            will_be_acitivated: Will become active on %date%.
+            will_be_deacitivated: Will be deactivated on %date%.
+            active_now: Is active now.
+            not_active_now: Is not active now.
 
         feature:
             promotion:
@@ -102,6 +122,14 @@ oro:
                 value:
                     label: 'Discount Value'
 
+        sections:
+            general:
+                label: General Information
+                subsection:
+                    general_info.label: General Information
+                    discount_optins.label: Discount Options
+            conditions.label: Conditions
+            matching_items.label: Matching Items
 
         discount:
             strategy:

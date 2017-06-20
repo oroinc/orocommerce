@@ -57,6 +57,8 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->addOroPromotionScheduleForeignKeys($schema);
         $this->addOroPromotionScopeForeignKeys($schema);
         $this->addOroPromotionToCouponForeignKeys($schema);
+
+        $this->addActivityAssociations($schema);
     }
 
     /**
