@@ -3,7 +3,6 @@ define(function(require) {
 
     var $ = require('jquery');
     var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
     var DiscountOptionsView;
 

@@ -25,6 +25,7 @@ class LoadPromotionData extends AbstractFixture implements DependentFixtureInter
                 'enabled' => true,
             ],
             'segmentReference' => LoadSegmentData::PRODUCT_STATIC_SEGMENT,
+            'discountConfiguration' => LoadDiscountConfigurationData::DISCOUNT_CONFIGURATION_ORDER_PERCENT
         ],
     ];
 
@@ -35,6 +36,7 @@ class LoadPromotionData extends AbstractFixture implements DependentFixtureInter
     {
         return [
             LoadSegmentData::class,
+            LoadDiscountConfigurationData::class,
         ];
     }
 
@@ -55,6 +57,10 @@ class LoadPromotionData extends AbstractFixture implements DependentFixtureInter
             $promotion = new Promotion();
             $promotion->setOwner($user);
             $promotion->setRule($rule);
+
+            /** @var DiscountConfiguration $discountConfiguration */
+            $discountConfiguration = $this->getReference($promotionData['discountConfiguration']);
+            $promotion->setDiscountConfiguration($discountConfiguration);
 
             /** @var Segment $segment */
             $segment = $this->getReference($promotionData['segmentReference']);
