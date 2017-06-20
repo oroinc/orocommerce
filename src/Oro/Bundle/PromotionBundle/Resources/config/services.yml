@@ -91,6 +91,13 @@ services:
         tags:
             - { name: form.type, alias: oro_promotion_select }
 
+    oro_promotion.form.type.discount_strategy_select:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountStrategySelectType
+        arguments:
+            - '@oro_promotion.discount.strategy_registry'
+        tags:
+            - { name: form.type, alias: oro_discount_strategy_select }
+
     oro_promotion.form.autocomplete.promotion.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler

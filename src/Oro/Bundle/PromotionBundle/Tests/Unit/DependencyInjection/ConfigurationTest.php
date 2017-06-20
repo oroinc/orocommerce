@@ -32,6 +32,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => true,
                     'scope' => 'app'
                 ],
+                Configuration::DISCOUNT_STRATEGY => [
+                    'value' => 'apply_all',
+                    'scope' => 'app'
+                ],
             ]
         ];
 

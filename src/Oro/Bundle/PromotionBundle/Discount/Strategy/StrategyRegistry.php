@@ -19,7 +19,7 @@ class StrategyRegistry
     }
 
     /**
-     * @return array
+     * @return array|StrategyInterface[]
      */
     public function getStrategies(): array
     {
