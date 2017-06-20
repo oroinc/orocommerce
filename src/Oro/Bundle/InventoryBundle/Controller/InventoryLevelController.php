@@ -59,7 +59,7 @@ class InventoryLevelController extends Controller
      */
     public function updateAction(Product $product, Request $request)
     {
-        if (!$this->get('oro_security.security_facade')->isGranted('EDIT', $product)) {
+        if (!$this->isGranted('EDIT', $product)) {
             throw new AccessDeniedException();
         }
 

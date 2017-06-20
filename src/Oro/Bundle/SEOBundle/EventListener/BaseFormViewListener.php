@@ -56,6 +56,10 @@ abstract class BaseFormViewListener
         }
 
         $twigEnv = $event->getEnvironment();
+        $titleTemplate = $twigEnv->render('OroSEOBundle:SEO:title_view.html.twig', [
+            'entity' => $object,
+            'labelPrefix' => $this->getMetaFieldLabelPrefix()
+        ]);
         $descriptionTemplate = $twigEnv->render('OroSEOBundle:SEO:description_view.html.twig', [
             'entity' => $object,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
@@ -65,7 +69,7 @@ abstract class BaseFormViewListener
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
         ]);
 
-        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate, $priority);
+        $this->addSEOBlock($event->getScrollData(), $titleTemplate, $descriptionTemplate, $keywordsTemplate, $priority);
     }
 
     /**
@@ -76,6 +80,10 @@ abstract class BaseFormViewListener
     {
         $twigEnv = $event->getEnvironment();
         $formView = $event->getFormView();
+        $titleTemplate = $twigEnv->render(
+            'OroSEOBundle:SEO:title_update.html.twig',
+            ['form' => $formView]
+        );
         $descriptionTemplate = $twigEnv->render(
             'OroSEOBundle:SEO:description_update.html.twig',
             ['form' => $formView]
@@ -85,21 +93,28 @@ abstract class BaseFormViewListener
             ['form' => $formView]
         );
 
-        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate, $priority);
+        $this->addSEOBlock($event->getScrollData(), $titleTemplate, $descriptionTemplate, $keywordsTemplate, $priority);
     }
 
     /**
      * @param ScrollData $scrollData
+     * @param string $titleTemplate
      * @param string $descriptionTemplate
      * @param string $keywordsTemplate
      * @param int $priority
      */
-    protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate, $priority = 10)
-    {
+    protected function addSEOBlock(
+        ScrollData $scrollData,
+        $titleTemplate,
+        $descriptionTemplate,
+        $keywordsTemplate,
+        $priority = 10
+    ) {
         $blockLabel = $this->translator->trans('oro.seo.label');
         $scrollData->addNamedBlock(self::SEO_BLOCK_ID, $blockLabel, $priority);
         $leftSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
         $rightSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
+        $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $titleTemplate, 'metaTitles');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $descriptionTemplate, 'metaDescriptions');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $rightSubBlock, $keywordsTemplate, 'metaKeywords');
     }

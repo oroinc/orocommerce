@@ -44,6 +44,9 @@ datagrids:
         extends: base-orders-grid
         update: false
         delete: false
+        options:
+            customerUserOwner:
+                customerUserColumn: customerUserName
         source:
             query:
                 select:

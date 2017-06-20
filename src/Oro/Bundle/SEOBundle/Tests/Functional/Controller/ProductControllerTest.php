@@ -40,6 +40,11 @@ class ProductControllerTest extends WebTestCase
             [
                 'input_action' => 'save_and_stay',
                 'oro_product_product' => [
+                    'metaTitles' => [
+                        'values' => [
+                            'default' => LoadProductMetaData::META_TITLES
+                        ]
+                    ],
                     'metaDescriptions' => [
                         'values' => [
                             'default' => LoadProductMetaData::META_DESCRIPTIONS
@@ -61,6 +66,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
+        $this->assertContains(LoadProductMetaData::META_TITLES, $html);
         $this->assertContains(LoadProductMetaData::META_DESCRIPTIONS, $html);
         $this->assertContains(LoadProductMetaData::META_KEYWORDS, $html);
     }
@@ -74,6 +80,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('SEO', $crawler->filter('.nav')->html());
+        $this->assertContains('Meta title', $crawler->html());
         $this->assertContains('Meta description', $crawler->html());
         $this->assertContains('Meta keywords', $crawler->html());
     }

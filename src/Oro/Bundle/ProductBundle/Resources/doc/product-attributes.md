@@ -109,6 +109,7 @@ The product family is designed to group product attributes for products of simil
 * Product Prices
    - Product prices
 * SEO
+   - Meta title
    - Meta keywords
    - Meta description
    

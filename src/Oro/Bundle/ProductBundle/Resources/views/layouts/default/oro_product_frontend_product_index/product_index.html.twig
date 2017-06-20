@@ -4,7 +4,7 @@
         '~data-page-component-options': {
             view: 'orofrontend/default/js/app/views/footer-align-view',
             elements: {
-                items: '.product-item_gallery-view',
+                items: '.product-item--gallery-view',
                 footer: '.product-item__qty'
             }
         }
@@ -12,4 +12,12 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _sticky_element_toolbar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'sticky_element_toolbar',
+        '~class': ' sticky-panel__toolbar toolbar-sticky-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}

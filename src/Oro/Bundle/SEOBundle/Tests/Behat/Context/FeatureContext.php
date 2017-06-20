@@ -11,7 +11,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     use PageObjectDictionary;
 
     /**
-     * @Then /^Page meta (?P<metaName>(keywords|description)) equals "(?P<content>[^"]+)"$/
+     * @Then /^Page meta (?P<metaName>(keywords|description|title)) equals "(?P<content>[^"]+)"$/
      *
      * @param string $metaName
      * @param string $content
