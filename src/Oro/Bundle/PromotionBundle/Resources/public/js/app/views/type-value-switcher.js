@@ -87,8 +87,10 @@ define(function(require) {
                 return;
             }
 
+            delete this.$type;
             delete this.$amountDiscountValue;
             delete this.$percentDiscountValue;
+            delete this.requiredOptions;
             TypeValueSwitcher.__super__.dispose.call(this);
         }
     });
