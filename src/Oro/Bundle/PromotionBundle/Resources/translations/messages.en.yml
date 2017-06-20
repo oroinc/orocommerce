@@ -49,6 +49,12 @@ oro:
                 promotion_general.title: Promotion General
             fields:
                 feature_enabled.label: Enable Promotion
+                discount_strategy.label: Discount Strategy
 
         form:
             choose: 'Choose a Promotion...'
+
+        discount:
+            strategy:
+                apply_all.label: Apply All
+                profitable.label: Profitable

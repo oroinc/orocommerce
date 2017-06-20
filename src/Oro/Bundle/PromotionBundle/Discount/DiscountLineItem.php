@@ -82,6 +82,8 @@ class DiscountLineItem implements
     public function setPrice(Price $price)
     {
         $this->price = $price;
+
+        return $this;
     }
 
     /**
@@ -94,6 +96,7 @@ class DiscountLineItem implements
 
     /**
      * @param Product|null $product
+     * @return $this
      */
     public function setProduct(Product $product = null)
     {
@@ -101,6 +104,8 @@ class DiscountLineItem implements
         if ($product) {
             $this->setProductSku($product->getSku());
         }
+
+        return $this;
     }
 
     /**
@@ -117,10 +122,13 @@ class DiscountLineItem implements
 
     /**
      * @param string $productSku
+     * @return $this
      */
     public function setProductSku($productSku)
     {
         $this->productSku = $productSku;
+
+        return $this;
     }
 
     /**
@@ -133,6 +141,7 @@ class DiscountLineItem implements
 
     /**
      * @param ProductUnit|null $productUnit
+     * @return $this
      */
     public function setProductUnit(ProductUnit $productUnit = null)
     {
@@ -140,6 +149,8 @@ class DiscountLineItem implements
         if ($productUnit) {
             $this->setProductUnitCode($productUnit->getCode());
         }
+
+        return $this;
     }
 
     /**
@@ -156,10 +167,13 @@ class DiscountLineItem implements
 
     /**
      * @param string $productUnitCode
+     * @return $this
      */
     public function setProductUnitCode($productUnitCode)
     {
         $this->productUnitCode = $productUnitCode;
+
+        return $this;
     }
 
     /**
@@ -172,10 +186,13 @@ class DiscountLineItem implements
 
     /**
      * @param float $quantity
+     * @return $this
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
+        return $this;
     }
 
     /**
@@ -188,18 +205,24 @@ class DiscountLineItem implements
 
     /**
      * @param float $subtotal
+     * @return $this
      */
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
+
+        return $this;
     }
 
     /**
      * @param DiscountInterface $discount
+     * @return $this
      */
     public function addDiscount(DiscountInterface $discount)
     {
         $this->discounts[] = $discount;
+
+        return $this;
     }
 
     /**
@@ -220,18 +243,24 @@ class DiscountLineItem implements
 
     /**
      * @param int $priceType
+     * @return $this
      */
     public function setPriceType($priceType)
     {
         $this->priceType = $priceType;
+
+        return $this;
     }
 
     /**
      * @param DiscountInformation $discountInformation
+     * @return $this
      */
     public function addDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->discountsInformation[] = $discountInformation;
+
+        return $this;
     }
 
     /**

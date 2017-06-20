@@ -10,6 +10,7 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 class Configuration implements ConfigurationInterface
 {
     const FEATURE_ENABLED = 'feature_enabled';
+    const DISCOUNT_STRATEGY = 'discount_strategy';
 
     /**
      * {@inheritDoc}
@@ -23,7 +24,8 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::FEATURE_ENABLED => ['type' => 'boolean', 'value' => true]
+                self::FEATURE_ENABLED => ['type' => 'boolean', 'value' => true],
+                self::DISCOUNT_STRATEGY => ['type' => 'string', 'value' => 'apply_all']
             ]
         );
 

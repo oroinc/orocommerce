@@ -13,6 +13,12 @@ system_configuration:
             options:
                 label: oro.promotion.system_configuration.fields.feature_enabled.label
 
+        oro_promotion.discount_strategy:
+            data_type: string
+            type: oro_discount_strategy_select
+            options:
+                label: oro.promotion.system_configuration.fields.discount_strategy.label
+
     tree:
         system_configuration:
             commerce:
@@ -25,3 +31,4 @@ system_configuration:
                                     promotion_general:
                                         children:
                                             - oro_promotion.feature_enabled
+                                            - oro_promotion.discount_strategy

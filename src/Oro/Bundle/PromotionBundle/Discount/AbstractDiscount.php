@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\PromotionBundle\Discount\Exception\ConfiguredException;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractDiscount implements DiscountInterface
@@ -115,10 +117,25 @@ abstract class AbstractDiscount implements DiscountInterface
         $resolver->setAllowedValues(self::DISCOUNT_TYPE, [self::TYPE_PERCENT, self::TYPE_AMOUNT]);
 
         $resolver->setDefault(self::DISCOUNT_VALUE, 0.0);
-        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, 'float');
+        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, ['float', 'integer']);
 
         $resolver->setDefault(self::DISCOUNT_CURRENCY, null);
         $resolver->setAllowedTypes(self::DISCOUNT_CURRENCY, ['null', 'string']);
+
+        $resolver->setNormalizer(
+            self::DISCOUNT_CURRENCY,
+            function (Options $options, $value) {
+                if ($options[self::DISCOUNT_TYPE] === self::TYPE_PERCENT) {
+                    return null;
+                }
+
+                if (strlen($value) !== 3) {
+                    throw new InvalidOptionsException('Currency code must be compatible with ISO 4217');
+                }
+
+                return $value;
+            }
+        );
 
         return $resolver;
     }
@@ -134,5 +151,23 @@ abstract class AbstractDiscount implements DiscountInterface
         }
 
         return $this->resolvedOptions;
+    }
+
+    /**
+     * @param float $amount
+     * @return float
+     */
+    protected function calculateDiscountAmount($amount): float
+    {
+        $amount = (float)$amount;
+        if ($this->getDiscountType() === DiscountInterface::TYPE_AMOUNT) {
+            if ($amount > $this->getDiscountValue()) {
+                return $this->getDiscountValue();
+            }
+
+            return $amount;
+        }
+
+        return $amount * $this->getDiscountValue();
     }
 }
