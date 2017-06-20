@@ -118,7 +118,7 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT,
-                    AbstractDiscount::DISCOUNT_VALUE => 123
+                    AbstractDiscount::DISCOUNT_VALUE => 1.23
                 ]
             ],
             'options for amount discount' => [

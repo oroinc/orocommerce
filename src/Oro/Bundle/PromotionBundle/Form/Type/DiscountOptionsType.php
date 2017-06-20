@@ -3,13 +3,13 @@
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\FormBundle\Form\Type\OroPercentType;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Form\DataMapper\DiscountConfigurationDataMapper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -195,7 +195,7 @@ class DiscountOptionsType extends AbstractType
             )
             ->add(
                 self::PERCENT_DISCOUNT_VALUE_FIELD,
-                TextType::class,
+                OroPercentType::class,
                 [
                     'required' => true,
                     'label' => 'oro.promotion.form.basic_discount.value.label',
