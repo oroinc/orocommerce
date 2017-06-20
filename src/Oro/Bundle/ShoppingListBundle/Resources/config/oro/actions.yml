@@ -243,7 +243,7 @@ operations:
         routes:
             - oro_shopping_list_view
         button_options:
-            class: btn--action
+            class: btn--action icons-holder-text
             icon: fa-clone
         actions:
             - '@call_service_method':
