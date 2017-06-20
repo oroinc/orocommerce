@@ -14,6 +14,8 @@ use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
 
 class LoadNewArrivalProductsSegmentData extends AbstractFixture implements DependentFixtureInterface
 {
+    const NEW_ARRIVALS_SEGMENT_NAME = 'New Arrivals';
+
     /**
      * {@inheritdoc}
      */
@@ -30,8 +32,14 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements Depen
      */
     public function load(ObjectManager $manager)
     {
+        $segmentName = self::NEW_ARRIVALS_SEGMENT_NAME;
+
+        if ($this->isSegmentAlreadyExists($manager, $segmentName)) {
+            return;
+        }
+
         $segment = new Segment();
-        $segment->setName('New Arrival Products');
+        $segment->setName($segmentName);
         $segment->setEntity(Product::class);
         $segment->setType($this->getSegmentType($manager, SegmentType::TYPE_DYNAMIC));
 
@@ -47,7 +55,20 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements Depen
 
     /**
      * @param ObjectManager $manager
-     * @param string $name
+     * @param string        $name
+     *
+     * @return bool
+     */
+    private function isSegmentAlreadyExists(ObjectManager $manager, $name)
+    {
+        $segment = $manager->getRepository(Segment::class)->findOneBy(['name' => $name]);
+
+        return (bool)$segment;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string        $name
      *
      * @return SegmentType
      */
@@ -65,7 +86,7 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements Depen
      */
     private function getOrganization(ObjectManager $manager)
     {
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     /**
@@ -76,16 +97,16 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements Depen
         return [
             'columns' => [
                 [
-                    'name'    => 'id',
-                    'label'   => 'Id',
+                    'name' => 'id',
+                    'label' => 'Id',
                     'sorting' => '',
-                    'func'    => null,
+                    'func' => null,
                 ],
                 [
-                    'name'    => 'updatedAt',
-                    'label'   => 'Updated At',
+                    'name' => 'updatedAt',
+                    'label' => 'Updated At',
                     'sorting' => 'DESC',
-                    'func'    => null,
+                    'func' => null,
                 ],
             ],
             'filters' => [
@@ -94,11 +115,11 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements Depen
                     'criterion' => [
                         'filter' => 'boolean',
                         'data' => [
-                            'value' => 1
-                        ]
-                    ]
-                ]
-            ]
+                            'value' => 1,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

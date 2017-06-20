@@ -229,6 +229,8 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.new_arrivals_max_items.tooltip
                 constraints:
                     - NotBlank: ~
+                    - Range:
+                        min: 0
 
         oro_product.new_arrivals_min_items:
             data_type: integer
@@ -239,6 +241,8 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.new_arrivals_min_items.tooltip
                 constraints:
                     - NotBlank: ~
+                    - Range:
+                        min: 0
 
         oro_product.new_arrivals_use_slider_on_mobile:
             data_type: boolean

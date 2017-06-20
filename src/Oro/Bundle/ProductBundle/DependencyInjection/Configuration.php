@@ -11,7 +11,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = 'oro_product';
+    const ROOT_NODE = OroProductExtension::ALIAS;
     const SINGLE_UNIT_MODE = 'single_unit_mode';
     const SINGLE_UNIT_MODE_SHOW_CODE = 'single_unit_mode_show_code';
     const DEFAULT_UNIT = 'default_unit';
@@ -27,7 +27,7 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
     const NEW_ARRIVALS_PRODUCT_SEGMENT_ID = 'new_arrivals_products_segment_id';
     const NEW_ARRIVALS_MAX_ITEMS = 'new_arrivals_max_items';
-    const NEW_ARRIVALS_MIX_ITEMS = 'new_arrivals_min_items';
+    const NEW_ARRIVALS_MIN_ITEMS = 'new_arrivals_min_items';
     const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
 
     /**
@@ -64,7 +64,7 @@ class Configuration implements ConfigurationInterface
                 self::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
                 self::NEW_ARRIVALS_PRODUCT_SEGMENT_ID => ['value' => null],
                 self::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
-                self::NEW_ARRIVALS_MIX_ITEMS => ['type' => 'integer', 'value' => 3],
+                self::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
                 self::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
             ]
         );
@@ -79,6 +79,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($key)
     {
-        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [OroProductExtension::ALIAS, $key]);
+        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [self::ROOT_NODE, $key]);
     }
 }

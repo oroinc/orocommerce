@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@setOption':
+            id: new_arrival_products
+            optionName: use_slider
+            optionValue: '=data["new_arrivals"].isUseSliderOnMobile()'
+
+    conditions: 'context["is_mobile"]'

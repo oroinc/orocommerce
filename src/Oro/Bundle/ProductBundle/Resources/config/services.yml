@@ -555,9 +555,9 @@ services:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:
             - '@oro_segment.segment_manager'
+            - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
-            - '@oro_config.user'
-            - '@logger'
+            - '@oro_config.manager'
             - '@oro.cache.memory_cache_chain'
         tags:
             - { name: layout.data_provider, alias: featured_products }
@@ -997,3 +997,23 @@ services:
             - "@oro_config.manager"
         tags:
             - { name: layout.data_provider, alias: oro_product_stickers }
+
+    oro_product.layout.data_provider.new_arrivals:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider'
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@oro_product.provider.segment'
+            - '@oro_product.product.manager'
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: new_arrivals }
+
+    oro_product.provider.segment:
+        parent: oro_product.provider.segment.logging_errors
+
+    oro_product.provider.segment.logging_errors:
+        class: 'Oro\Bundle\ProductBundle\Provider\Segment\LoggingErrors\ProductSegmentWithLoggingErrorsProvider'
+        public: fasle
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@logger'

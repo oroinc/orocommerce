@@ -32,6 +32,7 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
+        new_arrivals.label: New Arrivals
         featured:
             label: Is Featured
             yes: Yes
