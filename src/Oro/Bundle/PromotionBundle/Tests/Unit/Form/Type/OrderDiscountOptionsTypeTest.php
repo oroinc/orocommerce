@@ -46,13 +46,6 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
         $this->assertEquals(DiscountOptionsType::NAME, $this->formType->getParent());
     }
 
-    public function testBuildForm()
-    {
-        $form = $this->factory->create($this->formType);
-
-        $this->assertTrue($form->has(ShippingAwareDiscount::SHIPPING_DISCOUNT));
-    }
-
     /**
      * {@inheritdoc}
      */

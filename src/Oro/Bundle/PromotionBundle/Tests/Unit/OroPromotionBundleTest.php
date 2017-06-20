@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\OroPromotionBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,7 +23,9 @@ class OroPromotionBundleTest extends \PHPUnit_Framework_TestCase
 
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
-        $this->assertCount(1, $passes);
+        $this->assertInternalType('array', $passes);
+        $this->assertCount(2, $passes);
+
         $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[0]);
         $this->assertAttributeEquals(
             [
@@ -33,5 +37,20 @@ class OroPromotionBundleTest extends \PHPUnit_Framework_TestCase
             'classes',
             $passes[0]
         );
+
+        $expectedPasses = [
+            new PromotionCompilerPass()
+        ];
+
+        foreach ($expectedPasses as $expectedPass) {
+            $this->assertContains($expectedPass, $passes, '', false, false);
+        }
+    }
+
+    public function testGetContainerExtension()
+    {
+        $bundle = new OroPromotionBundle();
+
+        $this->assertInstanceOf(OroPromotionExtension::class, $bundle->getContainerExtension());
     }
 }

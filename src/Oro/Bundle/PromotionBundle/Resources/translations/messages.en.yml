@@ -83,6 +83,7 @@ oro:
                 promotion_general.title: Promotion General
             fields:
                 feature_enabled.label: Enable Promotion
+                discount_strategy.label: Discount Strategy
 
         controller:
             saved.message: Promotion has been saved
@@ -101,3 +102,8 @@ oro:
                 value:
                     label: 'Discount Value'
 
+
+        discount:
+            strategy:
+                apply_all.label: Apply All
+                profitable.label: Profitable
