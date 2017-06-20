@@ -19,6 +19,10 @@ define(function(require) {
 
             PaymentTransitionButtonComponent.__super__.initialize.call(this, options);
 
+            mediator.on('checkout:payment-method:rendered', this.onPaymentMethodRendered, this);
+        },
+
+        onPaymentMethodRendered: function() {
             this.initPaymentMethod();
             this.getPaymentMethodSelector().on('change', $.proxy(this.onPaymentMethodChange, this));
         },
