@@ -21,7 +21,13 @@ class LineItemsDiscount extends ShippingAwareDiscount
     {
         parent::apply($discountContext);
 
-        // TODO: Implement apply() method.
+        foreach ($discountContext->getLineItems() as $discountLineItem) {
+            foreach ($this->getMatchingProducts() as $discountMatchingProduct) {
+                if ($discountLineItem->getProduct() === $discountMatchingProduct) {
+                    $discountLineItem->addDiscount($this);
+                }
+            }
+        }
     }
 
     /**
@@ -32,9 +38,7 @@ class LineItemsDiscount extends ShippingAwareDiscount
         if (!$entity instanceof SubtotalAwareInterface) {
             return 0.0;
         }
-        // TODO: Implement calculate() method.
-        // TODO: Use BigDecimal
 
-        return $entity->getSubtotal() * $this->getDiscountValue();
+        return $this->calculateDiscountAmount($entity->getSubtotal());
     }
 }

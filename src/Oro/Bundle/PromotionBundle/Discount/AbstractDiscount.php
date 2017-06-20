@@ -87,6 +87,14 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
+    public function getMatchingProducts(): \Traversable
+    {
+        return $this->matchingProducts;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setMatchingProducts(\Traversable $products)
     {
         $this->matchingProducts = $products;
