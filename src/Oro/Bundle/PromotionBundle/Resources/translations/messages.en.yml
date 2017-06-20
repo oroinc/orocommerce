@@ -57,3 +57,4 @@ oro:
         discount:
             strategy:
                 apply_all.label: Apply All
+                profitable.label: Profitable

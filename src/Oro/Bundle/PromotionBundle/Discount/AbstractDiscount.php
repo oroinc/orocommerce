@@ -117,7 +117,7 @@ abstract class AbstractDiscount implements DiscountInterface
         $resolver->setAllowedValues(self::DISCOUNT_TYPE, [self::TYPE_PERCENT, self::TYPE_AMOUNT]);
 
         $resolver->setDefault(self::DISCOUNT_VALUE, 0.0);
-        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, 'float');
+        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, ['float', 'integer']);
 
         $resolver->setDefault(self::DISCOUNT_CURRENCY, null);
         $resolver->setAllowedTypes(self::DISCOUNT_CURRENCY, ['null', 'string']);

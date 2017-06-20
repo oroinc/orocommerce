@@ -86,6 +86,12 @@ services:
         tags:
             - { name: oro_promotion.discount_strategy, alias: apply_all }
 
+    oro_promotion.discount.strategy.profitable_strategy:
+        class: Oro\Bundle\PromotionBundle\Discount\Strategy\ProfitableStrategy
+        public: false
+        tags:
+            - { name: oro_promotion.discount_strategy, alias: profitable }
+
     oro_promotion.form.type.promotion_select:
         class: Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType
         tags:
