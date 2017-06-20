@@ -216,18 +216,26 @@ action_groups:
 
             - '@redirect':
                 conditions:
-                    '@equal':
-                        - true
-                        - $.responseData[purchaseSuccessful]
+                    '@and':
+                        - '@equal':
+                            - $.responseData[purchaseSuccessful]
+                            - true
+                        - '@payment_method_supports':
+                            payment_method: $.checkout.paymentMethod
+                            action: 'validate'
                 route: oro_checkout_frontend_checkout
                 route_parameters:
                     id: $.checkout.id
 
             - '@redirect':
                 conditions:
-                    '@equal':
-                        - false
-                        - $.responseData[purchaseSuccessful]
+                    '@and':
+                        - '@equal':
+                            - $.responseData[purchaseSuccessful]
+                            - false
+                        - '@payment_method_supports':
+                            payment_method: $.checkout.paymentMethod
+                            action: 'validate'
                 route: oro_checkout_frontend_checkout
                 route_parameters:
                     id: $.checkout.id
