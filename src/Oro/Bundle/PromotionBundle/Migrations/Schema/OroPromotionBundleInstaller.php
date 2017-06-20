@@ -78,7 +78,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id']);
-        $table->addIndex(['discount_config_id']);
+        $table->addUniqueIndex(['discount_config_id']);
         $table->addIndex(['products_segment_id']);
         $table->addIndex(['user_owner_id']);
         $table->addIndex(['organization_id']);

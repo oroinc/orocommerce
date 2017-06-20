@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oropromotion/js/app/views/type-value-switcher': 'bundles/oropromotion/js/app/components/type-value-switcher.js'

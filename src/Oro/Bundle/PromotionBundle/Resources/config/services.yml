@@ -87,10 +87,14 @@ services:
             - { name: form.type, alias: oro_promotion_select }
 
     oro_promotion.form.type.order_discount:
-        class: Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountType
+        class: Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountOptionsType
         tags:
-            - { name: form.type, alias: oro_promotion_order_discount }
+            - { name: form.type, alias: oro_promotion_order_discount_options }
 
+    oro_promotion.form.type.line_item_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType
+        tags:
+            - { name: form.type, alias: oro_promotion_line_item_discount_options }
     oro_promotion.form.type.discount_free_shipping:
         class: Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType
         tags:
@@ -107,8 +111,10 @@ services:
 
     oro_promotion.discount_type_to_form_type_provider:
         class: Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider
-#        calls:
-#            - ['addFormType', ['order', 'oro_promotion.form.discount.order_form_type']]
+        calls:
+            - ['setDefaultFormType', ['oro_promotion_order_discount_options']]
+            - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
+            - ['addFormType', ['shopping_list_line_item', 'oro_promotion_line_item_discount_options']]
 
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
@@ -133,9 +139,16 @@ services:
             - { name: oro_service_link, service: oro_customer.customer_group_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: promotion, priority: 30 }
 
-    oro_promotion.form.type.basic_discount:
-        class: Oro\Bundle\PromotionBundle\Form\Type\BasicDiscountFormType
+    oro_promotion.form.type.discount_options:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType
         arguments:
             - '@oro_promotion.discount_type_to_form_type_provider'
         tags:
-            - { name: form.type, alias: oro_basic_discount }
+            - { name: form.type, alias: oro_promotion_discount_options }
+
+    oro_promotion.form.type.discounts:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType
+        arguments:
+            - '@oro_promotion.discount_type_to_form_type_provider'
+        tags:
+            - { name: form.type, alias: oro_promotion_discount_configuration }

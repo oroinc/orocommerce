@@ -1,0 +1,34 @@
+{% block oro_promotion_discount_options_widget %}
+    <div
+        data-page-component-module="{{ form.vars.attr['data-page-component-module'] }}"
+        data-page-component-options="{{ form.vars.attr['data-page-component-options'] }}"
+    >
+        {{ form_row(form.discount_type) }}
+        {{ form_row(form.amount_discount_value) }}
+        {{ form_row(form.percent_discount_value) }}
+        {{ form_rest(form) }}
+    </div>
+{% endblock %}
+
+{% block oro_promotion_discount_configuration_widget %}
+    {% set dataPrototypes = [] %}
+
+    {% for prototypeKey, prototypeForm in prototypes %}
+        {% set dataPrototypes = dataPrototypes|merge({(prototypeKey): form_widget(prototypeForm)}) %}
+    {% endfor %}
+
+    <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'oropromotion/js/app/views/discount-options-view',
+                discountFormPrototypes: dataPrototypes
+            }|json_encode }}"
+    >
+        {{ form_row(form.type, {attr: {'data-role': 'discount-form-choice'}}) }}
+
+        <div data-role="discount-options-form">
+            {{ form_widget(form.options) }}
+        </div>
+    </div>
+{% endblock %}
+

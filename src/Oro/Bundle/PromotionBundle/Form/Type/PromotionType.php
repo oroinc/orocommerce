@@ -44,7 +44,7 @@ class PromotionType extends AbstractType
                     'empty_value' => false,
                 ]
             )
-            //->add('discountConfiguration')
+            ->add('discountConfiguration', DiscountConfigurationType::NAME)
             ->add(
                 'schedules',
                 ScheduleIntervalsCollectionType::NAME,

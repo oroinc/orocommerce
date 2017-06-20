@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\DataMapper;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
-use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
-use Oro\Bundle\PromotionBundle\Form\Type\BasicDiscountFormType;
+use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormInterface;
@@ -18,31 +16,61 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
      */
     public function mapDataToForms($data, $forms)
     {
-        // TODO: Replace with default PathMapper logic in scope of BB-10086
-        if (!$data) {
+        if (null === $data) {
             return;
         }
 
-        if (!$data instanceof DiscountConfiguration) {
-            throw new UnexpectedTypeException($data, DiscountConfiguration::class);
+        if (!is_array($data)) {
+            throw new UnexpectedTypeException($data, 'array');
         }
 
         /** @var FormInterface[]|\Traversable $forms */
         $forms = iterator_to_array($forms);
-        $options = $data->getOptions();
+        $this->setDataFromOptions($forms, $data);
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function mapFormsToData($forms, &$data)
+    {
+        if (null === $data) {
+            return;
+        }
+
+
+        if (!is_array($data)) {
+            throw new UnexpectedTypeException($data, 'array');
+        }
+
+        /** @var FormInterface[]|\Traversable $forms */
+        $forms = iterator_to_array($forms);
+
+        $data = $this->getOptionsFromData($forms);
+    }
+
+    /**
+     * @param FormInterface[] $forms
+     * @param array $options
+     */
+    private function setDataFromOptions(array &$forms, $options)
+    {
         foreach ($forms as $form) {
-            if ($form->getConfig()->getType()->getInnerType() instanceof PriceType
+            if ($form->getConfig()->getName() === DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD
                 && isset($options[AbstractDiscount::DISCOUNT_VALUE], $options[AbstractDiscount::DISCOUNT_CURRENCY])
             ) {
-                $forms[AbstractDiscount::DISCOUNT_VALUE]->setData(
-                    Price::create(
+                $forms[DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD]->setData(
+                    MultiCurrency::create(
                         $options[AbstractDiscount::DISCOUNT_VALUE],
                         $options[AbstractDiscount::DISCOUNT_CURRENCY]
                     )
                 );
-                unset($options[AbstractDiscount::DISCOUNT_VALUE]);
-                unset($options[AbstractDiscount::DISCOUNT_CURRENCY]);
+            } elseif ($form->getConfig()->getName() === DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD
+                      && isset($options[AbstractDiscount::DISCOUNT_VALUE])
+                      && !isset($options[AbstractDiscount::DISCOUNT_CURRENCY])
+            ) {
+                $forms[DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD]
+                    ->setData($options[AbstractDiscount::DISCOUNT_VALUE]);
             }
 
             foreach ($options as $name => $value) {
@@ -51,33 +79,34 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
                 }
             }
         }
-
-        $forms[BasicDiscountFormType::DISCOUNT_FIELD]->setData($data->getType());
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormInterface[] $forms
+     *
+     * @return array
      */
-    public function mapFormsToData($forms, &$data)
+    private function getOptionsFromData(array $forms)
     {
-        if (!$data instanceof DiscountConfiguration) {
-            throw new UnexpectedTypeException($data, DiscountConfiguration::class);
-        }
-
-        /** @var FormInterface[]|\Traversable $forms */
-        $forms = iterator_to_array($forms);
-
         $options = [];
         foreach ($forms as $form) {
-            if ($form->getConfig()->getType()->getInnerType() instanceof PriceType) {
-                $options[AbstractDiscount::DISCOUNT_VALUE] = $form->getData()->getValue();
+            if ($form->getConfig()->getName() === DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD
+                && $form->getData() instanceof MultiCurrency
+            ) {
+                $options[AbstractDiscount::DISCOUNT_VALUE]    = $form->getData()->getValue();
                 $options[AbstractDiscount::DISCOUNT_CURRENCY] = $form->getData()->getCurrency();
-            } elseif (BasicDiscountFormType::DISCOUNT_FIELD !== $form->getName()) {
+            } elseif ($form->getConfig()->getName() === DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD
+                      && $form->getData()
+            ) {
+                $options[AbstractDiscount::DISCOUNT_VALUE] = $form->getData();
+                unset($options[AbstractDiscount::DISCOUNT_CURRENCY]);
+            } elseif (DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD !== $form->getName()
+                      && DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD !== $form->getName()
+            ) {
                 $options[$form->getName()] = $form->getData();
             }
         }
-        $data->setOptions($options);
 
-        $data->setType($forms[BasicDiscountFormType::DISCOUNT_FIELD]->getData());
+        return $options;
     }
 }

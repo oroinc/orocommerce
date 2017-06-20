@@ -6,9 +6,9 @@ use Oro\Bundle\PromotionBundle\Discount\ShippingAwareDiscount;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class OrderDiscountType extends AbstractType
+class OrderDiscountOptionsType extends AbstractType
 {
-    const NAME = 'oro_promotion_order_discount';
+    const NAME = 'oro_promotion_order_discount_options';
 
     /**
      * {@inheritdoc}
@@ -39,6 +39,6 @@ class OrderDiscountType extends AbstractType
      */
     public function getParent()
     {
-        return BasicDiscountFormType::NAME;
+        return DiscountOptionsType::NAME;
     }
 }

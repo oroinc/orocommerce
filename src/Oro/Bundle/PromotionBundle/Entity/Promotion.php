@@ -187,7 +187,7 @@ class Promotion extends ExtendPromotion implements
     /**
      * @var DiscountConfiguration
      *
-     * @ORM\ManyToOne(
+     * @ORM\OneToOne(
      *     targetEntity="Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration",
      *     cascade={"persist", "remove"}
      * )

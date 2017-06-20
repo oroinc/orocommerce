@@ -1,4 +1,9 @@
 oro:
+    discount:
+        label: 'Discount'
+        choices:
+            order: 'Order'
+            shopping_list_line_item: 'Shopping List Line Item'
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
@@ -33,6 +38,7 @@ oro:
 
         blocks:
             general: General
+            discount_options: Discount Options
             schedules: Schedules
             conditions: Conditions
             matching_items: Matching Items
@@ -85,8 +91,6 @@ oro:
             basic_discount:
                 discount:
                     label: 'Discount'
-                    choices:
-                        order: 'Order'
                 type:
                     label: 'Type'
                     tooltip: 'Discount type'

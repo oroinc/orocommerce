@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Controller;
 
-use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -91,13 +90,6 @@ class PromotionController extends Controller
      */
     protected function update(Promotion $promotion, Request $request)
     {
-        // TODO: Please remove it after implementing first discount configuration in BB-10088
-        if (!$promotion->getDiscountConfiguration()) {
-            $promotion->setDiscountConfiguration(
-                (new DiscountConfiguration())->setType('someType')
-            );
-        }
-
         $form = $this->createForm(PromotionType::NAME, $promotion);
 
         $result = $this->get('oro_form.update_handler')->update(

@@ -60,10 +60,6 @@ class LoadPromotionData extends AbstractFixture implements DependentFixtureInter
             $segment = $this->getReference($promotionData['segmentReference']);
             $promotion->setProductsSegment($segment);
 
-            // TODO: Please remove it after implementing first discount configuration in BB-10088
-            $promotion->setDiscountConfiguration(
-                (new DiscountConfiguration())->setType('someType')
-            );
             $manager->persist($promotion);
 
             $this->setReference($reference, $promotion);
