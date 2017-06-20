@@ -12,7 +12,7 @@ define(function(require) {
             initialEvents: [],
             targetEvents: {},
             ignoreTargets: {},
-            changeTimeout: 2500
+            changeTimeout: 1500
         }),
 
         lastSavedData: '',

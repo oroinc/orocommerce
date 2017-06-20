@@ -35,8 +35,9 @@
                      address: '#' ~ form.shipping_address.customerAddress.vars.id,
                      region: '#' ~ form.shipping_address.region.vars.id,
                      fieldsContainer: '#checkout-address-fields-container',
-                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
-                 }
+                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id
+                 },
+                 hideInputOnShipTo: true
              }|json_encode }}">
 
             <div class="grid">
