@@ -21,6 +21,8 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
+                attr:
+                    'data-dependee-id': 'contact_info_source_display'
 
         oro_sale.contact_details:
             data_type: string
@@ -29,6 +31,10 @@ system_configuration:
             options:
                 required: false
                 label:  oro.sale.system_configuration.fields.contact_details.label
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'contact_info_source_display'
+                    'data-show-if': 'pre_configured'
 
         oro_sale.allow_user_configuration:
             data_type: boolean
@@ -37,6 +43,8 @@ system_configuration:
             options:
                 label: oro.sale.system_configuration.fields.allow_user_configuration.label
                 tooltip: oro.sale.form.tooltip.allow_user_configuration
+                attr:
+                    'data-dependee-id': 'allow_user_configuration'
 
         oro_sale.available_user_options:
             data_type: array
@@ -47,6 +55,10 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'allow_user_configuration'
+                    'data-show-if': 'checked'
 
         oro_sale.contact_info_user_option:
             data_type: string
@@ -57,6 +69,8 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
+                attr:
+                    'data-dependee-id': 'oro_sale.contact_info_user_option'
         oro_sale.contact_info_manual_text:
             data_type: string
             type: textarea
@@ -64,6 +78,10 @@ system_configuration:
             options:
                 required: false
                 label:  oro.sale.system_configuration.fields.contact_info_manual_text.label
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'oro_sale.contact_info_user_option'
+                    'data-show-if': 'enter_manually'
 
     tree:
         system_configuration:
