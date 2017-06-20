@@ -1,7 +1,7 @@
 // @theme: default;
 
 //Components
-@import './components/product-list-item';
+@import './components/product';
 @import './components/buttons-inline-group';
 @import './components/filter-controls';
 @import './components/grid';
@@ -12,7 +12,11 @@
 @import './components/line-item-form';
 @import './components/product-view-quantity';
 @import './components/product-view-desc';
-@import './components/products-widget';
+@import './components/prices-hint-content';
+@import './components/product-list';
+@import './components/product-item';
+@import './components/oro-more-info-toggler';
+@import './components/product-sticker';
 
 //Page templates of product page
 @import './components/page-templates/two-columns-theme';

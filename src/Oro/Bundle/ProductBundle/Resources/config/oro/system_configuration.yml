@@ -28,7 +28,7 @@ system_configuration:
             title: oro.product.system_configuration.groups.product_image_watermark.title
         featured_products:
             title: oro.product.system_configuration.groups.featured_products.title
-            icon: 'fa-certificate'
+            icon: 'fa-star'
         featured_products_segment:
             title: oro.product.system_configuration.groups.featured_products_segment.title
         quick_order:
@@ -39,10 +39,13 @@ system_configuration:
         product_collections:
             title: oro.product.system_configuration.groups.product_collections.title
             icon: 'fa-list'
-        product_collections_indexation:
-            title: oro.product.system_configuration.groups.product_collections_indexation.title
-        promotions:
-            title: oro.product.system_configuration.groups.promotions.title
+        product_collections_general:
+            title: oro.product.system_configuration.groups.product_collections_general.title
+        product_promotions:
+            title: oro.product.system_configuration.groups.product_promotions.title
+            icon: 'fa-certificate'
+        new_product_icons:
+            title: oro.product.system_configuration.groups.new_product_icons.title
         new_arrivals:
             title: oro.product.system_configuration.groups.new_arrivals.title
 
@@ -183,6 +186,31 @@ system_configuration:
                     0 */12 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_twelve_hours.label
                     0 0 * * *: oro.product.system_configuration.fields.product_collections_indexation_cron_schedule.choice.every_day.label
 
+        oro_product.product_collections_mass_action_limitation:
+            data_type: integer
+            type: integer
+            options:
+                label: oro.product.system_configuration.fields.product_collection_mass_action_limitation.label
+                tooltip: oro.product.system_configuration.fields.product_collection_mass_action_limitation.tooltip
+                constraints:
+                    - GreaterThan:
+                        value: 0
+                    - Type: integer
+
+        oro_product.product_promotion_show_on_product_view:
+            data_type: boolean
+            type: choice
+            options:
+                label: oro.product.system_configuration.fields.show_on_product_view.label
+                tooltip: oro.product.form.tooltip.show_on_product_view
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    false: oro.product.system_configuration.fields.show_on_product_view.type.no.label
+                    true: oro.product.system_configuration.fields.show_on_product_view.type.yes.label
+
         oro_product.new_arrivals_products_segment_id:
             data_type: string
             type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType'
@@ -191,6 +219,7 @@ system_configuration:
                 label: oro.product.system_configuration.fields.new_arrivals_products_segment.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+
         oro_product.new_arrivals_max_items:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
@@ -200,6 +229,7 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.new_arrivals_max_items.tooltip
                 constraints:
                     - NotBlank: ~
+
         oro_product.new_arrivals_min_items:
             data_type: integer
             type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
@@ -209,6 +239,7 @@ system_configuration:
                 tooltip: oro.product.system_configuration.fields.new_arrivals_min_items.tooltip
                 constraints:
                     - NotBlank: ~
+
         oro_product.new_arrivals_use_slider_on_mobile:
             data_type: boolean
             type: oro_config_checkbox
@@ -261,23 +292,25 @@ system_configuration:
                                     featured_products_segment:
                                         children:
                                             - oro_product.featured_products_segment_id
-                            promotions:
+                            product_promotions:
                                 priority: 50
                                 children:
+                                    new_product_icons:
+                                        children:
+                                            - oro_product.product_promotion_show_on_product_view
                                     new_arrivals:
                                         children:
                                             - oro_product.new_arrivals_products_segment_id
                                             - oro_product.new_arrivals_max_items
                                             - oro_product.new_arrivals_min_items
                                             - oro_product.new_arrivals_use_slider_on_mobile
-
-
                             product_collections:
                                 priority: 0
                                 children:
-                                    product_collections_indexation:
+                                    product_collections_general:
                                         children:
                                             - oro_product.product_collections_indexation_cron_schedule
+                                            - oro_product.product_collections_mass_action_limitation
                     product_inventory:
                         priority: 650
                         children:

@@ -4,11 +4,11 @@ namespace Oro\Bundle\PricingBundle\SubtotalProcessor\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
@@ -21,8 +21,8 @@ class RequestHandler
     /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /** @var  EntityRoutingHelper */
     protected $entityRoutingHelper;
@@ -33,20 +33,20 @@ class RequestHandler
     /**
      * @param TotalProcessorProvider $totalProvider
      * @param EventDispatcherInterface $eventDispatcher
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      * @param EntityRoutingHelper $entityRoutingHelper
      * @param Registry $doctrine
      */
     public function __construct(
         TotalProcessorProvider $totalProvider,
         EventDispatcherInterface $eventDispatcher,
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
         EntityRoutingHelper $entityRoutingHelper,
         Registry $doctrine
     ) {
         $this->totalProvider = $totalProvider;
         $this->eventDispatcher = $eventDispatcher;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
         $this->entityRoutingHelper = $entityRoutingHelper;
         $this->doctrine = $doctrine;
     }
@@ -121,7 +121,7 @@ class RequestHandler
      */
     protected function hasAccessView($entity)
     {
-        $isGranted = $this->securityFacade->isGranted('VIEW', $entity);
+        $isGranted = $this->authorizationChecker->isGranted('VIEW', $entity);
         if (!$isGranted) {
             throw new AccessDeniedException();
         }

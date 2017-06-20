@@ -31,10 +31,12 @@ class PaymentTransactionWasChargedTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('payment_transaction_was_charged', $this->condition->getName());
     }
 
+    /**
+     * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
+     * @expectedExceptionMessage Missing "transaction" option
+     */
     public function testInitializeException()
     {
-        $this->expectExceptionMessage('Missing "transaction" option');
-
         $this->condition->initialize([]);
     }
 

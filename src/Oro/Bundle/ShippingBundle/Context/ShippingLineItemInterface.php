@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Context;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
@@ -15,4 +16,8 @@ interface ShippingLineItemInterface extends
     QuantityAwareInterface,
     PriceAwareInterface
 {
+    /**
+     * @return Price|null
+     */
+    public function getPrice();
 }

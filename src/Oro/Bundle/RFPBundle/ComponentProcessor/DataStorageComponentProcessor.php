@@ -5,10 +5,11 @@ namespace Oro\Bundle\RFPBundle\ComponentProcessor;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
@@ -20,7 +21,8 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
      * Processor constructor.
      * @param UrlGeneratorInterface $router
      * @param ProductDataStorage $storage
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface $tokenAccessor
      * @param Session $session
      * @param TranslatorInterface $translator
      * @param RequestDataStorageExtension $requestDataStorageExtension
@@ -28,14 +30,15 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor,
         Session $session,
         TranslatorInterface $translator,
         RequestDataStorageExtension $requestDataStorageExtension
     ) {
         $this->requestDataStorageExtension = $requestDataStorageExtension;
 
-        parent::__construct($router, $storage, $securityFacade, $session, $translator);
+        parent::__construct($router, $storage, $authorizationChecker, $tokenAccessor, $session, $translator);
     }
 
     /**

@@ -1,0 +1,43 @@
+<% var i = 0; %>
+<% _.each(methods, function(method) { %>
+    <% if (_.size(method.types) > 0) { %>
+        <div class="method_title">
+            <% if (method.isGrouped === true) { %>
+                <span><%= method.label %></span>
+            <% } %>
+        </div>
+        <% _.each(method.types, function(type) { %>
+            <% if (type.price.value !== null) { %>
+                <div>
+                    <label>
+                        <input
+                            type="radio"
+                            name="possibleShippingMethodType"
+                            data-name="field__possible-shipping-method-type"
+                            value="<%= type.identifier %>"
+                            data-shipping-method="<%= method.identifier %>"
+                            data-shipping-price="<%= type.price.value %>"
+                            data-choice="<%= type.identifier %>"
+                            <% if (method.identifier === selectedMethod && type.identifier === selectedType) { %>
+                                <%= 'checked="checked"' %>
+                            <% } %>
+                        />
+                        <span class="radio_button_label">
+                            <%= _.__(
+                                'oro.shipping.method_type.backend.method_type_and_price.label',
+                                {
+                                    translatedMethodType: type.label,
+                                    price: '<strong>' + formatter.formatCurrency(type.price.value, type.price.currency) + '</strong>'
+                                })
+                            %>
+                        </span>
+                    </label>
+                </div>
+            <% } %>
+        <% }); %>
+    <% } %>
+    <% i = i + 1; %>
+    <% if (_.size(methods) > i) { %>
+        <hr>
+    <% } %>
+<% }); %>

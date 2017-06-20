@@ -7,11 +7,12 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\TableRow;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\EntityPage;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareTrait;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Tabs;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 class CommerceMainContext extends OroFeatureContext implements
@@ -67,7 +68,7 @@ class CommerceMainContext extends OroFeatureContext implements
 
     /**
      * Assert text by label in page.
-     * Example: Then I should see call on front store with data:
+     * Example: Then I should see Call Frontend Page with data:
      *            | Subject             | Proposed Charlie to star in new film |
      *            | Additional comments | Charlie was in a good mood           |
      *            | Call date & time    | Aug 24, 2017, 11:00 AM               |
@@ -75,24 +76,17 @@ class CommerceMainContext extends OroFeatureContext implements
      *            | Direction           | Outgoing                             |
      *            | Duration            | 5:30                                 |
      *
-     * @Then /^(?:|I )should see (?P<entity>[\w\s]+) on front store with data:$/
+     * @Then /^(?:|I )should see (?P<entity>[\w\s]+) with data:$/
      */
     public function assertValuesByLabels($entity, TableNode $table)
     {
+        /** @var EntityPage $entityPage */
+        $entityPage = $this->createElement($entity);
+
         foreach ($table->getRows() as $row) {
             list($label, $value) = $row;
-            /* @var $rowElement TableRow */
-            $rowElement = $this->findElementContains('TableRow', $label);
 
-            if (!$rowElement->isIsset()) {
-                self::fail(sprintf('Can\'t find "%s" label', $label));
-            }
-
-            if ($rowElement->getCellByNumber(1)->getText() === Form::normalizeValue($value)) {
-                continue;
-            }
-
-            self::fail(sprintf('Found "%s" label but no has "%s" value', $label, $value));
+            $entityPage->assertPageContainsValue($label, $value);
         }
     }
 
@@ -103,5 +97,36 @@ class CommerceMainContext extends OroFeatureContext implements
     protected function getUrl($path)
     {
         return $this->getContainer()->get('router')->generate($path);
+    }
+
+    /**
+     * Assert tab containing specified data on page.
+     * Example: Then I should see "Product Group" tab containing data:
+     *            | Color: Green |
+     *            | Size: L      |
+     *
+     * @Then /^(?:|I )should see "(?P<tabName>[^"]*)" tab containing data:$/
+     */
+    public function assertTabContainsData($tabName, TableNode $table)
+    {
+        $tabContainer = null;
+        $tabContainers = $this->findAllElements('Tab Container');
+        /** @var Tabs $element */
+        foreach ($tabContainers as $element) {
+            if ($element->hasTab($tabName)) {
+                $tabContainer = $element;
+                break;
+            }
+        }
+        self::assertNotEmpty($tabContainer);
+
+        $tabContainer->switchToTab($tabName);
+
+        $activeTab = $tabContainer->getActiveTab();
+        self::assertNotEmpty($activeTab);
+
+        foreach ($table->getRows() as $row) {
+            self::assertContains($this->fixStepArgument($row[0]), $activeTab->getText());
+        }
     }
 }

@@ -35,12 +35,12 @@ interface ShippingContextInterface extends CustomerOwnerAwareInterface
     public function getPaymentMethod();
 
     /**
-     * @return String
+     * @return String|null
      */
     public function getCurrency();
 
     /**
-     * @return Price
+     * @return Price|null
      */
     public function getSubtotal();
 

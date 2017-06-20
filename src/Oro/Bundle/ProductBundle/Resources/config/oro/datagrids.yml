@@ -15,6 +15,7 @@ datagrids:
                     - productInventoryStatus.name as inventoryStatusName
                     - product.status
                     - product.type
+                    - product.newArrival
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
                 join:
@@ -37,6 +38,13 @@ datagrids:
                 label:         oro.product.type.label
                 frontend_type: select
                 choices:       "@oro_product.provider.product_type_provider->getAvailableProductTypes"
+                renderable:    false
+            newArrival:
+                label:         oro.product.new_arrival.label
+                frontend_type: select
+                choices:
+                    - oro.product.new_arrival.no
+                    - oro.product.new_arrival.yes
                 renderable:    false
             createdAt:
                 label:         oro.ui.created_at
@@ -61,6 +69,8 @@ datagrids:
                     data_name: product.status
                 type:
                     data_name: product.type
+                newArrival:
+                    data_name: product.newArrival
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -91,6 +101,15 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_type_provider->getAvailableProductTypes"
+                newArrival:
+                    type: boolean
+                    data_name: product.newArrival
+                    options:
+                        field_options:
+                            choices:
+                                1: oro.product.new_arrival.yes
+                                2: oro.product.new_arrival.no
+                    enabled: false
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -131,6 +150,13 @@ datagrids:
                 event_name:    product-collection-add-to-excluded
                 label:         oro.product.grid.action.product_collection.add_to_exclude
                 icon:          remove
+        mass_actions:
+            add_to_excluded:
+                type:            trigger-event-for-selected-product-ids
+                label:           oro.product.grid.action.product_collection.add_to_exclude
+                icon:            remove
+                data_identifier: product.id
+                event_name:      product-collection-add-to-excluded
 
     product-collection-selected-products-grid:
         extends: product-collection-base-grid
@@ -147,38 +173,39 @@ datagrids:
                 selectedProducts:
                     default: 0
 
-    product-collection-add-products-grid:
+    product-collection-add-products-base-grid:
         extends: product-collection-base-grid
         options:
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
             routerEnabled: false
-            rowSelection:
-                dataField: id
-                columnName: isSelected
-                selectors:
-                    included: '#appendProducts'
-                    excluded: '#removeProducts'
         source:
             query:
-                select:
-                    - >
-                      (CASE WHEN (product.id IN (:data_in) AND product.id NOT IN (:data_not_in))
-                      THEN true ELSE false
-                      END) as isSelected
                 where:
                     and:
                         - NOT (product.id IN (:hiddenProducts))
             bind_parameters:
                 hiddenProducts:
                     default: 0
-        columns:
-            isSelected:
-                label:         oro.product.content_variant.ui.selected
-                editable:      true
-                frontend_type: boolean
-                order: -1
+        mass_actions:
+            add:
+                type: trigger-event-for-selected-product-ids
+                label: oro.product.grid.action.product_collection.add_individual_product
+                icon: plus
+                data_identifier: product.id
+
+    product-collection-add-products-to-included-grid:
+        extends: product-collection-add-products-base-grid
+        mass_actions:
+            add:
+                event_name: product-collection-add-to-included
+
+    product-collection-add-products-to-excluded-grid:
+        extends: product-collection-add-products-base-grid
+        mass_actions:
+            add:
+                event_name: product-collection-add-to-excluded
 
     product-collection-included-products-grid:
         extends: product-collection-selected-products-grid
@@ -188,6 +215,13 @@ datagrids:
                 event_name:    product-collection-remove-from-included
                 label:         oro.product.grid.action.product_collection.remove_from_included
                 icon:          undo
+        mass_actions:
+            remove_from_included:
+                type:            trigger-event-for-selected-product-ids
+                label:           oro.product.grid.action.product_collection.remove_from_included
+                icon:            undo
+                data_identifier: product.id
+                event_name:      product-collection-remove-from-included
 
     product-collection-excluded-products-grid:
         extends: product-collection-selected-products-grid
@@ -197,6 +231,13 @@ datagrids:
                 event_name:    product-collection-remove-from-excluded
                 label:         oro.product.grid.action.product_collection.remove_from_excluded
                 icon:          trash
+        mass_actions:
+            remove_from_excluded:
+                type:            trigger-event-for-selected-product-ids
+                label:           oro.product.grid.action.product_collection.remove_from_excluded
+                icon:            trash
+                data_identifier: product.id
+                event_name:      product-collection-remove-from-excluded
 
     products-grid:
         extends: products-select-grid-base
@@ -241,6 +282,9 @@ datagrids:
                     validation_rules:
                         NotBlank: true
             status:
+                inline_editing:
+                    enable: true
+            newArrival:
                 inline_editing:
                     enable: true
 
@@ -425,6 +469,7 @@ datagrids:
             query:
                 select:
                     - text.sku as sku
+                    - integer.new_arrival as newArrival
                     - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
                     - text.type as type
@@ -459,6 +504,7 @@ datagrids:
                 type:  url
                 route: oro_product_frontend_product_view
                 params: [ id ]
+            newArrival: ~
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true

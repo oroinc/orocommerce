@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Yaml\Parser;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 
@@ -17,24 +18,27 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
     /** @var QuoteAddressSecurityProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressProvider */
     protected $quoteAddressProvider;
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->quoteAddressProvider = $this->getMockBuilder('Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new QuoteAddressSecurityProvider(
-            $this->securityFacade,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
             $this->quoteAddressProvider,
             'CustomerQuoteClass',
             'CustomerUserQuoteClass'
@@ -43,7 +47,7 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->securityFacade, $this->provider, $this->quoteAddressProvider);
+        unset($this->authorizationChecker, $this->tokenAccessor, $this->provider, $this->quoteAddressProvider);
     }
 
     /**
@@ -54,7 +58,9 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsManualEditGranted($type, $permissionName, $permission)
     {
-        $this->securityFacade->expects($this->atLeastOnce())->method('isGranted')->with($permissionName)
+        $this->authorizationChecker->expects($this->atLeastOnce())
+            ->method('isGranted')
+            ->with($permissionName)
             ->willReturn($permission);
 
         $this->assertEquals($permission, $this->provider->isManualEditGranted($type));
@@ -101,8 +107,10 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $this->quoteAddressProvider->expects($this->any())->method('getCustomerUserAddresses')
             ->willReturn($hasCustomerUserAddresses);
 
-        $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new $userClass);
-        $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
+        $this->tokenAccessor->expects($this->any())->method('getUser')->willReturn(new $userClass);
+        $this->authorizationChecker->expects($this->any())
+            ->method('isGranted')
+            ->with($this->isType('string'))
             ->will($this->returnValueMap((array)$isGranted));
 
         $quote = null;
