@@ -328,4 +328,32 @@ class PriceList extends BasePriceList
 
         return $this;
     }
+
+    /**
+     * Set API currencies
+     *
+     * @param string[]|null $currencies
+     *
+     * @return PriceList
+     */
+    public function setPriceListCurrencies($currencies): PriceList
+    {
+        if (!$currencies) {
+            $currencies = [];
+        }
+
+        $this->setCurrencies($currencies);
+
+        return $this;
+    }
+
+    /**
+     * Get API currencies
+     *
+     * @return string[]
+     */
+    public function getPriceListCurrencies(): array
+    {
+        return $this->getCurrencies();
+    }
 }

@@ -13,6 +13,9 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
         currencies:
             - NotBlank: ~
             - Valid: ~
+            - Count:
+                min: 1
+                groups: [api]
         schedules:
             - Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
             - Valid: ~

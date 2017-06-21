@@ -1,0 +1,19 @@
+api:
+    entities:
+        Oro\Bundle\PricingBundle\Entity\PriceList:
+            fields:
+                createdAt:
+                    form_options:
+                        mapped: false
+                updatedAt:
+                    form_options:
+                        mapped: false
+                containSchedule:
+                    form_options:
+                        mapped: false
+                prices:
+                    exclude : true
+                priceListCurrencies:
+                    data_type: array
+        Oro\Bundle\PricingBundle\Entity\PriceListSchedule: ~
+        Oro\Bundle\PricingBundle\Entity\PriceRule: ~
