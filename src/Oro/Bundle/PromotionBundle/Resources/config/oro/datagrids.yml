@@ -1,0 +1,82 @@
+datagrids:
+    promotion-select-grid:
+        acl_resource: oro_promotion_view
+        extended_entity_name: '%oro_promotion.entity.promotion.class%'
+        options:
+            entityHint: 'promotions'
+        source:
+            type: orm
+            query:
+                select:
+                    - promotion.id
+                    - rule.name
+                    - promotion.useCoupons
+                    - promotion.createdAt
+                    - promotion.updatedAt
+                    - rule.enabled
+                from:
+                    - { table: '%oro_promotion.entity.promotion.class%', alias: promotion }
+                join:
+                    inner:
+                        - { join: promotion.rule, alias: rule}
+        columns:
+            name:
+                label: oro.promotion.rule.name.label
+            useCoupons:
+                label: oro.promotion.use_coupons.label
+                frontend_type: boolean
+            createdAt:
+                label: oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label: oro.ui.updated_at
+                frontend_type: datetime
+            enabled:
+                label: oro.promotion.rule.enabled.label
+                frontend_type: boolean
+        sorters:
+            columns:
+                name:
+                    data_name: rule.name
+                useCoupons:
+                    data_name: promotion.useCoupons
+                createdAt:
+                    data_name: promotion.createdAt
+                updatedAt:
+                    data_name: promotion.updatedAt
+                enabled:
+                    data_name: rule.enabled
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: rule.name
+                useCoupons:
+                    type: boolean
+                    data_name: promotion.useCoupons
+                createdAt:
+                    type:      datetime
+                    data_name: promotion.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: promotion.updatedAt
+                enabled:
+                    type:      boolean
+                    data_name: rule.enabled
+
+    promotion-grid:
+        extends: promotion-select-grid
+        properties:
+            view_link:
+                type:  url
+                route: oro_promotion_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_promotion_view
+                rowAction:     true

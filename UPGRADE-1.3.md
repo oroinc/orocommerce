@@ -30,6 +30,13 @@ AuthorizeNetBundle
 ------------------
 - AuthorizeNetBundle extracted into individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
 
+CronBundle
+-------------
+- New collection form type for schedule intervals was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType`
+- New form type for schedule interval was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType`
+- New constraint was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection`
+- New validator was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator`
+
 CheckoutBundle
 --------------
 - Class `Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter`
@@ -60,6 +67,13 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
 - Class `Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy`
     - method `setSecurityFacade` was replaced with `setTokenAccessor`
+
+PricingBundle
+-------------
+- Form type `Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType` was removed, use `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType` instead
+- Constraint `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection` instead
+- Validator `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator` instead
+- js `oropricing/js/app/views/price-list-schedule-view` view was removed, use `orocron/js/app/views/schedule-intervals-view` instead
 
 PaymentBundle
 -------------

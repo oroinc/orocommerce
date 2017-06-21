@@ -397,11 +397,6 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing_dates_chain_validator }
 
-    oro_pricing.validator.schedules_intersection:
-        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_pricing_schedules_intersection_validator }
-
     oro_pricing.model.price_list_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
         arguments:
