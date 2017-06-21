@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle;
 
+use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -26,6 +28,12 @@ class OroPromotionBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
+        $container->addCompilerPass(new DefaultFallbackExtensionPass([
+            Promotion::class => [
+                'label' => 'labels',
+                'description' => 'descriptions',
+            ],
+        ]));
         $container->addCompilerPass(new PromotionCompilerPass());
     }
 }

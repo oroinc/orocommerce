@@ -1,0 +1,10 @@
+placeholders:
+    placeholders:
+        render_discount_information:
+            items:
+                order_discount_information: ~
+
+    items:
+        order_discount_information:
+            applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, order)"
+            template: OroPromotionBundle:Promotion:discountPlaceholders/order.html.twig

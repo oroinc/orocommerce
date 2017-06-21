@@ -1,0 +1,23 @@
+.controls {
+  .control-label.expression-collapse-label {
+    margin-top: 4px;
+    margin-left: -5px;
+  }
+}
+
+.collapse-view {
+  .collapse-view__trigger_show {
+    display: block;
+  }
+  .collapse-view__trigger_hide {
+    display: none;
+  }
+  &.expanded {
+    .collapse-view__trigger_show {
+      display: none;
+    }
+    .collapse-view__trigger_hide {
+      display: block;
+    }
+  }
+}
