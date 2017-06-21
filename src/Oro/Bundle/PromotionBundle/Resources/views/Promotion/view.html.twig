@@ -1,0 +1,106 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroCronBundle::macros.html.twig' as cronSchedulIntervals %}
+{% import 'OroScopeBundle::macros.html.twig' as scopeMacros %}
+
+{% oro_title_set({params : {"%name%": entity.rule.name }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_promotion_index'),
+        'indexLabel': 'oro.promotion.entity_plural_label'|trans,
+        'entityTitle': entity.rule.name
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+    <div class="pull-left">
+        {% if entity.rule.enabled %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled fa-circle"></i>{{ 'oro.promotion.rule.enabled.active'|trans }}</div>
+        {% else %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled fa-circle"></i>{{ 'oro.promotion.rule.enabled.inactive'|trans }}</div>
+        {% endif %}
+    </div>
+{% endblock breadcrumbs %}
+
+{% block content_data %}
+    {% if entity.schedules.isEmpty() %}
+        {% set schedulesBlock = 'N/A'|trans %}
+    {% else %}
+        {% set labels = {
+            wasActivatedLabel: 'oro.promotion.promotionschedule.was_activated',
+            activeNowLabel: 'oro.promotion.promotionschedule.active_now',
+            notActiveNowLabel: 'oro.promotion.promotionschedule.not_active_now',
+            willBeActivatedLabel: 'oro.promotion.promotionschedule.will_be_acitivated',
+            wasDeactivatedLabel: 'oro.promotion.promotionschedule.was_deactivated',
+            willBeDeactivatedLabel: 'oro.promotion.promotionschedule.will_be_deacitivated'
+        } %}
+        {% set schedulesBlock = cronSchedulIntervals.scheduleIntervalsInfo(entity.schedules, labels) %}
+    {% endif %}
+
+    {% set discountBlock %}
+        {% placeholder render_discount_information with {entity: entity} %}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.promotion.sections.general.label'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'title': 'oro.promotion.sections.general.subsection.general_info.label'|trans,
+                    'useSpan': false,
+                    'data': [
+                        UI.renderProperty('oro.rule.name.label'|trans, entity.rule.name),
+                        UI.renderProperty('oro.rule.sort_order.label'|trans, entity.rule.sortOrder),
+                        UI.renderProperty('oro.rule.stop_processing.label'|trans, entity.rule.stopProcessing ? 'oro.promotion.rule.stop_processing.yes'|trans : 'oro.promotion.rule.stop_processing.no'|trans),
+                        UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans),
+                        UI.renderHtmlProperty('oro.promotion.schedules.label'|trans, schedulesBlock)
+                    ]
+                },
+                {
+                    'title': 'oro.promotion.sections.general.subsection.discount_optins.label'|trans,
+                    'useSpan': false,
+                    'data': [discountBlock]
+                }
+            ]
+        }
+    ] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.promotion.sections.conditions.label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [
+                        UI.renderHtmlProperty('oro.promotion.restrictions.label'|trans, scopeMacros.renderRestrictionsViewGrid(scopeEntities, entity.scopes)),
+                        UI.renderProperty('oro.promotion.advanced_conditions.label'|trans, entity.rule.expression)
+                    ]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'oro.promotion.sections.matching_items.label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid(gridName)]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set id = 'promotions-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

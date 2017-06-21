@@ -1,0 +1,24 @@
+operations:
+    oro_segment_edit_inside_promotion:
+        label: oro.promotion.segment_edit_button.label
+        datagrids:
+            - oro_segments-grid
+        button_options:
+            icon: pencil-square-o
+        order: 500
+        acl_resource: oro_promotion_update
+        entities:
+            - Oro\Bundle\SegmentBundle\Entity\Segment
+        preactions:
+            - '@call_service_method':
+                service: oro_promotion.repository.promotion
+                method: findPromotionByProductSegment
+                method_parameters: [$.data]
+                attribute: $.promotion
+        preconditions:
+            '@not_blank': $.promotion
+        actions:
+            - '@redirect':
+                route: oro_promotion_update
+                route_parameters:
+                    id: $.promotion.id

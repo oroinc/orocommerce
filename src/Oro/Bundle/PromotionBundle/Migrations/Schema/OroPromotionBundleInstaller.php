@@ -57,6 +57,8 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->addOroPromotionScheduleForeignKeys($schema);
         $this->addOroPromotionScopeForeignKeys($schema);
         $this->addOroPromotionToCouponForeignKeys($schema);
+
+        $this->addActivityAssociations($schema);
     }
 
     /**
@@ -68,7 +70,6 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     {
         $table = $schema->createTable('oro_promotion');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('discount_config_id', 'integer', []);
         $table->addColumn('rule_id', 'integer', []);
@@ -79,7 +80,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id']);
-        $table->addIndex(['discount_config_id']);
+        $table->addUniqueIndex(['discount_config_id']);
         $table->addIndex(['products_segment_id']);
         $table->addIndex(['user_owner_id']);
         $table->addIndex(['organization_id']);
