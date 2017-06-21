@@ -349,6 +349,17 @@ oro_behat_extension:
         - OroUserBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product'
+    OroProductBundleRelatedItems:
+      contexts:
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroSecurityBundle::ACLContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroConfigBundle::FeatureContext
+        - OroUserBundle::FeatureContext
+      paths:
+        - '@OroProductBundle/Tests/Behat/Features/related-items'
     OroProductBundleOther:
       contexts:
         - OroApplicationBundle::CommerceMainContext

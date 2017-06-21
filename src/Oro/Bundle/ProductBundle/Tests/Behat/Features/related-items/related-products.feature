@@ -96,7 +96,7 @@ Feature: Editing related products
     Given go to Products/ Products
     And "Assign In Both Directions" option for related products is enabled
     When I click View PSKU3 in grid
-    Then there is no records in RelatedProductsViewGrid
+    Then there is no records in "RelatedProductsViewGrid"
 
   Scenario: Related items should not be visible on view if user has no permission
     Given user has following permissions
@@ -124,8 +124,7 @@ Feature: Editing related products
     And I click "Save settings"
     Then go to Products/ Products
     And I click Edit Product 1 in grid
-    #I should not see "RelatedProductsViewGrid" grid
-    And I should not see "Grid"
+    And I should not see "RelatedProductsViewGrid" grid
 
   Scenario: Limit should be restricted
     Given go to System/ Configuration
@@ -144,3 +143,82 @@ Feature: Editing related products
         | PSKU4 |
     Then "Select products" button is disabled
       And I should see "Limit of related products has been reached"
+      And I click "Cancel"
+
+  Scenario: Check related grid view after related product title has been updated
+    Given go to System/ Configuration
+    And I click "Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Enable Related Products                      | true  |
+      | Maximum Number Of Assigned Items Use Default | false |
+      | Maximum Number Of Assigned Items             | 25    |
+    And I click "Save settings"
+    And go to Products/ Products
+    And I click Edit Product 1 in grid
+    And I click "Select related products"
+    And I select following records in "SelectRelatedProductsGrid" grid:
+      | PSKU2 |
+    And I click "Select products"
+    And I click "Save and Close"
+    And I should see "Product has been saved" flash message
+    And I should see following "RelatedProductsViewGrid" grid:
+      | SKU   | NAME      |
+      | PSKU2 | Product 2 |
+      | PSKU3 | Product 3 |
+      | PSKU4 | Product 4 |
+    When go to Products/ Products
+    And I click Edit PSKU2 in grid
+    And I fill "ProductForm" with:
+      | SKU   | PSKU22            |
+      | Name  | Product 2 updated |
+    And I click "Save and Close"
+    Then go to Products/ Products
+    And I click Edit "Product 1" in grid
+    And I should see following grid:
+      | SKU    | NAME              |
+      | PSKU22 | Product 2 updated |
+
+  Scenario: Check if relation is saved after disable/enable related items feature
+    Given go to System/ Configuration
+    And I click "Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Enable Related Products Use Default | false |
+      | Enable Related Products             | false |
+    And I click "Save settings"
+    And go to Products/ Products
+    And I click Edit Product 1 in grid
+    And I should not see "RelatedProductsViewGrid" grid
+    When go to System/ Configuration
+    And I click "Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Enable Related Products Use Default | false |
+      | Enable Related Products             | true  |
+    And I click "Save settings"
+    Then go to Products/ Products
+    And I click Edit Product 1 in grid
+    And I should see following grid:
+      | SKU    | NAME              |
+      | PSKU22 | Product 2 updated |
+
+  Scenario: Verify relation is removed in case when related product has been removed
+    Given go to Products/ Products
+    And I click Edit Product 1 in grid
+    And I click "Select related products"
+    And I select following records in "SelectRelatedProductsGrid" grid:
+      | PSKU3 |
+    And I click "Select products"
+    And I click "Save and Close"
+    And I should see "Product has been saved" flash message
+    And I should see following grid:
+      | SKU    | NAME              |
+      | PSKU22 | Product 2 updated |
+      | PSKU3  | Product 3         |
+    And go to Products/ Products
+    And I click Edit Product 2 updated in grid
+    When I click "Delete"
+    And I confirm deletion
+    Then go to Products/ Products
+    And I click Edit Product 1 in grid
+    And I should see following grid:
+      | SKU   | NAME      |
+      | PSKU3 | Product 3 |
