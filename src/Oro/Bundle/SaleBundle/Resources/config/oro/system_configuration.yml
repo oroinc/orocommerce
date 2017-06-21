@@ -77,11 +77,19 @@ system_configuration:
             priority: 30
             options:
                 required: false
-                label:  oro.sale.system_configuration.fields.contact_info_manual_text.label
+                label: oro.sale.system_configuration.fields.contact_info_manual_text.label
                 attr:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'oro_sale.contact_info_user_option'
                     'data-show-if': 'enter_manually'
+        oro_sale.guest_contact_info_text:
+            data_type: string
+            type: textarea
+            priority: 0
+            options:
+                required: false
+                label: oro.sale.system_configuration.fields.guest_contact_info_text.label
+                tooltip: oro.sale.form.tooltip.guest_contact_info_text
 
     tree:
         system_configuration:
@@ -104,6 +112,7 @@ system_configuration:
                                             - oro_sale.contact_details
                                             - oro_sale.allow_user_configuration
                                             - oro_sale.available_user_options
+                                            - oro_sale.guest_contact_info_text
         user_configuration:
             commerce:
                 children:

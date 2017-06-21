@@ -112,6 +112,7 @@ oro:
                 available_user_options.label: 'Available User Options'
                 contact_info_user_option.label: 'Customer Visible Contact Info'
                 contact_info_manual_text.label: 'Manual Contact Info'
+                guest_contact_info_text.label: 'Guest Contact'
 
         privilege:
             category.quotes.label: 'Quotes'
@@ -250,6 +251,7 @@ oro:
         form:
             tooltip:
                   allow_user_configuration: 'When checked, the sales representatives will be able to choose one of the options enabled below.'
+                  guest_contact_info_text: 'You may use this setting to enter the sales contact information that will be shown to non-authenticated visitors.'
         available_customer_options:
             type:
                 dont_display.label: "Don't Display Contact Info"

@@ -17,6 +17,7 @@ class Configuration implements ConfigurationInterface
     const AVAILABLE_USER_OPTIONS = 'available_user_options';
     const CONTACT_INFO_USER_OPTION = 'contact_info_user_option';
     const CONTACT_INFO_MANUAL_TEXT = 'contact_info_manual_text';
+    const GUEST_CONTACT_INFO_TEXT = 'guest_contact_info_text';
 
     /**
      * {@inheritDoc}
@@ -42,6 +43,7 @@ class Configuration implements ConfigurationInterface
                 self::AVAILABLE_USER_OPTIONS => ['value' => [], 'type' => 'array'],
                 self::CONTACT_INFO_USER_OPTION => ['value' => ''],
                 self::CONTACT_INFO_MANUAL_TEXT => ['value' => ''],
+                self::GUEST_CONTACT_INFO_TEXT => ['value' => ''],
             ]
         );
 
