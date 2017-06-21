@@ -5,6 +5,7 @@ datagrids:
             entityHint: coupon
             export: true
         properties:
+            id: ~
             view_link:
                 type:  url
                 route: oro_coupon_view
@@ -33,7 +34,7 @@ datagrids:
                     - { table: Oro\Bundle\CouponBundle\Entity\Coupon, alias: coupon }
         columns:
             code:
-                label:         oro.coupon.coupon_code.label
+                label:         oro.coupon.code.label
             usesPerCoupon:
                 label:         oro.coupon.uses_per_coupon.label
             usesPerUser:
@@ -85,3 +86,19 @@ datagrids:
                 updatedAt:
                     type:      datetime
                     data_name: coupon.updatedAt
+        mass_actions:
+            edit:
+                type:            massedit
+                handler:         oro_datagrid.extension.coupon.mass_action.handler.edit
+                acl_resource:    oro_coupon_edit
+                route:           oro_coupon_mass_edit_widget
+                label:           oro.ui.edit
+                icon:            edit
+                data_identifier: coupon.id
+                frontend_options:
+                    title:       "@translator->trans(oro.coupon.form.title.mass_edit)"
+                    dialogOptions:
+                        width: 500
+                        modal: false
+                        allowMaximize: false
+                        allowMinimize: false

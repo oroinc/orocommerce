@@ -2,18 +2,19 @@
 
 namespace Oro\Bundle\CouponBundle\Controller;
 
+use Oro\Bundle\CouponBundle\Entity\Coupon;
+use Oro\Bundle\CouponBundle\Form\Type\BaseCouponType;
 use Oro\Bundle\CouponBundle\Form\Type\CouponType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CouponBundle\Entity\Coupon;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class CouponController extends Controller
 {
@@ -88,6 +89,37 @@ class CouponController extends Controller
     }
 
     /**
+     * @Route("/coupon-mass-edit-widget", name="oro_coupon_mass_edit_widget")
+     * @AclAncestor("oro_coupon_edit")
+     * @Template("OroCouponBundle:Coupon/widget:mass_update.html.twig")
+     *
+     * @return array
+     */
+    public function massUpdateWidgetAction(Request $request)
+    {
+        $responseData = [
+            'form' => $this->createForm(BaseCouponType::class, new Coupon())->createView(),
+            'inset' => $request->get('inset', null),
+            'values' => $request->get('values', null),
+        ];
+
+        if ($request->isMethod('POST')) {
+            /** @var MassActionDispatcher $massActionDispatcher */
+            $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+            $response = $massActionDispatcher->dispatchByRequest(
+                $request->get('gridName'),
+                $request->get('actionName'),
+                $request
+            );
+            $responseData['response'] = [
+                'successful' => $response->isSuccessful(),
+                'message' => $response->getMessage(),
+            ];
+        }
+        return $responseData;
+    }
+
+    /**
      * @param Coupon $coupon
      * @param Request $request
      * @return array|RedirectResponse
@@ -97,7 +129,7 @@ class CouponController extends Controller
         $handler = $this->get('oro_form.update_handler');
         return $handler->update(
             $coupon,
-            CouponType::NAME,
+            CouponType::class,
             $this->get('translator')->trans('oro.coupon.form.message.saved'),
             $request
         );

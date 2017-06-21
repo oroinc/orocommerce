@@ -18,6 +18,8 @@ oro:
             general: General
             additional: Additional
         form:
+            title:
+                mass_edit: Mass Coupon Edit
             message:
                 saved: 'Coupon has been saved'
             tooltip:

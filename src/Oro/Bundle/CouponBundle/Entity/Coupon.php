@@ -84,7 +84,7 @@ class Coupon implements
     /**
      * @var integer
      *
-     * @ORM\Column(name="total_uses", type="integer", nullable=false)
+     * @ORM\Column(name="total_uses", type="integer", nullable=false, options={"default"=0})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

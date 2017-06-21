@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CouponBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CouponBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CouponBundle\Entity\Coupon;
 use Oro\Bundle\CouponBundle\Form\Type\CouponType;
@@ -50,37 +50,15 @@ class CouponTypeTest extends FormIntegrationTestCase
             )
         ];
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals(CouponType::NAME, $this->formType->getName());
-    }
-
-    public function testConfigureOptions()
-    {
-        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
-        $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects(static::once())
-            ->method('setDefaults')
-            ->with([
-                'data_class' => Coupon::class,
-            ]);
-
-        $this->formType->configureOptions($resolver);
-    }
-
     /**
      * @dataProvider submitProvider
      *
-     * @param Coupon $defaultData
      * @param array $submittedData
      * @param Coupon $expectedData
      */
-    public function testSubmit(Coupon $defaultData, $submittedData, Coupon $expectedData)
+    public function testSubmit($submittedData, Coupon $expectedData)
     {
-        $form = $this->factory->create($this->formType, $defaultData);
-
-        $this->assertEquals($defaultData, $form->getData());
+        $form = $this->factory->create($this->formType);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
@@ -103,7 +81,6 @@ class CouponTypeTest extends FormIntegrationTestCase
     {
         return [
             'simple product' => [
-                'defaultData' => $this->createCoupon('test1234'),
                 'submittedData' => [
                     'code' => 'test1234',
                     'usesPerUser' => 2,

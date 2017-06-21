@@ -1,0 +1,7 @@
+services:
+    oro_datagrid.extension.coupon.mass_action.handler.edit:
+        class: Oro\Bundle\CouponBundle\Datagrid\Extension\MassAction\CouponEditMassActionHandler
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
+            - '@translator'

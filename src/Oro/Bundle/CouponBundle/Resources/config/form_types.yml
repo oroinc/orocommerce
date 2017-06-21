@@ -2,4 +2,9 @@ services:
     oro_coupon.form.type.coupon:
         class: 'Oro\Bundle\CouponBundle\Form\Type\CouponType'
         tags:
-            - { name: form.type, alias: oro_coupon }
+            - { name: form.type }
+
+    oro_coupon.form.type.coupon_mass_edit:
+        class: 'Oro\Bundle\CouponBundle\Form\Type\BaseCouponType'
+        tags:
+            - { name: form.type }
