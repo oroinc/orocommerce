@@ -56,7 +56,7 @@ class PromotionSchedule implements ScheduleIntervalInterface
     /**
      * @return int
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -64,7 +64,7 @@ class PromotionSchedule implements ScheduleIntervalInterface
     /**
      * @return Promotion
      */
-    public function getPromotion(): Promotion
+    public function getPromotion()
     {
         return $this->promotion;
     }

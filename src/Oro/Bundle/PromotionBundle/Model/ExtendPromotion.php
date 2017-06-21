@@ -2,6 +2,17 @@
 
 namespace Oro\Bundle\PromotionBundle\Model;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+
+/**
+ * @method LocalizedFallbackValue getLabel(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultLabel()
+ * @method LocalizedFallbackValue getDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultDescription()
+ * @method setDefaultLabel($title)
+ * @method setDefaultDescription($slug)
+ */
 class ExtendPromotion
 {
     /**

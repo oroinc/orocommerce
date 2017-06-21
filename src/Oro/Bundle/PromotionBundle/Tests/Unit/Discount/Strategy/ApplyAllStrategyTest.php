@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Strategy;
 
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -14,20 +12,13 @@ use Oro\Bundle\PromotionBundle\Discount\Strategy\ApplyAllStrategy;
 class ApplyAllStrategyTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $lineItemsSubtotalProvider;
-
-    /**
      * @var ApplyAllStrategy
      */
     private $strategy;
 
     protected function setUp()
     {
-        $this->lineItemsSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
-
-        $this->strategy = new ApplyAllStrategy($this->lineItemsSubtotalProvider);
+        $this->strategy = new ApplyAllStrategy();
     }
 
     public function testGetLabel()
@@ -55,11 +46,7 @@ class ApplyAllStrategyTest extends \PHPUnit_Framework_TestCase
         array $expectedDiscountsInformation
     ) {
         $discountContext->setShippingCost($shippingCost);
-        $discountSubtotal = (new Subtotal())->setAmount($contextSubtotalAmount);
-        $this->lineItemsSubtotalProvider->expects($this->once())
-            ->method('getSubtotal')
-            ->with($discountContext)
-            ->willReturn($discountSubtotal);
+        $discountContext->setSubtotal($contextSubtotalAmount);
 
         $this->strategy->process($discountContext, $discounts);
         $this->assertEquals($expectedSubtotal, $discountContext->getSubtotal());

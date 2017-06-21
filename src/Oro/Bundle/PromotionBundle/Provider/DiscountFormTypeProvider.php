@@ -13,12 +13,37 @@ class DiscountFormTypeProvider
     private $formTypes = [];
 
     /**
+     * @var string
+     */
+    private $defaultDiscountFormType;
+
+    /**
      * @param string $discountType
      * @param string $discountFormType
      */
     public function addFormType($discountType, $discountFormType)
     {
         $this->formTypes[$discountType] = $discountFormType;
+    }
+
+    /**
+     * @param string $defaultDiscountFormType
+     */
+    public function setDefaultFormType($defaultDiscountFormType)
+    {
+        $this->defaultDiscountFormType = $defaultDiscountFormType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultFormType(): string
+    {
+        if (!$this->defaultDiscountFormType) {
+            throw new \LogicException('Default discount type is not provided.');
+        }
+
+        return $this->defaultDiscountFormType;
     }
 
     /**
@@ -33,7 +58,7 @@ class DiscountFormTypeProvider
     /**
      * @return array
      */
-    public function getFormTypes()
+    public function getFormTypes(): array
     {
         return $this->formTypes;
     }

@@ -1,29 +1,76 @@
 oro:
+    discount:
+        label: 'Discount'
+        choices:
+            order: 'Order'
+            shopping_list_line_item: 'Shopping List Line Item'
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
         entity_description: Represents promotion information
         id.label: ID
-        name.label: Name
         coupons.label: Coupons
         descriptions.label: Descriptions
+        descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration
         labels.label: Labels
+        labels.tooltip: This label will be displayed to user
+        name.tooltip: Name tooltip
         organization.label: Organization
         owner.label: Owner
         products_segment.label: Product Segment
-        rule.label: Rule
         schedules.label: Schedules
         scopes.label: Scopes
-        use_coupons.label: Use Coupons
-        rule.enabled.label: Status
+        use_coupons:
+            label: Use Coupons
+            no: No
+            yes: Yes
+        rule:
+            label: Rule
+            name.label: Name
+            enabled:
+                label: Enabled
+                active: Active
+                inactive: Inactive
+            stop_processing:
+                yes: Yes
+                no: No
+            expression:
+                toggle:
+                    hide: Hide
+                    show: Show
+        dates.label: Dates
+        restrictions.label: Restrictions
+        advanced_conditions.label: Advanced Conditions
+        segment_edit_button.label: Edit within Promotion
+
+        blocks:
+            general: General
+            discount_options: Discount Options
+            schedules: Schedules
+            conditions: Conditions
+            matching_items: Matching Items
+            store_frontend: Store Frontend
+
+        discount:
+            free_shipping:
+                label: Free Shipping
+                no: No
+                for_matching_items_only: For Matching Items Only
+                for_shipment_with_matching_items: For Shipment With Matching Items
 
         discountconfiguration:
             entity_label: Discount Configuration
             entity_plural_label: Discount Configurations
             id.label: ID
-            type.label: Type
-            options.label: Options
+            type:
+                label: Type
+                discount.label: Discount
+            options:
+                label: Options
+                type.label: Type
+                discount_value.label: Discount Value
+                free_shipping.label: Free Shipping
 
         coupon:
             entity_label: Coupon
@@ -38,6 +85,13 @@ oro:
             active_at.label: Active At
             deactivate_at.label: Deactivate At
 
+            was_activated: Was activated on %date%.
+            was_deactivated: Was deactivated on %date%.
+            will_be_acitivated: Will become active on %date%.
+            will_be_deacitivated: Will be deactivated on %date%.
+            active_now: Is active now.
+            not_active_now: Is not active now.
+
         feature:
             promotion:
                 label: Promotion
@@ -51,8 +105,31 @@ oro:
                 feature_enabled.label: Enable Promotion
                 discount_strategy.label: Discount Strategy
 
+        controller:
+            saved.message: Promotion has been saved
+
         form:
             choose: 'Choose a Promotion...'
+            basic_discount:
+                discount:
+                    label: 'Discount'
+                type:
+                    label: 'Type'
+                    tooltip: 'Discount type'
+                    choices:
+                        amount: 'Fixed Amount'
+                        percent: 'Percent'
+                value:
+                    label: 'Discount Value'
+
+        sections:
+            general:
+                label: General Information
+                subsection:
+                    general_info.label: General Information
+                    discount_optins.label: Discount Options
+            conditions.label: Conditions
+            matching_items.label: Matching Items
 
         discount:
             strategy:

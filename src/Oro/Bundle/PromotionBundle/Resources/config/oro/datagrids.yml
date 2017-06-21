@@ -9,7 +9,7 @@ datagrids:
             query:
                 select:
                     - promotion.id
-                    - promotion.name
+                    - rule.name
                     - promotion.useCoupons
                     - promotion.createdAt
                     - promotion.updatedAt
@@ -21,7 +21,7 @@ datagrids:
                         - { join: promotion.rule, alias: rule}
         columns:
             name:
-                label: oro.promotion.name.label
+                label: oro.promotion.rule.name.label
             useCoupons:
                 label: oro.promotion.use_coupons.label
                 frontend_type: boolean
@@ -37,7 +37,7 @@ datagrids:
         sorters:
             columns:
                 name:
-                    data_name: promotion.name
+                    data_name: rule.name
                 useCoupons:
                     data_name: promotion.useCoupons
                 createdAt:
@@ -50,7 +50,7 @@ datagrids:
             columns:
                 name:
                     type: string
-                    data_name: promotion.name
+                    data_name: rule.name
                 useCoupons:
                     type: boolean
                     data_name: promotion.useCoupons

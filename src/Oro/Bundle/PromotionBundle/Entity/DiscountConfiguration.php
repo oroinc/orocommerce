@@ -47,7 +47,7 @@ class DiscountConfiguration extends ExtendDiscountConfiguration
     /**
      * @return integer
      */
-    public function getId(): int
+    public function getId()
     {
         return $this->id;
     }
@@ -55,7 +55,7 @@ class DiscountConfiguration extends ExtendDiscountConfiguration
     /**
      * @return string
      */
-    public function getType(): string
+    public function getType()
     {
         return $this->type;
     }
@@ -74,7 +74,7 @@ class DiscountConfiguration extends ExtendDiscountConfiguration
     /**
      * @return array
      */
-    public function getOptions(): array
+    public function getOptions()
     {
         return $this->options;
     }
