@@ -123,5 +123,13 @@ services:
         class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoUserOptionsType
         arguments:
             - '@oro_sale.provider.contact_info_user_options_provider'
+            - '@oro_config.manager'
         tags:
             - { name: form.type, alias: oro_sale_contact_info_user_option }
+
+    oro_sale.form.type.contact_manual_text_type:
+        class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoManualTextType
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type, alias: oro_sale_contact_info_manual_text }

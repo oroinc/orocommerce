@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SaleBundle\Form\Type\ContactInfoUserOptionsType;
 use Oro\Bundle\SaleBundle\Provider\OptionProviderWithDefaultValueInterface;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -21,20 +22,29 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
     private $formType;
 
     /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
+        $this->configManager = $this->createMock(ConfigManager::class);
         $this->optionProvider = $this->createMock(OptionProviderWithDefaultValueInterface::class);
-        $this->formType = new ContactInfoUserOptionsType($this->optionProvider);
+        $this->formType = new ContactInfoUserOptionsType($this->optionProvider, $this->configManager);
         parent::setUp();
     }
 
     public function testSubmit()
     {
+        $this->configManager->expects(static::once())
+            ->method('get')
+            ->willReturn('');
         $this->optionProvider->expects($this->once())
             ->method('getDefaultOption')
-            ->willReturn('option2');
+            ->willReturn('option1');
         $allowedOptions = [
             'option1',
             'option2',

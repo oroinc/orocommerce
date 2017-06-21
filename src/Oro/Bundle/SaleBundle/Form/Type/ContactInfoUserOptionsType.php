@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\SaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SaleBundle\Provider\OptionProviderWithDefaultValueInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,11 +21,18 @@ class ContactInfoUserOptionsType extends AbstractType
     protected $optionsProvider;
 
     /**
-     * @param OptionProviderWithDefaultValueInterface $optionsProvider
+     * @var ConfigManager
      */
-    public function __construct(OptionProviderWithDefaultValueInterface $optionsProvider)
+    protected $configManager;
+
+    /**
+     * @param OptionProviderWithDefaultValueInterface $optionsProvider
+     * @param ConfigManager                           $configManager
+     */
+    public function __construct(OptionProviderWithDefaultValueInterface $optionsProvider, ConfigManager $configManager)
     {
         $this->optionsProvider = $optionsProvider;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -31,9 +40,13 @@ class ContactInfoUserOptionsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $key = Configuration::getConfigKeyByName(Configuration::ALLOW_USER_CONFIGURATION);
+        $configValue = $this->configManager->get($key) ? false : true;
+
         $resolver->setDefaults([
             'choices' => array_flip($this->optionsProvider->getOptions()),
             'multiple' => false,
+            'disabled' => $configValue
         ]);
 
         $resolver->setNormalizer('choice_label', function () {

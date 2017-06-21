@@ -73,7 +73,7 @@ system_configuration:
                     'data-dependee-id': 'oro_sale.contact_info_user_option'
         oro_sale.contact_info_manual_text:
             data_type: string
-            type: textarea
+            type: oro_sale_contact_info_manual_text
             priority: 30
             options:
                 required: false
