@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductUnitPrecisionRepository extends EntityRepository

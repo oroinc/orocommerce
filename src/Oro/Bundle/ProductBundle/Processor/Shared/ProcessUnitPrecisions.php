@@ -28,6 +28,9 @@ class ProcessUnitPrecisions implements ProcessorInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    /**
+     * @param ContextInterface $context
+     */
     public function process(ContextInterface $context)
     {
         /** @var FormContext $context */
@@ -41,6 +44,10 @@ class ProcessUnitPrecisions implements ProcessorInterface
         $context->setRequestData($requestData);
     }
 
+    /**
+     * @param array $requestData
+     * @return array
+     */
     private function handleUnitPrecisions(array $requestData)
     {
         $additionalUnitPrecisions = $primaryUnitPrecision = [];
@@ -72,6 +79,10 @@ class ProcessUnitPrecisions implements ProcessorInterface
         return $requestData;
     }
 
+    /**
+     * @param array $primaryUnitPrecisionInfo
+     * @return array
+     */
     private function handlePrimaryUnitPrecision(array $primaryUnitPrecisionInfo)
     {
         unset($primaryUnitPrecisionInfo[self::ATTR_UNIT_PRECISION]);
@@ -83,6 +94,10 @@ class ProcessUnitPrecisions implements ProcessorInterface
         return [JsonApi::TYPE => 'productunitprecisions', JsonApi::ID => (string)$primaryUnitPrecisionId];
     }
 
+    /**
+     * @param array $unitPrecisionInfo
+     * @return array
+     */
     private function handleAdditionalUnitPrecisions(array $unitPrecisionInfo)
     {
        $unitPrecisionId = $this->createProductUnitPrecision($unitPrecisionInfo);
@@ -90,6 +105,10 @@ class ProcessUnitPrecisions implements ProcessorInterface
        return [JsonApi::TYPE => 'productunitprecisions', JsonApi::ID => (string)$unitPrecisionId];
     }
 
+    /**
+     * @param array $unitPrecisionInfo
+     * @return int
+     */
     private function createProductUnitPrecision(array $unitPrecisionInfo)
     {
         $em = $this->doctrineHelper->getEntityManagerForClass(ProductUnitPrecision::class);

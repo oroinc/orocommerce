@@ -21,6 +21,9 @@ class ProcessPrecisionsAfterValidation implements ProcessorInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    /**
+     * @param ContextInterface $context
+     */
     public function process(ContextInterface $context)
     {
         /** @var Form $form */
@@ -30,6 +33,11 @@ class ProcessPrecisionsAfterValidation implements ProcessorInterface
         }
     }
 
+    /**
+     * Removes the product unit precisions that were created and the validation failed
+     *
+     * @param FormContext $context
+     */
     private function removeProductUnitPrecisions(FormContext $context)
     {
         /** @var ProductUnitPrecisionRepository $productUnitPrecisionRepo */
