@@ -7,6 +7,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface;
+use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
@@ -30,9 +31,9 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
     private $discountFactory;
 
     /**
-     * @var StrategyInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var StrategyProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $discountStrategy;
+    private $discountStrategyProvider;
 
     /**
      * @var PromotionExecutor
@@ -44,13 +45,13 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
         $this->promotionProvider = $this->createMock(PromotionProvider::class);
         $this->discountContextConverter = $this->createMock(DiscountContextConverterInterface::class);
         $this->discountFactory = $this->createMock(DiscountFactory::class);
-        $this->discountStrategy = $this->createMock(StrategyInterface::class);
+        $this->discountStrategyProvider = $this->createMock(StrategyProvider::class);
 
         $this->executor = new PromotionExecutor(
             $this->promotionProvider,
             $this->discountContextConverter,
             $this->discountFactory,
-            $this->discountStrategy
+            $this->discountStrategyProvider
         );
     }
 
@@ -72,7 +73,7 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
         $this->discountFactory->expects($this->never())
             ->method($this->anything());
 
-        $this->discountStrategy->expects($this->never())
+        $this->discountStrategyProvider->expects($this->never())
             ->method($this->anything());
 
         $this->assertSame($discountContext, $this->executor->execute($sourceEntity));
@@ -109,7 +110,12 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
 
         $newContext = new DiscountContext();
         $newContext->addSubtotalDiscount($discount);
-        $this->discountStrategy->expects($this->once())
+
+        $discountStrategy = $this->createMock(StrategyInterface::class);
+        $this->discountStrategyProvider->expects($this->once())
+            ->method('getActiveStrategy')
+            ->willReturn($discountStrategy);
+        $discountStrategy->expects($this->once())
             ->method('process')
             ->with($discountContext, [$discount])
             ->willReturn($newContext);

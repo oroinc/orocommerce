@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Executor;
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
-use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface;
+use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 
 class PromotionExecutor
@@ -26,26 +26,26 @@ class PromotionExecutor
     private $discountFactory;
 
     /**
-     * @var StrategyInterface
+     * @var StrategyProvider
      */
-    private $discountStrategy;
+    private $discountStrategyProvider;
 
     /**
      * @param PromotionProvider $promotionProvider
      * @param DiscountContextConverterInterface $discountContextConverter
      * @param DiscountFactory $discountFactory
-     * @param StrategyInterface $discountStrategy
+     * @param StrategyProvider $discountStrategyProvider
      */
     public function __construct(
         PromotionProvider $promotionProvider,
         DiscountContextConverterInterface $discountContextConverter,
         DiscountFactory $discountFactory,
-        StrategyInterface $discountStrategy
+        StrategyProvider $discountStrategyProvider
     ) {
         $this->promotionProvider = $promotionProvider;
         $this->discountContextConverter = $discountContextConverter;
         $this->discountFactory = $discountFactory;
-        $this->discountStrategy = $discountStrategy;
+        $this->discountStrategyProvider = $discountStrategyProvider;
     }
 
     /**
@@ -63,6 +63,8 @@ class PromotionExecutor
             return $discountContext;
         }
 
-        return $this->discountStrategy->process($discountContext, $discounts);
+        $strategy = $this->discountStrategyProvider->getActiveStrategy();
+
+        return $strategy->process($discountContext, $discounts);
     }
 }
