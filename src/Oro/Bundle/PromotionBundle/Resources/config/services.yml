@@ -102,8 +102,6 @@ services:
     oro_promotion.discount.strategy.apply_all_strategy:
         class: Oro\Bundle\PromotionBundle\Discount\Strategy\ApplyAllStrategy
         public: false
-        arguments:
-            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
             - { name: oro_promotion.discount_strategy, alias: apply_all }
 

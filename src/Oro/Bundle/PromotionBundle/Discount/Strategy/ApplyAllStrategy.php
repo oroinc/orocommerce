@@ -2,24 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 
 class ApplyAllStrategy extends AbstractStrategy
 {
-    /**
-     * @var SubtotalProviderInterface
-     */
-    private $lineItemsSubtotalProvider;
-
-    /**
-     * @param SubtotalProviderInterface $lineItemsSubtotalProvider
-     */
-    public function __construct(SubtotalProviderInterface $lineItemsSubtotalProvider)
-    {
-        $this->lineItemsSubtotalProvider = $lineItemsSubtotalProvider;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -38,13 +24,28 @@ class ApplyAllStrategy extends AbstractStrategy
         }
 
         $this->processLineItemDiscounts($discountContext);
-
-        $subtotal = $this->lineItemsSubtotalProvider->getSubtotal($discountContext);
-        $discountContext->setSubtotal($subtotal->getAmount());
+        $this->updateContextSubtotal($discountContext);
 
         $this->processTotalDiscounts($discountContext);
         $this->processShippingDiscounts($discountContext);
 
         return $discountContext;
+    }
+
+    /**
+     * @param DiscountContext $discountContext
+     */
+    private function updateContextSubtotal(DiscountContext $discountContext)
+    {
+        $lineItemsTotalDiscount = 0.0;
+        foreach ($discountContext->getLineItems() as $lineItem) {
+            foreach ($lineItem->getDiscountsInformation() as $discountInformation) {
+                $lineItemsTotalDiscount += $discountInformation->getDiscountAmount();
+            }
+        }
+
+        $discountContext->setSubtotal(
+            $this->getSubtotalWithDiscount($discountContext->getSubtotal(), $lineItemsTotalDiscount)
+        );
     }
 }
