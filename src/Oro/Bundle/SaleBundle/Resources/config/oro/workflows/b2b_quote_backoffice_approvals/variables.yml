@@ -4,7 +4,8 @@ workflows:
             variables:
                 price_override_triggers_approval:
                     type: boolean
-                    value: false
+                    value: true
                     options:
                         form_options:
                             tooltip: true
+        defaults: {active: true}

@@ -236,14 +236,14 @@ oro:
 
         security:
             permission:
-                address_shipping_customer_use_any: "[Quote] Use any shipping address from the customer address book"
-                address_shipping_customer_user_use_default: "[Quote] Use the default shipping address from the customer user's address book"
-                address_shipping_customer_user_use_any: "[Quote] Use any shipping address from the customer user's address book"
-                address_shipping_allow_manual: "[Quote] Enter the shipping address manually"
-                payment_term_customer_can_override: "[Quote] Override customer payment term"
-                quote_prices_override: "[Quote] Override quote prices"
-                quote_review_and_approve: "[Quote] Review and approve quotes"
-                add_free_form_items: "[Quote] Add free-form items"
+                address_shipping_customer_use_any: "Use any shipping address from the customer address book"
+                address_shipping_customer_user_use_default: "Use the default shipping address from the customer user's address book"
+                address_shipping_customer_user_use_any: "Use any shipping address from the customer user's address book"
+                address_shipping_allow_manual: "Enter the shipping address manually"
+                payment_term_customer_can_override: "Override customer payment term"
+                quote_prices_override: "Override quote prices"
+                quote_review_and_approve: "Review and approve quotes"
+                add_free_form_items: "Add free-form items"
 
     frontend:
         sale:

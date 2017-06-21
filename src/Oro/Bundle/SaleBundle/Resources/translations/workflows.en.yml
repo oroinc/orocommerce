@@ -1,6 +1,6 @@
 oro.workflow:
     b2b_quote_backoffice_default:
-        label: 'Quote Backoffice'
+        label: 'Quote Management Flow'
         step:
             draft:
                 label: 'Draft'
@@ -70,7 +70,7 @@ oro.workflow:
                 warning_message: ''
 
     b2b_quote_backoffice_approvals:
-        label: 'Quote Backoffice Approval'
+        label: 'Backoffice Quote Flow with Approvals'
         step:
             draft:
                 label: 'Draft'
@@ -131,7 +131,7 @@ oro.workflow:
                 label: 'Decline'
                 warning_message: ''
             approve_and_send_to_customer_transition:
-                label: 'Approve And Send To Customer'
+                label: 'Approve and Send to Customer'
                 warning_message: ''
             approve_transition:
                 label: 'Approve'
@@ -154,7 +154,7 @@ oro.workflow:
             cancel_transition:
                 label: 'Cancel'
                 warning_message: ''
-            accept_transiiotn:
+            accept_transition:
                 lable: 'Accept'
                 warning_message: ''
             expire_transition:
@@ -170,5 +170,5 @@ oro.workflow:
                         label: 'Expire Existing Quote'
         variable:
             price_override_triggers_approval:
-                label: 'Price override triggers approval'
+                label: 'Price override requires approval'
                 tooltip: 'If a Quote price has been changed this flag will trigger review approval requirement for the Quote.'

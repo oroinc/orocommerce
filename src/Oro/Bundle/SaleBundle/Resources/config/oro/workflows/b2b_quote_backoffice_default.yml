@@ -11,7 +11,7 @@ workflows:
 
         applications: ['default']
         datagrids: ['quotes-grid']
-        defaults: {active: true}
+        defaults: {active: false}
 
         exclusive_active_groups: ['b2b_quote_backoffice_flow']
         exclusive_record_groups: ['b2b_quote_backoffice_flow']

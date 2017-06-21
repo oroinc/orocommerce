@@ -44,7 +44,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
     protected function getWorkflows()
     {
         return [
-            'b2b_quote_backoffice_default',
+            'b2b_quote_backoffice_approvals',
         ];
     }
 
@@ -54,7 +54,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
     protected function getIgnoredTransitions()
     {
         return [
-            'b2b_quote_backoffice_default' => [
+            'b2b_quote_backoffice_approvals' => [
                 'edit_transition',
                 'clone_transition',
                 'create_new_quote_transition',
