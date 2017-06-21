@@ -2,4 +2,5 @@ api:
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision: ~
         Oro\Bundle\ProductBundle\Entity\ProductUnit: ~
-        Oro\Bundle\ProductBundle\Entity\Product: ~
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
