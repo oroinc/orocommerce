@@ -178,7 +178,6 @@ services:
         public: false
         arguments:
             - '@oro_pricing.provider.combined_product_price'
-            - '@oro_security.token_accessor'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.price_list_request_handler'
 
@@ -331,3 +330,25 @@ services:
         lazy: true
         tags:
             - { name: oro_featuretogle.voter }
+
+    oro_shopping_list.voter.create_shopping_list_voter:
+        class: 'Oro\Bundle\ShoppingListBundle\Voter\ShoppingListCreateVoter'
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_limit'
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_shopping_list.manager.shopping_list_limit:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_security.token_accessor'
+            - '@oro_entity.doctrine_helper'
+
+    oro_shopping_list.twig.shopping_list_limit_extension:
+        class: 'Oro\Bundle\ShoppingListBundle\Twig\ShoppingListLimitExtension'
+        public: false
+        arguments:
+            - "@oro_shopping_list.manager.shopping_list_limit"
+        tags:
+            - { name: twig.extension }

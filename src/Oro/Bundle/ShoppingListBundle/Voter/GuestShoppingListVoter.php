@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 
 class GuestShoppingListVoter implements VoterInterface
 {
@@ -37,7 +37,7 @@ class GuestShoppingListVoter implements VoterInterface
     public function vote($feature, $scopeIdentifier = null)
     {
         if ($feature === self::FEATURE_NAME) {
-            if ($this->tokenStorage->getToken() instanceof AnonymousToken) {
+            if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
                 return $this->configVoter->vote($feature, $scopeIdentifier);
             }
 

@@ -92,6 +92,7 @@
                  buttonTemplate: '<%#' ~ buttons.buttonTemplate(options.current) ~ '#%>',
                  removeButtonTemplate: options.remove is defined ? '<%#' ~ buttons.buttonTemplate(options.remove) ~ '#%>',
                  createNewButtonTemplate: '<%#' ~ buttons.buttonTemplate(options.new) ~ '#%>',
+                 shoppingListCreateEnabled: feature_enabled('shopping_list_create'),
              }|merge(options.componentOptions|default({}))
          }) }}
         >
@@ -107,7 +108,9 @@
             {% for shoppingList in existingShoppingLists %}
                 {{ buttons.addToButton(options.existing|merge({shoppingList: shoppingList})) }}
             {% endfor %}
-            {{ buttons.addToNewButton(options.new) }}
+            {% if feature_enabled('shopping_list_create') %}
+                {{ buttons.addToNewButton(options.new) }}
+            {% endif %}
         {% else %}
             {% set aCss = options.singleButtonACss is defined ? options.singleButtonACss : "" %}
             {{ buttons.addToCurrentButton(options.current|merge({shoppingList: null, aCss: aCss})) }}

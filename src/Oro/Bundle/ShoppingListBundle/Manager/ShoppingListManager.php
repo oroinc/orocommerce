@@ -7,11 +7,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
@@ -22,6 +20,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+
+/**
+ * @Todo: Must be refactored in scope of - #BB-10192
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class ShoppingListManager
 {
     /**
@@ -125,16 +130,6 @@ class ShoppingListManager
             $em = $this->managerRegistry->getManagerForClass(ShoppingList::class);
             $em->persist($shoppingList);
             $em->flush($shoppingList);
-        }
-
-        $anonymous = null; //$this->tokenStorage->getToken()->getVisitor(); //TODO uncomment after BB-10040
-        if ($anonymous instanceof CustomerVisitor && method_exists($anonymous, 'addShoppingList')) {
-            $anonymous->addShoppingList($shoppingList);
-
-            /** @var EntityManager $em */
-            $em = $this->managerRegistry->getManagerForClass(CustomerVisitor::class);
-            $em->persist($anonymous);
-            $em->flush($anonymous);
         }
 
         return $shoppingList;
@@ -283,9 +278,13 @@ class ShoppingListManager
      */
     public function getForCurrentUser($shoppingListId = null)
     {
+        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
+            return $this->getShoppingListForCustomerVisitor();
+        }
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $repository */
         $repository = $em->getRepository('OroShoppingListBundle:ShoppingList');
+
         $shoppingList = null;
         if ($shoppingListId) {
             $shoppingList = $repository->findByUserAndId($this->aclHelper, $shoppingListId);
@@ -299,12 +298,53 @@ class ShoppingListManager
     }
 
     /**
+     * @return ShoppingList
+     */
+    private function getShoppingListForCustomerVisitor()
+    {
+        /** @var CustomerVisitor $customerVisitor */
+        $customerVisitor = $this->tokenStorage->getToken()->getVisitor();
+
+        /** @var EntityManager $em */
+        $em = $this->managerRegistry->getManagerForClass(ShoppingList::class);
+
+        if ($customerVisitor->getShoppingLists()->first()) {
+            return $customerVisitor->getShoppingLists()->first()->setCurrent(true);
+        }
+
+        //Create new SL if no one still exists
+        $shoppingList = new ShoppingList();
+        $website = $this->websiteManager->getCurrentWebsite();
+        $shoppingList
+            ->setOrganization($website->getOrganization())
+            ->setCustomer(null)
+            ->setCustomerUser(null)
+            ->setWebsite($website)
+            ->setCurrent(true);
+
+        $shoppingList->setLabel($this->translator->trans('oro.shoppinglist.default.label'));
+
+        $em->persist($shoppingList);
+        $em->flush($shoppingList);
+
+        //Link customer visitor to shopping list
+        $customerVisitor->addShoppingList($shoppingList);
+        $em->flush($customerVisitor);
+
+        return $shoppingList;
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      * @param bool $create
      * @param string $label
      * @return ShoppingList
      */
     public function getCurrent($create = false, $label = '')
     {
+        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
+            return $this->getShoppingListForCustomerVisitor();
+        }
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
         if (!$this->getCustomerUser()) {
@@ -349,6 +389,9 @@ class ShoppingListManager
      */
     public function getShoppingListsWithCurrentFirst(array $sortCriteria = [])
     {
+        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
+            return [$this->getShoppingListForCustomerVisitor()];
+        }
         $shoppingLists = [];
         $currentShoppingList = $this->getCurrent();
         if ($currentShoppingList) {

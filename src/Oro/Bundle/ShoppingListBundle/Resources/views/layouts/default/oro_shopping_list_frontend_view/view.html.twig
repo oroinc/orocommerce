@@ -28,36 +28,40 @@
 {% block _shopping_list_title_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set attr = attr|merge({id: "title-inline-editable"}) %}
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
-        options: {
-            frontend_type: 'title',
-            value: shoppingList.label,
-            fieldName: 'label',
-            insertEditorMethod: 'after',
-            eventChannelId: 'shopping-list-title',
-            metadata: {
-                broadcast_parameters: {
-                    id: shoppingList.id
-                },
-                inline_editing: {
-                    enable: is_granted('oro_shopping_list_frontend_update'),
-                    save_api_accessor: {
-                        route: 'oro_api_frontend_patch_entity_data',
-                        http_method: 'PATCH',
-                        default_route_parameters: {
-                            className: oro_class_name(shoppingList, true),
-                            id: shoppingList.id
+    {% if app.user %} {# inline_editing.enable does not hide edit btn #}
+        <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+            module: 'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
+            options: {
+                frontend_type: 'title',
+                value: shoppingList.label,
+                fieldName: 'label',
+                insertEditorMethod: 'after',
+                eventChannelId: 'shopping-list-title',
+                metadata: {
+                    broadcast_parameters: {
+                        id: shoppingList.id
+                    },
+                    inline_editing: {
+                        enable: is_granted('oro_shopping_list_frontend_update'),
+                        save_api_accessor: {
+                            route: 'oro_api_frontend_patch_entity_data',
+                            http_method: 'PATCH',
+                            default_route_parameters: {
+                                className: oro_class_name(shoppingList, true),
+                                id: shoppingList.id
+                            }
                         }
+                    },
+                    view_options: {
+                        tooltip: 'oro.shoppinglist.label.edit.tooltip'|trans,
+                        additionalClass: 'cart-order-title'
                     }
-                },
-                view_options: {
-                    tooltip: 'oro.shoppinglist.label.edit.tooltip'|trans,
-                    additionalClass: 'cart-order-title'
                 }
             }
-        }
-    }) }}>
+        }) }}>
+    {% else %}
+        <div>
+    {% endif %}
         <h1 class="cart-order-title">
             <span>{{ shoppingList.label }}</span>
         </h1>
@@ -71,21 +75,6 @@
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _shopping_list_owner_widget %}
-    {% set options = {
-        shoppingListId: shoppingList.id
-    } %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shopping-list-owner',
-        'data-page-component-module': "oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component",
-        'data-page-component-options': options|json_encode()
-    }) %}
-    <div{{ block('block_attributes') }}>
-        {{ form_label(form, 'oro.frontend.shoppinglist.view.owner.label') }}
-        {{ form_widget(form) }}
     </div>
 {% endblock %}
 

@@ -32,6 +32,7 @@ class Configuration implements ConfigurationInterface
                 ],
                 'availability_for_guests' => ['type' => 'boolean', 'value' => true],
                 self::DEFAULT_QUEST_SHOPPING_LIST_OWNER => ['type' => 'string', 'value' => null],
+                'shopping_list_limit' => ['value' => 0, 'type' => 'integer']
             ]
         );
 

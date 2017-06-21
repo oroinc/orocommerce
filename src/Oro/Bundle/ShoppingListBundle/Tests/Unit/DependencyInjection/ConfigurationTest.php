@@ -40,6 +40,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 Configuration::DEFAULT_QUEST_SHOPPING_LIST_OWNER => [
                     'value' => null,
                     'scope' => 'app'
+                ],
+                'shopping_list_limit' => [
+                    'value' => 0,
+                    'scope' => 'app'
                 ]
             ]
         ];

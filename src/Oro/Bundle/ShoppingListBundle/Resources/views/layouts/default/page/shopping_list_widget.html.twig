@@ -41,7 +41,13 @@
             <i class="fa-clipboard"></i>
         </span>
         <span class="cart-widget__list-trigger">
-            <span class="cart-widget__text">{{ 'oro.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }} </span>
+            <span class="cart-widget__text">
+                {% if not is_one_shopping_list_enabled() %}
+                    {{ 'oro.frontend.shoppinglist.view.entity.label'|transchoice(shoppingLists|length)|raw }}
+                {% else %}
+                    {{ 'oro.shoppinglist.default.label'|trans}}
+                {% endif %}
+            </span>
             <i class="fa-angle-down"></i>
         </span>
     </div>
@@ -88,7 +94,7 @@
                 <span class="custom-radio__text"></span>
             </label>
         </div>
-        <a class="shopping-list-dropdown__link" href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">
+        <a class="shopping-list-dropdown__link" href="{{ is_one_shopping_list_enabled() ? path('oro_shopping_list_frontend_view') : path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">
             <span class="shopping-list-dropdown__title">
                 <span class="shopping-list-dropdown__name">
                     <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}"

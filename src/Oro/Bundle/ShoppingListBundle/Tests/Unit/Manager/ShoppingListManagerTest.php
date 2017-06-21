@@ -8,8 +8,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -28,11 +26,11 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
-use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\CustomerVisitorStub;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
+ * @Todo: Must be refactored in scope of - #BB-10192
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */

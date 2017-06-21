@@ -7,6 +7,11 @@ system_configuration:
             title: oro.shoppinglist.system_configuration.groups.guest_shopping_list_owner.title
         guest_shopping_list.enable:
             title: oro.shoppinglist.system_configuration.groups.guest_shopping_list.label
+        shopping_list:
+            title: oro.shoppinglist.system_configuration.groups.shopping_list.title
+            icon: 'fa-cogs'
+        shopping_list_limit_section:
+            title: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
     fields:
         oro_shopping_list.backend_product_visibility:
             data_type: array
@@ -19,6 +24,12 @@ system_configuration:
             options:
                 label: oro.shoppinglist.system_configuration.fields.availability_for_guests.label
                 tooltip: oro.shoppinglist.system_configuration.fields.availability_for_guests.tooltip
+        oro_shopping_list.shopping_list_limit:
+            data_type: integer
+            type: integer
+            options:
+                label: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
+                tooltip: oro.shoppinglist.system_configuration.fields.shopping_list_limit.tooltip
 
         oro_shopping_list.default_guest_shopping_list_owner:
             ui_only: true
@@ -51,3 +62,9 @@ system_configuration:
                                     guest_shopping_list.enable:
                                         children:
                                             - oro_shopping_list.availability_for_guests
+                            shopping_list:
+                                children:
+                                    shopping_list_limit_section:
+                                        children:
+                                            - oro_shopping_list.shopping_list_limit
+

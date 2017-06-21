@@ -1,0 +1,14 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'shopping_list_owner.html.twig'
+        - '@add':
+            id: shopping_list_owner
+            parentId: shopping_list_line_items
+            blockType: shopping_list_owner_select_block
+            options:
+                visible: '=data["entity"]!=null'
+                form: '=data["oro_customer_frontend_customer_user_form"].getCustomerUserSelectFormView(data["entity"].getCustomerUser(), data["entity"])'
+                shoppingList: '=data["entity"]'
+
+    conditions: 'context["is_logged_in"]'
