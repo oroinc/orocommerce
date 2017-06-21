@@ -1,9 +1,9 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-<div class="pull-right">
+<div class="related-products-widget">
     {{ UI.clientLink({
         'dataUrl': path('oro_product_possible_products_for_related_products', {'id': entity.id}),
-        'aCss': 'btn no-hash',
+        'aCss': 'btn no-hash related-products-widget__button',
         'label' : 'oro.product.widgets.select_related_products.label'|trans,
         'widget' : {
             'type' : 'related-items',
