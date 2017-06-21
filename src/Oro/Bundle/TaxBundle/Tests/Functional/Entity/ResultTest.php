@@ -46,17 +46,19 @@ class ResultTest extends WebTestCase
         $totalTaxes = 999;
 
         $result = new Result();
+        $result->lockResult();
         $result->offsetSet(Result::TOTAL, ResultElement::create($totalIncludingTax, $totalExcludingTax));
         $result->offsetSet(Result::SHIPPING, ResultElement::create($shippingIncludingTax, $shippingExcludingTax));
         $result->offsetSet(Result::UNIT, ResultElement::create($unitIncludingTax, $unitExcludingTax));
         $result->offsetSet(Result::ROW, ResultElement::create($rowIncludingTax, $rowExcludingTax));
         $result->offsetSet(Result::TAXES, $totalTaxes);
-        $result->offsetSet(Result::ITEMS, 101010);
+        $result->offsetSet(Result::ITEMS, []);
         $taxValue->setResult($result);
 
         $this->em->persist($taxValue);
         $this->em->flush();
         $id = $taxValue->getId();
+        $this->assertTrue($result->isResultLocked());
         $this->em->clear();
 
         $taxValue = $this->em->getRepository(TaxValue::class)->find($id);
@@ -68,6 +70,7 @@ class ResultTest extends WebTestCase
 
         $result = $taxValue->getResult();
         $this->assertInstanceOf(Result::class, $result);
+        $this->assertFalse($result->isResultLocked());
         $this->assertEquals($totalTaxes, $result->offsetGet(Result::TAXES));
         $this->assertFalse($result->offsetExists(Result::ITEMS));
         $this->assertInstanceOf(ResultElement::class, $result->offsetGet(Result::TOTAL));
