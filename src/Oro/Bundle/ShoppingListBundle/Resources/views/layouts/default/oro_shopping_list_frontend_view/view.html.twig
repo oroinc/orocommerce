@@ -41,7 +41,7 @@
                     id: shoppingList.id
                 },
                 inline_editing: {
-                    enable: resource_granted('oro_shopping_list_frontend_update'),
+                    enable: is_granted('oro_shopping_list_frontend_update'),
                     save_api_accessor: {
                         route: 'oro_api_frontend_patch_entity_data',
                         http_method: 'PATCH',
@@ -117,7 +117,7 @@
                     insertEditorMethod: 'after',
                     metadata: {
                         inline_editing: {
-                            enable: resource_granted('oro_shopping_list_frontend_update'),
+                            enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
                                 route: 'oro_api_frontend_patch_entity_data',
                                 http_method: 'PATCH',
@@ -206,7 +206,7 @@
             lineItemId: lineItem.id,
             quantityComponentOptions: {
                 dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                enable: resource_granted('oro_shopping_list_frontend_update'),
+                enable: is_granted('oro_shopping_list_frontend_update'),
                 elements: {
                     quantity: '[name="product_qty"]',
                     unit: '[name="product_unit"]'
@@ -472,7 +472,7 @@
                     fieldName: 'notes',
                     metadata: {
                         inline_editing: {
-                            enable: resource_granted('oro_shopping_list_frontend_update'),
+                            enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
                                 route: 'oro_api_frontend_patch_entity_data',
                                 http_method: 'PATCH',

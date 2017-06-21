@@ -11,6 +11,11 @@ trait MetaFieldSetterGetterTrait
     /**
      * @var LocalizedFallbackValue[]
      */
+    protected $metaTitles;
+
+    /**
+     * @var LocalizedFallbackValue[]
+     */
     protected $metaKeywords;
 
     /**
@@ -20,8 +25,19 @@ trait MetaFieldSetterGetterTrait
 
     public function __construct()
     {
+        $this->metaTitles = new ArrayCollection();
         $this->metaDescriptions = new ArrayCollection();
         $this->metaKeywords = new ArrayCollection();
+    }
+
+    /**
+     * @param string $value
+     */
+    public function addMetaTitles($value)
+    {
+        if (!$this->metaTitles->contains($value)) {
+            $this->metaTitles->add($value);
+        }
     }
 
     /**
@@ -42,6 +58,14 @@ trait MetaFieldSetterGetterTrait
         if (!$this->metaDescriptions->contains($value)) {
             $this->metaDescriptions->add($value);
         }
+    }
+
+    /**
+     * @return LocalizedFallbackValue[]|Collection
+     */
+    public function getMetaTitles()
+    {
+        return $this->metaTitles;
     }
 
     /**

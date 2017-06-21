@@ -6,12 +6,12 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 
 class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterface
@@ -48,7 +48,7 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
             return self::ACCESS_ABSTAIN;
         }
 
-        $securityFacade = $this->getSecurityFacade();
+        $authorizationChecker = $this->getAuthorizationChecker();
         $checkout = new Checkout();
 
         // use owner from Checkout Source with permission level from Checkout to make decision
@@ -56,7 +56,9 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
         if ($object instanceof CustomerOwnerAwareInterface) {
             $checkout->setCustomerUser($object->getCustomerUser());
         }
-        if ($securityFacade->isGranted('VIEW', $object) && $securityFacade->isGranted('CREATE', $checkout)) {
+        if ($authorizationChecker->isGranted('VIEW', $object)
+            && $authorizationChecker->isGranted('CREATE', $checkout)
+        ) {
             return self::ACCESS_GRANTED;
         }
 
@@ -84,10 +86,10 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
     }
 
     /**
-     * @return SecurityFacade
+     * @return AuthorizationCheckerInterface
      */
-    protected function getSecurityFacade()
+    protected function getAuthorizationChecker()
     {
-        return $this->getContainer()->get('oro_security.security_facade');
+        return $this->getContainer()->get('security.authorization_checker');
     }
 }

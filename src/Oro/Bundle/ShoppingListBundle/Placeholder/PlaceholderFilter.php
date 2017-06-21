@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Placeholder;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class PlaceholderFilter
 {
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -24,6 +22,6 @@ class PlaceholderFilter
      */
     public function userCanCreateLineItem()
     {
-        return $this->securityFacade->isGranted('oro_shopping_list_frontend_update');
+        return $this->authorizationChecker->isGranted('oro_shopping_list_frontend_update');
     }
 }

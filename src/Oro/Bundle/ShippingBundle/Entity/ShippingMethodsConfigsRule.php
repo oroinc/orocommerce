@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -205,7 +206,10 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      */
     public function getMethodConfigs()
     {
-        return $this->methodConfigs;
+        $criteria = Criteria::create()
+            ->orderBy(['id' => Criteria::ASC]);
+
+        return $this->methodConfigs->matching($criteria);
     }
 
     /**

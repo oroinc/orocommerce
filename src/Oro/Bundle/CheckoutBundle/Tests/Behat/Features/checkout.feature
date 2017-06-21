@@ -24,13 +24,13 @@ Feature: Checkout workflow
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     When I follow "click here to review"
-    Then I should see an Order page with Order #1
+    Then I should be on Order Frontend View page
 
   Scenario: Checking Order History grid with Open Orders
     Given I signed in as AmandaRCole@example.org on the store frontend
     When I open Order History page on the store frontend
-    Then there is no records in grid "OpenOrdersGrid"
+    Then there is no records in "OpenOrdersGrid"
 
     When I reset "Completed" filter on grid "OpenOrdersGrid"
       And I click View Order on List 1 in grid "OpenOrdersGrid"
-    Then I should see an Order page with Order #1
+    Then I should be on Order Frontend View page

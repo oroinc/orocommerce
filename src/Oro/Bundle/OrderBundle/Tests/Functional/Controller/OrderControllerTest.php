@@ -528,7 +528,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected function getCurrentUser()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
+        return $this->getContainer()->get('oro_security.token_accessor')->getUser();
     }
 
     /**

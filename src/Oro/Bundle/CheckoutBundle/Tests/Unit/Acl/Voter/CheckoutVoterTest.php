@@ -6,12 +6,12 @@ use Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,9 +26,9 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /**
      * {@inheritdoc}
@@ -39,12 +39,10 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $services = [
-            'oro_security.security_facade' => $this->securityFacade,
+            'security.authorization_checker' => $this->authorizationChecker,
         ];
 
         /* @var $container ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -137,7 +135,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     public function testVote(array $inputData, $expectedResult)
     {
         $object = $inputData['object'];
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->willReturnCallback(function ($attribute, $object) use ($inputData) {
                 if ($attribute === $inputData['isGrantedAttr']) {

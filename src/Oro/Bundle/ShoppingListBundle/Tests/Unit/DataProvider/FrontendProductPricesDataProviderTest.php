@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -33,9 +33,9 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
     protected $productPriceProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|UserCurrencyManager
@@ -53,9 +53,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->userCurrencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
             ->disableOriginalConstructor()
@@ -67,7 +65,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->provider = new FrontendProductPricesDataProvider(
             $this->productPriceProvider,
-            $this->securityFacade,
+            $this->tokenAccessor,
             $this->userCurrencyManager,
             $this->priceListRequestHandler
         );
@@ -87,8 +85,8 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit_Framework_TestCase
         array $lineItems = null
     ) {
         $expected = null;
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($customerUser);
 
         if ($customerUser) {
