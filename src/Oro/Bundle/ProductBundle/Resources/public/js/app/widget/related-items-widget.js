@@ -6,13 +6,16 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
 
     RelatedItemsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         elements: {
             appendedIds: '[data-role="related-items-appended-ids"]',
             removedIds: '[data-role="related-items-removed-ids"]',
-            selectButtonSelector: '[data-role="related-items-submit-button"]'
+            selectButtonSelector: '[data-role="related-items-submit-button"]',
+            limitError: '[data-role="related-items-limit-error"]',
+            widgetActions: '[data-section="adopted"]'
         },
 
         events: {
@@ -20,7 +23,7 @@ define(function(require) {
         },
 
         listen: {
-            contentLoad: 'onContentLoad',
+            'contentLoad': 'onContentLoad',
             'datagrid:rendered mediator': 'setSelectedCount'
         },
 
@@ -43,6 +46,7 @@ define(function(require) {
         onContentLoad: function() {
             this.clearElementsCache();
             this.initializeElements();
+            this.prepareError();
 
             this.recalculateSelectedItemsCount();
 
@@ -101,6 +105,23 @@ define(function(require) {
             $(this.elements.selectButtonSelector)
                 .toggleClass('btn-primary', !this.isLimitExceeded())
                 .toggleClass('disabled', this.isLimitExceeded());
+
+            $(this.elements.limitError).toggle(this.isLimitExceeded());
+        },
+
+        prepareError: function() {
+            if (this.options.limitErrorTemplate !== undefined) {
+                return;
+            } else {
+                this.options.limitErrorTemplate = _.template(
+                    '<span class="pull-left validation-failed" <%= dataAttr %>><%= msg %></span>'
+                );
+            }
+
+            $(this.elements.widgetActions).prepend(this.options.limitErrorTemplate({
+                dataAttr: this.elements.limitError.replace(new RegExp(/\[|]/g), ''),
+                msg: __('oro.product.widgets.select_related_products.limit_has_been_reached')
+            }));
         },
 
         dispose: function() {

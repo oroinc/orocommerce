@@ -143,3 +143,4 @@ Feature: Editing related products
         | PSKU3 |
         | PSKU4 |
     Then "Select products" button is disabled
+      And I should see "Limit of related products has been reached"
