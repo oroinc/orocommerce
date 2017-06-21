@@ -1,0 +1,14 @@
+services:
+    oro_product.shared.process_unit_precisions:
+            class: Oro\Bundle\ProductBundle\Processor\Shared\ProcessUnitPrecisions
+            arguments: ['@oro_api.doctrine_helper']
+            tags:
+                - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: 95 }
+                - { name: oro.api.processor, action: update, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: 95 }
+
+    oro_product.shared.process_precisions_after_validation:
+        class: Oro\Bundle\ProductBundle\Processor\Shared\ProcessPrecisionsAfterValidation
+        arguments: ['@oro_api.doctrine_helper']
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, priority: -99 }
+            - { name: oro.api.processor, action: update, group: transform_data, priority: -99 }
