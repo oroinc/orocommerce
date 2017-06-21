@@ -162,9 +162,10 @@
         </a>
         {% if hasSublist %}
             <button class="main-menu__button-arrow"
+                    data-toggle="dropdown"
                     data-go-to="next"
             >
-                <i class="fa-angle-right fa--no-offset"></i>
+                <i class="fa-angle-down fa--no-offset"></i>
             </button>
             {{ block(sub_block) }}
         {% endif %}
