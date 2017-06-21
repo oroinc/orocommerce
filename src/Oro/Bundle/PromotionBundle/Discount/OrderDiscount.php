@@ -32,9 +32,7 @@ class OrderDiscount extends ShippingAwareDiscount
         if (!$entity instanceof SubtotalAwareInterface) {
             return 0.0;
         }
-        // TODO: Implement calculate() method.
-        // TODO: Use BigDecimal
 
-        return $entity->getSubtotal() * $this->getDiscountValue();
+        return $this->calculateDiscountAmount($entity->getSubtotal());
     }
 }

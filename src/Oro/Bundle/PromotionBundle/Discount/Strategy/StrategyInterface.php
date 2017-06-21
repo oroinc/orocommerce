@@ -13,4 +13,9 @@ interface StrategyInterface
      * @return DiscountContext
      */
     public function process(DiscountContext $discountContext, array $discounts): DiscountContext;
+
+    /**
+     * @return string
+     */
+    public function getLabel(): string;
 }

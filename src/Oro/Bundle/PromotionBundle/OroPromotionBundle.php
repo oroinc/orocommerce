@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroPromotionBundle extends Bundle
 {
@@ -18,5 +19,13 @@ class OroPromotionBundle extends Bundle
         }
 
         return $this->extension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new PromotionCompilerPass());
     }
 }
