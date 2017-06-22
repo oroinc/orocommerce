@@ -7,11 +7,13 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 
 class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureInterface
 {
     use SEOMetaDataFieldsTrait;
 
+    const META_TITLES = 'metaTitles';
     const META_DESCRIPTIONS = 'metaDescriptions';
     const META_KEYWORDS = 'metaKeywords';
 
@@ -20,10 +22,12 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
      */
     public static $metadata = [
         LoadCategoryData::FIRST_LEVEL => [
+            self::META_TITLES => self::META_TITLES,
             self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
             self::META_KEYWORDS => self::META_KEYWORDS,
         ],
         LoadCategoryData::SECOND_LEVEL1 => [
+            self::META_TITLES => 'defaultMetaTitle',
             self::META_DESCRIPTIONS => 'defaultMetaDescription',
             self::META_KEYWORDS => 'defaultMetaKeywords',
         ]
@@ -48,7 +52,7 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+            LoadCategoryProductData::class,
         ];
     }
 }

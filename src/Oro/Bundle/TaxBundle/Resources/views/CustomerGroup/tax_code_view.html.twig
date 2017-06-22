@@ -2,7 +2,7 @@
 
 {% set taxCode %}
     {% if entity %}
-        {% set isGranted = resource_granted('VIEW', entity) %}
+        {% set isGranted = is_granted('VIEW', entity) %}
         {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': entity.id}) }}">{% endif %}
         {{ entity.code }}
         {% if isGranted %}</a>{% endif %}

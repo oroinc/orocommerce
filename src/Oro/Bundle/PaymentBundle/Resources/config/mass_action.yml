@@ -26,4 +26,3 @@ services:
             - 'OroPaymentBundle:PaymentMethodsConfigsRule'
             - '@doctrine.orm.entity_manager'
             - '@translator'
-            - '@oro_security.security_facade.link'

@@ -21,7 +21,7 @@ class CheckoutSuccessStep extends Element
 
                 return null;
             },
-            10
+            30
         );
 
         self::assertNotNull($titleElement, sprintf('Title "%s", was not found', $title));

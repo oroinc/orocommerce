@@ -51,6 +51,7 @@ class PageControllerTest extends WebTestCase
      */
     public function viewDataProvider()
     {
+        $title1 = $this->getMetaContent(LoadPageData::PAGE_1, LoadPageMetaData::META_TITLES);
         $description1 = $this->getMetaContent(LoadPageData::PAGE_1, LoadPageMetaData::META_DESCRIPTIONS);
         $keywords1 = $this->getMetaContent(LoadPageData::PAGE_1, LoadPageMetaData::META_KEYWORDS);
 
@@ -58,6 +59,7 @@ class PageControllerTest extends WebTestCase
             'Product 1' => [
                 'product' => LoadPageData::PAGE_1,
                 'metaTags' => [
+                    ['name' => $this->getMetaTitleName(), 'content' => $title1],
                     ['name' => $this->getMetaDescriptionName(), 'content' => $description1],
                     ['name' => $this->getMetaKeywordsName(), 'content' => $keywords1],
                 ],

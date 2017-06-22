@@ -79,7 +79,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
      */
     protected function createTaxes()
     {
-        return ['test tax'];
+        return [new Result()];
     }
 
     public function testConstruct()
@@ -104,7 +104,7 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testItemsDropped()
+    public function testSerializeItemsDropped()
     {
         $result = $this->createResultModel();
         $result->lockResult();
@@ -113,6 +113,10 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $newResult = unserialize(serialize($result));
         $this->assertEquals([], $newResult->getItems());
         $this->assertFalse($newResult->isResultLocked());
+
+        // original object not modified
+        $this->assertTrue($result->isResultLocked());
+        $this->assertNotEmpty($result->getItems());
     }
 
     public function testSerializeWithoutItems()
@@ -124,6 +128,40 @@ class ResultTest extends \PHPUnit_Framework_TestCase
         $newResult = unserialize(serialize($result));
         $this->assertEquals([], $newResult->getItems());
         $this->assertFalse($newResult->isResultLocked());
+
+        // original object not modified
+        $this->assertTrue($result->isResultLocked());
+    }
+
+
+    public function testJsonSerializeItemsDropped()
+    {
+        $result = $this->createResultModel();
+        $result->lockResult();
+
+        /** @var Result $newResult */
+        $newResult = Result::jsonDeserialize(json_decode(json_encode($result), true));
+        $this->assertEquals([], $newResult->getItems());
+        $this->assertFalse($newResult->isResultLocked());
+
+        // original object not modified
+        $this->assertTrue($result->isResultLocked());
+        $this->assertNotEmpty($result->getItems());
+    }
+
+    public function testJsonSerializeWithoutItems()
+    {
+        $result = $this->createResultModel();
+        $result->unsetOffset(Result::TAXES);
+        $result->lockResult();
+
+        /** @var Result $newResult */
+        $newResult = Result::jsonDeserialize(json_decode(json_encode($result), true));
+        $this->assertEquals([], $newResult->getItems());
+        $this->assertFalse($newResult->isResultLocked());
+
+        // original object not modified
+        $this->assertTrue($result->isResultLocked());
     }
 
     public function testLock()

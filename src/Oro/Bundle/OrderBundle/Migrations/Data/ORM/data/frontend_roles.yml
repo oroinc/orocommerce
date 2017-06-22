@@ -1,3 +1,7 @@
 BUYER:
     permissions:
         entity|Oro\Bundle\OrderBundle\Entity\Order: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC]
+
+ADMINISTRATOR:
+    permissions:
+        entity|Oro\Bundle\OrderBundle\Entity\Order: [VIEW_DEEP, CREATE_DEEP, EDIT_DEEP, ASSIGN_DEEP]

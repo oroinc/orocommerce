@@ -37,6 +37,8 @@ final class Result extends AbstractResult implements \JsonSerializable
         $result->deserializeAsResultElement(self::SHIPPING, $serialized);
         $result->deserializeAsResultElement(self::UNIT, $serialized);
         $result->deserializeAsResultElement(self::ROW, $serialized);
+        $result->deserializeTaxesAsTaxResultElement($serialized);
+
         return $result;
     }
 
@@ -45,8 +47,12 @@ final class Result extends AbstractResult implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $this->prepareToSerialization();
-        return $this->getArrayCopy();
+        // Prevent original object modifying
+        $that = clone $this;
+
+        $that->prepareToSerialization();
+
+        return $that->getArrayCopy();
     }
 
     /**
@@ -100,7 +106,21 @@ final class Result extends AbstractResult implements \JsonSerializable
     /** {@inheritdoc} */
     public function serialize()
     {
-        $this->prepareToSerialization();
+        // Prevent original object modifying
+        $that = clone $this;
+
+        $that->prepareToSerialization();
+
+        return $that->parentSerialize();
+    }
+
+    /**
+     * Proxy method to call parent serialization
+     *
+     * @return string
+     */
+    private function parentSerialize()
+    {
         return parent::serialize();
     }
 
@@ -128,16 +148,33 @@ final class Result extends AbstractResult implements \JsonSerializable
      */
     protected function deserializeAsResultElement($key, array $serialized)
     {
-        if (!empty($serialized[$key]) && is_array($serialized[$key])) {
+        if (isset($serialized[$key]) && is_array($serialized[$key])) {
             $this->offsetSet($key, new ResultElement($serialized[$key]));
         }
     }
 
     protected function prepareToSerialization()
     {
+        // Remove items because they are shouldn't be serialized
         if ($this->offsetExists(self::ITEMS)) {
             $this->unsetOffset(self::ITEMS);
         }
+
+        // Reset state of resultLocked
         $this->unlockResult();
+    }
+
+    /**
+     * @param array $serialized
+     */
+    protected function deserializeTaxesAsTaxResultElement(array $serialized)
+    {
+        if (isset($serialized[self::TAXES]) && is_array($serialized[self::TAXES])) {
+            $taxes = [];
+            foreach ($serialized[self::TAXES] as $key => $serializedTaxData) {
+                $taxes[$key] = new TaxResultElement($serializedTaxData);
+            }
+            $this->offsetSet(self::TAXES, $taxes);
+        }
     }
 }

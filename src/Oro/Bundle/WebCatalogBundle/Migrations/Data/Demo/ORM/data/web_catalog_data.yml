@@ -220,9 +220,9 @@
                     parentScopeUsed: true
                     contentVariants:
                         -
-                            type: category_page
+                            type: product_collection
                             params:
-                                title: "Lighting Products"
+                                title: "New Arrivals / Lighting Products"
                             isDefault: true
                     children: ~
                 "Architectural Floodlighting":
@@ -231,9 +231,9 @@
                     parentScopeUsed: true
                     contentVariants:
                         -
-                            type: category_page
+                            type: product_collection
                             params:
-                                title: "Architectural Floodlighting"
+                                title: "New Arrivals / Architectural Floodlighting"
                             isDefault: true
                     children: ~
                 "Medical Apparel":
@@ -242,9 +242,9 @@
                     parentScopeUsed: true
                     contentVariants:
                         -
-                            type: category_page
+                            type: product_collection
                             params:
-                                title: "Medical Apparel"
+                                title: "New Arrivals / Medical Apparel"
                             isDefault: true
                     children: ~
                 "Office Furniture":
@@ -253,9 +253,9 @@
                     parentScopeUsed: true
                     contentVariants:
                         -
-                            type: category_page
+                            type: product_collection
                             params:
-                                title: "Office Furniture"
+                                title: "New Arrivals / Office Furniture"
                             isDefault: true
                     children: ~
                 "Retail Supplies":
@@ -264,9 +264,9 @@
                     parentScopeUsed: true
                     contentVariants:
                         -
-                            type: category_page
+                            type: product_collection
                             params:
-                                title: "Retail Supplies"
+                                title: "New Arrivals / Retail Supplies"
                             isDefault: true
                     children: ~
         "Clearance":

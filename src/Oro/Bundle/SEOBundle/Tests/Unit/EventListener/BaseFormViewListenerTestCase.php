@@ -46,9 +46,17 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $env->expects($this->exactly(2))
+        $env->expects($this->exactly(3))
             ->method('render')
             ->willReturnMap([
+                [
+                    'OroSEOBundle:SEO:title_view.html.twig',
+                    [
+                        'entity' => $entityObject,
+                        'labelPrefix' => $labelPrefix
+                    ],
+                    ''
+                ],
                 [
                     'OroSEOBundle:SEO:description_view.html.twig',
                     [
@@ -79,9 +87,10 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $env->expects($this->exactly(2))
+        $env->expects($this->exactly(3))
             ->method('render')
             ->willReturnMap([
+                ['OroSEOBundle:SEO:title_update.html.twig', ['form' => new FormView()], ''],
                 ['OroSEOBundle:SEO:description_update.html.twig', ['form' => new FormView()], ''],
                 ['OroSEOBundle:SEO:keywords_update.html.twig', ['form' => new FormView()], ''],
             ]);
