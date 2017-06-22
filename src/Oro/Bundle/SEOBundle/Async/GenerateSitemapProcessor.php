@@ -6,7 +6,7 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
-use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -37,11 +37,6 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     private $producer;
 
     /**
-     * @var UrlItemsProviderRegistry
-     */
-    private $providerRegistry;
-
-    /**
      * @var WebsiteProviderInterface
      */
     private $websiteProvider;
@@ -67,6 +62,11 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     private $canonicalUrlGenerator;
 
     /**
+     * @var WebsiteUrlProvidersServiceInterface
+     */
+    private $websiteUrlProvidersService;
+
+    /**
      * @var int
      */
     private $version;
@@ -75,7 +75,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
      * @param JobRunner $jobRunner
      * @param DependentJobService $dependentJobService
      * @param MessageProducerInterface $producer
-     * @param UrlItemsProviderRegistry $providerRegistry
+     * @param WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService
      * @param WebsiteProviderInterface $websiteProvider
      * @param SitemapIndexMessageFactory $indexMessageFactory
      * @param SitemapMessageFactory $messageFactory
@@ -86,7 +86,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         JobRunner $jobRunner,
         DependentJobService $dependentJobService,
         MessageProducerInterface $producer,
-        UrlItemsProviderRegistry $providerRegistry,
+        WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService,
         WebsiteProviderInterface $websiteProvider,
         SitemapIndexMessageFactory $indexMessageFactory,
         SitemapMessageFactory $messageFactory,
@@ -96,7 +96,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->jobRunner = $jobRunner;
         $this->dependentJobService = $dependentJobService;
         $this->producer = $producer;
-        $this->providerRegistry = $providerRegistry;
+        $this->websiteUrlProvidersService = $websiteUrlProvidersService;
         $this->websiteProvider = $websiteProvider;
         $this->indexMessageFactory = $indexMessageFactory;
         $this->messageFactory = $messageFactory;
@@ -113,14 +113,14 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
 
         try {
             $websites = $this->websiteProvider->getWebsites();
-            $providerNames = $this->providerRegistry->getProviderNames();
 
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 Topics::GENERATE_SITEMAP,
-                function (JobRunner $jobRunner, Job $job) use ($providerNames, $websites) {
+                function (JobRunner $jobRunner, Job $job) use ($websites) {
                     $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
                     foreach ($websites as $website) {
+                        $providerNames = $this->getProvidersNamesByWebsite($website);
                         $this->canonicalUrlGenerator->clearCache($website);
                         foreach ($providerNames as $type) {
                             $this->scheduleGeneratingSitemapForWebsiteAndType($jobRunner, $website, $type);
@@ -160,6 +160,18 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         }
 
         return $result ? self::ACK : self::REJECT;
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     *
+     * @return array
+     */
+    protected function getProvidersNamesByWebsite(WebsiteInterface $website)
+    {
+        $providersByNames = $this->websiteUrlProvidersService->getWebsiteProvidersIndexedByNames($website);
+
+        return array_keys($providersByNames);
     }
 
     /**

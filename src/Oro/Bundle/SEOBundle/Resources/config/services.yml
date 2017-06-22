@@ -109,6 +109,30 @@ services:
 
     oro_seo.sitemap.provider.url_items_provider_registry:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry
+        arguments:
+            - []
+
+    oro_seo.sitemap.provider.website_access_denied_urls_provider_registry:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry
+        arguments:
+            - []
+
+    oro_seo.sitemap.provider.full_list_urls_provider_registry:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry
+        arguments:
+            - []
+
+    oro_seo.sitemap.website_url_provider_service:
+        class: Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersService
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_seo.sitemap.provider.url_items_provider_registry'
+            - '@oro_seo.sitemap.provider.website_access_denied_urls_provider_registry'
+
+    oro_seo.sitemap.website_url_provider_service_index:
+        class: Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceIndex
+        arguments:
+            - '@oro_seo.sitemap.provider.url_items_provider_registry_index'
 
     oro_seo.sitemap.provider.sitemap_files_provider:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\SitemapFilesProvider
@@ -130,22 +154,22 @@ services:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
         public: false
         arguments:
-            - '@oro_seo.sitemap.provider.url_items_provider_registry'
+            - '@oro_seo.sitemap.website_url_provider_service'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
             - '@event_dispatcher'
             - 'sitemap'
 
     oro_seo.sitemap.provider.url_items_provider_registry_index:
-        parent: oro_seo.sitemap.provider.url_items_provider_registry
-        calls:
-            - ['addProvider', ['@oro_seo.sitemap.provider.sitemap_files_provider', 'index']]
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry
+        arguments:
+            - { index: @oro_seo.sitemap.provider.sitemap_files_provider }
 
     oro_seo.sitemap.sitemap_index_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
         public: false
         arguments:
-            - '@oro_seo.sitemap.provider.url_items_provider_registry_index'
+            - '@oro_seo.sitemap.website_url_provider_service_index'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
             - '@event_dispatcher'
@@ -247,7 +271,7 @@ services:
         parent: oro_seo.model.sitemap_message_factory.abstract
         public: false
         calls:
-            - ['setProviderRegistry', ['@oro_seo.sitemap.provider.url_items_provider_registry']]
+            - ['setProviderRegistry', ['@oro_seo.sitemap.provider.full_list_urls_provider_registry']]
 
     oro_seo.model.sitemap_index_message_factory:
         class: Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory
@@ -260,7 +284,7 @@ services:
             - '@oro_message_queue.job.runner'
             - '@oro_message_queue.job.dependent_job_service'
             - '@oro_message_queue.client.message_producer'
-            - '@oro_seo.sitemap.provider.url_items_provider_registry'
+            - '@oro_seo.sitemap.website_url_provider_service'
             - '@oro_website.website.provider'
             - '@oro_seo.model.sitemap_index_message_factory'
             - '@oro_seo.model.sitemap_message_factory'
@@ -386,3 +410,26 @@ services:
         class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByStatusListener
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
+
+    oro_seo.sitemap.provider.router_sitemap_urls_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\RouterSitemapUrlsProvider
+        public: false
+        arguments:
+            - '@router'
+            - '@oro_redirect.generator.canonical_url'
+            - ["oro_customer_customer_user_security_login", "oro_customer_frontend_customer_user_reset_request", "oro_customer_frontend_customer_user_register"]
+        tags:
+            - { name: oro_seo.sitemap.url_items_provider, alias: 'login_urls' }
+            - { name: oro_seo.sitemap.website_access_denied_urls_provider, alias: 'login_urls' }
+
+    oro_seo.event_listener.schedule_sitemap_generation_on_guest_access_change:
+        class: Oro\Bundle\SEOBundle\EventListener\ScheduleSitemapGenerationOnGuestAccessChangeListener
+        arguments:
+            - '@oro_seo.provider.sitemap_generation_scheduler'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onConfigUpdate }
+
+    oro_seo.provider.sitemap_generation_scheduler:
+        class: Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler
+        arguments:
+            - '@oro_message_queue.client.message_producer'

@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\FullListUrlProvidersCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\Reference;
 
-class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
+class FullListUrlProvidersCompilerPassTest extends \PHPUnit_Framework_TestCase
 {
-    const PROVIDER_REGISTRY = 'test_service_registry';
-    const TAG = 'test_tag';
-
     /**
-     * @var UrlItemsProviderCompilerPass
+     * @var FullListUrlProvidersCompilerPass
      */
     private $compilerPass;
 
@@ -32,7 +29,7 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(ContainerBuilder::class)
             ->getMock();
 
-        $this->compilerPass = new UrlItemsProviderCompilerPass(self::PROVIDER_REGISTRY, self::TAG);
+        $this->compilerPass = new FullListUrlProvidersCompilerPass();
     }
 
     public function testProcessCompositeDoesNotExist()
@@ -40,7 +37,7 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
+            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
             ->willReturn(false);
 
         $this->containerBuilder
@@ -59,13 +56,12 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
+            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
             ->willReturn(true);
 
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('findTaggedServiceIds')
-            ->with(self::TAG)
             ->willReturn([]);
 
         $this->containerBuilder
@@ -80,7 +76,7 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
+            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
             ->willReturn(true);
 
         $compositeServiceDefinition = $this->createMock(Definition::class);
@@ -88,7 +84,7 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('getDefinition')
-            ->with(self::PROVIDER_REGISTRY)
+            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
             ->willReturn($compositeServiceDefinition);
 
         $taggedServices = [
@@ -97,9 +93,8 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('findTaggedServiceIds')
-            ->with(self::TAG)
             ->willReturn($taggedServices);
 
         $compositeServiceDefinition
@@ -125,7 +120,7 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('hasDefinition')
-            ->with(self::PROVIDER_REGISTRY)
+            ->with(FullListUrlProvidersCompilerPass::PROVIDER_REGISTRY)
             ->willReturn(true);
 
         $taggedServices = [

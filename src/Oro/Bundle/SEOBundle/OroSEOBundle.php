@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle;
 
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\FullListUrlProvidersCompilerPass;
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -39,6 +40,14 @@ class OroSEOBundle extends Bundle
                 array_values($fields),
                 'oro_catalog.event_listener.category_content_variant_index'
             ))
-            ->addCompilerPass(new UrlItemsProviderCompilerPass());
+            ->addCompilerPass(new UrlItemsProviderCompilerPass(
+                'oro_seo.sitemap.provider.url_items_provider_registry',
+                'oro_seo.sitemap.url_items_provider'
+            ))
+            ->addCompilerPass(new UrlItemsProviderCompilerPass(
+                'oro_seo.sitemap.provider.website_access_denied_urls_provider_registry',
+                'oro_seo.sitemap.website_access_denied_urls_provider'
+            ))
+            ->addCompilerPass(new FullListUrlProvidersCompilerPass());
     }
 }
