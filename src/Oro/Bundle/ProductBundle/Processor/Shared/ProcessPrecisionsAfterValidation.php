@@ -26,8 +26,18 @@ class ProcessPrecisionsAfterValidation implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
+        /** @var FormContext $context */
+        if (!$context->hasForm()) {
+            return;
+        }
+
         /** @var Form $form */
         $form = $context->getForm();
+
+        if (!$form->isSubmitted()) {
+            return;
+        }
+
         if (!$form->isValid()) {
             $this->removeProductUnitPrecisions($context);
         }
