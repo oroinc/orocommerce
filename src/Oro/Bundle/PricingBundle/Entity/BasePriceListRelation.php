@@ -32,7 +32,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
      * @var PriceList
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $priceList;
 
@@ -40,7 +40,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
      * @var Website
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $website;
 

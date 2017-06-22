@@ -2,14 +2,30 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_11;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 
 use Doctrine\DBAL\Schema\SchemaException;
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
+use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroPricingBundle implements Migration
+class OroPricingBundle implements Migration, ConnectionAwareInterface
 {
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setConnection(Connection $connection)
+    {
+        $this->connection = $connection;
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -61,11 +77,14 @@ class OroPricingBundle implements Migration
         string $oldCompositeIndexName,
         string $newUniqueIndexName,
         array $uniqueConstrainFields
-    ): self
-    {
+    ): self {
         $table = $schema->getTable($tableName);
 
-        $queryBag->addPreQuery("ALTER TABLE $tableName DROP CONSTRAINT $oldCompositeIndexName");
+        if (DatabasePlatformInterface::DATABASE_POSTGRESQL === $this->connection->getDatabasePlatform()->getName()) {
+            $queryBag->addPreQuery("ALTER TABLE $tableName DROP CONSTRAINT $oldCompositeIndexName");
+        } else {
+            $table->dropPrimaryKey();
+        }
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
 

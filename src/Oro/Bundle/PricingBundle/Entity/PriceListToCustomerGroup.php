@@ -10,7 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
  * @ORM\Table(name="oro_price_list_to_cus_group", uniqueConstraints={
  *     @ORM\UniqueConstraint(
  *          name="oro_price_list_to_cus_group_unique_key",
- *          columns={"customerGroup", "priceList", "website"}
+ *          columns={"customer_group_id", "price_list_id", "website_id"}
  *     )
  * })
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository")
@@ -21,7 +21,7 @@ class PriceListToCustomerGroup extends BasePriceListRelation
      * @var CustomerGroup
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerGroup")
-     * @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $customerGroup;
 
