@@ -130,3 +130,9 @@ services:
             - '@oro_cms.twig.renderer'
         tags:
             - { name: twig.extension }
+
+    oro_cms.migration.home_page_slider_images_source_fixer:
+        class: 'Oro\Bundle\CMSBundle\Migration\HomePageSliderImagesSourceFixer'
+        arguments:
+            - '@oro_config.global'
+            - '@doctrine.dbal.default_connection'
