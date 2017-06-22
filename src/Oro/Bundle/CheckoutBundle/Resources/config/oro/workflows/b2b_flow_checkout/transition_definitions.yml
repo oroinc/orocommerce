@@ -437,6 +437,8 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                 actions:
+                    - '@assign_constant_value': [$.result.validateAction, Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface::VALIDATE]
+
                     - '@assign_url':
                         attribute: $.result.failedShippingAddressUrl
                         route: oro_checkout_frontend_checkout
@@ -462,8 +464,35 @@ workflows:
                                 failedShippingAddressUrl: $.result.failedShippingAddressUrl
                                 additionalData: $additional_data
                         results:
-                            result.redirectUrl: $.redirectUrl
                             result.responseData: $.responseData
+
+                    - '@redirect':
+                        conditions:
+                            '@and':
+                                - '@equal':
+                                    - $.result.responseData[purchaseSuccessful]
+                                    - true
+                                - '@payment_method_supports':
+                                    payment_method: $checkout.paymentMethod
+                                    action: $.result.validateAction
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: finish_checkout
+
+                    - '@redirect':
+                        conditions:
+                            '@and':
+                                - '@equal':
+                                    - $.result.responseData[purchaseSuccessful]
+                                    - false
+                                - '@payment_method_supports':
+                                    payment_method: $checkout.paymentMethod
+                                    action: $.result.validateAction
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: payment_error
 
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout

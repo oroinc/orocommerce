@@ -214,33 +214,6 @@ action_groups:
             - '@extendable':
                 events: [extendable_action.finish_checkout]
 
-            - '@redirect':
-                conditions:
-                    '@and':
-                        - '@equal':
-                            - $.responseData[purchaseSuccessful]
-                            - true
-                        - '@payment_method_supports':
-                            payment_method: $.checkout.paymentMethod
-                            action: 'validate'
-                route: oro_checkout_frontend_checkout
-                route_parameters:
-                    id: $.checkout.id
-
-            - '@redirect':
-                conditions:
-                    '@and':
-                        - '@equal':
-                            - $.responseData[purchaseSuccessful]
-                            - false
-                        - '@payment_method_supports':
-                            payment_method: $.checkout.paymentMethod
-                            action: 'validate'
-                route: oro_checkout_frontend_checkout
-                route_parameters:
-                    id: $.checkout.id
-                    transition: payment_error
-
             - '@flash_message':
                 conditions:
                     '@and':

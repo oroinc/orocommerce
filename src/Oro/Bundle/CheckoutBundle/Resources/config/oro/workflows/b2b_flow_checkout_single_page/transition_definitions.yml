@@ -261,12 +261,26 @@ workflows:
                                     transactionOptions:
                                         additionalData: $additional_data
                                 results:
-                                    result.redirectUrl: $.redirectUrl
                                     result.responseData: $.responseData
 
                             - '@assign_value':
                                 - $.result.successPayment
                                 - $.result.responseData[purchaseSuccessful]
+
+                            - '@redirect':
+                                conditions:
+                                    '@equal': [true, $.result.successPayment]
+                                route: oro_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+
+                            - '@redirect':
+                                conditions:
+                                    '@equal': [false, $.result.successPayment]
+                                route: oro_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: payment_error
 
                     # finish checkout
                     - '@tree':
