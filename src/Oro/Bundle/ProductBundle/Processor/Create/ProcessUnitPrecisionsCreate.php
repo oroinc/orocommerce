@@ -20,17 +20,16 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
         $primaryUnitPrecisionCode = isset(
                 $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::PRIMARY_UNIT_PRECISION][self::CODE]
             ) ?: null;
-        $k = 0;
+        $hasPrimaryUnit = false;
         foreach ($unitPrecisionInfo[JsonApi::DATA] as $info) {
             if ($primaryUnitPrecisionCode === $info[self::ATTR_UNIT_CODE] ||
-                ($primaryUnitPrecisionCode === null && $k === 0)
+                ($primaryUnitPrecisionCode === null && $hasPrimaryUnit === false)
             ) {
                 $primaryUnitPrecision = $this->handlePrimaryUnitPrecision($info);
-                $k++;
+                $hasPrimaryUnit = true;
                 continue;
             }
             $additionalUnitPrecisions[] = $this->handleAdditionalUnitPrecisions($info);
-            $k++;
         }
 
         $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::UNIT_PRECISIONS] = [

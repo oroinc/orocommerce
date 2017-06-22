@@ -21,6 +21,10 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
 
     protected $doctrineHelper;
 
+    /**
+     * ProcessUnitPrecisions constructor.
+     * @param DoctrineHelper $doctrineHelper
+     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
