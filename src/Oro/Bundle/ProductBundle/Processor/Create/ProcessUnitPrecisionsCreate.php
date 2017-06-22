@@ -17,20 +17,23 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
     {
         $additionalUnitPrecisions = $primaryUnitPrecision = [];
         $unitPrecisionInfo = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::UNIT_PRECISIONS];
-        $primaryUnitPrecisionCode = isset(
-                $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::PRIMARY_UNIT_PRECISION][parent::CODE]
-            ) ?: null;
-        $k = 0;
+        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
+        $primaryUnitPrecisionCode = $relationships[parent::PRIMARY_UNIT_PRECISION][parent::ATTR_UNIT_CODE] ?: null;
+        $hasPrimaryUnit = false;
         foreach ($unitPrecisionInfo[JsonApi::DATA] as $info) {
             if ($primaryUnitPrecisionCode === $info[parent::ATTR_UNIT_CODE] ||
-                ($primaryUnitPrecisionCode === null && $k === 0)
+                ($primaryUnitPrecisionCode === null && $hasPrimaryUnit === false)
             ) {
                 $primaryUnitPrecision = $this->handlePrimaryUnitPrecision($info);
-                $k++;
+                $hasPrimaryUnit = true;
                 continue;
             }
             $additionalUnitPrecisions[] = $this->handleAdditionalUnitPrecisions($info);
-            $k++;
+        }
+        if ($hasPrimaryUnit === false) {
+            $primaryUnitPrecision = $this->handlePrimaryUnitPrecision(
+                $relationships[parent::PRIMARY_UNIT_PRECISION]
+            );
         }
 
         $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::UNIT_PRECISIONS] = [
@@ -39,7 +42,7 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
         $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::PRIMARY_UNIT_PRECISION] = [
             JsonApi::DATA => $primaryUnitPrecision
         ];
-        unset($requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::PRIMARY_UNIT_PRECISION][parent::CODE]);
+        unset($relationships[parent::PRIMARY_UNIT_PRECISION][parent::ATTR_UNIT_CODE]);
 
         return $requestData;
     }
@@ -81,12 +84,15 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
         $productUnit = $productUnitRepo->find($unitPrecisionInfo['unit_code']);
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setConversionRate(
-            isset($unitPrecisionInfo[parent::ATTR_CONVERSION_RATE]) ?: 1
+            isset($unitPrecisionInfo[parent::ATTR_CONVERSION_RATE]) ?
+                $unitPrecisionInfo[parent::ATTR_CONVERSION_RATE] : 1
         );
         $unitPrecision->setPrecision(
-            isset($unitPrecisionInfo[parent::ATTR_UNIT_PRECISION]) ?: 0
+            isset($unitPrecisionInfo[parent::ATTR_UNIT_PRECISION]) ? $unitPrecisionInfo[parent::ATTR_UNIT_PRECISION] : 0
         );
-        $unitPrecision->setSell((bool)isset($unitPrecisionInfo[parent::ATTR_SELL]) ?: true);
+        $unitPrecision->setSell(
+            (bool)(isset($unitPrecisionInfo[parent::ATTR_SELL]) ? $unitPrecisionInfo[parent::ATTR_SELL] : true)
+        );
         $unitPrecision->setUnit($productUnit);
 
         $em->persist($unitPrecision);

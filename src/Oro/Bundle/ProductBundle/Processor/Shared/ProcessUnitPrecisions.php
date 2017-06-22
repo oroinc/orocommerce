@@ -9,6 +9,8 @@ use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -16,7 +18,6 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
 {
     const UNIT_PRECISIONS = 'unitPrecisions';
     const PRIMARY_UNIT_PRECISION = 'primaryUnitPrecision';
-    const CODE = 'code';
 
     const ATTR_UNIT_PRECISION = 'unit_precision';
     const ATTR_CONVERSION_RATE = 'conversion_rate';
@@ -26,6 +27,7 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
     protected $doctrineHelper;
     /** @var SingleItemContext */
     protected $context;
+    protected $validProductUnits;
 
     public function __construct(DoctrineHelper $doctrineHelper)
     {
@@ -62,34 +64,25 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
     protected function validateUnitPrecisions($unitPrecisionInfo, $pointer)
     {
         $existentCodes = [];
-        $mandatoryFields = [
-            self::ATTR_UNIT_CODE,
-            self::ATTR_CONVERSION_RATE,
-            self::ATTR_UNIT_PRECISION,
-            self::ATTR_SELL
-        ];
-        $isValid = true;
-        $pointer = $this->buildPointer($pointer, self::UNIT_PRECISIONS . '/' . JsonApi::DATA);
+        $dataPointer = $this->buildPointer($pointer, self::UNIT_PRECISIONS . '/' . JsonApi::DATA);
         foreach ($unitPrecisionInfo[JsonApi::DATA] as $key => $unitPrecision) {
-            $absentProperties = array_diff($mandatoryFields, array_keys($unitPrecision));
-            foreach ($absentProperties as $property) {
-                $this->addError(
-                    $this->buildPointer($pointer, $key . '/' . $property),
-                    sprintf('The \'%s\' property is required', $property)
-                );
-                $isValid = false;
-            }
+            $pointer = $this->buildPointer($dataPointer, $key);
+            $this->validateRequiredFields($unitPrecision, $pointer);
+            $this->validateProductUnitExists($unitPrecision, $pointer);
             if (in_array($unitPrecision[self::ATTR_UNIT_CODE], $existentCodes)) {
                 $this->addError(
-                    $this->buildPointer($pointer, $key . '/' . self::ATTR_UNIT_CODE),
+                    $this->buildPointer($pointer, self::ATTR_UNIT_CODE),
                     sprintf('Unit precision \'%s\' already exists', $unitPrecision[self::ATTR_UNIT_CODE])
                 );
-                $isValid = false;
             }
             $existentCodes[] = $unitPrecision[self::ATTR_UNIT_CODE];
         }
 
-        return $isValid;
+        if ($this->context->hasErrors()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -113,5 +106,44 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
     protected function buildPointer($parentPath, $property)
     {
         return $parentPath . '/' . $property;
+    }
+
+    /**
+     * @param $unitPrecision
+     * @param $pointer
+     */
+    protected function validateRequiredFields($unitPrecision, $pointer)
+    {
+        $mandatoryFields = [
+            self::ATTR_UNIT_CODE,
+            self::ATTR_CONVERSION_RATE,
+            self::ATTR_UNIT_PRECISION,
+            self::ATTR_SELL
+        ];
+
+        $absentProperties = array_diff($mandatoryFields, array_keys($unitPrecision));
+        foreach ($absentProperties as $property) {
+            $this->addError(
+                $this->buildPointer($pointer, $property),
+                sprintf('The \'%s\' property is required', $property)
+            );
+        }
+    }
+
+    protected function validateProductUnitExists($unitPrecision, $pointer)
+    {
+        if (!$this->validProductUnits) {
+            /** @var ProductUnitRepository $productUnitRepo */
+            $productUnitRepo = $this->doctrineHelper->getEntityRepositoryForClass(ProductUnit::class);
+            $codes = $productUnitRepo->getAllUnitCodes();
+            $this->validProductUnits = $codes;
+        }
+
+        if (!in_array($unitPrecision[self::ATTR_UNIT_CODE], $this->validProductUnits)) {
+            $this->addError(
+                $this->buildPointer($pointer, self::ATTR_UNIT_CODE),
+                sprintf('Invalid value \'%s\' for unit_code', $unitPrecision[self::ATTR_UNIT_CODE])
+            );
+        }
     }
 }
