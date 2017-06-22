@@ -48,8 +48,10 @@ class ProductType extends AbstractType
      * @param DefaultProductUnitProviderInterface $provider
      * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(DefaultProductUnitProviderInterface $provider, UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        DefaultProductUnitProviderInterface $provider,
+        UrlGeneratorInterface $urlGenerator
+    ) {
         $this->provider = $provider;
         $this->urlGenerator = $urlGenerator;
     }
@@ -179,26 +181,6 @@ class ProductType extends AbstractType
                 'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
                 'empty_value' => false,
             ])
-            ->add(
-                'appendRelated',
-                'oro_entity_identifier',
-                [
-                    'class'    => Product::class,
-                    'required' => false,
-                    'mapped'   => false,
-                    'multiple' => true,
-                ]
-            )
-            ->add(
-                'removeRelated',
-                'oro_entity_identifier',
-                [
-                    'class'    => Product::class,
-                    'required' => false,
-                    'mapped'   => false,
-                    'multiple' => true,
-                ]
-            )
             ->add('newArrival', ChoiceType::class, [
                 'label' => 'oro.product.new_arrival.label',
                 'tooltip' => 'oro.product.form.tooltip.new_arrival',

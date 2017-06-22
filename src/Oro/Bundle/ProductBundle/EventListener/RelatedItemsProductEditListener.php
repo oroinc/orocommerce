@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
@@ -23,22 +24,22 @@ class RelatedItemsProductEditListener
     /** @var AbstractRelatedItemConfigProvider */
     private $configProvider;
 
-    /** @var SecurityFacade */
-    private $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    private $authorizationChecker;
 
     /**
      * @param TranslatorInterface               $translator
      * @param AbstractRelatedItemConfigProvider $configProvider
-     * @param SecurityFacade                    $securityFacade
+     * @param AuthorizationCheckerInterface     $authorizationChecker
      */
     public function __construct(
         TranslatorInterface $translator,
         AbstractRelatedItemConfigProvider $configProvider,
-        SecurityFacade $securityFacade
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->translator = $translator;
         $this->configProvider = $configProvider;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -46,7 +47,9 @@ class RelatedItemsProductEditListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        if (!$this->configProvider->isEnabled() || !$this->securityFacade->isGranted('oro_related_products_edit')) {
+        if (!$this->configProvider->isEnabled()
+            || !$this->authorizationChecker->isGranted('oro_related_products_edit')
+        ) {
             return;
         }
 
@@ -67,7 +70,28 @@ class RelatedItemsProductEditListener
      */
     public function onFormDataSet(FormProcessEvent $event)
     {
-        if (!$this->securityFacade->isGranted('oro_related_products_edit')) {
+        if ($this->authorizationChecker->isGranted('oro_related_products_edit')) {
+            $event->getForm()->add(
+                'appendRelated',
+                'oro_entity_identifier',
+                [
+                    'class' => Product::class,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            );
+            $event->getForm()->add(
+                'removeRelated',
+                'oro_entity_identifier',
+                [
+                    'class' => Product::class,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            );
+        } else {
             $event->getForm()->remove('appendRelated');
             $event->getForm()->remove('removeRelated');
         }

@@ -42,8 +42,6 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantFieldsCollectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
@@ -75,7 +73,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected $urlGenerator;
 
-    /** @var  ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $defaultProductUnitProvider;
 
     /**
@@ -92,7 +92,9 @@ class ProductTypeTest extends FormIntegrationTestCase
         ],
     ];
 
-    /** @var AttributeFamily */
+    /**
+     * @var AttributeFamily
+     */
     protected $attributeFamily;
 
     /**

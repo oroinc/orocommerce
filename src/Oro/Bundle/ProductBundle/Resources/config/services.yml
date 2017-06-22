@@ -209,7 +209,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_product.related_item.related_product.config_provider'
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-related-items-update, method: onProductEdit }

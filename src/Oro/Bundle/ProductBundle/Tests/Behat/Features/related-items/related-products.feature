@@ -9,7 +9,7 @@ Feature: Editing related products
   Scenario: Check if datagrid of a product doesn't contain this product
     Given I login as administrator
     When go to Products/ Products
-    And I click Edit "Product 1" in grid
+    And I click Edit "PSKU1" in grid
     And I click "Select related products"
     And I filter SKU as contains "PSKU" in "SelectRelatedProductsGrid"
     Then I should see following "SelectRelatedProductsGrid" grid:
@@ -21,7 +21,7 @@ Feature: Editing related products
 
   Scenario: Create relation
     Given go to Products/ Products
-    And I click Edit "Product 1" in grid
+    And I click Edit "PSKU1" in grid
     And I click "Select related products"
     And I should see following "SelectRelatedProductsGrid" grid:
       | Is Related  | SKU    | NAME      |
@@ -45,7 +45,7 @@ Feature: Editing related products
 
   Scenario: Grid in popup should have related products checked
     Given go to Products/ Products
-    And I click Edit "Product 1" in grid
+    And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU    | NAME      |
       | PSKU2  | Product 2 |
@@ -77,7 +77,7 @@ Feature: Editing related products
 
   Scenario: Canceling edit will not affect related products
     Given go to Products/ Products
-    And I click Edit Product 1 in grid
+    And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU    | NAME      |
       | PSKU3  | Product 3 |
@@ -109,6 +109,17 @@ Feature: Editing related products
       And I click View "PSKU1" in grid
     Then I should not see "Related Items"
 
+  Scenario: Verify edit related products permission will not affect product creation
+    When I go to Products/ Products
+    And I click "Create Product"
+    And I click "Continue"
+    And fill "ProductForm" with:
+      | SKU        | product12 |
+      | Name       | product12 |
+      | Status     | Enabled  |
+    And I click "Save and Close"
+    Then I should see "Product has been saved" flash message
+
   Scenario: Related items should not be visible in product edition if user has no permission
     When I go to Products/ Products
       And I click Edit "PSKU1" in grid
@@ -123,7 +134,7 @@ Feature: Editing related products
       | Enable Related Products             | false |
     And I click "Save settings"
     Then go to Products/ Products
-    And I click Edit Product 1 in grid
+    And I click Edit "PSKU1" in grid
     And I should not see "RelatedProductsViewGrid" grid
 
   Scenario: Limit should be restricted
@@ -135,7 +146,7 @@ Feature: Editing related products
         | Maximum Number Of Assigned Items             | 2     |
       And I click "Save settings"
     When go to Products/ Products
-      And I click Edit Product 1 in grid
+      And I click Edit "PSKU1" in grid
       And I click "Select related products"
       And I select following records in "SelectRelatedProductsGrid" grid:
         | PSKU2 |
@@ -154,7 +165,7 @@ Feature: Editing related products
       | Maximum Number Of Assigned Items             | 25    |
     And I click "Save settings"
     And go to Products/ Products
-    And I click Edit Product 1 in grid
+    And I click Edit "PSKU1" in grid
     And I click "Select related products"
     And I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU2 |
@@ -173,7 +184,7 @@ Feature: Editing related products
       | Name  | Product 2 updated |
     And I click "Save and Close"
     Then go to Products/ Products
-    And I click Edit "Product 1" in grid
+    And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU    | NAME              |
       | PSKU22 | Product 2 updated |
@@ -186,7 +197,7 @@ Feature: Editing related products
       | Enable Related Products             | false |
     And I click "Save settings"
     And go to Products/ Products
-    And I click Edit Product 1 in grid
+    And I click Edit "PSKU1" in grid
     And I should not see "RelatedProductsViewGrid" grid
     When go to System/ Configuration
     And I click "Related Items" on configuration sidebar
@@ -195,14 +206,14 @@ Feature: Editing related products
       | Enable Related Products             | true  |
     And I click "Save settings"
     Then go to Products/ Products
-    And I click Edit Product 1 in grid
+    And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU    | NAME              |
       | PSKU22 | Product 2 updated |
 
   Scenario: Verify relation is removed in case when related product has been removed
     Given go to Products/ Products
-    And I click Edit Product 1 in grid
+    And I click Edit "PSKU1" in grid
     And I click "Select related products"
     And I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU3 |
@@ -214,11 +225,11 @@ Feature: Editing related products
       | PSKU22 | Product 2 updated |
       | PSKU3  | Product 3         |
     And go to Products/ Products
-    And I click Edit Product 2 updated in grid
+    And I click Edit "PSKU22" in grid
     When I click "Delete"
     And I confirm deletion
     Then go to Products/ Products
-    And I click Edit Product 1 in grid
+    And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU   | NAME      |
       | PSKU3 | Product 3 |
