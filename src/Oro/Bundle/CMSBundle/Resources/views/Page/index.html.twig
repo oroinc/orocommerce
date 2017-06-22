@@ -4,7 +4,7 @@
 {% set gridName = 'cms-page-grid' %}
 
 {% block navButtons %}
-    {% if resource_granted('oro_cms_page_create') %}
+    {% if is_granted('oro_cms_page_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('oro_cms_page_create'),

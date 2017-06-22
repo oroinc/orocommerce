@@ -187,6 +187,7 @@ class ProductFormProvider extends AbstractFormProvider
                 ['id' => $product->getId()]
             ),
             'parentProduct' => $product,
+            'dynamic_fields_disabled' => true
         ];
     }
 }

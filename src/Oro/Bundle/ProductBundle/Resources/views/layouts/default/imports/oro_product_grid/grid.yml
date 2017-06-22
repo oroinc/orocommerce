@@ -30,6 +30,16 @@ layout:
             optionName: current_row_view
             optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
 
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new
+            optionName: visible
+            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()!="no-image-view"'
+
+        - '@setOption':
+            id: product_datagrid_row_product_sticker_new_text
+            optionName: visible
+            optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()=="no-image-view"'
+
         - '@move':
             id: product_datagrid_cell_sku
             parentId: product_datagrid_row_product_sku
@@ -41,11 +51,6 @@ layout:
         - '@move':
             id: product_datagrid_cell_shortDescription
             parentId: product_datagrid_row_product_short_description
-
-        - '@setOption':
-            id: product_datagrid_toolbar
-            optionName: attr.class
-            optionValue: 'catalog__filter-controls'
 
         - '@setOption':
             id: product_datagrid_toolbar_sorting

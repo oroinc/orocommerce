@@ -37,13 +37,19 @@ define(function(require) {
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
             }
-            this.onReady();
+            this.enableTransitionButton();
+            mediator.on('checkout:transition-button:enable', this.enableTransitionButton, this);
+            mediator.on('checkout:transition-button:disable', this.disableTransitionButton, this);
         },
 
-        onReady: function() {
+        enableTransitionButton: function() {
             if (this.options.enabled) {
                 this.$el.prop('disabled', false);
             }
+        },
+
+        disableTransitionButton: function() {
+            this.$el.prop('disabled', 'disabled');
         },
 
         initializeTriggers: function() {
@@ -56,7 +62,11 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            this.transit(e, {method: 'POST'});
+            this.$form.validate();
+
+            if (this.$form.valid()) {
+                this.transit(e, {method: 'POST'});
+            }
         },
 
         transit: function(e, data) {
@@ -150,6 +160,9 @@ define(function(require) {
             }
             this.$el.off('click', $.proxy(this.transit, this));
             this.$transitionTriggers.off('click', $.proxy(this.transit, this));
+
+            mediator.off('checkout:transition-button:enable', this.enableTransitionButton, this);
+            mediator.off('checkout:transition-button:disable', this.disableTransitionButton, this);
 
             TransitionButtonComponent.__super__.dispose.call(this);
         }

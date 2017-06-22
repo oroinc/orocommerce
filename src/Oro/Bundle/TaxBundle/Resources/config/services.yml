@@ -118,7 +118,6 @@ services:
     oro_tax.event_listener.customer_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.customer_tax_code.class%'
             - '%oro_customer.entity.customer.class%'
         tags:
@@ -127,7 +126,6 @@ services:
     oro_tax.event_listener.customer_grid_groups:
         class: 'Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.customer_tax_code.class%'
             - '%oro_customer.entity.customer_group.class%'
         tags:
@@ -136,7 +134,6 @@ services:
     oro_tax.event_listener.customer_group_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.customer_tax_code.class%'
             - '%oro_customer.entity.customer_group.class%'
         tags:
@@ -145,7 +142,6 @@ services:
     oro_tax.event_listener.product_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\ProductTaxCodeGridListener'
         arguments:
-            - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.product_tax_code.class%'
             - '%oro_product.entity.product.class%'
         tags:

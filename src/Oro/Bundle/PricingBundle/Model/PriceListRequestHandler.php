@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -23,9 +23,9 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $requestStack;
 
     /**
-     * @var SecurityFacade
+     * @var TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var PriceListTreeHandler
@@ -64,7 +64,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
 
     /**
      * @param RequestStack $requestStack
-     * @param SecurityFacade $securityFacade
+     * @param TokenAccessorInterface $tokenAccessor
      * @param PriceListTreeHandler $priceListTreeHandler
      * @param ManagerRegistry $registry
      * @param CustomerUserRelationsProvider $relationsProvider
@@ -72,14 +72,14 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      */
     public function __construct(
         RequestStack $requestStack,
-        SecurityFacade $securityFacade,
+        TokenAccessorInterface $tokenAccessor,
         PriceListTreeHandler $priceListTreeHandler,
         ManagerRegistry $registry,
         CustomerUserRelationsProvider $relationsProvider,
         WebsiteManager $websiteManager
     ) {
         $this->requestStack = $requestStack;
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
         $this->priceListTreeHandler = $priceListTreeHandler;
         $this->registry = $registry;
         $this->relationsProvider = $relationsProvider;
@@ -174,7 +174,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      */
     protected function getCustomer()
     {
-        $user = $this->securityFacade->getLoggedUser();
+        $user = $this->tokenAccessor->getUser();
 
         if ($user instanceof User) {
             $request = $this->getRequest();
@@ -252,7 +252,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     {
         $website = null;
 
-        $user = $this->securityFacade->getLoggedUser();
+        $user = $this->tokenAccessor->getUser();
         if ($user instanceof User) {
             $request = $this->getRequest();
             if ($request && $id = $request->get(self::WEBSITE_KEY)) {

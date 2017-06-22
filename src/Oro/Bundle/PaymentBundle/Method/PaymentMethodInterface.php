@@ -9,6 +9,7 @@ interface PaymentMethodInterface
 {
     const AUTHORIZE = 'authorize';
     const CHARGE = 'charge';
+    const INVOICE = 'invoice';
     const VALIDATE = 'validate';
     const CAPTURE = 'capture';
 

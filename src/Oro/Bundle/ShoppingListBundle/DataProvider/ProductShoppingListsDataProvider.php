@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
@@ -21,23 +20,23 @@ class ProductShoppingListsDataProvider
     protected $lineItemRepository;
 
     /**
-     * @var SecurityFacade
+     * @var AclHelper
      */
-    protected $securityFacade;
+    protected $aclHelper;
 
     /**
      * @param ShoppingListManager $shoppingListManager
      * @param LineItemRepository $lineItemRepository
-     * @param SecurityFacade $securityFacade
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         ShoppingListManager $shoppingListManager,
         LineItemRepository $lineItemRepository,
-        SecurityFacade $securityFacade
+        AclHelper $aclHelper
     ) {
         $this->shoppingListManager = $shoppingListManager;
         $this->lineItemRepository = $lineItemRepository;
-        $this->securityFacade = $securityFacade;
+        $this->aclHelper = $aclHelper;
     }
     
     /**
@@ -66,10 +65,8 @@ class ProductShoppingListsDataProvider
         }
         $currentShoppingListId = $currentShoppingList->getId();
 
-        /** @var CustomerUser $customerUser */
-        $customerUser = $this->securityFacade->getLoggedUser();
         $lineItems = $this->lineItemRepository
-            ->getProductItemsWithShoppingListNames($products, $customerUser);
+            ->getProductItemsWithShoppingListNames($this->aclHelper, $products);
         if (!count($lineItems)) {
             return [];
         }

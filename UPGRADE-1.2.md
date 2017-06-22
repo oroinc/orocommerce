@@ -1,141 +1,267 @@
 UPGRADE FROM 1.1 to 1.2
+=======================
+
+- [AlternativeCheckoutBundle](#alternativecheckoutbundle)
+- [CMSBundle](#cmsbundle)
+- [CatalogBundle](#catalogbundle)
+- [CMSBundle](#cmsbundle)
+- [FlatRateShippingBundle](#flatrateshippingbundle)
+- [MoneyOrderBundle](#moneyorderbundle)
+- [OrderBundle](#orderbundle)
+- [PayPalBundle](#paypalbundle)
+- [PaymentBundle](#paymentbundle)
+- [PricingBundle](#pricingbundle)
+- [ProductBundle](#productbundle)
+- [RFPBundle](#rfpbundle)
+- [RedirectBundle](#redirectbundle)
+- [ShippingBundle](#shippingbundle)
+- [TaxBundle](#taxbundle)
+- [UPSBundle](#upsbundle)
+- [VisibilityBundle](#visibilitybundle)
+- [WebCatalogBundle](#webcatalogbundle)
+
+AlternativeCheckoutBundle
+-------------------------
+* The `PaymentTermViewProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/AlternativeCheckoutBundle/Layout/DataProvider/PaymentTermViewProvider.php#L10 "Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider\PaymentTermViewProvider")</sup> class was removed.
+
+CatalogBundle
+-------------
+* The `CategoryPageVariantType::setDefaultOptions`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/Form/Type/CategoryPageVariantType.php#L61 "Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType::setDefaultOptions")</sup> method was removed.
+* The `CategoryRepository::getChildrenWithTitles`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/CatalogBundle/Entity/Repository/CategoryRepository.php#L87 "Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles")</sup> was deprecated, use `CategoryRepository::getChildren`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/CatalogBundle/Entity/Repository/CategoryRepository.php#L64 "Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren")</sup> instead.
+
+CMSBundle
+---------
+* The `CmsPageVariantType::setDefaultOptions`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CMSBundle/Form/Type/CmsPageVariantType.php#L61 "Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType::setDefaultOptions")</sup> method was removed.
+* Content Blocks functionality was added. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/CMSBundle/README.md) for more information.
+
+FlatRateShippingBundle
+----------------------
+* The `FlatRateMethod::__construct($identifier, $label, $enabled)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethod.php#L35 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod")</sup> method was changed to `FlatRateMethod::__construct($identifier, $label, $icon, $enabled)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethod.php#L42 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod")</sup>
+* The `FlatRateMethodProvider::__construct(DoctrineHelper $doctrineHelper, FlatRateMethodFromChannelBuilder $methodBuilder)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php#L34 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider")</sup> method was changed to `FlatRateMethodProvider::__construct($channelType, DoctrineHelper $doctrineHelper, IntegrationShippingMethodFactoryInterface $methodFactory)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php#L14 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider")</sup>
+* The `FlatRateMethodFromChannelBuilder::__construct(IntegrationMethodIdentifierGeneratorInterface $identifierGenerator, LocalizationHelper $localizationHelper)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Builder/FlatRateMethodFromChannelBuilder.php#L27 "Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder")</sup> method was changed to `FlatRateMethodFromChannelBuilder::__construct(IntegrationShippingMethodFactoryInterface $shippingMethodFactory)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/FlatRateShippingBundle/Builder/FlatRateMethodFromChannelBuilder.php#L23 "Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder")</sup>
+* The following methods in class `FlatRateMethodProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider")</sup> were removed:
+   - `getShippingMethods`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php#L44 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider::getShippingMethods")</sup>
+   - `getShippingMethod`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php#L60 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider::getShippingMethod")</sup>
+   - `hasShippingMethod`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php#L72 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider::hasShippingMethod")</sup>
+* The `FlatRateMethodProvider::$methods`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FlatRateShippingBundle/Method/FlatRateMethodProvider.php#L28 "Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider::$methods")</sup> property was removed.
+* The `FlatRateMethodFromChannelBuilder`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/FlatRateShippingBundle/Builder/FlatRateMethodFromChannelBuilder.php#L64 "Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder")</sup> was deprecated, use `FlatRateMethodFromChannelFactory`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/FlatRateShippingBundle/Factory/FlatRateMethodFromChannelFactory.php "Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory")</sup> instead.
 
 MoneyOrderBundle
 ----------------
-- `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder`
-    - removed constant `const TYPE = 'money_order'`
+- The class `MoneyOrder`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/MoneyOrderBundle/Method/MoneyOrder.php "Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder")</sup> constant `TYPE` was removed.
 
 OrderBundle
--------------
+-----------
 - `CHARGE_AUTHORIZED_PAYMENTS` permission was added for possibility to charge payment transaction
 - Capture button for payment authorize transactions was added in Payment History section, Capture button for order was removed
 - `oro_order_capture` operation was removed, `oro_order_payment_transaction_capture` should be used instead
 
-PaymentBundle
--------------
-- For supporting same approaches for working with payment methods, `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` and its implementation were deprecated. Related deprecation is `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass`. `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` which implements `Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface` was added instead. And `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\CompositePaymentMethodProviderCompilerPass` was added for collecting providers in new composite. 
-- Class `Oro\Bundle\PaymentBundle\Action\CaptureAction` was removed, `Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction` should be used instead
-- Class `Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener`
-    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
-
-PricingBundle
--------------
-- Class `Oro\Bundle\PricingBundle\Controller\AjaxPriceListController`
-    - method `getPriceListCurrencyList` was renamed to `getPriceListCurrencyListAction`
-- Class `Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController`
-   - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
-- Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
-   - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
-- `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now.
-
-ShoppingBundle
--------------
-- Class `Oro\Bundle\ShippingBundle\ControllerAjaxProductShippingOptionsController`
-    - method `getAvailableProductUnitFreightClasses` was renamed to `getAvailableProductUnitFreightClassesAction`
-
-UPSBundle
--------------
-- Class `Oro\Bundle\UPSBundle\Controller`
-    - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
-    - method `validateConnection` was renamed to `validateConnectionAction`
-
-OroCMSBundle
-------------
-- Content Blocks functionality was added. Please, see [documentation](./src/Oro/Bundle/CMSBundle/README.md) for more information.
-
-LayoutBundle
--------------
- - `isApplicable(ThemeImageTypeDimension $dimension)` method added to `Oro\Bundle\LayoutBundle\Provider\CustomImageFilterProviderInterface`
-
-AttachmentBundle
--------------
- - `Oro\Bundle\AttachmentBundle\Resizer\ImageResizer` is now responsible for image resizing only. Use `Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager` to store resized images.
- - `ImageResizer::resizeImage(File $image, $filterName)` has 2 parameters only now.
-
-VisibilityBundle
-----------------
-- Class `\Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider`
-    - changed signature of `getProductVisibilityScope` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
-    - changed signature of `getCustomerProductVisibilityScope` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
-    - changed signature of `getCustomerGroupProductVisibilityScope` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
-- Trait `\Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait`
-    - changed signature of `getCustomerGroupProductVisibilityResolvedTermByWebsite` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
-    - changed signature of `getCustomerProductVisibilityResolvedTermByWebsite` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
-    - changed signature of `getProductVisibilityResolvedTermByWebsite` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
-
-RuleBundle
-----------
-- Class `Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider`
-    - logic moved to the `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator`
-    - changed signature of `__construct` method, all arguments replaced with - `CanonicalUrlGenerator`
-- Following methods were added to `\Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface`:
-    - `getBaseSlug`
-    - `getSlugByLocalization`
-
-OrderBundle
------------
-- Added API for:
-    - `Oro\Bundle\OrderBundle\Entity\Order`
-    - `Oro\Bundle\OrderBundle\Entity\OrderDiscount`
-    - `Oro\Bundle\OrderBundle\Entity\OrderLineItem`
-    - `Oro\Bundle\OrderBundle\Entity\OrderAddress`
-    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
-
-CustomerBundle
---------------
-- Class `Oro\Bundle\CustomerBundle\Audit\DiscriminatorMapListener` moved to `Oro\Bundle\EntityBundle\ORM\DiscriminatorMapListener`
-- `Oro\Bundle\CustomerBundle\Controller\Frontend\Api\Rest\GridViewController`
-    - added api controller based on `Oro\Bundle\DataGridBundle\Controller\Api\Rest\GridViewController ` and override methods:
-        postAction(), putAction(), deleteAction(), defaultAction()
-- `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtension`
-    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension`
-- `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtensionComposite`
-    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension` and override methods:
-        isApplicable(), getPriority(), visitMetadata(), setParameters()
-- `Oro\Bundle\CustomerBundle\Entity\GridView`
-    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_owner_id`
-- `Oro\Bundle\CustomerBundle\Entity\GridViewUser`
-    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_id`
-- `Oro\Bundle\CustomerBundle\Entity\Manager\GridViewManagerComposite`
-    - added class based on `Oro\Bundle\DataGridBundle\Entity\Manager\GridViewManager` and override methods:
-        setDefaultGridView(), getSystemViews(), getAllGridViews(), getDefaultView(), getView()
-- `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewRepository`
-    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewRepository` with replaced getOwnerFieldName() and getUserFieldName() to `customerUserOwner` and `customerUser`
-- `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewUserRepository`
-    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewUserRepository` with replaced getUserFieldName() to `customerUser`
-
-ShippingBundle
---------------
-- `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method deprecated because it completely duplicate `getEnabledRulesByMethod`
-- If you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface` and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example.
-- The `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` was created,
-
-FlatRateShippingBundle
---------------
-- The `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` was deprecated, the `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` was created instead.
-
-RedirectBundle
---------------
-- Class `Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor` moved to `Oro\Component\MessageQueue\Job\DelayedJobRunnerDecoratingProcessor`
-
-CatalogBundle
---------------
-- The `Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildrenWithTitles` was deprecated, the `\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren` was created instead.
-
-ProductBundle
---------------
-- The method [`ProductContentVariantReindexEventListener::__construct`](https://github.com/orocommerce/orocommerce/blob/1.1.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener") has been updated. Pass `Oro\Bundle\ProductBundle\EventListener\ProductCollectionVariantReindexMessageSendListener` as a third argument of the method.
-
 PayPalBundle
 ------------
-- Form type `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
-- Interface `Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
-- Class `Oro\Bundle\PayPalBundle\EventListener\Callback`
-    - changed signature of `__construct` method. New dependency on `Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface` added.
-- JS credit card validators were moved to `PaymentBundle`. List of moved components:
+* Form type `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, will be removed in v1.3. Please use `Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+* Interface `Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
+* JS credit card validators were moved to `PaymentBundle`. List of moved components:
     - `oropaypal/js/lib/jquery-credit-card-validator`
     - `oropaypal/js/validator/credit-card-expiration-date`
     - `oropaypal/js/validator/credit-card-expiration-date-not-blank`
     - `oropaypal/js/validator/credit-card-number`
     - `oropaypal/js/validator/credit-card-type`
     - `oropaypal/js/adapter/credit-card-validator-adapter`
+* The `PayflowExpressCheckoutRedirectListener::__construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowExpressCheckoutRedirectListener.php#L26 "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener")</sup> method was changed to `PayflowExpressCheckoutRedirectListener::__construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider, PaymentResultMessageProviderInterface $messageProvider)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowExpressCheckoutRedirectListener.php#L32 "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener")</sup>
+
+PaymentBundle
+-------------
+* For supporting same approaches for working with payment methods, `PaymentMethodProvidersRegistryInterface`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface")</sup> and its implementation were deprecated. Related deprecation is `PaymentMethodProvidersPass`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/PaymentBundle/DependencyInjection/Compiler/PaymentMethodProvidersPass.php "Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass")</sup>. `CompositePaymentMethodProvider`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/PaymentBundle/Method/Provider/CompositePaymentMethodProvider.php "Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider")</sup> which implements `PaymentMethodProviderInterface`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface")</sup> was added instead.
+* The `CaptureAction`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Action/CaptureAction.php#L7 "Oro\Bundle\PaymentBundle\Action\CaptureAction")</sup> class was removed. Use `PaymentTransactionCaptureAction`<sup>[[?]](https://github.com/laboro/dev/blob/maintenance/2.2/package/commerce/src/Oro/Bundle/PaymentBundle/Action/PaymentTransactionCaptureAction.php "Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction")</sup> instead.
+* The `RedirectListener::__construct(Session $session)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/EventListener/Callback/RedirectListener.php#L24 "Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener")</sup> method was changed to `RedirectListener::__construct(Session $session, PaymentResultMessageProviderInterface $messageProvider)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PaymentBundle/EventListener/Callback/RedirectListener.php#L28 "Oro\Bundle\PaymentBundle\EventListener\Callback\RedirectListener")</sup>
+* The `AbstractCallbackEvent::getTypedEventName`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Event/AbstractCallbackEvent.php#L37 "Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent::getTypedEventName")</sup> method was removed.
+* The `HasApplicablePaymentMethods::$checkoutPaymentContextFactory`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Condition/HasApplicablePaymentMethods.php#L25 "Oro\Bundle\PaymentBundle\Condition\HasApplicablePaymentMethods::$checkoutPaymentContextFactory")</sup> property was removed.
+
+PricingBundle
+-------------
+* `productUnitSelectionVisible` option of the `Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType` is required now.
+* The `CurrencyProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Provider/CurrencyProvider.php#L9 "Oro\Bundle\PricingBundle\Provider\CurrencyProvider")</sup> class was removed.
+* The `PriceListProductPricesCurrencyValidator::__construct(Registry $registry)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Validator/Constraints/PriceListProductPricesCurrencyValidator.php#L27 "Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator")</sup> method was changed to `PriceListProductPricesCurrencyValidator::__construct(Registry $registry, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Validator/Constraints/PriceListProductPricesCurrencyValidator.php#L34 "Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator")</sup>
+* The `CombinedProductPriceResolver::__construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor, CombinedPriceListTriggerHandler $triggerHandler)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Resolver/CombinedProductPriceResolver.php#L64 "Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver")</sup> method was changed to `CombinedProductPriceResolver::__construct(ManagerRegistry $registry, InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor, CombinedPriceListTriggerHandler $triggerHandler)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Resolver/CombinedProductPriceResolver.php#L65 "Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver")</sup>
+* The `ProductPriceProvider::__construct(ManagerRegistry $registry)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Provider/ProductPriceProvider.php#L27 "Oro\Bundle\PricingBundle\Provider\ProductPriceProvider")</sup> method was changed to `ProductPriceProvider::__construct(ManagerRegistry $registry, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Provider/ProductPriceProvider.php#L33 "Oro\Bundle\PricingBundle\Provider\ProductPriceProvider")</sup>
+* The `FrontendProductPricesProvider::__construct(DoctrineHelper $doctrineHelper, PriceListRequestHandler $priceListRequestHandler, UserCurrencyManager $userCurrencyManager, ProductPriceFormatter $productPriceFormatter)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Layout/DataProvider/FrontendProductPricesProvider.php#L41 "Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider")</sup> method was changed to `FrontendProductPricesProvider::__construct(DoctrineHelper $doctrineHelper, PriceListRequestHandler $priceListRequestHandler, UserCurrencyManager $userCurrencyManager, ProductPriceFormatter $productPriceFormatter, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Layout/DataProvider/FrontendProductPricesProvider.php#L48 "Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider")</sup>
+* The `PriceListAdditionalProductPriceReader::__construct(ContextRegistry $contextRegistry, ManagerRegistry $registry)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/ImportExport/Reader/PriceListAdditionalProductPriceReader.php#L31 "Oro\Bundle\PricingBundle\ImportExport\Reader\PriceListAdditionalProductPriceReader")</sup> method was changed to `PriceListAdditionalProductPriceReader::__construct(ContextRegistry $contextRegistry, ManagerRegistry $registry, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/ImportExport/Reader/PriceListAdditionalProductPriceReader.php#L38 "Oro\Bundle\PricingBundle\ImportExport\Reader\PriceListAdditionalProductPriceReader")</sup>
+* The `ProductFormExtension::__construct(ManagerRegistry $registry)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Form/Extension/ProductFormExtension.php#L27 "Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension")</sup> method was changed to `ProductFormExtension::__construct(ManagerRegistry $registry, ShardManager $shardManager, PriceManager $priceManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Form/Extension/ProductFormExtension.php#L42 "Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension")</sup>
+* The `ProductPriceDatagridListener::__construct(TranslatorInterface $translator, PriceListRequestHandler $priceListRequestHandler, DoctrineHelper $doctrineHelper)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/EventListener/ProductPriceDatagridListener.php#L47 "Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener")</sup> method was changed to `ProductPriceDatagridListener::__construct(TranslatorInterface $translator, PriceListRequestHandler $priceListRequestHandler, DoctrineHelper $doctrineHelper, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/EventListener/ProductPriceDatagridListener.php#L53 "Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener")</sup>
+* The `BasePriceListRepository::getInvalidCurrenciesByPriceList(BasePriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BasePriceListRepository.php#L14 "Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository")</sup> method was changed to `BasePriceListRepository::getInvalidCurrenciesByPriceList(ShardManager $shardManager, BasePriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BasePriceListRepository.php#L17 "Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository")</sup>
+* The following methods in class `BaseProductPriceRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup> were changed:
+  > - `deleteByProductUnit(Product $product, ProductUnit $unit)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L26 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `deleteByProductUnit(ShardManager $shardManager, Product $product, ProductUnit $unit)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L28 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `deleteByPriceList(BasePriceList $priceList, Product $product = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L47 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `deleteByPriceList(ShardManager $shardManager, BasePriceList $priceList, Product $product = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L62 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `countByPriceList(PriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L80 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `countByPriceList(ShardManager $shardManager, PriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L106 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `getPricesByProduct(Product $product)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L119 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `getPricesByProduct(ShardManager $shardManager, Product $product)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L152 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `findByPriceListIdAndProductIds($priceListId, array $productIds, $getTierPrices = true, $currency = null, $productUnitCode = null, array $orderBy = [ ... ])`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L146 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `findByPriceListIdAndProductIds(ShardManager $shardManager, $priceListId, array $productIds, $getTierPrices = true, $currency = null, $productUnitCode = null, array $orderBy = [ ... ])`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L192 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `getPricesBatch($priceListId, array $productIds, array $productUnitCodes, array $currencies = [])`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L232 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `getPricesBatch(ShardManager $shardManager, $priceListId, array $productIds, array $productUnitCodes, array $currencies = [])`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L284 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `getProductUnitsByPriceList(BasePriceList $priceList, Product $product, $currency = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L277 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `getProductUnitsByPriceList(ShardManager $shardManager, BasePriceList $priceList, Product $product, $currency = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L339 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `getProductsUnitsByPriceList(BasePriceList $priceList, Collection $products, $currency)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L319 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `getProductsUnitsByPriceList(ShardManager $shardManager, BasePriceList $priceList, Collection $products, $currency)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L392 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+  > - `copyPrices(BasePriceList $sourcePriceList, BasePriceList $targetPriceList, InsertFromSelectQueryExecutor $insertQueryExecutor)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L350 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+  > - `copyPrices(BasePriceList $sourcePriceList, BasePriceList $targetPriceList, InsertFromSelectShardQueryExecutor $insertQueryExecutor)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/BaseProductPriceRepository.php#L430 "Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository")</sup>
+
+* The following methods in class `CombinedProductPriceRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/CombinedProductPriceRepository.php "Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")</sup> were changed:
+  > - `insertPricesByPriceList(InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor, CombinedPriceList $combinedPriceList, PriceList $priceList, $mergeAllowed, Product $product = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/CombinedProductPriceRepository.php#L26 "Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")</sup>
+  > - `insertPricesByPriceList(InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor, CombinedPriceList $combinedPriceList, PriceList $priceList, $mergeAllowed, Product $product = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/CombinedProductPriceRepository.php#L28 "Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")</sup>
+
+  > - `findByPriceListIdAndProductIds($priceListId, array $productIds, $getTierPrices = true, $currency = null, $productUnitCode = null, array $orderBy = [ ... ])`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/CombinedProductPriceRepository.php#L184 "Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")</sup>
+  > - `findByPriceListIdAndProductIds(ShardManager $shardManager, $priceListId, array $productIds, $getTierPrices = true, $currency = null, $productUnitCode = null, array $orderBy = [ ... ])`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/CombinedProductPriceRepository.php#L207 "Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")</sup>
+
+* The `PriceListToProductRepository::getProductsWithoutPrices(PriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/PriceListToProductRepository.php#L52 "Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository")</sup> method was changed to `PriceListToProductRepository::getProductsWithoutPrices(ShardManager $shardManager, PriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/PriceListToProductRepository.php#L55 "Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository")</sup>
+* The following methods in class `ProductPriceRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/ProductPriceRepository.php "Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")</sup> were changed:
+  > - `deleteGeneratedPrices(PriceList $priceList, Product $product = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/ProductPriceRepository.php#L22 "Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")</sup>
+  > - `deleteGeneratedPrices(ShardManager $shardManager, PriceList $priceList, Product $product = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/ProductPriceRepository.php#L34 "Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")</sup>
+
+  > - `deleteInvalidPrices(PriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/ProductPriceRepository.php#L46 "Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")</sup>
+  > - `deleteInvalidPrices(ShardManager $shardManager, PriceList $priceList)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/Repository/ProductPriceRepository.php#L57 "Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")</sup>
+
+* The `PriceListToProductEntityListener::__construct(PriceListTriggerHandler $priceListTriggerHandler, PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/EntityListener/PriceListToProductEntityListener.php#L35 "Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListToProductEntityListener")</sup> method was changed to `PriceListToProductEntityListener::__construct(PriceListTriggerHandler $priceListTriggerHandler, PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/EntityListener/PriceListToProductEntityListener.php#L42 "Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListToProductEntityListener")</sup>
+* The `ProductPriceDuplicator::__construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertQueryExecutor)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Duplicator/ProductPriceDuplicator.php#L37 "Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator")</sup> method was changed to `ProductPriceDuplicator::__construct(ManagerRegistry $registry, InsertFromSelectShardQueryExecutor $insertQueryExecutor)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Duplicator/ProductPriceDuplicator.php#L37 "Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator")</sup>
+* The `AjaxProductPriceController::updateAction(ProductPrice $productPrice)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Controller/AjaxProductPriceController.php#L45 "Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController")</sup> method was changed to `AjaxProductPriceController::updateAction(Request $request)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Controller/AjaxProductPriceController.php#L52 "Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController")</sup>
+* The `PriceListProductAssignmentBuilder::__construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor, ProductAssignmentRuleCompiler $ruleCompiler, EventDispatcherInterface $eventDispatcher)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Builder/PriceListProductAssignmentBuilder.php#L44 "Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder")</sup> method was changed to `PriceListProductAssignmentBuilder::__construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor, ProductAssignmentRuleCompiler $ruleCompiler, EventDispatcherInterface $eventDispatcher, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Builder/PriceListProductAssignmentBuilder.php#L51 "Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder")</sup>
+* The `ProductPriceBuilder::__construct(ManagerRegistry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor, PriceListRuleCompiler $ruleCompiler, PriceListTriggerHandler $priceListTriggerHandler)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Builder/ProductPriceBuilder.php#L49 "Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder")</sup> method was changed to `ProductPriceBuilder::__construct(ManagerRegistry $registry, InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor, PriceListRuleCompiler $ruleCompiler, PriceListTriggerHandler $priceListTriggerHandler, ShardManager $shardManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Builder/ProductPriceBuilder.php#L56 "Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder")</sup>
+* The `PriceListSystemConfigSubscriber::isSettingsApplicable`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/EventListener/PriceListSystemConfigSubscriber.php#L73 "Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber::isSettingsApplicable")</sup> method was removed.
+* The `ProductPriceCPLEntityListener::isPriceListToProductScheduled`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/EntityListener/ProductPriceCPLEntityListener.php#L120 "Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceCPLEntityListener::isPriceListToProductScheduled")</sup> method was removed.
+* The `PriceListSystemConfigSubscriber::$isApplicable`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/EventListener/PriceListSystemConfigSubscriber.php#L23 "Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber::$isApplicable")</sup> property was removed.
+* The `ProductPriceRepository::deleteGeneratedPricesByRule`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/Repository/ProductPriceRepository.php#L34 "Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository::deleteGeneratedPricesByRule")</sup> method was removed.
+* The following methods in class `ProductPriceCPLEntityListener`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/PricingBundle/Entity/EntityListener/ProductPriceCPLEntityListener.php "Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceCPLEntityListener")</sup> were removed:
+   - `prePersist`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/EntityListener/ProductPriceCPLEntityListener.php#L52 "Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceCPLEntityListener::prePersist")</sup>
+   - `preRemove`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/EntityListener/ProductPriceCPLEntityListener.php#L61 "Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceCPLEntityListener::preRemove")</sup>
+   - `preUpdate`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Entity/EntityListener/ProductPriceCPLEntityListener.php#L70 "Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceCPLEntityListener::preUpdate")</sup>
+* The `AjaxPriceListController::getPriceListCurrencyList`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Controller/AjaxPriceListController.php#L63 "Oro\Bundle\PricingBundle\Controller\AjaxPriceListController::getPriceListCurrencyList")</sup> method was renamed to `getPriceListCurrencyListAction`.
+* The `AjaxProductPriceController::getProductPricesByCustomer`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Controller/AjaxProductPriceController.php#L26 "Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController")</sup> method was renamed to `getProductPricesByCustomerAction`
+
+ProductBundle
+-------------
+* The `ProductVariantAvailabilityProvider::__construct(DoctrineHelper $doctrineHelper, EnumValueProvider $enumValueProvider, CustomFieldProvider $customFieldProvider, PropertyAccessor $propertyAccessor, EventDispatcherInterface $eventDispatcher)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Provider/ProductVariantAvailabilityProvider.php#L42 "Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider")</sup> method was changed to `ProductVariantAvailabilityProvider::__construct(DoctrineHelper $doctrineHelper, CustomFieldProvider $customFieldProvider, PropertyAccessor $propertyAccessor, EventDispatcherInterface $eventDispatcher, ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ProductBundle/Provider/ProductVariantAvailabilityProvider.php#L41 "Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider")</sup>
+* The `ImageResizeMessageProcessor::__construct(EntityRepository $imageRepository, ImageFilterLoader $filterLoader, ImageTypeProvider $imageTypeProvider, ImageResizer $imageResizer)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/MessageProcessor/ImageResizeMessageProcessor.php#L48 "Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor")</sup> method was changed to `ImageResizeMessageProcessor::__construct(EntityRepository $imageRepository, ImageFilterLoader $filterLoader, ImageTypeProvider $imageTypeProvider, ImageResizer $imageResizer, MediaCacheManager $mediaCacheManager, AttachmentManager $attachmentManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ProductBundle/MessageProcessor/ImageResizeMessageProcessor.php#L62 "Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor")</sup>
+* The `FeaturedProductsProvider::__construct(ProductRepository $productRepository, ProductManager $productManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Layout/DataProvider/FeaturedProductsProvider.php#L27 "Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider")</sup> method was changed to `FeaturedProductsProvider::__construct(SegmentManager $segmentManager, ProductManager $productManager, ConfigManager $configManager, LoggerInterface $logger)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ProductBundle/Layout/DataProvider/FeaturedProductsProvider.php#L34 "Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider")</sup>
+* The `ProductContentVariantReindexEventListener::__construct(EventDispatcherInterface $eventDispatcher, FieldUpdatesChecker $fieldUpdatesChecker, WebCatalogUsageProviderInterface $webCatalogUsageProvider = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php#L49 "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener")</sup> method was changed to `ProductContentVariantReindexEventListener::__construct(EventDispatcherInterface $eventDispatcher, FieldUpdatesChecker $fieldUpdatesChecker, ProductCollectionVariantReindexMessageSendListener $messageSendListener, WebCatalogUsageProviderInterface $webCatalogUsageProvider = null)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php#L54 "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener")</sup>
+* The `FeaturedProductsProvider::$productRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Layout/DataProvider/FeaturedProductsProvider.php#L16 "Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider::$productRepository")</sup> property was removed.
+* The `ProductPageVariantType::setDefaultOptions`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Form/Type/ProductPageVariantType.php#L61 "Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType::setDefaultOptions")</sup> method was removed.
+* The following methods in class `ProductImageResizeEvent`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ProductBundle/Event/ProductImageResizeEvent.php "Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent")</sup> were removed:
+   - `getProductImage`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Event/ProductImageResizeEvent.php#L36 "Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent::getProductImage")</sup>
+   - `getForceOption`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Event/ProductImageResizeEvent.php#L44 "Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent::getForceOption")</sup>
+
+RFPBundle
+---------
+* The following classes were removed:
+   - `RequestEntityProcessor`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RFPBundle/Api/Processor/RequestEntityProcessor.php#L9 "Oro\Bundle\RFPBundle\Api\Processor\RequestEntityProcessor")</sup>
+   - `RequestProductItemProcessor`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RFPBundle/Api/Processor/RequestProductItemProcessor.php#L11 "Oro\Bundle\RFPBundle\Api\Processor\RequestProductItemProcessor")</sup>
+   - `SortIncludedDataProcessor`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RFPBundle/Api/Processor/SortIncludedDataProcessor.php#L14 "Oro\Bundle\RFPBundle\Api\Processor\SortIncludedDataProcessor")</sup>
+
+RedirectBundle
+--------------
+* The `DelayedJobRunnerDecoratingProcessor`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Async/DelayedJobRunnerDecoratingProcessor.php#L11 "Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor")</sup> class was removed.
+* The following methods in class `CanonicalDataProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider")</sup> were removed:
+   - `getDirectUrlSlug`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L93 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::getDirectUrlSlug")</sup>
+   - `getFallbackLocalizationSlug`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L111 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::getFallbackLocalizationSlug")</sup>
+   - `getLocalizationSlug`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L130 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::getLocalizationSlug")</sup>
+* The `CanonicalDataProvider::__construct(UrlGeneratorInterface $router, ConfigManager $configManager, RequestStack $requestStack, RoutingInformationProvider $routingInformationProvider, LocalizationHelper $localizationHelper)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L50 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider")</sup> method was changed to `CanonicalDataProvider::__construct(CanonicalUrlGenerator $canonicalUrlGenerator)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L18 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider")</sup>
+* The following properties in class `CanonicalDataProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider")</sup> were removed:
+   - `$routingInformationProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L21 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::$routingInformationProvider")</sup>
+   - `$router`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L26 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::$router")</sup>
+   - `$localizationHelper`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L31 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::$localizationHelper")</sup>
+   - `$configManager`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L36 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::$configManager")</sup>
+   - `$requestStack`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/DataProvider/CanonicalDataProvider.php#L41 "Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider::$requestStack")</sup>
+
+ShippingBundle
+--------------
+* `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method deprecated because it completely duplicate `getEnabledRulesByMethod`
+* If you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface` and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example.
+* The `Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener` was created, and can be used for providing template of a shipping method on a shipping rule view page. - The `Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface` was deprecated, the `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` should be used instead.
+* The following methods in class `ShippingMethodsConfigsRuleType`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType")</sup> were removed:
+   - `__construct`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php#L36 "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType::__construct")</sup>
+   - `buildView`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php#L73 "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType::buildView")</sup>
+* The `AjaxProductShippingOptionsController::getAvailableProductUnitFreightClasses`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Controller/AjaxProductShippingOptionsController.php#L34 "Oro\Bundle\ShippingBundle\Controller\AjaxProductShippingOptionsController::getAvailableProductUnitFreightClasses")</sup> method was removed.
+* The following properties in class `ShippingMethodsConfigsRuleType`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType")</sup> were removed:
+   - `$translator`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php#L25 "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType::$translator")</sup>
+   - `$provider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php#L30 "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType::$provider")</sup>
+
+TaxBundle
+---------
+* The `CustomerTaxCodeImportExportSubscriber::__construct(CustomerTaxCodeImportExportHelper $customerTaxManager, $customerClassName)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/EventSubscriber/CustomerTaxCodeImportExportSubscriber.php#L36 "Oro\Bundle\TaxBundle\EventSubscriber\CustomerTaxCodeImportExportSubscriber")</sup> method was changed to `CustomerTaxCodeImportExportSubscriber::__construct(TranslatorInterface $translator, CustomerTaxCodeImportExportHelper $customerTaxManager, $customerClassName)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/TaxBundle/EventSubscriber/CustomerTaxCodeImportExportSubscriber.php#L46 "Oro\Bundle\TaxBundle\EventSubscriber\CustomerTaxCodeImportExportSubscriber")</sup>
+
+UPSBundle
+---------
+* The following classes were removed:
+   - `RemoveUsedShippingService`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingService.php#L7 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService")</sup>
+   - `InvalidateCacheAtHandler`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Handler/InvalidateCacheAtHandler.php#L16 "Oro\Bundle\UPSBundle\Handler\InvalidateCacheAtHandler")</sup>
+   - `InvalidateCacheScheduleCommand`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Command/InvalidateCacheScheduleCommand.php#L12 "Oro\Bundle\UPSBundle\Command\InvalidateCacheScheduleCommand")</sup>
+* The following methods in class `RemoveUsedShippingServiceValidator`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator")</sup> were removed:
+   - `getUpsTypesIds`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L97 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getUpsTypesIds")</sup>
+   - `getEnabledTypes`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L111 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getEnabledTypes")</sup>
+   - `addViolations`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L127 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::addViolations")</sup>
+   - `getPropertyAccessor`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L140 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getPropertyAccessor")</sup>
+   - `getChannelId`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L151 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getChannelId")</sup>
+   - `getCountry`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L169 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getCountry")</sup>
+   - `getForm`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L187 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getForm")</sup>
+   - `getFormPath`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L195 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::getFormPath")</sup>
+* The `RemoveUsedShippingServiceValidator::__construct(ManagerRegistry $doctrine, ShippingMethodRegistry $registry)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L43 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator")</sup> method was changed to `RemoveUsedShippingServiceValidator::__construct(IntegrationShippingMethodFactoryInterface $integrationShippingMethodFactory, ShippingMethodValidatorInterface $shippingMethodValidator)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L37 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator")</sup>
+* The `UPSShippingMethod::__construct($identifier, $label, array $types, UPSTransport $transport, UPSTransport $transportProvider, PriceRequestFactory $priceRequestFactory, ShippingPriceCache $cache, $enabled)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethod.php#L88 "Oro\Bundle\UPSBundle\Method\UPSShippingMethod")</sup> method was changed to `UPSShippingMethod::__construct($identifier, $label, $icon, array $types, UPSTransport $transport, UPSTransport $transportProvider, PriceRequestFactory $priceRequestFactory, ShippingPriceCache $cache, $enabled)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethod.php#L96 "Oro\Bundle\UPSBundle\Method\UPSShippingMethod")</sup>
+* The `UPSShippingMethodProvider::__construct(DoctrineHelper $doctrineHelper, IntegrationShippingMethodFactoryInterface $methodFactory)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodProvider.php#L34 "Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider")</sup> method was changed to `UPSShippingMethodProvider::__construct($channelType, DoctrineHelper $doctrineHelper, IntegrationShippingMethodFactoryInterface $methodFactory)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodProvider.php#L14 "Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider")</sup>
+* The `UPSShippingMethodFactory::__construct(UPSTransport $transport, PriceRequestFactory $priceRequestFactory, LocalizationHelper $localizationHelper, ShippingPriceCache $shippingPriceCache, IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator, UPSShippingMethodTypeFactoryInterface $methodTypeFactory)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/Factory/UPSShippingMethodFactory.php#L56 "Oro\Bundle\UPSBundle\Method\Factory\UPSShippingMethodFactory")</sup> method was changed to `UPSShippingMethodFactory::__construct(UPSTransport $transport, PriceRequestFactory $priceRequestFactory, LocalizationHelper $localizationHelper, IntegrationIconProviderInterface $integrationIconProvider, ShippingPriceCache $shippingPriceCache, IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator, UPSShippingMethodTypeFactoryInterface $methodTypeFactory)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Method/Factory/UPSShippingMethodFactory.php#L63 "Oro\Bundle\UPSBundle\Method\Factory\UPSShippingMethodFactory")</sup>
+* The `ShippingMethodConfigDataListener::__construct(UPSShippingMethodProvider $provider)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/EventListener/ShippingMethodConfigDataListener.php#L20 "Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener")</sup> method was changed to `ShippingMethodConfigDataListener::__construct(ShippingMethodProviderInterface $provider)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/EventListener/ShippingMethodConfigDataListener.php#L20 "Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener")</sup>
+* The following properties in class `RemoveUsedShippingServiceValidator`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator")</sup> were removed:
+   - `$doctrine`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L27 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::$doctrine")</sup>
+   - `$registry`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L32 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::$registry")</sup>
+   - `$propertyAccessor`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Validator/Constraints/RemoveUsedShippingServiceValidator.php#L37 "Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator::$propertyAccessor")</sup>
+* The following properties in class `UPSTransport`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php "Oro\Bundle\UPSBundle\Entity\UPSTransport")</sup> were renamed:
+   - `$testMode`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L35 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$testMode")</sup> is renamed to `$upsTestMode`, accessor methods became `UPSTransport::isUpsTestMode`, `UPSTransport::setUpsTestMode`
+   - `$apiUser`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L42 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$apiUser")</sup> is renamed to `$upsApiUser`, accessor methods became `UPSTransport::getUpsApiUser`, `UPSTransport::setUpsApiUser`
+   - `$apiPassword`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L49 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$apiPassword")</sup> is renamed to `$upsApiPassword`, accessor methods became `UPSTransport::getUpsApiPassword`, `UPSTransport::setUpsApiPassword`
+   - `$apiKey`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L56 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$apiKey")</sup> is renamed to `$upsApiKey`, accessor methods became `UPSTransport::getUpsApiKey`, `UPSTransport::setUpsApiKey`
+   - `$shippingAccountNumber`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L63 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$shippingAccountNumber")</sup> is renamed to `$upsShippingAccountNumber`, accessor methods became `UPSTransport::getUpsShippingAccountNumber`, `UPSTransport::setUpsShippingAccountNumber`
+   - `$shippingAccountName`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L70 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$shippingAccountName")</sup> is renamed to `$upsShippingAccountName`, accessor methods became `UPSTransport::getUpsShippingAccountName`, `UPSTransport::setUpsShippingAccountName`
+   - `$pickupType`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L77 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$pickupType")</sup> is renamed to `$upsPickupType`, accessor methods became `UPSTransport::getUpsPickupType`, `UPSTransport::setUpsPickupType`
+   - `$unitOfWeight`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L84 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$unitOfWeight")</sup> is renamed to `$upsUnitOfWeight`, accessor methods became `UPSTransport::getUpsUnitOfWeight`, `UPSTransport::setUpsUnitOfWeight`
+   - `$country`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L92 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$country")</sup> is renamed to `$upsCountry`, accessor methods became `UPSTransport::getUpsCountry`, `UPSTransport::setUpsCountry`
+   - `$invalidateCacheAt`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php#L138 "Oro\Bundle\UPSBundle\Entity\UPSTransport::$invalidateCacheAt")</sup> is renamed to `$upsInvalidateCacheAt`, accessor methods became `UPSTransport::getUpsInvalidateCacheAt`, `UPSTransport::setUpsInvalidateCacheAt`
+* The following methods in class `UPSShippingMethodProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodProvider.php "Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider")</sup> were removed:
+   - `getShippingMethods`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodProvider.php#L45 "Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider::getShippingMethods")</sup>
+   - `getShippingMethod`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodProvider.php#L63 "Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider::getShippingMethod")</sup>
+   - `hasShippingMethod`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodProvider.php#L75 "Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider::hasShippingMethod")</sup>
+* The following methods in class `AjaxUPSController`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/UPSBundle/Controller/AjaxUPSController.php "Oro\Bundle\UPSBundle\Controller\AjaxUPSController")</sup> were renamed:
+   - `getShippingServicesByCountry`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Controller/AjaxUPSController.php#L29 "Oro\Bundle\UPSBundle\Controller\AjaxUPSController::getShippingServicesByCountry")</sup> to `getShippingServicesByCountryAction`
+   - `validateConnection`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Controller/AjaxUPSController.php#L54 "Oro\Bundle\UPSBundle\Controller\AjaxUPSController::validateConnection")</sup> to `validateConnectionAction`
+
+VisibilityBundle
+----------------
+* The following methods in class `VisibilityScopeProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/VisibilityBundle/Provider/VisibilityScopeProvider.php "Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider")</sup> were changed:
+  > - `getProductVisibilityScope(Website $website)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/VisibilityBundle/Provider/VisibilityScopeProvider.php#L32 "Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider")</sup>
+  > - `getProductVisibilityScope(WebsiteInterface $website)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/VisibilityBundle/Provider/VisibilityScopeProvider.php#L32 "Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider")</sup>
+
+  > - `getCustomerProductVisibilityScope(Customer $customer, Website $website)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/VisibilityBundle/Provider/VisibilityScopeProvider.php#L42 "Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider")</sup>
+  > - `getCustomerProductVisibilityScope(Customer $customer, WebsiteInterface $website)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/VisibilityBundle/Provider/VisibilityScopeProvider.php#L42 "Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider")</sup>
+
+  > - `getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, Website $website)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/VisibilityBundle/Provider/VisibilityScopeProvider.php#L57 "Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider")</sup>
+  > - `getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, WebsiteInterface $website)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/VisibilityBundle/Provider/VisibilityScopeProvider.php#L57 "Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider")</sup>
+
+* The `ProductVisibilityQueryBuilderModifier::__construct(ConfigManager $configManager, ScopeManager $scopeManager)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/VisibilityBundle/Model/ProductVisibilityQueryBuilderModifier.php#L28 "Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier")</sup> method was changed to `ProductVisibilityQueryBuilderModifier::__construct(ConfigManager $configManager, ScopeManager $scopeManager, DoctrineHelper $doctrineHelper)`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/VisibilityBundle/Model/ProductVisibilityQueryBuilderModifier.php#L37 "Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier")</sup>
+
+WebCatalogBundle
+----------------
+* The `MenuDataProvider::getContentNodeRepository`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Layout/DataProvider/MenuDataProvider.php#L118 "Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider::getContentNodeRepository")</sup> method was removed.
+* The following properties in class `MenuDataProvider`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.2.0/src/Oro/Bundle/WebCatalogBundle/Layout/DataProvider/MenuDataProvider.php "Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider")</sup> were removed:
+   - `$registry`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Layout/DataProvider/MenuDataProvider.php#L24 "Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider::$registry")</sup>
+   - `$localizationHelper`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Layout/DataProvider/MenuDataProvider.php#L39 "Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider::$localizationHelper")</sup>
+   - `$requestStack`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Layout/DataProvider/MenuDataProvider.php#L44 "Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider::$requestStack")</sup>
+* The `PageVariantTypeExtension::$registry`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Form/Extension/PageVariantTypeExtension.php#L24 "Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension::$registry")</sup> property was removed.
+* The `PageVariantTypeExtension::__construct`<sup>[[?]](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Form/Extension/PageVariantTypeExtension.php#L29 "Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension::__construct")</sup> method was removed.

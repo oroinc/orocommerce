@@ -61,7 +61,6 @@ class BasicPaymentLineItemBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($entityIdentifier);
 
         $builder = new BasicPaymentLineItemBuilder(
-            $this->priceMock,
             $this->productUnitMock,
             $unitCode,
             $quantity,
@@ -69,6 +68,7 @@ class BasicPaymentLineItemBuilderTest extends \PHPUnit_Framework_TestCase
         );
 
         $builder
+            ->setPrice($this->priceMock)
             ->setProduct($this->productMock)
             ->setProductSku($productSku);
 
@@ -100,7 +100,6 @@ class BasicPaymentLineItemBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($entityIdentifier);
 
         $builder = new BasicPaymentLineItemBuilder(
-            $this->priceMock,
             $this->productUnitMock,
             $unitCode,
             $quantity,
@@ -110,7 +109,6 @@ class BasicPaymentLineItemBuilderTest extends \PHPUnit_Framework_TestCase
         $paymentLineItem = $builder->getResult();
 
         $expectedPaymentLineItem = new PaymentLineItem([
-            PaymentLineItem::FIELD_PRICE => $this->priceMock,
             PaymentLineItem::FIELD_PRODUCT_UNIT => $this->productUnitMock,
             PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => $unitCode,
             PaymentLineItem::FIELD_QUANTITY => $quantity,

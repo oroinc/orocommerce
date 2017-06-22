@@ -25,6 +25,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     protected static $valueMapping = [
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
+        'Value'=> 'paymentMethod',
         'Delete the shopping list' => 'oro_workflow_transition[remove_source]'
     ];
 
@@ -47,7 +48,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When /^I had checked "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/
+     * @When /^I check "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/
      *
      * @param string $value
      * @param string $step
@@ -61,8 +62,27 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $element = $page->findField(self::$valueMapping[$value]);
 
         self::assertTrue($element->isValid(), sprintf('Could not found option "%s" on page', $value));
+
+        if (!$element->isChecked()) {
+            $element->getParent()->click();
+        }
+
         self::assertTrue($element->isChecked(), sprintf('Option "%s" is not checked', $value));
 
+        $page->pressButton($button);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @When /^on the "(?P<step>[\w\s]+)" checkout step I press (?P<button>[\w\s]+)$/
+     *
+     * @param string $step
+     * @param string $button
+     */
+    public function onCheckoutStepAndPressButton($step, $button)
+    {
+        $this->assertTitle($step);
+        $page = $this->getSession()->getPage();
         $page->pressButton($button);
         $this->waitForAjax();
     }

@@ -9,19 +9,19 @@ Product visibility is a functionality that allows to show or hide some products 
 There are 3 levels of visibility for each product in scope types: product_visibility, customer_product_visibility, customer_group_product_visibility;
 Product visibility edit page allows setting of the following values:
 
-####Product Visibility (Visibility to All):
+#### Product Visibility (Visibility to All):
 * **Category (Visibility to All)** - `Default value`. Value is taken from the category of this product
 * **Config** - The value is taken from the system configuration parameter "Product Visibility to Customers"
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
-####Visibility to Customer Groups:
+#### Visibility to Customer Groups:
 * **Current Product (Visibility to All)** - `Default value`. Fallback to Product Visibility (Visibility to All) value
 * **Category** - Value is taken from the category of this product for selected customer group
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
-####Visibility to Customers:
+#### Visibility to Customers:
 * **Customer Group (Visibility to this Customer's Group)** - `Default value`. Fallback to Visibility to Customer Groups
 * **Current Product (Visibility to All)**  - Fallback to Product Visibility (Visibility to All) value
 * **Category (Visibility to this Customer)** - Value is taken from the category of this product for selected customer
@@ -32,7 +32,7 @@ There is entities in database for each listed levels:
 `ProductVisibility`, `CustomerProductVisibility`, `CustomerGroupProductVisibility` each of which implements 
 `VisibilityInterface` and `ScopeAwareInterface` interfaces.
 
-####Addition information:
+#### Addition information:
 * If default value is selected then the entity is not written to the database.
 * If product doesn't have category, then "Category" option is not available for all levels. 
 If visibility setting already exist with "Category" value, and category is deleted for specific product, 
@@ -63,7 +63,7 @@ Also each row in cache tables stores one on the data sources:
 
 Here are tables that describe calculation algorithms for all cache values.   
 
-#####Visibility to All
+##### Visibility to All
 | `ProductToAllVisibilityResolved` | **Category**                                | **Config** | **Hidden**                                  | **Visible**                                 |
 |----------------------------------|---------------------------------------------|------------|---------------------------------------------|---------------------------------------------|
 | **scope (FK) (PK)**              | Get scope from current product visibility   |      X     | Get scope from current product visibility   | Get scope from current product visibility   |
@@ -73,7 +73,7 @@ Here are tables that describe calculation algorithms for all cache values.
 | **source**                       |                ::CATEGORY                   |      X     |                   ::STATIC                  |                   ::STATIC                  |
 | **category (FK)**                | Get category from product                   |      X     |                     null                    |                     null                    |
 
-#####Visibility to Customer Group
+##### Visibility to Customer Group
 | `ProductToCustomerGroupVisibilityResolved`    | **Current Product (Visibility to All)** | **Category**                                               | **Hidden**                                                | **Visible**                                               |
 |----------------------------------------------|-----------------------------------------|------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
 | **scope (FK) (PK)**                          |                    X                    | Get scope from current customer group product visibility    | Get scope from current customer group product visibility   | Get scope from currentcustomer group product visibility    |
@@ -84,7 +84,7 @@ Here are tables that describe calculation algorithms for all cache values.
 | **source**                                   |                    X                    |                         ::CATEGORY                         |                          ::STATIC                         |                          ::STATIC                         |
 | **category (FK)**                            |                    X                    | Get category from product                                  |                            null                           |                            null                           |
 
-#####Visibility to Customer
+##### Visibility to Customer
 | `ProductToCustomerVisibilityResolved`    | **Customer Group** | **Current Product**                                  | **Category**                                         | **Hidden**                                                | **Visible**                                               |
 |-----------------------------------------|-------------------|------------------------------------------------------|------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
 | **scope (FK) (PK)**                     |         X         | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility               | Get scope from cur. acc. group product visibility         |
@@ -96,7 +96,7 @@ Here are tables that describe calculation algorithms for all cache values.
 | **category (FK)**                       |         X         |                      null                            |               Get category from product              |                            null                           |                            null                           |
 
 
-####Cache builders
+#### Cache builders
 The above listed steps, with the resolved entities for manipulation with the source entities. 
 But what if for example developer changed the product category or even removed it, and it will affect all the caches 
 for products that have this category? In this case all level have cache builders.

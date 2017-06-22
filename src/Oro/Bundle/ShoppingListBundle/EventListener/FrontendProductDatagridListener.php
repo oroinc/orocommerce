@@ -7,15 +7,13 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Add to frontend products grid information about how much qty of some unit were added to current shopping list
@@ -30,9 +28,9 @@ class FrontendProductDatagridListener
     protected $aclHelper;
 
     /**
-     * @var SecurityFacade
+     * @var TokenAccessorInterface
      */
-    protected $tokenStorage;
+    protected $tokenAccessor;
 
     /**
      * @var RegistryInterface
@@ -40,16 +38,16 @@ class FrontendProductDatagridListener
     protected $registry;
 
     /**
-     * @param TokenStorage $tokenStorage
+     * @param TokenAccessorInterface $tokenAccessor
      * @param AclHelper $aclHelper
      * @param RegistryInterface $manager
      */
     public function __construct(
-        TokenStorage $tokenStorage,
+        TokenAccessorInterface $tokenAccessor,
         AclHelper $aclHelper,
         RegistryInterface $manager
     ) {
-        $this->tokenStorage = $tokenStorage;
+        $this->tokenAccessor = $tokenAccessor;
         $this->aclHelper = $aclHelper;
         $this->registry = $manager;
     }
@@ -77,8 +75,7 @@ class FrontendProductDatagridListener
      */
     public function onResultAfter(SearchResultAfter $event)
     {
-        $customerUser = $this->getLoggedCustomerUser();
-        if (!$customerUser) {
+        if (!($this->tokenAccessor->getUser() instanceof CustomerUser)) {
             return;
         }
 
@@ -89,7 +86,7 @@ class FrontendProductDatagridListener
             return;
         }
 
-        $groupedUnits = $this->getGroupedLineItems($records, $customerUser, $shoppingList);
+        $groupedUnits = $this->getGroupedLineItems($records, $shoppingList);
         foreach ($records as $record) {
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $groupedUnits)) {
@@ -110,40 +107,25 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @return CustomerUser|null
-     */
-    protected function getLoggedCustomerUser()
-    {
-        $token = $this->tokenStorage->getToken(TokenInterface::class);
-        if (!$token || !($token->getUser() instanceof CustomerUser)) {
-            return null;
-        }
-
-        return $token->getUser();
-    }
-
-    /**
      * @param ResultRecord[] $records
-     * @param CustomerUser    $customerUser
      * @param ShoppingList   $currentShoppingList
      * @return array
      */
     protected function getGroupedLineItems(
         array $records,
-        CustomerUser $customerUser,
         ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */
         $lineItemRepository = $this->registry->getRepository('OroShoppingListBundle:LineItem');
         /** @var LineItem[] $lineItems */
         $lineItems = $lineItemRepository->getProductItemsWithShoppingListNames(
+            $this->aclHelper,
             array_map(
                 function (ResultRecord $record) {
                     return $record->getValue('id');
                 },
                 $records
-            ),
-            $customerUser
+            )
         );
 
         $groupedUnits       = [];

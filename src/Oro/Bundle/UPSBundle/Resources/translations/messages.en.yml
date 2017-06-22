@@ -34,6 +34,7 @@ oro:
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge
+                surcharge.tooltip: The payment method surcharge applies to the shipping cost whenever this shipping method is selected. Additional options surcharge may apply on top of the payment method surcharge.
 
         connection_validation:
             button.text: Check UPS Connection
@@ -41,5 +42,5 @@ oro:
                 authentication.message: 'Authentication error has occurred: %error_message%'
                 measurement_system.message: 'Measurement error has occurred: %error_message%'
                 unexpected_error.message: 'Unexpected error has occurred: %error_message%. Please, contact system administrator'
-                success.message: UPS Connection is valid
-                server_error.message: Connection error has occurred: %error_message%. Please, try again later
+                success.message: 'UPS Connection is valid'
+                server_error.message: 'Connection error has occurred: %error_message%. Please, try again later'

@@ -49,11 +49,6 @@ operations:
                     '@equal': ['$.result[successful]', false]
                 message: '$.result[message]'
                 type: 'error'
-            - '@refresh_grid':
-                conditions:
-                    '@equal': ['$.result[successful]', true]
-                parameters:
-                    - order-payment-transactions-grid
         frontend_options:
             confirmation:
                 title: oro.order.payment_transaction.capture.title

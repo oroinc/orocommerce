@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType;
 use Oro\Bundle\CatalogBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -15,9 +16,9 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    private $authorizationChecker;
 
     /**
      * @var CategoryPageContentVariantType
@@ -26,11 +27,12 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->type = new CategoryPageContentVariantType($this->securityFacade, $this->getPropertyAccessor());
+        $this->type = new CategoryPageContentVariantType(
+            $this->authorizationChecker,
+            $this->getPropertyAccessor()
+        );
     }
 
     public function testGetName()
@@ -50,7 +52,7 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testIsAllowed()
     {
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_catalog_category_view')
             ->willReturn(true);

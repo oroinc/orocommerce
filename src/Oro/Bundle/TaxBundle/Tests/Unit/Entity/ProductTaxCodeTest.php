@@ -24,16 +24,6 @@ class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($this->createProductTaxCode(), $properties);
     }
 
-    /**
-     * Test ProductTaxCode relations
-     */
-    public function testRelations()
-    {
-        $this->assertPropertyCollections($this->createProductTaxCode(), [
-            ['products', new Product()],
-        ]);
-    }
-
     public function testToString()
     {
         $entity = new ProductTaxCode();

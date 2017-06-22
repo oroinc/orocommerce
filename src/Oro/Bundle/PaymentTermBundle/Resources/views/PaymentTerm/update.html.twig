@@ -13,7 +13,7 @@
     {% placeholder update_navButtons with {entity: entity} %}
     {{ UI.cancelButton(path('oro_payment_term_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_payment_term_update') %}
+    {% if entity.id or is_granted('oro_payment_term_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

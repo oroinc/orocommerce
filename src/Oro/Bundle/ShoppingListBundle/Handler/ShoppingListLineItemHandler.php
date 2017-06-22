@@ -5,13 +5,14 @@ namespace Oro\Bundle\ShoppingListBundle\Handler;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -26,8 +27,11 @@ class ShoppingListLineItemHandler
     /** @var ShoppingListManager */
     protected $shoppingListManager;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var string */
     protected $productClass;
@@ -38,16 +42,19 @@ class ShoppingListLineItemHandler
     /**
      * @param ManagerRegistry $managerRegistry
      * @param ShoppingListManager $shoppingListManager
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface $tokenAccessor
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
-        SecurityFacade $securityFacade
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->shoppingListManager = $shoppingListManager;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -141,17 +148,17 @@ class ShoppingListLineItemHandler
      */
     public function isAllowed(ShoppingList $shoppingList = null)
     {
-        if (!$this->securityFacade->hasLoggedUser()) {
+        if (!$this->tokenAccessor->hasUser()) {
             return false;
         }
 
-        $isAllowed = $this->securityFacade->isGranted('oro_shopping_list_frontend_update');
+        $isAllowed = $this->authorizationChecker->isGranted('oro_shopping_list_frontend_update');
 
         if (!$shoppingList) {
             return $isAllowed;
         }
 
-        return $isAllowed && $this->securityFacade->isGranted('EDIT', $shoppingList);
+        return $isAllowed && $this->authorizationChecker->isGranted('EDIT', $shoppingList);
     }
 
     /**

@@ -157,6 +157,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_collection_validator }
 
+    oro_product.validator.not_empty_configurable_attributes:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator'
+        public: true
+        arguments:
+            - '@oro_product.provider.variant_field_provider'
+        tags:
+            - { name: validator.constraint_validator, alias: not_empty_configurable_attributes }
+
     oro_product.component_processor.filter:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false
@@ -178,7 +186,8 @@ services:
         arguments:
             - "@router"
             - "@oro_product.storage.product_data_storage"
-            - "@oro_security.security_facade"
+            - "@security.authorization_checker"
+            - "@oro_security.token_accessor"
             - "@session"
             - "@translator"
         calls:
@@ -287,10 +296,12 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@oro_product.provider.custom_field_provider"
+            - "@oro_product.provider.variant_field_provider"
             - '%oro_product.entity.product.class%'
             - '%oro_product.entity.product_variant_link.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfterEditGrid }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
@@ -547,6 +558,7 @@ services:
             - '@oro_product.product.manager'
             - '@oro_config.user'
             - '@logger'
+            - '@oro.cache.memory_cache_chain'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
@@ -615,7 +627,7 @@ services:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }
@@ -624,7 +636,7 @@ services:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
         tags:
             - { name: oro_web_catalog.content_variant_type }
 
@@ -833,12 +845,6 @@ services:
         tags:
             - { name: security.voter, priority: 500 }
 
-    oro_product.event_listener.product_datagrid_attribute_save:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductAttributeSaveListener'
-        arguments: []
-        tags:
-            - { name: kernel.event_listener, event: oro.entity_config.entity.attribute.before_save, method: onBeforeSave }
-
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         arguments:
@@ -851,6 +857,7 @@ services:
             - '@oro_segment.segment_manager'
             - '@doctrine'
             - '@oro_datagrid.datagrid.name_strategy'
+            - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
 
@@ -933,3 +940,60 @@ services:
             - '@oro_redirect.url_storage_cache'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
+
+    oro_product.provider.variant_field_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\VariantFieldProvider'
+        public: false
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity_config.provider.serialized_field_provider'
+
+    oro_product.provider.grid_count_provider:
+        class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
+        arguments:
+            - '@oro_datagrid.datagrid.manager'
+            - '@security.authorization_checker'
+            - '@oro_datagrid.extension.pager.orm.pager'
+
+    oro_product.service.product_collection_definition_converter:
+        class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
+        public: false
+
+    oro_product.event_listener.product_collection_datagrid_parameters_for_selected_products_grid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener
+        calls:
+            - [setParameterName,  ['selectedProducts']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-selected-products-grid, method: onBuildAfter }
+
+    oro_product.event_listener.product_collection_datagrid_parameters_for_add_products_grid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener
+        calls:
+            - [setParameterName,  ['hiddenProducts']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-base-grid, method: onBuildAfter }
+
+    oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler
+        arguments:
+            - '@oro_config.manager'
+            - '@translator'
+
+    oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }
+
+    oro_product.event_listener.product_stickers_frontend_datagrid:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductStickersFrontendDatagridListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_product.layout.data_provider.product_stickers:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductStickersProvider'
+        arguments:
+            - "@oro_config.manager"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_stickers }

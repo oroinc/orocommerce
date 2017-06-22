@@ -100,7 +100,7 @@ define(function(require) {
 
             _.each(options, function(option) {
                 if (option.value !== selected.val()) {
-                    option.remove();
+                    $(option).remove();
                 }
             });
             var self = this;

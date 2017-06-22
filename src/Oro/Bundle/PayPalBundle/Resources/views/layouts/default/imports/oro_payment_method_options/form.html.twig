@@ -6,12 +6,14 @@
 
     {%- set type = type|default('password') -%}
     <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
-    <span class="ttip__wrap">
-        <a href="javascript: void(0);" class="ttip__toggle">{{ 'oro.paypal.credit_card.whats_this'|trans }}</a>
-        <span class="ttip">
-            <span class="ttip__content">{{ 'oro.paypal.credit_card.tooltip'|trans|nl2br }}</span>
-        </span>
-    </span>
+    <a href="javascript: void(0);"
+       data-toggle="tooltip"
+       data-title="{{ 'oro.paypal.credit_card.tooltip'|trans }}"
+       data-html="true"
+       data-container="body"
+    >
+        {{ 'oro.paypal.credit_card.whats_this'|trans }}
+    </a>
 {% endblock %}
 
 {% block _oro_paypal_credit_card_widget %}

@@ -62,7 +62,7 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
         foreach ($productRefs as $productRef) {
             /** @var Product $product */
             $product = $this->getReference($productRef);
-            $productTaxCode->addProduct($product);
+            $product->setTaxCode($productTaxCode);
         }
 
         $manager->persist($productTaxCode);

@@ -174,5 +174,5 @@ layout:
                                         order_ship_until: ~
                                         order_customer_notes: ~
                             order_after_line_items_grid:
-                                order_list_link: ~
                                 order_total: ~
+                                order_list_link: ~

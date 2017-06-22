@@ -60,7 +60,7 @@ workflows:
             payment_save_for_later:
                 type: bool
             additional_data:
-                type: array
+                type: string
             state_token:
                 type: string
             internal_state_token:
@@ -173,6 +173,7 @@ workflows:
                                         validationGroups: ['Checkout']
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
+                            form_type: oro_save_address
                             options:
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
@@ -209,6 +210,7 @@ workflows:
                                     - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
                                         validationGroups: ['Checkout']
                         save_shipping_address:
+                            form_type: oro_save_address
                             options:
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
@@ -976,6 +978,7 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                                     failedShippingAddressUrl: $.result.failedShippingAddressUrl
+                                    additionalData: $additional_data
                                     checkoutId: $checkout.id
                             - '@assign_value': [$payment_in_progress, true]
                     - '@extendable':

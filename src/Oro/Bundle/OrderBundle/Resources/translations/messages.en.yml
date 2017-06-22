@@ -52,6 +52,7 @@ oro:
         subtotal_currency.label: 'Subtotal currency'
         subtotal_value.label: 'Subtotal'
         base_subtotal_value.label: 'Subtotal In Base Currency'
+        contact_information.label: 'Contact Information'
 
         subtotal:
             label: Subtotal

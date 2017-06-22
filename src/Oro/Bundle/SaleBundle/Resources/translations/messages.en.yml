@@ -43,6 +43,7 @@ oro:
             shipping_address.label: 'Shipping Address'
             customer_status.label: 'Customer Status'
             internal_status.label: 'Internal Status'
+            contact_information.label: 'Contact Information'
 
             sections:
                 general: 'General'

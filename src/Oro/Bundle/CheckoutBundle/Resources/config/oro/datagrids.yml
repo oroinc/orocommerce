@@ -3,6 +3,9 @@ datagrids:
         acl_resource: oro_checkout_frontend_view
         update: false
         delete: false
+        options:
+            customerUserOwner:
+                customerUserColumn: customerUserName
         source:
             type: orm
             query:
@@ -103,7 +106,7 @@ datagrids:
                 shipUntil:
                     data_name: checkout.shipUntil
                 shippingCost:
-                    data_name: checkout.shippingCost
+                    data_name: checkout.shippingEstimateAmount
                 customerNotes:
                     data_name: checkout.customerNotes
         filters:

@@ -56,7 +56,6 @@ class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateBuilder()
     {
-        $currency = 'usd';
         $entityId = '12';
 
         $this->shippingOriginProviderMock
@@ -69,15 +68,11 @@ class BasicShippingContextBuilderFactoryTest extends \PHPUnit_Framework_TestCase
         );
 
         $builder = $builderFactory->createShippingContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId
         );
 
         $expectedBuilder = new BasicShippingContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId,
             $this->shippingLineItemCollectionFactoryMock,

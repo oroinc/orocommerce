@@ -19,8 +19,8 @@
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}
-    <div class="cart-list_empty">
-        <span class="cart-list_empty__icon"><i class="fa-shopping-cart"></i></span>
+    <div class="cart-list-empty">
+        <span class="cart-list-empty__icon"><i class="fa-shopping-cart"></i></span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_have_available'|trans }}</span>
     </div>
 {% endblock %}
@@ -41,7 +41,7 @@
                     id: shoppingList.id
                 },
                 inline_editing: {
-                    enable: resource_granted('oro_shopping_list_frontend_update'),
+                    enable: is_granted('oro_shopping_list_frontend_update'),
                     save_api_accessor: {
                         route: 'oro_api_frontend_patch_entity_data',
                         http_method: 'PATCH',
@@ -53,12 +53,12 @@
                 },
                 view_options: {
                     tooltip: 'oro.shoppinglist.label.edit.tooltip'|trans,
-                    additionalClass: 'cart__order-title'
+                    additionalClass: 'cart-order-title'
                 }
             }
         }
     }) }}>
-        <h1 class="cart__order-title nmmt4-md">
+        <h1 class="cart-order-title">
             <span>{{ shoppingList.label }}</span>
         </h1>
     </div>
@@ -66,7 +66,7 @@
 
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " cart__order__controls-list",
+        class: attr.class|default('') ~ " controls-list",
         'data-name': "empty-items__hide"
     }) %}
     <div{{ block('block_attributes') }}>
@@ -107,8 +107,8 @@
         </span>
         <a href="#" class="collapse-view__trigger orange" data-collapse-trigger>{{ 'oro.frontend.shoppinglist.view.view_options.label'|trans }}</a>
 
-        <div class="collapse-view__container" data-collapse-container>
-            <div class="ml1-md mmt5-md" {{ UI.renderPageComponentAttributes({
+        <div class="shopping-list-view-options collapse-view__container" data-collapse-container
+            {{ UI.renderPageComponentAttributes({
                 module: 'orofrontend/js/app/components/switchable-editable-view-component',
                 options: {
                     frontend_type: 'multilineText',
@@ -117,7 +117,7 @@
                     insertEditorMethod: 'after',
                     metadata: {
                         inline_editing: {
-                            enable: resource_granted('oro_shopping_list_frontend_update'),
+                            enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
                                 route: 'oro_api_frontend_patch_entity_data',
                                 http_method: 'PATCH',
@@ -130,320 +130,391 @@
                     }
                 }
             }) }}>
-                <label for="addANote"
-                       data-checkbox
-                       class="custom-checkbox {% if notes is not empty %}checked{% endif %}"
+            <label for="addANote"
+                   data-checkbox
+                   class="custom-checkbox {% if notes is not empty %}checked{% endif %}"
+            >
+                <input id="addANote"
+                       name="addANote"
+                       type="checkbox"
+                       data-role="start-editing"
+                       class="custom-checkbox__input"
+                       {% if notes is not empty %}checked="checked"{% endif %}
                 >
-                    <input id="addANote"
-                           name="addANote"
-                           type="checkbox"
-                           data-role="start-editing"
-                           class="custom-checkbox__input"
-                           {% if notes is not empty %}checked="checked"{% endif %}
-                    >
-                    <span class="custom-checkbox__icon"></span>
-                    <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
-                </label>
-                <div data-role="editor">
-                <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
-                          rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                          class="textarea textarea--full">{{ notes }}</textarea>
-                </div>
+                <span class="custom-checkbox__icon"></span>
+                <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+            </label>
+            <div data-role="editor">
+            <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
+                      rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
+                      class="textarea textarea--full">{{ notes }}</textarea>
             </div>
         </div>
     </div>
 {% endblock %}
 
 {% block _shopping_list_line_items_list_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {# TODO: Pass default currency from provider. BB-2218 #}
-    {% set defaultCurrency = 'USD' %}
 
-        {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged"}) %}
-        <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-            module: 'orofrontend/js/app/components/empty-items-component',
-            options: {eventName: 'frontend:item:delete'}
-        }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list_empty">
-            <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
-                module: 'oroui/js/app/components/view-component',
-                layout: 'separate',
-                options: {
-                    view: 'oroshoppinglist/js/app/views/line-items-view'
-                }
-            }) }}>
-                <thead>
-                <tr>
-                    <th colspan="2"><small>{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
-                    <th><small>{{ 'oro.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
-                    <th><small>{{ 'oro.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
-                    <th class="text-right"><small>{{ 'oro.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
-                    <th class="w70"><small>&nbsp;</small></th>
-                </tr>
-                </thead>
-                {% for lineItem in shoppingList.lineItems %}
-                {% set mainProduct = lineItem.product %}
-                {% if lineItem.parentProduct is not null %}
-                    {% set mainProduct = lineItem.parentProduct %}
-                {% endif %}
-                {% set productAllPrices = productsAllPrices[lineItem.product.id]|default({}) is not empty ? productsAllPrices[lineItem.product.id] : null %}
-                {% set productMatchedPrice = productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
-                {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
-                {% set isProductUnitSelectionVisible = productsUnitSelectionVisibilities[lineItem.product.id]|default({}) is not empty ? productsUnitSelectionVisibilities[lineItem.product.id] : null %}
-                {% set isLineItemUnitVisible = lineItemsUnitVisibilities[lineItem.id]|default({}) is not empty ? lineItemsUnitVisibilities  [lineItem.id] : null %}
-                <tbody class="line_item">
-                    <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
-                        module: 'oroui/js/app/components/view-component',
-                        options: {
-                            view: 'oroshoppinglist/js/app/views/line-item-view',
-                            modelAttr: mainProduct,
-                            lineItemId: lineItem.id,
-                            quantityComponentOptions: {
-                                dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                                enable: resource_granted('oro_shopping_list_frontend_update'),
-                                elements: {
-                                    quantity: '[name="product_qty"]',
-                                    unit: '[name="product_unit"]'
-                                },
-                                save_api_accessor: {
-                                    default_route_parameters: {
-                                        id: lineItem.id
-                                    },
-                                    route: 'oro_api_shopping_list_frontend_put_line_item'
-                                },
-                                value: {
-                                    unit: lineItem.unit.code,
-                                    quantity: lineItem.quantity
-                                },
-                                validation: {
-                                    showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
-                                }
-                            }
-                        },
-                        layout: 'separate'
-                    }) }}>
-                        <td class="va-t_md" colspan="2">
-                            <div class="product-item product-item_in-cart">
-                                <div class="product-item__image-holder product-item__image-holder_in-cart">
-                                    {% set productImage = mainProduct.getImagesByType('listing')|length > 0  ? mainProduct.getImagesByType('listing').first.image : null %}
-                                    <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ Image.image(productImage, 'product_small') }}</a>
-                                </div>
-                                <div class="product-item__desctiption product-item__desctiption_in-cart">
-                                    <h3 class="product-item__title product-item__title_in-cart mb1-md">
-                                        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value }}</a>
-                                    </h3>
-                                    <div>{{ 'oro.frontend.shoppinglist.view.sku.label'|trans }} <span class="red">{{ mainProduct.sku }}</span></div>
-                                    <div class="visible-xs">{{ mainProduct.InventoryStatus }}</div>
-                                    {% if configurableProducts[lineItem.product.id] is defined %}
-                                        {% for field in configurableProducts[lineItem.product.id] %}
-                                            <div>{{ field.label|trans }}:
-                                                {% if field.type == 'boolean' %}
-                                                    {{ field.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
-                                                {% else %}
-                                                    {{ field.value }}
-                                                {% endif %}
-                                            </div>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </td>
-                        <td class="va-t_md hidden-xs">
-                            <div>{{ mainProduct.InventoryStatus }}</div>
-                        </td>
-                        <td class="va-t_md">
-                            <form action="#" class="product__qty-container cart-table__form">
-                                <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
-                                    <div class="product__qty-input__count-option">
-                                        <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
-                                            placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
-                                            class="input  input--full text-center" disabled="disabled" required
-                                        />
-                                    </div>
-                                </div>
-                                <div class="product__select inline va-m_md">
-                                    {% if isProductUnitSelectionVisible %}
-                                        <select class="select select--full" name="product_unit" data-name="field__unit" required>
-                                            {% if productsUnits[lineItem.product.id] is defined %}
-                                                {% for unit in productsUnits[lineItem.product.id] %}
-                                                <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
-                                                {% endfor %}
-                                                {% if lineItem.unit.code not in productsUnits[lineItem.product.id] %}
-                                                    <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
-                                                {% endif %}
-                                            {% endif %}
-                                        </select>
-                                    {% else %}
-                                        <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" />
-                                        {% if isLineItemUnitVisible %}
-                                            {{ lineItem.unit.code|oro_format_product_unit_label}}
-                                        {% endif %}
-                                    {% endif %}
-                                </div>
-                            </form>
-                        </td>
-                        <td class="va-t_md line-item-price" {{ UI.renderPageComponentAttributes({
-                            module: 'oroui/js/app/components/view-component',
-                            options: {
-                                view: 'oropricing/js/app/views/base-product-prices-view',
-                                modelAttr: {
-                                    prices: productAllPrices,
-                                }
-                            }
-                        }) }}>
-                            <table class="table borderless paddingless mb0-md {{ productMatchedPrice is null ? 'hidden' }}" data-name="price">
-                                <tbody>
-                                <tr>
-                                    <td>{{ 'oro.frontend.shoppinglist.view.your_price.label'|trans }}</td>
-                                    <td class="text-right"
-                                        data-name="prices-hint"
-                                        data-placement="bottom"
-                                        data-close="false"
-                                        data-trigger="hover"
-                                        data-container="body"
-                                        data-class="prices-hint-content">
-                                            <span data-name="price-value">
-                                                {% if productMatchedPrice is not null %}
-                                                    {{ productMatchedPrice.value|oro_format_currency({'currency': currency}) }}
-                                                {% else %}
-                                                    {{ 'oro.ui.empty'|trans }}
-                                                {% endif %}
-                                            </span>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <div data-name="prices-hint-content" class="hidden">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-uppercase">qty</th>
-                                        <th >Unit Price</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% set shownUnit = '' %}
-                                    {% for price in productAllPrices %}
-                                        {% if shownUnit != price.unit %}
-                                            {% set shownUnit = price.unit %}
-                                    <tr>
-                                        <td colspan="2" class="text-capitalize">
-                                            {% if loop.index > 1 %}<br/>{% endif %}
-                                            <b>{{ shownUnit|oro_format_product_unit_label }}</b>
-                                        </td>
-                                    </tr>
-                                        {% endif %}
-                                    <tr>
-                                        <td>{{ price.quantity }}</td>
-                                        <td>{{ price.formatted_price }}</td>
-                                    </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div data-name="price-not-found" class="{{ productMatchedPrice is not null ? 'hidden' }}">
-                                {% if productAllPrices %}
-                                    <span data-name="prices-hint"
-                                          data-placement="bottom"
-                                          data-close="false"
-                                          data-trigger="hover"
-                                          data-container="body"
-                                          data-class="prices-hint-content"
-                                          >{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</span>
-                                {% else %}
-                                {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
-                                {% endif %}
-                            </div>
-                        </td>
-                        <td class="va-t_md text-right">
-                            <button class="item-remove button-icon gray fs20" {{ UI.renderPageComponentAttributes({
-                                    module: 'orofrontend/js/app/components/delete-item-component',
-                                    options: {
-                                        url: path('oro_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
-                                        removeClass: 'line_item',
-                                        confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
-                                        sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
-                                    }
-                                }) }} >
-                                <i class="fa-trash-o"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    {% set errorPath = 'product.' ~ lineItem.productSku %}
-                    {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
-                        {% for error in lineItemErrors[errorPath] %}
-                            <tr class="borderless t_paddingless">
-                                <td id="product-error-{{ lineItem.productSku }}" colspan="6"></td>
-                            </tr>
-                            <script>
-                                require(['oroui/js/messenger'], function(messenger) {
-                                    messenger.notificationFlashMessage('error', '{{ error.message }}', {
-                                        style: 'validation',
-                                        container: $('#product-error-{{ lineItem.productSku }}')
-                                    })
-                                });
-                            </script>
-                        {% endfor %}
-                    {% endif %}
-                    <tr class="borderless t_paddingless">
-                        {% set notes = lineItem.notes %}
-                        <td colspan="6">
-                            <div class="editable" {{ UI.renderPageComponentAttributes({
-                                module: 'orofrontend/js/app/components/switchable-editable-view-component',
-                                options: {
-                                    frontend_type: 'multilineText',
-                                    value: lineItem.notes,
-                                    fieldName: 'notes',
-                                    metadata: {
-                                        inline_editing: {
-                                            enable: resource_granted('oro_shopping_list_frontend_update'),
-                                            save_api_accessor: {
-                                                route: 'oro_api_frontend_patch_entity_data',
-                                                http_method: 'PATCH',
-                                                default_route_parameters: {
-                                                    className: oro_class_name(lineItem, true),
-                                                    id: lineItem.id
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }) }}>
-                                <div class="editable__trigger">
-                                    <label for="{{ 'lineItem'~lineItem.id }}"
-                                           data-checkbox
-                                           class="custom-checkbox
-                                       {% if notes is not empty %} checked {% endif %}"
-                                    >
-                                        <input name="{{ 'lineItem'~lineItem.id }}"
-                                               id="{{ 'lineItem'~lineItem.id }}"
-                                               type="checkbox"
-                                               data-role="start-editing"
-                                                {% if notes is not empty %} checked = "checked" {% endif %}
-                                               class="custom-checkbox__input"
-                                        >
-                                        <span class="custom-checkbox__icon"></span>
-                                        <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
-                                    </label>
-                                </div>
-                            <div data-role="editor">
-                                <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
-                                    placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table"}) %}
+    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+        module: 'orofrontend/js/app/components/empty-items-component',
+        options: {eventName: 'frontend:item:delete'}
+    }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list-empty">
+        <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
+            module: 'oroui/js/app/components/view-component',
+            layout: 'separate',
+            options: {
+                view: 'oroshoppinglist/js/app/views/line-items-view'
+            }
+        }) }}>
+            <thead>
+            <tr>
+                <th colspan="2"><small>{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
+                <th><small>{{ 'oro.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
+                <th><small>{{ 'oro.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
+                <th class="text-right"><small>{{ 'oro.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
+                <th class="w70"><small>&nbsp;</small></th>
+            </tr>
+            </thead>
+            {% for lineItem in shoppingList.lineItems %}
+            {% set mainProduct = lineItem.product %}
+            {% if lineItem.parentProduct is not null %}
+                {% set mainProduct = lineItem.parentProduct %}
+            {% endif %}
+            <tbody class="line_item">
+                {% do block|merge_context({
+                    lineItem: lineItem,
+                    mainProduct: mainProduct,
+                    parent: block.vars,
+                    loop: loop
+                }) %}
+                {{ block('container_widget') }}
             </tbody>
             {% endfor %}
         </table>
-        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
+{% block _shopping_list_line_items_list_row_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
+        module: 'oroui/js/app/components/view-component',
+        options: {
+            view: 'oroshoppinglist/js/app/views/line-item-view',
+            modelAttr: mainProduct,
+            lineItemId: lineItem.id,
+            quantityComponentOptions: {
+                dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
+                enable: is_granted('oro_shopping_list_frontend_update'),
+                elements: {
+                    quantity: '[name="product_qty"]',
+                    unit: '[name="product_unit"]'
+                },
+                save_api_accessor: {
+                    default_route_parameters: {
+                        id: lineItem.id
+                    },
+                    route: 'oro_api_shopping_list_frontend_put_line_item'
+                },
+                value: {
+                    unit: lineItem.unit.code,
+                    quantity: lineItem.quantity
+                },
+                validation: {
+                    showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
+                }
+            }
+        },
+        layout: 'separate'
+    }) }}>
+        {{ block('container_widget') }}
+    </tr>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_widget %}
+    <td class="va-t_md" colspan="2">
+        <div class="product-item product-item_in-cart">
+            {{ block('container_widget') }}
+        </div>
+    </td>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    <div class="product-item__image-holder product-item__image-holder_in-cart">
+        {% set productImage = mainProduct.getImagesByType('listing')|length > 0  ? mainProduct.getImagesByType('listing').first.image : null %}
+        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ Image.image(productImage, 'product_small') }}</a>
+    </div>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_description_widget %}
+    <div class="product-item__desctiption product-item__desctiption_in-cart">
+        {{ block('container_widget') }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_name_widget %}
+    <h3 class="product-item__title product-item__title_in-cart mb1-md">
+        <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ mainProduct.names|localized_value }}</a>
+    </h3>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_sku_widget %}
+    <div>{{ 'oro.frontend.shoppinglist.view.sku.label'|trans }} <span class="red">{{ mainProduct.sku }}</span></div>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_inventory_status_widget %}
+    <div class="visible-xs">{{ mainProduct.InventoryStatus }}</div>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_item_configurable_products_widget %}
+    {% if parent.configurableProducts[lineItem.product.id] is defined %}
+        {% for field in configurableProducts[lineItem.product.id] %}
+            <div>{{ field.label|trans }}:
+                {% if field.type == 'boolean' %}
+                    {{ field.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
+                {% else %}
+                    {{ field.value }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block _shopping_list_line_items_list_availability_widget %}
+    <td class="va-t_md hidden-xs">
+        {{ block('container_widget') }}
+    </td>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_availability_inventory_status_widget %}
+    <div>{{ mainProduct.InventoryStatus }}</div>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_quantity_widget %}
+    <td class="va-t_md">
+        {{ block('container_widget') }}
+    </td>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_quantity_form_widget %}
+    {% set isProductUnitSelectionVisible = parent.productsUnitSelectionVisibilities[lineItem.product.id]|default({}) is not empty ? parent.productsUnitSelectionVisibilities[lineItem.product.id] : null %}
+    {% set isLineItemUnitVisible = parent.lineItemsUnitVisibilities[lineItem.id]|default({}) is not empty ? parent.lineItemsUnitVisibilities[lineItem.id] : null %}
+    <form action="#" class="product__qty-container cart-table__form">
+        <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
+            <div class="product__qty-input__count-option">
+                <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
+                       placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
+                       class="input  input--full text-center" disabled="disabled" required
+                />
+            </div>
+        </div>
+        <div class="product__select inline va-m_md">
+            {% if isProductUnitSelectionVisible %}
+                <select class="select select--full" name="product_unit" data-name="field__unit" required>
+                    {% if parent.productsUnits[lineItem.product.id] is defined %}
+                        {% for unit in parent.productsUnits[lineItem.product.id] %}
+                            <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
+                        {% endfor %}
+                        {% if lineItem.unit.code not in parent.productsUnits[lineItem.product.id] %}
+                            <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
+                        {% endif %}
+                    {% endif %}
+                </select>
+            {% else %}
+                <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" />
+                {% if isLineItemUnitVisible %}
+                    {{ lineItem.unit.code|oro_format_product_unit_label}}
+                {% endif %}
+            {% endif %}
+        </div>
+    </form>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_price_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set productAllPrices = parent.productsAllPrices[lineItem.product.id]|default({}) is not empty ? parent.productsAllPrices[lineItem.product.id] : null %}
+    <td class="va-t_md line-item-price" {{ UI.renderPageComponentAttributes({
+        module: 'oroui/js/app/components/view-component',
+        options: {
+            view: 'oropricing/js/app/views/base-product-prices-view',
+            modelAttr: {
+                prices: productAllPrices,
+            }
+        }
+    }) }}>
+        {% do block|merge_context({productAllPrices: productAllPrices}) %}
+        {{ block('container_widget') }}
+    </td>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_price_info_widget %}
+    {% set productMatchedPrice = parent.productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? parent.productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
+    {# TODO: Pass default currency from provider. BB-2218 #}
+    {% set defaultCurrency = 'USD' %}
+    {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
+    <table class="table borderless paddingless mb0-md {{ productMatchedPrice is null ? 'hidden' }}" data-name="price">
+        <tbody>
+        <tr>
+            <td>{{ 'oro.frontend.shoppinglist.view.your_price.label'|trans }}</td>
+            <td class="text-right"
+                data-name="prices-hint"
+                data-placement="bottom"
+                data-close="false"
+                data-trigger="hover"
+                data-container="body"
+                data-class="prices-hint-content">
+                    <span data-name="price-value">
+                        {% if productMatchedPrice is not null %}
+                            {{ productMatchedPrice.value|oro_format_currency({'currency': currency}) }}
+                        {% else %}
+                            {{ 'oro.ui.empty'|trans }}
+                        {% endif %}
+                    </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div data-name="prices-hint-content" class="hidden">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="text-uppercase">qty</th>
+                <th >Unit Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set shownUnit = '' %}
+            {% for price in productAllPrices %}
+                {% if shownUnit != price.unit %}
+                    {% set shownUnit = price.unit %}
+            <tr>
+                <td colspan="2" class="text-capitalize">
+                    {% if loop.index > 1 %}<br/>{% endif %}
+                    <b>{{ shownUnit|oro_format_product_unit_label }}</b>
+                </td>
+            </tr>
+                {% endif %}
+            <tr>
+                <td>{{ price.quantity }}</td>
+                <td>{{ price.formatted_price }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div data-name="price-not-found" class="{{ productMatchedPrice is not null ? 'hidden' }}">
+        {% if productAllPrices %}
+            <span data-name="prices-hint"
+                  data-placement="bottom"
+                  data-close="false"
+                  data-trigger="hover"
+                  data-container="body"
+                  data-class="prices-hint-content"
+                  >{{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}</span>
+        {% else %}
+        {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_actions_widget %}
+    <td class="va-t_md text-right">
+        {{ block('container_widget') }}
+    </td>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_actions_remove_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <button class="item-remove button button--plain" {{ UI.renderPageComponentAttributes({
+            module: 'orofrontend/js/app/components/delete-item-component',
+            options: {
+                url: path('oro_api_shopping_list_frontend_delete_line_item', {'id': lineItem.id}),
+                removeClass: 'line_item',
+                confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
+                sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans
+            }
+        }) }} >
+        <i class="fa-trash-o fa--x-large fa--no-offset"></i>
+    </button>
+{% endblock %}
+
+{% block _shopping_list_line_items_list_errors_widget %}
+    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
+    {% for error in parent.lineItemErrors[errorPath] %}
+    <tr class="borderless t_paddingless">
+        <td id="product-error-{{ lineItem.productSku }}" colspan="6"></td>
+    </tr>
+    <script>
+        require(['oroui/js/messenger'], function(messenger) {
+            messenger.notificationFlashMessage('error', '{{ error.message }}', {
+                style: 'validation',
+                container: $('#product-error-{{ lineItem.productSku }}')
+            })
+        });
+    </script>
+    {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block _shopping_list_line_items_list_notes_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <tr class="borderless t_paddingless">
+        {% set notes = lineItem.notes %}
+        <td colspan="6">
+            <div class="editable" {{ UI.renderPageComponentAttributes({
+                module: 'orofrontend/js/app/components/switchable-editable-view-component',
+                options: {
+                    frontend_type: 'multilineText',
+                    value: lineItem.notes,
+                    fieldName: 'notes',
+                    metadata: {
+                        inline_editing: {
+                            enable: is_granted('oro_shopping_list_frontend_update'),
+                            save_api_accessor: {
+                                route: 'oro_api_frontend_patch_entity_data',
+                                http_method: 'PATCH',
+                                default_route_parameters: {
+                                    className: oro_class_name(lineItem, true),
+                                    id: lineItem.id
+                                }
+                            }
+                        }
+                    }
+                }
+            }) }}>
+                <div class="editable__trigger">
+                    <label for="{{ 'lineItem'~lineItem.id }}"
+                           data-checkbox
+                           class="custom-checkbox
+                       {% if notes is not empty %} checked {% endif %}"
+                    >
+                        <input name="{{ 'lineItem'~lineItem.id }}"
+                               id="{{ 'lineItem'~lineItem.id }}"
+                               type="checkbox"
+                               data-role="start-editing"
+                                {% if notes is not empty %} checked = "checked" {% endif %}
+                               class="custom-checkbox__input"
+                        >
+                        <span class="custom-checkbox__icon"></span>
+                        <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                    </label>
+                </div>
+                <div data-role="editor">
+                    <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
+                              placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
+                </div>
+            </div>
+        </td>
+    </tr>
+{% endblock %}
+
 {% block _shopping_list_line_items_empty_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list_empty"}) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-list-empty"}) %}
     <div {{ block('block_attributes') }}>
-        <span class="cart-list_empty__icon">
+        <span class="cart-list-empty__icon">
             <i class="fa-shopping-cart"></i>
         </span>
         <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.empty'|trans }}</span>
@@ -451,7 +522,7 @@
 {% endblock %}
 
 {% block _shopping_list_checkout_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget order-checkout-widget_block text-right mb4-md"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget text-right"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
