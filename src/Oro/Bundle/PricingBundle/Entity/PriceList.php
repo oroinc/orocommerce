@@ -336,7 +336,7 @@ class PriceList extends BasePriceList
      *
      * @return PriceList
      */
-    public function setPriceListCurrencies($currencies): PriceList
+    public function setPriceListCurrencies($currencies): self
     {
         if (!$currencies) {
             $currencies = [];
