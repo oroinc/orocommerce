@@ -5,54 +5,118 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
+use Oro\Bundle\QueryDesignerBundle\Validator\NotBlankFilters;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Form\Type\SegmentFilterBuilderType;
 use Oro\Component\WebCatalog\Form\PageVariantType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Extension\Core\DataMapper\PropertyPathMapper;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Valid;
 
-class ProductCollectionVariantType extends AbstractType
+class ProductCollectionVariantType extends AbstractType implements DataMapperInterface
 {
     const NAME = 'oro_product_collection_variant';
+    const PRODUCT_COLLECTION_SEGMENT = 'productCollectionSegment';
+    const INCLUDED_PRODUCTS = 'includedProducts';
+    const EXCLUDED_PRODUCTS = 'excludedProducts';
+
+    /**
+     * @var ProductCollectionDefinitionConverter
+     */
+    private $definitionConverter;
+
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
+
+    /**
+     * @var PropertyPathMapper
+     */
+    private $propertyPathMapper;
+
+    /**
+     * @param ProductCollectionDefinitionConverter $definitionConverter
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(
+        ProductCollectionDefinitionConverter $definitionConverter,
+        PropertyAccessor $propertyAccessor
+    ) {
+        $this->definitionConverter = $definitionConverter;
+        $this->propertyAccessor = $propertyAccessor;
+    }
 
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(
-            'productCollectionSegment',
-            SegmentFilterBuilderType::NAME,
-            [
-                'label' => 'oro.product.content_variant.field.product_collection.label',
-                'segment_entity' => Product::class,
-                'segment_columns' => ['id', 'sku'],
-                'segment_name_template' => 'Product Collection %s',
-                'add_name_field' => true,
-                'name_field_required' => false,
-                'tooltip' => 'oro.product.content_variant.field.product_collection.tooltip',
-                'required' => true,
-                'constraints' => [new NotBlank(), new Valid()]
-            ]
-        );
+        $builder
+            ->add(
+                self::PRODUCT_COLLECTION_SEGMENT,
+                SegmentFilterBuilderType::NAME,
+                [
+                    'label' => false,
+                    'segment_entity' => Product::class,
+                    'segment_columns' => ['id', 'sku'],
+                    'segment_name_template' => 'Product Collection %s',
+                    'add_name_field' => true,
+                    'name_field_required' => false,
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(),
+                        new Valid(),
+                        new NotBlankFilters(['message' => 'oro.product.product_collection.blank_filters_or_included']),
+                    ],
+                    'error_bubbling' => false,
+                    'field_event_listeners' => [
+                        'definition' => [
+                            FormEvents::PRE_SET_DATA => function (FormEvent $event) {
+                                $definition = $event->getData();
+
+                                if ($definition) {
+                                    $definitionParts = $this->definitionConverter->getDefinitionParts($definition);
+
+                                    $event->setData(
+                                        $definitionParts[ProductCollectionDefinitionConverter::DEFINITION_KEY]
+                                    );
+                                }
+                            }
+                        ]
+                    ]
+                ]
+            )
+            ->add(self::INCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
+            ->add(self::EXCLUDED_PRODUCTS, HiddenType::class, ['mapped' => false])
+            ->setDataMapper($this);
 
         // Make segment name required for existing segments
         $builder->get('productCollectionSegment')->addEventListener(
             FormEvents::PRE_SET_DATA,
             function (FormEvent $event) {
                 $segment = $event->getData();
+                $eventListeners = $event->getForm()->getConfig()->getOption('field_event_listeners');
                 if ($segment instanceof Segment && $segment->getId()) {
                     FormUtils::replaceField(
                         $event->getForm()->getParent(),
                         'productCollectionSegment',
-                        ['name_field_required' => true]
+                        [
+                            'name_field_required' => true,
+                            'field_event_listeners' => $eventListeners
+                        ]
                     );
                 }
             }
@@ -88,8 +152,12 @@ class ProductCollectionVariantType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefault('content_variant_type', ProductCollectionContentVariantType::TYPE);
-        $resolver->setDefault('results_grid', 'product-collection-grid');
+        $resolver->setDefaults([
+            'content_variant_type' => ProductCollectionContentVariantType::TYPE,
+            'results_grid' => 'product-collection-grid',
+            'included_products_grid' => 'product-collection-included-products-grid',
+            'excluded_products_grid' => 'product-collection-excluded-products-grid'
+        ]);
     }
 
     /**
@@ -98,9 +166,76 @@ class ProductCollectionVariantType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['results_grid'] = $options['results_grid'];
-        $view->vars['segmentDefinitionFieldName'] = $view->children['productCollectionSegment']
-            ->children['definition']->vars['full_name'];
-        $view->vars['segmentDefinition'] = $view->children['productCollectionSegment']
-            ->children['definition']->vars['value'];
+        $view->vars['includedProductsGrid'] = $options['included_products_grid'];
+        $view->vars['excludedProductsGrid'] = $options['excluded_products_grid'];
+
+        $segmentDefinitionView = $view->children[self::PRODUCT_COLLECTION_SEGMENT]->children['definition'];
+        $view->vars['segmentDefinitionFieldName'] = $segmentDefinitionView->vars['full_name'];
+        $view->vars['segmentDefinition'] = $segmentDefinitionView->vars['value'];
+        $view->vars['hasFilters'] = $this->definitionConverter->hasFilters($view->vars['segmentDefinition']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mapDataToForms($data, $forms)
+    {
+        $this->getPropertyPathMapper()->mapDataToForms($data, $forms);
+        /** @var Form[]|\Traversable $forms */
+        $forms = iterator_to_array($forms);
+
+        if ($data) {
+            /** @var Segment $segment */
+            $segment = $data->getProductCollectionSegment();
+
+            $definitionParts = $this->definitionConverter->getDefinitionParts($segment->getDefinition());
+
+            $forms[self::PRODUCT_COLLECTION_SEGMENT]->setData($segment);
+
+            if (isset($forms[self::INCLUDED_PRODUCTS])) {
+                $forms[self::INCLUDED_PRODUCTS]
+                    ->setData($definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY]);
+            }
+
+            if (isset($forms[self::EXCLUDED_PRODUCTS])) {
+                $forms[self::EXCLUDED_PRODUCTS]
+                    ->setData($definitionParts[ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY]);
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function mapFormsToData($forms, &$data)
+    {
+        $this->getPropertyPathMapper()->mapFormsToData($forms, $data);
+        /** @var Form[]|\Traversable $forms */
+        $forms = iterator_to_array($forms);
+
+        /** @var Segment $segment */
+        $segment = $forms[self::PRODUCT_COLLECTION_SEGMENT]->getData();
+
+        $segmentDefinition = $this->definitionConverter->putConditionsInDefinition(
+            $segment->getDefinition(),
+            $forms[self::EXCLUDED_PRODUCTS]->getData(),
+            $forms[self::INCLUDED_PRODUCTS]->getData()
+        );
+
+        $segment->setDefinition($segmentDefinition);
+
+        $data->setProductCollectionSegment($segment);
+    }
+
+    /**
+     * @return PropertyPathMapper
+     */
+    private function getPropertyPathMapper()
+    {
+        if (!$this->propertyPathMapper) {
+            $this->propertyPathMapper = new PropertyPathMapper($this->propertyAccessor);
+        }
+
+        return $this->propertyPathMapper;
     }
 }

@@ -16,7 +16,7 @@
 
     {{ UI.cancelButton(path('oro_order_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_order_update') %}
+    {% if entity.id or is_granted('oro_order_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
+use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\DBAL\Types\MoneyType;
 use Symfony\Component\Config\Definition\Processor;
 
@@ -50,6 +51,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => null,
                     'scope' => 'app'
                 ],
+                'price_strategy' => [
+                    'value' => MinimalPricesCombiningStrategy::NAME,
+                    'scope' => 'app'
+                ]
             ]
         ];
 

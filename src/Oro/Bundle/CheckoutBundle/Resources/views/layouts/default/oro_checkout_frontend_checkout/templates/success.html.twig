@@ -3,7 +3,7 @@
         <h1 class="checkout__success__title">{{ 'oro.checkout.workflow.success.thank_you.label'|trans }}</h1>
         <div class="checkout__success__order">
             <p>{{ 'oro.checkout.workflow.success.order_number.label'|trans }} {{ order.id }}
-            {% if resource_granted('VIEW', order) %}
+            {% if is_granted('VIEW', order) %}
                 (<a href="{{ path('oro_order_frontend_view', {id: order.id}) }}">{{ 'oro.checkout.workflow.success.click_to_review.label'|trans }}</a>)
             {% endif %}
             </p>

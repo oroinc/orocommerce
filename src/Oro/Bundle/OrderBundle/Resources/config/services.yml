@@ -37,7 +37,7 @@ services:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
-            - '@oro_security.security_facade'
+            - '@oro_security.token_accessor'
             - '@oro_pricing.user_currency_manager'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 10 }
@@ -46,7 +46,8 @@ services:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressProvider'
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
+            - '@oro_security.token_accessor'
             - '@doctrine'
             - '@oro_security.acl_helper'
             - '%oro_customer.entity.customer_address.class%'
@@ -55,7 +56,8 @@ services:
     oro_order.order.provider.order_address_security:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
+            - '@oro_security.token_accessor'
             - '@oro_order.order.provider.order_address'
             - '%oro_customer.entity.customer_address.class%'
             - '%oro_customer.entity.customer_user_address.class%'
@@ -84,7 +86,7 @@ services:
         arguments:
             - '@doctrine'
             - '@request_stack'
-            - '@oro_security.security_facade'
+            - '@oro_security.token_accessor'
             - '@oro_payment_term.provider.payment_term'
 
     oro_order.handler.order_currency_handler:
@@ -285,6 +287,7 @@ services:
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
+            - "@oro.cache.memory_cache_chain"
         tags:
             - { name: layout.data_provider, alias: top_selling_items }
 
@@ -357,3 +360,13 @@ services:
             - '@oro_product.layout.data_provider.configurable_products'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }
+
+    oro_order.factory.supports_order_payment_context:
+        class: 'Oro\Bundle\OrderBundle\Factory\SupportsOrderPaymentContextFactory'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_order.factory.payment_context'
+        tags:
+            - { name: oro_payment.supports_entity_payment_context_factory }
+        public: false
+        lazy: true

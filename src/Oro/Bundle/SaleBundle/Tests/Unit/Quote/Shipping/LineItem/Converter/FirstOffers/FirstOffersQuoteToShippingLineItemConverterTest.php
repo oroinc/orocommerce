@@ -3,7 +3,9 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\LineItem\Converter\FirstOffers;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\FirstOffers\FirstOffersQuoteToShippingLineItemConverter;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 // @codingStandardsIgnoreStart
@@ -18,6 +20,11 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
      */
     protected $firstOffersQuoteToShippingLineItemConverter;
 
+    /**
+     * @var QuoteProductOffer|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $quoteProductOfferMock;
+
     public function setUp()
     {
         parent::setUp();
@@ -25,29 +32,33 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
             $this->shippingLineItemCollectionFactory,
             $this->shippingLineItemBuilderFactory
         );
+
+        $this->quoteProductOfferMock = $this->getQuoteProductOfferMock();
     }
 
     public function testConvertLineItems()
     {
         $quantity = 12;
+        $price = $this->createPrice(12);
 
-        $quoteProductMock = $this->getQuoteProductMock();
-        $quoteProductOfferMock = $this->getQuoteProductOfferMock();
+        $quoteProductOffers = new ArrayCollection([$this->quoteProductOfferMock]);
+        $quoteProductMock = $this->getQuoteProductMock($quoteProductOffers);
         $quoteProducts = new ArrayCollection([$quoteProductMock]);
-        $quoteProductOffers = new ArrayCollection([$quoteProductOfferMock]);
 
-        $expectedLineItemsCollection = $this->prepareConvertLineItems($quantity, $quoteProductOfferMock);
+        $expectedLineItemsCollection = $this
+            ->prepareConvertLineItems($quantity, $this->quoteProductOfferMock, $this->builderMock);
 
-        $quoteProductOfferMock
+        $this->builderMock
             ->expects($this->once())
-            ->method('getQuantity')
-            ->willReturn($quantity);
+            ->method('setPrice')
+            ->with($price);
 
-        $quoteMock = $this->getQuoteMock();
-        $quoteMock
-            ->expects($this->once())
-            ->method('getQuoteProducts')
-            ->willReturn($quoteProducts);
+        $this->quoteProductOfferMock
+            ->expects($this->exactly(2))
+            ->method('getPrice')
+            ->willReturn($price);
+
+        $quoteMock = $this->mockQuote($quoteProducts);
 
         $quoteProductMock
             ->expects($this->once())
@@ -61,53 +72,32 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
 
     public function testConvertLineItemsWithoutPrice()
     {
-        $quoteProductOfferMock = $this->getQuoteProductOfferMock();
-        $quoteProductOffers = new ArrayCollection([$quoteProductOfferMock]);
+        $quantity = 12;
 
-        $quoteProductMock = $this->getQuoteProductMock();
-        $quoteProductMock->expects($this->once())->method('getQuoteProductOffers')->willReturn($quoteProductOffers);
+        $quoteProductOffers = new ArrayCollection([$this->quoteProductOfferMock]);
+        $quoteProductMock = $this->getQuoteProductMock($quoteProductOffers);
+        $quoteProducts = new ArrayCollection([$quoteProductMock]);
 
-        $expectedLineItemsArray = [];
-        $expectedLineItemsCollection = new DoctrineShippingLineItemCollection($expectedLineItemsArray);
+        $expectedLineItemsCollection = $this
+            ->prepareConvertLineItems($quantity, $this->quoteProductOfferMock, $this->builderMock);
 
-        $quoteMock = $this->getQuoteMock();
-        $quoteMock->expects($this->once())
-            ->method('getQuoteProducts')
-            ->willReturn(new ArrayCollection([$quoteProductMock]));
+        $quoteMock = $this->mockQuote($quoteProducts);
 
-        $this->shippingLineItemBuilderFactory->expects($this->never())->method('createBuilder');
+        $actualLineItems = $this->firstOffersQuoteToShippingLineItemConverter->convertLineItems($quoteMock);
 
-        $this->shippingLineItemCollectionFactory
-            ->expects($this->once())
-            ->method('createShippingLineItemCollection')
-            ->with($expectedLineItemsArray)
-            ->willReturn($expectedLineItemsCollection);
-
-        $this->assertEquals(
-            $expectedLineItemsCollection,
-            $this->firstOffersQuoteToShippingLineItemConverter->convertLineItems($quoteMock)
-        );
+        $this->assertEquals($expectedLineItemsCollection, $actualLineItems);
     }
 
     public function testConvertLineItemsWithoutOffers()
     {
-        $quoteProductMock = $this->getQuoteProductMock();
-
-        $quoteProducts = new ArrayCollection([$quoteProductMock]);
         $quoteProductOffers = new ArrayCollection([]);
+        $quoteProductMock = $this->getQuoteProductMock($quoteProductOffers);
+        $quoteProducts = new ArrayCollection([$quoteProductMock]);
+
         $expectedLineItemsArray = [];
         $expectedLineItemsCollection = new DoctrineShippingLineItemCollection($expectedLineItemsArray);
 
-        $quoteMock = $this->getQuoteMock();
-        $quoteMock
-            ->expects($this->once())
-            ->method('getQuoteProducts')
-            ->willReturn($quoteProducts);
-
-        $quoteProductMock
-            ->expects($this->once())
-            ->method('getQuoteProductOffers')
-            ->willReturn($quoteProductOffers);
+        $quoteMock = $this->mockQuote($quoteProducts);
 
         $this->shippingLineItemCollectionFactory
             ->expects($this->once())
@@ -121,12 +111,37 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuot
     }
 
     /**
+     * @param Collection $quoteProductOffers
+     *
      * @return QuoteProduct|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getQuoteProductMock()
+    private function getQuoteProductMock(Collection $quoteProductOffers)
     {
-        return $this
+        $quoteProductMock = $this
             ->getMockBuilder(QuoteProduct::class)
             ->getMock();
+
+        $quoteProductMock
+            ->expects($this->once())
+            ->method('getQuoteProductOffers')
+            ->willReturn($quoteProductOffers);
+
+        return $quoteProductMock;
+    }
+
+    /**
+     * @param Collection $quoteProducts
+     *
+     * @return \Oro\Bundle\SaleBundle\Entity\Quote|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function mockQuote(Collection $quoteProducts)
+    {
+        $quoteMock = $this->getQuoteMock();
+        $quoteMock
+            ->expects($this->once())
+            ->method('getQuoteProducts')
+            ->willReturn($quoteProducts);
+
+        return $quoteMock;
     }
 }

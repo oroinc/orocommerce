@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Helper;
 
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\TaxBundle\Tests\Unit\Entity\CustomerStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -27,7 +28,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
     /** @var  \PHPUnit_Framework_MockObject_MockObject|EntityManager */
     private $entityManager;
 
-    /** @var  Customer[] */
+    /** @var  Customer[]|\PHPUnit_Framework_MockObject_MockObject[] */
     private $customers;
 
     /** @var CustomerTaxCode[] */
@@ -104,62 +105,6 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider setTaxCodeWithExistingCustomerDataProvider
-     * @param Customer $customer
-     * @param CustomerTaxCode $customerTaxCode
-     */
-    public function testSetTaxCodeWithExistingCustomer(Customer $customer, CustomerTaxCode $customerTaxCode)
-    {
-        $this->doctrineShouldReturnTaxCodesByCustomer();
-        $this->shouldCreateEntityReference($customer->getId());
-
-        $this->manager->setTaxCode($customer, $customerTaxCode);
-
-        $this->assertInstanceOf(Customer::class, $customerTaxCode->getCustomers()->first());
-    }
-
-    /**
-     * @dataProvider setTaxCodeWithNonExistingCustomerDataProvider
-     * @param Customer $customer
-     * @param CustomerTaxCode $customerTaxCode
-     */
-    public function testSetTaxCodeWithNewCustomer(Customer $customer, CustomerTaxCode $customerTaxCode)
-    {
-        $this->doctrineShouldReturnTaxCodesByCustomer();
-        $this->shouldNotCreateEntityReference();
-
-        $this->manager->setTaxCode($customer, $customerTaxCode);
-
-        $this->assertSame($customer, $customerTaxCode->getCustomers()->first());
-    }
-
-    /**
-     * @dataProvider setTaxCodeChangeTagForCustomerDataProvider
-     * @param Customer $customer
-     * @param CustomerTaxCode $oldCustomerTaxCode
-     * @param CustomerTaxCode $newCustomerTaxCode
-     */
-    public function testSetTaxCodeChangeTagForCustomer(
-        Customer $customer,
-        CustomerTaxCode $oldCustomerTaxCode,
-        CustomerTaxCode $newCustomerTaxCode
-    ) {
-        $this->doctrineShouldReturnSingleTaxCodeByCustomer($customer, $oldCustomerTaxCode);
-        $this->doctrineShouldFlushOnce();
-        $this->shouldCreateEntityReference($customer->getId());
-
-        $this->assertTrue($oldCustomerTaxCode->getCustomers()->contains($customer));
-        $this->assertFalse($newCustomerTaxCode->getCustomers()->contains($customer));
-
-        $this->manager->setTaxCode($customer, $newCustomerTaxCode);
-
-        $this->assertFalse($oldCustomerTaxCode->getCustomers()->contains($customer));
-        //Since in this scenario we are creating reference, objects won't be the same
-        //So we can't use contains()
-        $this->assertEquals($customer, $newCustomerTaxCode->getCustomers()->first());
-    }
-
-    /**
      * @return array
      */
     public function normalizeCustomerTaxCodeDataProvider()
@@ -191,62 +136,10 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
-     */
-    public function setTaxCodeWithExistingCustomerDataProvider()
-    {
-        $this->createCustomers();
-        $this->createCustomersTaxCodes();
-
-        return [
-            [$this->customers[1], $this->customerTaxCodes[0]],
-            [$this->customers[2], $this->customerTaxCodes[0]],
-            [$this->customers[1], $this->customerTaxCodes[1]],
-            [$this->customers[2], $this->customerTaxCodes[1]],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function setTaxCodeWithNonExistingCustomerDataProvider()
-    {
-        $this->createCustomersTaxCodes();
-
-        return [
-            [new Customer(), $this->customerTaxCodes[0]],
-            [$this->getEntity(Customer::class, ['name' => 'Customer']), $this->customerTaxCodes[1]],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function setTaxCodeChangeTagForCustomerDataProvider()
-    {
-        $this->createCustomers();
-
-        return [
-            [
-                $this->customers[1],
-                $this->getEntity(CustomerTaxCode::class, ['id' => 1])->addCustomer($this->customers[1]),
-                $this->getEntity(CustomerTaxCode::class, ['id' => 2]),
-            ],
-            [
-                $this->customers[2],
-                $this->getEntity(CustomerTaxCode::class, ['id' => 1])->addCustomer($this->customers[2]),
-                $this->getEntity(CustomerTaxCode::class, ['id' => 2]),
-            ],
-        ];
-    }
-
-    /**
      * Prepare map of responses according to $this->customers
      */
     private function doctrineShouldReturnTaxCodesByCustomer()
     {
-        $map = [];
-
         foreach ($this->customers as $customer) {
             $customerTaxCode = $this->getEntity(CustomerTaxCode::class, [
                 'id' => $customer->getId(),
@@ -254,25 +147,8 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
                 'description' => sprintf('description_%s', $customer->getId())
             ]);
 
-            $map[] = [$customer, $customerTaxCode];
+            $customer->setTaxCode($customerTaxCode);
         }
-
-        $this->repository->expects($this->any())
-            ->method('findOneByCustomer')
-            ->willReturnMap($map);
-    }
-
-    /**
-     * Prepare single findOneByCustomer response with provided $customer and $customerTaxCode
-     * @param Customer $customer
-     * @param CustomerTaxCode $customerTaxCode
-     */
-    private function doctrineShouldReturnSingleTaxCodeByCustomer(Customer $customer, CustomerTaxCode $customerTaxCode)
-    {
-        $this->repository->expects($this->once())
-            ->method('findOneByCustomer')
-            ->with($customer)
-            ->willReturn($customerTaxCode);
     }
 
     private function doctrineShouldReturnTagsByCode()
@@ -286,17 +162,6 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
         $this->repository->expects($this->once())
             ->method('findOneBy')
             ->willReturnMap($map);
-    }
-
-    /**
-     * @param int $id
-     */
-    private function shouldCreateEntityReference($id)
-    {
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with(Customer::class, $id)
-            ->willReturn($this->getEntity(Customer::class, ['id' => $id]));
     }
 
     private function shouldNotCreateEntityReference()
@@ -314,8 +179,8 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
     private function createCustomers()
     {
         $this->customers = [
-            1 => $this->getEntity(Customer::class, ['id' => 1]),
-            2 => $this->getEntity(Customer::class, ['id' => 2]),
+            1 => $this->getEntity(CustomerStub::class, ['id' => 1]),
+            2 => $this->getEntity(CustomerStub::class, ['id' => 2]),
         ];
     }
 

@@ -17,7 +17,8 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
     const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
-    
+
+    const METAINFORMATION_TITLES = 'metaTitles';
     const METAINFORMATION_DESCRIPTIONS = 'metaDescriptions';
     const METAINFORMATION_KEYWORDS = 'metaKeywords';
 
@@ -37,7 +38,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     /**
@@ -53,7 +54,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     }
 
     /**
-     * Adds metaDescription and metaKeywords relations to entitiy.
+     * Adds metaTitle, metaDescription and metaKeywords relations to entitiy.
      *
      * @param Schema $schema
      * @param string $ownerTable
@@ -61,6 +62,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     private function addMetaInformation(Schema $schema, $ownerTable)
     {
         if ($schema->hasTable($ownerTable)) {
+            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES);
             $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_DESCRIPTIONS);
             $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_KEYWORDS);
         }

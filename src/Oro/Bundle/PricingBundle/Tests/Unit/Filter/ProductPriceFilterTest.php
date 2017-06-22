@@ -127,6 +127,9 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 
         $formView = $this->createFormView();
         $formView->vars['formatter_options'] = [];
+        $formView->vars['array_separator'] = ',';
+        $formView->vars['array_operators'] = [9, 10];
+        $formView->vars['data_type'] = 'data_integer';
 
         $typeFormView = $this->createFormView($formView);
         $typeFormView->vars['choices'] = [];

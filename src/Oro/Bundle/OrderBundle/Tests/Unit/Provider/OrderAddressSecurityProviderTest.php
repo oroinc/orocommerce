@@ -3,38 +3,42 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Yaml\Parser;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var OrderAddressSecurityProvider */
     protected $provider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressProvider */
     protected $orderAddressProvider;
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->orderAddressProvider = $this->getMockBuilder('Oro\Bundle\OrderBundle\Provider\OrderAddressProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->provider = new OrderAddressSecurityProvider(
-            $this->securityFacade,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
             $this->orderAddressProvider,
             'CustomerOrderClass',
             'CustomerUserOrderClass'
@@ -43,7 +47,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->securityFacade, $this->provider, $this->orderAddressProvider);
+        unset($this->authorizationChecker, $this->tokenAccessor, $this->provider, $this->orderAddressProvider);
     }
 
     /**
@@ -54,7 +58,9 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsManualEditGranted($type, $permissionName, $permission)
     {
-        $this->securityFacade->expects($this->atLeastOnce())->method('isGranted')->with($permissionName)
+        $this->authorizationChecker->expects($this->atLeastOnce())
+            ->method('isGranted')
+            ->with($permissionName)
             ->willReturn($permission);
 
         $this->assertEquals($permission, $this->provider->isManualEditGranted($type));
@@ -103,8 +109,10 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $this->orderAddressProvider->expects($this->any())->method('getCustomerUserAddresses')
             ->willReturn($hasCustomerUserAddresses);
 
-        $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new $userClass);
-        $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
+        $this->tokenAccessor->expects($this->any())->method('getUser')->willReturn(new $userClass);
+        $this->authorizationChecker->expects($this->any())
+            ->method('isGranted')
+            ->with($this->isType('string'))
             ->will($this->returnValueMap((array)$isGranted));
 
         $order = null;

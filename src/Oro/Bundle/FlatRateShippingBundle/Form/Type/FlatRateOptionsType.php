@@ -4,6 +4,7 @@ namespace Oro\Bundle\FlatRateShippingBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -43,16 +44,15 @@ class FlatRateOptionsType extends AbstractType
 
         $builder
             ->add(FlatRateMethodType::PRICE_OPTION, NumberType::class, array_merge([
-                'required' => true,
                 'label' => 'oro.flat_rate.method.price.label',
                 'constraints' => [new NotBlank(), new Type(['type' => 'numeric'])]
             ], $priceOptions))
             ->add(FlatRateMethodType::HANDLING_FEE_OPTION, NumberType::class, array_merge([
                 'label' => 'oro.flat_rate.method.handling_fee.label',
+                'required' => false,
                 'constraints' => [new Type(['type' => 'numeric'])]
             ], $priceOptions))
             ->add(FlatRateMethodType::TYPE_OPTION, ChoiceType::class, [
-                'required' => true,
                 'choices' => [
                     FlatRateMethodType::PER_ITEM_TYPE
                     => 'oro.flat_rate.method.processing_type.per_item.label',

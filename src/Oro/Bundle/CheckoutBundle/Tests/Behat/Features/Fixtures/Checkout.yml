@@ -1,46 +1,6 @@
-Oro\Bundle\RuleBundle\Entity\Rule:
-    paymentRule:
-        name: 'Default'
-        enabled: true
-        sortOrder: 1
-    shippingRule:
-        name: 'Default'
-        enabled: true
-        sortOrder: 1
-
-Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
-    paymentMethodConfig:
-        type: '<("payment_term_".@paymentTermIntegration->id)>'
-
-Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
-    paymentMethodsConfigsRule:
-        rule: '@paymentRule'
-        methodConfigs: ['@paymentMethodConfig']
-        currency: 'USD'
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
-    shippingMethodTypeConfig:
-        type: 'primary'
-        enabled: true
-        options:
-            price: 1.5
-            type: 'per_order'
-            handling_fee: 1.5
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
-    shippingMethodConfig:
-        method: '<("flat_rate_".@flatRateIntegration->id)>'
-        typeConfigs: ['@shippingMethodTypeConfig']
-
-Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
-    shippingMethodsConfigsRule:
-        rule: '@shippingRule'
-        methodConfigs: ['@shippingMethodConfig']
-        currency: 'USD'
-
-Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
-    paymentTerm:
-        label: net 10
+include:
+    - Payment.yml
+    - Shipping.yml
 
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
     price:
@@ -201,3 +161,38 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
         address: '@address'
         type: '@shippingType'
         default: true
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        customer: '@customer'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        poNumber: 'PO1'
+        qid: '1'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct1:
+        product: '@product'
+        quote: '@quote1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    quoteProductPrice1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequest1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5

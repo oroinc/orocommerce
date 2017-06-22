@@ -5,11 +5,16 @@
     savedShippingMethod = null
 ) %}
     <div data-page-component-module="{{ component }}"
-         {% if events|length > 0 %}
+        {% if events|length > 0 %}
             data-page-component-options="{{ { events: events, savedShippingMethod: savedShippingMethod }|json_encode }}"
-         {% endif %}>
+        {% endif %}
+         class="possible_shipping_methods_container">
         <div class="btn-group">
-            <span id="possible_shipping_methods_btn" class="btn">{{ 'oro.order.btn.calculate_shipping'|trans }}</span>
+            <span
+                data-role="possible_shipping_methods_btn"
+                id="possible_shipping_methods_btn"
+                class="btn"
+            >{{ 'oro.order.btn.calculate_shipping'|trans }}</span>
         </div>
         <div class="possible_shipping_methods_form" data-content="possible_shipping_methods_form"></div>
         {{ form_row(form.calculateShipping) }}

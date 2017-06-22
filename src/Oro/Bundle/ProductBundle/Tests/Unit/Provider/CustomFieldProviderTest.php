@@ -183,42 +183,6 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $fields
-     * @param array $expectedResult
-     * @dataProvider getVariantFieldsDataProvider
-     */
-    public function testGetVariantFields($fields, $expectedResult)
-    {
-        $extendsConfigs = [];
-        foreach ($fields as $fieldName => $fieldData) {
-            $extendsConfigs[$fieldName] = $this->createConfigByScope('extend', $fieldName, $fieldData);
-        }
-
-        $entityConfigs = [];
-        foreach ($fields as $fieldName => $fieldData) {
-            $entityConfigs[$fieldName] =  $this->createConfigByScope('entity', $fieldName, $fieldData);
-        }
-
-        $this->extendConfigProvider
-            ->expects($this->once())
-            ->method('getConfigs')
-            ->with($this->className)
-            ->willReturn($extendsConfigs);
-
-        $this->entityConfigProvider
-            ->expects($this->any())
-            ->method('getConfigById')
-            ->willReturnCallback(
-                function (FieldConfigId $configId) use ($entityConfigs) {
-                    return $entityConfigs[$configId->getFieldName()];
-                }
-            );
-
-        $result = $this->provider->getVariantFields($this->className);
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    /**
      * @param string $className
      * @return \PHPUnit_Framework_MockObject_MockObject
      */

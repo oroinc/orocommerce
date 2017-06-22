@@ -119,6 +119,7 @@ class ProductController extends Controller
      * Create product form step two
      *
      * @Route("/create/step-two", name="oro_product_create_step_two")
+     *
      * @Template("OroProductBundle:Product:createStepTwo.html.twig")
      *
      * @AclAncestor("oro_product_create")
@@ -215,6 +216,9 @@ class ProductController extends Controller
                 'form' => $form->createView(),
                 'entity' => $product
             ];
+        } else {
+            $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
+            $form->submit($request->request->get(ProductType::NAME));
         }
 
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(
@@ -278,5 +282,20 @@ class ProductController extends Controller
             'showRedirectConfirmation' => $showRedirectConfirmation,
             'slugsData' => $slugsData,
         ]);
+    }
+
+    /**
+     * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
+     * @AclAncestor("oro_product_view")
+     * @Template
+     */
+    public function addProductsWidgetAction(Request $request, $gridName)
+    {
+        $hiddenProducts = $request->get('hiddenProducts');
+
+        return [
+            'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : [],
+            'gridName' => $gridName,
+        ];
     }
 }

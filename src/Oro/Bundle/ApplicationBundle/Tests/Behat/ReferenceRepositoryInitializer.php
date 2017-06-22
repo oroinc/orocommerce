@@ -51,12 +51,15 @@ class ReferenceRepositoryInitializer extends BaseInitializer
 
         /** @var ProductUnitRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroProductBundle:ProductUnit');
-        /** @var ProductUnit $item*/
+        /** @var ProductUnit $item */
         $item = $repository->findOneBy(['code' => 'item']);
         $this->referenceRepository->set('item', $item);
-        /** @var ProductUnit $each*/
+        /** @var ProductUnit $each */
         $each = $repository->findOneBy(['code' => 'each']);
         $this->referenceRepository->set('each', $each);
+        /** @var ProductUnit $set */
+        $set = $repository->findOneBy(['code' => 'set']);
+        $this->referenceRepository->set('set', $set);
 
         /** @var AddressTypeRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroAddressBundle:AddressType');
@@ -77,7 +80,7 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $repository = $this->getEntityManager()->getRepository('OroPricingBundle:PriceList');
         /** @var PriceList $pricelist1*/
         $pricelist1 = $repository->findOneBy(['id' => '1']);
-        $this->referenceRepository->set('pricelist1', $pricelist1);
+        $this->referenceRepository->set('defaultPriceList', $pricelist1);
 
         /** @var WebsiteRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroWebsiteBundle:Website');

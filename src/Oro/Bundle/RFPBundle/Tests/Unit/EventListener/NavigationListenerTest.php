@@ -5,15 +5,16 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 use Knp\Menu\MenuItem;
 use Knp\Menu\MenuFactory;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\NavigationBundle\Event\ConfigureMenuEvent;
 use Oro\Bundle\RFPBundle\EventListener\NavigationListener;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class NavigationListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
-    private $securityFacade;
+    /** @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $authorizationChecker;
 
     /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
     private $featureChecker;
@@ -23,9 +24,10 @@ class NavigationListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->createMock(SecurityFacade::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-        $this->listener       = new NavigationListener($this->securityFacade, $this->featureChecker);
+
+        $this->listener = new NavigationListener($this->authorizationChecker, $this->featureChecker);
     }
 
     /**
@@ -37,13 +39,11 @@ class NavigationListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnNavigationConfigure($isGranted, $isResourceEnabled, $expectedIsDisplayed)
     {
-        $this->securityFacade
-            ->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_rfp_frontend_request_view')
             ->willReturn($isGranted);
-        $this->featureChecker
-            ->expects($this->exactly((int)!$isGranted))
+        $this->featureChecker->expects($this->exactly((int)!$isGranted))
             ->method('isResourceEnabled')
             ->with('oro_rfp_frontend_request_index', 'routes')
             ->willReturn($isResourceEnabled);

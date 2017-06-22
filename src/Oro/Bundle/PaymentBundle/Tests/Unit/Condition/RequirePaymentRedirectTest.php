@@ -7,7 +7,6 @@ use Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -18,17 +17,17 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     /** @var RequirePaymentRedirect */
     protected $condition;
 
-    /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodProvidersRegistry;
+    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvider;
 
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcher;
 
     public function setUp()
     {
-        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->condition = new RequirePaymentRedirect($this->paymentMethodProvidersRegistry, $this->dispatcher);
+        $this->condition = new RequirePaymentRedirect($this->paymentMethodProvider, $this->dispatcher);
     }
 
     public function testGetName()
@@ -59,21 +58,16 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
 
-        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
-
-        $paymentMethodProvider->expects($this->once())
+        $this->paymentMethodProvider
+            ->expects($this->once())
             ->method('hasPaymentMethod')
             ->willReturn(true);
 
-        $paymentMethodProvider->expects($this->once())
+        $this->paymentMethodProvider
+            ->expects($this->once())
             ->method('getPaymentMethod')
             ->with('payment_method')
             ->willReturn($paymentMethod);
-
-        $this->paymentMethodProvidersRegistry
-            ->expects($this->once())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
 
         $event = new RequirePaymentRedirectEvent($paymentMethod);
 

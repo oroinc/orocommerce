@@ -156,6 +156,17 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->contextBuilderMock
             ->expects($this->once())
+            ->method('setSubTotal')
+            ->with(Price::create($subtotal->getAmount(), $subtotal->getCurrency()))
+            ->willReturnSelf();
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setCurrency')
+            ->with($checkout->getCurrency());
+
+        $this->contextBuilderMock
+            ->expects($this->once())
             ->method('setCustomer')
             ->with($customer);
 
@@ -171,12 +182,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createPaymentContextBuilder')
-            ->with(
-                $checkout->getCurrency(),
-                Price::create($subtotal->getAmount(), $subtotal->getCurrency()),
-                $checkout,
-                (string)$checkout->getId()
-            )
+            ->with($checkout, (string)$checkout->getId())
             ->willReturn($this->contextBuilderMock);
 
         $this->checkoutLineItemsManager

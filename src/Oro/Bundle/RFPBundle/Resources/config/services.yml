@@ -90,7 +90,7 @@ services:
     oro_rfp.request.manager:
         class: 'Oro\Bundle\RFPBundle\Model\RequestManager'
         arguments:
-            - '@oro_security.security_facade'
+            - '@oro_security.token_accessor'
             - '@oro_entity.doctrine_helper'
 
     oro_rfp.event_listener.customer_view:
@@ -139,7 +139,7 @@ services:
     oro_rfp.event_listener.navigation:
         class: 'Oro\Bundle\RFPBundle\EventListener\NavigationListener'
         arguments:
-            - "@oro_security.security_facade"
+            - "@security.authorization_checker"
             - "@oro_featuretoggle.checker.feature_checker"
         tags:
             - { name: kernel.event_listener, event: oro_menu.configure.oro_customer_menu, method: onNavigationConfigure }

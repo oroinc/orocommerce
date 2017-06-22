@@ -2,17 +2,25 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
+use Doctrine\Common\Persistence\ObjectRepository;
+use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 /**
@@ -22,6 +30,38 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
+
+    /**
+     * @var OroMainContext
+     */
+    private $oroMainContext;
+
+    /**
+     * @var GridContext
+     */
+    private $gridContext;
+
+    /**
+     * @var ConfigContext
+     */
+    private $configContext;
+
+    /**
+     * @var FormContext
+     */
+    private $formContext;
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope)
+    {
+        $environment = $scope->getEnvironment();
+        $this->oroMainContext = $environment->getContext(OroMainContext::class);
+        $this->gridContext = $environment->getContext(GridContext::class);
+        $this->configContext = $environment->getContext(ConfigContext::class);
+        $this->formContext = $environment->getContext(FormContext::class);
+    }
 
     /**
      * @When I fill product name field with :productName value
@@ -292,6 +332,65 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @When I add price :price to Price Attribute :priceAttribute
+     *
+     * @param string $priceAttributeName
+     * @param int $price
+     */
+    public function addPriceToAdditionalPriceAttribute($priceAttributeName, $price)
+    {
+        /** @var Form $form */
+        $form = $this->createElement('ProductForm');
+
+        /** @var NodeElement $label */
+        $labels = $form->findAll('xpath', '//div[@class="price-attributes-collection"]/div/div/label');
+
+        $savedLabel = false;
+        foreach ($labels as $label) {
+            if (trim($label->getText()) === $priceAttributeName) {
+                $label->getParent()->getParent()
+                    ->find('xpath', '//input[contains(@id, "productPriceAttributesPrices")]')
+                    ->setValue($price);
+
+                $savedLabel = true;
+            }
+        }
+
+        if (!$savedLabel) {
+            self::fail(sprintf('Can not find label with text %s', $priceAttributeName));
+        }
+    }
+
+    /**
+     * @When I clear Price Attribute :priceAttribute
+     *
+     * @param string $priceAttributeName
+     */
+    public function clearPriceToAdditionalPriceAttribute($priceAttributeName)
+    {
+        /** @var Form $form */
+        $form = $this->createElement('ProductForm');
+
+        /** @var NodeElement $label */
+        $labels = $form->findAll('xpath', '//div[@class="price-attributes-collection"]/div/div/label');
+
+        $savedLabel = false;
+        foreach ($labels as $label) {
+            if (trim($label->getText()) === $priceAttributeName) {
+                $label->getParent()->getParent()
+                    ->find('xpath', '//input[contains(@id, "productPriceAttributesPrices")]')
+                    ->setValue(' ');
+
+                $savedLabel = true;
+            }
+        }
+
+        if (!$savedLabel) {
+            self::fail(sprintf('Can not find label with text %s', $priceAttributeName));
+        }
+    }
+
+    /**
      * Example: Then I save product with next data:
      *            | Name                | Name      |
      *            | SKU                 | SKU       |
@@ -312,7 +411,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I should see value ":value" in ":elementName" options
+     * @Then /^I should see value "(?P<value>[^"]+)" in "(?P<elementName>[^"]+)" options$/
      *
      * @param string $value
      * @param string $elementName
@@ -325,7 +424,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I should not see value ":value" in ":elementName" options
+     * @Then /^I should not see value "(?P<value>[^"]+)" in "(?P<elementName>[^"]+)" options$/
      *
      * @param string $value
      * @param string $elementName
@@ -335,6 +434,76 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function shouldNotSeeValueInElementOptions($value, $elementName)
     {
         static::assertFalse(in_array($value, $this->getOptionsForElement($elementName), true));
+    }
+
+    /**
+     * @Then /^I should see (?P<counterValue>\d+) for "(?P<counterType>[\w\s]+)" counter$/
+     *
+     * @param string $counterType
+     * @param int $counterValue
+     */
+    public function iShouldSeeCounterValue($counterType, $counterValue)
+    {
+        $counterElement = $this->createElement(sprintf('%s Counter', $counterType));
+
+        static::assertEquals(
+            $counterValue,
+            $counterElement->getText(),
+            sprintf('Counter value "%s" doesn\'t match expected "%s"', $counterValue, $counterElement->getText())
+        );
+    }
+
+    /**
+     * @Given /^(?:|I )am on Content Node page and added Product Collection variant$/
+     */
+    public function iAmOnContentNodePageAndAddedProductCollectionVariant()
+    {
+        $this->oroMainContext->iOpenTheMenuAndClick('Marketing/Web Catalogs');
+        $this->waitForAjax();
+        $this->gridContext->clickActionInRow('Default Web Catalog', 'Edit Content Tree');
+        $this->waitForAjax();
+        $this->oroMainContext->iClickOn('Show Variants Dropdown');
+        $this->oroMainContext->pressButton('Add Product Collection');
+        $this->oroMainContext->pressButton('Content Variants');
+        $this->oroMainContext->assertPageContainsNumElements(1, 'Product Collection Variant Label');
+    }
+
+    /**
+     * @Given /^(?:|I )set "Mass action limit" in Product Collections settings to the "(?P<limit>[^"]+)"$/
+     *
+     * @param string $limit
+     */
+    public function iSetMassActionLimitInProductCollectionsSettings($limit)
+    {
+        $this->iOnProductCollectionsSettingsPage();
+        $this->formContext->uncheckUseDefaultForField("Mass action limit");
+        $this->oroMainContext->fillField("Mass action limit", $limit);
+        $this->oroMainContext->pressButton('Save settings');
+        $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
+    }
+
+    /**
+     * @Given /^I am on Product Collections settings page$/
+     */
+    public function iOnProductCollectionsSettingsPage()
+    {
+        $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
+        $this->waitForAjax();
+        $this->configContext->clickLinkOnConfigurationSidebar('Product Collections');
+        $this->waitForAjax();
+    }
+
+    /**
+     * @Given /^I have all products available in (?P<tab>[\s\w]+) tab, and focused on it$/
+     */
+    public function iHaveAllProductsAvailableInTabAndFocusedOnIt($tab)
+    {
+        $this->oroMainContext->pressButton($tab);
+        $this->oroMainContext->pressButton('Add Button');
+        $this->waitForAjax();
+        $this->gridContext->iCheckAllRecordsInGrid('AddProductsPopup');
+        $this->oroMainContext->pressButtonInModalWindow('Add');
+        $this->waitForAjax();
     }
 
     /**
@@ -353,5 +522,127 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return $options;
+    }
+
+    /**
+     * @When I open product with sku ":sku" on the store frontend
+     */
+    public function openProductWithSkuOnTheStoreFrontend($sku)
+    {
+        $product = $this->getRepository(Product::class)->findOneBy(['sku' => $sku]);
+
+        if (!$product) {
+            self::fail(sprintf('Can\'t find product with sku "%s"', $sku));
+        }
+
+        $this->visitPath($this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()]));
+    }
+
+    /**
+     * Assert specific template containing specified data on page.
+     * Example: Then I should see "Two Columns Page" with "Product Group" containing data:
+     *            | Color | Green |
+     *            | Size  | L     |
+     *
+     * @Then /^(?:|I )should see "(?P<templateName>[^"]*)" with "(?P<groupName>[^"]*)" containing data:$/
+     */
+    public function assertTemplateWithGroupContainsData($templateName, $groupName, TableNode $table)
+    {
+        /** @var ProductTemplate $template */
+        $template = $this->createElement($templateName);
+
+        $template->assertGroupWithValue($groupName, $table);
+    }
+
+    /**
+     * Assert prices on specific template.
+     * Example: Then I should see the following prices on "Two Columns Page":
+     *    | Listed Price: | [$10.00 / item, $445.50 / set] |
+     *    | Your Price:   | $10.00 / item                  |
+     *
+     * @Then /^(?:|I )should see the following prices on "(?P<templateName>[^"]*)":$/
+     */
+    public function assertPricesOnTemplatePage($templateName, TableNode $table)
+    {
+        /** @var ProductTemplate $template */
+        $template = $this->createElement($templateName);
+
+        $template->assertPrices($table);
+    }
+
+    /**
+     * @param string $route
+     * @param array $params
+     * @return string
+     */
+    protected function getUrl($route, $params = [])
+    {
+        return $this->getContainer()->get('router')->generate($route, $params);
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    protected function getRepository($className)
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass($className)
+            ->getRepository($className);
+    }
+
+    /**
+     * @Then /^I should not see tag "(?P<tag>[^"]+)" inside "(?P<element>[^"]+)" element$/
+     *
+     * @param string $tag
+     * @param string $element
+     */
+    public function iShouldNotSeeTagInsideElement($tag, $element)
+    {
+        $page = $this->getSession()->getPage();
+
+        $result = $page->find(
+            'xpath',
+            '//*[@id="' . $element . '"]/' . $tag
+        );
+
+        static::assertTrue(
+            is_null($result),
+            sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
+        );
+    }
+
+    /**
+     * @Then /^(?:|I )should see "([^"]*)" for "([^"]*)" product$/
+     */
+    public function shouldSeeForProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        self::assertTrue($element->isValid());
+    }
+
+    /**
+     * @Then /^(?:|I )should not see "([^"]*)" for "([^"]*)" product$/
+     */
+    public function shouldNotSeeForProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        self::assertFalse($element->isValid());
+    }
+
+    /**
+     * @Then /^(?:|I )click "([^"]*)" for "([^"]*)" product$/
+     */
+    public function clickElementforSelectedProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        $element->click();
     }
 }

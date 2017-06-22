@@ -1,6 +1,6 @@
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
-        <div class="oro-toolbar"
+        <div class="oro-toolbar oro-localization-switcher"
              data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
              data-page-component-options="{{ {
                  'selectedLocalization': selected_localization.titles|localized_value,

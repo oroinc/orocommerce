@@ -1,0 +1,5 @@
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+    inventoryLevel:
+        product: '@product'
+        productUnitPrecision: '@precision'
+        quantity: 1
