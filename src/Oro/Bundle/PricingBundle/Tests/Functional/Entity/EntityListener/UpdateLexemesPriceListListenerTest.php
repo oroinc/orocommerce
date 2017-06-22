@@ -42,8 +42,7 @@ class UpdateLexemesPriceListListenerTest extends WebTestCase
         $priceList = $this->getReference('price_list_1');
         $priceList->setProductAssignmentRule('product.category.id == 2');
 
-        $entityManager = $this->getEntityManager();
-        $entityManager->flush();
+        $this->getEntityManager()->flush();
 
         $this->assertLexemesCreated($priceList, 2);
     }

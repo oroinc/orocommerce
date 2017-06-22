@@ -21,7 +21,7 @@ class HandlePriceListStatusChangeListener
     /**
      * @var bool
      */
-    private $activeHasChanged = false;
+    private $statusChanged = false;
 
     /**
      * @param PriceListRelationTriggerHandler $priceListChangesHandler
@@ -37,7 +37,7 @@ class HandlePriceListStatusChangeListener
      */
     public function preUpdate(PriceList $priceList, PreUpdateEventArgs $event)
     {
-        $this->activeHasChanged = $event->hasChangedField(self::FIELD_ACTIVE);
+        $this->statusChanged = $event->hasChangedField(self::FIELD_ACTIVE);
     }
 
     /**
@@ -45,9 +45,11 @@ class HandlePriceListStatusChangeListener
      */
     public function postUpdate(PriceList $priceList)
     {
-        if ($this->activeHasChanged) {
-            $this->priceListChangesHandler->handlePriceListStatusChange($priceList);
-            $this->activeHasChanged = false;
+        if (false === $this->statusChanged) {
+            return;
         }
+
+        $this->priceListChangesHandler->handlePriceListStatusChange($priceList);
+        $this->statusChanged = false;
     }
 }
