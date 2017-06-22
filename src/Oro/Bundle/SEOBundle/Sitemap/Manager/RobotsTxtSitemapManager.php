@@ -7,7 +7,6 @@ use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 class RobotsTxtSitemapManager
 {
     const KEYWORD_SITEMAP = 'Sitemap';
-    const AUTO_GENERATED_MARK = '# auto-generated';
 
     /**
      * @var RobotsTxtFileManager
@@ -46,7 +45,7 @@ class RobotsTxtSitemapManager
             if (in_array($sitemap, $this->newSitemaps, true)) {
                 continue;
             }
-            $needle = sprintf('%s: %s %s', self::KEYWORD_SITEMAP, $sitemap, self::AUTO_GENERATED_MARK);
+            $needle = sprintf('%s: %s %s', self::KEYWORD_SITEMAP, $sitemap, RobotsTxtFileManager::AUTO_GENERATED_MARK);
             foreach ($this->content as $key => $line) {
                 if (strpos($line, $needle) !== false) {
                     unset($this->content[$key]);
@@ -59,7 +58,12 @@ class RobotsTxtSitemapManager
             if (in_array($sitemap, $this->existingSitemaps, true)) {
                 continue;
             }
-            $this->content[] = sprintf('%s: %s %s', self::KEYWORD_SITEMAP, $sitemap, self::AUTO_GENERATED_MARK);
+            $this->content[] = sprintf(
+                '%s: %s %s',
+                self::KEYWORD_SITEMAP,
+                $sitemap,
+                RobotsTxtFileManager::AUTO_GENERATED_MARK
+            );
         }
 
         $this->fileManager->dumpContent(implode(PHP_EOL, $this->content));
@@ -93,7 +97,7 @@ class RobotsTxtSitemapManager
             '/^\s*%s\s*:\s*(%s)\s+%s\s*$/i',
             self::KEYWORD_SITEMAP,
             $urlRegex,
-            self::AUTO_GENERATED_MARK
+            RobotsTxtFileManager::AUTO_GENERATED_MARK
         );
 
         $this->content = explode(PHP_EOL, $content);

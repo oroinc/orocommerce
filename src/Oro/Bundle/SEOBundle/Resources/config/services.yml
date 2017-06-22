@@ -433,3 +433,18 @@ services:
         class: Oro\Bundle\SEOBundle\Async\SitemapGenerationScheduler
         arguments:
             - '@oro_message_queue.client.message_producer'
+
+    oro_seo.event_listener.robots_txt_change:
+        class: Oro\Bundle\SEOBundle\EventListener\RobotsGuestAccessOnSitemapDumpListener
+        arguments:
+            - '@oro_seo.manager.robots_txt_indexing_rules_by_sitemap_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage }
+
+    oro_seo.manager.robots_txt_indexing_rules_by_sitemap_manager:
+        class: Oro\Bundle\SEOBundle\Manager\RobotsTxtIndexingRulesBySitemapManager
+        public: false
+        arguments:
+            - '@oro_seo.manager.robots_txt_file_manager'
+            - '@oro_config.manager'
+            - '@oro_seo.sitemap.provider.website_access_denied_urls_provider_registry'
