@@ -223,19 +223,12 @@ define(function(require) {
             virtualForm.append(appendElement);
 
             var self = this;
+            // should be refactored in scope https://magecore.atlassian.net/browse/BB-10308
             var validator = virtualForm.validate({
                 ignore: '', // required to validate all fields in virtual form
                 errorPlacement: function(error, element) {
                     var $el = self.$form.find('#' + $(element).attr('id'));
-                    var parentWithValidation = $el.parents(self.options.selectors.validation);
-
-                    $el.addClass('error');
-
-                    if (parentWithValidation.length) {
-                        error.appendTo(parentWithValidation.first());
-                    } else {
-                        error.appendTo($el.parent());
-                    }
+                    $.validator.defaults.errorPlacement(error, $el);
                 }
             });
 

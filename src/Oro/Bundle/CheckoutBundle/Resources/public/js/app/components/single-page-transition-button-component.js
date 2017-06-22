@@ -23,11 +23,6 @@ define(function(require) {
         initialize: function(options) {
             SinglePageTransitionButtonComponent.__super__.initialize.call(this, options);
 
-            // disable validation for credit cards, it validate manually in credit cardcomponents
-            _.each($('[data-credit-card-form] [data-validation]'), function(item) {
-                $(item).data('validation', {});
-            });
-
             if (this.options.saveStateUrl || false) {
                 $.each(this.options.initialEvents, function(index, eventName) {
                     mediator.trigger(eventName);
@@ -79,9 +74,11 @@ define(function(require) {
         afterSaveState: function($target, response) {
             var responseData = response.responseData || {};
             if (responseData.stateSaved || false) {
-                $.each(this.options.targetEvents, function(selector, eventName) {
+                $.each(this.options.targetEvents, function(selector, eventNames) {
                     if ($target.closest(selector).length) {
-                        mediator.trigger(eventName);
+                        _.each(eventNames, function(eventName) {
+                            mediator.trigger(eventName);
+                        });
                     }
                 });
             }
