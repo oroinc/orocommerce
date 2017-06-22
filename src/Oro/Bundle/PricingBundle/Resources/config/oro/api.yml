@@ -1,16 +1,24 @@
 api:
     entities:
         Oro\Bundle\PricingBundle\Entity\PriceList:
+            actions:
+                create:
+                    fields:
+                        createdAt:
+                            exclude: true
+                        updatedAt:
+                            exclude: true
+                        containSchedule:
+                            exclude: true
+                update:
+                    fields:
+                        createdAt:
+                            exclude: true
+                        updatedAt:
+                            exclude: true
+                        containSchedule:
+                            exclude: true
             fields:
-                createdAt:
-                    form_options:
-                        mapped: false
-                updatedAt:
-                    form_options:
-                        mapped: false
-                containSchedule:
-                    form_options:
-                        mapped: false
                 prices:
                     exclude : true
                 priceListCurrencies:
