@@ -1,3 +1,7 @@
 BUYER:
     permissions:
         entity|Oro\Bundle\CheckoutBundle\Entity\Checkout: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC, DELETE_BASIC]
+
+ADMINISTRATOR:
+    permissions:
+        entity|Oro\Bundle\CheckoutBundle\Entity\Checkout: [VIEW_DEEP, CREATE_DEEP, EDIT_DEEP, DELETE_DEEP, ASSIGN_DEEP]
