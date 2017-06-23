@@ -9,6 +9,7 @@ use Oro\Bundle\SegmentBundle\Tests\Functional\DataFixtures\AbstractLoadSegmentDa
 class LoadSegmentData extends AbstractLoadSegmentData
 {
     const PRODUCT_STATIC_SEGMENT = 'product_static_segment';
+    const PRODUCT_DYNAMIC_SEGMENT = 'product_dynamic_segment';
 
     /**
      * @var array
@@ -28,9 +29,45 @@ class LoadSegmentData extends AbstractLoadSegmentData
                         'sorting' => ''
                     ]
                 ],
-                'filters' =>[]
+                'filters' => []
             ]
         ],
+        self::PRODUCT_DYNAMIC_SEGMENT => [
+            'name' => 'Product Dynamic Segment',
+            'description' => 'Product Dynamic Segment Description',
+            'entity' => Product::class,
+            'type' => SegmentType::TYPE_DYNAMIC,
+            'definition' => [
+                'columns' => [
+                    [
+                        'func' => null,
+                        'label' => 'id',
+                        'name' => 'id',
+                        'sorting' => null
+                    ],
+                    [
+                        'func' => null,
+                        'label' => 'sku',
+                        'name' => 'sku',
+                        'sorting' => null
+                    ]
+                ],
+                'filters' => [
+                    [
+                        [
+                            'columnName' => 'id',
+                            'criterion' => [
+                                'filter' => 'number',
+                                'data' => [
+                                    'value' => 10,
+                                    'type' => 2
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
     ];
 
     protected function getSegmentsData(): array

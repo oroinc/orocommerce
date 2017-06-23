@@ -14,7 +14,6 @@ use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -78,27 +77,27 @@ class ProductCollectionDatagridListener
      */
     public function onBuildAfter(BuildAfter $event)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
+        $dataGrid = $event->getDatagrid();
+
+        $segmentData = $this->getSegmentData($dataGrid);
+        if (!$segmentData) {
             return;
         }
 
-        $dataGrid = $event->getDatagrid();
         $dataSource = $dataGrid->getDatasource();
         if (!$dataSource instanceof OrmDatasource) {
             return;
         }
 
-        $requestData = $this->getRequestData($dataGrid, $request);
         $dataGridQueryBuilder = $dataSource->getQueryBuilder();
 
-        $definition = json_decode($requestData[self::DEFINITION_KEY], true);
-        if (!$this->definitionConverter->hasFilters($definition) && !$requestData[self::INCLUDED_KEY]) {
+        $definition = json_decode($segmentData[self::DEFINITION_KEY], true);
+        if (!$this->definitionConverter->hasFilters($definition) && !$segmentData[self::INCLUDED_KEY]) {
             $dataGridQueryBuilder->andWhere('1 = 0');
             return;
         }
 
-        $segmentDefinition = $this->getSegmentDefinition($requestData);
+        $segmentDefinition = $this->getSegmentDefinition($segmentData);
         if ($segmentDefinition) {
             $this->addFilterBySegment($dataGridQueryBuilder, $segmentDefinition);
         }
@@ -123,28 +122,64 @@ class ProductCollectionDatagridListener
     }
 
     /**
-     * @param array $requestData
+     * @param array $segmentData
      *
      * @return null|string
      */
-    private function getSegmentDefinition(array $requestData)
+    private function getSegmentDefinition(array $segmentData)
     {
         return $this->definitionConverter->putConditionsInDefinition(
-            $requestData[self::DEFINITION_KEY],
-            $requestData[self::EXCLUDED_KEY],
-            $requestData[self::INCLUDED_KEY]
+            $segmentData[self::DEFINITION_KEY],
+            $segmentData[self::EXCLUDED_KEY],
+            $segmentData[self::INCLUDED_KEY]
         );
     }
 
+    /**
+     * @param DatagridInterface $dataGrid
+     * @return array
+     */
+    private function getSegmentData(DatagridInterface $dataGrid): array
+    {
+        $parameters = $this->getSegmentDataFromGridParameters($dataGrid);
+        if (!$parameters) {
+            $parameters = $this->getSegmentDataFromRequest($dataGrid);
+        }
+
+        return $parameters;
+    }
 
     /**
      * @param DatagridInterface $dataGrid
-     * @param Request $request
-     *
+     * @return array|null
+     */
+    private function getSegmentDataFromGridParameters(DatagridInterface $dataGrid)
+    {
+        $parameters = $dataGrid->getParameters();
+
+        $params = $parameters->get('params', []);
+        if (isset($params['segmentDefinition'])) {
+            return [
+                self::DEFINITION_KEY => $params['segmentDefinition'],
+                self::INCLUDED_KEY => $params['includedProducts'] ?? null,
+                self::EXCLUDED_KEY => $params['excludedProducts'] ?? null
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * @param DatagridInterface $dataGrid
      * @return array
      */
-    private function getRequestData(DatagridInterface $dataGrid, Request $request): array
+    private function getSegmentDataFromRequest(DatagridInterface $dataGrid): array
     {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return [];
+        }
+
         $scope = $dataGrid->getScope();
         $gridFullName = $this->nameStrategy->buildGridFullName($dataGrid->getName(), $scope);
         $dataParameterName = self::SEGMENT_DEFINITION_PARAMETER_KEY . $gridFullName;

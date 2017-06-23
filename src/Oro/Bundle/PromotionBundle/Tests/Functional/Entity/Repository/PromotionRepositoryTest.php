@@ -32,7 +32,7 @@ class PromotionRepositoryTest extends WebTestCase
     public function testFindPromotionByProductSegment()
     {
         /** @var Segment $segment */
-        $segment = $this->getReference(LoadSegmentData::PRODUCT_STATIC_SEGMENT);
+        $segment = $this->getReference(LoadSegmentData::PRODUCT_DYNAMIC_SEGMENT);
         /** @var Promotion $expectedPromotion */
         $expectedPromotion = $this->getReference(LoadPromotionData::SIMPLE_PROMOTION);
 

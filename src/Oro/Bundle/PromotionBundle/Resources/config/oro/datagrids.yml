@@ -80,3 +80,8 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_promotion_view
                 rowAction:     true
+
+    promotion-products-collection-grid:
+        extends: products-select-grid-base
+        options:
+            export: true
