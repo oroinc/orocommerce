@@ -12,7 +12,9 @@ oro:
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields.label: Configurable Attributes
-        inventory_status.label: Inventory Status
+        inventory_status:
+            label: Inventory Status
+            description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
         status.label: Status
         type.label: Type
         owner.label: Owner
