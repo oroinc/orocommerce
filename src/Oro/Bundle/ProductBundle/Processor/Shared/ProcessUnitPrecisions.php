@@ -24,9 +24,13 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
     const ATTR_SELL = 'sell';
     const ATTR_UNIT_CODE = 'unit_code';
 
+    /** @var DoctrineHelper  */
     protected $doctrineHelper;
+
     /** @var SingleItemContext */
     protected $context;
+
+    /** @var  array */
     protected $validProductUnits;
 
     /**
@@ -47,15 +51,13 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
         /** @var FormContext $context */
         $requestData = $context->getRequestData();
 
-        if (!isset($requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::UNIT_PRECISIONS])) {
+        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
+        if (!isset($relationships[self::UNIT_PRECISIONS])) {
             return;
         }
 
         $pointer = $this->buildPointer('', JsonApi::DATA);
-        if (!$this->validateUnitPrecisions(
-            $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::UNIT_PRECISIONS],
-            $pointer)
-        ) {
+        if (!$this->validateUnitPrecisions($relationships[self::UNIT_PRECISIONS], $pointer)) {
             return;
         }
 
@@ -63,8 +65,17 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
         $context->setRequestData($requestData);
     }
 
+    /**
+     * @param array $requestData
+     * @return mixed
+     */
     abstract public function handleUnitPrecisions(array $requestData);
 
+    /**
+     * @param $unitPrecisionInfo
+     * @param $pointer
+     * @return bool
+     */
     protected function validateUnitPrecisions($unitPrecisionInfo, $pointer)
     {
         $existentCodes = [];
@@ -134,6 +145,10 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
         }
     }
 
+    /**
+     * @param $unitPrecision
+     * @param $pointer
+     */
     protected function validateProductUnitExists($unitPrecision, $pointer)
     {
         if (!$this->validProductUnits) {
