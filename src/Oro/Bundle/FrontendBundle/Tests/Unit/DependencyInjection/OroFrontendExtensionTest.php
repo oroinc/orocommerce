@@ -4,7 +4,6 @@ namespace Oro\Bundle\FrontendBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\OroLocaleExtension;
 use Oro\Component\DependencyInjection\ExtendedContainerBuilder;
 use Oro\Bundle\FrontendBundle\DependencyInjection\OroFrontendExtension;
 
@@ -20,11 +19,6 @@ class OroFrontendExtensionTest extends \PHPUnit_Framework_TestCase
         $container->expects($this->once())
             ->method('prependExtensionConfig')
             ->with(OroFrontendExtension::ALIAS, $this->isType('array'));
-
-        $container->expects($this->once())
-            ->method('getParameter')
-            ->with(OroLocaleExtension::PARAMETER_ADDRESS_FORMATS)
-            ->willReturn([]);
 
         $extension = new OroFrontendExtension();
         $extension->load([], $container);
