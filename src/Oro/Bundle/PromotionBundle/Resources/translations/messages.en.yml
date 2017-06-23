@@ -42,7 +42,13 @@ oro:
         dates.label: Dates
         restrictions.label: Restrictions
         advanced_conditions.label: Advanced Conditions
-        segment_edit_button.label: Edit within Promotion
+
+        ui:
+            segment_edit_button.label: Edit within Promotion
+            duplicate:
+                new_name: 'originalName (duplicated at dateTime)'
+                label: Duplicate
+                success_message: Promotion has been duplicated
 
         blocks:
             general: General

@@ -4,6 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
+use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
@@ -14,6 +16,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 {
+    const UNIT_CODE_ITEM = 'item';
+    const UNIT_CODE_SET = 'set';
+
     use EntityTrait;
 
     /**
@@ -54,7 +59,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->matchingProductsProvider
             ->expects($this->never())
-            ->method('hasMatchingProducts');
+            ->method('getMatchingProducts');
 
         $this->assertSame($ruleOwners, $this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, []));
     }
@@ -72,7 +77,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->matchingProductsProvider
             ->expects($this->never())
-            ->method('hasMatchingProducts');
+            ->method('getMatchingProducts');
 
         $this->assertEmpty(
             $this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, ['lineItems' => $lineItems])
@@ -82,31 +87,55 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
     public function testGetFilteredRuleOwners()
     {
         $firstPromotionSegment = new Segment();
-        $firstPromotion = $this->getEntity(Promotion::class, ['productsSegment' => $firstPromotionSegment]);
+        $firstPromotion = $this->createPromotion($firstPromotionSegment, self::UNIT_CODE_SET);
         $secondPromotionSegment = new Segment();
-        $secondPromotion = $this->getEntity(Promotion::class, ['productsSegment' => $secondPromotionSegment]);
+        $secondPromotion = $this->createPromotion($secondPromotionSegment, self::UNIT_CODE_ITEM);
         $thirdPromotionSegment = new Segment();
-        $thirdPromotion = $this->getEntity(Promotion::class, ['productsSegment' => $thirdPromotionSegment]);
+        $thirdPromotion = $this->createPromotion($thirdPromotionSegment, self::UNIT_CODE_ITEM);
 
         $ruleOwners = [$firstPromotion, $secondPromotion, $thirdPromotion];
+
         $product = new Product();
-        $lineItems = [(new DiscountLineItem())->setProduct($product)];
+        $lineItems = [
+            (new DiscountLineItem())
+                ->setProduct($product)
+                ->setProductUnitCode(self::UNIT_CODE_ITEM)
+        ];
 
         $this->configureFiltrationService();
 
         $this->matchingProductsProvider
             ->expects($this->exactly(3))
-            ->method('hasMatchingProducts')
+            ->method('getMatchingProducts')
             ->willReturnMap([
-                [$firstPromotionSegment, $lineItems, true],
-                [$secondPromotionSegment, $lineItems, false],
-                [$thirdPromotionSegment, $lineItems, true]
+                [$firstPromotionSegment, $lineItems, [$product]],
+                [$secondPromotionSegment, $lineItems, []],
+                [$thirdPromotionSegment, $lineItems, [$product]]
             ]);
 
         $this->assertEquals(
-            [$firstPromotion, $thirdPromotion],
+            [$thirdPromotion],
             $this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, ['lineItems' => $lineItems])
         );
+    }
+
+    /**
+     * @param Segment $segment
+     * @param string $productUnitCode
+     * @return Promotion
+     */
+    private function createPromotion(Segment $segment, $productUnitCode)
+    {
+        $options[DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE] = $productUnitCode;
+        $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['options' => $options]);
+
+        /** @var Promotion|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        $promotion = $this->getEntity(Promotion::class, [
+            'productsSegment' => $segment,
+            'discountConfiguration' => $discountConfiguration
+        ]);
+
+        return $promotion;
     }
 
     private function configureFiltrationService()
