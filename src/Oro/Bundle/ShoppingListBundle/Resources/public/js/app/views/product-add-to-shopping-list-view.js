@@ -117,9 +117,8 @@ define(function(require) {
 
             var buttons = this._collectAllButtons();
 
-            var $container = this.dropdownWidget.element.find('.btn-group:first');
-            $container.empty();
-            $container.html(buttons);
+            this.findAllButtons().remove();
+            this.dropdownWidget.element.prepend(buttons);
             this.dropdownWidget._renderButtons();
         },
 
@@ -166,10 +165,6 @@ define(function(require) {
                 buttons.push($createNewButton);
             }
 
-            if (buttons.length === 1) {
-                buttons = _.first(buttons).find(this.options.buttonsSelector);
-            }
-
             return buttons;
         },
 
@@ -185,7 +180,7 @@ define(function(require) {
         },
 
         findDropdownButtons: function(filter) {
-            var $el = this.dropdownWidget.element || this.dropdownWidget.dropdown;
+            var $el = this.dropdownWidget.dropdown || this.dropdownWidget.element;
             var $buttons = $el.find(this.options.buttonsSelector);
             if (filter) {
                 $buttons = $buttons.filter(filter);
