@@ -37,7 +37,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => true,
                     'scope' => 'app'
                 ],
-                Configuration::DEFAULT_QUEST_SHOPPING_LIST_OWNER => [
+                Configuration::DEFAULT_GUEST_SHOPPING_LIST_OWNER => [
                     'value' => null,
                     'scope' => 'app'
                 ],
