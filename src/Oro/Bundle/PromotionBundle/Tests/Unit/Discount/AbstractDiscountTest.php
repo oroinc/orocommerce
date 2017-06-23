@@ -119,7 +119,7 @@ class AbstractDiscountTest extends \PHPUnit_Framework_TestCase
                     AbstractDiscount::DISCOUNT_VALUE => 'abc'
                 ]
             ],
-            'invalid DISCOUNT_CURRENCY typr' => [
+            'invalid DISCOUNT_CURRENCY type' => [
                 [
                     AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
                     AbstractDiscount::DISCOUNT_CURRENCY => 100
