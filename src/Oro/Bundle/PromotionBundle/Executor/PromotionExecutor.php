@@ -67,4 +67,13 @@ class PromotionExecutor
 
         return $strategy->process($discountContext, $discounts);
     }
+
+    /**
+     * @param object $sourceEntity
+     * @return bool
+     */
+    public function supports($sourceEntity)
+    {
+        return $this->discountContextConverter->supports($sourceEntity);
+    }
 }

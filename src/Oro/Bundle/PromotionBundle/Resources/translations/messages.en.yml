@@ -58,6 +58,12 @@ oro:
                 no: No
                 for_matching_items_only: For Matching Items Only
                 for_shipment_with_matching_items: For Shipment With Matching Items
+            strategy:
+                apply_all.label: Apply All
+                profitable.label: Profitable
+            subtotal:
+                order.label: 'Order Discount'
+                shipping.label: 'Shipping Discount'
 
         discountconfiguration:
             entity_label: Discount Configuration
@@ -130,8 +136,3 @@ oro:
                     discount_optins.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
-
-        discount:
-            strategy:
-                apply_all.label: Apply All
-                profitable.label: Profitable

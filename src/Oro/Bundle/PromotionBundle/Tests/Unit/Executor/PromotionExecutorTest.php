@@ -122,4 +122,29 @@ class PromotionExecutorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($newContext, $this->executor->execute($sourceEntity));
     }
+
+    /**
+     * @dataProvider trueFalseDataProvider
+     * @param bool $result
+     */
+    public function testSupports($result)
+    {
+        $entity = new \stdClass();
+        $this->discountContextConverter->expects($this->once())
+            ->method('supports')
+            ->willReturn($result);
+
+        $this->assertSame($result, $this->executor->supports($entity));
+    }
+
+    /**
+     * @return array
+     */
+    public function trueFalseDataProvider()
+    {
+        return [
+            [true],
+            [false]
+        ];
+    }
 }

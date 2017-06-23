@@ -56,7 +56,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('hasMatchingProducts');
 
-        $this->assertEmpty($this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, []));
+        $this->assertSame($ruleOwners, $this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, []));
     }
 
     public function testGetFilteredRuleOwnersWhenNotPromotionRuleOwnersGiven()
