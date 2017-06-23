@@ -170,6 +170,16 @@ system_configuration:
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
+        oro_product.brand_direct_url_prefix:
+            data_type: string
+            type: oro_redirect_sluggable_prefix
+            options:
+                label: oro.product.system_configuration.fields.brand_direct_url_prefix.label
+                data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
+                required: false
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
+
         oro_product.product_collections_indexation_cron_schedule:
             data_type: string
             type: choice
@@ -220,6 +230,7 @@ system_configuration:
                                     oro_redirect_direct_urls:
                                         children:
                                             - oro_product.product_direct_url_prefix
+                                            - oro_product.brand_direct_url_prefix
             commerce:
                 children:
                     product:

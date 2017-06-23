@@ -1,3 +1,9 @@
+parameters:
+    oro_product.form.type.brand.class: 'Oro\Bundle\ProductBundle\Form\Type\BrandType'
+    oro_product.form.type.brand_select.class: 'Oro\Bundle\ProductBundle\Form\Type\BrandSelectType'
+    oro_product.form.type.brand_status_type.class: 'Oro\Bundle\ProductBundle\Form\Type\BrandStatusType'
+    oro_product.form.handler.brand.class: 'Oro\Bundle\ProductBundle\Form\Handler\BrandHandler'
+
 services:
     # Product form types
     oro_product.form.type.product:
@@ -225,3 +231,36 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\AttributeConfigExtension'
         tags:
             - { name: form.type_extension, alias: oro_entity_config_type }
+
+    oro_product.form.brand:
+        class: 'Symfony\Component\Form\Form'
+        factory: 'form.factory:createNamed'
+        arguments: ['oro_brand', '%oro_product.form.type.brand.class%', null]
+
+    oro_product.form.type.brand:
+        class: '%oro_product.form.type.brand.class%'
+        calls:
+            - [setDataClass, ['%oro_product.entity.brand.class%']]
+        tags:
+            - { name: form.type }
+
+    oro_product.form.handler.brand:
+        class: '%oro_product.form.handler.brand.class%'
+        scope: request
+        arguments:
+            - '@oro_product.form.brand'
+            - '@request'
+            - '@doctrine.orm.entity_manager'
+            - '@translator'
+
+    oro_product.form.type.brand_status:
+        class: '%oro_product.form.type.brand_status_type.class%'
+        arguments:
+            - "@oro_product.provider.brand_status_provider"
+        tags:
+            - { name: form.type }
+
+    oro_product.form.type.brand_select:
+        class: '%oro_product.form.type.brand_select.class%'
+        tags:
+            - { name: form.type, alias: oro_product_brand_select }
