@@ -1,9 +1,31 @@
 oro:
     discount:
-        label: 'Discount'
-        choices:
-            order: 'Order'
-            shopping_list_line_item: 'Shopping List Line Item'
+        type:
+            label: Discount
+            choices:
+                order: Order
+                shopping_list_line_item: Line Item
+    discount_options:
+        general:
+            type:
+                label: Type
+                tooltip: Discount type
+                choices:
+                    amount: Fixed Amount
+                    percent: Percent
+            value:
+                label: Discount Value
+        line_item_type:
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount Value To
+                choices:
+                    each_item: Each Item
+                    line_items_total: Line Items Total
+            maximum_qty:
+                label: Maximum Qty Discount is Applied To
+                tooltip: Maximum Qty Discount is Applied To Each Line Item
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
@@ -122,17 +144,6 @@ oro:
 
         form:
             choose: 'Choose a Promotion...'
-            basic_discount:
-                discount:
-                    label: 'Discount'
-                type:
-                    label: 'Type'
-                    tooltip: 'Discount type'
-                    choices:
-                        amount: 'Fixed Amount'
-                        percent: 'Percent'
-                value:
-                    label: 'Discount Value'
 
         sections:
             general:

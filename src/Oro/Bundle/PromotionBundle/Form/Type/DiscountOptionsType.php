@@ -38,10 +38,10 @@ class DiscountOptionsType extends AbstractType
                 [
                     'choices' => $options['type_choices'],
                     'mapped' => false,
-                    'label' => 'oro.promotion.form.basic_discount.type.label',
+                    'label' => 'oro.discount_options.general.type.label',
                     'required' => true,
                     'placeholder' => false,
-                    'tooltip' => 'oro.promotion.form.basic_discount.type.tooltip',
+                    'tooltip' => 'oro.discount_options.general.type.tooltip',
                 ]
             )
             ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'])
@@ -166,7 +166,7 @@ class DiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::TYPE_FIELD_CHOICES as $type) {
-            $choices[$type] = 'oro.promotion.form.basic_discount.type.choices.' . $type;
+            $choices[$type] = 'oro.discount_options.general.type.choices.' . $type;
         }
 
         return $choices;
@@ -186,7 +186,7 @@ class DiscountOptionsType extends AbstractType
                 [
                     'currency_empty_value' => null,
                     'required' => true,
-                    'label' => 'oro.promotion.form.basic_discount.value.label',
+                    'label' => 'oro.discount_options.general.value.label',
                     'compact' => false,
                     'data_class' => MultiCurrency::class,
                     'validation_groups' => ['ValueRequired', 'Default'],
@@ -198,7 +198,7 @@ class DiscountOptionsType extends AbstractType
                 OroPercentType::class,
                 [
                     'required' => true,
-                    'label' => 'oro.promotion.form.basic_discount.value.label',
+                    'label' => 'oro.discount_options.general.value.label',
                     'constraints' => [new NotBlank(), new Type(['type' => 'numeric'])],
                     'attr' => $percentFieldVisible ? [] : ['class' => 'hide'],
                 ]
