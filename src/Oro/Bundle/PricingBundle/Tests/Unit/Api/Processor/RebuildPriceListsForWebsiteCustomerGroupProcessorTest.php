@@ -6,18 +6,10 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Api\Processor\RebuildPriceListsForWebsiteCustomerGroupProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
-use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Component\ChainProcessor\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends TestCase
+class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPriceListsTest
 {
-    /**
-     * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $relationChangesHandler;
-
     /**
      * @var RebuildPriceListsForWebsiteCustomerGroupProcessor
      */
@@ -25,7 +17,7 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends TestCase
 
     protected function setUp()
     {
-        $this->relationChangesHandler = $this->createMock(PriceListRelationTriggerHandler::class);
+        parent::setUp();
 
         $this->processor = new RebuildPriceListsForWebsiteCustomerGroupProcessor(
             $this->relationChangesHandler
@@ -147,21 +139,6 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends TestCase
     }
 
     /**
-     * @param int $id
-     *
-     * @return Website|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createWebsite(int $id)
-    {
-        $website = $this->createMock(Website::class);
-        $website->expects(static::any())
-            ->method('getId')
-            ->willReturn($id);
-
-        return $website;
-    }
-
-    /**
      * @param CustomerGroup $group
      * @param Website       $website
      *
@@ -175,20 +152,5 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends TestCase
             ->setFallback(0);
 
         return $fallback;
-    }
-
-    /**
-     * @param mixed $result
-     *
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createContext($result)
-    {
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
-            ->method('getResult')
-            ->willReturn($result);
-
-        return $context;
     }
 }
