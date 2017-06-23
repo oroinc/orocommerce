@@ -144,6 +144,11 @@ services:
         tags:
             - { name: form.type, alias: oro_promotion_line_item_discount_options }
 
+    oro_promotion.form.type.buy_x_get_y_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\BuyXGetYDiscountOptionsType
+        tags:
+            - { name: form.type, alias: oro_promotion_buy_x_get_y_discount_options }
+
     oro_promotion.form.type.discount_free_shipping:
         class: Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType
         tags:
@@ -191,6 +196,7 @@ services:
             - ['setDefaultFormType', ['oro_promotion_order_discount_options']]
             - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
             - ['addFormType', ['shopping_list_line_item', 'oro_promotion_line_item_discount_options']]
+            - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
 
     oro_promotion.promotion_executor:
         class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor

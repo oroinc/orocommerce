@@ -5,6 +5,7 @@ oro:
             choices:
                 order: Order
                 shopping_list_line_item: Line Item
+                buy_x_get_y: Buy X Get Y
     discount_options:
         general:
             type:
@@ -26,6 +27,19 @@ oro:
             maximum_qty:
                 label: Maximum Qty Discount is Applied To
                 tooltip: Maximum Qty Discount is Applied To Each Line Item
+        buy_x_get_y_type:
+            buy_x.label: Buy X
+            get_y.label: Get Y
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount Value To
+                choices:
+                    apply_to_each_y: Each Y Item Separately
+                    apply_to_xy_total: X + Y Total
+            limit_times:
+                label: Limit, times
+                tooltip: The limitation on how many sets of X+Y can be applied to a single line item.
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
