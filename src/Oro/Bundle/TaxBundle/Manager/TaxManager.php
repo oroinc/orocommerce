@@ -156,10 +156,11 @@ class TaxManager
     }
 
     /**
-     * Create TaxValue instance based on object.
+     * Creates new or returns existing TaxValue instance based on object
      *
+     * @internal
      * @param object $object
-     * @return false|TaxValue
+     * @return TaxValue
      * @throws TaxationDisabledException if taxation disabled in system configuration
      * @throws \InvalidArgumentException if impossible to create TaxValue for object
      */
@@ -171,7 +172,25 @@ class TaxManager
         $result = $taxable->getResult();
 
         $transformer = $this->getTaxTransformer($taxable->getClassName());
+
         return $transformer->reverseTransform($result, $taxable);
+    }
+
+    /**
+     * Returns existing TaxValue instance based on object
+     *
+     * @internal
+     * @param object $object
+     * @return TaxValue
+     * @throws TaxationDisabledException if taxation disabled in system configuration
+     */
+    public function getTaxValue($object)
+    {
+        $this->throwExceptionIfTaxationDisabled();
+
+        $taxable = $this->getTaxable($object);
+
+        return $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
     }
 
     /**

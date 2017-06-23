@@ -3,10 +3,10 @@
 namespace Oro\Bundle\ProductBundle\ContentVariantType;
 
 use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductCollectionContentVariantType implements ContentVariantTypeInterface
 {
@@ -14,17 +14,15 @@ class ProductCollectionContentVariantType implements ContentVariantTypeInterface
     const PRODUCT_COLLECTION_ROUTE_NAME = 'oro_product_frontend_product_index';
     const CONTENT_VARIANT_ID_KEY = 'contentVariantId';
 
-    /**
-     * @var SecurityFacade
-     */
-    private $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    private $authorizationChecker;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -56,7 +54,7 @@ class ProductCollectionContentVariantType implements ContentVariantTypeInterface
      */
     public function isAllowed()
     {
-        return $this->securityFacade->isGranted('oro_product_view');
+        return $this->authorizationChecker->isGranted('oro_product_view');
     }
 
     /**

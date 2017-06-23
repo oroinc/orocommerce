@@ -4,33 +4,31 @@ namespace Oro\Bundle\ProductBundle\ContentVariantType;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductPageContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'product_page';
 
-    /**
-     * @var SecurityFacade
-     */
-    private $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    private $authorizationChecker;
 
-    /**
-     * @var PropertyAccessor
-     */
+    /** @var PropertyAccessor */
     private $propertyAccessor;
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param PropertyAccessor $propertyAccessor
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param PropertyAccessor              $propertyAccessor
      */
-    public function __construct(SecurityFacade $securityFacade, PropertyAccessor $propertyAccessor)
-    {
-        $this->securityFacade = $securityFacade;
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        PropertyAccessor $propertyAccessor
+    ) {
+        $this->authorizationChecker = $authorizationChecker;
         $this->propertyAccessor = $propertyAccessor;
     }
 
@@ -63,7 +61,7 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface
      */
     public function isAllowed()
     {
-        return $this->securityFacade->isGranted('oro_product_view');
+        return $this->authorizationChecker->isGranted('oro_product_view');
     }
 
     /**

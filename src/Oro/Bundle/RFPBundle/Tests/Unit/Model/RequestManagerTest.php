@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Model;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -20,9 +20,9 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
     protected $requestManager;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -31,14 +31,12 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestManager = new RequestManager($this->securityFacade, $this->doctrineHelper);
+        $this->requestManager = new RequestManager($this->tokenAccessor, $this->doctrineHelper);
     }
 
     public function testCreate()
@@ -46,8 +44,8 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
         $customer = new Customer();
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($customer);
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($customerUser);
         $expected = new Request();
         $expected->setCustomerUser($customerUser);

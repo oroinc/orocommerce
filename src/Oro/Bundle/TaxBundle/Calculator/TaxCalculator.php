@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Calculator;
 
-use Brick\Math\BigDecimal;
+use Oro\Component\Math\BigDecimal;
 
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 
