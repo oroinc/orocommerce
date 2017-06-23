@@ -246,6 +246,21 @@ oro_behat_extension:
     GridPagination:
       selector: 'div.tab-pane.active div.toolbar div.pagination input'
 
+    Clear Brand:
+          selector:
+            type: xpath
+            locator: '//div[contains(@id,"s2id_oro_product_brand-uid")]//abbr[@class="select2-search-choice-close"]'
+
+    Brand Form:
+      selector: 'form[name="oro_brand"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_brand[names][values][default]'
+          Meta Title: 'oro_brand[metaTitles][values][default]'
+          Meta Description: 'oro_brand[metaDescriptions][values][default]'
+          Meta Keywords: 'oro_brand[metaKeywords][values][default]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
