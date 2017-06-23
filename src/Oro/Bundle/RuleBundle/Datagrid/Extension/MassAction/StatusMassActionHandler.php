@@ -7,11 +7,8 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
-
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Component\DependencyInjection\ServiceLink;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class StatusMassActionHandler implements MassActionHandlerInterface
@@ -39,29 +36,21 @@ class StatusMassActionHandler implements MassActionHandlerInterface
     protected $translator;
 
     /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
-
-    /**
      * @param string $responseMessage
      * @param string $repositoryClassPath
      * @param EntityManager $entityManager
      * @param TranslatorInterface $translator
-     * @param ServiceLink $securityFacadeServiceLink
      */
     public function __construct(
         $responseMessage,
         $repositoryClassPath,
         EntityManager $entityManager,
-        TranslatorInterface $translator,
-        ServiceLink $securityFacadeServiceLink
+        TranslatorInterface $translator
     ) {
         $this->responseMessage = $responseMessage;
         $this->repositoryClassPath = $repositoryClassPath;
         $this->entityManager = $entityManager;
         $this->translator = $translator;
-        $this->securityFacade = $securityFacadeServiceLink->getService();
     }
 
     /**

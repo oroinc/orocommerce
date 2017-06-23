@@ -39,6 +39,7 @@ class ContentNodeContentVariantProvider implements ContentVariantProviderInterfa
     public function getLocalizedValues(ContentNodeInterface $node)
     {
         return [
+            'metaTitles' => $node->getMetaTitles(),
             'metaDescriptions' => $node->getMetaDescriptions(),
             'metaKeywords' => $node->getMetaKeywords(),
         ];

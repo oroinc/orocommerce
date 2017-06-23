@@ -1,5 +1,16 @@
 layout:
     actions:
+        - '@setOption':
+            id: title
+            optionName: value
+            optionValue: '=data["web_catalog_title"].getTitle(defaultValue, data["category"].getCurrentCategory())'
+        - '@add':
+            id: meta_title
+            parentId: head
+            blockType: meta
+            options:
+                name: 'title'
+                content: '=data["category"].getCurrentCategory()!=null ? data["seo"].getMetaInformation(data["category"].getCurrentCategory(), "metaTitles") : null'
         - '@add':
             id: meta_description
             parentId: head

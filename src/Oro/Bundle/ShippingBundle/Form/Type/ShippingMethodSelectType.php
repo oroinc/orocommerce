@@ -50,13 +50,14 @@ class ShippingMethodSelectType extends AbstractType
     {
         $resolver->setDefaults([
             'empty_value' => null,
+            'placeholder' => 'oro.shipping.sections.shippingrule_configurations.placeholder.label',
             'choices' => $this->getChoices(),
             'choice_attr' => function ($choice) {
                 return $this->getChoiceAttributes($choice);
             },
             'configs' => [
-                'result_template_twig' => 'OroShippingBundle:Form:type/result.html.twig',
-                'selection_template_twig' => 'OroShippingBundle:Form:type/selection.html.twig',
+                'showIcon' => true,
+                'minimumResultsForSearch' => 1,
             ]
         ]);
     }

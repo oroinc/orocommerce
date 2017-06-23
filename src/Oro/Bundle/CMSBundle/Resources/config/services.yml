@@ -44,7 +44,7 @@ services:
         class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }
@@ -130,3 +130,9 @@ services:
             - '@oro_cms.twig.renderer'
         tags:
             - { name: twig.extension }
+
+    oro_cms.migration.home_page_slider_images_source_fixer:
+        class: 'Oro\Bundle\CMSBundle\Migration\HomePageSliderImagesSourceFixer'
+        arguments:
+            - '@oro_config.global'
+            - '@doctrine.dbal.default_connection'

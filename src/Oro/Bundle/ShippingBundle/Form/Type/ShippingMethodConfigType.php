@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Form\Type;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -54,14 +55,15 @@ class ShippingMethodConfigType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['methods_labels'] = array_reduce(
-            $this->methodRegistry->getShippingMethods(),
-            function (array $result, ShippingMethodInterface $method) {
-                $result[$method->getIdentifier()] = $method->getLabel();
-                return $result;
-            },
-            []
-        );
+        $methodsLabels = [];
+        $methodsIcons = [];
+        /* @var ShippingMethodInterface|ShippingMethodIconAwareInterface $method */
+        foreach ($this->methodRegistry->getShippingMethods() as $method) {
+            $methodsLabels[$method->getIdentifier()] = $method->getLabel();
+            $methodsIcons[$method->getIdentifier()] = $method->getIcon();
+        }
+        $view->vars['methods_labels'] = $methodsLabels;
+        $view->vars['methods_icons'] = $methodsIcons;
     }
 
     /**

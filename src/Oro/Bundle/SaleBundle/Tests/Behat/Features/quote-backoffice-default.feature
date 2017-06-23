@@ -370,3 +370,25 @@ Feature: Quote Backoffice Default
     Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO36" in grid
+
+  Scenario: See Quote without Customer User by frontend administrator.
+    Given I login as administrator
+    And go to Sales/Quotes
+    And click view POWithoutCustomerUser in grid
+    And click "Send to Customer"
+    And fill form with:
+      | To | admin@example.com |
+    And click "Send"
+    Then I should see Quote with:
+      | PO Number | POWithoutCustomerUser |
+      | Customer | first customer |
+      | Internal Status | Sent to customer |
+    And I should not see "Customer User"
+    When I click "Declined by Customer"
+
+    When I signed in as NancyJSallee@example.org on the store frontend
+    And click "Quotes"
+    Then I should see following records in grid:
+      | POWithoutCustomerUser |
+    When I click view POWithoutCustomerUser in grid
+    Then I should see "My Account / Quotes / View"

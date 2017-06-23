@@ -18,3 +18,9 @@
         </div>
     </div>
 {% endblock %}
+
+{% block oro_ups_shipping_method_config_options_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.tooltip('oro.ups.form.shipping_method_config_options.surcharge.tooltip', {}, 'right') }}
+    {{ form_widget(form) }}
+{% endblock %}

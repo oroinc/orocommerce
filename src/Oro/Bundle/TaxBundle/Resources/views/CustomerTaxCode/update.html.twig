@@ -9,7 +9,7 @@
 
     {{ UI.cancelButton(path('oro_tax_customer_tax_code_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_tax_customer_tax_code_update') %}
+    {% if entity.id or is_granted('oro_tax_customer_tax_code_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
