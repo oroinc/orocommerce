@@ -39,7 +39,9 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "permissions"="VIEW;CREATE;EDIT;DELETE",
+ *              "group_name"="commerce",
+ *              "category"="marketing"
  *          }
  *      }
  * )
