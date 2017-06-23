@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroupAwareInterface;
 
 /**
  * @ORM\Table(name="oro_price_list_to_cus_group", uniqueConstraints={
@@ -15,7 +16,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
  * })
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository")
  */
-class PriceListToCustomerGroup extends BasePriceListRelation
+class PriceListToCustomerGroup extends BasePriceListRelation implements CustomerGroupAwareInterface
 {
     /**
      * @var CustomerGroup

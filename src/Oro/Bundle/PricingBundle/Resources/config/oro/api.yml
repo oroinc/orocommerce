@@ -1,8 +1,92 @@
 api:
     entities:
-        Oro\Bundle\PricingBundle\Entity\PriceListToWebsite: ~
-        Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback: ~
-        Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup: ~
-        Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback: ~
-        Oro\Bundle\PricingBundle\Entity\PriceListToCustomer: ~
-        Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback: ~
+        Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                priceList:
+                    actions:
+                        update_relationship: false
+        Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback:
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+        Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customerGroup:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                priceList:
+                    actions:
+                        update_relationship: false
+                customerGroup:
+                    actions:
+                        update_relationship: false
+        Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customerGroup:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                customerGroup:
+                    actions:
+                        update_relationship: false
+        Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customer:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                priceList:
+                    actions:
+                        update_relationship: false
+                customer:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
+            actions:
+                update:
+                    fields:
+                        website:
+                            exclude: true
+                        customer:
+                            exclude: true
+            subresources:
+                website:
+                    actions:
+                        update_relationship: false
+                customer:
+                    actions:
+                        update_relationship: false

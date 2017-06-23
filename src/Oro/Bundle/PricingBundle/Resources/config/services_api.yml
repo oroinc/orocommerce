@@ -1,0 +1,42 @@
+services:
+    oro_pricing.api.rebuild_price_lists_for_website:
+        class: 'Oro\Bundle\PricingBundle\Api\Processor\RebuildPriceListsForWebsiteProcessor'
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_data, class: '%oro_pricing.entity.price_list_website_fallback.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_data, class: '%oro_pricing.entity.price_list_website_fallback.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: '%oro_pricing.entity.price_list_website_fallback.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: '%oro_pricing.entity.price_list_website_fallback.class%' }
+            - { name: oro.api.processor, action: create, group: normalize_data, class: '%oro_pricing.entity.price_list_to_website.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_data, class: '%oro_pricing.entity.price_list_to_website.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: '%oro_pricing.entity.price_list_to_website.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: '%oro_pricing.entity.price_list_to_website.class%' }
+
+    oro_pricing.api.rebuild_price_lists_for_website_customer_group:
+        class: 'Oro\Bundle\PricingBundle\Api\Processor\RebuildPriceListsForWebsiteCustomerGroupProcessor'
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_data, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_data, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: create, group: normalize_data, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_data, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+
+    oro_pricing.api.rebuild_price_lists_for_website_customer:
+        class: 'Oro\Bundle\PricingBundle\Api\Processor\RebuildPriceListsForWebsiteCustomerProcessor'
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_data, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_data, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: create, group: normalize_data, class: '%oro_pricing.entity.price_list_to_customer.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_data, class: '%oro_pricing.entity.price_list_to_customer.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, class: '%oro_pricing.entity.price_list_to_customer.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, class: '%oro_pricing.entity.price_list_to_customer.class%' }
