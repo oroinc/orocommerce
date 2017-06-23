@@ -4,6 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Context;
 
 interface ContextDataConverterInterface
 {
+    const CRITERIA = 'criteria';
+
     /**
      * @param object $entity
      * @return array

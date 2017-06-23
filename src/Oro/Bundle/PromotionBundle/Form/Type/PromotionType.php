@@ -21,6 +21,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PromotionType extends AbstractType
 {
     const NAME = 'oro_promotion';
+    const SCOPE_TYPE = 'promotion';
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -62,7 +63,7 @@ class PromotionType extends AbstractType
                     'label' => 'oro.promotion.restrictions.label',
                     'required' => false,
                     'entry_options' => [
-                        'scope_type' => 'promotion'
+                        'scope_type' => self::SCOPE_TYPE
                     ],
                 ]
             )
