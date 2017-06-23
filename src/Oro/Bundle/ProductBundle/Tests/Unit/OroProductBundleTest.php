@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
+use Oro\Bundle\ProductBundle\Entity\Brand;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
@@ -37,6 +38,12 @@ class OroProductBundleTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals(
             [
                 Product::class => [
+                    'name' => 'names',
+                    'description' => 'descriptions',
+                    'shortDescription' => 'shortDescriptions',
+                    'slugPrototype' => 'slugPrototypes'
+                ],
+                Brand::class => [
                     'name' => 'names',
                     'description' => 'descriptions',
                     'shortDescription' => 'shortDescriptions',
