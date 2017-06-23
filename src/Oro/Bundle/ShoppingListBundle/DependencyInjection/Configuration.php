@@ -10,6 +10,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class Configuration implements ConfigurationInterface
 {
+    const DEFAULT_QUEST_SHOPPING_LIST_OWNER = 'default_guest_shopping_list_owner';
+
     /**
      * {@inheritDoc}
      */
@@ -27,7 +29,10 @@ class Configuration implements ConfigurationInterface
                         Product::INVENTORY_STATUS_IN_STOCK,
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
                     ]
-                ]
+                ],
+                'availability_for_guests' => ['type' => 'boolean', 'value' => true],
+                self::DEFAULT_QUEST_SHOPPING_LIST_OWNER => ['type' => 'string', 'value' => null],
+                'shopping_list_limit' => ['value' => 0, 'type' => 'integer']
             ]
         );
 

@@ -157,7 +157,7 @@ class LineItem extends ExtendLineItem implements
     protected $notes;
 
     /**
-     * @var CustomerUser
+     * @var CustomerUser|null
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
      * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
@@ -300,7 +300,7 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @return CustomerUser
+     * @return CustomerUser|null
      */
     public function getCustomerUser()
     {
@@ -308,11 +308,11 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @param CustomerUser $user
+     * @param CustomerUser|null $user
      *
      * @return $this
      */
-    public function setCustomerUser(CustomerUser $user)
+    public function setCustomerUser(CustomerUser $user = null)
     {
         $this->customerUser = $user;
 

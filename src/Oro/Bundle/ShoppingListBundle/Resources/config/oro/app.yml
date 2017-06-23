@@ -1,0 +1,6 @@
+security:
+    firewalls:
+        shoppinglist:
+            pattern:                 ^/customer/shoppinglist
+            context:                 customer_identity
+            anonymous_customer_user: true

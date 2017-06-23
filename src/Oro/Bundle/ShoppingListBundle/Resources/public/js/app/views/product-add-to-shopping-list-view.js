@@ -17,6 +17,7 @@ define(function(require) {
             buttonTemplate: '',
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
+            shoppingListCreateEnabled: true,
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
@@ -158,9 +159,11 @@ define(function(require) {
                 buttons.push($button);
             });
 
-            var $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
-            $createNewButton = this.updateLabel($createNewButton, null);
-            buttons.push($createNewButton);
+            if (this.options.shoppingListCreateEnabled) {
+                var $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
+                $createNewButton = this.updateLabel($createNewButton, null);
+                buttons.push($createNewButton);
+            }
 
             return buttons;
         },
@@ -335,6 +338,7 @@ define(function(require) {
                 return;
             }
             var self = this;
+
             mediator.execute('showLoading');
             $.ajax({
                 type: 'POST',

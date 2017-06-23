@@ -15,3 +15,5 @@ layout:
                 page_sidebar:
                     shopping_lists_menu:
                         shopping_lists_menu_item: ~
+
+    conditions: 'context["is_logged_in"]'
