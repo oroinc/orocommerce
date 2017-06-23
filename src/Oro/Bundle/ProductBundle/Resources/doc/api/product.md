@@ -61,23 +61,26 @@ Example:
             "id": "1"
           }
         },
+        "primaryUnitPrecision":{
+          "unit_code": "some code"
+        },
         "unitPrecisions": {
           "data": [
             {
               "type": "productunitprecisions",
-              "id": "1"
+              "unit_code": "each"
+              "unit_precision": "0",
+              "conversion_rate": "2",
+              "sell": "1"
             },
             {
               "type": "productunitprecisions",
-              "id": "65"
+              "unit_code": "item",
+              "unit_precision": "0",
+              "conversion_rate": "2",
+              "sell": "1"
             }
           ]
-        },
-        "primaryUnitPrecision": {
-          "data": {
-            "type": "productunitprecisions",
-            "id": "1"
-          }
         },
         "inventory_status": {
           "data": {
@@ -189,23 +192,26 @@ Example:
             "id": "1"
           }
         },
+        "primaryUnitPrecision":{
+          "unit_code": "some code"
+        },
         "unitPrecisions": {
           "data": [
             {
               "type": "productunitprecisions",
-              "id": "1"
+              "unit_code": "each"
+              "unit_precision": "0",
+              "conversion_rate": "2",
+              "sell": "1"
             },
             {
               "type": "productunitprecisions",
-              "id": "65"
+              "unit_code": "item",
+              "unit_precision": "0",
+              "conversion_rate": "2",
+              "sell": "1"
             }
           ]
-        },
-        "primaryUnitPrecision": {
-          "data": {
-            "type": "productunitprecisions",
-            "id": "1"
-          }
         },
         "inventory_status": {
           "data": {
