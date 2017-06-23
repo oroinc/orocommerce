@@ -95,7 +95,6 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     public function testGetNewArrivalsNoSegment()
     {
         $this->configManager
@@ -110,6 +109,22 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getProductSegmentById')
             ->with(1)
             ->willReturn(null);
+
+        static::assertEquals([], $this->provider->getNewArrivals());
+    }
+
+    public function testGetNewArrivalsNoSegmentInConfig()
+    {
+        $this->configManager
+            ->method('get')
+            ->will(static::returnValueMap([
+                ['oro_product.new_arrivals_products_segment_id', false, false, null, null],
+                ['oro_product.new_arrivals_max_items', false, false, null, 1],
+                ['oro_product.new_arrivals_min_items', false, false, null, 1],
+            ]));
+
+        $this->productSegmentProvider->expects(static::never())
+            ->method('getProductSegmentById');
 
         static::assertEquals([], $this->provider->getNewArrivals());
     }

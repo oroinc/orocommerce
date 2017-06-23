@@ -99,7 +99,7 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements Depen
                 [
                     'name' => 'id',
                     'label' => 'Id',
-                    'sorting' => '',
+                    'sorting' => 'DESC',
                     'func' => null,
                 ],
                 [

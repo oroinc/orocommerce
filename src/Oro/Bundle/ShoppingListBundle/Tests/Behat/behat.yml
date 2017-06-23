@@ -7,3 +7,19 @@ oro_behat_extension:
     ShoppingListTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
+
+  suites:
+    OroShoppingListBundle:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+      paths:
+        - '@OroShoppingListBundle/Tests/Behat/Features'

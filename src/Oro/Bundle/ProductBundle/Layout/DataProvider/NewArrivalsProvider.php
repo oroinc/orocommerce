@@ -55,7 +55,7 @@ class NewArrivalsProvider
      */
     public function getNewArrivals()
     {
-        if (!$this->isMinAndMaxLimitsValid()) {
+        if (!$this->isMinAndMaxLimitsValid() || !$this->getSegmentId()) {
             return [];
         }
 
