@@ -141,3 +141,9 @@ ShippingBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+        
+PricingBundle
+--------------
+- Service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`
+    - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
+    - method `postRemove` has additional argument `ProductUnitPrecision $precision`.
