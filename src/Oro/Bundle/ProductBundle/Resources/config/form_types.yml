@@ -183,11 +183,16 @@ services:
 
     oro_product.form.type.product_collection_content_variant:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductCollectionVariantType
+        tags:
+            - { name: form.type, alias: oro_product_collection_variant }
+
+    oro_product.form.type.product_collection_segment_type:
+        class: Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType
         arguments:
             - '@oro_product.service.product_collection_definition_converter'
             - '@property_accessor'
         tags:
-            - { name: form.type, alias: oro_product_collection_variant }
+            - { name: form.type, alias: oro_product_collection_segment_type }
 
     oro_product.product_variant.form.type.frontend_variant_field:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType'

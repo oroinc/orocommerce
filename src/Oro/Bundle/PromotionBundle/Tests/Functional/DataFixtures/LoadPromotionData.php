@@ -24,7 +24,7 @@ class LoadPromotionData extends AbstractFixture implements DependentFixtureInter
                 'sortOrder' => 100,
                 'enabled' => true,
             ],
-            'segmentReference' => LoadSegmentData::PRODUCT_STATIC_SEGMENT,
+            'segmentReference' => LoadSegmentData::PRODUCT_DYNAMIC_SEGMENT,
             'discountConfiguration' => LoadDiscountConfigurationData::DISCOUNT_CONFIGURATION_ORDER_PERCENT
         ],
     ];

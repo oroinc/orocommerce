@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Controller;
 
+use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,18 +29,15 @@ class PromotionController extends Controller
      */
     public function viewAction(Promotion $promotion)
     {
-        $segment = $promotion->getProductsSegment();
-        $this->get('oro_segment.entity_name_provider')->setCurrentItem($segment);
-        $gridName = Segment::GRID_PREFIX . $segment->getId();
-
-        if (!$this->get('oro_segment.datagrid.configuration.provider')->isConfigurationValid($gridName)) {
-            $gridName = false;
-        }
+        $definitionParts = $this->get('oro_product.service.product_collection_definition_converter')
+            ->getDefinitionParts($promotion->getProductsSegment()->getDefinition());
 
         return [
             'entity' => $promotion,
-            'gridName' => $gridName,
             'scopeEntities' => $this->get('oro_scope.scope_manager')->getScopeEntities('promotion'),
+            'segmentDefinition' => $definitionParts[ProductCollectionDefinitionConverter::DEFINITION_KEY],
+            'includedProducts' => $definitionParts[ProductCollectionDefinitionConverter::INCLUDED_FILTER_KEY],
+            'excludedProducts' => $definitionParts[ProductCollectionDefinitionConverter::EXCLUDED_FILTER_KEY]
         ];
     }
 

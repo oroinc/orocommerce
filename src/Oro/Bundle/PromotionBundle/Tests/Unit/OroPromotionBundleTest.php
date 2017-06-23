@@ -24,7 +24,7 @@ class OroPromotionBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(2, $passes);
+        $this->assertCount(3, $passes);
 
         $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[0]);
         $this->assertAttributeEquals(
