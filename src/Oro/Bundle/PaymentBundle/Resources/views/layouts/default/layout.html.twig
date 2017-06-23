@@ -1,4 +1,6 @@
 {% block payment_additional_data_widget %}
+    {% set views = options.views|default({}) %}
+    {% set view = views[options.payment_method]|default({}) %}
     {{ block(block_name) }}
 {% endblock %}
 

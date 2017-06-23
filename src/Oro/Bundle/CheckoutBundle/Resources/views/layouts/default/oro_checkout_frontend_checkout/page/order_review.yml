@@ -28,6 +28,7 @@ layout:
             options:
                 block_name: '=data["oro_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
                 options:
+                    views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                     payment_method: '=data["checkout"].getPaymentMethod()'
         - '@addTree':
             items:

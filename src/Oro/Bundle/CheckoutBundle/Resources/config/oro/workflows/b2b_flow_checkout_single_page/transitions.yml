@@ -82,6 +82,7 @@ workflows:
                         saveStateUrl: $.result.saveStateUrl
                         initialEvents:
                             - 'checkout:shipping-method:rendered'
+                            - 'checkout:payment-method:rendered'
                         targetEvents:
                             '.checkout-billing-address, .checkout-shipping-address':
                                 - 'payment-methods:refresh'

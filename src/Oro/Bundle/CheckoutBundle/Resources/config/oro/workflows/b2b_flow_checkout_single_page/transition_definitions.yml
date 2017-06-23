@@ -267,21 +267,6 @@ workflows:
                                 - $.result.successPayment
                                 - $.result.responseData[purchaseSuccessful]
 
-                            - '@redirect':
-                                conditions:
-                                    '@equal': [true, $.result.successPayment]
-                                route: oro_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-
-                            - '@redirect':
-                                conditions:
-                                    '@equal': [false, $.result.successPayment]
-                                route: oro_checkout_frontend_checkout
-                                route_parameters:
-                                    id: $checkout.id
-                                    transition: payment_error
-
                     # finish checkout
                     - '@tree':
                         conditions:
@@ -295,3 +280,18 @@ workflows:
                                     auto_remove_source: $auto_remove_source
                                     allow_manual_source_remove: $allow_manual_source_remove
                                     remove_source: $remove_source
+
+                    - '@redirect':
+                        conditions:
+                            '@equal': [true, $.result.successPayment]
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+
+                    - '@redirect':
+                        conditions:
+                            '@equal': [false, $.result.successPayment]
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $checkout.id
+                            transition: payment_error
