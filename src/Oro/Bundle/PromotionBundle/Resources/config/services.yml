@@ -23,6 +23,7 @@ services:
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.scope_decorator.inner'
+            - '@oro_scope.scope_manager'
 
     oro_promotion.rule_filtration.currency_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CurrencyFiltrationService

@@ -2,8 +2,14 @@
 
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
+use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class ScopeFiltrationService implements RuleFiltrationServiceInterface
 {
@@ -13,11 +19,18 @@ class ScopeFiltrationService implements RuleFiltrationServiceInterface
     private $filtrationService;
 
     /**
-     * @param RuleFiltrationServiceInterface $filtrationService
+     * @var ScopeManager
      */
-    public function __construct(RuleFiltrationServiceInterface $filtrationService)
+    private $scopeManager;
+
+    /**
+     * @param RuleFiltrationServiceInterface $filtrationService
+     * @param ScopeManager $scopeManager
+     */
+    public function __construct(RuleFiltrationServiceInterface $filtrationService, ScopeManager $scopeManager)
     {
         $this->filtrationService = $filtrationService;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
@@ -25,17 +38,36 @@ class ScopeFiltrationService implements RuleFiltrationServiceInterface
      */
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
-        $filteredOwners = array_values(array_filter($ruleOwners, [$this, 'hasMatchingScope']));
+        $criteria = $context[ContextDataConverterInterface::CRITERIA] ?? null;
+
+        $filteredOwners = array_values(array_filter(
+            $ruleOwners,
+            function ($ruleOwner) use ($criteria) {
+                return $this->hasMatchingScope($ruleOwner, $criteria);
+            }
+        ));
 
         return $this->filtrationService->getFilteredRuleOwners($filteredOwners, $context);
     }
 
     /**
      * @param RuleOwnerInterface $ruleOwner
+     * @param ScopeCriteria|null $criteria
+     *
      * @return bool
      */
-    private function hasMatchingScope(RuleOwnerInterface $ruleOwner): bool
+    private function hasMatchingScope(RuleOwnerInterface $ruleOwner, $criteria): bool
     {
-        return true;
+        if (!$ruleOwner instanceof Promotion || !$criteria instanceof ScopeCriteria) {
+            return false;
+        }
+
+        foreach ($ruleOwner->getScopes() as $scope) {
+            if ($this->scopeManager->isScopeMatchCriteria($scope, $criteria, PromotionType::SCOPE_TYPE)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

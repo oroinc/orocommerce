@@ -93,7 +93,19 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid(gridName)]
+                    'data' : [
+                        dataGrid.renderGrid(
+                            'promotion-products-collection-grid',
+                            {
+                                '_grid_view': {'_disabled': true},
+                                params: {
+                                    'segmentDefinition': segmentDefinition,
+                                    'includedProducts': includedProducts,
+                                    'excludedProducts': excludedProducts
+                                }
+                            }
+                        )
+                    ]
                 }
             ]
         }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -34,6 +35,8 @@ class OroPromotionBundle extends Bundle
                 'description' => 'descriptions',
             ],
         ]));
-        $container->addCompilerPass(new PromotionCompilerPass());
+        $container
+            ->addCompilerPass(new PromotionCompilerPass())
+            ->addCompilerPass(new PromotionProductsGridCompilerPass());
     }
 }

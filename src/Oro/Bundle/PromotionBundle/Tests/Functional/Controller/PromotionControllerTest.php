@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadSegmentData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class PromotionControllerTest extends WebTestCase
@@ -30,7 +29,6 @@ class PromotionControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_create'));
         $form = $crawler->selectButton('Close')->form();
 
-        $segmentId = $this->getReference(LoadSegmentData::PRODUCT_STATIC_SEGMENT)->getId();
         $form['oro_promotion[owner]'] = $this->getOwnerId();
         $form['oro_promotion[rule][name]'] = 'Some name';
         $form['oro_promotion[rule][enabled]'] = 1;
@@ -40,7 +38,9 @@ class PromotionControllerTest extends WebTestCase
         $form['oro_promotion[useCoupons]'] = 1;
         $form['oro_promotion[schedules][0][activeAt]'] = '2016-03-01T22:00:00Z';
         $form['oro_promotion[schedules][0][deactivateAt]'] = '2016-03-01T22:00:00Z';
-        $form['oro_promotion[productsSegment]'] = $segmentId;
+        $form['oro_promotion[discountConfiguration][options][amount_discount_value][value]'] = 77;
+        $form['oro_promotion[productsSegment][definition]']
+            = '{"filters":[{"columnName":"id","criterion":{"filter":"number","data":{"value":10,"type":"2"}}}]}';
         $form['oro_promotion[labels][values][default]'] = 'Default label';
         $form['oro_promotion[descriptions][values][default]'] = 'Default descriptions';
         $this->client->followRedirects(true);
