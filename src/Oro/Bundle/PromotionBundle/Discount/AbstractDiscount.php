@@ -46,7 +46,7 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function configure(array $options)
+    public function configure(array $options): array
     {
         if ($this->configured) {
             throw new ConfiguredException();
@@ -58,6 +58,8 @@ abstract class AbstractDiscount implements DiscountInterface
         $this->discountType = $resolvedOptions[self::DISCOUNT_TYPE];
         $this->discountValue = $resolvedOptions[self::DISCOUNT_VALUE];
         $this->discountCurrency = $resolvedOptions[self::DISCOUNT_CURRENCY];
+
+        return $resolvedOptions;
     }
 
     /**
@@ -82,6 +84,14 @@ abstract class AbstractDiscount implements DiscountInterface
     public function getDiscountCurrency(): string
     {
         return $this->discountCurrency;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMatchingProducts(): \Traversable
+    {
+        return $this->matchingProducts;
     }
 
     /**

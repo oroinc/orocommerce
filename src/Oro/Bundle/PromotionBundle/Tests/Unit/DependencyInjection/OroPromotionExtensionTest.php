@@ -22,12 +22,14 @@ class OroPromotionExtensionTest extends ExtensionTestCase
             'oro_promotion.discount_type_to_form_type_provider',
             'oro_promotion.discount.shipping_discount',
             'oro_promotion.discount.order_discount',
+            'oro_promotion.discount.buy_x_get_y_discount',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
         $sharedFalseDefinitions = [
             'oro_promotion.discount.shipping_discount',
-            'oro_promotion.discount.order_discount'
+            'oro_promotion.discount.order_discount',
+            'oro_promotion.discount.buy_x_get_y_discount'
         ];
         foreach ($sharedFalseDefinitions as $sharedFalseDefinition) {
             $this->assertFalse($this->actualDefinitions[$sharedFalseDefinition]->isShared());

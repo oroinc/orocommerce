@@ -27,7 +27,8 @@ class DiscountLineItemTest extends \PHPUnit_Framework_TestCase
                 ['priceType', PriceTypeAwareInterface::PRICE_TYPE_UNIT],
                 ['quantity', 10.5],
                 ['productUnit', new ProductUnit()],
-                ['subtotal', 42.2]
+                ['subtotal', 42.2],
+                ['sourceLineItem', new \stdClass()]
             ]
         );
     }
@@ -80,5 +81,19 @@ class DiscountLineItemTest extends \PHPUnit_Framework_TestCase
 
         $lineItem->addDiscountInformation($info);
         $this->assertSame([$info], $lineItem->getDiscountsInformation());
+    }
+
+    public function testGetDiscountTotal()
+    {
+        /** @var DiscountInterface $discount */
+        $discount = $this->createMock(DiscountInterface::class);
+        $discountInformation1 = new DiscountInformation($discount, 10.5);
+        $discountInformation2 = new DiscountInformation($discount, 20);
+
+        $lineItem = new DiscountLineItem();
+        $lineItem->addDiscountInformation($discountInformation1);
+        $lineItem->addDiscountInformation($discountInformation2);
+
+        $this->assertEquals(30.5, $lineItem->getDiscountTotal());
     }
 }

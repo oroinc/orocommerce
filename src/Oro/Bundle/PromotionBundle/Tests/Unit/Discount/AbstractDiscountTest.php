@@ -79,11 +79,11 @@ class AbstractDiscountTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('50%', $this->discount->__toString());
     }
 
-    public function testSetMatchingProducts()
+    public function testSetGetMatchingProducts()
     {
         $products = new ArrayCollection([$this->createMock(Product::class)]);
         $this->discount->setMatchingProducts($products);
-        $this->assertAttributeSame($products, 'matchingProducts', $this->discount);
+        $this->assertSame($products, $this->discount->getMatchingProducts());
     }
 
     public function testDoubleConfiguration()
@@ -119,7 +119,7 @@ class AbstractDiscountTest extends \PHPUnit_Framework_TestCase
                     AbstractDiscount::DISCOUNT_VALUE => 'abc'
                 ]
             ],
-            'invalid DISCOUNT_CURRENCY typr' => [
+            'invalid DISCOUNT_CURRENCY type' => [
                 [
                     AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
                     AbstractDiscount::DISCOUNT_CURRENCY => 100

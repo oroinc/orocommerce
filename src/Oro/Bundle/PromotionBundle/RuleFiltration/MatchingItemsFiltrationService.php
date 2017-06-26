@@ -44,7 +44,7 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
     {
         $lineItems = $context['lineItems'] ?? [];
 
-        $filteredOwners = [];
+        $filteredOwners = $ruleOwners;
         if (!empty($lineItems)) {
             $filteredOwners = array_values(array_filter($ruleOwners, function ($ruleOwner) use ($lineItems) {
                 if (!$ruleOwner instanceof Promotion) {

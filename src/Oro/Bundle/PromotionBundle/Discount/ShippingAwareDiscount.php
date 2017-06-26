@@ -43,11 +43,10 @@ abstract class ShippingAwareDiscount extends AbstractDiscount
     /**
      * {@inheritdoc}
      */
-    public function configure(array $options)
+    public function configure(array $options): array
     {
-        parent::configure($options);
+        $resolvedOptions = parent::configure($options);
 
-        $resolvedOptions = $this->getResolvedOptions($options);
         $this->hasShippingDiscount = !empty($resolvedOptions[self::SHIPPING_DISCOUNT]);
         if ($this->hasShippingDiscount) {
             $this->shippingDiscount->configure(
@@ -57,6 +56,8 @@ abstract class ShippingAwareDiscount extends AbstractDiscount
                 ]
             );
         }
+
+        return $resolvedOptions;
     }
 
     /**
