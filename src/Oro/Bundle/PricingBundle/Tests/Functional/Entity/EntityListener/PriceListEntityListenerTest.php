@@ -120,7 +120,7 @@ class PriceListEntityListenerTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = new PriceList();
         $priceList->setName('TEST123');
-        $priceList->setProductAssignmentRule('1 == 0');
+        $priceList->setProductAssignmentRule('TEST123');
         $em->persist($priceList);
         $em->flush();
 
