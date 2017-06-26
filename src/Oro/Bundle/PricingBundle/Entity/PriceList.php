@@ -186,7 +186,7 @@ class PriceList extends BasePriceList
     public function removeSchedule(PriceListSchedule $schedule)
     {
         $this->schedules->removeElement($schedule);
-        $this->containSchedule = !$this->schedules->isEmpty();
+        $this->refreshContainSchedule();
 
         return $this;
     }
@@ -208,6 +208,11 @@ class PriceList extends BasePriceList
         $this->containSchedule = $containSchedule;
 
         return $this;
+    }
+
+    public function refreshContainSchedule()
+    {
+        $this->setContainSchedule(!$this->schedules->isEmpty());
     }
 
     /**

@@ -23,6 +23,11 @@ class OroPricingExtensionTest extends ExtensionTestCase
         $expectedDefinitions = [
             'oro_pricing.api.handle_price_list_status_change',
             'oro_pricing.api.update_price_list_lexemes',
+            'oro_pricing.api.update_price_list_contains_schedule_on_schedule_delete',
+            'oro_pricing.api.update_price_list_contains_schedule_on_schedule_delete_list',
+            'oro_pricing.api.build_combined_price_list_on_schedule_save',
+            'oro_pricing.api.build_combined_price_list_on_schedule_delete',
+            'oro_pricing.api.build_combined_price_list_on_schedule_delete_list',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

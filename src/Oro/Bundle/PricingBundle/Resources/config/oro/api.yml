@@ -23,5 +23,14 @@ api:
                     exclude : true
                 priceListCurrencies:
                     data_type: array
-        Oro\Bundle\PricingBundle\Entity\PriceListSchedule: ~
+        Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
+            actions:
+                update:
+                    fields:
+                        priceList:
+                            exclude: true
+            subresources:
+                priceList:
+                    actions:
+                        update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceRule: ~
