@@ -16,13 +16,13 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
     public function handleUnitPrecisions(array $requestData)
     {
         $additionalUnitPrecisions = $primaryUnitPrecision = [];
-        $unitPrecisionInfo = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::UNIT_PRECISIONS];
-        $primaryUnitPrecisionCode = isset(
-                $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::PRIMARY_UNIT_PRECISION][self::CODE]
-            ) ?: null;
+        $unitPrecisionInfo = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::UNIT_PRECISIONS];
+        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
+        $primaryUnitPrecisionCode = isset($relationships[parent::PRIMARY_UNIT_PRECISION][parent::ATTR_UNIT_CODE]) ?
+            $relationships[parent::PRIMARY_UNIT_PRECISION][parent::ATTR_UNIT_CODE] : null;
         $hasPrimaryUnit = false;
         foreach ($unitPrecisionInfo[JsonApi::DATA] as $info) {
-            if ($primaryUnitPrecisionCode === $info[self::ATTR_UNIT_CODE] ||
+            if ($primaryUnitPrecisionCode === $info[parent::ATTR_UNIT_CODE] ||
                 ($primaryUnitPrecisionCode === null && $hasPrimaryUnit === false)
             ) {
                 $primaryUnitPrecision = $this->handlePrimaryUnitPrecision($info);
@@ -31,14 +31,19 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
             }
             $additionalUnitPrecisions[] = $this->handleAdditionalUnitPrecisions($info);
         }
+        if ($hasPrimaryUnit === false) {
+            $primaryUnitPrecision = $this->handlePrimaryUnitPrecision(
+                $relationships[parent::PRIMARY_UNIT_PRECISION]
+            );
+        }
 
-        $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::UNIT_PRECISIONS] = [
+        $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::UNIT_PRECISIONS] = [
              JsonApi::DATA => $additionalUnitPrecisions
         ];
-        $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::PRIMARY_UNIT_PRECISION] = [
+        $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::PRIMARY_UNIT_PRECISION] = [
             JsonApi::DATA => $primaryUnitPrecision
         ];
-        unset($requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][self::PRIMARY_UNIT_PRECISION][self::CODE]);
+        unset($relationships[parent::PRIMARY_UNIT_PRECISION][parent::ATTR_UNIT_CODE]);
 
         return $requestData;
     }
@@ -49,9 +54,9 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
      */
     private function handlePrimaryUnitPrecision(array $primaryUnitPrecisionInfo)
     {
-        unset($primaryUnitPrecisionInfo[self::ATTR_UNIT_PRECISION]);
-        unset($primaryUnitPrecisionInfo[self::ATTR_CONVERSION_RATE]);
-        unset($primaryUnitPrecisionInfo[self::ATTR_SELL]);
+        unset($primaryUnitPrecisionInfo[parent::ATTR_UNIT_PRECISION]);
+        unset($primaryUnitPrecisionInfo[parent::ATTR_CONVERSION_RATE]);
+        unset($primaryUnitPrecisionInfo[parent::ATTR_SELL]);
 
         $primaryUnitPrecisionId = $this->createProductUnitPrecision($primaryUnitPrecisionInfo);
 
@@ -80,12 +85,15 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
         $productUnit = $productUnitRepo->find($unitPrecisionInfo['unit_code']);
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setConversionRate(
-            isset($unitPrecisionInfo[self::ATTR_CONVERSION_RATE]) ?: 1
+            isset($unitPrecisionInfo[parent::ATTR_CONVERSION_RATE]) ?
+                $unitPrecisionInfo[parent::ATTR_CONVERSION_RATE] : 1
         );
         $unitPrecision->setPrecision(
-            isset($unitPrecisionInfo[self::ATTR_UNIT_PRECISION]) ?: 0
+            isset($unitPrecisionInfo[parent::ATTR_UNIT_PRECISION]) ? $unitPrecisionInfo[parent::ATTR_UNIT_PRECISION] : 0
         );
-        $unitPrecision->setSell((bool)isset($unitPrecisionInfo[self::ATTR_SELL]) ?: true);
+        $unitPrecision->setSell(
+            (bool)(isset($unitPrecisionInfo[parent::ATTR_SELL]) ? $unitPrecisionInfo[parent::ATTR_SELL] : true)
+        );
         $unitPrecision->setUnit($productUnit);
 
         $em->persist($unitPrecision);
