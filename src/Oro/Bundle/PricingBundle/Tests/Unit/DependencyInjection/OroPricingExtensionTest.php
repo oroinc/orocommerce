@@ -23,6 +23,9 @@ class OroPricingExtensionTest extends ExtensionTestCase
         $expectedDefinitions = [
             'oro_pricing.entity_listener.price_list.handle_status_change',
             'oro_pricing.entity_listener.price_list.update_lexemes',
+            'oro_pricing.api.update_lexemes_price_rule_processor',
+            'oro_pricing.api.update_lexemes_on_price_rule_delete_processor',
+            'oro_pricing.api.update_lexemes_on_price_rule_delete_list_processor'
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
