@@ -596,13 +596,14 @@ datagrids:
                 icon:          trash
                 configuration:
                     triggerAction: excludeRow
-        mass_actions:
-            delete:
-                type: frontend
-                label: oro.grid.action.delete
-                icon: trash
-                configuration:
-                    triggerAction: excludeRow
+#      @todo implement in scope of BB-10454
+#        mass_actions:
+#            delete:
+#                type: frontend
+#                label: oro.grid.action.delete
+#                icon: trash
+#                configuration:
+#                    triggerAction: excludeRow
 
     products-related-products-select:
         extends: products-select-grid-base
