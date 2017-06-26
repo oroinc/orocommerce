@@ -2,18 +2,23 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class OrderAddressSecurityProvider
 {
     const MANUAL_EDIT_ACTION = 'oro_order_address_%s_allow_manual';
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var OrderAddressProvider */
     protected $orderAddressProvider;
@@ -25,18 +30,21 @@ class OrderAddressSecurityProvider
     protected $customerUserAddressClass;
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param OrderAddressProvider $orderAddressProvider
-     * @param string $customerAddressClass
-     * @param string $customerUserAddressClass
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface        $tokenAccessor
+     * @param OrderAddressProvider          $orderAddressProvider
+     * @param string                        $customerAddressClass
+     * @param string                        $customerUserAddressClass
      */
     public function __construct(
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor,
         OrderAddressProvider $orderAddressProvider,
         $customerAddressClass,
         $customerUserAddressClass
     ) {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenAccessor = $tokenAccessor;
         $this->orderAddressProvider = $orderAddressProvider;
         $this->customerAddressClass = $customerAddressClass;
         $this->customerUserAddressClass = $customerUserAddressClass;
@@ -66,7 +74,7 @@ class OrderAddressSecurityProvider
             return true;
         }
 
-        $hasPermissions = $this->securityFacade->isGranted(
+        $hasPermissions = $this->authorizationChecker->isGranted(
             $this->getClassPermission('VIEW', $this->customerAddressClass)
         );
 
@@ -93,9 +101,9 @@ class OrderAddressSecurityProvider
             return true;
         }
 
-        $hasPermissions = $this->securityFacade
+        $hasPermissions = $this->authorizationChecker
                 ->isGranted($this->getClassPermission('VIEW', $this->customerUserAddressClass))
-            && $this->securityFacade->isGranted($this->getTypedPermission($type));
+            && $this->authorizationChecker->isGranted($this->getTypedPermission($type));
 
         if (!$hasPermissions) {
             return false;
@@ -140,7 +148,7 @@ class OrderAddressSecurityProvider
      */
     protected function getPermission($permission)
     {
-        if (!$this->securityFacade->getLoggedUser() instanceof CustomerUser) {
+        if (!$this->tokenAccessor->getUser() instanceof CustomerUser) {
             $permission .= OrderAddressProvider::ADMIN_ACL_POSTFIX;
         }
 
@@ -157,6 +165,6 @@ class OrderAddressSecurityProvider
 
         $permission = sprintf(self::MANUAL_EDIT_ACTION, $type);
 
-        return $this->securityFacade->isGranted($this->getPermission($permission));
+        return $this->authorizationChecker->isGranted($this->getPermission($permission));
     }
 }

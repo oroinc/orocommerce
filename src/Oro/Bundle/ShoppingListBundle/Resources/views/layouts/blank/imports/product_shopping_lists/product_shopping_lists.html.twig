@@ -61,7 +61,7 @@
                 shoppingLists: shoppingLists,
                 quantityComponentOptions: {
                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                    enable: resource_granted('oro_shopping_list_frontend_update'),
+                    enable: is_granted('oro_shopping_list_frontend_update'),
                 },
                 singleUnitMode: singleUnitMode,
                 singleUnitModeCodeVisible: singleUnitModeCodeVisible,
@@ -101,7 +101,7 @@
                                 options: {
                                     view: 'oroproduct/js/app/views/product-quantity-editable-view',
                                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
-                                    enable: resource_granted('oro_shopping_list_frontend_update'),
+                                    enable: is_granted('oro_shopping_list_frontend_update'),
                                     elements: {
                                         saveButton: '[data-role="accept"]',
                                         quantity: '[data-role="field__quantity"]',

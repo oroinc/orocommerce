@@ -1,0 +1,5 @@
+oro_behat_extension:
+    elements:
+        Shipping Rule Flat Rate:
+            selector: 'div#container'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

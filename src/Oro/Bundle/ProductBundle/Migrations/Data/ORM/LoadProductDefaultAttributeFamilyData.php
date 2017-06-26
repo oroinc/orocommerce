@@ -41,6 +41,8 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
                 'descriptions',
                 'shortDescriptions',
                 'featured',
+                'newArrival',
+                'brand'
             ],
             'groupVisibility' => true
         ],

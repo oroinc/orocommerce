@@ -106,7 +106,8 @@ services:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider'
         public: false
         arguments:
-            - "@oro_security.security_facade"
+            - "@security.authorization_checker"
+            - "@oro_security.token_accessor"
             - "@doctrine"
             - "@oro_security.acl_helper"
             - '%oro_customer.entity.customer_address.class%'
@@ -115,7 +116,8 @@ services:
     oro_sale.provider.quote_address_security:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider'
         arguments:
-            - "@oro_security.security_facade"
+            - "@security.authorization_checker"
+            - "@oro_security.token_accessor"
             - "@oro_sale.provider.quote_address"
             - '%oro_customer.entity.customer_address.class%'
             - '%oro_customer.entity.customer_user_address.class%'

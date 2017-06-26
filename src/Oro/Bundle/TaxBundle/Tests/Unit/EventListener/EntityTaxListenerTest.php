@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
 
+use Oro\Bundle\TaxBundle\Model\Result;
+use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
@@ -183,13 +185,95 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($orderId, $taxValue->getEntityId());
     }
 
-    public function testPreFlush()
+    public function testPreFlushOnEntityWithoutSavedTaxValue()
     {
         $orderId = 1;
         /** @var Order $order */
-        $order = $this->getEntity('\Oro\Bundle\OrderBundle\Entity\Order', ['id' => $orderId]);
+        $order = $this->getEntity(Order::class, ['id' => $orderId]);
 
         $event = new PreFlushEventArgs($this->entityManager);
+
+        $taxValue = new TaxValue();
+        $this->taxManager->expects($this->once())
+            ->method('getTaxValue')
+            ->with($order)
+            ->willReturn($taxValue);
+
+        $this->taxManager->expects($this->never())
+            ->method('loadTax');
+
+        $this->taxManager->expects($this->never())
+            ->method('getTax');
+
+        $this->taxManager->expects($this->once())
+            ->method('saveTax')
+            ->with($order, false);
+
+        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
+
+        $this->listener->preFlush($order, $event);
+    }
+
+    public function testPreFlushWithSameTaxResults()
+    {
+        $orderId = 1;
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => $orderId]);
+
+        $event = new PreFlushEventArgs($this->entityManager);
+
+        $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
+        $this->taxManager->expects($this->once())
+            ->method('getTaxValue')
+            ->with($order)
+            ->willReturn($taxValue);
+
+        $loadedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
+        $this->taxManager->expects($this->once())
+            ->method('loadTax')
+            ->with($order)
+            ->willReturn($loadedResult);
+
+        $calculatedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
+        $this->taxManager->expects($this->once())
+            ->method('getTax')
+            ->with($order)
+            ->willReturn($calculatedResult);
+
+        $this->taxManager->expects($this->never())
+            ->method('saveTax')
+            ->with($order, false);
+
+        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
+
+        $this->listener->preFlush($order, $event);
+    }
+
+    public function testPreFlushWithDifferentTaxResults()
+    {
+        $orderId = 1;
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => $orderId]);
+
+        $event = new PreFlushEventArgs($this->entityManager);
+
+        $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
+        $this->taxManager->expects($this->once())
+            ->method('getTaxValue')
+            ->with($order)
+            ->willReturn($taxValue);
+
+        $loadedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
+        $this->taxManager->expects($this->once())
+            ->method('loadTax')
+            ->with($order)
+            ->willReturn($loadedResult);
+
+        $calculatedResult = new Result([Result::TOTAL => ResultElement::create(1, 1)]);
+        $this->taxManager->expects($this->once())
+            ->method('getTax')
+            ->with($order)
+            ->willReturn($calculatedResult);
 
         $this->taxManager->expects($this->once())
             ->method('saveTax')

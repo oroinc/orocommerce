@@ -20,6 +20,7 @@ class OroSEOBundle extends Bundle
         parent::build($container);
 
         $fields = [
+            'metaTitle' => 'metaTitles',
             'metaDescription' => 'metaDescriptions',
             'metaKeyword' => 'metaKeywords'
         ];
@@ -29,6 +30,7 @@ class OroSEOBundle extends Bundle
                 'Oro\Bundle\ProductBundle\Entity\Product' => $fields,
                 'Oro\Bundle\CatalogBundle\Entity\Category' => $fields,
                 'Oro\Bundle\CMSBundle\Entity\Page' => $fields,
+                'Oro\Bundle\ProductBundle\Entity\Brand' => $fields,
             ]))
             ->addCompilerPass(new ContentNodeFieldsChangesCompilerPass(
                 array_values($fields),

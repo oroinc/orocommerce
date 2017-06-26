@@ -38,3 +38,11 @@
         Item #: <span class="red">{{ block_widget(block) }}</span>
     </div>
 {% endblock %}
+
+{% block _product_view_attribute_group_general_attribute_text_brand_widget %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' product-brand'}) %}
+    <div {{ block('block_attributes') }}>
+        <span class="product-view-brand">{{ 'oro.product.brand.label'|trans }}:</span>
+        <span class="product-view-brand-title">{{ block_widget(block) }}</span>
+    </div>
+{% endblock %}

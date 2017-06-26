@@ -12,6 +12,7 @@ use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener;
+use Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
@@ -41,6 +42,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $nameStrategy;
 
     /**
+     * @var ProductCollectionDefinitionConverter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $definitionConverter;
+
+    /**
      * @var ProductCollectionDatagridListener
      */
     protected $listener;
@@ -48,16 +54,17 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->requestStack = $this->createMock(RequestStack::class);
-        $this->segmentManager = $this->getMockBuilder(SegmentManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->segmentManager = $this->createMock(SegmentManager::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->nameStrategy = $this->createMock(NameStrategyInterface::class);
+        $this->definitionConverter = $this->createMock(ProductCollectionDefinitionConverter::class);
+
         $this->listener = new ProductCollectionDatagridListener(
             $this->requestStack,
             $this->segmentManager,
             $this->registry,
-            $this->nameStrategy
+            $this->nameStrategy,
+            $this->definitionConverter
         );
     }
 
@@ -98,9 +105,13 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testOnBuildAfterWithoutDefinition()
+    public function testOnBuildAfterWithEmptyRequestData()
     {
+        $qb = $this->createMock(QueryBuilder::class);
         $dataSource = $this->createMock(OrmDatasource::class);
+        $dataSource->expects($this->once())
+            ->method('getQueryBuilder')
+            ->willReturn($qb);
 
         /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
@@ -143,6 +154,9 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $segmentDefinition = 'definition';
+        $updatedSegmentDefinition = '{"filters":["merged-filters"]}';
+        $included = '1,2';
+        $excluded = '3,4';
         $qb = $this->createMock(QueryBuilder::class);
 
         $dataSource = $this->createMock(OrmDatasource::class);
@@ -163,11 +177,17 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn(new Request([
-                $requestParameterKey => $segmentDefinition
+                $requestParameterKey => $segmentDefinition,
+                $requestParameterKey . ':incl' => $included,
+                $requestParameterKey . ':excl' => $excluded
             ]));
+        $this->definitionConverter->expects($this->once())
+            ->method('putConditionsInDefinition')
+            ->with($segmentDefinition, $excluded, $included)
+            ->willReturn($updatedSegmentDefinition);
 
         $createdSegment = new Segment();
-        $createdSegment->setDefinition($segmentDefinition)
+        $createdSegment->setDefinition($updatedSegmentDefinition)
             ->setEntity(Product::class)
             ->setType($segmentType);
 
@@ -184,9 +204,70 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function gridNameDataProvider(): array
     {
         return [
-            'without scope' => ['grid_name', null, 'grid_name:0'],
+            'without scope' => ['grid_name', null, 'grid_name'],
             'with 0 scope' => ['grid_name', '0', 'grid_name:0'],
             'with scope' => ['grid_name', '1', 'grid_name:1']
+        ];
+    }
+
+    /**
+     * @dataProvider definitionEmptyAndNoIncludedProductsDataProvider
+     * @param array $requestData
+     */
+    public function testOnBuildAfterWhenDefinitionFilterIsEmptyAndNoIncludedProducts(array $requestData)
+    {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn(new Request($requestData));
+
+        $qb = $this->createMock(QueryBuilder::class);
+        $dataSource = $this->createMock(OrmDatasource::class);
+        $dataSource->expects($this->once())
+            ->method('getQueryBuilder')
+            ->willReturn($qb);
+
+        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        $dataGrid = $this->createMock(Datagrid::class);
+        $dataGrid->expects($this->once())
+         ->method('getDatasource')
+         ->willReturn($dataSource);
+
+        $this->assertGetGridFullNameCalls($dataGrid, 'grid_name', null);
+        $event = new BuildAfter($dataGrid);
+
+        $this->segmentManager->expects($this->never())
+             ->method('filterBySegment');
+
+        $qb->expects($this->once())
+            ->method('andWhere')
+            ->with('1 = 0');
+
+        $this->listener->onBuildAfter($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function definitionEmptyAndNoIncludedProductsDataProvider()
+    {
+        return [
+            'empty request data' => [
+                'requestData' => []
+            ],
+            'empty filters, no included&excluded products' => [
+                'requestData' => [
+                    'sd_grid_name' => '{filters:[]}',
+                    'sd_grid_name:incl' => null,
+                    'sd_grid_name:excl' => null
+                ]
+            ],
+            'empty filters, no included products' => [
+                'requestData' => [
+                    'sd_grid_name' => '{filters:[]}',
+                    'sd_grid_name:incl' => null,
+                    'sd_grid_name:excl' => [1, 2]
+                ]
+            ],
         ];
     }
 
@@ -198,7 +279,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
     private function assertGetGridFullNameCalls(Datagrid $dataGrid, $gridName, $gridScope)
     {
         $gridFullName = $gridName;
-        if ($gridScope) {
+        if ($gridScope !== null) {
             $gridFullName .= ':' . $gridScope;
         }
         $dataGrid->expects($this->once())

@@ -1,5 +1,6 @@
 parameters:
     oro_product.entity.product.class: Oro\Bundle\ProductBundle\Entity\Product
+    oro_product.entity.brand.class: Oro\Bundle\ProductBundle\Entity\Brand
     oro_product.entity.product_unit.class: Oro\Bundle\ProductBundle\Entity\ProductUnit
     oro_product.entity.product_unit_precision.class: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision
     oro_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
@@ -9,12 +10,21 @@ parameters:
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
+    oro_product.provider.brand_status_provider.class: Oro\Bundle\ProductBundle\Provider\BrandStatusProvider
+
 services:
     oro_product.product.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_product.entity.product.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_product.brand.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_product.entity.brand.class%'
             - "@doctrine.orm.entity_manager"
 
     oro_product.service.quantity_rounding:
@@ -91,6 +101,15 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product, acl_resource: oro_product_view }
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_frontend, acl_resource: oro_product_frontend_view }
+
+    oro_product.form.autocomplete.brand.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_product.entity.brand.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_brand }
 
     oro_product.service.sku_incrementor:
         class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'
@@ -186,7 +205,8 @@ services:
         arguments:
             - "@router"
             - "@oro_product.storage.product_data_storage"
-            - "@oro_security.security_facade"
+            - "@security.authorization_checker"
+            - "@oro_security.token_accessor"
             - "@session"
             - "@translator"
         calls:
@@ -557,6 +577,7 @@ services:
             - '@oro_product.product.manager'
             - '@oro_config.user'
             - '@logger'
+            - '@oro.cache.memory_cache_chain'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
@@ -625,7 +646,7 @@ services:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_type }
@@ -634,7 +655,7 @@ services:
         class: Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType
         public: false
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
         tags:
             - { name: oro_web_catalog.content_variant_type }
 
@@ -644,6 +665,13 @@ services:
             - '@oro_config.global'
         tags:
             - { name: oro_redirect.routing_information_provider, alias: '%oro_product.entity.product.class%' }
+
+    oro_product.provider.brand.routing_information_provider:
+        class: Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: oro_redirect.routing_information_provider, alias: '%oro_product.entity.brand.class%' }
 
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
@@ -855,6 +883,7 @@ services:
             - '@oro_segment.segment_manager'
             - '@doctrine'
             - '@oro_datagrid.datagrid.name_strategy'
+            - '@oro_product.service.product_collection_definition_converter'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
 
@@ -944,3 +973,56 @@ services:
         arguments:
             - '@oro_entity_config.manager.attribute_manager'
             - '@oro_entity_config.provider.serialized_field_provider'
+
+    oro_product.provider.grid_count_provider:
+        class: Oro\Bundle\ProductBundle\Provider\GridCountProvider
+        arguments:
+            - '@oro_datagrid.datagrid.manager'
+            - '@security.authorization_checker'
+            - '@oro_datagrid.extension.pager.orm.pager'
+
+    oro_product.provider.brand_status_provider:
+        class: '%oro_product.provider.brand_status_provider.class%'
+
+    oro_product.service.product_collection_definition_converter:
+        class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
+        public: false
+
+    oro_product.event_listener.product_collection_datagrid_parameters_for_selected_products_grid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener
+        calls:
+            - [setParameterName,  ['selectedProducts']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-selected-products-grid, method: onBuildAfter }
+
+    oro_product.event_listener.product_collection_datagrid_parameters_for_add_products_grid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridParametersListener
+        calls:
+            - [setParameterName,  ['hiddenProducts']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-add-products-base-grid, method: onBuildAfter }
+
+    oro_product.datagrid.extension.mass_action.trigger_event_for_selected_product_ids_mass_action_handler:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\TriggerEventForSelectedProductIdsMassActionHandler
+        arguments:
+            - '@oro_config.manager'
+            - '@translator'
+
+    oro_product.datagrid.extension.mass_action.action.trigger_event_for_selected_product_ids_mass_action:
+        class: Oro\Bundle\ProductBundle\DataGrid\Extension\MassAction\Action\TriggerEventForSelectedProductIdsMassAction
+        shared: false
+        tags:
+            - { name: oro_datagrid.extension.mass_action.type, type: trigger-event-for-selected-product-ids }
+
+    oro_product.event_listener.product_stickers_frontend_datagrid:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductStickersFrontendDatagridListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
+
+    oro_product.layout.data_provider.product_stickers:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductStickersProvider'
+        arguments:
+            - "@oro_config.manager"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_stickers }

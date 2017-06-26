@@ -43,7 +43,6 @@ class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingL
                 $productOffer = $productDemand->getQuoteProductOffer();
 
                 $lineItemBuilder = $this->shippingLineItemBuilderFactory->createBuilder(
-                    $productOffer->getPrice(),
                     $productOffer->getProductUnit(),
                     $productOffer->getProductUnitCode(),
                     $productDemand->getQuantity(),
@@ -52,6 +51,10 @@ class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingL
 
                 if (null !== $productOffer->getProduct()) {
                     $lineItemBuilder->setProduct($productOffer->getProduct());
+                }
+
+                if (null !== $productOffer->getPrice()) {
+                    $lineItemBuilder->setPrice($productOffer->getPrice());
                 }
 
                 $shippingLineItems[] = $lineItemBuilder->getResult();

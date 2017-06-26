@@ -1,0 +1,90 @@
+// @theme: default;
+
+.oro-more-info-toggler {
+    &__container {
+        display: none;
+    }
+
+    &__list {
+        @include list-normalize();
+
+        margin: 8px 0 0 19px;
+
+        + a {
+            margin-left: 19px;
+        }
+
+        li {
+            margin: 0 0 3px;
+
+            font-size: $base-font-size - 1;
+
+            a {
+                color: get-color('additional', 'dark');
+
+                &:focus, &:active, &:hover {
+                    color: get-color('additional', 'dark');
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    > a,
+    &__trigger {
+        display: inline-block !important;
+
+        color: get-color('ui', 'normal');
+
+        cursor: pointer;
+
+        &:focus,
+        &:hover,
+        &:active,
+        &:visited {
+            text-decoration: none;
+        }
+
+        &.orange {
+            color: get-color('primary', 'base');
+        }
+    }
+
+    > i,
+    &__icon {
+        transition: transform .2s linear;
+
+        &.expanded {
+            transform: rotate(90deg);
+        }
+    }
+
+    &.within-fixed-checkout {
+        position: relative;
+        margin: 10px 0;
+    }
+
+    &_indented {
+        .oro-more-info-toggler__container {
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    &_b-bordered {
+        padding-bottom: 15px;
+        border-bottom: 1px solid get-color('additional', 'light');
+    }
+
+    &--list-view {
+        display: none;
+    }
+
+    &--gallery-view {
+        margin-bottom: 10px;
+    }
+
+    &--no-image-view {
+        display: none;
+    }
+}

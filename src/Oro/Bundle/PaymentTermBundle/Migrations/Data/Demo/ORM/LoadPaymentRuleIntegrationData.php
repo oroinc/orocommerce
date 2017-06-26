@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -92,7 +93,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
 
         $shippingRule->setRule($rule)
             ->setOrganization($this->getOrganization($manager))
-            ->setCurrency('USD')
+            ->setCurrency(CurrencyConfig::DEFAULT_CURRENCY)
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);

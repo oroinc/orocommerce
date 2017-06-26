@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -33,9 +33,9 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     protected $session;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|PriceListTreeHandler
@@ -84,9 +84,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->session = $this->createMock(SessionInterface::class);
 
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->priceListTreeHandler = $this->getMockBuilder(PriceListTreeHandler::class)
             ->disableOriginalConstructor()
@@ -112,7 +110,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         unset(
             $this->session,
-            $this->securityFacade,
+            $this->tokenAccessor,
             $this->priceListTreeHandler,
             $this->handler,
             $this->request,
@@ -129,7 +127,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return new PriceListRequestHandler(
             $this->requestStack,
-            $this->securityFacade,
+            $this->tokenAccessor,
             $this->priceListTreeHandler,
             $this->registry,
             $this->relationsProvider,
@@ -261,8 +259,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         /** @var CombinedPriceList $priceList */
         $priceList = $this->getEntity(CombinedPriceList::class, 42);
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
             ->willReturn($user);
 
         $this->request->expects($this->any())
@@ -360,8 +358,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
             ->willReturn($user);
 
         $this->relationsProvider->expects($this->once())
