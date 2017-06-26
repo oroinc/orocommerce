@@ -50,6 +50,12 @@ class InteractiveLoginListener
      */
     public function onInteractiveLogin(InteractiveLoginEvent $event)
     {
+        $user = $event->getAuthenticationToken()->getUser();
+
+        if (!$user instanceof CustomerUser) {
+            return;
+        }
+
         try {
             $credentials = $this->getCredentials($event->getRequest());
             if ($credentials) {
@@ -60,10 +66,8 @@ class InteractiveLoginListener
                     /** @var ShoppingList $visitorShoppingList */
                     $visitorShoppingList = $shoppingLists->first();
                     if ($visitorShoppingList && $visitorShoppingList->getLineItems()->count()) {
-                        /** @var CustomerUser $customerUser */
-                        $customerUser = $event->getAuthenticationToken()->getUser();
                         $this->guestShoppingListMigrationManager
-                            ->migrateGuestShoppingList($visitor, $customerUser, $visitorShoppingList);
+                            ->migrateGuestShoppingList($visitor, $user, $visitorShoppingList);
                     }
                 }
             }

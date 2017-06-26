@@ -75,8 +75,7 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRequest')
             ->willReturn($this->request);
 
-        $this->visitorManager->expects($this->never())
-            ->method('find');
+        $this->configureToken();
 
         $this->listener->onInteractiveLogin($this->event);
     }
@@ -87,6 +86,9 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
+
+        $this->configureToken();
+
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
@@ -106,9 +108,12 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
+
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
+
+        $this->configureToken();
 
         $visitor = new CustomerVisitorStub();
         $this->visitorManager->expects($this->once())
@@ -128,9 +133,12 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
+
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
+
+        $this->configureToken();
 
         $visitor = new CustomerVisitorStub();
         $visitor->addShoppingList(new ShoppingList());
@@ -154,14 +162,7 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
-        $customerUser = new CustomerUser();
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($customerUser);
-        $this->event->expects($this->once())
-            ->method('getAuthenticationToken')
-            ->willReturn($token);
+        $customerUser = $this->configureToken();
 
         $shoppingList = new ShoppingList();
         $shoppingList->addLineItem(new LineItem());
@@ -188,15 +189,7 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
-        $customerUser = new CustomerUser();
-        $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->once())
-            ->method('getUser')
-            ->willReturn($customerUser);
-        $this->event->expects($this->once())
-            ->method('getAuthenticationToken')
-            ->willReturn($token);
-
+        $customerUser = $this->configureToken();
         $shoppingList = new ShoppingList();
         $shoppingList->addLineItem(new LineItem());
         $visitor = new CustomerVisitorStub();
@@ -214,6 +207,40 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->logger->expects($this->once())
             ->method('error')
             ->with('Migration of the guest shopping list failed.');
+
+        $this->listener->onInteractiveLogin($this->event);
+    }
+
+    /**
+     * @param bool $isCustomer
+     * @return CustomerUser|\stdClass
+     */
+    private function configureToken($isCustomer = true)
+    {
+        $customerUser = $isCustomer ? new CustomerUser() : new \stdClass();
+        $token = $this->createMock(TokenInterface::class);
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+        $this->event->expects($this->once())
+            ->method('getAuthenticationToken')
+            ->willReturn($token);
+
+        return $customerUser;
+    }
+
+    public function testNotCustomerLogin()
+    {
+        $this->configureToken(false);
+        $this->event->expects($this->never())
+            ->method('getRequest')
+            ->willReturn($this->request);
+
+        $this->visitorManager->expects($this->never())
+            ->method('find');
+
+        $this->guestShoppingListMigrationManager->expects($this->never())
+            ->method('migrateGuestShoppingList');
 
         $this->listener->onInteractiveLogin($this->event);
     }
