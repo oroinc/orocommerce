@@ -122,6 +122,67 @@ Oro\Bundle\PricingBundle\Entity\PriceListCurrency:
             - NotBlank: ~
             - Currency: ~
 
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website]
+    properties:
+        priceList:
+            - NotBlank: ~
+        website:
+            - NotBlank:
+                groups: [api]
+
+Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: website
+    properties:
+        website:
+            - NotBlank: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website, customerGroup]
+    properties:
+        priceList:
+            - NotBlank: ~
+        website:
+            - NotBlank:
+                groups: [api]
+        customerGroup:
+            - NotBlank:
+                groups: [api]
+
+Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [website, customerGroup]
+    properties:
+        website:
+            - NotBlank: ~
+        customerGroup:
+            - NotBlank: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website, customer]
+    properties:
+        priceList:
+            - NotBlank: ~
+        website:
+            - NotBlank:
+                groups: [api]
+        customer:
+            - NotBlank:
+                groups: [api]
+
+Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [website, customer]
+    properties:
+        website:
+            - NotBlank: ~
+        customer:
+            - NotBlank: ~
+
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~

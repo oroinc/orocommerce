@@ -65,13 +65,4 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         return $form;
     }
-
-    /**
-     * @When click use different card link
-     */
-    public function clickUseDifferentCardLink()
-    {
-        $createOrderButton = $this->createElement('UseDifferentCardLink');
-        $createOrderButton->click();
-    }
 }

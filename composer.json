@@ -16,7 +16,6 @@
         "oro/marketing": "2.x-dev",
         "oro/customer-portal": "2.x-dev",
         "box/spout": "2.3.*",
-        "brick/math": "0.5.*",
         "myclabs/deep-copy": "1.5.*",
         "bower-asset/jquery-creditcardvalidator": "1.0",
         "bower-asset/jquery-validate": "1.11.1",
