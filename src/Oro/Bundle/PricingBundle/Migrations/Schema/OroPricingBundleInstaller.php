@@ -42,7 +42,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         /** Tables generation **/
         $this->createOroPriceListTable($schema);
         $this->createOroPriceListCurrencyTable($schema);
-        $this->createOroPriceListToCustomerGrTable($schema);
+        $this->createOroPriceListToCustomerGroupTable($schema);
         $this->createOroPriceListToCustomerTable($schema);
         $this->createOroPriceListToWebsiteTable($schema);
         $this->createOroPriceProductTable($schema);
@@ -131,7 +131,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      *
      * @param Schema $schema
      */
-    protected function createOroPriceListToCustomerGrTable(Schema $schema)
+    protected function createOroPriceListToCustomerGroupTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_list_to_cus_group');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
