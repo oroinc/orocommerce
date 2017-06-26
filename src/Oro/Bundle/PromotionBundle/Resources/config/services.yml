@@ -212,3 +212,12 @@ services:
 
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
+
+    oro_promotion.event_listener.order:
+        class: Oro\Bundle\PromotionBundle\EventListener\ORM\OrderEventListener
+        arguments:
+            - 'oro_promotion.discount_manager'
+
+    oro_promotion.discount_manager:
+        class: Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager
+
