@@ -46,7 +46,7 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        $this->context->setRequestData($this->createRequestData());
+        $this->context->setRequestData(ProcessUnitPrecisionsTestHelper::createRequestData());
         $this->processUnitPrecisions->process($this->context);
         $relationships = $this->context->getRequestData()['relationships'];
         $this->assertArrayHasKey(
@@ -69,54 +69,10 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessNoUnitPrecisions()
     {
-        $requestData = $this->createRequestData();
+        $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
         unset($requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][ProcessUnitPrecisions::UNIT_PRECISIONS]);
         $this->context->setRequestData($requestData);
         $this->processUnitPrecisions->process($this->context);
         $this->assertSame($requestData, $this->context->getRequestData());
-    }
-
-    /**
-     * @return array
-     */
-    private function createRequestData()
-    {
-        return [
-            "data" => [
-                "type" => "products",
-                "attributes" => [
-                    "sku" => "test-api",
-                    "status" => "enabled",
-                    "variantFields" => [],
-                    "createdAt" => "2017-06-13T07:12:06Z",
-                    "updatedAt" => "2017-06-13T07:12:31Z",
-                    "productType" => "simple",
-                    "featured" => true
-                ],
-                "relationships" => [
-                    "primaryUnitPrecision" => [
-                        "unit_code" => "piece",
-                    ],
-                    "unitPrecisions" => [
-                        "data" => [
-                            0 => [
-                                "type" => "productunitprecisions",
-                                "unit_code" => "each",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
-                            ],
-                            1 => [
-                                "type" => "productunitprecisions",
-                                "unit_code" => "item",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
     }
 }

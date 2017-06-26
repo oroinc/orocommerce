@@ -29,16 +29,11 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
             if ($primaryUnitPrecisionCode === $info[parent::ATTR_UNIT_CODE] ||
                 ($primaryUnitPrecisionCode === null && $hasPrimaryUnit === false)
             ) {
-                $primaryUnitPrecision = $this->handlePrimaryUnitPrecision($info);
+                $primaryUnitPrecision = $this->handleAndCreateUnitPrecision($info);
                 $hasPrimaryUnit = true;
                 continue;
             }
-            $additionalUnitPrecisions[] = $this->handleAdditionalUnitPrecisions($info);
-        }
-        if ($hasPrimaryUnit === false) {
-            $primaryUnitPrecision = $this->handlePrimaryUnitPrecision(
-                $relationships[parent::PRIMARY_UNIT_PRECISION]
-            );
+            $additionalUnitPrecisions[] = $this->handleAndCreateUnitPrecision($info);
         }
 
         $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][parent::UNIT_PRECISIONS] = [
@@ -51,6 +46,7 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
 
         return $requestData;
     }
+
     /**
      * @param $unitPrecisionInfo
      * @param $pointer
@@ -73,11 +69,7 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
             $existentCodes[] = $unitPrecision[self::ATTR_UNIT_CODE];
         }
 
-        if ($this->context->hasErrors()) {
-            return false;
-        }
-
-        return true;
+        return !$this->context->hasErrors();
     }
 
     public function validatePrimaryUnitPrecision($relationships, $pointer)
@@ -97,11 +89,7 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
             );
         }
 
-        if ($this->context->hasErrors()) {
-            return false;
-        }
-
-        return true;
+        return !$this->context->hasErrors();
     }
 
     /**
@@ -160,25 +148,10 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
     }
 
     /**
-     * @param array $primaryUnitPrecisionInfo
-     * @return array
-     */
-    private function handlePrimaryUnitPrecision(array $primaryUnitPrecisionInfo)
-    {
-        unset($primaryUnitPrecisionInfo[parent::ATTR_UNIT_PRECISION]);
-        unset($primaryUnitPrecisionInfo[parent::ATTR_CONVERSION_RATE]);
-        unset($primaryUnitPrecisionInfo[parent::ATTR_SELL]);
-
-        $primaryUnitPrecisionId = $this->createProductUnitPrecision($primaryUnitPrecisionInfo);
-
-        return [JsonApi::TYPE => 'productunitprecisions', JsonApi::ID => (string)$primaryUnitPrecisionId];
-    }
-
-    /**
      * @param array $unitPrecisionInfo
      * @return array
      */
-    private function handleAdditionalUnitPrecisions(array $unitPrecisionInfo)
+    private function handleAndCreateUnitPrecision(array $unitPrecisionInfo)
     {
        $unitPrecisionId = $this->createProductUnitPrecision($unitPrecisionInfo);
 
@@ -195,16 +168,9 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
         $productUnitRepo = $this->doctrineHelper->getEntityRepositoryForClass(ProductUnit::class);
         $productUnit = $productUnitRepo->find($unitPrecisionInfo['unit_code']);
         $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision->setConversionRate(
-            isset($unitPrecisionInfo[parent::ATTR_CONVERSION_RATE]) ?
-                $unitPrecisionInfo[parent::ATTR_CONVERSION_RATE] : 1
-        );
-        $unitPrecision->setPrecision(
-            isset($unitPrecisionInfo[parent::ATTR_UNIT_PRECISION]) ? $unitPrecisionInfo[parent::ATTR_UNIT_PRECISION] : 0
-        );
-        $unitPrecision->setSell(
-            (bool)(isset($unitPrecisionInfo[parent::ATTR_SELL]) ? $unitPrecisionInfo[parent::ATTR_SELL] : true)
-        );
+        $unitPrecision->setConversionRate($unitPrecisionInfo[parent::ATTR_CONVERSION_RATE]);
+        $unitPrecision->setPrecision($unitPrecisionInfo[parent::ATTR_UNIT_PRECISION]);
+        $unitPrecision->setSell((bool)$unitPrecisionInfo[parent::ATTR_SELL]);
         $unitPrecision->setUnit($productUnit);
 
         $em->persist($unitPrecision);
