@@ -16,19 +16,37 @@ services:
         class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
         extends: oro_rule.rule_filtration.service
 
+    oro_promotion.rule_filtration.enabled_decorator:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 0
+        arguments:
+            - '@oro_promotion.rule_filtration.enabled_decorator.inner'
+
     oro_promotion.rule_filtration.scope_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 0
+        decoration_priority: 50
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.scope_decorator.inner'
             - '@oro_scope.scope_manager'
 
+    oro_promotion.rule_filtration.expression_language_decorator:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 100
+        arguments:
+            - '@oro_rule.expression_language'
+            - '@oro_promotion.rule_filtration.expression_language_decorator.inner'
+            - '@logger'
+
     oro_promotion.rule_filtration.currency_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CurrencyFiltrationService
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 10
+        decoration_priority: 150
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.currency_decorator.inner'
@@ -36,7 +54,7 @@ services:
     oro_promotion.rule_filtration.schedule_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 25
+        decoration_priority: 200
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.schedule_decorator.inner'
@@ -45,7 +63,7 @@ services:
     oro_promotion.rule_filtration.coupon_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 50
+        decoration_priority: 250
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.coupon_decorator.inner'
@@ -54,7 +72,7 @@ services:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
         public: false
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 75
+        decoration_priority: 300
         arguments:
             - '@oro_promotion.rule_filtration.matching_items.inner'
             - '@oro_promotion.provider.matching_products_provider'
@@ -63,7 +81,7 @@ services:
         class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
         public: false
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 100
+        decoration_priority: 350
         arguments:
             - '@oro_promotion.rule_filtration.stop_processing_decorator.inner'
 
@@ -92,8 +110,17 @@ services:
     oro_promotion.discount.shopping_list_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
         public: false
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_total'
+            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
+
+    oro_promotion.discount.line_items_to_discount_line_items_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
+        public: false
+        arguments:
+            - '@oro_shopping_list.data_provider.frontend_product_prices'
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
@@ -104,6 +131,8 @@ services:
         public: false
         arguments:
             - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
+            - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
