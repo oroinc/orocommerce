@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount;
@@ -84,7 +83,7 @@ class BuyXGetYDiscountTest extends \PHPUnit_Framework_TestCase
             BuyXGetYDiscount::GET_Y => 3,
         ];
         $this->discount->configure($options);
-        $this->discount->setMatchingProducts(new ArrayCollection([$matchingProduct]));
+        $this->discount->setMatchingProducts([$matchingProduct]);
 
         $this->discount->apply($discountContext);
         $this->assertEmpty($lineItemWithFalseUnitCode->getDiscounts());

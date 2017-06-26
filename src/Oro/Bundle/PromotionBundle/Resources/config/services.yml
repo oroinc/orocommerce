@@ -104,6 +104,7 @@ services:
         public: false
         arguments:
             - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_scope.scope_manager'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 
@@ -196,7 +197,7 @@ services:
         calls:
             - ['setDefaultFormType', ['oro_promotion_order_discount_options']]
             - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
-            - ['addFormType', ['shopping_list_line_item', 'oro_promotion_line_item_discount_options']]
+            - ['addFormType', ['line_item', 'oro_promotion_line_item_discount_options']]
             - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
 
     oro_promotion.promotion_executor:
@@ -206,6 +207,7 @@ services:
             - '@oro_promotion.discount.context_converter.registry'
             - '@oro_promotion.discount_factory'
             - '@oro_promotion.discount.strategy_provider'
+            - '@oro_promotion.provider.matching_products_provider'
 
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider

@@ -3,8 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
-use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
+use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface as UnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
@@ -42,7 +43,7 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
      */
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
-        $lineItems = $context['lineItems'] ?? [];
+        $lineItems = $context[ContextDataConverterInterface::LINE_ITEMS] ?? [];
 
         $filteredOwners = $ruleOwners;
         if (!empty($lineItems)) {
@@ -50,16 +51,20 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
                 if (!$ruleOwner instanceof Promotion) {
                     return false;
                 }
+                $discountOptions = $ruleOwner->getDiscountConfiguration()->getOptions();
+
+                // Skip promotions that are not unit aware
+                if (!array_key_exists(UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE, $discountOptions)) {
+                    return true;
+                }
 
                 $matchingProducts = $this->matchingProductsProvider
                     ->getMatchingProducts($ruleOwner->getProductsSegment(), $lineItems);
 
-                $discountOptions = $ruleOwner->getDiscountConfiguration()->getOptions();
-
                 return $this->hasMatchedProductUnit(
                     $lineItems,
                     $matchingProducts,
-                    $discountOptions[DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE]
+                    $discountOptions[UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE]
                 );
             }));
         }
@@ -68,12 +73,12 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
     }
 
     /**
-     * @param $lineItems
+     * @param array $lineItems
      * @param array|Product[] $matchingProducts
      * @param string $productUnitCode
      * @return bool
      */
-    private function hasMatchedProductUnit(array $lineItems, array $matchingProducts, $productUnitCode)
+    private function hasMatchedProductUnit(array $lineItems, array $matchingProducts, $productUnitCode): bool
     {
         $productIds = [];
         foreach ($matchingProducts as $product) {
@@ -82,7 +87,7 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
 
         /** @var DiscountLineItem $lineItem */
         foreach ($lineItems as $lineItem) {
-            if (isset($productIds[$lineItem->getProduct()->getId()])
+            if ($lineItem->getProduct() && isset($productIds[$lineItem->getProduct()->getId()])
                 && $lineItem->getProductUnitCode() === $productUnitCode
             ) {
                 return true;

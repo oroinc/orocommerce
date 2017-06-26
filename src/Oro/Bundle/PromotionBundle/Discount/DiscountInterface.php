@@ -19,14 +19,14 @@ interface DiscountInterface
     public function configure(array $options): array;
 
     /**
-     * @return \Traversable|Product[]
+     * @return array|Product[]
      */
-    public function getMatchingProducts();
+    public function getMatchingProducts(): array;
 
     /**
-     * @param \Traversable|Product[] $products
+     * @param array|Product[] $products
      */
-    public function setMatchingProducts(\Traversable $products);
+    public function setMatchingProducts(array $products);
 
     /**
      * @return string

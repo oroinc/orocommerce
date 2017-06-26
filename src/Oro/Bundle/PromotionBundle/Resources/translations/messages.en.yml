@@ -4,7 +4,7 @@ oro:
             label: Discount
             choices:
                 order: Order
-                shopping_list_line_item: Line Item
+                line_item: Line Item
                 buy_x_get_y: Buy X Get Y
     discount_options:
         general:

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount;
@@ -79,7 +78,7 @@ class LineItemsDiscountTest extends \PHPUnit_Framework_TestCase
         $discountContext = new DiscountContext();
         $discountContext->setLineItems([$lineItem1, $lineItem2, $lineItem3]);
 
-        $this->discount->setMatchingProducts(new ArrayCollection([$product1, $product2]));
+        $this->discount->setMatchingProducts([$product1, $product2]);
 
         $options = [
             DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE => 'item',

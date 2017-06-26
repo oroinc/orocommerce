@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Context;
 
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListContextDataConverter implements ContextDataConverterInterface
@@ -13,11 +14,18 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     private $relationsProvider;
 
     /**
-     * @param CustomerUserRelationsProvider $relationsProvider
+     * @var ScopeManager
      */
-    public function __construct(CustomerUserRelationsProvider $relationsProvider)
+    private $scopeManager;
+
+    /**
+     * @param CustomerUserRelationsProvider $relationsProvider
+     * @param ScopeManager $scopeManager
+     */
+    public function __construct(CustomerUserRelationsProvider $relationsProvider, ScopeManager $scopeManager)
     {
         $this->relationsProvider = $relationsProvider;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
@@ -34,6 +42,7 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
         }
 
         return [
+            self::CRITERIA => $this->scopeManager->getCriteria('promotion'),
             self::CUSTOMER_USER => $entity->getCustomerUser(),
             self::CUSTOMER => $customer ?: $entity->getCustomer(),
             self::CUSTOMER_GROUP => $customerGroup,

@@ -34,7 +34,7 @@ abstract class ShippingAwareDiscount extends AbstractDiscount
     /**
      * {@inheritdoc}
      */
-    public function setMatchingProducts(\Traversable $products)
+    public function setMatchingProducts(array $products)
     {
         parent::setMatchingProducts($products);
         $this->shippingDiscount->setMatchingProducts($products);

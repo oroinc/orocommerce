@@ -3,8 +3,16 @@ placeholders:
         render_discount_information:
             items:
                 order_discount_information: ~
+                line_item_discount_information: ~
+                buy_x_get_y_discount_information: ~
 
     items:
         order_discount_information:
             applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, order)"
             template: OroPromotionBundle:Promotion:discountPlaceholders/order.html.twig
+        line_item_discount_information:
+            applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, line_item)"
+            template: OroPromotionBundle:Promotion:discountPlaceholders/lineItem.html.twig
+        buy_x_get_y_discount_information:
+            applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, buy_x_get_y)"
+            template: OroPromotionBundle:Promotion:discountPlaceholders/buyXGetY.html.twig

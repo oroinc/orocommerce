@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -81,7 +80,7 @@ class AbstractDiscountTest extends \PHPUnit_Framework_TestCase
 
     public function testSetGetMatchingProducts()
     {
-        $products = new ArrayCollection([$this->createMock(Product::class)]);
+        $products = [$this->createMock(Product::class)];
         $this->discount->setMatchingProducts($products);
         $this->assertSame($products, $this->discount->getMatchingProducts());
     }
