@@ -20,6 +20,10 @@ class OrderEventListener
         $this->discountManager = $discountManager;
     }
 
+    /**
+     * @param Order $order
+     * @param LifecycleEventArgs $args
+     */
     public function prePersist(Order $order, LifecycleEventArgs $args)
     {
         /** @var $appliedDiscounts */

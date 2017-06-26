@@ -82,10 +82,13 @@ class AppliedDiscount
 
     /**
      * @param string $type
+     * @return $this
      */
     public function setType(string $type)
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /**
@@ -98,10 +101,13 @@ class AppliedDiscount
 
     /**
      * @param float $amount
+     * @return $this
      */
     public function setAmount(float $amount)
     {
         $this->amount = $amount;
+
+        return $this;
     }
 
     /**
@@ -114,10 +120,13 @@ class AppliedDiscount
 
     /**
      * @param Order $order
+     * @return $this
      */
     public function setOrder(Order $order)
     {
         $this->order = $order;
+
+        return $this;
     }
 
     /**
@@ -130,10 +139,13 @@ class AppliedDiscount
 
     /**
      * @param Promotion $promotion
+     * @return $this
      */
     public function setPromotion(Promotion $promotion)
     {
         $this->promotion = $promotion;
+
+        return $this;
     }
 
     /**
@@ -146,10 +158,13 @@ class AppliedDiscount
 
     /**
      * @param array $configOptions
+     * @return $this
      */
     public function setConfigOptions(array $configOptions)
     {
         $this->configOptions = $configOptions;
+
+        return $this;
     }
 
     /**
@@ -162,9 +177,12 @@ class AppliedDiscount
 
     /**
      * @param array $options
+     * @return $this
      */
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
     }
 }

@@ -39,8 +39,15 @@ class AppliedDiscountManager
         $promotions = $discountContext->getPromotions();
         if ($subtotalDiscounts && $promotions) {
             foreach ($subtotalDiscounts as $discount) {
+                $discountType = $discount->getDiscountType();
+                $promotion = $promotions[$discountType];
+
                 $appliedDiscounts[] = (new AppliedDiscount())
-                    ->setOrder($order);
+                    ->setOrder($order)
+                    ->setType($discountType)
+                    ->setAmount($discount->getDiscountValue())
+                    ->setConfigOptions($promotion->getDiscountConfiguration()->getOptions())
+                    ->setPromotion($promotion);
             }
         }
         return $appliedDiscounts;
