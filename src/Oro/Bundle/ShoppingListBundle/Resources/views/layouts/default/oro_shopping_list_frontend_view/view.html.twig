@@ -5,6 +5,16 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_content_widget %}
+    {% if not app.user %}
+        <div class="notification-flash notification-flash--warning">
+            <div class="notification-flash__badge">
+                <i class="fa-exclamation-circle"></i>
+            </div>
+            <div class="notification-flash__text">
+                {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans }}
+            </div>
+        </div>
+    {% endif %}
     <div {{ block('block_attributes') }}
             id="shopping_list_view_container_content"
             data-page-component-module="oroui/js/app/components/view-component"
