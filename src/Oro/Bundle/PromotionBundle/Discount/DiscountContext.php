@@ -4,9 +4,13 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
 {
+    /** @var Promotion[] */
+    protected $promotions = [];
+
     /**
      * @var DiscountLineItem[]
      */
@@ -173,5 +177,21 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     public function getShippingDiscountsInformation(): array
     {
         return $this->shippingDiscountsInformation;
+    }
+
+    /**
+     * @return Promotion[]
+     */
+    public function getPromotions(): array
+    {
+        return $this->promotions;
+    }
+
+    /**
+     * @param Promotion[] $promotions
+     */
+    public function setPromotions(array $promotions)
+    {
+        $this->promotions = $promotions;
     }
 }
