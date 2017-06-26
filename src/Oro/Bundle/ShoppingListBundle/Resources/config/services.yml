@@ -210,9 +210,7 @@ services:
     oro_shopping_list.event_listener.frontend_product_datagrid:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
         arguments:
-            - "@oro_security.token_accessor"
-            - "@oro_security.acl_helper"
-            - "@doctrine"
+            - "@oro_shopping_list.data_provider.product_shopping_lists"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }

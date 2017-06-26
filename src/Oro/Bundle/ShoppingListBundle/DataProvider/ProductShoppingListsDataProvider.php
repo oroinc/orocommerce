@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ProductShoppingListsDataProvider
@@ -54,7 +55,24 @@ class ProductShoppingListsDataProvider
     }
 
     /**
-     * @param Product[] $products
+     * @param ShoppingList $shoppingList
+     * @param array $products
+     * @return array|\Doctrine\Common\Collections\ArrayCollection|\Oro\Bundle\ShoppingListBundle\Entity\LineItem[]
+     */
+    private function getLineItems(ShoppingList $shoppingList, array $products)
+    {
+        if (!$shoppingList->getCustomerUser()) {
+            $lineItems = $shoppingList->getLineItems();
+        } else {
+            $lineItems = $this->lineItemRepository
+                ->getProductItemsWithShoppingListNames($this->aclHelper, $products);
+        }
+
+        return $lineItems;
+    }
+
+    /**
+     * @param Product[]|array $products
      * @return array
      */
     public function getProductsUnitsQuantity($products)
@@ -65,8 +83,8 @@ class ProductShoppingListsDataProvider
         }
         $currentShoppingListId = $currentShoppingList->getId();
 
-        $lineItems = $this->lineItemRepository
-            ->getProductItemsWithShoppingListNames($this->aclHelper, $products);
+        $lineItems = $this->getLineItems($currentShoppingList, $products);
+
         if (!count($lineItems)) {
             return [];
         }
