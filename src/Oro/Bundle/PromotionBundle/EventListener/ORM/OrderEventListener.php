@@ -12,6 +12,9 @@ class OrderEventListener
     /**@var AppliedDiscountManager */
     protected $discountManager;
 
+    /**
+     * @param AppliedDiscountManager $discountManager
+     */
     public function __construct(AppliedDiscountManager $discountManager)
     {
         $this->discountManager = $discountManager;

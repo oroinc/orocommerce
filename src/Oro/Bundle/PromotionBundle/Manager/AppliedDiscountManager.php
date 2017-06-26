@@ -3,7 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PromotionBundle\Discount\Converter\AppliedDiscountConverterInterface;
+use Oro\Bundle\PromotionBundle\Discount\Converter\ConverterInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 
 class AppliedDiscountManager
@@ -11,12 +12,16 @@ class AppliedDiscountManager
     /** @var PromotionExecutor */
     protected $promotionExecutor;
 
-    /** @var  AppliedDiscountConverterInterface */
+    /** @var  ConverterInterface */
     protected $appliedDiscountConverter;
 
+    /**
+     * @param PromotionExecutor $promotionExecutor
+     * @param ConverterInterface $appliedDiscountConverter
+     */
     public function __construct(
         PromotionExecutor $promotionExecutor,
-        AppliedDiscountConverterInterface $appliedDiscountConverter
+        ConverterInterface $appliedDiscountConverter
     ) {
         $this->promotionExecutor = $promotionExecutor;
         $this->appliedDiscountConverter = $appliedDiscountConverter;
@@ -31,9 +36,11 @@ class AppliedDiscountManager
         $appliedDiscounts = [];
         $discountContext = $this->promotionExecutor->execute($order);
         $subtotalDiscounts = $discountContext->getSubtotalDiscounts();
-        if ($subtotalDiscounts) {
+        $promotions = $discountContext->getPromotions();
+        if ($subtotalDiscounts && $promotions) {
             foreach ($subtotalDiscounts as $discount) {
-                $appliedDiscounts[] = $this->appliedDiscountConverter->convert($discount)->setOrder($order);
+                $appliedDiscounts[] = (new AppliedDiscount())
+                    ->setOrder($order);
             }
         }
         return $appliedDiscounts;

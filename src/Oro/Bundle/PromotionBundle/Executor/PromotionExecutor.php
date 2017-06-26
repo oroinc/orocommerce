@@ -56,12 +56,17 @@ class PromotionExecutor
     {
         $discountContext = $this->discountContextConverter->convert($sourceEntity);
         $discounts = [];
+        $promotions = [];
         foreach ($this->promotionProvider->getPromotions($sourceEntity) as $promotion) {
-            $discounts[] = $this->discountFactory->create($promotion->getDiscountConfiguration());
+            $discount = $this->discountFactory->create($promotion->getDiscountConfiguration());
+            $discounts[] = $discount;
+            $promotions[$discount->getDiscountType()] = $promotion;
         }
         if (!$discounts) {
             return $discountContext;
         }
+
+        $discountContext->setPromotions($promotions);
 
         $strategy = $this->discountStrategyProvider->getActiveStrategy();
 
