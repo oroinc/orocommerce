@@ -74,6 +74,7 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
+            ->add('brand', BrandSelectType::NAME, ['label' => 'oro.product.brand.label'])
             ->add(
                 'inventory_status',
                 'oro_enum_select',
