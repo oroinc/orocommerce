@@ -66,9 +66,7 @@ Feature: Editing related products
     When I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU4 |
     And I click "Select products"
-    And I select following records in grid:
-      | PSKU2 |
-    And I click "Delete" link from mass action dropdown
+    And I click "Delete" on row "PSKU2" in grid
     And I click "Save and Close"
     Then I should see following grid:
       | SKU    | NAME      |
@@ -82,9 +80,7 @@ Feature: Editing related products
       | SKU    | NAME      |
       | PSKU3  | Product 3 |
       | PSKU4  | Product 4 |
-    When I select following records in grid:
-      | PSKU4 |
-    And I click "Delete" link from mass action dropdown
+    And I click "Delete" on row "PSKU4" in grid
     And I click "Cancel"
     And I click View Product 1 in grid
     Then I should see following grid:
