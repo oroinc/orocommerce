@@ -32,20 +32,21 @@ class HandlePriceListStatusChangeProcessor implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var PriceList $data */
-        $data = $context->getResult();
-        if (!$data) {
+        $priceList = $context->getResult();
+        if (!$priceList instanceof PriceList) {
             return;
         }
 
         if ($this->previousStatus === null) {
-            $this->previousStatus = $data->isActive();
+            $this->previousStatus = $priceList->isActive();
 
             return;
         }
 
-        if ($data->isActive() !== $this->previousStatus) {
-            $this->priceListChangesHandler->handlePriceListStatusChange($data);
+        if ($priceList->isActive() !== $this->previousStatus) {
+            $this->priceListChangesHandler->handlePriceListStatusChange($priceList);
         }
+
+        $this->previousStatus = null;
     }
 }
