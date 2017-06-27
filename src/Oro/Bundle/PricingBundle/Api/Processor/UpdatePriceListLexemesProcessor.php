@@ -27,12 +27,11 @@ class UpdatePriceListLexemesProcessor implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var PriceList $data */
-        $data = $context->getResult();
-        if (!$data) {
+        $priceList = $context->getResult();
+        if (!$priceList instanceof PriceList) {
             return;
         }
 
-        $this->priceRuleLexemeHandler->updateLexemes($data);
+        $this->priceRuleLexemeHandler->updateLexemes($priceList);
     }
 }

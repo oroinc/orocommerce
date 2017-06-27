@@ -27,9 +27,10 @@ class HandlePriceListStatusChangeProcessorTest extends TestCase
         $this->processor = new HandlePriceListStatusChangeProcessor($this->priceListChangesHandler);
     }
 
-    public function testProcessNoData()
+    public function testProcessWrongType()
     {
-        $this->priceListChangesHandler->expects(static::any())
+        $this->priceListChangesHandler
+            ->expects(static::never())
             ->method('handlePriceListStatusChange');
 
         $context = $this->createMock(ContextInterface::class);
@@ -39,7 +40,8 @@ class HandlePriceListStatusChangeProcessorTest extends TestCase
 
     public function testProcessStatusNotChanged()
     {
-        $this->priceListChangesHandler->expects(static::any())
+        $this->priceListChangesHandler
+            ->expects(static::never())
             ->method('handlePriceListStatusChange');
 
         $priceList = new PriceList();
@@ -62,7 +64,8 @@ class HandlePriceListStatusChangeProcessorTest extends TestCase
         $newPriceList = new PriceList();
         $newPriceList->setActive(true);
 
-        $this->priceListChangesHandler->expects(static::once())
+        $this->priceListChangesHandler
+            ->expects(static::once())
             ->method('handlePriceListStatusChange')
             ->with($newPriceList);
 
