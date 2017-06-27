@@ -48,7 +48,41 @@ class ProcessUnitPrecisionsTestHelper
             ]
         ];
     }
+    /**
+     * @return array
+     */
+    public static function createNormalizedRequestData()
+    {
+        return [
+            "sku" => "test-api",
+            "status" => "enabled",
+            "variantFields" => [],
+            "createdAt" => "2017-06-13T07:12:06Z",
+            "updatedAt" => "2017-06-13T07:12:31Z",
+            "productType" => "simple",
+            "featured" => true,
+            "primaryUnitPrecision" => [
+                "type" => "productunitprecisions",
+                "id" => "1",
+            ],
+            "unitPrecisions" => [
+                0 => [
+                    "type" => "productunitprecisions",
+                    "id" => "2"
+                ],
+                1 => [
+                    "type" => "productunitprecisions",
+                    "id" => "3"
+                ]
+            ]
+        ];
+    }
 
+    /**
+     * @param array $requestData
+     * @param string $unitCode
+     * @return array
+     */
     public static function setPrimaryUnitCode(array $requestData, $unitCode)
     {
         $requestData['data']['relationships']['primaryUnitPrecision']['unit_code'] = $unitCode;
@@ -56,6 +90,11 @@ class ProcessUnitPrecisionsTestHelper
         return $requestData;
     }
 
+    /**
+     * @param array $requestData
+     * @param string $unitCode
+     * @return array
+     */
     public static function setWrongUnitCode(array $requestData, $unitCode)
     {
         $requestData['data']['relationships']['unitPrecisions']['data'][0]['unit_code'] = $unitCode;
@@ -63,6 +102,9 @@ class ProcessUnitPrecisionsTestHelper
         return $requestData;
     }
 
+    /**
+     * @return array
+     */
     public static function createRequestDataSameUnitCodes()
     {
         return [
@@ -104,6 +146,9 @@ class ProcessUnitPrecisionsTestHelper
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function createRequestDataWrongPrimaryUnit()
     {
         return [

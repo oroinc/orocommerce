@@ -53,7 +53,8 @@ abstract class ProcessUnitPrecisions implements ProcessorInterface
 
         $pointer = $this->buildPointer('', JsonApi::DATA . '/' . JsonApi::RELATIONSHIPS);
         if (!$this->validateUnitPrecisions($relationships[self::UNIT_PRECISIONS], $pointer) ||
-            !$this->validatePrimaryUnitPrecision($relationships, $pointer)
+            (isset($relationships[self::PRIMARY_UNIT_PRECISION]) &&
+            !$this->validatePrimaryUnitPrecision($relationships, $pointer))
         ) {
             return;
         }
