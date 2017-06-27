@@ -24,8 +24,6 @@ class UpdateLexemesOnPriceRuleDeleteProcessor implements ProcessorInterface
     private $deleteProcessor;
 
     /**
-     * UpdateLexemesOnPriceRuleDeleteProcessor constructor.
-     *
      * @param PriceRuleLexemeHandler $priceRuleLexemeHandler
      * @param ProcessorInterface $deleteProcessor
      */
