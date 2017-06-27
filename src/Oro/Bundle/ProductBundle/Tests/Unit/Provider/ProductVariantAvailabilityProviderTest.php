@@ -482,7 +482,6 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getSimpleProductsByVariantFieldsQueryBuilder')
             ->willReturnCallback(
                 function ($configurableProduct, array $variantParameters) use ($simpleProducts) {
-
                     $filteredProducts = array_filter(
                         $simpleProducts,
                         function (Product $simpleProduct) use ($variantParameters) {
