@@ -65,7 +65,7 @@ class ProductExtension extends \Twig_Extension
         /** @var FinderStrategyInterface $finderStrategy */
         $finderStrategy = $this->container->get('oro.product.related_item.related_product.finder_strategy');
         /** @var Product[] $related */
-        $related = $finderStrategy->find($product, false);
+        $related = $finderStrategy->find($product, false, false);
         $ids = [];
 
         foreach ($related as $relatedProduct) {
