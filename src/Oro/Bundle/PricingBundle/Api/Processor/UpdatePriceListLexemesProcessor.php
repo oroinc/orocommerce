@@ -1,11 +1,13 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
+namespace Oro\Bundle\PricingBundle\Api\Processor;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class UpdateLexemesPriceListListener
+class UpdatePriceListLexemesProcessor implements ProcessorInterface
 {
     /**
      * @var PriceRuleLexemeHandler
@@ -21,10 +23,15 @@ class UpdateLexemesPriceListListener
     }
 
     /**
-     * @param PriceList $priceList
+     * {@inheritDoc}
      */
-    public function updateLexemes(PriceList $priceList)
+    public function process(ContextInterface $context)
     {
+        $priceList = $context->getResult();
+        if (!$priceList instanceof PriceList) {
+            return;
+        }
+
         $this->priceRuleLexemeHandler->updateLexemes($priceList);
     }
 }
