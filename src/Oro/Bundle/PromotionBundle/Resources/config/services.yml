@@ -265,3 +265,10 @@ services:
 
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
+
+    oro_promotion.provider.applied_discount_subtotal:
+        class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountSubtotalProvider
+        public: false
+        arguments: ['@oro_api.doctrine_helper']
+        tags:
+            - { name: oro_pricing.subtotal_provider, priority: 50 }
