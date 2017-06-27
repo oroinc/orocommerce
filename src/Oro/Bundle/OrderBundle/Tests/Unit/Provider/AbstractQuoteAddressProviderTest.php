@@ -2,19 +2,24 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $registry;
@@ -32,6 +37,14 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      * @var AddressProviderInterface
      */
     protected $provider;
+
+    protected function setUp()
+    {
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+    }
 
     /**
      * @expectedException \InvalidArgumentException
@@ -59,11 +72,11 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     public function testGetCustomerAddressesNotGranted($type, $expectedPermission, $loggedUser)
     {
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
             ->will($this->returnValue($loggedUser));
 
-        $this->securityFacade->expects($this->exactly(2))
+        $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
             ->will(
                 $this->returnValueMap(
@@ -92,14 +105,14 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     public function testGetCustomerAddressesGrantedAny($type, $expectedPermission, $loggedUser)
     {
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
             ->will($this->returnValue($loggedUser));
 
         $customer = new Customer();
         $addresses = [new CustomerAddress()];
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with($expectedPermission)
             ->willReturn(true);
@@ -124,14 +137,14 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     public function testGetCustomerAddressesGrantedView($type, $expectedPermission, $loggedUser)
     {
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
             ->will($this->returnValue($loggedUser));
 
         $customer = new Customer();
         $addresses = [new CustomerAddress()];
 
-        $this->securityFacade->expects($this->exactly(2))
+        $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
             ->will(
                 $this->returnValueMap(
@@ -172,8 +185,8 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
         array $addresses,
         $loggedUser
     ) {
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
             ->will($this->returnValue($loggedUser));
 
         $customerUser = new CustomerUser();
@@ -183,7 +196,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
             $permissionsValueMap[] = [$permission, null, $decision];
         }
 
-        $this->securityFacade->expects($this->exactly(count($expectedCalledPermissions)))
+        $this->authorizationChecker->expects($this->exactly(count($expectedCalledPermissions)))
             ->method('isGranted')
             ->will($this->returnValueMap($permissionsValueMap));
 

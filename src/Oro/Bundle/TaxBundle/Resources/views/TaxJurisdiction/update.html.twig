@@ -11,7 +11,7 @@
 
     {{ UI.cancelButton(path('oro_tax_jurisdiction_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_tax_jurisdiction_update') %}
+    {% if entity.id or is_granted('oro_tax_jurisdiction_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

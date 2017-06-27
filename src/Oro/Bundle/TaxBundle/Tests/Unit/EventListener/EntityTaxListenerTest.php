@@ -195,7 +195,7 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $taxValue = new TaxValue();
         $this->taxManager->expects($this->once())
-            ->method('createTaxValue')
+            ->method('getTaxValue')
             ->with($order)
             ->willReturn($taxValue);
 
@@ -224,17 +224,17 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
         $this->taxManager->expects($this->once())
-            ->method('createTaxValue')
+            ->method('getTaxValue')
             ->with($order)
             ->willReturn($taxValue);
 
-        $loadedResult = new Result([Result::ITEMS => ResultElement::create(0, 0)]);
+        $loadedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
         $this->taxManager->expects($this->once())
             ->method('loadTax')
             ->with($order)
             ->willReturn($loadedResult);
 
-        $calculatedResult = new Result([Result::ITEMS => ResultElement::create(0, 0)]);
+        $calculatedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
         $this->taxManager->expects($this->once())
             ->method('getTax')
             ->with($order)
@@ -259,17 +259,17 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $taxValue = $this->getEntity(TaxValue::class, ['id' => 1]);
         $this->taxManager->expects($this->once())
-            ->method('createTaxValue')
+            ->method('getTaxValue')
             ->with($order)
             ->willReturn($taxValue);
 
-        $loadedResult = new Result([Result::ITEMS => ResultElement::create(0, 0)]);
+        $loadedResult = new Result([Result::TOTAL => ResultElement::create(0, 0)]);
         $this->taxManager->expects($this->once())
             ->method('loadTax')
             ->with($order)
             ->willReturn($loadedResult);
 
-        $calculatedResult = new Result([Result::ITEMS => ResultElement::create(1, 1)]);
+        $calculatedResult = new Result([Result::TOTAL => ResultElement::create(1, 1)]);
         $this->taxManager->expects($this->once())
             ->method('getTax')
             ->with($order)

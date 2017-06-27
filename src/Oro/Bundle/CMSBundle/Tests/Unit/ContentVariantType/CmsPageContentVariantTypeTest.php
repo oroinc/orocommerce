@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType;
 use Oro\Bundle\CMSBundle\Tests\Unit\ContentVariantType\Stub\ContentVariantStub;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -15,9 +16,9 @@ class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    private $authorizationChecker;
 
     /**
      * @var CmsPageContentVariantType
@@ -26,11 +27,12 @@ class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
-        $this->type = new CmsPageContentVariantType($this->securityFacade, $this->getPropertyAccessor());
+        $this->type = new CmsPageContentVariantType(
+            $this->authorizationChecker,
+            $this->getPropertyAccessor()
+        );
     }
 
     public function testGetName()
@@ -50,7 +52,7 @@ class CmsPageContentVariantTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testIsAllowed()
     {
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_cms_page_view')
             ->willReturn(true);

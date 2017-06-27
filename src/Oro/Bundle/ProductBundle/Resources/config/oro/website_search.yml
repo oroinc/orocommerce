@@ -14,6 +14,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: sku_uppercase
             type: text
         -
+            name: new_arrival
+            type: integer
+        -
             name: short_description_LOCALIZATION_ID
             type: text
         -
@@ -37,3 +40,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
         -
             name: assigned_to_ASSIGN_TYPE_ASSIGN_ID
             type: integer
+
+Oro\Bundle\ProductBundle\Entity\Brand:
+    alias: oro_brand_WEBSITE_ID
+    fields:
+        -
+            name: name_LOCALIZATION_ID
+            type: text
+        -
+            name: short_description_LOCALIZATION_ID
+            type: text

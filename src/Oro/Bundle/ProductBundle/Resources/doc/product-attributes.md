@@ -102,6 +102,8 @@ The product family is designed to group product attributes for products of simil
    - Name
    - Description
    - Short Description
+   - New Arrival flag
+   - Product Brand
 * Images	
    - Images
 * Inventory	
@@ -109,6 +111,7 @@ The product family is designed to group product attributes for products of simil
 * Product Prices
    - Product prices
 * SEO
+   - Meta title
    - Meta keywords
    - Meta description
    

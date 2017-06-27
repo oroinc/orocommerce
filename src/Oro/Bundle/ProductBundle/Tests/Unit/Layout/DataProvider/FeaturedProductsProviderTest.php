@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Cache\ChainCache;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
-
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
@@ -15,9 +13,15 @@ use Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
+use Psr\Log\LoggerInterface;
 
 class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ChainCache|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cache;
+
     /** @var FeaturedProductsProvider */
     private $provider;
 
@@ -42,12 +46,14 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
         $this->productManager = $this->createMock(ProductManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->cache = $this->createMock(ChainCache::class);
 
         $this->provider = new FeaturedProductsProvider(
             $this->segmentManager,
             $this->productManager,
             $this->configManager,
-            $this->logger
+            $this->logger,
+            $this->cache
         );
     }
 

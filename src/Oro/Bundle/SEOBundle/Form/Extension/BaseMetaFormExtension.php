@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Form\Extension;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\Valid;
 
 abstract class BaseMetaFormExtension extends AbstractTypeExtension
 {
@@ -21,6 +22,16 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
     {
         $builder
             ->add(
+                'metaTitles',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => $this->getMetaFieldLabelPrefix() . '.meta_titles.label',
+                    'required' => false,
+                    'type' => 'text',
+                    'constraints' => new Valid()
+                ]
+            )
+            ->add(
                 'metaDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
@@ -28,6 +39,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'required' => false,
                     'field' => 'text',
                     'type' => 'textarea',
+                    'constraints' => new Valid()
                 ]
             )
             ->add(
@@ -38,6 +50,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
                     'required' => false,
                     'field' => 'text',
                     'type' => 'textarea',
+                    'constraints' => new Valid()
                 ]
             );
     }

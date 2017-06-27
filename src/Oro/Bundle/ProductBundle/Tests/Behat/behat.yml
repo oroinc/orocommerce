@@ -127,6 +127,7 @@ oro_behat_extension:
         mapping:
           Titles: 'oro_web_catalog_content_node[titles][values][default]'
           Url Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
           Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
           Meta Keywords: 'oro_web_catalog_content_node[metaKeywords][values][default]'
           Default Product Collection Segment Name:
@@ -158,6 +159,31 @@ oro_behat_extension:
     Search Button:
       selector: 'button[name="oro_website_search_search_button"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Galery View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"gallery-view")]'
+    NoImage View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"no-image-view")]'
+    List View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"list-view")]'
+
+    NewArrivalStiker:
+      selector: '.product-sticker--icon-new_arrival'
+
+    NewArrivalText:
+      selector: '.product-sticker--text-new_arrival'
+
+    ViewDetails:
+      selector: 'a.view-product'
+
+    ProductItem:
+      selector: 'div.product-item'
 
     Product Collection Variant Label:
       selector:
@@ -206,14 +232,42 @@ oro_behat_extension:
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
+    Promotions Form:
+      selector: 'form[name="product_promotions"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Show On Product View Default: 'product_promotions[oro_product___product_promotion_show_on_product_view][use_parent_scope_value]'
+          Show On Product View: 'product_promotions[oro_product___product_promotion_show_on_product_view][value]'
+
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
 
     GridPagination:
       selector: 'div.tab-pane.active div.toolbar div.pagination input'
 
+    Clear Brand:
+          selector:
+            type: xpath
+            locator: '//div[contains(@id,"s2id_oro_product_brand-uid")]//abbr[@class="select2-search-choice-close"]'
+
+    Brand Form:
+      selector: 'form[name="oro_brand"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_brand[names][values][default]'
+          Meta Title: 'oro_brand[metaTitles][values][default]'
+          Meta Description: 'oro_brand[metaDescriptions][values][default]'
+          Meta Keywords: 'oro_brand[metaKeywords][values][default]'
+
   suites:
+    # Revert by OPI-52
     OroProductBundle:
+      contexts: []
+      paths:
+        - /dev/null
+    OroProductBundleProductCollection:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
@@ -227,4 +281,34 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
       paths:
-        - '@OroProductBundle/Tests/Behat/Features'
+        - '@OroProductBundle/Tests/Behat/Features/product-collection'
+    OroProductBundleProduct:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroUserBundle::FeatureContext
+      paths:
+        - '@OroProductBundle/Tests/Behat/Features/product'
+    OroProductBundleOther:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroUserBundle::FeatureContext
+      paths:
+        - '@OroProductBundle/Tests/Behat/Features/other'

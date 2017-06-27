@@ -81,12 +81,20 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => '',
                     'scope' => 'app'
                 ],
+                'brand_direct_url_prefix' => [
+                    'value' => '',
+                    'scope' => 'app'
+                ],
                 'featured_products_segment_id' => [
                     'value' => null,
                     'scope' => 'app'
                 ],
                 'product_collections_indexation_cron_schedule' => [
                     'value' => '0 * * * *',
+                    'scope' => 'app'
+                ],
+                'product_promotion_show_on_product_view' => [
+                    'value' => false,
                     'scope' => 'app'
                 ],
                 'product_collections_mass_action_limitation' => [

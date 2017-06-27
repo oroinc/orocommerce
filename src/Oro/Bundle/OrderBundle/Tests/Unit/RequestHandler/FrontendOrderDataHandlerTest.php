@@ -7,13 +7,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,9 +33,9 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider
@@ -59,9 +59,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->paymentTermProvider = $this->getMockBuilder('Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider')
             ->disableOriginalConstructor()
@@ -70,7 +68,7 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler = new FrontendOrderDataHandler(
             $this->registry,
             $this->requestStack,
-            $this->securityFacade,
+            $this->tokenAccessor,
             $this->paymentTermProvider
         );
     }
@@ -78,14 +76,14 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->handler, $this->objectManager, $this->requestStack);
-        unset($this->securityFacade, $this->paymentTermProvider);
+        unset($this->tokenAccessor, $this->paymentTermProvider);
     }
 
     public function testGetCustomerUser()
     {
         $customerUser = new CustomerUser();
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($customerUser);
 
         $this->assertSame($customerUser, $this->handler->getCustomerUser());
@@ -97,8 +95,8 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCustomerUserWithoutCustomerUser()
     {
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn(new \stdClass());
 
         $this->handler->getCustomerUser();
@@ -110,8 +108,8 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($customer);
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($customerUser);
 
         $this->assertSame($customer, $this->handler->getCustomer());
@@ -123,8 +121,8 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
         $customerUser = new CustomerUser();
         $customerUser->setCustomer($customer);
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($customerUser);
 
         $paymentTerm = new PaymentTerm();

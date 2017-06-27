@@ -86,7 +86,7 @@ class EntityTaxListener
         if ($this->getIdentifier($entity, $event->getEntityManager())) {
             try {
                 // Always calculate taxes for entity which doesn't have it
-                $taxValue = $this->taxManager->createTaxValue($entity);
+                $taxValue = $this->taxManager->getTaxValue($entity);
                 if (!$taxValue->getId()) {
                     $this->taxManager->saveTax($entity, false);
 
@@ -98,8 +98,9 @@ class EntityTaxListener
                 $storedTaxResult = $this->taxManager->loadTax($entity);
                 $calculatedTaxResult = $this->taxManager->getTax($entity);
 
-                // Compare result objects by value
-                if ($storedTaxResult != $calculatedTaxResult) {
+                // Compare result objects by serializing results
+                // it allows to compare only significant fields
+                if ($storedTaxResult->jsonSerialize() != $calculatedTaxResult->jsonSerialize()) {
                     $this->taxManager->saveTax($entity, false);
                 }
             } catch (TaxationDisabledException $e) {
