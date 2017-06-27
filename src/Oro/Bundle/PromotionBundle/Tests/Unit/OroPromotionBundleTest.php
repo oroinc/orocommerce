@@ -4,6 +4,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionCompilerPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\PromotionProductsGridCompilerPass;
+use Oro\Bundle\PromotionBundle\DependencyInjection\Compiler\ShoppingListBlockOptionsCompilerPass;
 use Oro\Bundle\PromotionBundle\DependencyInjection\OroPromotionExtension;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\OroPromotionBundle;
@@ -24,7 +26,7 @@ class OroPromotionBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(3, $passes);
+        $this->assertCount(4, $passes);
 
         $this->assertInstanceOf(DefaultFallbackExtensionPass::class, $passes[0]);
         $this->assertAttributeEquals(
@@ -39,7 +41,9 @@ class OroPromotionBundleTest extends \PHPUnit_Framework_TestCase
         );
 
         $expectedPasses = [
-            new PromotionCompilerPass()
+            new PromotionCompilerPass(),
+            new PromotionProductsGridCompilerPass(),
+            new ShoppingListBlockOptionsCompilerPass()
         ];
 
         foreach ($expectedPasses as $expectedPass) {

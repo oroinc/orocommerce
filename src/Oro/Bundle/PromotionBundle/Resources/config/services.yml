@@ -229,6 +229,14 @@ services:
             - ['addFormType', ['line_item', 'oro_promotion_line_item_discount_options']]
             - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
 
+    oro_promotion.layout.discount_information_data_provider:
+        class: Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider
+        arguments:
+            - '@oro_promotion.promotion_executor'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: layout.data_provider, alias: oro_promotion_discounts_information }
+
     oro_promotion.promotion_executor:
         class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
         arguments:
