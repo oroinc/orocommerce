@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Twig;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
@@ -61,8 +62,10 @@ class ProductExtension extends \Twig_Extension
      */
     public function getRelatedProductsIds(Product $product)
     {
+        /** @var FinderStrategyInterface $finderStrategy */
+        $finderStrategy = $this->container->get('oro.product.related_item.related_product.finder_strategy');
         /** @var Product[] $related */
-        $related = $this->container->get('oro.product.related_item.related_product.finder_strategy')->find($product);
+        $related = $finderStrategy->find($product, false);
         $ids = [];
 
         foreach ($related as $relatedProduct) {

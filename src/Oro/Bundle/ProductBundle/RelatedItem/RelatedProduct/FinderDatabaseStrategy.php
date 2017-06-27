@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
@@ -24,42 +23,32 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
      */
     private $configProvider;
 
-    /**
-     * @var FrontendHelper
-     */
-    private $frontendHelper;
 
     /**
      * @param DoctrineHelper                    $doctrineHelper
      * @param AbstractRelatedItemConfigProvider $configProvider
-     * @param FrontendHelper                    $frontendHelper
      */
-    public function __construct(
-        DoctrineHelper $doctrineHelper,
-        AbstractRelatedItemConfigProvider $configProvider,
-        FrontendHelper $frontendHelper
-    ) {
+    public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
+    {
         $this->doctrineHelper = $doctrineHelper;
         $this->configProvider = $configProvider;
-        $this->frontendHelper = $frontendHelper;
     }
 
     /**
      * {@inheritdoc}
+     * If parameters `bidirectional` and `limit` are not passed - default values from configuration will be used
      */
-    public function find(Product $product)
+    public function find(Product $product, $bidirectional = null, $limit = null)
     {
         if (!$this->configProvider->isEnabled()) {
             return [];
         }
 
-        $frontedRequest = $this->frontendHelper->isFrontendRequest();
-
         return $this->getRelatedProductsRepository()
             ->findRelated(
                 $product->getId(),
-                $frontedRequest ? $this->configProvider->isBidirectional() : false,
-                $frontedRequest ? $this->configProvider->getLimit() : null
+                $bidirectional === null ? $this->configProvider->isBidirectional() : $bidirectional,
+                $limit === null ? $this->configProvider->getLimit() : $limit
             );
     }
 

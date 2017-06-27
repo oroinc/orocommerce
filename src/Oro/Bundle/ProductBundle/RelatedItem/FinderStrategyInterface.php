@@ -13,8 +13,10 @@ interface FinderStrategyInterface
      * Keep in mind, that this method works for frontend and backend (to fill related items grids).
      * Consider this while implementing.
      *
-     * @param Product $product
+     * @param Product   $product
+     * @param bool      $bidirectional
+     * @param int|null  $limit
      * @return Product[]
      */
-    public function find(Product $product);
+    public function find(Product $product, $bidirectional = null, $limit = null);
 }

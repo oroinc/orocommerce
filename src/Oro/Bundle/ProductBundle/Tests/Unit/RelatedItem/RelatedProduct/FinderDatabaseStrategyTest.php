@@ -39,11 +39,6 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private $entityManager;
 
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $frontendHelper;
-
-    /**
      * @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $configProvider;
@@ -72,14 +67,9 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->frontendHelper = $this->getMockBuilder(FrontendHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->strategy = new FinderDatabaseStrategy(
             $this->doctrineHelper,
-            $this->configProvider,
-            $this->frontendHelper
+            $this->configProvider
         );
     }
 
@@ -94,7 +84,6 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(3);
         $this->andShouldNotBeBidirectional();
-        $this->andRequestCameFromFrontend();
 
         $this->assertSame(
             $expectedResult,
@@ -123,7 +112,6 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), 2, $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
-        $this->andRequestCameFromFrontend();
 
         $this->assertSame(
             $expectedResult,
@@ -142,7 +130,6 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->andProductRepositoryShouldFindRelated($productA, true, $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldBeBidirectional();
-        $this->andRequestCameFromFrontend();
 
         $this->assertSame(
             $expectedResult,
@@ -161,7 +148,6 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $this->andProductRepositoryShouldFindRelated($productA, false, $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
-        $this->andRequestCameFromFrontend();
 
         $this->assertSame(
             $expectedResult,
@@ -169,7 +155,7 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFindShouldIgnoredConfigManagerForBackend()
+    public function testFindShouldIgnoredConfigManagerIfArgumentsArePassed()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
@@ -178,11 +164,10 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 
         $this->relatedProductFunctionalityShouldBeEnabled();
         $this->andProductRepositoryShouldFindRelated($productA, false, null, $expectedResult);
-        $this->andRequestCameFromBackend();
 
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA)
+            $this->strategy->find($productA, false, null)
         );
     }
 
@@ -260,21 +245,5 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private function getProduct(array $properties = [])
     {
         return $this->getEntity(Product::class, $properties);
-    }
-
-    private function andRequestCameFromFrontend()
-    {
-        $this->frontendHelper
-            ->expects($this->any())
-            ->method('isFrontendRequest')
-            ->willReturn(true);
-    }
-
-    private function andRequestCameFromBackend()
-    {
-        $this->frontendHelper
-            ->expects($this->any())
-            ->method('isFrontendRequest')
-            ->willReturn(false);
     }
 }
