@@ -349,6 +349,55 @@ oro:
             new_arrival: 'New Arrival'
             top_selling: 'Top Selling'
 
+        brand:
+            owner:
+                label: Owner
+            label:                Brand
+            entity_label:         Brand
+            entity_plural_label:  Brands
+
+            descriptions:
+                label:    Description
+            id:
+                label:    Id
+            meta_titles:
+                label:    Meta title
+            meta_descriptions:
+                label:    Meta description
+            meta_keywords:
+                label:    Meta keyword
+            names:
+                label:    Name
+            short_descriptions:
+                label:    Short description
+            slug_prototypes:
+                label:    Slug prototype
+            slugs:
+                label:    Slug
+            organization:
+                label:    Organization
+            owner:
+                label:    Owner
+            status:
+                label:    Status
+                disabled: Disabled
+                enabled:  Enabled
+
+            menu:
+                entity_plural_label:  Product Brands
+                description:          Product Brands
+
+            form:
+                choose: Choose brand
+                update:
+                    sections:
+                        general:    'General'
+                        seo:        'SEO'
+                    messages:
+                        saved:      'Brand has been saved'
+                        notBlank:   'This field cannot be blank'
+
+
     product_unit.each:
         label:
             full: each
@@ -458,3 +507,4 @@ oro:
         quick_order_form:
             label: Quick Order Form
             description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
+

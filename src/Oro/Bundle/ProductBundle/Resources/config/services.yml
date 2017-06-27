@@ -1,5 +1,6 @@
 parameters:
     oro_product.entity.product.class: Oro\Bundle\ProductBundle\Entity\Product
+    oro_product.entity.brand.class: Oro\Bundle\ProductBundle\Entity\Brand
     oro_product.entity.product_unit.class: Oro\Bundle\ProductBundle\Entity\ProductUnit
     oro_product.entity.product_unit_precision.class: Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision
     oro_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
@@ -9,12 +10,21 @@ parameters:
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
+    oro_product.provider.brand_status_provider.class: Oro\Bundle\ProductBundle\Provider\BrandStatusProvider
+
 services:
     oro_product.product.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_product.entity.product.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_product.brand.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_product.entity.brand.class%'
             - "@doctrine.orm.entity_manager"
 
     oro_product.service.quantity_rounding:
@@ -91,6 +101,15 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product, acl_resource: oro_product_view }
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_frontend, acl_resource: oro_product_frontend_view }
+
+    oro_product.form.autocomplete.brand.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_product.entity.brand.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_brand }
 
     oro_product.service.sku_incrementor:
         class: 'Oro\Bundle\ProductBundle\Duplicator\SkuIncrementor'
@@ -647,6 +666,13 @@ services:
         tags:
             - { name: oro_redirect.routing_information_provider, alias: '%oro_product.entity.product.class%' }
 
+    oro_product.provider.brand.routing_information_provider:
+        class: Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: oro_redirect.routing_information_provider, alias: '%oro_product.entity.brand.class%' }
+
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
         arguments:
@@ -954,6 +980,9 @@ services:
             - '@oro_datagrid.datagrid.manager'
             - '@security.authorization_checker'
             - '@oro_datagrid.extension.pager.orm.pager'
+
+    oro_product.provider.brand_status_provider:
+        class: '%oro_product.provider.brand_status_provider.class%'
 
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter

@@ -17,6 +17,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
     const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
+    const BRAND_TABLE_NAME = 'oro_brand';
 
     const METAINFORMATION_TITLES = 'metaTitles';
     const METAINFORMATION_DESCRIPTIONS = 'metaDescriptions';
@@ -38,7 +39,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -50,6 +51,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
         $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
         $this->addMetaInformation($schema, self::WEB_CATALOG_NODE_TABLE_NAME);
+        $this->addMetaInformation($schema, self::BRAND_TABLE_NAME);
         $this->createOroWebCatalogProductLimitTable($schema);
     }
 
