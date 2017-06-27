@@ -30,7 +30,7 @@ class UpdatePriceListLexemesProcessorTest extends TestCase
     public function testProcessWrongType()
     {
         $this->priceRuleLexemeHandler
-            ->expects(static::any())
+            ->expects(static::never())
             ->method('updateLexemes');
 
         $context = $this->createMock(ContextInterface::class);
