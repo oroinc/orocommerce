@@ -185,10 +185,6 @@
                 display: block;
                 width: 100%;
             }
-
-            .product-sticker--icon-new_arrival {
-                width: 40%;
-            }
         }
 
         &--no-image-view {
@@ -516,6 +512,10 @@
         &__image-holder {
             &--list-view {
                 width: 110px;
+
+                .product-sticker--icon-new_arrival {
+                    width: 40%;
+                }
             }
         }
 

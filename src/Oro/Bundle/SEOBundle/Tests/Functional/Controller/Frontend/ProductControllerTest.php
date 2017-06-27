@@ -103,7 +103,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function indexDataProvider()
     {
-        $title1 = $this->getMetaContent(LoadCategoryData::FIRST_LEVEL, LoadCategoryMetaData::META_TITLES);
         $description1 = $this->getMetaContent(LoadCategoryData::FIRST_LEVEL, LoadCategoryMetaData::META_DESCRIPTIONS);
         $keywords1 = $this->getMetaContent(LoadCategoryData::FIRST_LEVEL, LoadCategoryMetaData::META_KEYWORDS);
 
@@ -111,7 +110,6 @@ class ProductControllerTest extends WebTestCase
             'Category 1' => [
                 'category' => LoadCategoryData::FIRST_LEVEL,
                 'metaTags' => [
-                    ['name' => $this->getMetaTitleName(), 'content' => $title1],
                     ['name' => $this->getMetaDescriptionName(), 'content' => $description1],
                     ['name' => $this->getMetaKeywordsName(), 'content' => $keywords1],
                 ],
@@ -119,7 +117,6 @@ class ProductControllerTest extends WebTestCase
             'Category 2' => [
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'metaTags' => [
-                    ['name' => 'title', 'content' => 'defaultMetaTitle'],
                     ['name' => 'description', 'content' => 'defaultMetaDescription'],
                     ['name' => 'keywords', 'content' => 'defaultMetaKeywords'],
                 ],
