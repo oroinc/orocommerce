@@ -36,13 +36,13 @@ class BuildCombinedPriceListOnScheduleDeleteProcessor implements ProcessorInterf
      */
     public function process(ContextInterface $context)
     {
-        /** @var PriceListSchedule $schedule */
         $schedule = $context->getResult();
-        if (!$schedule) {
-            return;
-        }
 
         $this->deleteHandler->process($context);
+
+        if (!$schedule instanceof PriceListSchedule) {
+            return;
+        }
 
         $this->combinedPriceListBuilder->buildByPriceList($schedule->getPriceList());
     }

@@ -35,13 +35,13 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteProcessor implements Proces
      */
     public function process(ContextInterface $context)
     {
-        /** @var PriceListSchedule $schedule */
         $schedule = $context->getResult();
-        if (!$schedule) {
-            return;
-        }
 
         $this->deleteHandler->process($context);
+
+        if (!$schedule instanceof PriceListSchedule) {
+            return;
+        }
 
         $schedule->getPriceList()->refreshContainSchedule();
 

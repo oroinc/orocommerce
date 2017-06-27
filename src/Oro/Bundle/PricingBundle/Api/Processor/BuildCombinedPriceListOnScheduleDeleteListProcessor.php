@@ -36,17 +36,22 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessor implements ProcessorIn
      */
     public function process(ContextInterface $context)
     {
-        /** @var PriceListSchedule[] $schedules */
-        $schedules = $context->getResult();
-        if (!$schedules) {
-            return;
-        }
+        $schedules = $this->getSchedulesFromContext($context);
 
         $this->deleteHandler->process($context);
 
         $processed = [];
         foreach ($schedules as $schedule) {
+            if (!$schedule instanceof PriceListSchedule) {
+                continue;
+            }
+
+            if (null === $schedule->getPriceList()) {
+                continue;
+            }
+
             $priceList = $schedule->getPriceList();
+
             if (in_array($priceList->getId(), $processed, true)) {
                 continue;
             }
@@ -54,5 +59,21 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessor implements ProcessorIn
             $this->combinedPriceListBuilder->buildByPriceList($priceList);
             $processed[] = $priceList->getId();
         }
+    }
+
+    /**
+     * @param ContextInterface $context
+     *
+     * @return array
+     */
+    private function getSchedulesFromContext(ContextInterface $context)
+    {
+        $schedules = $context->getResult();
+
+        if (false === is_array($schedules)) {
+            return [];
+        }
+
+        return $schedules;
     }
 }

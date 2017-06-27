@@ -35,18 +35,37 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor implements Pr
      */
     public function process(ContextInterface $context)
     {
-        /** @var PriceListSchedule[] $schedules */
-        $schedules = $context->getResult();
-        if (!$schedules) {
-            return;
-        }
+        $schedules = $this->getSchedulesFromContext($context);
 
         $this->deleteHandler->process($context);
 
+        if ([] === $schedules) {
+            return;
+        }
+
         foreach ($schedules as $schedule) {
+            if (!$schedule instanceof PriceListSchedule) {
+                continue;
+            }
             $schedule->getPriceList()->refreshContainSchedule();
         }
 
         $this->doctrineHelper->getEntityManager(PriceList::class)->flush();
+    }
+
+    /**
+     * @param ContextInterface $context
+     *
+     * @return array
+     */
+    private function getSchedulesFromContext(ContextInterface $context)
+    {
+        $schedules = $context->getResult();
+
+        if (false === is_array($schedules)) {
+            return [];
+        }
+
+        return $schedules;
     }
 }
