@@ -33,7 +33,12 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
             new \Swift_Transport_NullTransport(new \Swift_Events_SimpleEventDispatcher())
         );
 
+        $notificationListener = $this->container->get('oro_workflow.listener.workflow_transition_record');
+        $notificationListener->setEnabled(false);
+
         parent::load($manager);
+
+        $notificationListener->setEnabled(true);
 
         $this->container->set('swiftmailer.mailer.default.transport.real', $transport);
     }

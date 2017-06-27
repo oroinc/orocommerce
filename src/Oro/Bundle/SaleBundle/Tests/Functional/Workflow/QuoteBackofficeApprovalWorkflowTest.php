@@ -113,4 +113,12 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
             ['Return', 'Approve and Send to Customer', 'Approve', 'Decline']
         );
     }
+
+    protected function activateWorkflow()
+    {
+        $this->manager->deactivateWorkflow('b2b_quote_backoffice_default');
+        $this->manager->resetWorkflowData('b2b_quote_backoffice_default');
+
+        parent::activateWorkflow();
+    }
 }
