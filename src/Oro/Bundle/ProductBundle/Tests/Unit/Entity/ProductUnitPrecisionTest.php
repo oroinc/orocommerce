@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductUnitPrecisionTest extends EntityTestCase
 {
-
     public function testProperties()
     {
         $properties = [

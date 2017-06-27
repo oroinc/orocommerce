@@ -39,7 +39,6 @@ class PaymentMethodIdentifierByChannelProvider
         IntegrationIdentifierGeneratorInterface $paymentsProCreditCardIdentifierGenerator,
         IntegrationIdentifierGeneratorInterface $paymentsProExpressCheckoutIdentifierGenerator
     ) {
-
         $this->payflowGatewayCreditCardIdentifierGenerator = $payflowGatewayCreditCardIdentifierGenerator;
         $this->payflowGatewayExpressCheckoutIdentifierGenerator = $payflowGatewayExpressCheckoutIdentifierGenerator;
         $this->paymentsProCreditCardIdentifierGenerator = $paymentsProCreditCardIdentifierGenerator;
