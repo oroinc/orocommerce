@@ -1,0 +1,24 @@
+brand1:
+    status: enabled
+    names:
+        - { reference: brand-1.names.default, string: brand-1.names.default }
+        - { reference: brand-1.names.en_US, string: brand-1.names.en_US, fallback: system, localization: en_US }
+    slugPrototypes:
+        - { reference: brand-1.slugPrototypes.default, string: brand-1.slugPrototypes.default }
+        - { reference: brand-1.slugPrototypes.en_US, string: brand-1.slugPrototypes.en_US, fallback: system, localization: en_US }
+    descriptions:
+        - { reference: brand-1.descriptions.default, text: brand-1.descriptions.default }
+        - { reference: brand-1.descriptions.en_US, text: brand-1.descriptions.en_US, fallback: system, localization: en_US }
+    shortDescriptions:
+        - { reference: brand-1.shortDescriptions.default, text: brand-1.shortDescriptions.default }
+        - { reference: brand-1.shortDescriptions.en_US, text: brand-1.shortDescriptions.en_US, fallback: system, localization: en_US }
+brand2:
+    status: enabled
+    names:
+        - { reference: brand-2.names.default, string: brand-2.names.default }
+    slugPrototypes:
+        - { reference: brand-2.slugPrototypes.default, string: brand-2.slugPrototypes.default }
+    descriptions:
+        - { reference: brand-2.descriptions.default, text: brand-2.descriptions.default }
+    shortDescriptions:
+        - { reference: brand-2.shortDescriptions.default, text: brand-2.shortDescriptions.default }
