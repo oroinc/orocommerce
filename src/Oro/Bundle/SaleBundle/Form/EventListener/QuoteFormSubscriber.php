@@ -3,40 +3,32 @@
 namespace Oro\Bundle\SaleBundle\Form\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
+use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
 
 class QuoteFormSubscriber implements EventSubscriberInterface
 {
-    /** @var ProductPriceProvider */
-    protected $productPriceProvider;
-
-    /** @var PriceListTreeHandler */
-    protected $treeHandler;
+    /** @var QuoteProductPriceProvider */
+    protected $provider;
 
     /** @var TranslatorInterface */
     protected $translator;
 
     /**
-     * @param ProductPriceProvider $productPriceProvider
-     * @param PriceListTreeHandler $treeHandler
+     * @param QuoteProductPriceProvider $provider
      * @param TranslatorInterface $translator
      */
-    public function __construct(
-        ProductPriceProvider $productPriceProvider,
-        PriceListTreeHandler $treeHandler,
-        TranslatorInterface $translator
-    ) {
-        $this->productPriceProvider = $productPriceProvider;
-        $this->treeHandler = $treeHandler;
+    public function __construct(QuoteProductPriceProvider $provider, TranslatorInterface $translator)
+    {
+        $this->provider = $provider;
         $this->translator = $translator;
     }
 
@@ -55,12 +47,83 @@ class QuoteFormSubscriber implements EventSubscriberInterface
      */
     public function onPreSubmit(FormEvent $event)
     {
-        /** @var array $data */
-        $data = $event->getData();
+        $form = $event->getForm();
 
-        if (isset($data['quoteProducts'])) {
-            $this->processFormData($event->getForm(), $data);
+        $quote = $form->getData();
+        if (!$quote instanceof Quote || !$quote->getId()) {
+            return;
         }
+
+        $data = $event->getData();
+        if (!is_array($data) || !isset($data['quoteProducts'])) {
+            return;
+        }
+
+        $this->processPriceChanges($form, $quote, $data['quoteProducts']);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Quote $quote
+     * @param array $quoteProducts
+     */
+    protected function processPriceChanges(FormInterface $form, Quote $quote, array $quoteProducts)
+    {
+        $config = $form->getConfig();
+
+        $allowPricesOverride = $this->isAllowedPricesOverride($config);
+        $allowFreeForm = $this->isAllowedAddFreeFormItems($config);
+
+        $priceComparator = new QuotePriceComparator($quote);
+        $tierPrices = $this->getTierPrices($quote, $quoteProducts);
+
+        foreach ($quoteProducts as $productData) {
+            $allowChanges = $allowPricesOverride && ($productData['product'] || $allowFreeForm);
+            $offers = $productData['quoteProductOffers'] ?? [];
+
+            foreach ($offers as $productOfferData) {
+                $priceChanged = $priceComparator->isQuoteProductOfferPriceChanged(
+                    $productData['productSku'],
+                    $productOfferData['productUnit'],
+                    $productOfferData['quantity'],
+                    $productOfferData['price']['currency'],
+                    $productOfferData['price']['value']
+                );
+
+                if ($priceChanged) {
+                    $quote->setPricesChanged(true);
+
+                    if ($allowChanges) {
+                        break;
+                    }
+
+                    // check that overridden price in free form
+                    if (!$productData['product']) {
+                        $this->addFormError($form, 'oro.sale.quote.form.error.free_form_price_override');
+                        break;
+                    }
+
+                    // check that overridden price is tier
+                    if (!$this->isTierPrice($productData['product'], $productOfferData, $tierPrices)) {
+                        $this->addFormError($form, 'oro.sale.quote.form.error.price_override');
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Quote $quote
+     * @param array $quoteProducts
+     *
+     * @return array
+     */
+    protected function getTierPrices(Quote $quote, array $quoteProducts)
+    {
+        $productIds = array_filter(array_column($quoteProducts, 'product'));
+
+        return $this->provider->getTierPricesForProducts($quote, $productIds);
     }
 
     /**
@@ -84,104 +147,37 @@ class QuoteFormSubscriber implements EventSubscriberInterface
                 return true;
             }
         }
-
         return false;
     }
 
     /**
-     * @param Quote $quote
-     * @param array $productIds
-     * @return array
-     */
-    protected function getTierPrices(Quote $quote, array $productIds)
-    {
-        $tierPrices = [];
-
-        if ($productIds) {
-            $priceList = $this->getPriceList($quote);
-            if (!$priceList) {
-                return [];
-            }
-            $tierPrices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-                $priceList->getId(),
-                $productIds
-            );
-        }
-
-        return $tierPrices;
-    }
-
-    /**
-     * @param Quote $quote
-     * @return BasePriceList
-     */
-    protected function getPriceList(Quote $quote)
-    {
-        return $this->treeHandler->getPriceList(null, $quote->getWebsite());
-    }
-
-    /**
-     * @param Quote $quote
-     * @return array
-     */
-    protected function getQuotePricesValues(Quote $quote)
-    {
-        $prices = [];
-        foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
-                $key = sprintf(
-                    '%s_%s_%s_%s',
-                    $quoteProduct->getProductSku(),
-                    $quoteProductOffer->getProductUnitCode(),
-                    $quoteProductOffer->getQuantity(),
-                    $quoteProductOffer->getPrice()->getCurrency()
-                );
-                $prices[$key] = (float) $quoteProductOffer->getPrice()->getValue();
-            }
-        }
-
-        return $prices;
-    }
-
-    /**
      * @param FormInterface $form
-     * @param array $data
+     * @param string $error
      */
-    protected function processFormData(FormInterface $form, array $data)
+    protected function addFormError(FormInterface $form, $error)
     {
-        /** @var Quote $quote */
-        $quote = $form->getData();
-        $options = $form->getConfig()->getOptions();
-        $prices = $this->getQuotePricesValues($quote);
-        $productIds = array_filter(array_column($data['quoteProducts'], 'product'));
-        $allowPricesOverride = $options['allow_prices_override'] ?? false;
-        $allowFreeForm = $options['allow_add_free_form_items'] ?? false;
-        $tierPrices = $this->getTierPrices($quote, $productIds);
+        $form->addError(new FormError($this->translator->trans($error)));
+    }
 
-        foreach ($data['quoteProducts'] as $quoteProductData) {
-            foreach ($quoteProductData['quoteProductOffers'] ?? [] as $quoteProductOfferData) {
-                $key = sprintf(
-                    '%s_%s_%s_%s',
-                    $quoteProductData['productSku'],
-                    $quoteProductOfferData['productUnit'],
-                    $quoteProductOfferData['quantity'],
-                    $quoteProductOfferData['price']['currency']
-                );
-                if (!isset($prices[$key]) || $prices[$key] !== (float) $quoteProductOfferData['price']['value']) {
-                    $quote->setPricesChanged(true);
-                    if ($allowPricesOverride && $allowFreeForm) {
-                        break;
-                    }
-                    // check that overridden price is tier
-                    if (!$quoteProductData['product'] ||
-                        !$this->isTierPrice($quoteProductData['product'], $quoteProductOfferData, $tierPrices)
-                    ) {
-                        $form->addError(new FormError($this->translator->trans(
-                            'oro.sale.quote.form.error.price_override'
-                        )));
-                    }
-                }
-            }
-        }
+    /**
+     * @param FormConfigInterface $config
+     * @return bool
+     */
+    protected function isAllowedPricesOverride(FormConfigInterface $config)
+    {
+        $options = $config->getOptions();
+
+        return $options['allow_prices_override'] ?? false;
+    }
+
+    /**
+     * @param FormConfigInterface $config
+     * @return bool
+     */
+    protected function isAllowedAddFreeFormItems(FormConfigInterface $config)
+    {
+        $options = $config->getOptions();
+
+        return $options['allow_add_free_form_items'] ?? false;
     }
 }

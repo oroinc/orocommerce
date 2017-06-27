@@ -153,15 +153,16 @@ define(function(require) {
         updatePriceValue: function() {
             this.setTierPrices(this.tierPrices);
             if (!this.options.editable) {
-                var price = this.findPrice();
-                if (!price &&
-                    this.storedValues &&
+                var price;
+                if (this.storedValues &&
                     this.model.get('id') === this.storedValues.id &&
                     this.model.get('unit') === this.storedValues.unit &&
                     this.model.get('quantity') === this.storedValues.quantity &&
                     this.model.get('currency') === this.storedValues.currency
                 ) {
                     price = this.storedValues;
+                } else {
+                    price = this.findPrice();
                 }
                 this.setPriceValue(price ? price.price : null);
                 this.getElement('priceValue').addClass('matched-price');

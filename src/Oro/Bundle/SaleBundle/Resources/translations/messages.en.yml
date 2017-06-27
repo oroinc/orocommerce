@@ -90,6 +90,11 @@ oro:
                 quote.sent.success: 'Quote #%id% successfully sent to customer'
                 quote.cancel.success: 'Quote #%id% successfully cancelled'
                 quote.decline.success: 'Quote #%id% successfully declined'
+                quote.submit_for_review.success: 'Quote #%id% successfully submitted for review'
+                quote.review.success: 'Quote #%id% on review'
+                quote.return.success: 'Quote #%id% returned'
+                quote.approve.success: 'Quote #%id% approved'
+                quote.decline_by_reviewer.success: 'Quote #%id% declined'
 
             form:
                 address:

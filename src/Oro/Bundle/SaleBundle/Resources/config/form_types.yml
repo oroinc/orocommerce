@@ -110,6 +110,5 @@ services:
     oro_sale.form.event_listener.quote_update:
         class: 'Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber'
         arguments:
-            - '@oro_pricing.provider.product_price'
-            - '@oro_pricing.model.price_list_tree_handler'
+            - '@oro_sale.provider.quote_product_price'
             - '@translator'
