@@ -13,6 +13,8 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\OroSEOBundle;
+use Oro\Bundle\ProductBundle\Entity\Brand;
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 
 class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,6 +37,7 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
                     Product::class => $fields,
                     Category::class => $fields,
                     Page::class => $fields,
+                    Brand::class => $fields,
                 ]),
                 new ContentNodeFieldsChangesCompilerPass(
                     array_values($fields),
