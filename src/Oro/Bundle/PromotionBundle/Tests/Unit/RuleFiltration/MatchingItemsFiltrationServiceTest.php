@@ -39,9 +39,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);
-        $this->matchingProductsProvider = $this->getMockBuilder(MatchingProductsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->matchingProductsProvider = $this->createMock(MatchingProductsProvider::class);
 
         $this->matchingItemsFiltrationService = new MatchingItemsFiltrationService(
             $this->filtrationService,

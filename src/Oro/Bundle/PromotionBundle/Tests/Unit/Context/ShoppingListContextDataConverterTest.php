@@ -75,6 +75,8 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
     {
         $entity = new \stdClass();
         $this->expectException(UnsupportedSourceEntityException::class);
+        $this->expectExceptionMessage('Entity "stdClass" is not supported.');
+
         $this->converter->getContextData($entity);
     }
 

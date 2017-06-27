@@ -34,17 +34,22 @@ class LineItemsToDiscountLineItemsConverter
             $discountLineItem = new DiscountLineItem();
 
             $unitCode = $lineItem->getProductUnitCode();
+
             $price = null;
             if (isset($shoppingListPrices[$lineItem->getProduct()->getId()][$unitCode])) {
                 /** @var Price $price */
                 $price = $shoppingListPrices[$lineItem->getProduct()->getId()][$unitCode];
+                $discountLineItem->setPrice($price);
+                $discountLineItem->setSubtotal($price->getValue() * $lineItem->getQuantity());
+            } else {
+                $discountLineItem->setSubtotal(0);
             }
-            $discountLineItem->setPrice($price);
+
             $discountLineItem->setQuantity($lineItem->getQuantity());
             $discountLineItem->setProduct($lineItem->getProduct());
             $discountLineItem->setProductUnit($lineItem->getProductUnit());
             $discountLineItem->setSourceLineItem($lineItem);
-            $discountLineItem->setSubtotal($price->getValue() * $lineItem->getQuantity());
+
             $discountLineItems[] = $discountLineItem;
         }
 

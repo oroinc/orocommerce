@@ -111,8 +111,8 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
         public: false
         arguments:
-            - '@oro_shopping_list.manager.shopping_list_total'
-            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
+           - '@oro_shopping_list.manager.shopping_list_total'
+           - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 
@@ -120,7 +120,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
         public: false
         arguments:
-            - '@oro_shopping_list.data_provider.frontend_product_prices'
+             - '@oro_shopping_list.data_provider.frontend_product_prices'
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry

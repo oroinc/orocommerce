@@ -37,7 +37,9 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
     public function convert($sourceEntity): DiscountContext
     {
         if (!$this->supports($sourceEntity)) {
-            throw new UnsupportedSourceEntityException();
+            throw new UnsupportedSourceEntityException(
+                sprintf('Source entity "%s" is not supported.', get_class($sourceEntity))
+            );
         }
 
         $discountContext = new DiscountContext();

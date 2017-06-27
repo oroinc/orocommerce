@@ -77,9 +77,7 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
     public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
-        $resolver = $this->getMockBuilder(OptionsResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
 
         $resolver->expects($this->any())
             ->method('setDefault')

@@ -57,7 +57,9 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     public function getContextData($entity): array
     {
         if (!$this->supports($entity)) {
-            throw new UnsupportedSourceEntityException();
+            throw new UnsupportedSourceEntityException(
+                sprintf('Entity "%s" is not supported.', get_class($entity))
+            );
         }
 
         $customerUser = $entity->getCustomerUser();
