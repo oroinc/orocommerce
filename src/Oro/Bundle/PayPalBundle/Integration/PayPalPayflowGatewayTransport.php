@@ -17,7 +17,7 @@ class PayPalPayflowGatewayTransport implements TransportInterface
      */
     public function init(Transport $transportEntity)
     {
-         $this->settings = $transportEntity->getSettingsBag();
+        $this->settings = $transportEntity->getSettingsBag();
     }
 
     /**
@@ -25,7 +25,7 @@ class PayPalPayflowGatewayTransport implements TransportInterface
      */
     public function getSettingsFormType()
     {
-         return PayPalSettingsType::class;
+        return PayPalSettingsType::class;
     }
 
      /**

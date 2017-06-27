@@ -45,7 +45,6 @@ class EnumTypeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->formFactory->expects($this->once())
             ->method('createNamed')
             ->with($fieldName, EnumSelectType::NAME, null, $this->callback(function (array $options) use ($fieldName) {
-
                 $disabledValues = ['red', 'yellow'];
 
                 $this->assertEquals([
