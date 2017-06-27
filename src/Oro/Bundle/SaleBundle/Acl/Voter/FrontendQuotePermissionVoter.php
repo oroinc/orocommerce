@@ -47,7 +47,7 @@ class FrontendQuotePermissionVoter extends Voter
     /**
      * @return bool
      */
-    protected function isValidApplication() : bool
+    protected function isValidApplication()
     {
         return $this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION;
     }

@@ -155,7 +155,7 @@ oro.workflow:
                 label: 'Cancel'
                 warning_message: ''
             accept_transition:
-                lable: 'Accept'
+                label: 'Accept'
                 warning_message: ''
             expire_transition:
                 label: 'Expire'

@@ -12,10 +12,10 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 class FrontendQuotePermissionVoterTest extends \PHPUnit_Framework_TestCase
 {
-    /* @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $token;
 
-    /* @var CurrentApplicationProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CurrentApplicationProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $applicationProvider;
 
     /** @var FrontendQuotePermissionVoter */

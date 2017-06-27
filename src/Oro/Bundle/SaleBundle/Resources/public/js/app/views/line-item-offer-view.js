@@ -31,7 +31,7 @@ define(function(require) {
 
             // get all units
             _.each(this.getElement('unit').find('option'), _.bind(function(elem) {
-                this.options.allUnits.push({ code: elem.value, label: elem.text });
+                this.options.allUnits.push({code: elem.value, label: elem.text});
             }, this));
             this.model.on('product:unit:filter-values', _.bind(this.filterUnits, this));
         },
