@@ -14,6 +14,9 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator;
 
+/**
+ * Discards price modifications and free form inputs, if there are no permissions for those operations
+ */
 class QuoteFormSubscriber implements EventSubscriberInterface
 {
     /** @var QuoteProductPriceProvider */

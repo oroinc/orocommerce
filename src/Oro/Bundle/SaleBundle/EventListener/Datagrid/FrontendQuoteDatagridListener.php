@@ -5,6 +5,9 @@ namespace Oro\Bundle\SaleBundle\EventListener\Datagrid;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQuery;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
+/**
+ * Appends Frontend Datagrid query with proper internal statuses.
+ */
 class FrontendQuoteDatagridListener
 {
     /**

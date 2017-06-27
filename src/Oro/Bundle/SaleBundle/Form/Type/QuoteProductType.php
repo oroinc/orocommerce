@@ -101,6 +101,7 @@ class QuoteProductType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $units = [];
+
         /* @var $products Product[] */
         $products = [];
 

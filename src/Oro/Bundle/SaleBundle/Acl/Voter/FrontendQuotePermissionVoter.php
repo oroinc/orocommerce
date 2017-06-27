@@ -9,6 +9,10 @@ use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
+/**
+ * Checks if given Quote contains frontend internal status.
+ * Triggered only for Commerce Application
+ */
 class FrontendQuotePermissionVoter extends Voter
 {
     /** @var CurrentApplicationProviderInterface */
