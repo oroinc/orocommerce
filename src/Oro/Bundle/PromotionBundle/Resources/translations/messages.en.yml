@@ -1,9 +1,45 @@
 oro:
     discount:
-        label: 'Discount'
-        choices:
-            order: 'Order'
-            shopping_list_line_item: 'Shopping List Line Item'
+        type:
+            label: Discount
+            choices:
+                order: Order
+                line_item: Line Item
+                buy_x_get_y: Buy X Get Y
+    discount_options:
+        general:
+            type:
+                label: Type
+                tooltip: Discount type
+                choices:
+                    amount: Fixed Amount
+                    percent: Percent
+            value:
+                label: Discount Value
+        line_item_type:
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount Value To
+                choices:
+                    each_item: Each Item
+                    line_items_total: Line Items Total
+            maximum_qty:
+                label: Maximum Qty Discount is Applied To
+                tooltip: Maximum Qty Discount is Applied To Each Line Item
+        buy_x_get_y_type:
+            buy_x.label: Buy X
+            get_y.label: Get Y
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount Value To
+                choices:
+                    apply_to_each_y: Each Y Item Separately
+                    apply_to_xy_total: X + Y Total
+            limit_times:
+                label: Limit, times
+                tooltip: The limitation on how many sets of X+Y can be applied to a single line item.
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
@@ -64,6 +100,12 @@ oro:
                 no: No
                 for_matching_items_only: For Matching Items Only
                 for_shipment_with_matching_items: For Shipment With Matching Items
+            strategy:
+                apply_all.label: Apply All
+                profitable.label: Profitable
+            subtotal:
+                order.label: 'Order Discount'
+                shipping.label: 'Shipping Discount'
 
         discountconfiguration:
             entity_label: Discount Configuration
@@ -116,17 +158,6 @@ oro:
 
         form:
             choose: 'Choose a Promotion...'
-            basic_discount:
-                discount:
-                    label: 'Discount'
-                type:
-                    label: 'Type'
-                    tooltip: 'Discount type'
-                    choices:
-                        amount: 'Fixed Amount'
-                        percent: 'Percent'
-                value:
-                    label: 'Discount Value'
 
         sections:
             general:
@@ -136,8 +167,3 @@ oro:
                     discount_optins.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
-
-        discount:
-            strategy:
-                apply_all.label: Apply All
-                profitable.label: Profitable

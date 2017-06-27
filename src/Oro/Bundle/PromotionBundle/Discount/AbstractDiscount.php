@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\Exception\ConfiguredException;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
@@ -31,9 +32,9 @@ abstract class AbstractDiscount implements DiscountInterface
     protected $discountCurrency;
 
     /**
-     * @var \Traversable
+     * @var array|Product[]
      */
-    protected $matchingProducts;
+    protected $matchingProducts = [];
 
     /**
      * @var bool
@@ -53,7 +54,7 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function configure(array $options)
+    public function configure(array $options): array
     {
         if ($this->configured) {
             throw new ConfiguredException();
@@ -65,6 +66,8 @@ abstract class AbstractDiscount implements DiscountInterface
         $this->discountType = $resolvedOptions[self::DISCOUNT_TYPE];
         $this->discountValue = $resolvedOptions[self::DISCOUNT_VALUE];
         $this->discountCurrency = $resolvedOptions[self::DISCOUNT_CURRENCY];
+
+        return $resolvedOptions;
     }
 
     /**
@@ -94,7 +97,15 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function setMatchingProducts(\Traversable $products)
+    public function getMatchingProducts(): array
+    {
+        return $this->matchingProducts;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMatchingProducts(array $products)
     {
         $this->matchingProducts = $products;
     }
@@ -135,11 +146,17 @@ abstract class AbstractDiscount implements DiscountInterface
         $resolver->setAllowedValues(self::DISCOUNT_TYPE, [self::TYPE_PERCENT, self::TYPE_AMOUNT]);
 
         $resolver->setDefault(self::DISCOUNT_VALUE, 0.0);
-        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, ['float', 'integer']);
+        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, ['numeric']);
 
         $resolver->setDefault(self::DISCOUNT_CURRENCY, null);
         $resolver->setAllowedTypes(self::DISCOUNT_CURRENCY, ['null', 'string']);
 
+        $resolver->setNormalizer(
+            self::DISCOUNT_VALUE,
+            function (Options $options, $value) {
+                return (float)$value;
+            }
+        );
         $resolver->setNormalizer(
             self::DISCOUNT_CURRENCY,
             function (Options $options, $value) {

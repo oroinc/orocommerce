@@ -4,13 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
 {
-    /** @var Promotion[] */
-    protected $promotions = [];
-
     /**
      * @var DiscountLineItem[]
      */
@@ -107,6 +103,17 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
+     * @param DiscountLineItem $lineItem
+     * @return $this
+     */
+    public function addLineItem(DiscountLineItem $lineItem)
+    {
+        $this->lineItems[] = $lineItem;
+
+        return $this;
+    }
+
+    /**
      * @return array|DiscountInterface[]
      */
     public function getShippingDiscounts(): array
@@ -180,18 +187,51 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
-     * @return Promotion[]
+     * @return float
      */
-    public function getPromotions(): array
+    public function getShippingDiscountTotal(): float
     {
-        return $this->promotions;
+        $value = 0.0;
+        foreach ($this->shippingDiscountsInformation as $discountInformation) {
+            $value += $discountInformation->getDiscountAmount();
+        }
+
+        return $value;
     }
 
     /**
-     * @param Promotion[] $promotions
+     * @return float
      */
-    public function setPromotions(array $promotions)
+    public function getSubtotalDiscountTotal(): float
     {
-        $this->promotions = $promotions;
+        $value = 0.0;
+        foreach ($this->subtotalDiscountsInformation as $discountInformation) {
+            $value += $discountInformation->getDiscountAmount();
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalLineItemsDiscount(): float
+    {
+        $value = 0.0;
+        foreach ($this->getLineItems() as $lineItem) {
+            $value += $lineItem->getDiscountTotal();
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalDiscountAmount(): float
+    {
+        return $this->getTotalLineItemsDiscount()
+            + $this->getSubtotalDiscountTotal()
+            + $this->getShippingDiscountTotal();
     }
 }

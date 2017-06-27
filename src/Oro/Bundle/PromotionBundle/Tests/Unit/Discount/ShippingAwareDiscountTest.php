@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -61,7 +60,7 @@ class ShippingAwareDiscountTest extends \PHPUnit_Framework_TestCase
 
     public function testSetMatchingProducts()
     {
-        $products = new ArrayCollection([$this->createMock(Product::class)]);
+        $products = [$this->createMock(Product::class)];
         $this->shippingDiscount->expects($this->once())
             ->method('setMatchingProducts')
             ->with($products);

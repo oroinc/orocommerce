@@ -149,8 +149,8 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('page_component_options', $options);
                     $this->assertEquals(
                         [
-                            'amount' => 'oro.promotion.form.basic_discount.type.choices.amount',
-                            'percent' => 'oro.promotion.form.basic_discount.type.choices.percent'
+                            'amount' => 'oro.discount_options.general.type.choices.amount',
+                            'percent' => 'oro.discount_options.general.type.choices.percent'
                         ],
                         $options['type_choices']
                     );

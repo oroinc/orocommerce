@@ -11,11 +11,11 @@
     {% set data = [
         UI.renderProperty(
             'oro.promotion.discountconfiguration.type.discount.label'|trans,
-            ('oro.discount.choices.' ~ entity.discountConfiguration.type)|trans
+            ('oro.discount.type.choices.' ~ entity.discountConfiguration.type)|trans
         ),
         UI.renderProperty(
             'oro.promotion.discountconfiguration.options.type.label'|trans,
-            ('oro.promotion.form.basic_discount.type.choices.' ~ options['discount_type'])|trans
+            ('oro.discount_options.general.type.choices.' ~ options['discount_type'])|trans
         ),
         UI.renderProperty('oro.promotion.discountconfiguration.options.discount_value.label'|trans, discountValue)
     ]|merge(data|default({})) %}

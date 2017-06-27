@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
+use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -27,7 +28,7 @@ class CurrencyFiltrationService implements RuleFiltrationServiceInterface
      */
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
-        $currentCurrency = $context['currency'];
+        $currentCurrency = $context[ContextDataConverterInterface::CURRENCY] ?? null;
         $filteredOwners = array_values(array_filter(
             $ruleOwners,
             function ($ruleOwner) use ($currentCurrency) {
