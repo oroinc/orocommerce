@@ -38,12 +38,12 @@ class BuildCombinedPriceListOnScheduleDeleteProcessorTest extends TestCase
         );
     }
 
-    public function testProcessNoData()
+    public function testProcessWrongType()
     {
-        $this->combinedPriceListBuilder->expects(static::any())
+        $this->combinedPriceListBuilder->expects(static::never())
             ->method('buildByPriceList');
 
-        $this->deleteHandler->expects(static::any())
+        $this->deleteHandler->expects(static::once())
             ->method('process');
 
         $this->processor->process($this->createMock(ContextInterface::class));

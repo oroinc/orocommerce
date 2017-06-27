@@ -27,9 +27,8 @@ class BuildCombinedPriceListOnScheduleSaveProcessor implements ProcessorInterfac
      */
     public function process(ContextInterface $context)
     {
-        /** @var PriceListSchedule $schedule */
         $schedule = $context->getResult();
-        if (!$schedule) {
+        if (!$schedule instanceof PriceListSchedule) {
             return;
         }
 

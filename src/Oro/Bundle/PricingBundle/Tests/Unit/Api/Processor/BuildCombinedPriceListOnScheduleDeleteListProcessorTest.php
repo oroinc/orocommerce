@@ -38,12 +38,12 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
         );
     }
 
-    public function testProcessNoData()
+    public function testProcessNotArray()
     {
-        $this->combinedPriceListBuilder->expects(static::any())
+        $this->combinedPriceListBuilder->expects(static::never())
             ->method('buildByPriceList');
 
-        $this->deleteHandler->expects(static::any())
+        $this->deleteHandler->expects(static::once())
             ->method('process');
 
         $this->processor->process($this->createMock(ContextInterface::class));
@@ -76,6 +76,27 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
                 [$priceLists[0]],
                 [$priceLists[2]]
             );
+
+        $this->processor->process($context);
+    }
+
+    public function testProcessWrongType()
+    {
+        $schedules = [
+            new \StdClass(),
+            new PriceListSchedule(),
+        ];
+
+        $context = $this->createMock(ContextInterface::class);
+        $context->expects(static::once())
+            ->method('getResult')
+            ->willReturn($schedules);
+
+        $this->deleteHandler->expects(static::once())
+            ->method('process');
+
+        $this->combinedPriceListBuilder->expects(static::never())
+            ->method('buildByPriceList');
 
         $this->processor->process($context);
     }

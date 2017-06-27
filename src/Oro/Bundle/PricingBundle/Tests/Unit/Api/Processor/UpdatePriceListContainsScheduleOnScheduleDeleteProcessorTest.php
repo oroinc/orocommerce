@@ -39,12 +39,12 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteProcessorTest extends TestC
         );
     }
 
-    public function testProcessNoData()
+    public function testProcessWrongType()
     {
-        $this->doctrineHelper->expects(static::any())
+        $this->doctrineHelper->expects(static::never())
             ->method('getEntityManager');
 
-        $this->deleteHandler->expects(static::any())
+        $this->deleteHandler->expects(static::once())
             ->method('process');
 
         $this->processor->process($this->createMock(ContextInterface::class));

@@ -39,12 +39,12 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends T
         );
     }
 
-    public function testProcessNoData()
+    public function testProcessNotArray()
     {
-        $this->doctrineHelper->expects(static::any())
+        $this->doctrineHelper->expects(static::never())
             ->method('getEntityManager');
 
-        $this->deleteHandler->expects(static::any())
+        $this->deleteHandler->expects(static::once())
             ->method('process');
 
         $this->processor->process($this->createMock(ContextInterface::class));
@@ -65,6 +65,8 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends T
             ->willReturn([
                 (new PriceListSchedule())->setPriceList($priceList),
                 (new PriceListSchedule())->setPriceList($priceListWithSchedule),
+                new \StdClass(),
+                new PriceListSchedule(),
             ]);
 
         $this->deleteHandler->expects(static::once())

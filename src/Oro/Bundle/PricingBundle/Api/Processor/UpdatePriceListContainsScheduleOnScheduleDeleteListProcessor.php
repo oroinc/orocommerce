@@ -47,6 +47,11 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor implements Pr
             if (!$schedule instanceof PriceListSchedule) {
                 continue;
             }
+
+            if (null === $schedule->getPriceList()) {
+                continue;
+            }
+
             $schedule->getPriceList()->refreshContainSchedule();
         }
 
