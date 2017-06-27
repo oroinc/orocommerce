@@ -3,11 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PromotionBundle\Discount\Converter\ConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 
 class AppliedDiscountManager
@@ -15,28 +13,19 @@ class AppliedDiscountManager
     /** @var PromotionExecutor */
     protected $promotionExecutor;
 
-    /** @var  ConverterInterface */
-    protected $appliedDiscountConverter;
-
     /**
      * @param PromotionExecutor $promotionExecutor
-     * @param ConverterInterface $appliedDiscountConverter
      */
-    public function __construct(
-        PromotionExecutor $promotionExecutor,
-        ConverterInterface $appliedDiscountConverter
-    ) {
+    public function setPromotionExecutor(PromotionExecutor $promotionExecutor)
+    {
         $this->promotionExecutor = $promotionExecutor;
-        $this->appliedDiscountConverter = $appliedDiscountConverter;
     }
-
     /**
      * @param Order $order
-     * @return array
+     * @return array|null
      */
-    public function getAppliedDiscounts(Order $order): array
+    public function getAppliedDiscounts(Order $order)
     {
-        $appliedDiscounts = [];
         $discountContext = $this->promotionExecutor->execute($order);
         /** @var DiscountInterface[] $discountsData */
         $discountsData = array_merge(
@@ -44,12 +33,17 @@ class AppliedDiscountManager
             $discountContext->getShippingDiscounts()
         );
         if ($discountsData) {
+            $appliedDiscounts = [];
             foreach ($discountsData as $discount) {
                 $appliedDiscounts[] = $this->createAppliedDiscount($order, $discount);
             }
+            return array_merge(
+                $appliedDiscounts,
+                $this->getLineItemDiscounts($order, $discountContext->getLineItems())
+            );
         }
 
-        return array_merge($appliedDiscounts, $this->getLineItemDiscounts($order, $discountContext->getLineItems()));
+        return null;
     }
 
     /**
@@ -58,7 +52,7 @@ class AppliedDiscountManager
      * @param array $options
      * @return AppliedDiscount
      */
-    public function createAppliedDiscount(
+    protected function createAppliedDiscount(
         Order $order,
         DiscountInterface $discount,
         array $options = []
@@ -72,6 +66,7 @@ class AppliedDiscountManager
             ->setOrder($order)
             ->setType($discount->getDiscountType())
             ->setAmount($discount->getDiscountValue())
+            ->setCurrency($discount->getDiscountCurrency())
             ->setConfigOptions($promotion->getDiscountConfiguration()->getOptions())
             ->setOptions($options)
             ->setPromotion($promotion);

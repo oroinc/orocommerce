@@ -191,6 +191,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('type', 'string', ['length' => 50]);
         $table->addColumn('amount', 'float', ['notnull' => false]);
+        $table->addColumn('currency', 'string', ['notnull' => false]);
         $table->addColumn('config_options', 'json_array', []);
         $table->addColumn('options', 'json_array', []);
         $table->addIndex(['promotion_id'], 'idx_c19d7e3139df194', []);

@@ -12,12 +12,13 @@ class OrderEventListener
     /**@var AppliedDiscountManager */
     protected $discountManager;
 
-    /**
-     * @param AppliedDiscountManager $discountManager
+    /** Using setter instead constructor due circular reference
+     *
+     * @param AppliedDiscountManager $appliedDiscountManager
      */
-    public function __construct(AppliedDiscountManager $discountManager)
+    public function setAppliedDiscountManager(AppliedDiscountManager $appliedDiscountManager)
     {
-        $this->discountManager = $discountManager;
+        $this->discountManager = $appliedDiscountManager;
     }
 
     /**
