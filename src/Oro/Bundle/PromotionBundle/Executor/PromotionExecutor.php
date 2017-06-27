@@ -58,9 +58,7 @@ class PromotionExecutor
         $discounts = [];
         $promotions = [];
         foreach ($this->promotionProvider->getPromotions($sourceEntity) as $promotion) {
-            $discount = $this->discountFactory->create($promotion->getDiscountConfiguration());
-            $discounts[] = $discount;
-            $promotions[$discount->getDiscountType()] = $promotion;
+            $discounts[] = $this->discountFactory->create($promotion->getDiscountConfiguration(), $promotion);
         }
         if (!$discounts) {
             return $discountContext;

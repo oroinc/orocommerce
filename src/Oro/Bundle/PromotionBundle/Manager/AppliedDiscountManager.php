@@ -39,17 +39,21 @@ class AppliedDiscountManager
         $promotions = $discountContext->getPromotions();
         if ($subtotalDiscounts && $promotions) {
             foreach ($subtotalDiscounts as $discount) {
-                $discountType = $discount->getDiscountType();
-                $promotion = $promotions[$discountType];
+                $promotion = $discount->getPromotion();
+                if (!$promotion) {
+                    throw new \LogicException('required promotion is missing');
+                }
 
                 $appliedDiscounts[] = (new AppliedDiscount())
                     ->setOrder($order)
-                    ->setType($discountType)
+                    ->setType($discount->getDiscountType())
                     ->setAmount($discount->getDiscountValue())
                     ->setConfigOptions($promotion->getDiscountConfiguration()->getOptions())
+                    ->setOptions(['sourceEntityId' => ''])
                     ->setPromotion($promotion);
             }
         }
+
         return $appliedDiscounts;
     }
 }

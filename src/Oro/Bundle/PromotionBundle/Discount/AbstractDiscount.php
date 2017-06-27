@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\PromotionBundle\Discount\Exception\ConfiguredException;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
+
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -37,6 +39,11 @@ abstract class AbstractDiscount implements DiscountInterface
      * @var bool
      */
     protected $configured = false;
+
+    /**
+     * @var Promotion
+     */
+    protected $promotion;
 
     /**
      * @var array
@@ -90,6 +97,17 @@ abstract class AbstractDiscount implements DiscountInterface
     public function setMatchingProducts(\Traversable $products)
     {
         $this->matchingProducts = $products;
+    }
+
+    /** {@inheritdoc} */
+    public function getPromotion(): Promotion
+    {
+        return $this->promotion;
+    }
+
+    public function setPromotion(Promotion $promotion)
+    {
+        $this->promotion = $promotion;
     }
 
     /**
