@@ -22,9 +22,10 @@ Static options for product attributes
 | decrementQuantity | 1 / 0 | Yes / No |
 | manageInventory | 1 / 0 | On Order Submission / Defined by Workflow |
 | backOrder | 1 / 0 | Yes / No |
-| productType | "simple" / "configurable" | Yes / No |
-
-
+| productType | "simple" / "configurable" | |
+| status | "enabled" / "disabled" |  |
+| featured | true / false |  |
+| newArrival | true / false |  |
 
 {@inheritdoc}
 
@@ -46,7 +47,8 @@ Example:
         "createdAt": "2017-06-13T07:12:06Z",
         "updatedAt": "2017-06-13T07:12:31Z",
         "productType": "simple",
-        "featured": true
+        "featured": true,
+        "newArrival": false
       },
       "relationships": {
         "owner": {
@@ -61,8 +63,20 @@ Example:
             "id": "1"
           }
         },
+        "taxCode": {
+          "data": {
+            "type": "producttaxcodes",
+            "id": "2"
+          }
+        },
+        "attributeFamily": {
+          "data": {
+             "type": "attributefamilies",
+             "id": "1"
+           }
+        },
         "primaryUnitPrecision":{
-          "unit_code": "some code"
+          "unit_code": "set"
         },
         "unitPrecisions": {
           "data": [
@@ -193,7 +207,7 @@ Example:
           }
         },
         "primaryUnitPrecision":{
-          "unit_code": "some code"
+          "unit_code": "set"
         },
         "unitPrecisions": {
           "data": [
