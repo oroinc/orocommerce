@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router as SymfonyRouter;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -12,6 +13,8 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
+use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy;
 
 class ProductUpdateHandler extends UpdateHandler
 {
@@ -25,6 +28,9 @@ class ProductUpdateHandler extends UpdateHandler
 
     /** @var SymfonyRouter */
     private $symfonyRouter;
+
+    /** @var AssignerStrategyInterface|AssignerDatabaseStrategy */
+    private $relatedProductAssigner;
 
     /**
      * @param ActionGroupRegistry $actionGroupRegistry
@@ -51,12 +57,28 @@ class ProductUpdateHandler extends UpdateHandler
     }
 
     /**
-     * @param FormInterface $form
-     * @param Product $entity
+     * @param AssignerStrategyInterface $relatedProductAssigner
+     */
+    public function setRelatedProductAssigner(AssignerStrategyInterface $relatedProductAssigner)
+    {
+        $this->relatedProductAssigner = $relatedProductAssigner;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function saveForm(FormInterface $form, $data)
+    {
+        return parent::saveForm($form, $data) && $this->saveRelatedProducts($form, $data);
+    }
+
+    /**
+     * @param FormInterface  $form
+     * @param Product        $entity
      * @param array|callable $saveAndStayRoute
      * @param array|callable $saveAndCloseRoute
-     * @param string $saveMessage
-     * @param null $resultCallback
+     * @param string         $saveMessage
+     * @param null           $resultCallback
      * @return array|RedirectResponse
      */
     protected function processSave(
@@ -99,5 +121,49 @@ class ProductUpdateHandler extends UpdateHandler
     protected function isSaveAndDuplicateAction()
     {
         return $this->getCurrentRequest()->get(Router::ACTION_PARAMETER) === self::ACTION_SAVE_AND_DUPLICATE;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Product       $entity
+     * @return bool
+     */
+    private function saveRelatedProducts(FormInterface $form, Product $entity)
+    {
+        if (!$form->has('appendRelated') && !$form->has('removeRelated')) {
+            return true;
+        }
+
+        $appendRelatedFormItem = $form->get('appendRelated');
+        $removeRelatedFormItem = $form->get('removeRelated');
+        $appendRelated = $appendRelatedFormItem->getData();
+        $removeRelated = $removeRelatedFormItem->getData();
+
+        $this->relatedProductAssigner->removeRelations($entity, $removeRelated);
+
+        try {
+            $this->relatedProductAssigner->addRelations($entity, $appendRelated);
+        } catch (\InvalidArgumentException $e) {
+            $this->addFormError($appendRelatedFormItem, $e->getMessage());
+        } catch (\LogicException $e) {
+            $this->addFormError($appendRelatedFormItem, $e->getMessage());
+        } catch (\OverflowException $e) {
+            $this->addFormError($appendRelatedFormItem, $e->getMessage());
+        }
+
+        return $form->getErrors()->count() === 0;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string $message
+     */
+    private function addFormError(FormInterface $form, $message)
+    {
+        $form->addError(
+            new FormError(
+                $this->translator->trans($message, [], 'validators')
+            )
+        );
     }
 }

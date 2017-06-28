@@ -614,6 +614,31 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Given /^"([^"]*)" option for related products is enabled$/
+     * @param string $option
+     */
+    public function optionForRelatedProductsIsEnabled($option)
+    {
+        switch ($option) {
+            case 'Enable Related Products':
+                $option = 'oro_product.related_products_enabled';
+                break;
+            case 'Maximum Number Of Assigned Items':
+                $option = 'oro_product.max_number_of_related_products';
+                break;
+            case 'Assign In Both Directions':
+                $option = 'oro_product.related_products_bidirectional';
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('There is no mapping to `%s` options', $option));
+        }
+
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set($option, 1);
+        $configManager->flush();
+    }
+
+    /**
      * @Then /^(?:|I )should see "([^"]*)" for "([^"]*)" product$/
      */
     public function shouldSeeForProduct($elementName, $SKU)
