@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Create;
 
 use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
 use Oro\Bundle\ApiBundle\Provider\ConfigProvider;
 use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
@@ -92,9 +93,14 @@ class ProcessUnitPrecisionsCreateTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey(JsonApi::TYPE, $primaryUnitPrecision[JsonApi::DATA]);
     }
 
-    public function testValidateUnitPrecisions()
+    /**
+     * @dataProvider getUnitPrecisionsProvider
+     *
+     * @param $requestData
+     * @param $isValid
+     */
+    public function testValidateUnitPrecisions($requestData, $isValid)
     {
-        $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
         $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
         $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
             ->disableOriginalConstructor()
@@ -114,63 +120,17 @@ class ProcessUnitPrecisionsCreateTest extends \PHPUnit_Framework_TestCase
             $pointer
         );
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals($isValid, $result);
     }
 
-    public function testValidateUnitPrecisionsWrongUnit()
+    /**
+     * @dataProvider getPrimaryUnitPrecisionProvider
+     *
+     * @param $requestData
+     * @param $isValid
+     */
+    public function testValidatePrimaryUnitPrecision($requestData, $isValid)
     {
-        $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
-        $requestData = ProcessUnitPrecisionsTestHelper::setWrongUnitCode($requestData, 'test_unit');
-        $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
-        $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitRepo->expects($this->once())
-            ->method('getAllUnitCodes')
-            ->willReturn($unitCodes);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(ProductUnit::class)
-            ->willReturn($productUnitRepo);
-        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $pointer = '/' . JsonApi::DATA . '/' . JsonApi::RELATIONSHIPS;
-        $this->processUnitPrecisionsCreate->setContext($this->context);
-        $result = $this->processUnitPrecisionsCreate->validateUnitPrecisions(
-            $relationships[ProcessUnitPrecisions::UNIT_PRECISIONS],
-            $pointer
-        );
-
-        $this->assertEquals(false, $result);
-    }
-
-    public function testValidateUnitPrecisionsNonUnique()
-    {
-        $requestData = ProcessUnitPrecisionsTestHelper::createRequestDataSameUnitCodes();
-        $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
-        $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitRepo->expects($this->once())
-            ->method('getAllUnitCodes')
-            ->willReturn($unitCodes);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(ProductUnit::class)
-            ->willReturn($productUnitRepo);
-        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $pointer = '/' . JsonApi::DATA . '/' . JsonApi::RELATIONSHIPS;
-        $this->processUnitPrecisionsCreate->setContext($this->context);
-        $result = $this->processUnitPrecisionsCreate->validateUnitPrecisions(
-            $relationships[ProcessUnitPrecisions::UNIT_PRECISIONS],
-            $pointer
-        );
-
-        $this->assertEquals(false, $result);
-    }
-
-    public function testValidatePrimaryUnitPrecision()
-    {
-        $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
         $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
         $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
             ->disableOriginalConstructor()
@@ -190,57 +150,51 @@ class ProcessUnitPrecisionsCreateTest extends \PHPUnit_Framework_TestCase
             $pointer
         );
 
-        $this->assertEquals(true, $result);
+        $this->assertEquals($isValid, $result);
     }
 
-    public function testValidatePrimaryUnitPrecisionWrongUnitCode()
+    /**
+     * @return array
+     */
+    public function getUnitPrecisionsProvider()
     {
         $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
-        $requestData = ProcessUnitPrecisionsTestHelper::setPrimaryUnitCode($requestData, 'test_item');
-        $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
-        $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitRepo->expects($this->once())
-            ->method('getAllUnitCodes')
-            ->willReturn($unitCodes);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(ProductUnit::class)
-            ->willReturn($productUnitRepo);
-        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $pointer = '/' . JsonApi::DATA . '/' . JsonApi::RELATIONSHIPS;
-        $this->processUnitPrecisionsCreate->setContext($this->context);
-        $result = $this->processUnitPrecisionsCreate->validatePrimaryUnitPrecision(
-            $relationships,
-            $pointer
-        );
+        $wrongUnit = ProcessUnitPrecisionsTestHelper::setWrongUnitCode($requestData, 'test_unit');
 
-        $this->assertEquals(false, $result);
+        return [
+            'valid_unit_precisions' => [
+                'requestData' => $requestData,
+                'isValid' => true,
+            ],
+            'wrong_unit' => [
+                'requestData' => $wrongUnit,
+                'isValid' => false,
+            ],
+            'unit_non_unique' => [
+                'requestData' => ProcessUnitPrecisionsTestHelper::createRequestDataSameUnitCodes(),
+                'isValid' => false,
+            ],
+        ];
     }
 
-    public function testValidatePrimaryUnitPrecisionExistsInList()
+    public function getPrimaryUnitPrecisionProvider()
     {
-        $requestData = ProcessUnitPrecisionsTestHelper::createRequestDataWrongPrimaryUnit();
-        $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
-        $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitRepo->expects($this->once())
-            ->method('getAllUnitCodes')
-            ->willReturn($unitCodes);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(ProductUnit::class)
-            ->willReturn($productUnitRepo);
-        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $pointer = '/' . JsonApi::DATA . '/' . JsonApi::RELATIONSHIPS;
-        $this->processUnitPrecisionsCreate->setContext($this->context);
-        $result = $this->processUnitPrecisionsCreate->validatePrimaryUnitPrecision(
-            $relationships,
-            $pointer
-        );
+        $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
+        $wrongUnit = ProcessUnitPrecisionsTestHelper::setPrimaryUnitCode($requestData, 'test_item');
 
-        $this->assertEquals(false, $result);
+        return [
+            'valid_primary_unit' => [
+                'requestData' => $requestData,
+                'isValid' => true,
+            ],
+            'wrong_primary_unit' => [
+                'requestData' => $wrongUnit,
+                'isValid' => false,
+            ],
+            'primary_unit_not_present_in_list' => [
+                'requestData' => ProcessUnitPrecisionsTestHelper::createRequestDataWrongPrimaryUnit(),
+                'isValid' => false,
+            ]
+        ];
     }
 }

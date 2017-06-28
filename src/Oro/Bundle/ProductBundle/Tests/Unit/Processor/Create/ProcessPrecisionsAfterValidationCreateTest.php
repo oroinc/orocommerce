@@ -2,20 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Create;
 
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
 use Oro\Bundle\ApiBundle\Provider\ConfigProvider;
 use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
-use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormContextStub;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Processor\Create\ProcessPrecisionsAfterValidationCreate;
-use Oro\Bundle\ProductBundle\Processor\Shared\ProcessUnitPrecisions;
-use Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared\CreateContextStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared\ProcessUnitPrecisionsTestHelper;
 
 class ProcessPrecisionsAfterValidationCreateTest extends \PHPUnit_Framework_TestCase
