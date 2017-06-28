@@ -51,6 +51,14 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getType()
+    {
+        return self::TYPE;
+    }
+
+    /**
      * @param ShippingAwareInterface $entity
      * @return Subtotal
      */

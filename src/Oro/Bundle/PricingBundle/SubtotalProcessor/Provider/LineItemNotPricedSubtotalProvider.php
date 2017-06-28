@@ -86,6 +86,14 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /**
      * {@inheritdoc}
      */
+    public function getType()
+    {
+        return self::TYPE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isSupported($entity)
     {
         return $entity instanceof LineItemsNotPricedAwareInterface;

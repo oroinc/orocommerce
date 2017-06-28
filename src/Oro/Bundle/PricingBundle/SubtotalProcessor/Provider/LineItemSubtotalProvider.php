@@ -55,6 +55,14 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     /**
      * {@inheritdoc}
      */
+    public function getType()
+    {
+        return self::TYPE;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isSupported($entity)
     {
         return $entity instanceof LineItemsAwareInterface;

@@ -117,11 +117,25 @@ services:
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 
+    oro_promotion.discount.checkout_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\CheckoutDiscountContextConverter
+        public: false
+        arguments:
+            - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal_amount_provider'
+        tags:
+            - { name: 'oro_promotion.discount_context_converter' }
+
     oro_promotion.discount.line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
         public: false
         arguments:
              - '@oro_shopping_list.data_provider.frontend_product_prices'
+
+    oro_promotion.discount.order_line_items_to_discount_line_items_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter
+        public: false
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry

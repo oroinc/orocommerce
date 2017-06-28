@@ -468,3 +468,11 @@ services:
         decorates: oro_payment.provider.result_messages
         public: false
         arguments: ['@oro_checkout.provider.payment_method_provider']
+
+    oro_checkout.provider.checkout_subtotal_amount_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalAmountProvider
+        public: false
+        arguments:
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.mapper.order_mapper'
+            - '@oro_pricing.subtotal_processor.subtotal_provider_registry'
