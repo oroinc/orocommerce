@@ -10,6 +10,11 @@ interface ShippingMethodInterface
     public function isGrouped();
 
     /**
+     * @return bool
+     */
+    public function isEnabled();
+
+    /**
      * @return string
      */
     public function getIdentifier();

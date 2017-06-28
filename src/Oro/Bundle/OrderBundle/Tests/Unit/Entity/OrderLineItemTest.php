@@ -3,11 +3,11 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class OrderLineItemTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
             ['quantity', 42],
             ['productUnit', new ProductUnit()],
             ['productUnitCode', 'item'],
-            ['value', 42],
+            ['value', 42.00],
             ['currency', 'USD'],
             ['price', Price::create(42, 'USD')],
             ['priceType', 10],

@@ -2,15 +2,30 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
 
 class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return array_merge(
+            parent::getDependencies(),
+            [
+                LoadPriceListToCustomerGroupDemoData::class,
+                LoadPriceListDemoData::class,
+            ]
+        );
+    }
+
     /**
      * {@inheritdoc}
      * @param EntityManager $manager
@@ -29,20 +44,17 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 
         $priceLists = [
             'Default Price List' => [
-                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0,
             ],
             'Wholesale Price List' => [
-                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0.1,
             ],
             'Partner C Custom Price List' => [
-                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0.2,
             ],
         ];
 
-
+        $priceManager = $this->container->get('oro_pricing.manager.price_manager');
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -50,7 +62,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
             $productUnit = $this->getProductUnit($manager, $row['unit']);
             foreach ($priceLists as $listName => $listOptions) {
                 $priceList = $this->getPriceList($manager, $listName);
-                foreach ($listOptions['currencies'] as $currency) {
+                foreach ($priceList->getCurrencies() as $currency) {
                     $amount = round(
                         (float)$row['price'] * (1 - (float)$listOptions['discount']),
                         2
@@ -65,9 +77,9 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
                         ->setQuantity(1)
                         ->setPrice($price);
 
-                    $manager->persist($productPrice);
+                    $priceManager->persist($productPrice);
 
-                    $this->createPriceTiers($manager, $productPrice, $price);
+                    $this->createPriceTiers($priceManager, $productPrice, $price);
                 }
             }
         }
@@ -78,12 +90,15 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
     }
 
     /**
-     * @param ObjectManager $manager
+     * @param PriceManager $priceManager
      * @param ProductPrice $productPrice
      * @param Price $unitPrice
      */
-    protected function createPriceTiers(ObjectManager $manager, ProductPrice $productPrice, Price $unitPrice)
-    {
+    protected function createPriceTiers(
+        PriceManager $priceManager,
+        ProductPrice $productPrice,
+        Price $unitPrice
+    ) {
         $tiers = [
             10  => 0.05,
             20  => 0.10,
@@ -93,10 +108,11 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 
         foreach ($tiers as $qty => $discount) {
             $price = clone $productPrice;
+            $currentPrice = clone $unitPrice;
             $price
                 ->setQuantity($qty)
-                ->setPrice($unitPrice->setValue(round($unitPrice->getValue() * (1 - $discount), 2)));
-            $manager->persist($price);
+                ->setPrice($currentPrice->setValue(round($unitPrice->getValue() * (1 - $discount), 2)));
+            $priceManager->persist($price);
         }
     }
 

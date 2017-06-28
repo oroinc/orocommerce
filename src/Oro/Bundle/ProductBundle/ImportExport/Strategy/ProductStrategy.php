@@ -2,19 +2,20 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 
+use Oro\Bundle\BatchBundle\Item\Support\ClosableInterface;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class ProductStrategy extends LocalizedFallbackValueAwareStrategy
+class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements ClosableInterface
 {
     /**
-     * @var SecurityFacade
+     * @var TokenAccessorInterface
      */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /**
      * @var BusinessUnit
@@ -32,11 +33,24 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected $productClass;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @var array|Product[]
      */
-    public function setSecurityFacade($securityFacade)
+    protected $processedProducts = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function close()
     {
-        $this->securityFacade = $securityFacade;
+        $this->processedProducts = [];
+    }
+
+    /**
+     * @param TokenAccessorInterface $tokenAccessor
+     */
+    public function setTokenAccessor($tokenAccessor)
+    {
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -86,7 +100,17 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_AFTER, $event);
 
-        return parent::afterProcessEntity($entity);
+        /** @var Product $entity */
+        $entity = parent::afterProcessEntity($entity);
+        //Clear unitPrecision collection items with unit null
+        foreach ($entity->getUnitPrecisions() as $unitPrecision) {
+            if (!$unitPrecision->getProductUnitCode()) {
+                $entity->getUnitPrecisions()->removeElement($unitPrecision);
+            }
+        }
+        $this->processedProducts[$entity->getSku()] = $entity;
+
+        return $entity;
     }
 
     /**
@@ -105,7 +129,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         }
 
         /** @var User $user */
-        $user = $this->securityFacade->getLoggedUser();
+        $user = $this->tokenAccessor->getUser();
         if (!$user) {
             $this->owner = false;
 
@@ -158,6 +182,24 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function processEntity(
+        $entity,
+        $isFullData = false,
+        $isPersistNew = false,
+        $itemData = null,
+        array $searchContext = [],
+        $entityIsRelation = false
+    ) {
+        if ($entity instanceof Product && array_key_exists($entity->getSku(), $this->processedProducts)) {
+            return $this->processedProducts[$entity->getSku()];
+        }
+
+        return parent::processEntity($entity, $isFullData, $isPersistNew, $itemData, $searchContext, $entityIsRelation);
+    }
+
+    /**
      * Get additional search parameter name to find only related entities
      *
      * @param string $entityName
@@ -207,5 +249,47 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         }
 
         parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);
+    }
+
+    /**
+     * Validate unitPrecisions array data before model validation because model merges same codes
+     * {@inheritdoc}
+     */
+    protected function validateAndUpdateContext($entity)
+    {
+        $itemData = $this->context->getValue('itemData');
+        $unitPrecisions = [];
+
+        if (isset($itemData['unitPrecisions'])) {
+            $unitPrecisions = $itemData['unitPrecisions'];
+        }
+
+        if (isset($itemData['primaryUnitPrecision'])) {
+            $unitPrecisions[] = $itemData['primaryUnitPrecision'];
+        }
+
+        $usedCodes = [];
+
+        foreach ($unitPrecisions as $unitPrecision) {
+            if (!isset($unitPrecision['unit']['code'])) {
+                continue;
+            }
+
+            $code = $unitPrecision['unit']['code'];
+
+            if (in_array($code, $usedCodes, true)) {
+                $error = $this->translator->trans('oro.product.productunitprecision.duplicate_units_import_error');
+                $this->context->incrementErrorEntriesCount();
+                $this->strategyHelper->addValidationErrors([$error], $this->context);
+
+                $this->doctrineHelper->getEntityManager($entity)->detach($entity);
+
+                return null;
+            }
+
+            $usedCodes[] = $code;
+        }
+
+        return parent::validateAndUpdateContext($entity);
     }
 }

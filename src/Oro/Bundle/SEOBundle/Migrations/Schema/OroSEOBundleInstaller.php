@@ -17,7 +17,9 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
     const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
-    
+    const BRAND_TABLE_NAME = 'oro_brand';
+
+    const METAINFORMATION_TITLES = 'metaTitles';
     const METAINFORMATION_DESCRIPTIONS = 'metaDescriptions';
     const METAINFORMATION_KEYWORDS = 'metaKeywords';
 
@@ -37,7 +39,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_6';
     }
 
     /**
@@ -49,10 +51,12 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
         $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
         $this->addMetaInformation($schema, self::WEB_CATALOG_NODE_TABLE_NAME);
+        $this->addMetaInformation($schema, self::BRAND_TABLE_NAME);
+        $this->createOroWebCatalogProductLimitTable($schema);
     }
 
     /**
-     * Adds metaDescription and metaKeywords relations to entitiy.
+     * Adds metaTitle, metaDescription and metaKeywords relations to entitiy.
      *
      * @param Schema $schema
      * @param string $ownerTable
@@ -60,6 +64,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     private function addMetaInformation(Schema $schema, $ownerTable)
     {
         if ($schema->hasTable($ownerTable)) {
+            $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_TITLES);
             $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_DESCRIPTIONS);
             $this->addMetaInformationField($schema, $ownerTable, self::METAINFORMATION_KEYWORDS);
         }
@@ -109,5 +114,19 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 ],
             ]
         );
+    }
+
+    /**
+     * Create oro_web_catalog_product_limit table
+     *
+     * @param Schema $schema
+     */
+    private function createOroWebCatalogProductLimitTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_web_catalog_product_limit');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('version', 'integer', []);
+        $table->setPrimaryKey(['id']);
     }
 }

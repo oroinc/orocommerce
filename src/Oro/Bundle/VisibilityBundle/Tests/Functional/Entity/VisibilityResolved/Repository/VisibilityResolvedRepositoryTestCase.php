@@ -81,7 +81,6 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      */
     public function testInsertByCategory($targetEntityReference, $visibility, array $expectedData)
     {
-
         $this->getRepository()->clearTable();
         $scope = $this->getScope($targetEntityReference);
         /** @var CustomerGroupProductRepository $repository */

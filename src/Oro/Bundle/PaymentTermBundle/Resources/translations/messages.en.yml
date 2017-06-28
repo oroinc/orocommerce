@@ -1,7 +1,7 @@
 oro:
     paymentterm:
         channel_type:
-            label: Payment Term
+            label: Payment Terms
         settings:
             label: Payment Term Settings
             labels.label: Label
@@ -39,6 +39,8 @@ oro:
 
         payment_terms:
             label: 'Terms: %paymentTerm%'
+
+        delete.message.placeholder: '%confirmationMessage%'
 
     payment:
         admin:

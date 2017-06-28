@@ -2,12 +2,12 @@
 
 {% set taxCode %}
     {% if entity %}
-        {% set isGranted = resource_granted('VIEW', entity) %}
+        {% set isGranted = is_granted('VIEW', entity) %}
         {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': entity.id}) }}">{% endif %}
         {{ entity.code }}
         {% if isGranted %}</a>{% endif %}
     {% elseif groupCustomerTaxCode %}
-        {% set isGranted = resource_granted('VIEW', groupCustomerTaxCode) %}
+        {% set isGranted = is_granted('VIEW', groupCustomerTaxCode) %}
         {% if isGranted %}<a href="{{ path('oro_tax_customer_tax_code_view', {'id': groupCustomerTaxCode.id}) }}">{% endif %}
         {{ groupCustomerTaxCode.code }}
         {% if isGranted %}</a>{% endif %}

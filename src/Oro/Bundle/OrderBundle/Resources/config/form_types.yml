@@ -69,10 +69,10 @@ services:
 
     oro_order.form.type.event_listener.subtotals_subscriber:
         class: 'Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber'
-        public: false
         arguments:
             - '@oro_order.order.total.total_helper'
             - '@oro_order.pricing.price_matcher'
+            - '@oro_website.manager'
 
     oro_order.form.type.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType'
@@ -90,3 +90,4 @@ services:
         class: 'Oro\Bundle\OrderBundle\Form\Type\SelectSwitchInputType'
         tags:
             - { name: form.type }
+

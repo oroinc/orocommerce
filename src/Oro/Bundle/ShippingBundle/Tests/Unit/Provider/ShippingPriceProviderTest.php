@@ -19,7 +19,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 

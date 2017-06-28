@@ -18,5 +18,5 @@ navigation:
 
     titles:
         oro_payment_term_index: 'oro.paymentterm.entity_plural_label'
-        oro_payment_term_view: '%%entityLabel%%'
-        oro_payment_term_update: '%%entityLabel%%'
+        oro_payment_term_view: '%entityLabel%'
+        oro_payment_term_update: '%entityLabel%'

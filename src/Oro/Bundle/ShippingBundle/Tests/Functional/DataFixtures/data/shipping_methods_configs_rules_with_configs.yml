@@ -1,0 +1,205 @@
+shipping_rule.1:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'EUR'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_order'
+                        price: 10
+    destinations:
+        -
+            postalCodes:
+                -
+                    name: '12345'
+            country: 'US'
+            region: 'NY'
+shipping_rule.2:
+    rule:
+        enabled: true
+        sortOrder: 1
+        expression: 'true'
+    currency: 'EUR'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_item'
+                        price: 10
+    destinations:
+        -
+            country: 'US'
+        -
+            country: 'FR'
+            region: 'FR-75'
+shipping_rule.3:
+    rule:
+        enabled: false
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_item'
+                        price: 10
+    destinations:
+        -
+            country: 'US'
+            region: 'NY'
+        -
+            country: 'FR'
+shipping_rule.4:
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_item'
+                        price: 10
+    destinations:
+        -
+            postalCodes:
+                -
+                    name: '12345'
+                -
+                    name: '12346'
+            country: 'US'
+            region: 'NY'
+shipping_rule.5:
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_item'
+                        price: 10
+shipping_rule.6:
+    rule:
+        enabled: true
+        sortOrder: 2
+        expression: 'true'
+    currency: 'EUR'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_item'
+                        price: 10
+    destinations:
+        -
+            country: 'FR'
+shipping_rule.7:
+    rule:
+        enabled: true
+        sortOrder: 3
+        expression: 'true'
+    currency: 'EUR'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_item'
+                        price: 10
+    destinations:
+        -
+            postalCodes:
+                -
+                    name: '12346'
+            country: 'US'
+            region: 'NY'
+shipping_rule.8:
+    rule:
+        enabled: true
+        sortOrder: 3
+        expression: 'true'
+    currency: 'EUR'
+    destinations:
+        -
+            country: 'US'
+            region: 'AL'
+shipping_rule.9:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'USD'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: true
+                    options:
+                        type: 'per_order'
+                        price: 10
+shipping_rule.10:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'UAH'
+shipping_rule.11:
+    rule:
+        enabled: false
+        sortOrder: 0
+        expression: 'true'
+    currency: 'UAH'
+shipping_rule.12:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'UAH'
+    destinations:
+        -
+            country: 'US'
+            region: 'NY'
+shipping_rule_without_type_configs:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'USD'
+    methodConfigs:
+         -
+            typeConfigs: []
+shipping_rule_with_disabled_type_configs:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'USD'
+    methodConfigs:
+         -
+            typeConfigs:
+                -
+                    enabled: false
+                    options:
+                        type: 'per_order'
+                        price: 10

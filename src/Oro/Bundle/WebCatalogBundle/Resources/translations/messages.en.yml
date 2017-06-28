@@ -24,7 +24,7 @@ oro:
             organization.label: Organization
             owner.label: Owner
             parent_node.label: Parent Content Node
-            slug_prototypes.label: Slug prototypes
+            slug_prototypes.label: URL Slug
             titles.label: Titles
             parent_scope_used.label: Inherit Parent
             rewrite_variant_title.label: Rewrite Variant Title

@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 use Doctrine\ORM\PersistentCollection;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -41,10 +42,24 @@ class PriceForProductUnitExistsValidator extends ConstraintValidator
         $product = $value->getOwner();
         $deletedUnits = [];
         $deletedUnitCodes = [];
+        /** @var FormInterface $form */
+        $form = $this->context->getRoot();
+
+        if (!$form || !$form instanceof FormInterface) {
+            return;
+        }
+
+        $productPriceAttributeData = [];
+        if ($form->has('productPriceAttributesPrices')) {
+            $productPriceAttributeData = $form->get('productPriceAttributesPrices')->getData();
+        }
+
         /** @var ProductUnitPrecision $precision */
         foreach ($value->getDeleteDiff() as $precision) {
-            $deletedUnits[] = $precision->getUnit();
-            $deletedUnitCodes[] = $precision->getUnit()->getCode();
+            if (!$this->isEmptyProductPrice($precision, $productPriceAttributeData)) {
+                $deletedUnits[] = $precision->getUnit();
+                $deletedUnitCodes[] = $precision->getUnit()->getCode();
+            }
         }
 
         if ($deletedUnits) {
@@ -58,5 +73,21 @@ class PriceForProductUnitExistsValidator extends ConstraintValidator
                 $this->context->addViolation($constraint->message, ['%units%' => implode(', ', $deletedUnitCodes)]);
             }
         }
+    }
+
+    private function isEmptyProductPrice(ProductUnitPrecision $productUnitPrecision, array $productPriceAttributeData)
+    {
+        foreach ($productPriceAttributeData as $productPriceAttributes) {
+            /** @var PriceAttributeProductPrice $productPriceAttribute */
+            foreach ($productPriceAttributes as $productPriceAttribute) {
+                if ($productPriceAttribute->getUnit()->getCode() === $productUnitPrecision->getUnit()->getCode() &&
+                    $productPriceAttribute->getPrice()->getValue() !== null
+                ) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

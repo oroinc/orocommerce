@@ -48,7 +48,7 @@ services:
     oro_payment.method.provider.method_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider'
         arguments:
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.payment_methods_configs.rules_provider_basic'
 
     oro_payment.provider.methods_provider:
@@ -94,17 +94,17 @@ services:
         abstract: true
         arguments:
             - '@oro_action.expression.context_accessor'
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.provider.payment_transaction'
             - '@router'
         calls:
             - ['setLogger', ['@logger']]
 
-    oro_payment.action.capture:
-        class: 'Oro\Bundle\PaymentBundle\Action\CaptureAction'
+    oro_payment.action.capture_payment_transaction:
+        class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_action.action, alias: payment_capture }
+            - { name: oro_action.action, alias: payment_transaction_capture }
 
     oro_payment.action.purchase:
         class: 'Oro\Bundle\PaymentBundle\Action\PurchaseAction'
@@ -123,6 +123,7 @@ services:
         lazy: true
         arguments:
             - '@session'
+            - '@oro_payment.provider.result_messages'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: 10 }
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 10 }
@@ -141,6 +142,13 @@ services:
         tags:
             - { name: oro_action.condition, alias: 'has_applicable_payment_methods' }
 
+    oro_payment.condition.payment_transaction_was_charged:
+        class: 'Oro\Bundle\PaymentBundle\Condition\PaymentTransactionWasCharged'
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: oro_action.condition, alias: 'payment_transaction_was_charged' }
+
     oro_payment.provider.address_extractor:
         class: 'Oro\Bundle\PaymentBundle\Provider\AddressExtractor'
         public: false
@@ -150,7 +158,7 @@ services:
     oro_payment.condition.payment_method_supports:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
         arguments:
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
         tags:
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
@@ -184,14 +192,13 @@ services:
     oro_payment.condition.require_payment_redirect:
         class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
-            - '@oro_payment.payment_method_provider.registry'
+            - '@oro_payment.payment_method.composite_provider'
             - '@event_dispatcher'
         tags:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
 
-    oro_payment.payment_method_provider.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
-        public: false
+    oro_payment.payment_method.composite_provider:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
 
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'
@@ -269,3 +276,19 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Method\Event\BasicMethodRenamingEventDispatcher'
         arguments:
             - '@event_dispatcher'
+
+    oro_payment.provider.result_messages:
+        class: 'Oro\Bundle\PaymentBundle\Provider\DefaultPaymentResultMessageProvider'
+        public: false
+
+    oro_payment.context.factory.composite_supports_entity:
+        class: 'Oro\Bundle\PaymentBundle\Context\Factory\CompositeSupportsEntityPaymentContextFactory'
+        arguments:
+            - []
+        public: false
+        lazy: true
+
+    oro_payment.context.factory.transaction_payment_context:
+        class: 'Oro\Bundle\PaymentBundle\Context\Factory\TransactionPaymentContextFactory'
+        arguments:
+            - '@oro_payment.context.factory.composite_supports_entity'

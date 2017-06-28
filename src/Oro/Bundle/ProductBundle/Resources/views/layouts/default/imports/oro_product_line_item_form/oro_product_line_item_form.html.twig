@@ -22,7 +22,16 @@
                     'configDefaultUnit': defaultUnitCode
                 }|json_encode
             }) %}
+
             <div {{ block('block_attributes') }}>
+                <div>
+                    <div class="form-row {{ class_prefix }}">
+                        {{ form_widget(form.quantity) }}
+                    </div>
+                    <div class="form-row {{ class_prefix }}">
+                        {{ form_widget(form.unit) }}
+                    </div>
+                </div>
                 {{ block_widget(block) }}
             </div>
         {% endset %}
@@ -37,7 +46,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__qty product-item__qty_{{ class_prefix }}'
+        '~class': ' product-item__qty product-item__qty--{{ class_prefix }}'
     }) %}
 
     <div {{ block('block_attributes') }}>

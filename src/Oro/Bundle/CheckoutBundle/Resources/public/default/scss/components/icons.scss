@@ -1,0 +1,36 @@
+// @theme: default
+
+.credit-card-icon {
+    $paymentIconUrl: $global-url + '/orofrontend/default/images/payments';
+
+    display: inline-block;
+    vertical-align: middle;
+
+    &_mastercard {
+        width: 39px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/mastercard.png') no-repeat;
+    }
+
+    &_visa {
+        width: 41px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/visa.png') no-repeat;
+    }
+
+    &_american_express {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/american_express.png') no-repeat;
+    }
+
+    &_discover {
+        width: 40px;
+        height: 25px;
+
+        background: url('#{$paymentIconUrl}/discover.png') no-repeat;
+    }
+}

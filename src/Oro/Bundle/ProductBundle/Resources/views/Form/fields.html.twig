@@ -1,11 +1,18 @@
 {% block oro_product_primary_unit_precision_widget %}
     {% set precisions = {} %}
+    {% set initialAdditionalUnits = {} %}
 
     {% for choice in form.unit.vars.choices %}
         {% set precisions = precisions|merge({ (choice.data.code) : choice.data.defaultPrecision}) %}
     {% endfor %}
+    {% if form.vars.data.product is not null %}
+        {% for addPrecision in form.vars.data.product.additionalUnitPrecisions %}
+            {% set initialAdditionalUnits = initialAdditionalUnits|merge({ (addPrecision.unit.code) : addPrecision.unit.code}) %}
+        {% endfor %}
+    {% endif %}
+
     <div data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
-         data-page-component-options="{{ { 'precisions': precisions }|json_encode }}">
+         data-page-component-options="{{ { 'precisions': precisions, 'initialAdditionalUnits': initialAdditionalUnits }|json_encode  }}">
 
         <div class="float-holder">
             <table>
@@ -68,10 +75,11 @@
             <span class="add-on ui-sortable-handle{% if disabled %} disabled{% endif %}"
                   data-name="sortable-handle"
                   title="{{ 'oro.entity_extend.enum_options.priority.tooltip'|trans }}">
-                <i class="fa-arrows-v {% if disabled %} disabled{% endif %}"></i>
+                 <i class="fa-arrows-v {% if disabled %} disabled{% endif %}"></i>
                 {{ form_widget(form.priority, {disabled: disabled}) }}
             </span>
-            <label class="add-on{% if disabled %} disabled{% endif %}" title="{{ 'oro.entity_extend.enum_options.default.tooltip'|trans }}">
+            <label class="add-on{% if disabled %} disabled{% endif %}"
+                   title="{{ 'oro.entity_extend.enum_options.default.tooltip'|trans }}">
                 {{ form_widget(form.is_default, {disabled: disabled}) }}
             </label>
         </div>
@@ -230,6 +238,229 @@
 
 {% block oro_product_page_variant_widget %}
     {{ form_row(form.productPageProduct) }}
+{% endblock %}
+
+{% block oro_product_collection_variant_widget %}
+    {% set scope = 'scope_' ~ form.vars.name %}
+    {% set gridWidgetAlias = 'product-collection-products-grid-' ~ scope %}
+    {% set controlsBlockAlias = 'product-collection-grid-control-' ~ scope %}
+
+    {% set gridName = oro_datagrid_build_fullname(form.vars.results_grid, scope) %}
+    {% set excludedProductsGridName = oro_datagrid_build_fullname(excludedProductsGrid, scope) %}
+    {% set includedProductsGridName = oro_datagrid_build_fullname(includedProductsGrid, scope) %}
+    {% set widgetRouteParameters = {
+        'gridName': gridName,
+        ('sd_' ~ gridName): form.vars.segmentDefinition,
+        ('sd_' ~ gridName ~ ':incl'): form.includedProducts.vars.value,
+        ('sd_' ~ gridName ~ ':excl'): form.excludedProducts.vars.value
+    } %}
+    {% set excludedWidgetRouteParameters = {
+        'gridName': excludedProductsGridName,
+        'params': {'selectedProducts': form.excludedProducts.vars.value}
+    } %}
+    {% set includedWidgetRouteParameters = {
+        'gridName': includedProductsGridName,
+        'params': {'selectedProducts': form.includedProducts.vars.value}
+    } %}
+
+    {% set gridSidebarComponentOptions = {
+        'sidebarAlias': controlsBlockAlias,
+        'widgetAlias': gridWidgetAlias,
+        'widgetRouteParameters': widgetRouteParameters
+    } %}
+
+    {% set excludedControlsBlockAlias = 'product-collection-excluded-grid-control-' ~ scope %}
+    {% set includedControlsBlockAlias = 'product-collection-included-grid-control-' ~ scope %}
+    {% set excludedProductsElementId = '#' ~ form.excludedProducts.vars.id %}
+    {% set includedProductsElementId = '#' ~ form.includedProducts.vars.id %}
+    {% set productCollectionApplyQueryComponentOptions = {
+        'selectors': {
+            'conditionBuilder': '#' ~ form.productCollectionSegment.vars.id ~ '-condition-builder',
+            'reset': '.filter-reset',
+            'apply': '.filter-apply',
+            'included': includedProductsElementId,
+            'excluded': excludedProductsElementId
+        },
+        'segmentDefinitionFieldName': form.vars.segmentDefinitionFieldName,
+        'controlsBlockAlias': controlsBlockAlias,
+        'gridName': gridName,
+        'scope': scope,
+        'excludedProductsGridName': excludedProductsGrid,
+        'includedProductsGridName': includedProductsGrid,
+        'excludedControlsBlockAlias': excludedControlsBlockAlias,
+        'includedControlsBlockAlias': includedControlsBlockAlias,
+    } %}
+
+    {% set productCollectionSegmentOptions = {} %}
+    {% if form.vars.value is null or form.vars.value.id is null %}
+        {% set productCollectionSegmentOptions = {'attr': {placeholder: 'oro.product.content_variant.product_collection.segment_name_placeholder'| trans}} %}
+    {% endif %}
+
+    {{ form_row(form.productCollectionSegment.name, productCollectionSegmentOptions) }}
+
+    <div id="{{ form.vars.id }}" data-role="grid-sidebar-component-container">
+        {# --Apply Query component start-- #}
+        <div
+             data-page-component-module="oroproduct/js/app/components/product-collection-apply-query-component"
+             data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}"
+        >
+            {# --Grid sidebar component start-- #}
+            <div class="{{ controlsBlockAlias }} control-group fields-row"
+                 data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+                 data-page-component-options="{{ gridSidebarComponentOptions|json_encode }}"
+            >
+                {% import 'OroProductBundle::product_collection_macros.html.twig' as ProductCollection %}
+                <div class="oro-tabs">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a href="#{{ 'filtered_products' ~ scope}}" data-toggle="tab" data-role="tab-filtered">
+                                {{ 'oro.product.content_variant.ui.filtered_products'|trans }}
+                                (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', widgetRouteParameters)) }}</span>)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#{{ 'excluded_products' ~ scope}}" data-toggle="tab" data-role="tab-excluded">
+                                {{ 'oro.product.content_variant.ui.excluded_products'|trans }}
+                                (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', excludedWidgetRouteParameters)) }}</span>)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#{{ 'included_products' ~ scope}}" data-toggle="tab" data-role="tab-included">
+                                {{ 'oro.product.content_variant.ui.included_products'|trans }}
+                                (<span data-role="counter">{{ render(controller('OroProductBundle:AjaxGetProductsCount:get', includedWidgetRouteParameters)) }}</span>)
+                            </a>
+                        </li>
+                        <li class="pull-right">
+                            {# --Reset button start-- #}
+                            <div class="btn-group">
+                                <a class="btn filter-reset">
+                                    {{ 'oro.product.content_variant.ui.reset'|trans }}
+                                </a>
+                            </div>
+                            {# --Reset button end-- #}
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="{{ 'filtered_products' ~ scope}}">
+                            <div class="collapse-view"
+                                 data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                 data-page-component-options="{{ {
+                                     widgetModule: 'oroui/js/widget/collapse-widget',
+                                     openClass: 'expanded',
+                                     open: hasFilters
+                                 }|json_encode() }}"
+                            >
+                                <div class="top-frame">
+                                    <div class="control-group">
+                                        <div class="pull-right">
+                                            <div data-collapse-trigger class="btn-group icons-holder">
+                                                <a class="collapse-view__trigger btn"><i class="fa-filter"></i> {{ 'oro.product.content_variant.ui.advanced_filter'|trans }}</a>
+                                            </div>
+                                            {{ ProductCollection.popupButton(
+                                                oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
+                                                includedProductsElementId,
+                                                'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                            ) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-collapse-container class="filter">
+                                    {{ form_row(form.productCollectionSegment) }}
+                                        {# --Apply Query button start--#}
+                                        <div class="clearfix">
+                                            <div class="pull-right">
+                                                <a class="btn btn-primary filter-apply">
+                                                    {{ 'oro.product.content_variant.ui.apply_query'|trans }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        {# --Apply Query button end-- #}
+                                </div>
+                                {{ oro_widget_render({
+                                    'widgetType': 'block',
+                                    'url': path('oro_datagrid_widget', widgetRouteParameters),
+                                    'title': '',
+                                    'alias': gridWidgetAlias
+                                }) }}
+                            </div>
+                        </div>
+
+                        <div class="tab-pane" id="{{ 'excluded_products' ~ scope}}">
+                            <div class="top-frame">
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-excluded-grid', scope),
+                                            excludedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_excluded'|trans
+                                        ) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% set excludedGridWidgetAlias = 'product-collection-excluded-products-grid-' ~ scope %}
+                            {% set excludedGridSidebarComponentOptions = {
+                                'sidebarAlias': excludedControlsBlockAlias,
+                                'widgetAlias': excludedGridWidgetAlias,
+                                'widgetRouteParameters': excludedWidgetRouteParameters
+                            } %}
+
+                            <div class="{{ excludedControlsBlockAlias }} control-group"
+                                 data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+                                 data-page-component-options="{{ excludedGridSidebarComponentOptions|json_encode }}"
+                            >
+                                {{ form_widget(form.excludedProducts) }}
+                                {{ oro_widget_render({
+                                    'widgetType': 'block',
+                                    'url': path('oro_datagrid_widget', excludedWidgetRouteParameters),
+                                    'title': '',
+                                    'alias': excludedGridWidgetAlias
+                                }) }}
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane" id="{{ 'included_products' ~ scope}}">
+                            <div class="top-frame">
+                                <div class="control-group">
+                                    <div class="pull-right">
+                                        {{ ProductCollection.popupButton(
+                                            oro_datagrid_build_fullname('product-collection-add-products-to-included-grid', scope),
+                                            includedProductsElementId,
+                                            'oro.product.content_variant.ui.hint.add_to_included'|trans
+                                        ) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% set includedGridWidgetAlias = 'product-collection-included-products-grid-' ~ scope %}
+                            {% set includedGridSidebarComponentOptions = {
+                                'sidebarAlias': includedControlsBlockAlias,
+                                'widgetAlias': includedGridWidgetAlias,
+                                'widgetRouteParameters': includedWidgetRouteParameters
+                            } %}
+
+                            <div class="{{ includedControlsBlockAlias }} control-group"
+                                 data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+                                 data-page-component-options="{{ includedGridSidebarComponentOptions|json_encode }}"
+                            >
+                                {{ form_widget(form.includedProducts) }}
+                                {{ oro_widget_render({
+                                    'widgetType': 'block',
+                                    'url': path('oro_datagrid_widget', includedWidgetRouteParameters),
+                                    'title': '',
+                                    'alias': includedGridWidgetAlias
+                                }) }}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {# --Grid sidebar component end-- #}
+        </div>
+        {# --Apply Query component end-- #}
+    </div>
 {% endblock %}
 
 {% block oro_product_custom_variant_fields_collection_widget %}

@@ -4,7 +4,7 @@ layout:
             themes: 'layout.html.twig'
         - '@add':
             id: units_request_for_quote
-            parentId: product_prices
+            parentId: product_price_table
             prepend: false
             blockType: units_request_for_quote
             options:

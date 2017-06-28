@@ -31,18 +31,13 @@ class ProductImageResizeEvent extends Event
     }
 
     /**
-     * @return ProductImage
+     * @return array
      */
-    public function getProductImage()
+    public function getData()
     {
-        return $this->productImage;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getForceOption()
-    {
-        return $this->forceOption;
+        return [
+            'productImageId' => $this->productImage->getId(),
+            'force' => $this->forceOption
+        ];
     }
 }

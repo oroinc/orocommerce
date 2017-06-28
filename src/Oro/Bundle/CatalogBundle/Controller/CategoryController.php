@@ -125,7 +125,7 @@ class CategoryController extends Controller
                 $currentInsertPosition++;
             }
 
-            $response['saved'] = true;
+            $responseData['saved'] = true;
         }
 
         return array_merge($responseData, ['form' => $form->createView()]);

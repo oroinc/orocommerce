@@ -1,22 +1,6 @@
-Oro\Bundle\RuleBundle\Entity\Rule:
-    rule:
-        name: 'Default'
-        enabled: true
-        sortOrder: 1
-
-Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
-    paymentMethodConfig:
-        type: '<("payment_term_" . @paymentTermIntegration->id)>'
-
-Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
-    paymentMethodsConfigsRule:
-        rule: '@rule'
-        methodConfigs: ['@paymentMethodConfig']
-        currency: 'USD'
-
-Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
-    paymentTerm:
-        label: net 10
+include:
+    - Payment.yml
+    - Shipping.yml
 
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
     price:
@@ -61,10 +45,15 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
         label: 'List 1'
+        customerUser: '@amanda'
+        organization: '@organization'
+    shoppinglist2:
+        label: 'List 2'
         customerUser: '@amanda'
         organization: '@organization'
 
@@ -76,6 +65,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist'
         organization: '@organization'
+    lineitem2:
+        product: '@product'
+        quantity: '10'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist2'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppingListTotal:
@@ -83,6 +79,12 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         shoppingList: '@shoppinglist'
         currency: 'USD'
         subtotalValue: '10'
+        valid: true
+    shoppingListTotal2:
+        __construct: ['@shoppinglist2','USD']
+        shoppingList: '@shoppinglist2'
+        currency: 'USD'
+        subtotalValue: '15'
         valid: true
 
 Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
@@ -111,7 +113,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
         customer: '@customer'
         pricelist: '@pricelistShipping'
         website: '@website1'
-        priority: 200
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice:
@@ -159,3 +161,38 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
         address: '@address'
         type: '@shippingType'
         default: true
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        customer: '@customer'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        poNumber: 'PO1'
+        qid: '1'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct1:
+        product: '@product'
+        quote: '@quote1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    quoteProductPrice1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequest1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5

@@ -5,7 +5,7 @@ oro:
         transport:
             label: UPS API
             labels.label: Label
-            base_url.label: Base URL
+            test_mode.label: Test Mode
             api_user.label: API User
             api_password.label: API Password
             api_key.label: API Key
@@ -34,16 +34,13 @@ oro:
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge
-            invalidate_cache.title: Invalidate Shipping Calculations Cache
-            invalidate_cache_at.label: Invalidate cache at
-            invalidate_cache.label: Invalidate cache
-            invalidate_cache.action.cancel: Cancel
-            invalidate_cache.action.invalidate_now: Invalidate Now
-            invalidate_cache.action.remove: Remove Scheduled Invalidation
-            invalidate_cache.action.submit: Submit
-            invalidate_cache.flash.invalidate_success: Cache was successfully invalidated
-            invalidate_cache.flash.save_success: Cache settings have been saved
-            invalidate_cache.at.label: at
-            invalidate_cache.type:
-                immediate: Now
-                scheduled: Schedule Invalidation
+                surcharge.tooltip: The payment method surcharge applies to the shipping cost whenever this shipping method is selected. Additional options surcharge may apply on top of the payment method surcharge.
+
+        connection_validation:
+            button.text: Check UPS Connection
+            result:
+                authentication.message: 'Authentication error has occurred: %error_message%'
+                measurement_system.message: 'Measurement error has occurred: %error_message%'
+                unexpected_error.message: 'Unexpected error has occurred: %error_message%. Please, contact system administrator'
+                success.message: 'UPS Connection is valid'
+                server_error.message: 'Connection error has occurred: %error_message%. Please, try again later'

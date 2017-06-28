@@ -41,9 +41,11 @@ class PaymentTerm extends ExtendPaymentTerm
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ConfigField(
-     *      importexport={
-     *          "excluded"=true
-     *      }
+     *     defaultValues={
+     *         "importexport"={
+     *              "excluded"=true
+     *         }
+     *     }
      * )
      */
     protected $id;
@@ -55,7 +57,10 @@ class PaymentTerm extends ExtendPaymentTerm
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
-     *          }
+     *          },
+     *          "importexport"={
+     *              "identity"=true
+     *         }
      *      }
      * )
      */

@@ -25,6 +25,7 @@ class OroFlatRateShippingExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('event_listeners.yml');
         $loader->load('builders.yml');
+        $loader->load('factories.yml');
     }
 
     /**

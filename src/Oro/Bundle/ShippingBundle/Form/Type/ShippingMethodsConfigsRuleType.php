@@ -6,39 +6,13 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ShippingMethodsConfigsRuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_shipping_methods_configs_rule';
-
-    /**
-     * @var ShippingMethodRegistry
-     */
-    protected $methodRegistry;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @param ShippingMethodRegistry $methodRegistry
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(ShippingMethodRegistry $methodRegistry, TranslatorInterface $translator)
-    {
-        $this->methodRegistry = $methodRegistry;
-        $this->translator = $translator;
-    }
 
     /**
      * {@inheritdoc}
@@ -57,21 +31,10 @@ class ShippingMethodsConfigsRuleType extends AbstractType
                 'label'                => 'oro.shipping.shippingmethodsconfigsrule.destinations.label',
                 'show_form_when_empty' => false,
             ])
-            ->add('methodConfigs', ShippingMethodConfigCollectionType::class, [
-                'required' => false,
-            ])
-            ->add('method', ChoiceType::class, [
+            ->add('methodConfigs', ShippingMethodConfigCollectionType::class)
+            ->add('method', ShippingMethodSelectType::class, [
                 'mapped' => false,
-                'choices' => $this->getMethods(),
             ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['methods'] = $this->getMethods(true);
     }
 
     /**
@@ -90,25 +53,5 @@ class ShippingMethodsConfigsRuleType extends AbstractType
     public function getBlockPrefix()
     {
         return self::BLOCK_PREFIX;
-    }
-
-    /**
-     * @param bool $translate
-     * @return array
-     */
-    protected function getMethods($translate = false)
-    {
-        return array_reduce(
-            $this->methodRegistry->getShippingMethods(),
-            function (array $result, ShippingMethodInterface $method) use ($translate) {
-                $label = $method->getLabel();
-                if ($translate) {
-                    $label = $this->translator->trans($label);
-                }
-                $result[$method->getIdentifier()] = $label;
-                return $result;
-            },
-            []
-        );
     }
 }

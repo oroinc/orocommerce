@@ -9,6 +9,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var StandardConfirmation = require('oroui/js/standart-confirmation');
+    var NumberFormatter = require('orolocale/js/formatter/number');
 
     PossibleShippingMethodsComponent = BaseComponent.extend({
         selectors: {
@@ -33,6 +34,12 @@ define(function(require) {
                 trigger: 'entry-point:order:trigger'
             }
         },
+
+        /**
+         * @property {Array}
+         * @private
+         */
+        _$selectedShippingMethod: [],
 
         /**
          * @constructor
@@ -61,8 +68,9 @@ define(function(require) {
                 _.bind(this.onOverriddenShippingCostChange, this
                 )
             );
-            if ($(document).find('.selected-shipping-method').length > 0) {
-                this.savedShippingMethod = $(document).find('.selected-shipping-method').text();
+
+            if (this.getSelectedShippingMethodElement().length > 0) {
+                this.savedShippingMethod = this.getSelectedShippingMethodElement().text();
             }
             mediator.on(this.options.events.before, this.showLoadingMask, this);
             mediator.on(this.options.events.load, this.onOrderChange, this);
@@ -92,8 +100,6 @@ define(function(require) {
             var confirmation = new StandardConfirmation({
                 title: __('oro.order.possible_shipping_methods.confirmation.title'),
                 content: __('oro.order.possible_shipping_methods.confirmation.content'),
-                allowOk: true,
-                allowCancel: true,
                 okText: __('Save'),
                 cancelText: __('oro.order.continue_editing')
             });
@@ -173,9 +179,7 @@ define(function(require) {
                                 if (method.identifier === selectedMethod && type.identifier === selectedType) {
                                     checked = 'checked="checked"';
                                     selectedFound = true;
-                                    if (parseFloat(selectedCost) === parseFloat(type.price.value)) {
-                                        priceMatched = true;
-                                    }
+                                    priceMatched = parseFloat(selectedCost) === parseFloat(type.price.value);
                                     self.updateElementsValue(
                                         selectedType,
                                         selectedMethod,
@@ -192,7 +196,7 @@ define(function(require) {
                                     'oro.shipping.method_type.backend.method_type_and_price.label',
                                     {
                                         translatedMethodType: __(type.label),
-                                        price: '<strong>' + type.price.currency + ' ' + type.price.value + '</strong>'
+                                        price: NumberFormatter.formatCurrency(type.price.value, type.price.currency)
                                     }) +
                                     '</span>';
                                 str = str + '</label></div>';
@@ -205,19 +209,16 @@ define(function(require) {
                     }
                 });
                 if (selectedFound === false) {
-                    $(document).find('.selected-shipping-method').css('text-decoration', 'line-through');
+                    this.getSelectedShippingMethodElement().css('text-decoration', 'line-through');
                     this.setElementsValue(null, null, null);
                 }
-                this.getPossibleShippingMethodForm().html(str);
             } else {
-                $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
+                this.getSelectedShippingMethodElement().find('input').css('text-decoration', 'line-through');
                 this.setElementsValue(null, null, null);
-                str = '<span class="notification notification_xmd notification_alert notification-radiused mb1-md">' +
-                    __('oro.order.possible_shipping_methods.no_method') +
-                    '</span>';
-                this.getPossibleShippingMethodForm().html(str);
+                str = '<span class="alert alert-error">' +
+                    __('oro.order.possible_shipping_methods.no_method') + '</span>';
             }
-
+            this.getPossibleShippingMethodForm().html(str);
             this.allowUnlistedAndLockFlags();
         },
 
@@ -239,43 +240,64 @@ define(function(require) {
          * @param {boolean} matched
          */
         updateSelectedShippingMethod: function(type, method, cost, matched) {
-            if (type !== null && method !== null) {
-                var methodLabel = (this.$data[method].isGrouped === true) ? __(this.$data[method].label) : '';
-                var typeLabel = __(this.$data[method].types[type].label);
-                var currency = this.$data[method].types[type].price.currency;
-                var translation = (this.$data[method].isGrouped === true) ?
-                    'oro.shipping.method_type.backend.method_with_type_and_price.label'
-                    : 'oro.shipping.method_type.backend.method_type_and_price.label';
-                var selectedShippingMethod = __(translation, {
-                        translatedMethod: methodLabel,
-                        translatedMethodType: __(typeLabel),
-                        price: currency + ' ' + parseFloat(cost).toFixed(2)
-                    });
-
-                var $div = $('<div>', {'class': 'control-group'});
-                $div.append('<label class="control-label">' + __('oro.order.shipping_method.label') + '</label>');
-                $div.append('<div class="controls"><div class="control-label selected-shipping-method">' +
-                    selectedShippingMethod + '</div>');
-
-                if ($(document).find('.selected-shipping-method').length > 0) {
-                    $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
-                    $(document).find('.selected-shipping-method').closest('.control-group').remove();
-                    if (!matched && this.savedShippingMethod && selectedShippingMethod !== this.savedShippingMethod) {
-                        var $prevDiv = $('<div>', {'class': 'control-group'});
-                        $prevDiv.append(
-                            '<label class="control-label">' +
-                            __('oro.order.previous_shipping_method.label') + '</label>'
-                        );
-                        $prevDiv.append(
-                            '<div class="controls"><div class="control-label previously-selected-shipping-method">' +
-                            this.savedShippingMethod + '</div>'
-                        );
-
-                        this.$el.closest('.responsive-cell').prepend($prevDiv);
-                    }
-                }
-                this.$el.closest('.responsive-cell').prepend($div);
+            if (type === null && method === null) {
+                return;
             }
+
+            var $div = $('<div>', {'class': 'control-group'});
+
+            if (this.getSelectedShippingMethodElement(true).length > 0) {
+                $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
+                this.getSelectedShippingMethodElement().closest('.control-group').remove();
+                if (!matched && this.savedShippingMethod &&
+                    this.getSelectedShippingMethod(type, method, cost) !== this.savedShippingMethod) {
+                    this.renderPreviousSelectedShippingMethod();
+                }
+            }
+
+            $div.append('<label class="control-label">' + __('oro.order.shipping_method.label') + '</label>');
+            $div.append('<div class="controls"><div class="control-label selected-shipping-method">' +
+                this.getSelectedShippingMethod(type, method, cost) + '</div>');
+            this.$el.closest('.responsive-cell').prepend($div);
+        },
+
+        getSelectedShippingMethod: function(type, method, cost) {
+            var methodLabel = this.$data[method].isGrouped ? __(this.$data[method].label) : '';
+            var typeLabel = __(this.$data[method].types[type].label);
+            var currency = this.$data[method].types[type].price.currency;
+            var translation = this.$data[method].isGrouped ?
+                'oro.shipping.method_type.backend.method_with_type_and_price.label'
+                : 'oro.shipping.method_type.backend.method_type_and_price.label';
+
+            return __(translation, {
+                translatedMethod: methodLabel,
+                translatedMethodType: __(typeLabel),
+                price: NumberFormatter.formatCurrency(cost, currency)
+            });
+        },
+
+        getSelectedShippingMethodElement: function(refresh) {
+            refresh = refresh || false;
+
+            if (!this._$selectedShippingMethod.length || refresh) {
+                this._$selectedShippingMethod = $(document).find('.selected-shipping-method');
+            }
+
+            return this._$selectedShippingMethod;
+        },
+
+        renderPreviousSelectedShippingMethod: function() {
+            var $prevDiv = $('<div>', {'class': 'control-group'});
+            $prevDiv.append(
+                '<label class="control-label">' +
+                __('oro.order.previous_shipping_method.label') + '</label>'
+            );
+            $prevDiv.append(
+                '<div class="controls"><div class="control-label previously-selected-shipping-method">' +
+                this.savedShippingMethod + '</div>'
+            );
+
+            this.$el.closest('.responsive-cell').prepend($prevDiv);
         },
 
         allowUnlistedAndLockFlags: function() {

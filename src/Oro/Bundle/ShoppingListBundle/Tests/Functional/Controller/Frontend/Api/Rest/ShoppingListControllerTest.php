@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -59,7 +60,7 @@ class ShoppingListControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider ACLProvider
+     * @dataProvider actionACLProvider
      * @param string $resource
      * @param string $user
      * @param int $status
@@ -70,11 +71,32 @@ class ShoppingListControllerTest extends WebTestCase
         $shoppingList = $this->getReference($resource);
 
         $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_shoppinglist', ['id' => $shoppingList->getId()])
+            'GET',
+            $this->getUrl(
+                'oro_frontend_action_operation_execute',
+                [
+                    'operationName' => 'oro_shoppinglist_delete',
+                    'entityId' => $shoppingList->getId(),
+                    'entityClass' =>
+                        $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class'),
+                ]
+            ),
+            [],
+            [],
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
-        $result = $this->client->getResponse();
-        $this->assertResponseStatusCodeEquals($result, $status);
+        static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), $status);
+
+        if ($status === 200) {
+            static::getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class)->clear();
+
+            $removedShoppingList = static::getContainer()
+                ->get('doctrine')
+                ->getRepository('OroShoppingListBundle:ShoppingList')
+                ->find($shoppingList->getId());
+
+            static::assertNull($removedShoppingList);
+        }
     }
 
     /**
@@ -114,6 +136,20 @@ class ShoppingListControllerTest extends WebTestCase
                 'status' => 204,
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function actionACLProvider()
+    {
+        $acls = $this->ACLProvider();
+        $acls['anonymous user']['status'] = 403;
+        $acls['BASIC']['status'] = 200;
+        $acls['EDIT (user from parent customer : LOCAL)']['status'] = 200;
+        $acls['user from same customer : LOCAL']['status'] = 200;
+
+        return $acls;
     }
 
     /**

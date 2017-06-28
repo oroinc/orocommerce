@@ -13,7 +13,7 @@ interface PaymentLineItemInterface extends
     QuantityAwareInterface
 {
     /**
-     * @return Price
+     * @return Price|null
      */
     public function getPrice();
 }

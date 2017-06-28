@@ -60,7 +60,7 @@ class AjaxPriceListController extends Controller
      * @param PriceList $priceList
      * @return JsonResponse
      */
-    public function getPriceListCurrencyList(PriceList $priceList)
+    public function getPriceListCurrencyListAction(PriceList $priceList)
     {
         $currencyNames = Intl::getCurrencyBundle()->getCurrencyNames($this->get('oro_locale.settings')->getLocale());
 

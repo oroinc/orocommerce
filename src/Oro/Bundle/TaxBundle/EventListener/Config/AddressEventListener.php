@@ -43,18 +43,17 @@ class AddressEventListener
     {
         $settings = $event->getSettings();
 
-        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::KEY;
-        if (empty($settings[$key]['value'])) {
+        if (!array_key_exists('value', $settings)) {
             return;
         }
 
-        $address = $settings[$key]['value'];
+        $address = $settings['value'];
 
         if (!$address instanceof Address) {
             return;
         }
 
-        $settings[$key]['value'] = [
+        $settings['value'] = [
             'country' => $address->getCountry() ? $address->getCountry()->getIso2Code() : null,
             'region' => $address->getRegion() ? $address->getRegion()->getCombinedCode() : null,
             'region_text' => $address->getRegionText(),

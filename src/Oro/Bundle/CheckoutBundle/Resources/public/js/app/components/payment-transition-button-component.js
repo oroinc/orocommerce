@@ -7,7 +7,7 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
 
     var PaymentTransitionButtonComponent;
-    PaymentTransitionButtonComponent = TransitionButtonComponent.extend(/** @exports PaymentTransitionButtonComponent.prototype */{
+    PaymentTransitionButtonComponent = TransitionButtonComponent.extend({
         /**
          * @constructor
          * @param {Object} options
@@ -57,13 +57,21 @@ define(function(require) {
             }
 
             var paymentMethod = this.getPaymentMethodElement().val();
-            var eventData = {stopped: false, data: {paymentMethod: paymentMethod}};
+            var eventData = {
+                stopped: false,
+                resume: $.proxy(this.continueTransit, this, e, data),
+                data: {paymentMethod: paymentMethod}
+            };
 
             mediator.trigger('checkout:payment:before-transit', eventData);
             if (eventData.stopped) {
                 return;
             }
 
+            this.continueTransit(e, data);
+        },
+
+        continueTransit: function(e, data) {
             var filledForm = this.getPaymentForm();
             mediator.trigger('checkout:payment:before-hide-filled-form', filledForm);
             filledForm
@@ -92,6 +100,17 @@ define(function(require) {
         onPaymentMethodChange: function(event) {
             var target = $(event.target);
             this.getPaymentMethodElement().val(target.val());
+        },
+
+        /**
+         * @param {Event} event
+         */
+        onSubmit: function(event) {
+            var paymentMethod = this.getPaymentMethodElement().val();
+            var eventData = {paymentMethod: paymentMethod};
+            mediator.trigger('checkout:payment:before-form-serialization', eventData);
+
+            PaymentTransitionButtonComponent.__super__.onSubmit.call(this, event);
         },
 
         /**

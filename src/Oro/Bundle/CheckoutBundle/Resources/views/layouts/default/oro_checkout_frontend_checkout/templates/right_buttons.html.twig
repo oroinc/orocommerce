@@ -1,13 +1,14 @@
 {% block _checkout_button_continue_right_widget %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="order-checkout-widget order-checkout-widget_block text-right">
-            {{ _layout.conditionMessagesStart(transitionData) }}
+        <div class="order-checkout-widget text-right">
             <button type="submit"
-                    class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-l checkout__submit-btn" {{ _layout.transitionAttrbiutes(transitionData, checkout) }}>
+                    class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-l checkout__submit-btn"
+                    {{ _layout.transitionAttrbiutes(transitionData, checkout) }}
+                    {{ _layout.conditionMessages(transitionData) }}
+            >
                 {{ transitionData.transition.label|trans({},'workflows') }}
             </button>
-            {{ _layout.conditionMessagesEnd(transitionData) }}
         </div>
     {% endif %}
 {% endblock %}
@@ -15,7 +16,7 @@
 {% block _checkout_button_back_right_widget %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
-        <div class="checkout__form__back order-checkout-widget order-checkout-widget_block text-right">
+        <div class="checkout__form__back order-checkout-widget text-right">
             {{ block_widget(block) }}
         </div>
     {% endif %}

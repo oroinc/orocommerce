@@ -7,13 +7,13 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -36,10 +36,7 @@ class RequestController extends Controller
      */
     public function viewAction(RFPRequest $request)
     {
-        $status = $request->getInternalStatus();
-        if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
-            throw $this->createNotFoundException();
-        }
+        $this->assertValidInternalStatus($request);
 
         return [
             'data' => [
@@ -58,7 +55,7 @@ class RequestController extends Controller
     {
         $entityClass = $this->container->getParameter('oro_rfp.entity.request.class');
         $viewPermission = 'VIEW;entity:' . $entityClass;
-        if (!$this->getSecurityFacade()->isGranted($viewPermission)) {
+        if (!$this->isGranted($viewPermission)) {
             return $this->redirect(
                 $this->generateUrl('oro_rfp_frontend_request_create')
             );
@@ -113,6 +110,8 @@ class RequestController extends Controller
      */
     public function updateAction(RFPRequest $rfpRequest)
     {
+        $this->assertValidInternalStatus($rfpRequest);
+
         $response = $this->update($rfpRequest);
 
         if ($response instanceof Response) {
@@ -131,14 +130,12 @@ class RequestController extends Controller
         /* @var $handler RequestUpdateHandler */
         $handler = $this->get('oro_rfp.service.request_update_handler');
 
-        $securityFacade = $this->getSecurityFacade();
-
         return $handler->handleUpdate(
             $rfpRequest,
             $this->get('oro_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest),
-            function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
-                    $route = $securityFacade->isGranted('EDIT', $rfpRequest)
+            function (RFPRequest $rfpRequest) {
+                if ($this->isGranted('VIEW', $rfpRequest)) {
+                    $route = $this->isGranted('EDIT', $rfpRequest)
                         ? 'oro_rfp_frontend_request_update'
                         : 'oro_rfp_frontend_request_view';
 
@@ -153,8 +150,8 @@ class RequestController extends Controller
                     'parameters' => [],
                 ];
             },
-            function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
+            function (RFPRequest $rfpRequest) {
+                if ($this->isGranted('VIEW', $rfpRequest)) {
                     return [
                         'route' => 'oro_rfp_frontend_request_view',
                         'parameters' => ['id' => $rfpRequest->getId()],
@@ -204,14 +201,6 @@ class RequestController extends Controller
     }
 
     /**
-     * @return SecurityFacade
-     */
-    protected function getSecurityFacade()
-    {
-        return $this->get('oro_security.security_facade');
-    }
-
-    /**
      * @param RFPRequest $rfpRequest
      * @param Request $request
      */
@@ -240,5 +229,17 @@ class RequestController extends Controller
         }
         $this->get('oro_rfp.request.manager')
             ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
+    }
+
+    /**
+     * @param RFPRequest $request
+     * @throws NotFoundHttpException
+     */
+    private function assertValidInternalStatus(RFPRequest $request)
+    {
+        $status = $request->getInternalStatus();
+        if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
+            throw $this->createNotFoundException();
+        }
     }
 }

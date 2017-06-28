@@ -3,9 +3,11 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener\Config;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\EventListener\Config\ProductTaxCodeEventListener;
 
@@ -19,6 +21,9 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var ConfigManager */
+    protected $configManager;
+
     /**
      * @var array
      */
@@ -26,13 +31,12 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->listener = new ProductTaxCodeEventListener(
             $this->doctrineHelper,
-            'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
+            ProductTaxCode::class,
             'digital_products_eu'
         );
 
@@ -41,35 +45,28 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testFormPreSetWithoutKey()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
+        $event = new ConfigSettingsUpdateEvent($this->configManager, []);
 
-        $event->expects($this->once())->method('getSettings')->willReturn([]);
         $this->doctrineHelper->expects($this->never())->method($this->anything());
-        $event->expects($this->never())->method('setSettings');
 
         $this->listener->formPreSet($event);
+        $this->assertEquals([], $event->getSettings());
     }
 
     public function testFormPreSet()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
-
-        $event->expects($this->once())->method('getSettings')
-            ->willReturn(['oro_tax___digital_products_eu' => ['value' => $this->data]]);
+        $settings = ['oro_tax___digital_products_eu' => ['value' => $this->data]];
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
-        $repository = $this->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
+        $repository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $taxCodes = [
-            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => 'CODE1']),
-            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => 'CODE2']),
-            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['code' => '2']),
+            $this->getEntity(ProductTaxCode::class, ['code' => 'CODE1']),
+            $this->getEntity(ProductTaxCode::class, ['code' => 'CODE2']),
+            $this->getEntity(ProductTaxCode::class, ['code' => '2']),
         ];
         $repository->expects($this->once())->method('findByCodes')->with(['CODE1', 'CODE2', '2'])
             ->willReturn($taxCodes);
@@ -79,55 +76,37 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepository')
             ->willReturn($repository);
 
-        $event->expects($this->once())->method('setSettings')->with(
-            $this->callback(
-                function ($settings) use ($taxCodes) {
-                    $this->assertInternalType('array', $settings);
-                    $this->assertArrayHasKey('oro_tax___digital_products_eu', $settings);
-                    $this->assertInternalType('array', $settings['oro_tax___digital_products_eu']);
-                    $this->assertArrayHasKey('value', $settings['oro_tax___digital_products_eu']);
-                    $this->assertInternalType('array', $settings['oro_tax___digital_products_eu']['value']);
-
-                    $this->assertEquals($taxCodes, $settings['oro_tax___digital_products_eu']['value']);
-
-                    return true;
-                }
-            )
-        );
-
         $this->listener->formPreSet($event);
+
+        $this->assertEquals(['oro_tax___digital_products_eu' => ['value' => $taxCodes]], $event->getSettings());
     }
 
-    public function testBeforeSaveWithoutKey()
+    public function testBeforeSaveWithoutValueKey()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
+        $settings = [];
 
-        $event->expects($this->once())->method('getSettings')->willReturn([]);
-        $this->doctrineHelper->expects($this->never())->method($this->anything());
-        $event->expects($this->never())->method('setSettings');
-
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
         $this->listener->beforeSave($event);
+
+        $this->assertEquals($settings, $event->getSettings());
     }
 
     public function testBeforeSave()
     {
-        /** @var ConfigSettingsUpdateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
-            ->disableOriginalConstructor()->getMock();
+        $settings = [
+            'value' => $this->data
+        ];
 
-        $event->expects($this->once())->method('getSettings')
-            ->willReturn(['oro_tax.digital_products_eu' => ['value' => $this->data]]);
+        $event = new ConfigSettingsUpdateEvent($this->configManager, $settings);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
-        $repository = $this->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
+        $repository = $this->getMockBuilder(AbstractTaxCodeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $taxCodes = [
-            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 1, 'code' => 'CODE1']),
-            $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 2, 'code' => 'CODE2']),
+            $this->getEntity(ProductTaxCode::class, ['id' => 1, 'code' => 'CODE1']),
+            $this->getEntity(ProductTaxCode::class, ['id' => 2, 'code' => 'CODE2']),
         ];
 
         $repository->expects($this->once())->method('findBy')->with(['id' => [1, 2]])->willReturn($taxCodes);
@@ -137,22 +116,8 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepository')
             ->willReturn($repository);
 
-        $event->expects($this->once())->method('setSettings')->with(
-            $this->callback(
-                function ($settings) {
-                    $this->assertInternalType('array', $settings);
-                    $this->assertArrayHasKey('oro_tax.digital_products_eu', $settings);
-                    $this->assertInternalType('array', $settings['oro_tax.digital_products_eu']);
-                    $this->assertArrayHasKey('value', $settings['oro_tax.digital_products_eu']);
-                    $this->assertInternalType('array', $settings['oro_tax.digital_products_eu']['value']);
-
-                    $this->assertEquals(['CODE1', 'CODE2'], $settings['oro_tax.digital_products_eu']['value']);
-
-                    return true;
-                }
-            )
-        );
-
         $this->listener->beforeSave($event);
+
+        $this->assertEquals(['value' => ['CODE1', 'CODE2']], $event->getSettings());
     }
 }

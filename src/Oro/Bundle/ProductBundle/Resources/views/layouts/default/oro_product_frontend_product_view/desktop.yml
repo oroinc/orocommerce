@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@move':
+            id: product_view_line_item_container
+            parentId: product_view_specification_container
+    conditions: '!context["is_mobile"]'

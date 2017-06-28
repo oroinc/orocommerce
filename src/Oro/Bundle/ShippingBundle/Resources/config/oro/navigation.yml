@@ -37,6 +37,6 @@ navigation:
 
     titles:
         oro_shipping_methods_configs_rule_index: ~
-        oro_shipping_methods_configs_rule_view:  '%%label%%'
-        oro_shipping_methods_configs_rule_update: 'Shipping Rule %%id%% - Edit'
+        oro_shipping_methods_configs_rule_view:  '%label%'
+        oro_shipping_methods_configs_rule_update: 'Shipping Rule %id% - Edit'
         oro_shipping_methods_configs_rule_create: 'Create Shipping Rule'

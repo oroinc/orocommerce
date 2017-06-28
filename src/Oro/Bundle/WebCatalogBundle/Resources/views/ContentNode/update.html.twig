@@ -46,7 +46,7 @@
         {% set cancelPath = path('oro_content_node_update', { 'id': entity.parentNode.id }) %}
     {% endif %}
 
-    {% if entity.id is not empty and resource_granted('oro_web_catalog_update') %}
+    {% if entity.id is not empty and is_granted('oro_web_catalog_update') %}
         {{ UI.button({
             'path' : path('oro_content_node_create', { 'id': entity.id }),
             'iCss': 'fa-book',
@@ -64,7 +64,6 @@
     {% set id = 'web-catalog-tree-edit' %}
 
     {% set formRows = [
-        form_row(form.parentNode),
         form_row(form.titles),
         form_row(form.rewriteVariantTitle),
     ] %}
@@ -77,12 +76,13 @@
         {% set scopes %}
         <div data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
-                 view: 'orowebcatalog/js/app/views/scope-toggle-view',
+                 view: 'oroscope/js/app/views/scope-toggle-view',
                  selectors: {
                      useParentScopeSelector: '#' ~ form.parentScopeUsed.vars.id,
                      scopesSelector: '.scope-elements'
                  }
              }|json_encode }}"
+             data-layout="separate"
         >
             {{ form_row(form.parentScopeUsed) }}
             <div class="scope-elements">
@@ -125,31 +125,29 @@
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
     }%}
-    {% set componentOptions = {
-    container: 'web-catalog-page-container',
-    sidebar: 'tree-component',
-    fixSidebarHeight: true
+
+    {% set twoColumnContent = parent() %}
+
+    {% set nodeId = null %}
+    {% if entity.id %}
+        {% set nodeId = entity.id %}
+    {% elseif entity.parentNode is not empty %}
+        {% set nodeId = entity.parentNode.id %}
+    {% endif %}
+
+    {% set treeOptions = {
+        'key' : 'web-catalog',
+        'data' : oro_web_catalog_tree(web_catalog),
+        'updateAllowed' : is_granted('oro_web_catalog_update'),
+        'onRootSelectRoute': 'oro_content_node_update',
+        'onSelectRoute' : 'oro_content_node_update',
+        'onMoveRoute' : 'oro_content_node_move',
+        'nodeId': nodeId,
+        'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
     } %}
-    <div class="web-catalog-page-container tree-component-container"
-         data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
-         data-page-component-options="{{ componentOptions|json_encode }}">
-        <div class="web-catalog-sidebar page page-tree tree-component">
-            {% set nodeId = null %}
-            {% if entity.id %}
-                {% set nodeId = entity.id %}
-            {% elseif entity.parentNode is not empty %}
-                {% set nodeId = entity.parentNode.id %}
-            {% endif %}
-            {% set treeOptions = {
-                'key' : 'web-catalog',
-                'data' : oro_web_catalog_tree(web_catalog),
-                'updateAllowed' : resource_granted('oro_web_catalog_update'),
-                'onRootSelectRoute': 'oro_content_node_update',
-                'onSelectRoute' : 'oro_content_node_update',
-                'onMoveRoute' : 'oro_content_node_move',
-                'nodeId': nodeId,
-                'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
-            } %}
+
+    {% embed "OroUIBundle::content_sidebar.html.twig" %}
+        {% block sidebar %}
             {{ UI.renderJsTree(
                 {
                     'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
@@ -157,14 +155,17 @@
                 },
                 {
                     'move': {
-                        'routeName': 'oro_web_catalog_move',
-                        'routeParams': {'id': web_catalog.id}
+                    'routeName': 'oro_web_catalog_move',
+                    'routeParams': {'id': web_catalog.id}
                     }
                 }
             ) }}
-        </div>
-    </div>
-    <div class="web-catalog-page-data">
-        {{ parent() }}
-    </div>
+        {% endblock sidebar %}
+
+        {% block content %}
+            {% autoescape %}
+                {{ twoColumnContent|raw}}
+            {% endautoescape %}
+        {% endblock content %}
+    {% endembed %}
 {% endblock content_data %}

@@ -42,7 +42,10 @@ class MatrixGridOrderController extends AbstractLineItemController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems($form->getData());
+            $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems(
+                $form->getData(),
+                $product
+            );
 
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->addLineItem($lineItem, $shoppingList, true, true);

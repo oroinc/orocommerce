@@ -6,15 +6,14 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -50,27 +49,19 @@ class UPSTransportSettingsType extends AbstractType
      */
     protected $doctrineHelper;
 
-    /** @var SymmetricCrypterInterface */
-    protected $symmetricCrypter;
-
     /**
-     * UPSTransportSettingsType constructor.
-     *
      * @param TransportInterface        $transport
      * @param ShippingOriginProvider    $shippingOriginProvider
      * @param DoctrineHelper            $doctrineHelper
-     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         TransportInterface $transport,
         ShippingOriginProvider $shippingOriginProvider,
-        DoctrineHelper $doctrineHelper,
-        SymmetricCrypterInterface $symmetricCrypter
+        DoctrineHelper $doctrineHelper
     ) {
         $this->transport = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
         $this->doctrineHelper = $doctrineHelper;
-        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
@@ -92,15 +83,15 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'baseUrl',
-            TextType::class,
+            'upsTestMode',
+            CheckboxType::class,
             [
-                'label' => 'oro.ups.transport.base_url.label',
-                'required' => true
+                'label' => 'oro.ups.transport.test_mode.label',
+                'required' => false,
             ]
         );
         $builder->add(
-            'apiUser',
+            'upsApiUser',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_user.label',
@@ -108,24 +99,15 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'apiPassword',
-            PasswordType::class,
+            'upsApiPassword',
+            OroEncodedPlaceholderPasswordType::class,
             [
                 'label' => 'oro.ups.transport.api_password.label',
                 'required' => true
             ]
         );
-        $builder->get('apiPassword')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($password) {
-                    return $password;
-                },
-                function ($password) {
-                    return $this->symmetricCrypter->encryptData($password);
-                }
-            ));
         $builder->add(
-            'apiKey',
+            'upsApiKey',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.api_key.label',
@@ -133,7 +115,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'shippingAccountName',
+            'upsShippingAccountName',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_name.label',
@@ -141,7 +123,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'shippingAccountNumber',
+            'upsShippingAccountNumber',
             TextType::class,
             [
                 'label' => 'oro.ups.transport.shipping_account_number.label',
@@ -149,7 +131,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'pickupType',
+            'upsPickupType',
             ChoiceType::class,
             [
                 'label' => 'oro.ups.transport.pickup_type.label',
@@ -165,7 +147,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'unitOfWeight',
+            'upsUnitOfWeight',
             ChoiceType::class,
             [
                 'label' => 'oro.ups.transport.unit_of_weight.label',
@@ -177,7 +159,7 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'country',
+            'upsCountry',
             CountryType::class,
             [
                 'label' => 'oro.ups.transport.country.label',
@@ -206,7 +188,7 @@ class UPSTransportSettingsType extends AbstractType
         /** @var UPSTransport $transport */
         $transport = $event->getData();
 
-        if ($transport && null === $transport->getCountry()) {
+        if ($transport && null === $transport->getUpsCountry()) {
             $countryCode = $this
                 ->shippingOriginProvider
                 ->getSystemShippingOrigin()
@@ -214,7 +196,7 @@ class UPSTransportSettingsType extends AbstractType
 
             $country = $this->getCountry($countryCode);
             if (null !== $country) {
-                $transport->setCountry($country);
+                $transport->setUpsCountry($country);
                 $event->setData($transport);
             }
         }

@@ -4,15 +4,13 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
 use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -70,8 +68,8 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn(null);
 
-        $this->statusProviderMock->expects($this->once())->method('computeStatus')
-            ->with($entity, new ArrayCollection([$this->transaction]))
+        $this->statusProviderMock->expects($this->once())->method('getPaymentStatus')
+            ->with($entity)
             ->willReturn(PaymentStatusProvider::FULL);
 
         $this->manager->updateStatus($this->transaction);
@@ -80,7 +78,6 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
     public function testOnTransactionCompleteExistingOrder()
     {
         $existingPaymentStatus = new PaymentStatus();
-        $existingTransaction = new PaymentTransaction();
         $entity = $this->getEntity('\stdClass');
         $repositoryMock = $this->commonExpectations($entity);
 
@@ -93,22 +90,15 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($existingPaymentStatus);
 
-        $transactionsCollection = new ArrayCollection([$this->transaction]);
-        $transactionsCollection2 = new ArrayCollection([$existingTransaction, $this->transaction]);
-
-        $this->statusProviderMock->expects($this->exactly(2))->method('computeStatus')
+        $this->statusProviderMock->expects($this->once())->method('getPaymentStatus')
             ->withConsecutive(
-                [$entity, $transactionsCollection],
-                [$entity, $transactionsCollection2]
+                [$entity],
+                [$entity]
             )
             ->willReturnOnConsecutiveCalls(
                 PaymentStatusProvider::PARTIALLY,
                 PaymentStatusProvider::FULL
             );
-
-        $this->paymentTransactionProvider->expects($this->once())->method('getPaymentTransactions')
-            ->with($entity)
-            ->willReturn([$existingTransaction]);
 
         $this->manager->updateStatus($this->transaction);
     }

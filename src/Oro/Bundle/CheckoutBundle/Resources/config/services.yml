@@ -216,8 +216,6 @@ services:
 
     oro_checkout.workflow_state.mapper.payment_method_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodDiffMapper'
-        arguments:
-            - '@oro_payment.payment_method_provider.registry'
         public: false
         tags:
             - { name: checkout.workflow_state.mapper }
@@ -329,6 +327,7 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_checkout.mapper.order_mapper'
+            - '@oro_checkout.shipping_method.provider_main'
 
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
@@ -456,3 +455,16 @@ services:
             - '@oro_checkout.repository.checkout'
         tags:
             - { name: kernel.event_listener, event: oro_payment.method_renaming, method: onMethodRename}
+
+    oro_checkout.provider.payment_method_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\PaymentMethodProvider
+        arguments:
+            - '@oro_checkout.factory.payment_context_factory'
+            - '@oro_checkout.repository.checkout'
+            - '@oro_payment.method.provider.method_provider'
+
+    oro_checkout.provider.result_messages:
+        class: Oro\Bundle\CheckoutBundle\Provider\PaymentResultMessageProvider
+        decorates: oro_payment.provider.result_messages
+        public: false
+        arguments: ['@oro_checkout.provider.payment_method_provider']

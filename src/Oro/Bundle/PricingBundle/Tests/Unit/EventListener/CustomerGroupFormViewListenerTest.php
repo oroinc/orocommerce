@@ -38,7 +38,7 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
 
         $priceListToCustomerGroup1 = new PriceListToCustomerGroup();
         $priceListToCustomerGroup1->setCustomerGroup($customerGroup);
-        $priceListToCustomerGroup1->setPriority(3);
+        $priceListToCustomerGroup1->setSortOrder(3);
         $priceListToCustomerGroup1->setWebsite(current($this->websiteProvider->getWebsites()));
         $priceListToCustomerGroup2 = clone $priceListToCustomerGroup1;
         $priceListsToCustomerGroup = [$priceListToCustomerGroup1, $priceListToCustomerGroup2];

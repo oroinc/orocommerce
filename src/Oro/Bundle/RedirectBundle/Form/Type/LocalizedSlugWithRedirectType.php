@@ -90,7 +90,8 @@ class LocalizedSlugWithRedirectType extends AbstractType
             'create_redirect_enabled' => true,
             'slug_suggestion_enabled' => true,
             'data_class' => SlugPrototypesWithRedirect::class,
-            'get_changed_slugs_url' => null
+            'get_changed_slugs_url' => null,
+            'tooltip' => 'oro.redirect.slug_prototypes.tooltip',
         ]);
         $resolver->setRequired('source_field');
 

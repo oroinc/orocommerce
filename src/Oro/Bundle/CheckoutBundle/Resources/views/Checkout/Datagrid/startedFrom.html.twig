@@ -1,7 +1,7 @@
 {% set data = record.getValue('startedFrom') %}
 
 {% if data.entity is defined %}
-    {% if resource_granted('VIEW', data.entity) %}
+    {% if is_granted('VIEW', data.entity) %}
         {% if data.type == 'shopping_list' %}
             <a href="{{ path('oro_shopping_list_frontend_view', {id: data.id}) }}">{{ data.label }}</a>
         {% elseif data.type == 'quote' %}

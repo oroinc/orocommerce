@@ -99,14 +99,14 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->lineItemsCollectionMock);
 
         $builder = new BasicPaymentContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId,
             $this->paymentLineItemCollectionFactoryMock
         );
 
         $builder
+            ->setCurrency($currency)
+            ->setSubTotal($this->subtotalMock)
             ->setLineItems($this->lineItemsCollectionMock)
             ->setShippingAddress($this->shippingAddressMock)
             ->setBillingAddress($this->billingAddressMock)
@@ -126,7 +126,6 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testOptionalFields()
     {
-        $currency = 'usd';
         $entityId = '12';
         $lineItems = [];
 
@@ -137,17 +136,12 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->lineItemsCollectionMock);
 
         $builder = new BasicPaymentContextBuilder(
-            $currency,
-            $this->subtotalMock,
             $this->sourceEntityMock,
             $entityId,
             $this->paymentLineItemCollectionFactoryMock
         );
 
-        $expectedContext = $this->getExpectedContextWithoutOptionalFields(
-            $currency,
-            $entityId
-        );
+        $expectedContext = $this->getExpectedContextWithoutOptionalFields($entityId);
 
         $context = $builder->getResult();
 
@@ -180,17 +174,14 @@ class BasicPaymentContextBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $currency
      * @param $entityId
      *
      * @return PaymentContext
      */
-    private function getExpectedContextWithoutOptionalFields($currency, $entityId)
+    private function getExpectedContextWithoutOptionalFields($entityId)
     {
         $params = [
             PaymentContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,
-            PaymentContext::FIELD_CURRENCY => $currency,
-            PaymentContext::FIELD_SUBTOTAL => $this->subtotalMock,
             PaymentContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             PaymentContext::FIELD_SOURCE_ENTITY_ID => $entityId,
         ];

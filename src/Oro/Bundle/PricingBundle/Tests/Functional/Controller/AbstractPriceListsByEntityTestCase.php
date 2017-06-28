@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -52,6 +53,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
+        self::getContainer()->get('oro_config.global')
+            ->set('oro_pricing.price_strategy', MergePricesCombiningStrategy::NAME);
         $this->loadFixtures(
             [
                 'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
@@ -121,9 +124,9 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                     1 => [
                         'fallback' => 0,
                         'priceLists' => [
-                            ['priceList' => 'price_list_1', 'priority' => 3, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_2', '_position' => 23, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_3', '_position' => 22, 'mergeAllowed' => true],
                         ],
                     ],
                 ],
@@ -132,9 +135,9 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                     1 => [
                         'fallback' => 0,
                         'priceLists' => [
-                            ['priceList' => 'price_list_1', 'priority' => 3, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_3', 'priority' => 22, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_2', 'priority' => 23, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_3', '_position' => 22, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_2', '_position' => 23, 'mergeAllowed' => true],
                         ],
                     ],
                 ],
@@ -201,7 +204,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 } else {
                     $this->assertContains('No', $mergeAllowedText);
                 }
-                $this->assertEquals($priceListRelation['priority'], $row->filter('.price_list_priority')->text());
                 $this->assertContains($priceList->getName(), $row->filter('.price_list_link')->text());
             }
         }
@@ -268,13 +270,9 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
             1
         );
         $formValues[sprintf('%s[priceList]', $collectionElementPath1)] = $priceList->getId();
-        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = '';
-        $this->checkValidationMessage($formValues, 'This value should not be blank');
-        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 'not_integer';
-        $this->checkValidationMessage($formValues, 'This value should be integer number');
-        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 1;
+        $formValues[sprintf('%s[_position]', $collectionElementPath1)] = 1;
         $formValues[sprintf('%s[priceList]', $collectionElementPath2)] = $priceList->getId();
-        $formValues[sprintf('%s[priority]', $collectionElementPath2)] = 2;
+        $formValues[sprintf('%s[_position]', $collectionElementPath2)] = 2;
 
         $this->checkValidationMessage($formValues, 'Price list is duplicated.');
     }
@@ -369,7 +367,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 /** @var PriceList $priceListEntity */
                 $priceListEntity = $this->getReference($priceList['priceList']);
                 $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceListEntity->getId();
-                $formValues[sprintf('%s[priority]', $collectionElementPath)] = $priceList['priority'];
+                $formValues[sprintf('%s[_position]', $collectionElementPath)] = $priceList['_position'];
                 $formValues[sprintf('%s[mergeAllowed]', $collectionElementPath)] = $priceList['mergeAllowed'];
             }
         }
@@ -403,15 +401,15 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                         $this->assertTrue(isset($actualPriceListRelation['mergeAllowed']));
                     }
                     $this->assertEquals(
-                        $expectedPriceListRelation['priority'],
-                        $actualPriceListRelation['priority']
+                        $expectedPriceListRelation['_position'],
+                        $actualPriceListRelation['_position']
                     );
                     $priceListId = $this->getReference($expectedPriceListRelation['priceList'])->getId();
                     $this->assertEquals($actualPriceListRelation['priceList'], $priceListId);
                 }
             } else {
                 $this->assertCount(1, $actualFallbackWithPriceLists['priceListCollection']);
-                $this->assertEmpty($actualFallbackWithPriceLists['priceListCollection'][0]['priority']);
+                $this->assertEmpty($actualFallbackWithPriceLists['priceListCollection'][0]['_position']);
                 $this->assertEmpty($actualFallbackWithPriceLists['priceListCollection'][0]['priceList']);
             }
         }

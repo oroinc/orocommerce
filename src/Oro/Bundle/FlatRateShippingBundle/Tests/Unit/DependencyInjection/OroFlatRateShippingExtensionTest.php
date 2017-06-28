@@ -7,7 +7,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroFlatRateShippingExtensionTest extends ExtensionTestCase
 {
-    /** @var OroFlatRateShippingExtension */
+    /**
+     * @var OroFlatRateShippingExtension
+     */
     private $extension;
 
     protected function setUp()
@@ -26,6 +28,7 @@ class OroFlatRateShippingExtensionTest extends ExtensionTestCase
             'oro_flat_rate_shipping.form.type.flat_rate_options',
             'oro_flat_rate_shipping.method.provider',
             'oro_flat_rate_shipping.builder.flat_rate_method_from_channel',
+            'oro_flat_rate_shipping.disable_integration_listener',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

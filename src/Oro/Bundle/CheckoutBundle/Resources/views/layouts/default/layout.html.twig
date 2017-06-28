@@ -23,23 +23,13 @@
 {% endspaceless %}
 {% endmacro %}
 
-{% macro conditionMessagesStart(transitionData) %}
+{% macro conditionMessages(transitionData) %}
     {% set hasErrors = transitionData.errors|length > 0 %}
     {% if hasErrors %}
-        <span class="ttip__wrap"><span class="ttip__toggle">
-    {% endif %}
-{% endmacro %}
-
-{% macro conditionMessagesEnd(transitionData) %}
-    {% set hasErrors = transitionData.errors|length > 0 %}
-    {% if hasErrors %}
-        </span>
-          <span class="ttip">
-            <span class="ttip__content dark">
-                {{ _self.transitionConditionMessages(transitionData) }}
-            </span>
-          </span>
-        </span>
+        data-toggle="tooltip"
+        data-title="{{ _self.transitionConditionMessages(transitionData) }}"
+        data-html="true"
+        data-container="body"
     {% endif %}
 {% endmacro %}
 
@@ -61,21 +51,26 @@
             transition: transitionData.transition.name
         })
     %}
-    <a href="{{ transitionUrl }}" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
-        {{ _self.conditionMessagesStart(transitionData) }}
+    <a href="{{ transitionUrl }}"
+        {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+        {{ _self.conditionMessages(transitionData) }}
+    >
         <i class="fa-angle-left"></i>{{ 'oro.checkout.workflow.b2b_flow_checkout.transition.back.label'|trans }}
-        {{ _self.conditionMessagesEnd(transitionData) }}
     </a>
     {% endif %}
 {% endblock %}
 
 {% block checkout_transition_continue_widget %}
     {% if transitionData is defined and transitionData %}
-    {{ _self.conditionMessagesStart(transitionData) }}
-    <button type="submit" class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }} disabled="disabled">
-        {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right va-m_md"></i>
-    </button>
-    {{ _self.conditionMessagesEnd(transitionData) }}
+        <div class="tooltip-container" {{ _self.conditionMessages(transitionData) }}>
+            <button type="submit"
+                class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__form__submit"
+                disabled="disabled"
+                {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+            >
+                {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right va-m_md"></i>
+            </button>
+        </div>
     {% endif %}
 {% endblock %}
 
@@ -88,19 +83,19 @@
             transition: transitionData.transition.name
         })
     %}
-    <a href="{{ transitionUrl }}" class="button-icon fs14 gray" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
-        <span class="ttip__wrap">
-          <i class="fa-pencil ttip__toggle"></i>
-          <span class="ttip">
-            <span class="ttip__content dark">
-                {% if transitionData.errors|length > 0 %}
-                    {{ _self.transitionConditionMessages(transitionData) }}
-                {% else %}
-                    {{ transitionData.transition.label|trans({},'workflows') }}
-                {% endif %}
-            </span>
-          </span>
-        </span>
+    {% if transitionData.errors|length > 0 %}
+        {% set transitionLabel = _self.transitionConditionMessages(transitionData) %}
+    {% else %}
+        {% set transitionLabel = transitionData.transition.label|trans({},'workflows') %}
+    {% endif %}
+    <a href="{{ transitionUrl }}" class="button--plain"
+       data-toggle="tooltip"
+       data-title="{{ transitionLabel }}"
+       data-html="true"
+       data-container="body"
+       {{ _self.transitionAttrbiutes(transitionData, checkout) }}
+    >
+        <i class="fa-pencil fa--no-offset tooltip-trigger"></i>
     </a>
     {% endif %}
 {% endblock %}

@@ -1,0 +1,133 @@
+include:
+    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    product1_name:
+        string: 'Green shirt L'
+    product2_name:
+        string: 'Red shirt M'
+    configurable_product_name:
+        string: 'Shirt_1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precision1:
+        unit: '@item'
+        precision: '1'
+    unit_precision2:
+        unit: '@item'
+        precision: '1'
+    unit_precision3:
+        unit: '@item'
+        precision: '1'
+    unit_precision_additional1:
+        unit: '@set'
+        precision: '1'
+    unit_precision_additional2:
+        unit: '@set'
+        precision: '1'
+    unit_precision_additional3:
+        unit: '@set'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'gtsh_l'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision1'
+        addName: ['@product1_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+        addAdditionalUnitPrecision: ['@unit_precision_additional1']
+    product2:
+        type: 'simple'
+        sku: 'rtsh_m'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision2'
+        addName: ['@product2_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+        addAdditionalUnitPrecision: ['@unit_precision_additional2']
+    configurable_product:
+        type: 'configurable'
+        sku: 'shirt_main'
+        organization: '@organization'
+        owner: '@business_unit'
+        attributeFamily: '@defaultProductFamily'
+        primaryUnitPrecision: '@unit_precision3'
+        addName: ['@configurable_product_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+        addAdditionalUnitPrecision: ['@unit_precision_additional3']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    product1ItemPrice:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 10
+    product1SetPrice:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@set'
+        value: 445.50
+    product2ItemPrice:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 7
+    product2SetPrice:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@set'
+        value: 432.30
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationRpoduct1DefaultPriceList:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelationRpoduct2DefaultPriceList:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+    product1ItemCombined:
+        unit: '@item'
+        product: '@product1'
+        priceList: '@combinedPriceList'
+        quantity: 1
+        value: 10
+        currency: 'USD'
+    product1SetCombined:
+        unit: '@set'
+        product: '@product1'
+        priceList: '@combinedPriceList'
+        quantity: 1
+        value: 445.50
+        currency: 'USD'
+    product2ItemCombined:
+        unit: '@item'
+        product: '@product2'
+        priceList: '@combinedPriceList'
+        quantity: 1
+        value: 7
+        currency: 'USD'
+    product2SetCombined:
+        unit: '@set'
+        product: '@product2'
+        priceList: '@combinedPriceList'
+        quantity: 1
+        value: 432.30
+        currency: 'USD'

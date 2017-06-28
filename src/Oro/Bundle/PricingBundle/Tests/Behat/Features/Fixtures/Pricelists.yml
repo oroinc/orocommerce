@@ -1,0 +1,5 @@
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist1:
+        name: 'first price list'
+    pricelist2:
+        name: 'second price list'

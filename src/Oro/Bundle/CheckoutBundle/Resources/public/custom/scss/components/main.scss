@@ -1,7 +1,19 @@
+// @theme: custom;
+
 .checkout-container {
-  padding-left: 235px;
+    padding-left: 235px;
+}
+
+.checkout {
+    overflow: hidden;
 }
 
 .checkout-navigation {
-  margin: 0;
+    margin: 0;
 }
+
+@include breakpoint('tablet') {
+    .checkout-container {
+        padding-left: 0;
+    }
+ }

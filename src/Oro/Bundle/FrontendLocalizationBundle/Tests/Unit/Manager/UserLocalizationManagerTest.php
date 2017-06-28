@@ -13,6 +13,7 @@ use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
+use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -156,13 +157,18 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn(['1', '2']);
 
+        $localization = $this->getEntity(
+            Localization::class,
+            ['language' => $this->getEntity(Language::class, ['code' => 'en'])]
+        );
+
         $this->localizationManager->expects($this->once())
             ->method('getLocalizations')
             ->with(['1', '2'])
-            ->willReturn([(new Localization())->setLanguageCode('en')]);
+            ->willReturn([$localization]);
 
         $this->assertEquals(
-            [(new Localization())->setLanguageCode('en')],
+            [$localization],
             $this->userLocalizationManager->getEnabledLocalizations()
         );
     }

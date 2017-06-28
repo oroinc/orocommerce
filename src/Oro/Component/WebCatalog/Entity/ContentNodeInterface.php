@@ -12,7 +12,7 @@ interface ContentNodeInterface
     public function getId();
 
     /**
-     * @return ContentNodeInterface[]
+     * @return ContentVariantInterface[]
      */
     public function getContentVariants();
 

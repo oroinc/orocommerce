@@ -1,12 +1,12 @@
 // @theme: default
 
-$shopping-lists-actions-width: 55px;
-
 .shopping-lists-units {
     position: relative;
 
     display: block;
-    padding: 4px $shopping-lists-actions-width 4px 0;
+    padding: 4px 7px 4px 0;
+
+    @include clearfix();
 
     &:first-child {
         display: block;
@@ -15,7 +15,11 @@ $shopping-lists-actions-width: 55px;
 
     &__number {
         display: inline-block;
-        min-width: 10px;
+        min-width: $offset-x-m;
+    }
+
+    &__static {
+        padding-right: $offset-x-m;
     }
 
     &__separate {
@@ -23,18 +27,20 @@ $shopping-lists-actions-width: 55px;
     }
 
     &__actions {
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        width: $shopping-lists-actions-width;
+        float: right;
 
         color: get-color('ui', 'normal');
-
-        transition: opacity .3s linear;
     }
 
     &:hover &__actions {
         transition-delay: 0.1s;
+    }
+}
+
+@include breakpoint('mobile') {
+    .shopping-lists-units {
+        &__static {
+            padding-right: 0;
+        }
     }
 }

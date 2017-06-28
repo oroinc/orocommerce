@@ -3,13 +3,19 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\BrandSelectTypeStub;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
@@ -22,6 +28,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
@@ -30,37 +37,34 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
-use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\VariantField;
+use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
-
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantFieldsCollectionTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const DATA_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
+    const DATA_CLASS = \Oro\Bundle\ProductBundle\Entity\Product::class;
 
     /**
      * @var ProductType
@@ -72,26 +76,10 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected $urlGenerator;
 
-    /** @var  ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $defaultProductUnitProvider;
-
     /**
-     * @var array
+     * @var ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $exampleCustomFields = [
-        'size' => [
-            'name' => 'size',
-            'type' => 'boolean',
-            'label' => 'Size',
-            'is_serialized' => false,
-        ],
-        'color' => [
-            'name' => 'color',
-            'type' => 'enum',
-            'label' => 'Color',
-            'is_serialized' => false,
-        ],
-    ];
+    protected $defaultProductUnitProvider;
 
     /**
      * @var array
@@ -108,14 +96,19 @@ class ProductTypeTest extends FormIntegrationTestCase
     ];
 
     /**
-     * @var string
+     * @var AttributeFamily
      */
-    private $productClass = 'stdClass';
+    protected $attributeFamily;
 
     /**
      * @var array
      */
     protected $images = [];
+
+    /**
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productUnitLabelFormatter;
 
     /**
      * {@inheritDoc}
@@ -144,6 +137,11 @@ class ProductTypeTest extends FormIntegrationTestCase
         $image2->setImage(new File());
 
         $this->images = [$image1, $image2];
+
+        $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
 
         parent::setUp();
     }
@@ -184,13 +182,14 @@ class ProductTypeTest extends FormIntegrationTestCase
         $imageTypeProvider->expects($this->any())
             ->method('getImageTypes')
             ->willReturn([]);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomFieldProvider $customFieldProvider */
-        $customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
+        /** @var \PHPUnit_Framework_MockObject_MockObject|VariantFieldProvider $variantFieldProvider */
+        $variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $customFieldProvider->expects($this->any())
-            ->method('getEntityCustomFields')
-            ->willReturn($this->exampleCustomFields);
+        $variantFields = [new VariantField('size', 'Size'), new VariantField('color', 'Color')];
+        $variantFieldProvider->expects($this->any())
+            ->method('getVariantFields')
+            ->willReturn($variantFields);
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityFallbackResolver $entityFallbackResolver */
         $entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
             ->disableOriginalConstructor()
@@ -211,6 +210,13 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $entityType = new EntityType(
+            [
+                'item' => (new ProductUnit())->setCode('item'),
+                'kg' => (new ProductUnit())->setCode('kg')
+            ]
+        );
+
         return [
             new PreloadedExtension(
                 [
@@ -220,18 +226,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductPrimaryUnitPrecisionType::NAME => $productPrimaryUnitPrecision,
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
-                        [
-                            'item' => (new ProductUnit())->setCode('item'),
-                            'kg' => (new ProductUnit())->setCode('kg')
-                        ],
-                        ProductUnitSelectionType::NAME
-                    ),
+                    ProductUnitSelectType::NAME => new ProductUnitSelectType($this->productUnitLabelFormatter),
+                    'entity' => $entityType,
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    ProductCustomVariantFieldsCollectionType::NAME => new ProductCustomVariantFieldsCollectionTypeStub(
-                        $customFieldProvider,
-                        $this->productClass,
-                        $this->exampleCustomFields
+                    ProductCustomVariantFieldsCollectionType::NAME => new ProductCustomVariantFieldsCollectionType(
+                        $variantFieldProvider
                     ),
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
                     ProductVariantLinksType::NAME => new ProductVariantLinksType(),
@@ -244,6 +243,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     PageTemplateType::class => new PageTemplateType($pageTemplatesManager),
                     LocalizedSlugWithRedirectType::NAME
                     => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
+                    BrandSelectType::NAME => new BrandSelectTypeStub(),
                 ],
                 [
                     'form' => [
@@ -297,9 +297,12 @@ class ProductTypeTest extends FormIntegrationTestCase
                         'slugPrototypes' => [['string' => 'slug']],
                         'createRedirect' => true,
                     ],
+                    'featured' => 1,
+                    'attributeFamily' => $this->getAttributeFamily()
                 ],
                 'expectedData'  => $this->createExpectedProductEntity()
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'))
+                    ->setFeatured(true)
             ],
             'product with additionalUnitPrecisions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
@@ -322,6 +325,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'slugPrototypesWithRedirect' => [
                         'createRedirect' => true,
                     ],
+                    'attributeFamily' => $this->getAttributeFamily()
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true)
             ],
@@ -349,6 +353,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'slugPrototypesWithRedirect' => [
                         'createRedirect' => true,
                     ],
+                    'attributeFamily' => $this->getAttributeFamily()
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true)
             ],
@@ -364,6 +369,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'slugPrototypesWithRedirect' => [
                         'createRedirect' => true,
                     ],
+                    'attributeFamily' => $this->getAttributeFamily()
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false)
             ],
@@ -380,6 +386,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'slugPrototypesWithRedirect' => [
                         'createRedirect' => true,
                     ],
+                    'attributeFamily' => $this->getAttributeFamily()
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false)
             ],
@@ -396,6 +403,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'slugPrototypesWithRedirect' => [
                         'createRedirect' => true,
                     ],
+                    'attributeFamily' => $this->getAttributeFamily()
                 ],
                 'expectedData' => $this->createExpectedProductEntity(false, false, true)
                     ->setType(Product::TYPE_CONFIGURABLE)
@@ -422,7 +430,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         if ($hasVariants) {
             $expectedProduct->setType(Product::TYPE_CONFIGURABLE);
-            $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
+            $expectedProduct->setVariantFields(['size', 'color']);
         }
 
         $expectedProduct->setPrimaryUnitPrecision($this->getDefaultProductUnitPrecision());
@@ -463,6 +471,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             'oro_product_frontend_product_view' => null
         ]);
         $expectedProduct->setPageTemplate($entityFieldFallbackValue);
+        $expectedProduct->setAttributeFamily($this->getAttributeFamily());
 
         return $expectedProduct->setSku('test sku');
     }
@@ -495,6 +504,18 @@ class ProductTypeTest extends FormIntegrationTestCase
         return $value;
     }
 
+
+    /**
+     * @return AttributeFamily
+     */
+    private function getAttributeFamily()
+    {
+        if (!$this->attributeFamily) {
+            $this->attributeFamily = $this->getEntity(AttributeFamily::class, ['id' => 777]);
+        }
+
+        return $this->attributeFamily;
+    }
     /**
      * @param bool|true $hasVariants
      * @return Product
@@ -503,10 +524,11 @@ class ProductTypeTest extends FormIntegrationTestCase
     {
         $defaultProduct = new Product();
         $defaultProduct->setType(Product::TYPE_SIMPLE);
+        $defaultProduct->setAttributeFamily($this->getAttributeFamily());
 
         if ($hasVariants) {
             $defaultProduct->setType(Product::TYPE_CONFIGURABLE);
-            $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));
+            $defaultProduct->setVariantFields(['size', 'color']);
         }
 
         return $defaultProduct;
@@ -540,6 +562,8 @@ class ProductTypeTest extends FormIntegrationTestCase
             'slugPrototypes' => new ArrayCollection([$this->getEntity(LocalizedFallbackValue::class)]),
             'directlyPrimaryUnitPrecision' => $this->getEntity(ProductUnitPrecision::class)
         ]);
+
+        $existingData->setAttributeFamily($this->getAttributeFamily());
 
         /** @var Form $form */
         $form = $this->factory->create($this->type, $existingData);

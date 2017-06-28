@@ -10,3 +10,7 @@ liip_imagine:
             filters:
                 thumbnail: { size: [80, 80], mode: outbound }
                 strip:        ~
+        login_page_background:
+            quality:          95
+            filters:
+                strip:        ~

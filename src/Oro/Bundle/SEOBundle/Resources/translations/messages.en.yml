@@ -1,15 +1,49 @@
 oro:
     seo:
         label: SEO
+        system_configuration:
+            groups:
+                sitemap.title: Sitemap
+                sitemap_default.title: Default
+                sitemap_product.title: Product
+                sitemap_category.title: Category
+                sitemap_page.title: Page
+            fields:
+                changefreq:
+                    choice:
+                        always.label: Always
+                        hourly.label: Hourly
+                        daily.label: Daily
+                        weekly.label: Weekly
+                        monthly.label: Monthly
+                        yearly.label: Yearly
+                        never.label: Never
+                changefreq_product.label: Changefreq
+                changefreq_category.label: Changefreq
+                changefreq_page.label: Changefreq
+                priority_product.label: Priority
+                priority_category.label: Priority
+                priority_page.label: Priority
+                sitemap_cron_definition:
+                    label: Cron definition
+                    choice:
+                        weekly.label: Weekly (0 0 * * 0)
+                        daily.label: Daily (0 0 * * *)
+                        hourly.label: Hourly (0 * * * *)
 
+
+oro.product.meta_titles.label: Meta title
 oro.product.meta_descriptions.label: Meta description
 oro.product.meta_keywords.label: Meta keywords
 
+oro.catalog.category.meta_titles.label: Meta title
 oro.catalog.category.meta_descriptions.label: Meta description
 oro.catalog.category.meta_keywords.label: Meta keywords
 
+oro.cms.page.meta_titles.label: Meta title
 oro.cms.page.meta_descriptions.label: Meta description
 oro.cms.page.meta_keywords.label: Meta keywords
 
+oro.webcatalog.contentnode.meta_titles.label: Meta title
 oro.webcatalog.contentnode.meta_descriptions.label: Meta description
 oro.webcatalog.contentnode.meta_keywords.label: Meta keywords

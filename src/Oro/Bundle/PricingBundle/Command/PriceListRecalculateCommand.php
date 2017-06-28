@@ -28,6 +28,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const WEBSITE = 'website';
     const PRICE_LIST = 'price-list';
     const DISABLE_TRIGGERS = 'disable-triggers';
+    const VERBOSE = 'verbose';
 
     /**
      * {@inheritdoc}
@@ -79,6 +80,10 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+            ->getCurrentStrategy()
+            ->setOutput($output);
+
         $disableTriggers = (bool)$input->getOption(self::DISABLE_TRIGGERS);
         if (true === $disableTriggers) {
             $this->disableAllTriggers($output);
@@ -221,7 +226,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 
         $cplIterator = $cplRepository->getCombinedPriceListsByPriceLists($priceLists);
 
-        $priceResolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver');
+        $priceResolver = $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+            ->getCurrentStrategy();
         foreach ($cplIterator as $cpl) {
             $priceResolver->combinePrices($cpl);
         }

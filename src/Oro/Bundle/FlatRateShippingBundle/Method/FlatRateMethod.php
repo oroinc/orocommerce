@@ -2,33 +2,54 @@
 
 namespace Oro\Bundle\FlatRateShippingBundle\Method;
 
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class FlatRateMethod implements ShippingMethodInterface
+class FlatRateMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
 {
-    /** @var FlatRateMethodType */
+    /**
+     * @var FlatRateMethodType
+     */
     protected $type;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $label;
 
-    /** @var int */
+    /**
+     * @var string|null
+     */
+    protected $icon;
+
+    /**
+     * @var string
+     */
     protected $identifier;
 
     /**
-     * @param int|string $identifier
-     * @param string     $label
+     * @var bool
      */
-    public function __construct($identifier, $label)
+    private $enabled;
+
+    /**
+     * @param string      $identifier
+     * @param string      $label
+     * @param string|null $icon
+     * @param bool        $enabled
+     */
+    public function __construct($identifier, $label, $icon, $enabled)
     {
         $this->identifier = $identifier;
         $this->label = $label;
+        $this->icon = $icon;
         $this->type = new FlatRateMethodType($label);
+        $this->enabled = $enabled;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIdentifier()
     {
@@ -36,7 +57,7 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isGrouped()
     {
@@ -44,7 +65,15 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getLabel()
     {
@@ -52,7 +81,15 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getTypes()
     {
@@ -60,18 +97,19 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getType($type)
     {
         if ($this->type->getIdentifier() === $type) {
             return $this->type;
         }
+
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOptionsConfigurationFormType()
     {
@@ -79,7 +117,7 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOptions()
     {
@@ -87,7 +125,7 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSortOrder()
     {

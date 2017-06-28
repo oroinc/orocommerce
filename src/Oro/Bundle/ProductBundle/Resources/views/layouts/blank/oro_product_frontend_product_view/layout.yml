@@ -14,21 +14,32 @@ layout:
                     options:
                         product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                         parentProduct: '=data["product"].isConfigurable()?data["product"]'
+                        productTheme: '=context["page_template"]'
+                product_view_primary_wrapper:
+                    blockType: container
                 product_view_primary_container:
                     blockType: container
                 product_view_aside_container:
                     blockType: container
+                product_view_gallery_container:
+                    blockType: container
+                product_sticker_new:
+                    blockType: product_sticker
+                    options:
+                        mode: text
+                        stickers: '=data["oro_product_stickers"].getStickers(data["product"])'
+                        visible: '=data["oro_product_stickers"].isStickersEnabledOnView()'
                 product_view_main_container:
                     blockType: container
                 product_view_content_container:
                     blockType: container
                 product_view_specification_container:
                     blockType: container
-                product_view_variant_field_container:
-                    blockType: container
                 product_view_line_item_container:
                     blockType: container
                 product_view_description_container:
+                    blockType: container
+                product_view_brand_container:
                     blockType: container
                 product_view_additional_container:
                     blockType: container
@@ -53,26 +64,32 @@ layout:
             tree:
                 page_content:
                     product_view_container:
-                        product_view_primary_container:
-                        product_view_aside_container:
-                          product_view_attribute_group_images: ~
-                          product_media_popup: ~
+                        product_view_primary_wrapper:
+                            product_view_primary_container:
+                                product_sticker_new: ~
+                            product_view_aside_container:
+                                product_view_gallery_container:
+                                    product_view_attribute_group_images: ~
+                                product_media_popup: ~
                         product_view_main_container:
                             product_view_content_container:
-                                product_view_specification_container:
-                                    product_view_variant_field_container: ~
+                                product_view_specification_container: ~
                                 product_view_description_container:
                                     product_view_line_item_container: ~
+                                product_view_brand_container: ~
                                 product_view_attribute_group_general: ~
                                 product_view_main_attributes_container: ~
                         product_view_additional_container: ~
         - '@move':
             id: product_view_attribute_group_general_attribute_text_sku
-            parentId: product_view_specification_container
+            parentId: product_view_primary_container
             prepend: true
         - '@move':
             id: product_view_attribute_group_general_attribute_localized_fallback_descriptions
             parentId: product_view_description_container
+        - '@move':
+            id: product_view_attribute_group_general_attribute_text_brand
+            parentId: product_view_brand_container
         - '@setOption':
             id: product_view_attribute_group_general_attribute_localized_fallback_shortDescriptions
             optionName: visible
@@ -81,8 +98,7 @@ layout:
             id: product_view_attribute_group_general_attribute_localized_fallback_names
             parentId: product_view_primary_container
             prepend: true
-
-    imports:
-        -
-            id: oro_product_variant_form
-            root: product_view_variant_field_container
+        - '@add':
+            id: product_require_js_config
+            parentId: require_js
+            blockType: block

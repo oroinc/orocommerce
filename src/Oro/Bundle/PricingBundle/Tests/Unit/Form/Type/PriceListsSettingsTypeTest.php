@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
@@ -52,8 +54,8 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             [
                 PriceListsSettingsType::FALLBACK_FIELD => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
                 PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
-                    (new PriceListToWebsite())->setPriority(100)->setPriceList($pl1)->setMergeAllowed(true),
-                    (new PriceListToWebsite())->setPriority(200)->setPriceList($pl2)->setMergeAllowed(false),
+                    (new PriceListToWebsite())->setSortOrder(100)->setPriceList($pl1)->setMergeAllowed(true),
+                    (new PriceListToWebsite())->setSortOrder(200)->setPriceList($pl2)->setMergeAllowed(false),
                 ]
             ],
             [
@@ -73,13 +75,13 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '2',
-                    PriceListSelectWithPriorityType::PRIORITY_FIELD => '300',
-                    PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false
+                    SortableExtension::POSITION_FIELD_NAME => '300',
+                    PriceListFormExtension::MERGE_ALLOWED_FIELD => false
                 ],
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '1',
-                    PriceListSelectWithPriorityType::PRIORITY_FIELD => '400',
-                    PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
+                    SortableExtension::POSITION_FIELD_NAME => '400',
+                    PriceListFormExtension::MERGE_ALLOWED_FIELD => true
                 ],
             ]
         ]);
@@ -88,8 +90,8 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
         $this->assertEquals([
             PriceListsSettingsType::FALLBACK_FIELD => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
             PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
-                (new PriceListToWebsite())->setPriority(400)->setPriceList($pl1)->setMergeAllowed(true),
-                (new PriceListToWebsite())->setPriority(300)->setPriceList($pl2)->setMergeAllowed(false),
+                (new PriceListToWebsite())->setSortOrder(400)->setPriceList($pl1)->setMergeAllowed(true),
+                (new PriceListToWebsite())->setSortOrder(300)->setPriceList($pl2)->setMergeAllowed(false),
             ]
         ], $form->getData());
     }

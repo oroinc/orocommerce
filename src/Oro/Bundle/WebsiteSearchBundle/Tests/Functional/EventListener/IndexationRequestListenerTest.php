@@ -13,7 +13,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
-use Oro\Bundle\TestFrameworkBundle\Entity\TestProductType;
 
 class IndexationRequestListenerTest extends WebTestCase
 {
@@ -117,41 +116,6 @@ class IndexationRequestListenerTest extends WebTestCase
         $this->assertContains(TestProduct::class, $triggeredEvent->getClassesNames());
         $this->assertContains($product->getId(), $triggeredEvent->getIds());
         $this->assertCount(1, $triggeredEvent->getIds());
-    }
-
-    public function testDoesntTriggerReindexationAfterProductUpdatedWithNonIndexableField()
-    {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
-        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
-
-        $product = $this->createProduct();
-
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
-        $triggeredEvent = null;
-
-        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
-            $triggeredEvent = $event;
-        });
-
-        /**
-         * @var EntityManager $em
-         */
-        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
-
-        $productType = new TestProductType();
-        $productType->setName('test123');
-        $em->persist($productType);
-
-        $product->setProductType($productType);
-
-        $em->persist($product);
-        $em->flush();
-
-        $this->assertNull($triggeredEvent);
     }
 
     public function testTriggersReindexationAfterProductDelete()

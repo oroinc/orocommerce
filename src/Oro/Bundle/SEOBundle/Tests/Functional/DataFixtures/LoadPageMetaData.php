@@ -12,6 +12,7 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
 {
     use SEOMetaDataFieldsTrait;
 
+    const META_TITLES = 'metaTitles';
     const META_DESCRIPTIONS = 'metaDescriptions';
     const META_KEYWORDS = 'metaKeywords';
 
@@ -20,6 +21,7 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
      */
     public static $metadata = [
         LoadPageData::PAGE_1 => [
+            self::META_TITLES => self::META_TITLES,
             self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
             self::META_KEYWORDS => self::META_KEYWORDS,
         ]

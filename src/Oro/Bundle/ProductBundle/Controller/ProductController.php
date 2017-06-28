@@ -4,15 +4,16 @@ namespace Oro\Bundle\ProductBundle\Controller;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
-
 use Oro\Bundle\ProductBundle\Form\Handler\ProductCreateStepOneHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -39,10 +40,13 @@ class ProductController extends Controller
         $pageTemplate = $this->get('oro_product.provider.page_template_provider')
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
 
+        $relatedProductsEnabled = $this->get('oro_product.related_item.related_product.config_provider')->isEnabled();
+
         return [
             'entity' => $product,
             'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
-            'pageTemplate' => $pageTemplate
+            'pageTemplate' => $pageTemplate,
+            'relatedProductsEnabled' => $relatedProductsEnabled,
         ];
     }
 
@@ -118,6 +122,7 @@ class ProductController extends Controller
      * Create product form step two
      *
      * @Route("/create/step-two", name="oro_product_create_step_two")
+     *
      * @Template("OroProductBundle:Product:createStepTwo.html.twig")
      *
      * @AclAncestor("oro_product_create")
@@ -150,17 +155,36 @@ class ProductController extends Controller
     }
 
     /**
+     * Quick edit product form
+     *
+     * @Route("/related-items-update/{id}", name="oro_product_related_items_update", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("oro_related_products_edit")
+     * @param Product $product
+     *
+     * @return array|RedirectResponse
+     */
+    public function updateRelatedItemsAction(Product $product)
+    {
+        if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->update($product, 'oro_product_related_items_update');
+    }
+
+    /**
      * @param Product $product
      * @return array|RedirectResponse
      */
-    protected function update(Product $product)
+    protected function update(Product $product, $routeName = 'oro_product_update')
     {
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->createForm(ProductType::NAME, $product),
-            function (Product $product) {
+            function (Product $product) use ($routeName) {
                 return [
-                    'route' => 'oro_product_update',
+                    'route' => $routeName,
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
@@ -214,6 +238,9 @@ class ProductController extends Controller
                 'form' => $form->createView(),
                 'entity' => $product
             ];
+        } else {
+            $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
+            $form->submit($request->request->get(ProductType::NAME));
         }
 
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(
@@ -247,5 +274,66 @@ class ProductController extends Controller
     {
         return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
             ->getChangedSlugsData($product, ProductType::class));
+    }
+
+    /**
+     * @Route("/get-changed-default-url/{id}", name="oro_product_get_changed_default_slug", requirements={"id"="\d+"})
+     *
+     * @AclAncestor("oro_product_update")
+     *
+     * @param Request $request
+     * @param Product $product
+     * @return JsonResponse
+     */
+    public function getChangedDefaultSlugAction(Request $request, Product $product)
+    {
+        $newName = $request->get('productName');
+
+        $configManager = $this->get('oro_config.manager');
+        $showRedirectConfirmation =
+            $configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
+
+        $slugsData = [];
+        if ($newName !== null) {
+            $newSlug = $this->get('oro_entity_config.slug.generator')->slugify($newName);
+            $slugsData = $this->get('oro_redirect.helper.changed_slugs_helper')
+                ->getChangedDefaultSlugData($product, $newSlug);
+        }
+
+        return new JsonResponse([
+            'showRedirectConfirmation' => $showRedirectConfirmation,
+            'slugsData' => $slugsData,
+        ]);
+    }
+
+    /**
+     * @Route(
+     *     "/get-possible-products-for-related-products/{id}",
+     *     name="oro_product_possible_products_for_related_products",
+     *     requirements={"id"="\d+"}
+     * )
+     * @Template(template="OroProductBundle:Product:selectRelatedProducts.html.twig")
+     *
+     * @param Product $product
+     * @return array
+     */
+    public function getPossibleProductsForRelatedProductsAction(Product $product)
+    {
+        return ['product' => $product];
+    }
+
+    /**
+     * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
+     * @AclAncestor("oro_product_view")
+     * @Template
+     */
+    public function addProductsWidgetAction(Request $request, $gridName)
+    {
+        $hiddenProducts = $request->get('hiddenProducts');
+
+        return [
+            'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : [],
+            'gridName' => $gridName,
+        ];
     }
 }

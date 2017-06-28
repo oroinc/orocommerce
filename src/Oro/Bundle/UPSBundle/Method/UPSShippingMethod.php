@@ -5,6 +5,7 @@ namespace Oro\Bundle\UPSBundle\Method;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
@@ -16,6 +17,7 @@ use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
 class UPSShippingMethod implements
     ShippingMethodInterface,
+    ShippingMethodIconAwareInterface,
     PricesAwareShippingMethodInterface,
     ShippingTrackingAwareInterface
 {
@@ -30,59 +32,91 @@ class UPSShippingMethod implements
                             [\dT]\d\d\d ?\d\d\d\d ?\d\d\d)
                             \b/ix';
 
-    /** @var UPSTransportProvider */
+    /**
+     * @var UPSTransportProvider
+     */
     protected $transportProvider;
 
-    /** @var Channel */
+    /**
+     * @var Channel
+     */
     protected $channel;
 
-    /** @var PriceRequestFactory */
+    /**
+     * @var PriceRequestFactory
+     */
     protected $priceRequestFactory;
 
-    /** @var ShippingPriceCache */
+    /**
+     * @var ShippingPriceCache
+     */
     protected $cache;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $identifier;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $label;
 
-    /** @var array */
+    /**
+     * @var string|null
+     */
+    private $icon;
+
+    /**
+     * @var array
+     */
     private $types;
 
-    /** @var UPSSettings */
+    /**
+     * @var UPSSettings
+     */
     private $transport;
 
     /**
-     * @param string $identifier
-     * @param string $label
-     * @param array $types
-     * @param UPSSettings $transport
+     * @var bool
+     */
+    private $enabled;
+
+    /**
+     * @param string               $identifier
+     * @param string               $label
+     * @param string|null          $icon
+     * @param array                $types
+     * @param UPSSettings          $transport
      * @param UPSTransportProvider $transportProvider
-     * @param PriceRequestFactory $priceRequestFactory
-     * @param ShippingPriceCache $cache
+     * @param PriceRequestFactory  $priceRequestFactory
+     * @param ShippingPriceCache   $cache
+     * @param bool                 $enabled
      */
     public function __construct(
         $identifier,
         $label,
+        $icon,
         array $types,
         UPSSettings $transport,
         UPSTransportProvider $transportProvider,
         PriceRequestFactory $priceRequestFactory,
-        ShippingPriceCache $cache
+        ShippingPriceCache $cache,
+        $enabled
     ) {
         $this->identifier = $identifier;
         $this->label = $label;
+        $this->icon = $icon;
         $this->types = $types;
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
         $this->priceRequestFactory = $priceRequestFactory;
         $this->cache = $cache;
+        $this->enabled = $enabled;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isGrouped()
     {
@@ -90,7 +124,15 @@ class UPSShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getIdentifier()
     {
@@ -98,11 +140,19 @@ class UPSShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIcon()
+    {
+        return $this->icon;
     }
 
     /**
@@ -148,7 +198,7 @@ class UPSShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
@@ -189,7 +239,7 @@ class UPSShippingMethod implements
 
     /**
      * @param ShippingContextInterface $context
-     * @param array $types
+     * @param array                    $types
      * @return array
      */
     private function fetchPrices(ShippingContextInterface $context, array $types)
@@ -233,6 +283,7 @@ class UPSShippingMethod implements
                 }
             }
         }
+
         return $prices;
     }
 }

@@ -20,10 +20,6 @@ define([
             },
 
             _create: function() {
-                if (!this.options.productModel) {
-                    $(this.element).trigger('options:set:productModel', this.options);
-                }
-
                 var modules = this.modules = [];
                 $(this.element).trigger('deferredInitialize', {
                     dropdownWidget: this,

@@ -16,7 +16,7 @@ class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderT
     {
         return [
             [
-                'expectedStaticCount' => 8,
+                'expectedStaticCount' => 9,
                 'expectedCategoryCount' => 2,
             ],
         ];

@@ -17,26 +17,24 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
     protected $transportData = [
         [
             'reference' => 'ups:transport_1',
-            'baseUrl' => 'url_1',
-            'apiUser' => 'user_1',
-            'apiPassword' => 'password_1',
-            'apiKey' => 'key_1',
-            'shippingAccountNumber' => 'ship_customer_number_1',
-            'shippingAccountName' => 'ship_customer_name_1',
-            'country' => 'ups.shipping_country.1',
+            'upsApiUser' => 'user_1',
+            'upsApiPassword' => 'password_1',
+            'upsApiKey' => 'key_1',
+            'upsShippingAccountNumber' => 'ship_customer_number_1',
+            'upsShippingAccountName' => 'ship_customer_name_1',
+            'upsCountry' => 'ups.shipping_country.1',
             'applicableShippingServices' => [
                 'ups.shipping_service.1'
             ]
         ],
         [
             'reference' => 'ups:transport_2',
-            'baseUrl' => 'url_2',
-            'apiUser' => 'user_2',
-            'apiPassword' => 'password_2',
-            'apiKey' => 'key_2',
-            'shippingAccountNumber' => 'ship_customer_number_2',
-            'shippingAccountName' => 'ship_customer_name_2',
-            'country' => 'ups.shipping_country.1',
+            'upsApiUser' => 'user_2',
+            'upsApiPassword' => 'password_2',
+            'upsApiKey' => 'key_2',
+            'upsShippingAccountNumber' => 'ship_customer_number_2',
+            'upsShippingAccountName' => 'ship_customer_name_2',
+            'upsCountry' => 'ups.shipping_country.1',
             'applicableShippingServices' => [
                 'ups.shipping_service.1',
                 'ups.shipping_service.2'
@@ -51,14 +49,14 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
     {
         foreach ($this->transportData as $data) {
             $entity = new UPSTransport();
-            $country = $this->getReference($data['country']);
-            $entity->setCountry($country);
+            $country = $this->getReference($data['upsCountry']);
+            $entity->setUpsCountry($country);
             foreach ($data['applicableShippingServices'] as $shipServiceRef) {
                 /** @var ShippingService $shipService */
                 $shipService = $this->getReference($shipServiceRef);
                 $entity->addApplicableShippingService($shipService);
             }
-            $this->setEntityPropertyValues($entity, $data, ['reference', 'country', 'applicableShippingServices']);
+            $this->setEntityPropertyValues($entity, $data, ['reference', 'upsCountry', 'applicableShippingServices']);
             $manager->persist($entity);
             $this->setReference($data['reference'], $entity);
         }

@@ -3,13 +3,6 @@ parameters:
     oro_payment_term.type: 'payment_term'
 
 services:
-    oro_payment_term.payment_term.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_payment_term.entity.payment_term.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_payment_term.form.autocomplete.payment_term.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
@@ -125,3 +118,10 @@ services:
             - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+
+    oro_payment_term.event_listener.import_export_customer_subscriber:
+        class: Oro\Bundle\PaymentTermBundle\EventListener\CustomerImportExportSubscriber
+        arguments:
+            - '@oro_payment_term.provider.payment_term_association'
+        tags:
+            - { name: kernel.event_subscriber }

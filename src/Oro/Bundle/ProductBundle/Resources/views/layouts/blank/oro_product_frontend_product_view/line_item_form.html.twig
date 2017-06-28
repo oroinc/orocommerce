@@ -1,11 +1,9 @@
 {% block _line_item_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' line-item-form',
         'data-role': 'line-item-form-container'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-        <div class="disabled-overlay"></div>
     </div>
 {% endblock %}
 
@@ -23,12 +21,18 @@
             {{ form_errors(form.quantity) }}
         </div>
     {% else %}
-        {{ form_row(form.unit) }}
-        {{ form_row(form.quantity) }}
+        <div class="product-view-quantity">
+            <div class="product-view-quantity__unit">
+                {{ form_widget(form.unit) }}
+            </div>
+            <div class="product-view-quantity__value">
+                {{ form_widget(form.quantity) }}
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
 
-{% block _line_item_buttons_container_widget %}
+{% block _product_line_item_form_buttons_widget %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': " form__col"

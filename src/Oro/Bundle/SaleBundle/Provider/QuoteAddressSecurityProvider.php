@@ -2,17 +2,22 @@
 
 namespace Oro\Bundle\SaleBundle\Provider;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class QuoteAddressSecurityProvider
 {
     const MANUAL_EDIT_ACTION = 'oro_quote_address_%s_allow_manual';
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var QuoteAddressProvider */
     protected $QuoteAddressProvider;
@@ -24,18 +29,21 @@ class QuoteAddressSecurityProvider
     protected $customerUserAddressClass;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface $tokenAccessor
      * @param QuoteAddressProvider $quoteAddressProvider
      * @param string $customerAddressClass
      * @param string $customerUserAddressClass
      */
     public function __construct(
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor,
         QuoteAddressProvider $quoteAddressProvider,
         $customerAddressClass,
         $customerUserAddressClass
     ) {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenAccessor = $tokenAccessor;
         $this->QuoteAddressProvider = $quoteAddressProvider;
         $this->customerAddressClass = $customerAddressClass;
         $this->customerUserAddressClass = $customerUserAddressClass;
@@ -65,7 +73,7 @@ class QuoteAddressSecurityProvider
             return true;
         }
 
-        $hasPermissions = $this->securityFacade->isGranted(
+        $hasPermissions = $this->authorizationChecker->isGranted(
             $this->getClassPermission('VIEW', $this->customerAddressClass)
         );
 
@@ -92,9 +100,9 @@ class QuoteAddressSecurityProvider
             return true;
         }
 
-        $hasPermissions = $this->securityFacade
+        $hasPermissions = $this->authorizationChecker
                 ->isGranted($this->getClassPermission('VIEW', $this->customerUserAddressClass))
-            && $this->securityFacade->isGranted($this->getTypedPermission($type));
+            && $this->authorizationChecker->isGranted($this->getTypedPermission($type));
 
         if (!$hasPermissions) {
             return false;
@@ -137,7 +145,7 @@ class QuoteAddressSecurityProvider
      */
     protected function getPermission($permission)
     {
-        if (!$this->securityFacade->getLoggedUser() instanceof CustomerUser) {
+        if (!$this->tokenAccessor->getUser() instanceof CustomerUser) {
             $permission .= QuoteAddressProvider::ADMIN_ACL_POSTFIX;
         }
 
@@ -155,6 +163,6 @@ class QuoteAddressSecurityProvider
 
         $permission = sprintf(self::MANUAL_EDIT_ACTION, $type);
 
-        return $this->securityFacade->isGranted($this->getPermission($permission));
+        return $this->authorizationChecker->isGranted($this->getPermission($permission));
     }
 }

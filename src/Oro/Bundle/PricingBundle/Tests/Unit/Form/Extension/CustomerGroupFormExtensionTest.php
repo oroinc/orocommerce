@@ -18,6 +18,10 @@ use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener;
 use Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 
 class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
 {
@@ -36,6 +40,14 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
         $provider = new PriceListCollectionTypeExtensionsProvider();
         $websiteScopedDataType = (new WebsiteScopedTypeMockProvider())->getWebsiteScopedDataType();
 
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_pricing.price_strategy')
+            ->willReturn(MergePricesCombiningStrategy::NAME);
+
         $extensions = [
             new PreloadedExtension(
                 [
@@ -44,7 +56,9 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                     CustomerGroupType::NAME => new CustomerGroupTypeStub()
                 ],
                 [
-                    CustomerGroupType::NAME => [new CustomerGroupFormExtension($listener)]
+                    CustomerGroupType::NAME => [new CustomerGroupFormExtension($listener)],
+                    'form' => [new SortableExtension()],
+                    PriceListSelectWithPriorityType::NAME => [new PriceListFormExtension($configManager)]
                 ]
             )
         ];
@@ -64,6 +78,7 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
         $form->submit([AbstractPriceListCollectionAwareListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME => $submitted]);
         $data = $form->get(CustomerGroupListener::PRICE_LISTS_COLLECTION_FORM_FIELD_NAME)->getData();
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expected, $data);
     }
 
@@ -79,17 +94,17 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                         PriceListsSettingsType::FALLBACK_FIELD => '0',
                         PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD =>
                             [
-                                0 => [
+                                [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                    => (string)PriceListSelectTypeStub::PRICE_LIST_1,
-                                    PriceListSelectWithPriorityType::PRIORITY_FIELD => '200',
-                                    PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true,
+                                        => (string)PriceListSelectTypeStub::PRICE_LIST_1,
+                                    SortableExtension::POSITION_FIELD_NAME => '200',
+                                    PriceListFormExtension::MERGE_ALLOWED_FIELD => true,
                                 ],
-                                1 => [
+                                [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                    => (string)PriceListSelectTypeStub::PRICE_LIST_2,
-                                    PriceListSelectWithPriorityType::PRIORITY_FIELD => '100',
-                                    PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false,
+                                        => (string)PriceListSelectTypeStub::PRICE_LIST_2,
+                                    SortableExtension::POSITION_FIELD_NAME => '100',
+                                    PriceListFormExtension::MERGE_ALLOWED_FIELD => false,
                                 ]
                             ],
                     ],
@@ -99,13 +114,13 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                         PriceListsSettingsType::FALLBACK_FIELD => 0,
                         PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD =>
                             [
-                                0 => (new PriceListToCustomerGroup())
+                                (new PriceListToCustomerGroup())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_1))
-                                    ->setPriority(200)
+                                    ->setSortOrder(200)
                                     ->setMergeAllowed(true),
-                                1 => (new PriceListToCustomerGroup())
+                                (new PriceListToCustomerGroup())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_2))
-                                    ->setPriority(100)
+                                    ->setSortOrder(100)
                                     ->setMergeAllowed(false)
                             ],
                     ],
@@ -120,7 +135,7 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
      */
     protected function getPriceList($id)
     {
-        return $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', [
+        return $this->getEntity(PriceList::class, [
             'id' => $id
         ]);
     }

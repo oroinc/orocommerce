@@ -18,10 +18,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const ORDER_1 = 'simple_order';
+    const ORDER_2 = 'simple_order2';
+    const ORDER_3 = 'simple_order3';
+    const ORDER_4 = 'simple_order4';
     const MY_ORDER = 'my_order';
     const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
-    const SUBTOTAL = '789';
-    const TOTAL = '1234';
+    const SUBTOTAL = '789.0000';
+    const TOTAL = '1234.0000';
 
     /**
      * @var array
@@ -37,18 +40,48 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
         ],
+        self::ORDER_2 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'customerUser' => self::ACCOUNT_USER,
+            'poNumber' => 'PO2',
+            'customerNotes' => 'Test customer user notes',
+            'currency' => 'USD',
+            'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+        ],
+        self::ORDER_3 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'customerUser' => self::ACCOUNT_USER,
+            'poNumber' => 'PO3',
+            'customerNotes' => 'Test customer user notes',
+            'currency' => 'USD',
+            'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+        ],
+        self::ORDER_4 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'customerUser' => self::ACCOUNT_USER,
+            'poNumber' => 'PO3',
+            'customerNotes' => 'Test customer user notes',
+            'currency' => 'USD',
+            'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+        ],
         self::MY_ORDER => [
             'user' => LoadOrderUsers::ORDER_USER_1,
             'customerUser' => TestCustomerUserData::AUTH_USER,
             'poNumber' => 'PO_NUM',
             'customerNotes' => 'Test customer user notes',
             'currency' => 'EUR',
-            'subtotal' => '1500',
-            'total' => '1700',
+            'subtotal' => '1500.0000',
+            'total' => '1700.0000',
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
             'shippingMethod' => 'flat_rate',
             'shippingMethodType' => 'primary',
-            'shippingCostAmount' => 10,
+            'shippingCostAmount' => '10.0000',
         ],
     ];
 

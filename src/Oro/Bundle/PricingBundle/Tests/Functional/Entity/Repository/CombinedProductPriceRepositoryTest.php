@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -17,7 +18,12 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 class CombinedProductPriceRepositoryTest extends WebTestCase
 {
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var ShardManager
+     */
+    protected $shardManager;
+
+    /**
+     * @var InsertFromSelectShardQueryExecutor
      */
     protected $insertFromSelectQueryExecutor;
 
@@ -32,7 +38,8 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ]
         );
         $this->insertFromSelectQueryExecutor = $this->getContainer()
-            ->get('oro_entity.orm.insert_from_select_query_executor');
+            ->get('oro_pricing.orm.insert_from_select_query_executor');
+        $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
     /**
@@ -293,6 +300,155 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         usort($actual, [$this, 'sort']);
 
         $this->assertEquals($expected, $actual);
+    }
+
+
+    /**
+     * @dataProvider insertMinimalPricesByPriceListDataProvider
+     * @param string $combinedPriceList
+     * @param string $product
+     * @param array $expectedPrices
+     */
+    public function testInsertMinimalPricesByPriceList($combinedPriceList, $product, array $expectedPrices)
+    {
+        /** @var CombinedPriceList $combinedPriceList */
+        $combinedPriceList = $this->getReference($combinedPriceList);
+        /** @var Product $product */
+        $product = $this->getReference($product);
+
+        $repository = $this->getCombinedPriceListToPriceListRepository();
+        $combinedPriceListRelations = $repository->getPriceListRelations($combinedPriceList, $product);
+
+        $combinedProductPriceRepository = $this->getCombinedProductPriceRepository();
+
+        $combinedProductPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
+        $prices = $combinedProductPriceRepository->findBy(
+            [
+                'priceList' => $combinedPriceList,
+                'product' => $product,
+            ]
+        );
+        $this->assertEmpty($prices);
+        foreach ($combinedPriceListRelations as $combinedPriceListRelation) {
+            $combinedProductPriceRepository->insertMinimalPricesByPriceList(
+                $this->shardManager,
+                $this->insertFromSelectQueryExecutor,
+                $combinedPriceList,
+                $combinedPriceListRelation->getPriceList(),
+                $product
+            );
+        }
+        $prices = $combinedProductPriceRepository->createQueryBuilder('prices')
+            ->select('prices.productSku, prices.quantity, prices.value, prices.currency, IDENTITY(prices.unit) as unit')
+            ->where('prices.priceList = :priceList AND prices.product = :product')
+            ->setParameters(['priceList' => $combinedPriceList, 'product' => $product])
+            ->orderBy('prices.currency, prices.quantity, prices.value')
+            ->getQuery()
+            ->getArrayResult();
+        $this->assertEquals($expectedPrices, $prices);
+    }
+
+    /**
+     * @return array
+     */
+    public function insertMinimalPricesByPriceListDataProvider()
+    {
+        return [
+            'test getting price lists 1' => [
+                'combinedPriceList' => '1t_2t_3t',
+                'product' => 'product-1',
+                'prices' => [
+                    [
+                        'productSku' => 'product-1',
+                        'quantity' => 1.0,
+                        'value' => '12.2000',
+                        'currency' => 'EUR',
+                        'unit' => 'bottle',
+                    ],
+                    [
+                        'productSku' => 'product-1',
+                        'quantity' => 11.0,
+                        'value' => '12.2000',
+                        'currency' => 'EUR',
+                        'unit' => 'bottle',
+                    ],
+                    [
+                        'productSku' => 'product-1',
+                        'quantity' => 1.0,
+                        'value' => '10.0000',
+                        'currency' => 'USD',
+                        'unit' => 'liter',
+                    ],
+                    [
+                        'productSku' => 'product-1',
+                        'quantity' => 10.0,
+                        'value' => '12.2000',
+                        'currency' => 'USD',
+                        'unit' => 'liter',
+                    ],
+                    [
+                        'productSku' => 'product-1',
+                        'quantity' => 15.0,
+                        'value' => '12.2000',
+                        'currency' => 'USD',
+                        'unit' => 'liter',
+                    ],
+                ],
+            ],
+            'test getting price lists 2' => [
+                'combinedPriceList' => '1t_2t_3t',
+                'product' => 'product-2',
+                'prices' => [
+                    [
+                        'productSku' => 'product-2',
+                        'quantity' => 14.0,
+                        'value' => '16.5000',
+                        'currency' => 'EUR',
+                        'unit' => 'liter',
+                    ],
+                    [
+                        'productSku' => 'product-2',
+                        'quantity' => 24.0,
+                        'value' => '16.5000',
+                        'currency' => 'EUR',
+                        'unit' => 'bottle',
+                    ],
+                    [
+                        'productSku' => 'product-2',
+                        'quantity' => 1.0,
+                        'value' => '20.0000',
+                        'currency' => 'USD',
+                        'unit' => 'liter',
+                    ],
+                    [
+                        'productSku' => 'product-2',
+                        'quantity' => 12.0,
+                        'value' => '12.2000',
+                        'currency' => 'USD',
+                        'unit' => 'liter',
+                    ],
+                    [
+                        'productSku' => 'product-2',
+                        'quantity' => 13.0,
+                        'value' => '12.2000',
+                        'currency' => 'USD',
+                        'unit' => 'liter',
+                    ],
+                    [
+                        'productSku' => 'product-2',
+                        'quantity' => 14.0,
+                        'value' => '12.2000',
+                        'currency' => 'USD',
+                        'unit' => 'bottle',
+                    ],
+                ],
+            ],
+            'test getting price lists 3' => [
+                'combinedPriceList' => '2t_3f_1t',
+                'product' => 'product-7',
+                'prices' => [],
+            ],
+        ];
     }
 
     /**

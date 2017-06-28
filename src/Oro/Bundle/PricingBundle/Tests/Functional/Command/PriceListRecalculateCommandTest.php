@@ -3,11 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
 use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
+use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class PriceListRecalculateCommandTest extends WebTestCase
@@ -18,6 +19,8 @@ class PriceListRecalculateCommandTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        self::getContainer()->get('oro_config.global')
+            ->set('oro_pricing.price_strategy', MinimalPricesCombiningStrategy::NAME);
         $this->loadFixtures([
             LoadPriceListRelations::class,
             LoadProductPrices::class,
@@ -49,7 +52,9 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->getContainer()->get('oro_pricing.builder.website_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_group_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_combined_price_list_builder')->resetCache();
-        $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver')->resetCache();
+        $this->getContainer()->get('oro_pricing.pricing_strategy.strategy_register')
+            ->getCurrentStrategy()
+            ->resetCache();
 
         foreach ($websites as $websiteName) {
             $params[] = '--website='.$this->getReference($websiteName)->getId();
@@ -112,7 +117,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'customer.level_1_1' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 14,
+                'expectedCount' => 22,  // 14 + 8 = customer.level_1_1 + website2
                 'website' => [],
                 'customerGroup' => [],
                 'customer' => ['customer.level_1_1']
@@ -140,6 +145,16 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'website' => [],
                 'customerGroup' => ['customer_group.group1'], // doesn't has own price list
                 'customer' => []
+            ],
+            'verbosity_verbose' => [
+                'expected_message' => 'Processing combined price list id:',
+                'params' => ['--all', '-v'],
+                'expectedCount' => 40
+            ],
+            'verbosity_very_verbose' => [
+                'expected_message' => 'Processing price list:',
+                'params' => ['--all', '-vv'],
+                'expectedCount' => 40
             ],
         ];
     }

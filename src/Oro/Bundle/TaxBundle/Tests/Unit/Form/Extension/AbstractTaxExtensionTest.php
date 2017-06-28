@@ -54,16 +54,8 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
      */
     abstract protected function getExtension();
 
-    /**
-     * @param bool $expectsManager
-     * @param bool $expectsRepository
-     */
-    abstract protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false);
-
     public function testOnPostSetDataNoEntity()
     {
-        $this->prepareDoctrineHelper();
-
         $event = $this->createEvent(null);
 
         $this->getExtension()->onPostSetData($event);
@@ -71,8 +63,6 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetDataNewEntity()
     {
-        $this->prepareDoctrineHelper();
-
         $event = $this->createEvent($this->createTaxCodeTarget());
 
         $this->getExtension()->onPostSetData($event);
@@ -100,7 +90,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int|null $id
      *
-     * @return object
+     * @return object|\PHPUnit_Framework_MockObject_MockObject
      */
     abstract protected function createTaxCodeTarget($id = null);
 

@@ -12,13 +12,16 @@ use Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -50,7 +53,10 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
      */
     public function getDependencies()
     {
-        return [LoadCategoryDemoData::class];
+        return [
+            LoadCategoryDemoData::class,
+            LoadNewArrivalsSegmentsForWebCatalogDemoData::class,
+        ];
     }
     
     /**
@@ -60,7 +66,7 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
     {
         $webCatalog = $this->loadWebCatalogData($manager);
         $this->enableWebCatalog($webCatalog);
-        $this->scheduleCacheCalculation($webCatalog);
+        $this->generateCache($webCatalog);
     }
 
     /**
@@ -209,6 +215,14 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
             $variant->setCmsPage($page);
         } elseif ($type === SystemPageContentVariantType::TYPE) {
             $variant->setSystemPageRoute($params['route']);
+        } elseif ($type === ProductCollectionContentVariantType::TYPE
+            && method_exists($variant, 'setProductCollectionSegment')
+        ) {
+            $segment = $this->container
+                ->get('doctrine')
+                ->getRepository(Segment::class)
+                ->findOneByName($params['title']);
+            $variant->setProductCollectionSegment($segment);
         }
         
         return $variant;
@@ -265,6 +279,29 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
                 }
             }
             $node->addContentVariant($variant);
+        }
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     */
+    protected function generateCache(WebCatalog $webCatalog)
+    {
+        $registry = $this->container->get('doctrine');
+        $scopeMatcher = $this->container->get('oro_web_catalog.scope_matcher');
+        $dumper = $this->container->get('oro_web_catalog.cache.dumper.content_node_tree_dumper');
+
+        /** @var ContentNodeRepository $contentNodeRepo */
+        $contentNodeRepo = $registry
+            ->getManagerForClass(ContentNode::class)
+            ->getRepository(ContentNode::class);
+
+        $rootContentNode = $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);
+
+        $scopes = $scopeMatcher->getUsedScopes($webCatalog);
+
+        foreach ($scopes as $scope) {
+            $dumper->dump($rootContentNode, $scope);
         }
     }
 }

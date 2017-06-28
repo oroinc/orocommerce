@@ -22,7 +22,8 @@ define(function(require) {
             dataContent: '*[data-content]',
             unitSelect: 'select[name$="[unit]"]',
             hiddenUnitClass: 'hidden-unit',
-            precisions: {}
+            precisions: {},
+            initialAdditionalUnits: {}
         },
 
         /**
@@ -44,6 +45,7 @@ define(function(require) {
                 .on('change', _.bind(this.onChange, this));
             this.saveInitialOptions();
             this.options._sourceElement.trigger('change');
+            this.onAdditionalPrecisionsChange(this.options.initialAdditionalUnits);
         },
 
         /**
@@ -98,7 +100,7 @@ define(function(require) {
 
             _.each(options, function(option) {
                 if (option.value !== selected.val()) {
-                    option.remove();
+                    $(option).remove();
                 }
             });
             var self = this;

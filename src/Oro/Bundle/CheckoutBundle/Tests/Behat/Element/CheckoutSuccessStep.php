@@ -11,7 +11,19 @@ class CheckoutSuccessStep extends Element
      */
     public function assertTitle($title)
     {
-        $titleElement = $this->findElementContains('CheckoutSuccessStepTitle', $title);
-        self::assertTrue($titleElement->isValid(), sprintf('Title "%s", was not match to current title', $title));
+        $titleElement = $this->spin(
+            function (Element $element) use ($title) {
+                $titleElement = $element->findElementContains('CheckoutSuccessStepTitle', $title);
+
+                if ($titleElement->isValid() && $titleElement->isVisible()) {
+                    return $titleElement;
+                }
+
+                return null;
+            },
+            30
+        );
+
+        self::assertNotNull($titleElement, sprintf('Title "%s", was not found', $title));
     }
 }

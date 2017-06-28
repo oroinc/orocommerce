@@ -48,6 +48,16 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'primaryUnitPrecision.precision' => '',
         'primaryUnitPrecision.conversionRate' => '',
         'primaryUnitPrecision.sell' => '',
+        'metaTitles.default.fallback' => '',
+        'metaTitles.default.value' => '',
+        'metaTitles.English.fallback' => '',
+        'metaTitles.English.value' => '',
+        'metaTitles.English (United States).fallback' => '',
+        'metaTitles.English (United States).value' => '',
+        'metaTitles.Spanish.fallback' => '',
+        'metaTitles.Spanish.value' => '',
+        'metaTitles.English (Canada).fallback' => '',
+        'metaTitles.English (Canada).value' => '',
         'metaDescriptions.default.fallback' => '',
         'metaDescriptions.default.value' => '',
         'metaDescriptions.English.fallback' => '',
@@ -78,7 +88,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'slugPrototypes.Spanish.value' => '',
         'slugPrototypes.English (Canada).fallback' => '',
         'slugPrototypes.English (Canada).value' => '',
-        'attributeFamily.code' => ''
+        'featured' => '',
+        'newArrival' => '',
     ];
 
     /**

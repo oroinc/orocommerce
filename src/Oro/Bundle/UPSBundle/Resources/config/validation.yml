@@ -1,28 +1,27 @@
 Oro\Bundle\UPSBundle\Entity\UPSTransport:
+    constraints:
+        - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
-        baseUrl:
+        upsApiUser:
             - NotBlank: ~
-        apiUser:
+        upsApiPassword:
             - NotBlank: ~
-        apiPassword:
+        upsApiKey:
             - NotBlank: ~
-        apiKey:
+        upsShippingAccountName:
             - NotBlank: ~
-        shippingAccountName:
+        upsShippingAccountNumber:
             - NotBlank: ~
-        shippingAccountNumber:
+        upsPickupType:
             - NotBlank: ~
-        pickupType:
+        upsUnitOfWeight:
             - NotBlank: ~
-        unitOfWeight:
-            - NotBlank: ~
-        country:
+        upsCountry:
             - NotBlank: ~
             - Valid: ~
         applicableShippingServices:
             - NotBlank:
                 message: 'oro.ups.transport.shipping_service.blank'
-            - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService: ~
         labels:
             - NotBlank: ~
             - Valid: ~

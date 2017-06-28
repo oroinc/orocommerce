@@ -39,6 +39,8 @@ class OrmEngine extends AbstractEngine
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context Not used here, only to comply with the interface
      */
     protected function doSearch(Query $query, array $context = [])
     {

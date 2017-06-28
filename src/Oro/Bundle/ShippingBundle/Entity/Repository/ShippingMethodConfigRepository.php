@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
 class ShippingMethodConfigRepository extends EntityRepository
 {
@@ -45,5 +46,17 @@ class ShippingMethodConfigRepository extends EntityRepository
             ->where($qb->expr()->in('methodConfig.id', ':ids'))
             ->setParameter('ids', $ids)
             ->getQuery()->execute();
+    }
+
+    /**
+     * @param string|string[] $method
+     *
+     * @return ShippingMethodConfig[]
+     */
+    public function findByMethod($method)
+    {
+        return $this->findBy([
+            'method' => $method
+        ]);
     }
 }

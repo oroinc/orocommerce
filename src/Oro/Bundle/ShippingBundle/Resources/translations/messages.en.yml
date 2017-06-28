@@ -76,6 +76,15 @@ oro:
             enabled.label: Enabled
             options.label: Options
             method_config.label: Method Config
+
+        shipping_methods_table:
+            method.label: Method
+            options.label: Options
+            additional_options.label: Additional Options
+            option.label: Option
+            status.label: Status
+            active.label: Active
+
         product:
             section:
                 shipping_options: Shipping Options
@@ -88,6 +97,7 @@ oro:
         method_type:
             shipping_methods_widget:
                 label: '%translatedMethodType%: <strong>%price%</strong>'
+            used.error: 'The following types "%types%" are used in Shipping Rules. Please disable them before removal.'
 
         methods:
             label: "Shipping Method"
@@ -109,9 +119,20 @@ oro:
             shippingrule_configurations:
                 no_methods.message: 'Please enable at least one shipping integration.'
                 label: 'Shipping Method Configurations'
+                placeholder.label: 'Choose a Method...'
 
         controller:
             rule.saved.message: 'Shipping rule has been saved'
+
+        integration:
+            deactivate:
+                message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">the following</a> shipping rules depend on the integration that is being disabled. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
+                title: Deactivate integration.
+                button.okText: Deactivate
+            delete:
+                message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">the following</a> shipping rules depend on the integration that is being deleted. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
+                title: Delete integration.
+                button.okText: Delete
 
     weight_unit.lbs:
         label:

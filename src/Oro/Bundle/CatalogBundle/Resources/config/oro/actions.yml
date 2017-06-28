@@ -3,5 +3,20 @@ operations:
         exclude_datagrids:
             - category-products-grid
     DELETE:
-        exclude_datagrids:
-            - category-products-grid
+        exclude_entities:
+            - Oro\Bundle\CatalogBundle\Entity\Category
+
+    oro_catalog_category_delete:
+        extends: DELETE
+        replace:
+            - exclude_entities
+            - entities
+            - for_all_datagrids
+            - for_all_entities
+        for_all_datagrids: false
+        for_all_entities: false
+        entities:
+            - Oro\Bundle\CatalogBundle\Entity\Category
+        preconditions:
+            '@and':
+                - '@not_equal': [$.data.parentCategory, null]

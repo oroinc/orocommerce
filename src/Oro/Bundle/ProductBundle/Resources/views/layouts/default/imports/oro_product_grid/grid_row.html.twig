@@ -1,3 +1,25 @@
+{% block _product_datagrid_row_product_sticker_new_widget %}
+    {% if
+        product is defined and
+        product.stickers is defined and
+        product.stickers|length
+    %}
+        {% set stickers = product.stickers %}
+    {% endif %}
+    {{ block_widget(block, {'stickers' : stickers|default({})}) }}
+{% endblock %}
+
+{% block _product_datagrid_row_product_sticker_new_text_widget %}
+    {% if
+        product is defined and
+        product.stickers is defined and
+        product.stickers|length
+    %}
+        {% set stickers = product.stickers %}
+    {% endif %}
+    {{ block_widget(block, {'stickers' : stickers|default({})}) }}
+{% endblock %}
+
 {% block __oro_product_grid__product_widget %}
     {% set product = datagrid_row|merge({
         getDefaultName: datagrid_row.name
@@ -25,19 +47,20 @@
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__image-holder product-item__image-holder_{{ class_prefix }}"
+        '~class': " product-item__image-holder product-item__image-holder--{{ class_prefix }}"
     }) %}
 
     {% set noImageUrl = Image.url(null, 'product_large') %}
     <div {{ block('block_attributes') }}>
         {% set image = product.image is defined ? product.image : noImageUrl %}
         <a href="{{ product.view_link }}" class="view-product" style="background-image: url('{{ image }}')"></a>
+        {{ block('container_widget') }}
     </div>
 {% endblock %}
 
 {% block __oro_product_grid__product_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product-item__title product-item__title_{{ class_prefix }}"
+        '~class': " product-item__title product-item__title--{{ class_prefix }}"
     }) %}
 
     <h3 {{ block('block_attributes') }}>
@@ -50,26 +73,22 @@
            {% endif %}
            class="view-product"
         >
-            {{ block('container_widget') }}
+            {{- block('container_widget') -}}
         </a>
     </h3>
 {% endblock %}
 
 {% block __oro_product_grid__product_details_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " product__view-details-link product__view-details-link_{{ class_prefix }}"
+        '~class': " product__view-details-link product__view-details-link--{{ class_prefix }}"
     }) %}
     <div {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}" class="view-product">
-            <span class="underlined">{{ 'oro.product.frontend.index.view_details'|trans }}</span><i class="cf-right-open-mini"></i>
+            {{ 'oro.product.frontend.index.view_details'|trans }}<i class="fa-angle-right fa--link-r"></i>
         </a>
     </div>
 {% endblock %}
 
 {% block __oro_product_grid__product_price_container_widget %}
-    {% do block|merge_context({
-        productPrices: product.prices,
-    }) %}
-
-    {{ block_widget(block) }}
+    {{ block("product_price_container") }}
 {% endblock %}

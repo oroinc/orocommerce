@@ -58,10 +58,7 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
         foreach ($this->channelData as $data) {
             $entity = new Channel();
             /** @var Transport $transport */
-            $transportId = $this->getReference($data['transport'])->getId();
-            $transport = $manager
-                ->getRepository('OroUPSBundle:UPSTransport')
-                ->findOneBy(['id' => $transportId]);
+            $transport = $this->getReference($data['transport']);
             $entity->setName($data['name']);
             $entity->setType($data['type']);
             $entity->setDefaultUserOwner($admin);

@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AsyncIndexer implements IndexerInterface
@@ -83,6 +81,8 @@ class AsyncIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context Not used here, only to comply with the interface
      */
     public function getClassesForReindex($class = null, array $context = [])
     {
@@ -105,6 +105,12 @@ class AsyncIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'websiteIds' int[] Array of websites ids to reindex
+     * ]
      */
     public function reindex($class = null, array $context = [])
     {

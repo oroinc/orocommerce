@@ -5,9 +5,11 @@ namespace Oro\Bundle\ProductBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\DefaultProductUnitProvidersCompilerPass;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
@@ -46,6 +48,13 @@ class OroProductBundle extends Bundle
                     'shortDescription' => 'shortDescriptions',
                     'slugPrototype' => 'slugPrototypes'
                 ],
-            ]));
+                Brand::class => [
+                    'name' => 'names',
+                    'description' => 'descriptions',
+                    'shortDescription' => 'shortDescriptions',
+                    'slugPrototype' => 'slugPrototypes'
+                ],
+            ]))
+            ->addCompilerPass(new ProductCollectionCompilerPass());
     }
 }

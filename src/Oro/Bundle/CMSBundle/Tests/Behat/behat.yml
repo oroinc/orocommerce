@@ -1,0 +1,41 @@
+oro_behat_extension:
+    pages:
+        Landing Page Create:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageCreate
+            route: 'oro_cms_page_create'
+
+        Landing Page Edit:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageEdit
+            route: 'oro_cms_page_update'
+
+        Landing Page View:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageView
+            route: 'oro_cms_page_view'
+
+        Landing Page Index:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageIndex
+            route: 'oro_cms_page_index'
+
+    elements:
+        LandingPageTitlesField:
+            selector: "input[name='oro_cms_page[titles][values][default]']"
+
+        PageTitle:
+            selector: "title"
+
+        Content Block Form:
+            selector: 'form[name="oro_cms_content_block"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Titles: 'oro_cms_content_block[titles][values][default]'
+
+        Content Variant 1 form:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: 'form[name="oro_cms_content_block"] div[data-content="1"]'
+            options:
+                mapping:
+                    Customer:
+                        type: 'css'
+                        locator: 'input[name="oro_cms_content_block[contentVariants][1][scopes][0][customer]"]'
+                        element: Select2Entity

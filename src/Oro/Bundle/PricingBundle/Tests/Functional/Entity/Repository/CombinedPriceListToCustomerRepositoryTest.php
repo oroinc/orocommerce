@@ -10,7 +10,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 
 class CombinedPriceListToCustomerRepositoryTest extends AbstractCombinedPriceListRelationRepositoryTest
 {
-
     public function testDeleteInvalidRelations()
     {
         /** @var  CombinedPriceList $combinedPriceList */
@@ -30,7 +29,7 @@ class CombinedPriceListToCustomerRepositoryTest extends AbstractCombinedPriceLis
         $priceListToCustomer->setCustomer($combinedPriceListToCustomer->getCustomer());
         $priceListToCustomer->setMergeAllowed(false);
         $priceListToCustomer->setPriceList($priceList);
-        $priceListToCustomer->setPriority(4);
+        $priceListToCustomer->setSortOrder(4);
         $priceListToCustomer->setWebsite($combinedPriceListToCustomer->getWebsite());
         $em->persist($priceListToCustomer);
         $em->flush();

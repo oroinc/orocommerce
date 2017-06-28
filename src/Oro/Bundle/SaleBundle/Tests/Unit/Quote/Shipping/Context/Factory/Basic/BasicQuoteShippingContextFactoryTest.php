@@ -148,10 +148,21 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('setLineItems')
             ->with($shippingLineItems);
 
+        $builder
+            ->expects($this->once())
+            ->method('setSubTotal')
+            ->with($subTotal)
+            ->willReturnSelf();
+
+        $builder
+            ->expects($this->once())
+            ->method('setCurrency')
+            ->with($currency);
+
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createShippingContextBuilder')
-            ->with($currency, $subTotal, $quoteMock, $quoteId)
+            ->with($quoteMock, $quoteId)
             ->willReturn($builder);
 
         $actualContext = $this->basicQuoteShippingContextFactory->create($quoteMock);

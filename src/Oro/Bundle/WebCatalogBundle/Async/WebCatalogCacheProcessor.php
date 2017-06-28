@@ -124,6 +124,9 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
     protected function scheduleCacheRecalculationForWebCatalog(JobRunner $jobRunner, WebCatalog $webCatalog)
     {
         $rootNode = $this->getRootNodeByWebCatalog($webCatalog);
+        if (!$rootNode) {
+            return;
+        }
         $scopes = $this->scopeMatcher->getUsedScopes($webCatalog);
 
         foreach ($scopes as $scope) {

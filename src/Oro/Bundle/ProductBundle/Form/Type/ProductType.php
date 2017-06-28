@@ -4,7 +4,17 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
+use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,16 +23,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
-use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
-use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 
 class ProductType extends AbstractType
 {
@@ -48,8 +48,10 @@ class ProductType extends AbstractType
      * @param DefaultProductUnitProviderInterface $provider
      * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(DefaultProductUnitProviderInterface $provider, UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        DefaultProductUnitProviderInterface $provider,
+        UrlGeneratorInterface $urlGenerator
+    ) {
         $this->provider = $provider;
         $this->urlGenerator = $urlGenerator;
     }
@@ -69,17 +71,10 @@ class ProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $product = $builder->getData();
-
-        if (!$product->getPageTemplate()) {
-            $entityFallback = new EntityFieldFallbackValue();
-            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
-            $product->setPageTemplate($entityFallback);
-        }
-
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
+            ->add('brand', BrandSelectType::NAME, ['label' => 'oro.product.brand.label'])
             ->add(
                 'inventory_status',
                 'oro_enum_select',
@@ -157,15 +152,6 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
-                'variantFields',
-                ProductCustomVariantFieldsCollectionType::NAME,
-                [
-                    'label' => 'oro.product.variant_fields.label',
-                    'tooltip' => 'oro.product.form.tooltip.variant_fields',
-                    'required' => false,
-                ]
-            )
-            ->add(
                 'images',
                 ProductImageCollectionType::NAME,
                 ['required' => false]
@@ -181,6 +167,7 @@ class ProductType extends AbstractType
                 ]
             )
             ->add('type', HiddenType::class)
+
             ->add(
                 'slugPrototypesWithRedirect',
                 LocalizedSlugWithRedirectType::NAME,
@@ -190,6 +177,17 @@ class ProductType extends AbstractType
                     'source_field' => 'names'
                 ]
             )
+            ->add('featured', ChoiceType::class, [
+                'label' => 'oro.product.featured.label',
+                'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
+                'empty_value' => false,
+            ])
+            ->add('newArrival', ChoiceType::class, [
+                'label' => 'oro.product.new_arrival.label',
+                'tooltip' => 'oro.product.form.tooltip.new_arrival',
+                'choices' => ['oro.product.new_arrival.no', 'oro.product.new_arrival.yes'],
+                'empty_value' => false,
+            ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
@@ -206,6 +204,22 @@ class ProductType extends AbstractType
         /** @var Product $product */
         $product = $event->getData();
         $form = $event->getForm();
+
+        if (!$product->getPageTemplate()) {
+            $entityFallback = new EntityFieldFallbackValue();
+            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
+            $product->setPageTemplate($entityFallback);
+        }
+        $form->add(
+            'variantFields',
+            ProductCustomVariantFieldsCollectionType::NAME,
+            [
+                'label' => 'oro.product.variant_fields.label',
+                'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                'required' => false,
+                'attributeFamily' => $product->getAttributeFamily()
+            ]
+        );
 
         if ($product->getId() == null) {
             $form->remove('primaryUnitPrecision');
@@ -237,7 +251,7 @@ class ProductType extends AbstractType
             );
         }
 
-        if ($product instanceof Product && $product->getId() && $product->isConfigurable()) {
+        if ($product instanceof Product && $product->isConfigurable()) {
             $form
                 ->add(
                     'variantLinks',
@@ -300,7 +314,6 @@ class ProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'intention' => 'product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'enable_attributes' => true,
             'enable_attribute_family' => true,
         ]);

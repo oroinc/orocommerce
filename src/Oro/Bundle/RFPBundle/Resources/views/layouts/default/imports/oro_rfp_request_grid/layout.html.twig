@@ -1,0 +1,22 @@
+{% block _page_title_widget %}
+    {% set hasActions = true %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __oro_rfp_request_grid__button_container_create_new_quote_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " page-title-actions"}) %}
+    {% set actionButtonClass = 'btn btn--size-s' %}
+    <div{{ block('block_attributes') }}>
+        {{ block('combined_buttons_widget') }}
+    </div>
+{% endblock %}
+
+{% block __oro_rfp_request_grid__additional_views_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' grid-views__aditional'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

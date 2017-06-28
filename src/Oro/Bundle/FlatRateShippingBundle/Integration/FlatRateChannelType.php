@@ -3,8 +3,9 @@
 namespace Oro\Bundle\FlatRateShippingBundle\Integration;
 
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
+use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
-class FlatRateChannelType implements ChannelInterface
+class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
     const TYPE = 'flat_rate';
 

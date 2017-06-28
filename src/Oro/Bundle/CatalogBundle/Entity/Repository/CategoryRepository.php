@@ -61,6 +61,29 @@ class CategoryRepository extends NestedTreeRepository
      * @param bool $includeNode
      * @return Category[]
      */
+    public function getChildren(
+        $node = null,
+        $direct = false,
+        $sortByField = null,
+        $direction = 'ASC',
+        $includeNode = false
+    ) {
+        return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
+            ->addSelect('children')
+            ->leftJoin('node.childCategories', 'children')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param object|null $node
+     * @param bool $direct
+     * @param string|null $sortByField
+     * @param string $direction
+     * @param bool $includeNode
+     * @return Category[]
+     * @deprecated Use \Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository::getChildren
+     */
     public function getChildrenWithTitles(
         $node = null,
         $direct = false,
@@ -211,38 +234,17 @@ class CategoryRepository extends NestedTreeRepository
             ->andWhere($builder->expr()->in('product', ':products'))
             ->setParameter('products', $products);
 
-        // Join localization fields to avoid lazy-loading
-        $localizationFields = ['titles', 'shortDescriptions', 'longDescriptions'];
-        foreach ($localizationFields as $field) {
-            $builder
-                ->addSelect($field)
-                ->leftJoin(
-                    sprintf('category.%s', $field),
-                    $field,
-                    'WITH',
-                    $builder->expr()->orX(
-                        $builder->expr()->in(sprintf('%s.localization', $field), ':localizations'),
-                        $builder->expr()->isNull(sprintf('%s.localization', $field))
-                    )
-                );
-        }
-        $builder->setParameter('localizations', $localizations);
+        $builder->select('category as cat');
+        $builder->addSelect('product.id as productId');
+        $builder->addSelect('category.id as categoryId');
 
-        $relationBuilder = clone $builder;
-        $relationBuilder->select('product.id as productId, category.id as categoryId');
-
-        $categories = $builder->getQuery()->getResult();
-        $relations = $relationBuilder->getQuery()->getArrayResult();
+        $results = $builder->getQuery()->getArrayResult();
 
         $categoryMap = [];
-        /** @var Category $category */
-        foreach ($categories as $category) {
-            $categoryMap[$category->getId()] = $category;
-        }
-
         $productCategoryMap = [];
-        foreach ($relations as $relation) {
-            $productCategoryMap[$relation['productId']] = $categoryMap[$relation['categoryId']];
+        foreach ($results as $result) {
+            $categoryMap[$result['cat']['id']] = $this->find($result['cat']['id']);
+            $productCategoryMap[$result['productId']] = $categoryMap[$result['categoryId']];
         }
 
         return $productCategoryMap;

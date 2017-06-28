@@ -81,9 +81,9 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
     protected function createOroRfpAssignedAccUsersTable(Schema $schema)
     {
         $table = $schema->createTable('oro_rfp_assigned_cus_users');
-        $table->addColumn('quote_id', 'integer', []);
+        $table->addColumn('request_id', 'integer', []);
         $table->addColumn('customer_user_id', 'integer', []);
-        $table->setPrimaryKey(['quote_id', 'customer_user_id']);
+        $table->setPrimaryKey(['request_id', 'customer_user_id']);
     }
 
     /**
@@ -94,9 +94,9 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
     protected function createOroRfpAssignedUsersTable(Schema $schema)
     {
         $table = $schema->createTable('oro_rfp_assigned_users');
-        $table->addColumn('quote_id', 'integer', []);
+        $table->addColumn('request_id', 'integer', []);
         $table->addColumn('user_id', 'integer', []);
-        $table->setPrimaryKey(['quote_id', 'user_id']);
+        $table->setPrimaryKey(['request_id', 'user_id']);
     }
 
     /**
@@ -217,6 +217,9 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->setPrimaryKey(['id']);
     }
 
+    /**
+     * @param Schema $schema
+     */
     protected function createOroRfpRequestAddNoteTable(Schema $schema)
     {
         $table = $schema->createTable('oro_rfp_request_add_note');
@@ -247,7 +250,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_rfp_request'),
-            ['quote_id'],
+            ['request_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -269,7 +272,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_rfp_request'),
-            ['quote_id'],
+            ['request_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

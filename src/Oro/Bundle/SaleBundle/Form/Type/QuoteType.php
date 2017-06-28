@@ -7,9 +7,9 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
@@ -87,10 +87,6 @@ class QuoteType extends AbstractType
             ])
             ->add('validUntil', OroDateTimeType::class, [
                 'label'     => 'oro.sale.quote.valid_until.label',
-                'required'  => false
-            ])
-            ->add('locked', CheckboxType::class, [
-                'label' => 'oro.sale.quote.locked.label',
                 'required'  => false
             ])
             ->add('shippingMethodLocked', CheckboxType::class, [
@@ -184,7 +180,6 @@ class QuoteType extends AbstractType
         $resolver->setDefaults([
             'data_class'    => $this->dataClass,
             'intention'     => 'sale_quote',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 

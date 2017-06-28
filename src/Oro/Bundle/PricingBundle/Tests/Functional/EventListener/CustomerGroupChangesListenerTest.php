@@ -20,7 +20,7 @@ class CustomerGroupChangesListenerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
@@ -34,12 +34,33 @@ class CustomerGroupChangesListenerTest extends WebTestCase
      */
     protected function sendDeleteCustomerGroupRequest(CustomerGroup $group)
     {
+        $groupId = $group->getId();
+
         $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_customer_delete_customer_group', ['id' => $group->getId()])
+            'GET',
+            $this->getUrl(
+                'oro_action_operation_execute',
+                [
+                    'operationName' => 'oro_customer_groups_delete',
+                    'entityId[id]' => $groupId,
+                    'entityClass' => $this->getContainer()->getParameter('oro_customer.entity.customer_group.class'),
+                ]
+            ),
+            [],
+            [],
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
 
-        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        static::getContainer()->get('doctrine')->getManagerForClass(CustomerGroup::class)->clear();
+
+        $removedGroup = static::getContainer()
+            ->get('doctrine')
+            ->getRepository('OroCustomerBundle:CustomerGroup')
+            ->find($groupId);
+
+        static::assertNull($removedGroup);
     }
 
     public function testDeleteCustomerGroupWithAssignedCustomer()

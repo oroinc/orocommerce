@@ -9,6 +9,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TranslationBundle\Entity\Language;
 
 class AjaxLocalizationControllerTest extends WebTestCase
 {
@@ -80,8 +81,12 @@ class AjaxLocalizationControllerTest extends WebTestCase
     {
         $registry = $this->getContainer()->get('doctrine');
 
+        $language = $registry->getManagerForClass(Language::class)
+            ->getRepository(Language::class)
+            ->findOneBy(['code' => $code]);
+
         return $registry->getManagerForClass(Localization::class)
             ->getRepository(Localization::class)
-            ->findOneBy(['languageCode' => $code]);
+            ->findOneBy(['language' => $language]);
     }
 }

@@ -23,7 +23,7 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     /** {@inheritdoc} */
     public function transform(TaxValue $taxValue)
     {
-        return $taxValue->getResult();
+        return new Result($taxValue->getResult()->getArrayCopy());
     }
 
     /** {@inheritdoc} */
@@ -32,7 +32,9 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
         $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());
         $taxValue->setAddress((string)$taxable->getTaxationAddress());
 
-        $taxValue->setResult($result);
+        // We have to create new instance of Result because original TaxValue::Result
+        // must not be changed from outside
+        $taxValue->setResult(new Result($result->getArrayCopy()));
 
         return $taxValue;
     }

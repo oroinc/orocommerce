@@ -8,9 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -504,6 +504,58 @@ class Product extends ExtendProduct implements
      *  )
      */
     protected $attributeFamily;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_featured", type="boolean", options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "attribute"={
+     *              "is_attribute"=true,
+     *              "visible"=false
+     *          }
+     *      }
+     *  )
+     */
+    protected $featured = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_new_arrival", type="boolean", options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "attribute"={
+     *              "is_attribute"=true,
+     *              "visible"=false
+     *          }
+     *      }
+     *  )
+     */
+    protected $newArrival = false;
+
+    /**
+     * @var Brand
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Brand")
+     * @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "attribute"={
+     *              "is_attribute"=true,
+     *              "visible"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $brand;
 
     /**
      * {@inheritdoc}
@@ -1241,5 +1293,62 @@ class Product extends ExtendProduct implements
     public function getAttributeFamily()
     {
         return $this->attributeFamily;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getFeatured()
+    {
+        return $this->featured;
+    }
+
+    /**
+     * @param bool $featured
+     * @return $this
+     */
+    public function setFeatured($featured)
+    {
+        $this->featured = (bool)$featured;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNewArrival()
+    {
+        return $this->newArrival;
+    }
+
+    /**
+     * @param bool $newArrival
+     * @return $this
+     */
+    public function setNewArrival($newArrival)
+    {
+        $this->newArrival = (bool)$newArrival;
+
+        return $this;
+    }
+
+    /**
+     * @return Brand
+     */
+    public function getBrand()
+    {
+        return $this->brand;
+    }
+
+    /**
+     * @param Brand $brand
+     * @return $this
+     */
+    public function setBrand($brand)
+    {
+        $this->brand = $brand;
+
+        return $this;
     }
 }

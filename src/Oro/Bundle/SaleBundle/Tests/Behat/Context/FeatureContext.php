@@ -5,18 +5,16 @@ namespace Oro\Bundle\SaleBundle\Tests\Behat\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
@@ -36,16 +34,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given Admin creates a quote for RFQ with PO Number :poNumber
+     * @Given /^(?:|I )create a quote from RFQ with PO Number "(?P<poNumber>[^"]+)"$/
      * @param string $poNumber
      */
-    public function adminCreatesAQuoteForRFQWithPONumber($poNumber)
+    public function iCreateAQuoteFromRFQWithPONumber($poNumber)
     {
-        $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1880, 'current');
-
-        $this->oroMainContext->loginAsUserWithPassword();
-        $this->waitForAjax();
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
         $mainMenu->openAndClick('Sales/Requests For Quote');
@@ -68,27 +61,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $unitPrice->blur();
 
         $this->getPage()->pressButton('Save and Close');
-
-        $this->getSession('second_session')->stop();
-        $this->getMink()->setDefaultSessionName('first_session');
-    }
-
-    /**
-     * @When Buyer starts checkout for a quote with :poNumber PO Number
-     * @param string $poNumber
-     */
-    public function buyerStartsCheckoutForAQuoteWithPONumber($poNumber)
-    {
-        /** @var Grid $grid */
-        $grid = $this->createElement('Grid');
-        $grid->clickActionLink($poNumber, 'View');
-        $this->waitForAjax();
-
-        $this->getPage()->clickLink('Accept and Submit to Order');
-        $this->waitForAjax();
-
-        $this->getPage()->pressButton('Submit');
-        $this->waitForAjax();
     }
 
     /**
@@ -99,5 +71,43 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         /** @var CheckoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
         $checkoutStep->assertTitle('Billing Information');
+    }
+
+    /**
+     * @When /^(?:|I )open Quote with qid (?P<qid>[\w\s]+)/
+     *
+     * @param string $qid
+     */
+    public function openQuote($qid)
+    {
+        $quote = $this->getQuote($qid);
+
+        $url = $this->getContainer()
+            ->get('router')
+            ->generate('oro_sale_quote_view', ['id' => $quote->getId()]);
+
+        $this->visitPath($url);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @param string $qid
+     * @return Quote
+     */
+    protected function getQuote($qid)
+    {
+        return $this->getRepository(Quote::class)->findOneBy(['qid' => $qid]);
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    protected function getRepository($className)
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass($className)
+            ->getRepository($className);
     }
 }

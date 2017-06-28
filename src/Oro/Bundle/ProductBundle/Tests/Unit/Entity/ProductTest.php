@@ -7,14 +7,14 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 /**
@@ -41,6 +41,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE],
             ['attributeFamily', new AttributeFamily()],
             ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
+            ['featured', true, false],
+            ['newArrival', true, false],
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);

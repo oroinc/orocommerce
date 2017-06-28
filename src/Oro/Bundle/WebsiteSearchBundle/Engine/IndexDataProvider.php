@@ -74,6 +74,10 @@ class IndexDataProvider
      * @param string $entityClass
      * @param object[] $restrictedEntities
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @param array $entityConfig
      * @return array
      */
@@ -326,6 +330,10 @@ class IndexDataProvider
      * @param string $entityClass
      * @param QueryBuilder $queryBuilder
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @return QueryBuilder
      */
     public function getRestrictedEntitiesQueryBuilder($entityClass, $queryBuilder, array $context)

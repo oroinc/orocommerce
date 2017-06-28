@@ -57,6 +57,7 @@ class CategoryProvider
     }
 
     /**
+     * @deprecated use CategoryBreadcrumbProvider::getItems() instead
      * @return Category[]
      */
     public function getBreadcrumbs()
@@ -131,5 +132,13 @@ class CategoryProvider
         }
 
         return $this->categories[$categoryId];
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIncludeSubcategoriesChoice()
+    {
+        return $this->requestProductHandler->getIncludeSubcategoriesChoice();
     }
 }

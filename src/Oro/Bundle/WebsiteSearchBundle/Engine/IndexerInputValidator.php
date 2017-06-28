@@ -33,13 +33,17 @@ class IndexerInputValidator
     /**
      * @param string|array $classOrClasses
      * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'websiteIds' int[] Array of websites ids to reindex
+     * ]
+     *
      * @return array
      */
     public function validateReindexRequest(
         $classOrClasses,
         array $context
     ) {
-
         if (is_array($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
             throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
         }
@@ -85,6 +89,10 @@ class IndexerInputValidator
 
     /**
      * @param array $context
+     * $context = [
+     *     'websiteIds' int[] Array of websites ids to reindex
+     * ]
+     *
      * @return array
      */
     private function getWebsiteIdsToIndex(array $context)

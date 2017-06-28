@@ -18,6 +18,8 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension'
         public: false
         arguments:
-            - "@service_container"
+            - "@oro_shipping.formatter.shipping_method_label"
+            - '@event_dispatcher'
+            - '@oro_shipping.checker.shipping_method_enabled'
         tags:
             - { name: twig.extension }

@@ -8,18 +8,21 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
 {
-    /** @internal */
     const LABEL = 'test';
-
-    /** @internal */
     const IDENTIFIER = 'flat_rate';
+    const ICON = 'bundles/icon-uri.png';
 
-    /** @var FlatRateMethod */
-    protected $flatRate;
+    /**
+     * @var FlatRateMethod
+     */
+    private $flatRate;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
-        $this->flatRate = new FlatRateMethod(self::IDENTIFIER, self::LABEL);
+        $this->flatRate = new FlatRateMethod(self::IDENTIFIER, self::LABEL, self::ICON, true);
     }
 
     public function testGetIdentifier()
@@ -30,6 +33,11 @@ class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
     public function testIsGrouped()
     {
         static::assertFalse($this->flatRate->isGrouped());
+    }
+
+    public function testIsEnabled()
+    {
+        static::assertTrue($this->flatRate->isEnabled());
     }
 
     public function testGetLabel()
@@ -63,5 +71,10 @@ class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
     public function testGetSortOrder()
     {
         static::assertEquals(10, $this->flatRate->getSortOrder());
+    }
+
+    public function testGetIcon()
+    {
+        static::assertSame(self::ICON, $this->flatRate->getIcon());
     }
 }

@@ -9,16 +9,24 @@ use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestCustomerStatuses;
 use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestInternalStatuses;
 use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
-class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
+class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
+    use MigrationConstraintTrait;
+
     /** @var ExtendExtension */
     protected $extendExtension;
+
+    /** @var RenameExtension */
+    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -26,6 +34,16 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * Sets the RenameExtension
+     *
+     * @param RenameExtension $renameExtension
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 
     /**
@@ -39,6 +57,8 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         $this->updateOroRfpRequestTable($schema);
         $this->removeOroRfpRequestStatusTable($schema, $queries);
         $this->removeUnusedTranslationKeys($queries);
+        $this->renameFieldForAssignedCustomers($schema, $queries);
+        $this->renameFieldForAssignedUsers($schema, $queries);
     }
 
     /**
@@ -175,5 +195,59 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         foreach ($data as $domain => $keys) {
             $queries->addQuery(new DeleteTranslationKeysQuery($domain, $keys));
         }
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function renameFieldForAssignedCustomers(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_rfp_assigned_cus_users');
+        $table->removeForeignKey($this->getConstraintName($table, 'quote_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'quote_id',
+            'request_id'
+        );
+
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_rfp_assigned_cus_users',
+            'oro_rfp_request',
+            ['request_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function renameFieldForAssignedUsers(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_rfp_assigned_users');
+        $table->removeForeignKey($this->getConstraintName($table, 'quote_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'quote_id',
+            'request_id'
+        );
+
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'oro_rfp_assigned_users',
+            'oro_rfp_request',
+            ['request_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }

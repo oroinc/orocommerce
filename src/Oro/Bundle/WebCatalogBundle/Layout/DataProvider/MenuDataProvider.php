@@ -3,25 +3,20 @@
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
-use Symfony\Component\HttpFoundation\RequestStack;
 
-class MenuDataProvider
+class MenuDataProvider extends AbstractWebCatalogDataProvider
 {
     const IDENTIFIER = 'identifier';
     const LABEL = 'label';
     const URL = 'url';
     const CHILDREN = 'children';
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
 
     /**
      * @var WebCatalogProvider
@@ -32,16 +27,6 @@ class MenuDataProvider
      * @var ContentNodeTreeResolverInterface
      */
     protected $contentNodeTreeResolverFacade;
-
-    /**
-     * @var LocalizationHelper
-     */
-    protected $localizationHelper;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
 
     /**
      * @param ManagerRegistry $registry
@@ -110,14 +95,5 @@ class MenuDataProvider
         }
 
         return $result;
-    }
-
-    /**
-     * @return ContentNodeRepository
-     */
-    protected function getContentNodeRepository()
-    {
-        return $this->registry->getManagerForClass(ContentNode::class)
-            ->getRepository(ContentNode::class);
     }
 }

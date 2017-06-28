@@ -3,10 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
-use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodTypeConfigsWithFakeTypes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -14,8 +11,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ShippingMethodConfigRepositoryTest extends WebTestCase
 {
-    use FlatRateIntegrationTrait;
-
     /**
      * @var ShippingMethodConfigRepository
      */
@@ -25,7 +20,7 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
     {
         $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([
-            LoadShippingMethodsConfigsRules::class
+            LoadShippingMethodTypeConfigsWithFakeTypes::class,
         ]);
 
         $this->repository = static::getContainer()->get('doctrine')
@@ -34,32 +29,18 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
 
     public function testDeleteByMethod()
     {
-        static::assertNotEmpty(
-            $this->repository->findBy(
-                [
-                    'method' => $this->getFlatRateIdentifier(),
-                ]
-            )
-        );
+        $method = 'ups';
 
-        $this->repository->deleteByMethod($this->getFlatRateIdentifier());
+        static::assertNotEmpty($this->repository->findByMethod($method));
 
-        static::assertEmpty(
-            $this->repository->findBy(
-                [
-                    'method' => $this->getFlatRateIdentifier(),
-                ]
-            )
-        );
+        $this->repository->deleteByMethod($method);
+
+        static::assertEmpty($this->repository->findByMethod($method));
     }
 
     public function testFindMethodConfigIdsWithoutTypeConfigs()
     {
-        /** @var ShippingMethodsConfigsRule $rule */
-        $rule = $this->getReference('shipping_rule_without_type_configs');
-
-        /** @var ShippingMethodConfig $methodConfig */
-        $methodConfig = $rule->getMethodConfigs()->first();
+        $methodConfig = $this->getReference('shipping_rule.3.method_config_without_type_configs');
 
         static::assertEmpty($methodConfig->getTypeConfigs());
 
@@ -70,19 +51,40 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
 
     public function testDeleteMethodConfigByIds()
     {
-        /** @var ShippingMethodsConfigsRule $rule */
-        $rule1 = $this->getReference('shipping_rule.1');
-        $rule2 = $this->getReference('shipping_rule_without_type_configs');
-
         $ids = [
-            $rule1->getMethodConfigs()->first()->getId(),
-            $rule2->getMethodConfigs()->first()->getId(),
+            $this->getReference('shipping_rule.3.method_config_without_type_configs')->getId(),
         ];
-
-        static::assertCount(2, $this->repository->findBy(['id' => $ids]));
 
         $this->repository->deleteByIds($ids);
 
         static::assertEmpty($this->repository->findBy(['id' => $ids]));
+    }
+
+    public function testFindByType()
+    {
+        $actualConfigs = $this->repository->findByMethod('flat_rate');
+
+        $expectedConfig = $this->getReference('shipping_rule.2.method_config.1');
+
+        static::assertContains($expectedConfig, $actualConfigs);
+    }
+
+    public function testFindByTypes()
+    {
+        $methods = [
+            'ups',
+            'flat_rate',
+        ];
+
+        $actualConfigs = $this->repository->findByMethod($methods);
+
+        $expectedConfigs = [
+            $this->getReference('shipping_rule.1.method_config.1'),
+            $this->getReference('shipping_rule.2.method_config.1'),
+        ];
+
+        foreach ($expectedConfigs as $expectedConfig) {
+            static::assertContains($expectedConfig, $actualConfigs);
+        }
     }
 }

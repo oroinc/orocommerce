@@ -60,18 +60,19 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
 
         $this->totalProcessorProvider->enableRecalculation();
 
-        $convertedLineItems = $this->quoteToShippingLineItemConverter->convertLineItems($quote);
+        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
+            $quote,
+            $quote->getId()
+        );
 
+        $convertedLineItems = $this->quoteToShippingLineItemConverter->convertLineItems($quote);
         $calculableQuote = $this->calculableQuoteFactory->createCalculableQuote($convertedLineItems);
         $total = $this->totalProcessorProvider->getTotal($calculableQuote);
         $subtotal = Price::create($total->getAmount(), $total->getCurrency());
 
-        $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
-            $quote->getCurrency(),
-            $subtotal,
-            $quote,
-            $quote->getId()
-        );
+        $shippingContextBuilder
+            ->setSubTotal($subtotal)
+            ->setCurrency($quote->getCurrency());
 
         if (null !== $quote->getShippingAddress()) {
             $shippingContextBuilder

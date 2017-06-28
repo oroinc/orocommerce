@@ -126,7 +126,7 @@ class PaymentTransactionProvider
         /** @var PaymentTransactionRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
         $methods = $repository->getPaymentMethods($className, [$identifier]);
-        
+
         return isset($methods[$identifier]) ? $methods[$identifier] : [];
     }
 
@@ -156,7 +156,7 @@ class PaymentTransactionProvider
 
     /**
      * @param string $paymentMethod
-     * @return PaymentTransaction
+     * @return PaymentTransaction|null
      */
     public function getActiveValidatePaymentTransaction($paymentMethod)
     {
@@ -188,14 +188,33 @@ class PaymentTransactionProvider
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
 
-        /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = new $this->paymentTransactionClass;
-        $paymentTransaction
+        $paymentTransaction = $this->createEmptyPaymentTransaction()
             ->setPaymentMethod($paymentMethod)
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
             ->setFrontendOwner($this->getLoggedCustomerUser());
+
+        return $paymentTransaction;
+    }
+
+    /**
+     * @param string $action
+     * @param PaymentTransaction $parentPaymentTransaction
+     *
+     * @return PaymentTransaction
+     */
+    public function createPaymentTransactionByParentTransaction($action, PaymentTransaction $parentPaymentTransaction)
+    {
+        $paymentTransaction = $this->createEmptyPaymentTransaction()
+            ->setAction($action)
+            ->setPaymentMethod($parentPaymentTransaction->getPaymentMethod())
+            ->setEntityClass($parentPaymentTransaction->getEntityClass())
+            ->setEntityIdentifier($parentPaymentTransaction->getEntityIdentifier())
+            ->setAmount($parentPaymentTransaction->getAmount())
+            ->setCurrency($parentPaymentTransaction->getCurrency())
+            ->setFrontendOwner($this->getLoggedCustomerUser())
+            ->setSourcePaymentTransaction($parentPaymentTransaction);
 
         return $paymentTransaction;
     }
@@ -222,5 +241,13 @@ class PaymentTransactionProvider
                 $this->logger->error($e->getMessage(), $e->getTrace());
             }
         }
+    }
+
+    /**
+     * @return PaymentTransaction
+     */
+    private function createEmptyPaymentTransaction()
+    {
+        return new $this->paymentTransactionClass();
     }
 }

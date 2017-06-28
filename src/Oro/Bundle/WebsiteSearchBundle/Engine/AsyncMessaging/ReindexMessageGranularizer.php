@@ -17,6 +17,10 @@ class ReindexMessageGranularizer
      * @param array|string $entities
      * @param array $websites
      * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     * ]
+     *
      * @return array
      */
     public function process($entities, array $websites, array $context)
@@ -26,20 +30,6 @@ class ReindexMessageGranularizer
         $entityIds = $this->getContextEntityIds($context);
 
         $result = [];
-
-        if (count($entities) === 1 && count($entityIds) <= self::ID_CHUNK_SIZE) {
-            $entity      = current($entities);
-            $itemContext = [];
-            $itemContext = $this->setContextEntityIds($itemContext, $entityIds);
-            $itemContext = $this->setContextWebsiteIds($itemContext, $websites);
-
-            return [
-                [
-                    'class'   => [$entity],
-                    'context' => $itemContext
-                ]
-            ];
-        }
 
         if (empty($websites)) {
             foreach ($entities as $entity) {

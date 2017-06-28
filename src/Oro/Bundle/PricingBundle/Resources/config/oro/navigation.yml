@@ -52,11 +52,11 @@ navigation:
 
     titles:
         oro_pricing_price_list_index:   ~
-        oro_pricing_price_list_view:   '%%name%%'
-        oro_pricing_price_list_update: '%%name%% - Edit'
+        oro_pricing_price_list_view:   '%name%'
+        oro_pricing_price_list_update: '%name% - Edit'
         oro_pricing_price_list_create: oro.ui.create_entity
 
         oro_pricing_price_attribute_price_list_index:  ~
-        oro_pricing_price_attribute_price_list_view:   '%%name%%'
-        oro_pricing_price_attribute_price_list_update: '%%name%% - Edit'
+        oro_pricing_price_attribute_price_list_view:   '%name%'
+        oro_pricing_price_attribute_price_list_update: '%name% - Edit'
         oro_pricing_price_attribute_price_list_create: oro.ui.create_entity

@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 
 /**
  * @ORM\Table(
@@ -49,7 +50,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  */
 class LineItem extends ExtendLineItem implements
     OrganizationAwareInterface,
-    ProductLineItemInterface
+    ProductLineItemInterface,
+    CheckoutLineItemInterface
 {
     use UserAwareTrait;
 
@@ -78,7 +80,7 @@ class LineItem extends ExtendLineItem implements
     protected $product;
 
     /**
-     * @var Product
+     * @var Product|null
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
@@ -198,7 +200,7 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @return Product
+     * @return Product|null
      */
     public function getParentProduct()
     {

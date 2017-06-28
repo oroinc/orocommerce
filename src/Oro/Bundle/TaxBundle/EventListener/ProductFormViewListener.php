@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 
 class ProductFormViewListener extends AbstractFormViewListener
 {
@@ -19,9 +18,7 @@ class ProductFormViewListener extends AbstractFormViewListener
             return;
         }
 
-        /** @var ProductTaxCodeRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-        $entity = $repository->findOneByProduct($product);
+        $entity = $product->getTaxCode();
 
         $template = $event->getEnvironment()->render(
             'OroTaxBundle:Product:tax_code_view.html.twig',

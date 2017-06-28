@@ -129,6 +129,60 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    public function getVariantFieldsDataProvider()
+    {
+        return [
+            'all_fields' => [
+                'fields' => [
+                    'size' => [
+                        'owner' => 'Custom',
+                        'label' => 'Size Label',
+                        'type' => 'boolean',
+                        'state' => 'Active',
+                        'is_serialized' => false,
+                    ],
+                    'color' => [
+                        'owner' => 'Custom',
+                        'label' => 'Color Label',
+                        'type' => 'enum',
+                        'state' => 'Requires update',
+                        'is_serialized' => false,
+                    ],
+                    'weight' => [
+                        'owner' => 'Custom',
+                        'label' => 'Weight Label',
+                        'type' => 'string',
+                        'state' => 'New',
+                        'is_serialized' => true
+                    ],
+                    'id' => [
+                        'owner' => 'System',
+                        'label' => 'Id Label',
+                        'type' => 'string',
+                    ],
+                ],
+
+                'expectedResult' => [
+                    'size' => [
+                        'name' => 'size',
+                        'label' => 'Size Label',
+                        'type' => 'boolean',
+                        'is_serialized' => false
+                    ],
+                    'color' => [
+                        'name' => 'color',
+                        'label' => 'Color Label',
+                        'type' => 'enum',
+                        'is_serialized' => false,
+                    ],
+                ],
+            ]
+        ];
+    }
+
+    /**
      * @param string $className
      * @return \PHPUnit_Framework_MockObject_MockObject
      */

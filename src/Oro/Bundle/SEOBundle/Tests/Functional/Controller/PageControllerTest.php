@@ -36,6 +36,7 @@ class PageControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],
         ];
+        $parameters['oro_cms_page']['metaTitles']['values']['default'] = LoadPageMetaData::META_TITLES;
         $parameters['oro_cms_page']['metaDescriptions']['values']['default'] = LoadPageMetaData::META_DESCRIPTIONS;
         $parameters['oro_cms_page']['metaKeywords']['values']['default'] = LoadPageMetaData::META_KEYWORDS;
 
@@ -48,6 +49,7 @@ class PageControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
+        $this->assertContains(LoadPageMetaData::META_TITLES, $html);
         $this->assertContains(LoadPageMetaData::META_DESCRIPTIONS, $html);
         $this->assertContains(LoadPageMetaData::META_KEYWORDS, $html);
     }
@@ -57,18 +59,7 @@ class PageControllerTest extends WebTestCase
      */
     protected function getPageId()
     {
-        $class = $this->getContainer()->getParameter('oro_cms.entity.page.class');
-        /** @var EntityRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')->getManagerForClass($class)->getRepository($class);
-        $qb = $repository->createQueryBuilder('page');
-
-        return $qb
-            ->select('page.id')
-            ->innerJoin('page.slugPrototypes', 'slugPrototypes')
-            ->andWhere('slugPrototypes.string = :slug')
-            ->setParameter('slug', 'about')
-            ->getQuery()
-            ->getSingleScalarResult();
+        return $this->getReference(LoadPageData::PAGE_1)->getId();
     }
 
     /**
@@ -80,6 +71,7 @@ class PageControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('SEO', $crawler->filter('.nav')->html());
+        $this->assertContains('Meta title', $crawler->html());
         $this->assertContains('Meta description', $crawler->html());
         $this->assertContains('Meta keywords', $crawler->html());
     }

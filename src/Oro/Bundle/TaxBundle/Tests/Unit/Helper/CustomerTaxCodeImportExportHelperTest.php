@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Helper;
 
+use Doctrine\ORM\EntityManager;
+
+use Oro\Bundle\TaxBundle\Tests\Unit\Entity\CustomerStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -13,25 +16,41 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var  CustomerTaxCodeImportExportHelper */
+    /** @var CustomerTaxCodeImportExportHelper */
     private $manager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
     private $doctrineHelper;
 
-    /** @var  Customer[] */
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|CustomerTaxCodeRepository */
+    private $repository;
+
+    /** @var  \PHPUnit_Framework_MockObject_MockObject|EntityManager */
+    private $entityManager;
+
+    /** @var  Customer[]|\PHPUnit_Framework_MockObject_MockObject[] */
     private $customers;
+
+    /** @var CustomerTaxCode[] */
+    private $customerTaxCodes;
 
     protected function setUp()
     {
-        $this->customers = [
-            1 => $this->getEntity(Customer::class, ['id' => 1]),
-            2 => $this->getEntity(Customer::class, ['id' => 2]),
-        ];
+        $this->createCustomers();
+        $this->createCustomersTaxCodes();
+
+        $this->repository = $this->createMock(CustomerTaxCodeRepository::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
 
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->willReturn($this->repository);
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($this->entityManager);
 
         $this->manager = new CustomerTaxCodeImportExportHelper(
             $this->doctrineHelper
@@ -40,7 +59,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCustomerTaxCodeTest()
     {
-        $this->doctrineShouldReturnTags();
+        $this->doctrineShouldReturnTaxCodesByCustomer();
         $customerTaxCodes = $this->manager->loadCustomerTaxCode($this->customers);
 
         foreach ($this->customers as $customer) {
@@ -50,6 +69,8 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider normalizeCustomerTaxCodeDataProvider
+     * @param string $expectedName
+     * @param CustomerTaxCode $customerTaxCode
      */
     public function testNormalizeCustomerTaxCode($expectedName, CustomerTaxCode $customerTaxCode)
     {
@@ -57,6 +78,30 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertArrayHasKey('code', $normalizedCustomerTaxCode);
         $this->assertEquals($expectedName, $normalizedCustomerTaxCode['code']);
+    }
+
+    /**
+     * @dataProvider denormalizeCustomerTaxCodeDataProvider
+     * @param CustomerTaxCode|null $expectedTaxCode
+     * @param array $data
+     */
+    public function testDenormalizeCustomerTaxCode(CustomerTaxCode $expectedTaxCode = null, array $data)
+    {
+        $this->doctrineShouldReturnTagsByCode();
+        $taxCode = $this->manager->denormalizeCustomerTaxCode($data);
+
+        $this->assertEquals($expectedTaxCode, $taxCode);
+    }
+
+    /**
+     * @dataProvider testDenormalizeCustomerTaxCodeShouldThrowExceptionDataProvider
+     * @expectedException \Doctrine\ORM\EntityNotFoundException
+     * @param array $data
+     */
+    public function testDenormalizeCustomerTaxCodeShouldThrowException(array $data)
+    {
+        $this->doctrineShouldReturnTagsByCode();
+        $this->manager->denormalizeCustomerTaxCode($data);
     }
 
     /**
@@ -70,10 +115,31 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    private function doctrineShouldReturnTags()
+    /**
+     * @return array
+     */
+    public function denormalizeCustomerTaxCodeDataProvider()
     {
-        $map = [];
+        $this->createCustomersTaxCodes();
 
+        return [
+            [$this->customerTaxCodes[0], ['tax_code' => ['code' => 'TaxCode1']]],
+            [$this->customerTaxCodes[1], ['tax_code' => ['code' => 'TaxCode2']]],
+        ];
+    }
+
+    public function testDenormalizeCustomerTaxCodeShouldThrowExceptionDataProvider()
+    {
+        return [
+            [['tax_code' => ['code' => 'NoneExistingCode']]],
+        ];
+    }
+
+    /**
+     * Prepare map of responses according to $this->customers
+     */
+    private function doctrineShouldReturnTaxCodesByCustomer()
+    {
         foreach ($this->customers as $customer) {
             $customerTaxCode = $this->getEntity(CustomerTaxCode::class, [
                 'id' => $customer->getId(),
@@ -81,14 +147,48 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit_Framework_TestCase
                 'description' => sprintf('description_%s', $customer->getId())
             ]);
 
-            $map[] = [$customer, $customerTaxCode];
+            $customer->setTaxCode($customerTaxCode);
+        }
+    }
+
+    private function doctrineShouldReturnTagsByCode()
+    {
+        $map = [];
+
+        foreach ($this->customerTaxCodes as $customerTaxCode) {
+            $map[] = [['code' => $customerTaxCode->getCode()], null, $customerTaxCode];
         }
 
-        $repository = $this->createMock(CustomerTaxCodeRepository::class);
-        $repository->expects($this->exactly(count($this->customers)))->method('findOneByCustomer')
+        $this->repository->expects($this->once())
+            ->method('findOneBy')
             ->willReturnMap($map);
-        $this->doctrineHelper->expects($this->exactly(count($this->customers)))
-            ->method('getEntityRepository')
-            ->willReturn($repository);
+    }
+
+    private function shouldNotCreateEntityReference()
+    {
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityReference');
+    }
+
+    private function doctrineShouldFlushOnce()
+    {
+        $this->entityManager->expects($this->once())
+            ->method('flush');
+    }
+
+    private function createCustomers()
+    {
+        $this->customers = [
+            1 => $this->getEntity(CustomerStub::class, ['id' => 1]),
+            2 => $this->getEntity(CustomerStub::class, ['id' => 2]),
+        ];
+    }
+
+    private function createCustomersTaxCodes()
+    {
+        $this->customerTaxCodes = [
+            $this->getEntity(CustomerTaxCode::class, ['id' => 1, 'code' => 'TaxCode1']),
+            $this->getEntity(CustomerTaxCode::class, ['id' => 2, 'code' => 'TaxCode2']),
+        ];
     }
 }

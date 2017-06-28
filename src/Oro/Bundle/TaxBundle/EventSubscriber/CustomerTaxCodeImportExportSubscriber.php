@@ -2,18 +2,28 @@
 
 namespace Oro\Bundle\TaxBundle\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Doctrine\ORM\EntityNotFoundException;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\ImportExportBundle\Event\LoadTemplateFixturesEvent;
 use Oro\Bundle\ImportExportBundle\Event\AfterEntityPageLoadedEvent;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Event\NormalizeEntityEvent;
 use Oro\Bundle\ImportExportBundle\Event\LoadEntityRulesAndBackendHeadersEvent;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\ImportExportBundle\Event\StrategyEvent;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper;
 
 class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
     /**
      * @var CustomerTaxCodeImportExportHelper
      */
@@ -34,9 +44,11 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
      * @param string $customerClassName
      */
     public function __construct(
+        TranslatorInterface $translator,
         CustomerTaxCodeImportExportHelper $customerTaxManager,
         $customerClassName
     ) {
+        $this->translator = $translator;
         $this->customerTaxCodeImportExportHelper = $customerTaxManager;
         $this->customerClassName = $customerClassName;
     }
@@ -50,6 +62,8 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             Events::AFTER_ENTITY_PAGE_LOADED => 'updateEntityResults',
             Events::AFTER_NORMALIZE_ENTITY => 'normalizeEntity',
             Events::AFTER_LOAD_ENTITY_RULES_AND_BACKEND_HEADERS => 'loadEntityRulesAndBackendHeaders',
+            StrategyEvent::PROCESS_AFTER => ['afterImportStrategy', -255],
+            Events::AFTER_LOAD_TEMPLATE_FIXTURES => 'addTaxCodeToCustomers',
         ];
     }
 
@@ -94,22 +108,66 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        array_map(
-            [$event, 'addHeader'],
-            [
-                [
-                    'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
-                    'order' => PHP_INT_MAX,
-                ]
-            ]
-        );
+        $event->addHeader([
+            'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
+            'order' => 200,
+        ]);
 
         $event->setRule('Tax code', [
             'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
-            'order' => PHP_INT_MAX,
+            'order' => 200,
         ]);
     }
 
+    /**
+     * @param StrategyEvent $event
+     */
+    public function afterImportStrategy(StrategyEvent $event)
+    {
+        /** @var Customer $entity */
+        $entity = $event->getEntity();
+        $data = $event->getContext()->getValue('itemData');
+
+        if (!is_a($entity, $this->customerClassName)) {
+            return;
+        }
+
+        try {
+            $taxCode = $this->customerTaxCodeImportExportHelper->denormalizeCustomerTaxCode($data);
+
+            if ($taxCode === null) {
+                return;
+            }
+            $entity->setTaxCode($taxCode);
+        } catch (EntityNotFoundException $e) {
+            $event->setEntity(null);
+            $event->getContext()->addError(
+                $this->translator->trans(
+                    'oro.tax.import_export.tax_code_doesnt_exist',
+                    ['%customer_name%' => $entity->getName()]
+                )
+            );
+        }
+    }
+
+    /**
+     * @param LoadTemplateFixturesEvent $event
+     */
+    public function addTaxCodeToCustomers(LoadTemplateFixturesEvent $event)
+    {
+        foreach ($event->getEntities() as $customerData) {
+            foreach ($customerData as $customer) {
+                /** @var Customer $customer */
+                $customer = $customer['entity'];
+
+                if (!$customer instanceof Customer) {
+                    continue;
+                }
+
+                $this->customerTaxCodes[$customer->getId()] = (new CustomerTaxCode())->setCode('Tax_code_1');
+            }
+        }
+    }
 
     /**
      * @param Customer $customer

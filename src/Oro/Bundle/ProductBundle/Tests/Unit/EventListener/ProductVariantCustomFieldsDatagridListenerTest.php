@@ -8,14 +8,21 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\ProductBundle\Provider\VariantField;
+use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
 use Oro\Component\Testing\Unit\PropertyAccess\PropertyAccessTrait;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     use PropertyAccessTrait;
@@ -52,6 +59,9 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     /** @var \PHPUnit_Framework_MockObject_MockObject|CustomFieldProvider */
     protected $customFieldProvider;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|VariantFieldProvider */
+    protected $variantFieldProvider;
+
     /** @var array|string[] */
     protected $variantFields = [self::FIELD_SIZE];
 
@@ -67,10 +77,14 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         ],
     ];
 
+    /**
+     * @var $doctrineHelper \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper $doctrineHelper
+     */
+    protected $doctrineHelper;
+
     protected function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper $doctrineHelper */
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -79,12 +93,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
             ->disableOriginalConstructor()
             ->getMock();
 
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
-            ->with(self::PRODUCT_CLASS)
-            ->willReturn($this->productRepository);
-
-        $this->customFieldProvider = $this->getMockBuilder('Oro\Bundle\ProductBundle\Provider\CustomFieldProvider')
+        $this->customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -98,15 +107,24 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->config = DatagridConfiguration::create($initConfig);
         $this->parameterBag = new ParameterBag();
 
+        $this->variantFieldProvider = $this->getMockBuilder(VariantFieldProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->listener = new ProductVariantCustomFieldsDatagridListener(
-            $doctrineHelper,
+            $this->doctrineHelper,
             $this->customFieldProvider,
+            $this->variantFieldProvider,
             self::PRODUCT_CLASS,
             self::PRODUCT_VARIANT_LINK_CLASS
         );
     }
 
-    public function testOnBuildBeforeHideUnsuitable()
+    /**
+     * User open configurable product and see all available product variants
+     * for configurable product with 2 variant fields (color, size)
+     */
+    public function testOnBuildBeforeHideUnsuitableShowsAllAvailableVariants()
     {
         $product = new Product();
         $product->setVariantFields([
@@ -117,7 +135,8 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->prepareRepositoryProduct($product);
 
         $this->setParameterBag();
-        $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
+        $event = $this->prepareBuildBeforeEvent($this->config);
+        $this->listener->onBuildBeforeHideUnsuitable($event);
 
         $expectedConfigValue = $this->getInitConfig();
         $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', [
@@ -126,6 +145,110 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         ]);
 
         $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
+        ]);
+
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
+    }
+
+    public function testOnBuildBeforeHideUnsuitableShowsAllAvailableVariantsOnCreate()
+    {
+        $product = new Product();
+        $product->setVariantFields([
+            self::FIELD_COLOR,
+            self::FIELD_SIZE,
+        ]);
+
+        $this->prepareRepositoryProduct($product);
+
+        $this->setParameterBag(null);
+        $event = $this->prepareBuildBeforeEvent($this->config);
+        $this->listener->onBuildBeforeHideUnsuitable($event);
+
+        $expectedConfigValue = $this->getInitConfig();
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', ['1 = 0' ]);
+
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
+        ]);
+
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
+    }
+
+    /**
+     * User saves configurable product with "color" variant field and select products with ids 1,2,3 as variants
+     */
+    public function testOnBuildBeforeHideUnsuitableAfterSubmit()
+    {
+        $product = new Product();
+        $product->setVariantFields([
+            self::FIELD_COLOR,
+        ]);
+
+        $this->prepareRepositoryProduct($product);
+
+        $formAppendVariants = '1,2,3';
+
+        $this->setParameterBag();
+        $this->parameterBag->set(ProductVariantCustomFieldsDatagridListener::FORM_APPEND_VARIANTS, $formAppendVariants);
+
+        $event = $this->prepareBuildBeforeEvent($this->config);
+        $this->listener->onBuildBeforeHideUnsuitable($event);
+
+        $expectedConfigValue = $this->getInitConfig();
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', [
+            sprintf('%s.color IS NOT NULL', self::PRODUCT_ALIAS),
+        ]);
+
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IN (%s)', self::PRODUCT_ALIAS, $formAppendVariants),
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
+        ]);
+
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
+    }
+
+    /**
+     * User submit form, got any validation error and then changes variant fields list
+     */
+    public function testOnBuildBeforeHideUnsuitableAfterSubmitAndChangeVariantFields()
+    {
+        $product = new Product();
+        $product->setVariantFields([
+            self::FIELD_COLOR,
+            self::FIELD_SIZE,
+        ]);
+
+        $dataIn = [10, 11];
+
+        $dynamicFields = [
+            'selectedVariantFields' => [
+                self::FIELD_COLOR
+            ],
+            'data_in' => $dataIn,
+            'gridDynamicLoad' => '1'
+        ];
+
+        $this->parameterBag->set('_parameters', $dynamicFields);
+
+        $formAppendVariants = '1,2,3';
+
+        $this->setParameterBag();
+        $this->prepareRepositoryProduct($product);
+
+        $this->parameterBag->set(ProductVariantCustomFieldsDatagridListener::FORM_APPEND_VARIANTS, $formAppendVariants);
+
+        $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
+
+        $expectedConfigValue = $this->getInitConfig();
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', [
+            sprintf('%s.color IS NOT NULL', self::PRODUCT_ALIAS),
+        ]);
+
+        $expectedAppendVariants = implode(',', $dataIn);
+
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IN (%s)', self::PRODUCT_ALIAS, $expectedAppendVariants),
             sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
         ]);
 
@@ -171,7 +294,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->prepareRepositoryProduct($product);
 
         $dynamicFields = [
-          ProductVariantCustomFieldsDatagridListener::FORM_SELECTED_VARIANTS => 0
+            ProductVariantCustomFieldsDatagridListener::FORM_SELECTED_VARIANTS => 0
         ];
 
         $this->parameterBag->set('_parameters', $dynamicFields);
@@ -258,15 +381,17 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Can not find parent product with id "1"
+     */
     public function testOnBuildBeforeHideUnsuitableNotExistingParentProduct()
     {
         $this->prepareRepositoryProduct(null);
 
         $this->setParameterBag();
-        $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
-
-        $expectedConfigValue = $this->getInitConfig();
-        $this->assertEquals($expectedConfigValue, $this->config->toArray());
+        $event = $this->prepareBuildBeforeEvent($this->config);
+        $this->listener->onBuildBeforeHideUnsuitable($event);
     }
 
     public function testOnBuildAfter()
@@ -289,6 +414,71 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->listener->onBuildAfter($this->prepareBuildAfterEvent($datagridConfig));
 
         $this->assertEquals($expectedConfig, $datagridConfig->toArray());
+    }
+
+    public function testOnBuildAfterEditGrid()
+    {
+        $attributeFamilyRepository = $this
+            ->getMockBuilder(AttributeFamilyRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(AttributeFamily::class)
+            ->willReturn($attributeFamilyRepository);
+
+        $attributeFamily = new AttributeFamily();
+
+        $attributeFamilyRepository->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn($attributeFamily);
+
+        $config = [];
+        $this->prepareConfig($config, 'size');
+        $this->prepareConfig($config, 'color');
+        // Expected color and size both
+        $expectedConfig = $config;
+
+        $datagridConfig = DatagridConfiguration::create($config);
+
+        $this->setParameterBag();
+        $this->variantFieldProvider->expects($this->once())
+            ->method('getVariantFields')
+            ->with($attributeFamily)
+            ->willReturn([
+                'color' => new VariantField('color', 'color'),
+                'size' => new VariantField('size', 'size'),
+            ]);
+        $this->listener->onBuildAfterEditGrid($this->prepareBuildAfterEvent($datagridConfig));
+
+        $this->assertEquals($expectedConfig, $datagridConfig->toArray());
+    }
+
+    public function testOnBuildAfterEditGridWithNoFamily()
+    {
+        $attributeFamilyRepository = $this
+            ->getMockBuilder(AttributeFamilyRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(AttributeFamily::class)
+            ->willReturn($attributeFamilyRepository);
+
+        $attributeFamilyRepository->expects($this->once())
+            ->method('find')
+            ->with(1)
+            ->willReturn(null);
+
+        $config = [];
+        $datagridConfig = DatagridConfiguration::create($config);
+
+        $this->setParameterBag();
+        $this->variantFieldProvider->expects($this->never())->method('getVariantFields');
+        $this->listener->onBuildAfterEditGrid($this->prepareBuildAfterEvent($datagridConfig));
     }
 
     /**
@@ -345,6 +535,11 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
      */
     private function prepareRepositoryProduct(Product $product = null)
     {
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->with(self::PRODUCT_CLASS)
+            ->willReturn($this->productRepository);
+
         $this->productRepository->expects($this->any())
             ->method('find')
             ->with(self::PRODUCT_ID)
@@ -376,9 +571,13 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         return $initConfig;
     }
 
-    private function setParameterBag()
+    /**
+     * @param int $productId
+     */
+    private function setParameterBag($productId = self::PRODUCT_ID)
     {
-        $this->parameterBag->set('parentProduct', self::PRODUCT_ID);
+        $this->parameterBag->set('parentProduct', $productId);
+        $this->parameterBag->set('attributeFamily', 1);
     }
 
     /**

@@ -2,7 +2,7 @@ datagrids:
     cms-page-select-grid:
         acl_resource: oro_cms_page_view
         options:
-            entityHint: 'landing page'
+            entityHint: 'landing pages'
         source:
             type:         orm
             query:
@@ -41,7 +41,7 @@ datagrids:
         acl_resource: oro_cms_loginpage_view
         options:
             entity_pagination: true
-            entityHint:        login page
+            entityHint:        login pages
         source:
             type:         orm
             query:
@@ -71,7 +71,7 @@ datagrids:
         acl_resource: oro_cms_page_view
         options:
             entity_pagination: true
-            entityHint:        landing page
+            entityHint:        landing pages
         source:
             type:         orm
             query:
@@ -115,3 +115,87 @@ datagrids:
                 title:
                     type: string
                     data_name: title
+
+    cms-content-block-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - contentBlock.id
+                    - contentBlock.alias
+                    - contentBlock.enabled
+                    - contentBlock.createdAt
+                    - contentBlock.updatedAt
+                from:
+                    - { table: '%oro_cms.entity.content_block.class%', alias: contentBlock }
+        columns:
+            alias:
+                label: oro.cms.contentblock.alias.label
+            title:
+                label: oro.cms.contentblock.titles.singular_label
+            enabled:
+                label: oro.cms.contentblock.enabled.label
+                frontend_type: select
+                choices:
+                   - Disabled
+                   - Enabled
+            createdAt:
+                label: oro.cms.contentblock.createdat.label
+                frontend_type: datetime
+            updatedAt:
+                label: oro.cms.contentblock.updatedat.label
+                frontend_type: datetime
+        sorters:
+            columns:
+                alias:
+                    data_name: contentBlock.alias
+                title:
+                    data_name: title
+                enabled:
+                    data_name: contentBlock.enabled
+                createdAt:
+                    data_name: contentBlock.createdAt
+                updatedAt:
+                    data_name: contentBlock.updatedAt
+            default:
+                updatedAt: DESC
+        filters:
+            columns:
+                alias:
+                    type: string
+                    data_name: contentBlock.alias
+                title:
+                    type: string
+                    data_name: title
+                enabled:
+                    type: boolean
+                    data_name: contentBlock.enabled
+                    options:
+                        field_options:
+                            choices:
+                                1: Enabled
+                                2: Disabled
+                createdAt:
+                    type: datetime
+                    data_name: contentBlock.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: contentBlock.updatedAt
+        properties:
+            id: ~
+            title:
+                type: localized_value
+                data_name: titles
+            view_link:
+                type: url
+                route: oro_cms_content_block_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_cms_content_block_view
+                rowAction:     true

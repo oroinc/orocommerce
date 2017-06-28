@@ -1,0 +1,57 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            form_event_subscriber:
+                - oro_order.form.type.event_listener.subtotals_subscriber
+                - oro_order.api.form_listener.default_website
+            actions:
+                create:
+                    fields:
+                        subtotalValue:
+                            exclude: true
+                        totalValue:
+                            exclude: true
+                        totalDiscountsAmount:
+                            exclude: true
+                update:
+                    fields:
+                        subtotalValue:
+                            exclude: true
+                        totalValue:
+                            exclude: true
+                        totalDiscountsAmount:
+                            exclude: true
+                        currency:
+                            exclude: true
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            fields:
+                # this is added in order to properly handle "price" parameter that is created out of these values
+                # which are not present in validations.yml and so are not handled by api
+                value:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                currency:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+            # there is already a productUnit required property in entity
+            actions:
+                create:
+                    fields:
+                        productUnitCode:
+                            exclude: true
+                update:
+                    fields:
+                        productUnitCode:
+                            exclude: true
+
+        Oro\Bundle\OrderBundle\Entity\OrderAddress: ~
+
+        Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+            form_event_subscriber: oro_order.api.form_listener.discount
+
+        Oro\Bundle\OrderBundle\Entity\OrderShippingTracking: ~

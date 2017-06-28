@@ -25,17 +25,17 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             'priceLists' => [
                 [
                     'priceList' => 'price_list_6',
-                    'priority' => 200,
+                    'sort_order' => 200,
                     'mergeAllowed' => false,
                 ],
                 [
                     'priceList' => 'price_list_1',
-                    'priority' => 100,
+                    'sort_order' => 100,
                     'mergeAllowed' => true,
                 ],
                 [
                     'priceList' => 'price_list_3',
-                    'priority' => 50,
+                    'sort_order' => 50,
                     'mergeAllowed' => false,
                 ],
             ],
@@ -43,36 +43,36 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 'customer.level_1_1' => [ // No group
                     [
                         'priceList' => 'price_list_1',
-                        'priority' => 300,
+                        'sort_order' => 300,
                         'mergeAllowed' => true,
                     ],
                     [
                         'priceList' => 'price_list_2',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => false,
                     ]
                 ],
                 'customer.level_1.3' => [// Assigned to group1
                     [
                         'priceList' => 'price_list_6',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => false,
                     ],
                     [
                         'priceList' => 'price_list_4',
-                        'priority' => 50,
+                        'sort_order' => 50,
                         'mergeAllowed' => true,
                     ],
                     [
                         'priceList' => 'price_list_2',
-                        'priority' => 80,
+                        'sort_order' => 80,
                         'mergeAllowed' => true,
                     ]
                 ],
                 'customer.level_1.2' => [ // Assigned to group2
                     [
                         'priceList' => 'price_list_2',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => true,
                     ]
                 ],
@@ -81,24 +81,24 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 'customer_group.group1' => [
                     [
                         'priceList' => 'price_list_6',
-                        'priority' => 500,
+                        'sort_order' => 500,
                         'mergeAllowed' => false,
                     ],
                     [
                         'priceList' => 'price_list_1',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => true,
                     ],
                     [
                         'priceList' => 'price_list_5',
-                        'priority' => 50,
+                        'sort_order' => 50,
                         'mergeAllowed' => false,
                     ],
                 ],
                 'customer_group.group2' => [
                     [
                         'priceList' => 'price_list_4',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => true,
                     ],
                 ]
@@ -108,7 +108,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             'priceLists' => [
                 [
                     'priceList' => 'price_list_3',
-                    'priority' => 100,
+                    'sort_order' => 100,
                     'mergeAllowed' => true,
                 ]
             ],
@@ -116,14 +116,14 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 'customer.level_1_1' => [ // No group
                     [
                         'priceList' => 'price_list_1',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => true,
                     ]
                 ],
                 'customer.level_1.1.1' => [
                     [
                         'priceList' => 'price_list_5',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => true,
                     ]
                 ]
@@ -132,7 +132,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 'customer_group.group3' => [
                     [
                         'priceList' => 'price_list_5',
-                        'priority' => 100,
+                        'sort_order' => 100,
                         'mergeAllowed' => true,
                     ]
                 ],
@@ -208,7 +208,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
     ) {
         /** @var PriceList $priceList */
         $priceList = $this->getReference($priceListData['priceList']);
-        $priceListToWebsite->setPriority($priceListData['priority']);
+        $priceListToWebsite->setSortOrder($priceListData['sort_order']);
         $priceListToWebsite->setMergeAllowed($priceListData['mergeAllowed']);
         $priceListToWebsite->setWebsite($website);
         $priceListToWebsite->setPriceList($priceList);

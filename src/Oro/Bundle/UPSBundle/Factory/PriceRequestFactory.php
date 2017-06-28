@@ -69,18 +69,18 @@ class PriceRequestFactory
             return null;
         }
 
-        $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getApiPassword());
+        $decryptedPassword = $this->symmetricCrypter->decryptData($transport->getUpsApiPassword());
 
         $priceRequest = (new PriceRequest())
-            ->setUsername($transport->getApiUser())
+            ->setUsername($transport->getUpsApiUser())
             ->setPassword($decryptedPassword)
-            ->setAccessLicenseNumber($transport->getApiKey())
+            ->setAccessLicenseNumber($transport->getUpsApiKey())
             ->setRequestOption($requestOption)
-            ->setShipperName($transport->getShippingAccountName())
-            ->setShipperNumber($transport->getShippingAccountNumber())
+            ->setShipperName($transport->getUpsShippingAccountName())
+            ->setShipperNumber($transport->getUpsShippingAccountNumber())
             ->setShipperAddress($context->getShippingOrigin())
             ->setShipToAddress($context->getShippingAddress())
-            ->setShipFromName($transport->getShippingAccountName())
+            ->setShipFromName($transport->getUpsShippingAccountName())
             ->setShipFromAddress($context->getShippingOrigin());
         
         if (null !== $shippingService) {
@@ -88,7 +88,7 @@ class PriceRequestFactory
                 ->setServiceDescription($shippingService->getDescription());
         }
 
-        $unitOfWeight = $transport->getUnitOfWeight();
+        $unitOfWeight = $transport->getUpsUnitOfWeight();
         if ($unitOfWeight === UPSTransport::UNIT_OF_WEIGHT_KGS) {
             $weightLimit = self::MAX_PACKAGE_WEIGHT_KGS;
         } else {
