@@ -39,7 +39,7 @@ class ProcessUnitPrecisionsCreateTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $configProvider   = $this->getMockBuilder(ConfigProvider::class)
+        $configProvider = $this->getMockBuilder(ConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         $metadataProvider = $this->getMockBuilder(MetadataProvider::class)
@@ -177,6 +177,9 @@ class ProcessUnitPrecisionsCreateTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getPrimaryUnitPrecisionProvider()
     {
         $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
