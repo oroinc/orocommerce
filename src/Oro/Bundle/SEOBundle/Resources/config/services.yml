@@ -22,7 +22,6 @@ services:
         class: 'Oro\Bundle\SEOBundle\EventListener\BrandFormViewListener'
         arguments:
             - '@translator'
-            - '@oro_entity.doctrine_helper'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.brand-edit, method: onBrandEdit }
 

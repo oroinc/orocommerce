@@ -27,40 +27,16 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $this->priceAttributePricesProvider = $this->createMock(PriceAttributePricesProvider::class);
 
-        return parent::setUp();
-    }
-
-    public function testOnViewNoRequest()
-    {
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getRequestStack(null);
-
-        $listener = $this->getListener($requestStack);
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityReference');
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
-        $environment = $this->createMock(\Twig_Environment::class);
-        $event = $this->createEvent($environment);
-        $listener->onProductView($event);
+        parent::setUp();
     }
 
     public function testOnProductView()
     {
-        $productId = 1;
         $product = new Product();
         $templateHtml = 'template_html';
 
-        $request = new Request(['id' => $productId]);
-        $requestStack = $this->getRequestStack($request);
-
         /** @var FormViewListener $listener */
-        $listener = $this->getListener($requestStack);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntity')
-            ->with(Product::class, $productId)
-            ->willReturn($product);
+        $listener = $this->getListener();
 
         $priceList = new PriceAttributePriceList();
 
@@ -104,7 +80,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             )
             ->willReturn($templateHtml);
 
-        $event = $this->createEvent($environment);
+        $event = $this->createEvent($environment, $product);
         $listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
@@ -124,12 +100,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('OroPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
-        $event = $this->createEvent($environment, $formView);
-
-        $requestStack = $this->getRequestStack(null);
+        $entity = new Product();
+        $event = $this->createEvent($environment, $entity, $formView);
 
         /** @var FormViewListener $listener */
-        $listener = $this->getListener($requestStack);
+        $listener = $this->getListener();
         $listener->onProductEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
@@ -156,10 +131,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     /**
      * @param \Twig_Environment $environment
+     * @param object $entity
      * @param FormView $formView
      * @return BeforeListRenderEvent
      */
-    protected function createEvent(\Twig_Environment $environment, FormView $formView = null)
+    protected function createEvent(\Twig_Environment $environment, $entity, FormView $formView = null)
     {
         $defaultData = [
             ScrollData::DATA_BLOCKS => [
@@ -173,33 +149,18 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ],
         ];
 
-        return new BeforeListRenderEvent($environment, new ScrollData($defaultData), new \stdClass(), $formView);
+        return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $entity, $formView);
     }
 
     /**
-     * @param RequestStack $requestStack
      * @return FormViewListener
      */
-    protected function getListener(RequestStack $requestStack)
+    protected function getListener()
     {
         return new FormViewListener(
-            $requestStack,
             $this->translator,
             $this->doctrineHelper,
             $this->priceAttributePricesProvider
         );
-    }
-
-    /**
-     * @param Request|null $request
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestStack
-     */
-    protected function getRequestStack(Request $request = null)
-    {
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->createMock(RequestStack::class);
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($request);
-
-        return $requestStack;
     }
 }

@@ -4,9 +4,9 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -33,28 +33,20 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
      * @var PriceAttributePricesProvider
      */
     protected $priceAttributePricesProvider;
 
     /**
-     * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      * @param PriceAttributePricesProvider $provider
      */
     public function __construct(
-        RequestStack $requestStack,
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
         PriceAttributePricesProvider $provider
     ) {
-        $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->priceAttributePricesProvider = $provider;
@@ -65,16 +57,9 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return;
-        }
-
-        $productId = (int)$request->get('id');
-        /** @var Product|null $product */
-        $product = $this->doctrineHelper->getEntity(Product::class, $productId);
-        if (!$product) {
-            return;
+        $product = $event->getEntity();
+        if (!$product instanceof Product) {
+            throw new UnexpectedTypeException($product, Product::class);
         }
 
         $this->addPriceAttributesViewBlock($event, $product);

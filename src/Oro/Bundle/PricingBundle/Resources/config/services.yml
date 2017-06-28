@@ -237,7 +237,6 @@ services:
     oro_pricing.event_listener.form_view:
         class: 'Oro\Bundle\PricingBundle\EventListener\FormViewListener'
         arguments:
-            - '@request_stack'
             - '@translator'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.providers.price_attribute_prices'
