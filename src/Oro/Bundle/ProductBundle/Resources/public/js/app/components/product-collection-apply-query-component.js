@@ -406,7 +406,7 @@ define(function(require) {
             if ($form.data('validator') && this.$conditionBuilder.parents('.oro-tabs')) {
                 $form.validate()
                     .settings
-                    .ignore = ':hidden:not([type=hidden]):not(:parent.' + this.options.controlsBlockAlias +')';
+                    .ignore = ':hidden:not([type=hidden]):not(:parent.' + this.options.controlsBlockAlias + ')';
             }
         },
 
