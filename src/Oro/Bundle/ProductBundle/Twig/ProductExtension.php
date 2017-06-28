@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
 
@@ -44,11 +48,36 @@ class ProductExtension extends \Twig_Extension
                 'is_configurable_product_type',
                 [$this, 'isConfigurableType']
             ),
+            new \Twig_SimpleFunction(
+                'get_related_products_ids',
+                [$this, 'getRelatedProductsIds']
+            ),
         ];
     }
 
     /**
+     * @param Product $product
+     *
+     * @return Product[]
+     */
+    public function getRelatedProductsIds(Product $product)
+    {
+        /** @var FinderStrategyInterface $finderStrategy */
+        $finderStrategy = $this->container->get('oro.product.related_item.related_product.finder_strategy');
+        /** @var Product[] $related */
+        $related = $finderStrategy->find($product, false, false);
+        $ids = [];
+
+        foreach ($related as $relatedProduct) {
+            $ids[] = $relatedProduct->getId();
+        }
+
+        return $ids;
+    }
+
+    /**
      * @param string $productType
+     *
      * @return bool
      */
     public function isConfigurableType($productType)
@@ -59,6 +88,7 @@ class ProductExtension extends \Twig_Extension
     /**
      * @param bool $numericalOnly
      * @param bool $withRelations
+     *
      * @return array
      */
     public function getAutocompleteData($numericalOnly = false, $withRelations = true)
