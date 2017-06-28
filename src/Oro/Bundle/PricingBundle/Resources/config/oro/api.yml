@@ -24,6 +24,7 @@ api:
                 priceListCurrencies:
                     data_type: array
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
+            form_event_subscriber: oro_pricing.api_form_subscriber.add_schdules_to_price_list
             actions:
                 update:
                     fields:

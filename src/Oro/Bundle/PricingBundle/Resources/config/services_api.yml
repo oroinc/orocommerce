@@ -78,3 +78,6 @@ services:
             - '@oro_api.delete_list.delete_data_by_handler'
         tags:
             - { name: oro.api.processor, action: delete_list, group: delete_data, priority: -15, class: '%oro_pricing.entity.price_rule.class%' }
+
+    oro_pricing.api_form_subscriber.add_schdules_to_price_list:
+        class: 'Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber'

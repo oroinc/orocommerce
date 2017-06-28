@@ -20,4 +20,12 @@ class SchedulesIntersection extends Constraint
     {
         return self::ALIAS;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTargets()
+    {
+        return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];
+    }
 }

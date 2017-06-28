@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection;
@@ -25,12 +26,16 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
 
         $context->expects($this->never())
             ->method('buildViolation');
-
         $collection = $this->normalizeCollection($collection);
 
         $validator = new SchedulesIntersectionValidator();
         $validator->initialize($context);
-        $validator->validate($collection, $constraint);
+
+        $pl = (new PriceList())->setSchedules($collection);
+        foreach($collection as $date) {
+            $date->setPriceList($pl);
+            $validator->validate($date, $constraint);
+        }
     }
 
     /**
@@ -78,21 +83,6 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testNotIterableValue()
-    {
-        $constraint = new SchedulesIntersection();
-        $context = $this->getContextMock();
-
-        $validator = new SchedulesIntersectionValidator();
-        $validator->initialize($context);
-        /** @var array $notIterable */
-        $notIterable = 12;
-        $validator->validate($notIterable, $constraint);
-    }
-
-    /**
      * @dataProvider validateFailDataProvider
      *
      * @param array $collection
@@ -113,19 +103,35 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
             ->with(self::MESSAGE, [])
             ->willReturn($builder);
 
-        foreach ($intersections as $i => $intersection) {
-            $path = sprintf('[%d].%s', $intersection, PriceListScheduleType::ACTIVE_AT_FIELD);
-            $builder->expects($this->at($i))
-                ->method('atPath')
-                ->with($path)
-                ->willReturn($this->getBuilderMock());
-        }
+        $builder->expects($this->exactly(count($intersections)))
+            ->method('atPath')
+            ->with(PriceListScheduleType::ACTIVE_AT_FIELD)
+            ->willReturn($this->getBuilderMock());
 
         $collection = $this->normalizeCollection($collection);
 
         $validator = new SchedulesIntersectionValidator();
         $validator->initialize($context);
-        $validator->validate($collection, $constraint);
+        $pl = (new PriceList())->setSchedules($collection);
+        foreach($collection as $date) {
+            $date->setPriceList($pl);
+            $validator->validate($date, $constraint);
+        }
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testNotPriceListScheduleValue()
+    {
+        $constraint = new SchedulesIntersection();
+        $context = $this->getContextMock();
+
+        $validator = new SchedulesIntersectionValidator();
+        $validator->initialize($context);
+        /** @var array $notIterable */
+        $notIterable = 12;
+        $validator->validate($notIterable, $constraint);
     }
 
     /**
@@ -222,16 +228,27 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $collection
-     * @return array
+     * @return PriceListSchedule[]
      */
     protected function normalizeCollection(array $collection)
     {
         $collection = array_map(function ($dates) {
-            $start = (null === $dates[0]) ? null : new \DateTime($dates[0]);
-            $end = (null === $dates[1]) ? null : new \DateTime($dates[1]);
-            return new PriceListSchedule($start, $end);
+            return $this->normalizeSingleDateData($dates);
         }, $collection);
 
         return $collection;
+    }
+
+    /**
+     * @param array $dates
+     *
+     * @return PriceListSchedule
+     */
+    protected function normalizeSingleDateData(array $dates)
+    {
+        $start = (null === $dates[0]) ? null : new \DateTime($dates[0]);
+        $end = (null === $dates[1]) ? null : new \DateTime($dates[1]);
+
+        return new PriceListSchedule($start, $end);
     }
 }

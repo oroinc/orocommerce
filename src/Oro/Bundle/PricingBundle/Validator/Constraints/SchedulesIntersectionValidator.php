@@ -11,22 +11,34 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 class SchedulesIntersectionValidator extends ConstraintValidator
 {
     /**
-     * @param PriceListSchedule[] $value The value that should be validated
+     * @param PriceListSchedule $value The value that should be validated
      * @param Constraint|SchedulesIntersection $constraint The constraint for the validation
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$this->isIterable($value)) {
-            throw new \InvalidArgumentException('Constraint value should be iterable');
+        if (!$value instanceof PriceListSchedule) {
+            throw new \InvalidArgumentException('Constraint value should be of type ' . PriceListSchedule::class);
         }
 
-        foreach ($value as $index => $schedule) {
-            if ($this->hasIntersection($value, $schedule)) {
-                $path = sprintf('[%d].%s', $index, PriceListScheduleType::ACTIVE_AT_FIELD);
+        $this->validateSchedules($value, $constraint);
+    }
+
+    protected function validateSchedules(PriceListSchedule $validatedSchedule, Constraint $constraint)
+    {
+        if (null === $validatedSchedule->getPriceList()) {
+            return;
+        }
+
+        $schedules = $validatedSchedule->getPriceList()->getSchedules();
+
+        foreach ($schedules as $index => $schedule) {
+            if ($this->hasIntersection($schedules, $validatedSchedule)) {
                 $this->context
-                    ->buildViolation($constraint->message, [])
-                    ->atPath($path)
+                    ->buildViolation($constraint->message)
+                    ->atPath(PriceListScheduleType::ACTIVE_AT_FIELD)
                     ->addViolation();
+
+                break;
             }
         }
     }

@@ -17,7 +17,6 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
                 min: 1
                 groups: [api]
         schedules:
-            - Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
             - Valid: ~
         priceRules:
             - Valid: ~
@@ -53,6 +52,7 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
 
 Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
     constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
         - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
             chain:
                 activeAt: 'Active At'
