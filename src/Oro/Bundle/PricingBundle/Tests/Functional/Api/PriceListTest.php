@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Functional\Builder;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Api;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\PricingBundle\Async\Topics;
