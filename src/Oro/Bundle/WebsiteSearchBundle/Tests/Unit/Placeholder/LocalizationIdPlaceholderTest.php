@@ -58,7 +58,6 @@ class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetValueWithUnknownLocalization()
     {
-
         $this->localizationManager->expects($this->once())
             ->method('getCurrentLocalization')
             ->willReturn(null);

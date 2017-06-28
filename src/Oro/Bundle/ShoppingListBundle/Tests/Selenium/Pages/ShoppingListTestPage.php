@@ -45,7 +45,6 @@ class ShoppingListTestPage extends AbstractPage
 
     public function login()
     {
-
         $this->test->url('/customer/user/login');
         $this->waitPageToLoad();
         $this->waitForAjax();

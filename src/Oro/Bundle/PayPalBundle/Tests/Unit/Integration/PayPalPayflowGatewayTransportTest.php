@@ -18,9 +18,9 @@ class PayPalPayflowGatewayTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testInitCompiles()
     {
-         $settings = new PayPalSettings();
-         $this->transport->init($settings);
-         $this->assertAttributeSame($settings->getSettingsBag(), 'settings', $this->transport);
+        $settings = new PayPalSettings();
+        $this->transport->init($settings);
+        $this->assertAttributeSame($settings->getSettingsBag(), 'settings', $this->transport);
     }
 
     public function testGetSettingsFormType()

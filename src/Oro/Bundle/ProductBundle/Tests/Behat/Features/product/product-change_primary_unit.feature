@@ -1,4 +1,4 @@
-@fixture-Products.yml
+@fixture-quick_order_product.yml
 Feature: User should have the possibility to change Primary Unit
   In order to Check that the User can change and save Primary Unit of Quantity of product
   As administrator
