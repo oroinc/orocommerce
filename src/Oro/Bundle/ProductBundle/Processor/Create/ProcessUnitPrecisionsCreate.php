@@ -72,6 +72,11 @@ class ProcessUnitPrecisionsCreate extends ProcessUnitPrecisions
         return !$this->context->hasErrors();
     }
 
+    /**
+     * @param $relationships
+     * @param $pointer
+     * @return bool
+     */
     public function validatePrimaryUnitPrecision($relationships, $pointer)
     {
         $codes = [];
