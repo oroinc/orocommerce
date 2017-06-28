@@ -1,6 +1,7 @@
 api:
     entities:
         Oro\Bundle\PricingBundle\Entity\PriceList:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list.md'
             actions:
                 create:
                     fields:
@@ -24,6 +25,7 @@ api:
                 priceListCurrencies:
                     data_type: array
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_schedule.md'
             actions:
                 update:
                     fields:
