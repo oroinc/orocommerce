@@ -111,8 +111,9 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
         public: false
         arguments:
-           - '@oro_shopping_list.manager.shopping_list_total'
            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
+           - '@oro_pricing.user_currency_manager'
+           - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 
