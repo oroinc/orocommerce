@@ -97,7 +97,17 @@ class ProductSearchIndexListener
         foreach ($products as $product) {
             // Localized fields
             $category = &$categoryMap[$product->getId()];
+            $brand = $product->getBrand();
             foreach ($localizations as $localization) {
+                if (null !== $brand) {
+                    $event->addPlaceholderField(
+                        $product->getId(),
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        (string)$brand->getName($localization),
+                        [LocalizationIdPlaceholder::NAME => $localization->getId()],
+                        true
+                    );
+                }
                 foreach ($this->getMetaFieldsForEntity($product, $localization) as $metaField) {
                     $this->addPlaceholderToEvent($event, $product->getId(), $metaField, $localization->getId());
                 }

@@ -16,6 +16,8 @@ class LoadHomePageSlider extends AbstractFixture implements DependentFixtureInte
 {
     use UserUtilityTrait;
 
+    const HOME_PAGE_SLIDER_ALIAS = 'home-page-slider';
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +38,7 @@ class LoadHomePageSlider extends AbstractFixture implements DependentFixtureInte
         $slider = new ContentBlock();
         $slider->setOrganization($user->getOrganization());
         $slider->setOwner($user->getOwner());
-        $slider->setAlias('home-page-slider');
+        $slider->setAlias(self::HOME_PAGE_SLIDER_ALIAS);
 
         $title = new LocalizedFallbackValue();
         $title->setString('Home Page Slider');
