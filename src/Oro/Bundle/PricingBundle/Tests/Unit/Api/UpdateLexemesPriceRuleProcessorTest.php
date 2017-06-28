@@ -3,78 +3,25 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api;
 
 use Oro\Bundle\PricingBundle\Api\UpdateLexemesPriceRuleProcessor;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use Oro\Component\ChainProcessor\ContextInterface;
 
-class UpdateLexemesPriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
+class UpdateLexemesPriceRuleProcessorTest extends AbstractUpdateLexemesTest
 {
     /**
      * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $priceRuleLexemesHandler;
+    protected $priceRuleLexemesHandler;
 
     /**
      * @var UpdateLexemesPriceRuleProcessor
      */
-    private $testedProcessor;
+    protected $testedProcessor;
 
     protected function setUp()
     {
         $this->priceRuleLexemesHandler = $this->createMock(PriceRuleLexemeHandler::class);
 
         $this->testedProcessor = new UpdateLexemesPriceRuleProcessor($this->priceRuleLexemesHandler);
-    }
-
-    /**
-     * @param PriceRule|null $priceRule
-     *
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createContextMock(PriceRule $priceRule = null)
-    {
-        $contextMock = $this->createMock(ContextInterface::class);
-
-        if (null === $priceRule) {
-            return $contextMock;
-        }
-
-        $contextMock
-            ->expects(static::any())
-            ->method('getResult')
-            ->willReturn($priceRule);
-
-        return $contextMock;
-    }
-
-    /**
-     * @param PriceList|null $priceList
-     *
-     * @return PriceRule|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createPriceRuleMock(PriceList $priceList = null)
-    {
-        $priceRuleMock = $this->createMock(PriceRule::class);
-
-        if (null === $priceList) {
-            return $priceRuleMock;
-        }
-
-        $priceRuleMock
-            ->expects(static::any())
-            ->method('getPriceList')
-            ->willReturn($priceList);
-
-        return $priceRuleMock;
-    }
-
-    /**
-     * @return PriceList|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createPriceListMock()
-    {
-        return $this->createMock(PriceList::class);
     }
 
     public function testProcess()
