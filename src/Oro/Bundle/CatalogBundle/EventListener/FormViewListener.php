@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
@@ -13,6 +14,9 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class FormViewListener
 {
+    const CATEGORY_FIELD = 'category';
+    const GENERAL_BLOCK = 'general';
+
     /**
      * @var TranslatorInterface
      */
@@ -24,23 +28,15 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
-     * @param RequestStack $requestStack
      */
     public function __construct(
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper,
-        RequestStack $requestStack
+        DoctrineHelper $doctrineHelper
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-        $this->requestStack = $requestStack;
     }
 
     /**
@@ -48,42 +44,26 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $request = $this->requestStack->getCurrentRequest();
+        $product = $event->getEntity();
 
-        if (!$request) {
-            return;
-        }
-
-        $productId = (int)$request->get('id');
-        if (!$productId) {
-            return;
-        }
-
-        /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroProductBundle:Product', $productId);
-        if (!$product) {
-            return;
+        if (!$product instanceof Product) {
+            throw new UnexpectedTypeException($product, Product::class);
         }
 
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository('OroCatalogBundle:Category');
         $category = $repository->findOneByProduct($product);
 
+        if (!$category) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
             'OroCatalogBundle:Product:category_view.html.twig',
             ['entity' => $category]
         );
-        $scrollData = $event->getScrollData()->getData();
-        if (!empty($scrollData[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA])) {
-            $subData = $scrollData[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA];
-            if (array_key_exists('category', $subData)) {
-                $subData['category'] = $template;
-            } else {
-                $subData = ['category' => $template] + $subData;    // insert as first element
-            }
-            $scrollData[ScrollData::DATA_BLOCKS]['general'][ScrollData::SUB_BLOCKS][0][ScrollData::DATA] = $subData;
-            $event->getScrollData()->setData($scrollData);
-        }
+
+        $this->prependCategoryBlock($event->getScrollData(), $template);
     }
 
     /**
@@ -100,13 +80,34 @@ class FormViewListener
 
     /**
      * @param ScrollData $scrollData
-     * @param string     $html
+     * @param string $html
      */
     protected function addCategoryBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('oro.catalog.product.section.catalog');
-        $blockId    = $scrollData->addBlock($blockLabel);
+        $blockId = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
+    }
+
+    /**
+     * @param ScrollData $scrollData
+     * @param string $template
+     */
+    private function prependCategoryBlock(ScrollData $scrollData, $template)
+    {
+        $data = $scrollData->getData();
+
+        if (!empty($data[ScrollData::DATA_BLOCKS][self::GENERAL_BLOCK][ScrollData::SUB_BLOCKS][0][ScrollData::DATA])) {
+            /** @var array $subData */
+            $subData = $data[ScrollData::DATA_BLOCKS][self::GENERAL_BLOCK][ScrollData::SUB_BLOCKS][0][ScrollData::DATA];
+
+            // No any sort support of fields order
+            // insert as first element
+            $subData = [self::CATEGORY_FIELD => $template] + $subData;
+
+            $data[ScrollData::DATA_BLOCKS][self::GENERAL_BLOCK][ScrollData::SUB_BLOCKS][0][ScrollData::DATA] = $subData;
+            $scrollData->setData($data);
+        }
     }
 }

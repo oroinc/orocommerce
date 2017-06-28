@@ -11,7 +11,7 @@ class PageFormViewListener extends BaseFormViewListener
      */
     public function onPageView(BeforeListRenderEvent $event)
     {
-        $this->addViewPageBlock($event, 'OroCMSBundle:Page');
+        $this->addViewPageBlock($event);
     }
 
     /**

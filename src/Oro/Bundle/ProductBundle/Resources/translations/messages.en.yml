@@ -17,7 +17,6 @@ oro:
         type.label: Type
         owner.label: Owner
         organization.label: Organization
-        primary_unit_precision.label.short: Unit
         primary_unit_precision.label: Unit of Quantity
         primary_unit_precision_id.label: Primary Unit Precision Id
         additional_unit_precisions.label: Additional Units

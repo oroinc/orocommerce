@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\SEOBundle\EventListener\BrandFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
 {
@@ -13,7 +16,7 @@ class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new BrandFormViewListener($this->requestStack, $this->translator, $this->doctrineHelper);
+        $this->listener = new BrandFormViewListener($this->translator, $this->doctrineHelper);
     }
 
     protected function tearDown()
@@ -26,7 +29,10 @@ class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
     public function testOnCategoryEdit()
     {
         $env = $this->getEnvironmentForEdit();
-        $event = $this->getEventForEdit($env);
+        $scrollData = new ScrollData();
+        $brand = new Brand();
+
+        $event = new BeforeListRenderEvent($env, $scrollData, $brand);
 
         $this->listener->onBrandEdit($event);
     }

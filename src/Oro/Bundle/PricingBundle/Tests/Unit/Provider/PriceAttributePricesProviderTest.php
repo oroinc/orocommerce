@@ -2,23 +2,23 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\Product;
-
-use Doctrine\ORM\EntityRepository;
 
 class PriceAttributePricesProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $helper;
+    protected $doctrineHelper;
 
     /**
      * @var PriceAttributePricesProvider
@@ -27,57 +27,81 @@ class PriceAttributePricesProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->helper = $this->createMock(DoctrineHelper::class);
-        $this->priceAttributePricesProvider = new PriceAttributePricesProvider($this->helper);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->priceAttributePricesProvider = new PriceAttributePricesProvider($this->doctrineHelper);
     }
 
-    public function testGetPrices()
+    public function testGetPricesWithUnitAndCurrencies()
     {
-        /** @var PriceAttributePriceList|\PHPUnit_Framework_MockObject_MockObject $priceList **/
-        $priceList = $this->createMock(PriceAttributePriceList::class);
-        $priceList->expects($this->atLeastOnce())->method('getCurrencies')->willReturn(['USD', 'EUR']);
+        $priceList = new PriceAttributePriceList();
+        $priceList->setCurrencies(['USD', 'EUR', 'GBP']);
 
-        /** @var Product|\PHPUnit_Framework_MockObject_MockObject $product **/
-        $product = $this->createMock(Product::class);
-        $product->expects($this->once())->method('getAvailableUnitCodes')
-            ->willReturn(['set', 'item']);
+        $itemUnitPrecision = $this->createProductUnitPrecision('set');
+        $setUnitPrecision = $this->createProductUnitPrecision('item');
 
-        $entityRepository = $this->createMock(EntityRepository::class);
-        $entityRepository->expects($this->once())->method('findBy')
+        $product = new Product();
+        $product->addUnitPrecision($setUnitPrecision);
+        $product->addUnitPrecision($itemUnitPrecision);
+
+        $setUsd = $this->getPriceAttributeProductPrice('set', 'USD');
+        $setEur = $this->getPriceAttributeProductPrice('set', 'EUR');
+        $itemUsd = $this->getPriceAttributeProductPrice('item', 'USD');
+        $itemEur = $this->getPriceAttributeProductPrice('item', 'EUR');
+
+        $priceAttributeProductPriceRepository = $this->createMock(EntityRepository::class);
+        $priceAttributeProductPriceRepository->expects($this->once())->method('findBy')
             ->with(['product' => $product, 'priceList' => $priceList])->willReturn([
-                $setUsd = $this->preparePrice('set', 'USD'),
-                $setEur = $this->preparePrice('set', 'EUR'),
-                $itemUsd = $this->preparePrice('item', 'USD'),
-                $itemEur = $this->preparePrice('item', 'EUR'),
+                $setUsd,
+                $setEur,
+                $itemUsd,
+                $itemEur,
             ]);
 
-        $this->helper->expects($this->once())->method('getEntityRepository')
-            ->willReturn($entityRepository);
+        $this->doctrineHelper->expects($this->once())->method('getEntityRepository')
+            ->with(PriceAttributeProductPrice::class)
+            ->willReturn($priceAttributeProductPriceRepository);
 
-        $this->assertSame(
+        $this->assertEquals(
             [
                 'set' => ['USD' => $setUsd, 'EUR' => $setEur],
                 'item' => ['USD' => $itemUsd, 'EUR' => $itemEur],
             ],
-            $this->priceAttributePricesProvider->getPrices($priceList, $product)
+            $this->priceAttributePricesProvider->getPricesWithUnitAndCurrencies($priceList, $product)
         );
     }
 
     /**
      * @param string $unitCode
      * @param string $currency
-     * @return PriceAttributeProductPrice|\PHPUnit_Framework_MockObject_MockObject
+     * @return PriceAttributeProductPrice
      */
-    protected function preparePrice($unitCode, $currency)
+    protected function getPriceAttributeProductPrice($unitCode, $currency)
     {
-        $priceAttributeProductPrice = $this->createMock(PriceAttributeProductPrice::class);
-        $priceAttributeProductPrice->expects($this->atLeastOnce())->method('getProductUnitCode')->willReturn($unitCode);
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($unitCode);
 
-        $price = $this->createMock(Price::class);
-        $price->expects($this->atLeastOnce())->method('getCurrency')->willReturn($currency);
+        $price = Price::create(10, $currency);
+        $price->setCurrency($currency);
 
-        $priceAttributeProductPrice->expects($this->atLeastOnce())->method('getPrice')->willReturn($price);
+        $priceAttributeProductPrice = new PriceAttributeProductPrice();
+        $priceAttributeProductPrice->setUnit($productUnit);
+        $priceAttributeProductPrice->setPrice($price);
 
         return $priceAttributeProductPrice;
+    }
+
+    /**
+     * @param string $code
+     * @return ProductUnitPrecision
+     */
+    private function createProductUnitPrecision($code)
+    {
+        $unit = new ProductUnit();
+        $unit->setCode($code);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($unit);
+
+        return $unitPrecision;
     }
 }

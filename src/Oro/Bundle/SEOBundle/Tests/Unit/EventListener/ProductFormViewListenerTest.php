@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Traits\FormViewListenerWrongProductTestTrait;
-use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
 
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 {
-    use FormViewListenerWrongProductTestTrait;
-
     /** @var ProductFormViewListener */
     protected $listener;
 
@@ -18,7 +16,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new ProductFormViewListener($this->requestStack, $this->translator, $this->doctrineHelper);
+        $this->listener = new ProductFormViewListener($this->translator);
     }
 
     protected function terDown()
@@ -30,44 +28,26 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 
     public function testOnProductView()
     {
-        $this->request
-            ->expects($this->any())
-            ->method('get')
-            ->with('id')
-            ->willReturn(1);
-
         $product = new Product();
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getEnvironmentForView($product, $this->listener->getMetaFieldLabelPrefix());
-        $event = $this->getEventForView($env);
+        $scrollData = new ScrollData();
+
+        $event = new BeforeListRenderEvent($env, $scrollData, $product);
 
         $this->listener->onProductView($event);
     }
 
     public function testOnProductEdit()
     {
+        $product = new Product();
+
         $env = $this->getEnvironmentForEdit();
-        $event = $this->getEventForEdit($env);
+        $scrollData = new ScrollData();
+
+        $event = new BeforeListRenderEvent($env, $scrollData, $product);
 
         $this->listener->onProductEdit($event);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getScrollData()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->createMock(ScrollData::class);
-        $scrollData->expects($this->any())
-            ->method('addSubBlockData');
-
-        return $scrollData;
     }
 
     /**
@@ -82,32 +62,39 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $env->expects($this->exactly(3))
+        $env->expects($this->exactly(4))
             ->method('render')
             ->willReturnMap([
                 [
+                    'OroSEOBundle:SEO:title_view.html.twig',
+                    [
+                        'entity' => $entityObject,
+                        'labelPrefix' => $labelPrefix,
+                    ],
+                    '',
+                ],                [
                     'OroSEOBundle:SEO:description_view.html.twig',
                     [
                         'entity' => $entityObject,
-                        'labelPrefix' => $labelPrefix
+                        'labelPrefix' => $labelPrefix,
                     ],
-                    ''
+                    '',
                 ],
                 [
                     'OroSEOBundle:SEO:keywords_view.html.twig',
                     [
                         'entity' => $entityObject,
-                        'labelPrefix' => $labelPrefix
+                        'labelPrefix' => $labelPrefix,
                     ],
-                    ''
+                    '',
                 ],
                 [
                     'OroRedirectBundle::entitySlugs.html.twig',
                     [
                         'entitySlugs' => $entityObject->getSlugs(),
                     ],
-                    ''
-                ]
+                    '',
+                ],
             ]);
 
         return $env;

@@ -19,38 +19,20 @@ abstract class BaseFormViewListener
     protected $translator;
 
     /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(
-        RequestStack $requestStack,
-        TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper
-    ) {
-        $this->requestStack = $requestStack;
+    public function __construct(TranslatorInterface $translator)
+    {
         $this->translator = $translator;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
      * @param BeforeListRenderEvent $event
-     * @param string $entityClass
      * @param int $priority
      */
-    protected function addViewPageBlock(BeforeListRenderEvent $event, $entityClass, $priority = 10)
+    protected function addViewPageBlock(BeforeListRenderEvent $event, $priority = 10)
     {
-        $object = $this->extractEntityFromCurrentRequest($entityClass);
+        $object = $event->getEntity();
         if (!$object) {
             return;
         }
@@ -62,11 +44,11 @@ abstract class BaseFormViewListener
         ]);
         $descriptionTemplate = $twigEnv->render('OroSEOBundle:SEO:description_view.html.twig', [
             'entity' => $object,
-            'labelPrefix' => $this->getMetaFieldLabelPrefix()
+            'labelPrefix' => $this->getMetaFieldLabelPrefix(),
         ]);
         $keywordsTemplate = $twigEnv->render('OroSEOBundle:SEO:keywords_view.html.twig', [
             'entity' => $object,
-            'labelPrefix' => $this->getMetaFieldLabelPrefix()
+            'labelPrefix' => $this->getMetaFieldLabelPrefix(),
         ]);
 
         $this->addSEOBlock($event->getScrollData(), $titleTemplate, $descriptionTemplate, $keywordsTemplate, $priority);
@@ -117,25 +99,6 @@ abstract class BaseFormViewListener
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $titleTemplate, 'metaTitles');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $descriptionTemplate, 'metaDescriptions');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $rightSubBlock, $keywordsTemplate, 'metaKeywords');
-    }
-
-    /**
-     * @param string $entityClass
-     * @return null|object
-     */
-    protected function extractEntityFromCurrentRequest($entityClass)
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return null;
-        }
-
-        $objectId = (int)$request->get('id');
-        if (!$objectId) {
-            return null;
-        }
-
-        return $this->doctrineHelper->getEntity($entityClass, $objectId);
     }
 
     /**

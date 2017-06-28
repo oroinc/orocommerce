@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
+use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -14,12 +15,27 @@ class ProductFormViewListener extends BaseFormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $product = $this->extractEntityFromCurrentRequest(Product::class);
+        $product = $event->getEntity();
+
         if (!$product instanceof Product) {
-            return;
+            throw new UnexpectedTypeException($product, Product::class);
         }
 
+        $this->addViewPageBlock($event);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function addViewPageBlock(BeforeListRenderEvent $event, $priority = 10)
+    {
+        $product = $event->getEntity();
+
         $twigEnv = $event->getEnvironment();
+        $titleTemplate = $twigEnv->render('OroSEOBundle:SEO:title_view.html.twig', [
+            'entity' => $product,
+            'labelPrefix' => $this->getMetaFieldLabelPrefix()
+        ]);
         $descriptionTemplate = $twigEnv->render('OroSEOBundle:SEO:description_view.html.twig', [
             'entity' => $product,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
@@ -36,6 +52,7 @@ class ProductFormViewListener extends BaseFormViewListener
         $scrollData->addNamedBlock(self::SEO_BLOCK_ID, $blockLabel, 800);
         $subBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $subBlock, $slugsTemplate, 'generatedSlugs');
+        $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $subBlock, $titleTemplate, 'metaTitles');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $subBlock, $descriptionTemplate, 'metaDescriptions');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $subBlock, $keywordsTemplate, 'metaKeywords');
     }

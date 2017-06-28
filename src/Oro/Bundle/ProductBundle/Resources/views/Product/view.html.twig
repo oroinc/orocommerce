@@ -123,7 +123,7 @@
             }
             ) }}
         {% endset %}
-        {% set unitOfQuantityData = { 'unitOfQuantity' : UI.renderHtmlProperty('oro.product.primary_unit_precision.label.short'|trans, primaryUnitPrecisionElement) } %}
+        {% set unitOfQuantityData = { 'unitOfQuantity' : UI.renderHtmlProperty('oro.product.productunitprecision.unit.label'|trans, primaryUnitPrecisionElement) } %}
     {% endif %}
 
     {% if entity.additionalUnitPrecisions.count %}

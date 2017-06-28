@@ -12,15 +12,14 @@ class PriceAttributePricesProvider
     /**
      * @var DoctrineHelper
      */
-    protected $helper;
+    protected $doctrineHelper;
 
     /**
-     * PriceAttributePricesProvider constructor.
-     * @param DoctrineHelper $helper
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(DoctrineHelper $helper)
+    public function __construct(DoctrineHelper $doctrineHelper)
     {
-        $this->helper = $helper;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -28,11 +27,11 @@ class PriceAttributePricesProvider
      * @param Product $product
      * @return array
      */
-    public function getPrices(PriceAttributePriceList $priceList, Product $product)
+    public function getPricesWithUnitAndCurrencies(PriceAttributePriceList $priceList, Product $product)
     {
         $data = [];
         /** @var PriceAttributeProductPrice[] $priceAttributePrices */
-        $priceAttributePrices = $this->helper
+        $priceAttributePrices = $this->doctrineHelper
             ->getEntityRepository(PriceAttributeProductPrice::class)
             ->findBy(['product' => $product, 'priceList' => $priceList]);
 
@@ -64,6 +63,7 @@ class PriceAttributePricesProvider
                 return $price;
             }
         }
+
         return null;
     }
 }

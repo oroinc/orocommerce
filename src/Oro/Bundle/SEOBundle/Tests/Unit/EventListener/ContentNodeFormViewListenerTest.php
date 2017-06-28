@@ -3,6 +3,8 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\SEOBundle\EventListener\ContentNodeFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
@@ -16,11 +18,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new ContentNodeFormViewListener(
-            $this->requestStack,
-            $this->translator,
-            $this->doctrineHelper
-        );
+        $this->listener = new ContentNodeFormViewListener($this->translator);
     }
 
     protected function tearDown()
@@ -28,31 +26,22 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
         unset($this->listener);
     }
 
-    public function testOnContentNodeView()
+    public function testOnContentNodeViewWithEmptyScrollData()
     {
-        $this->request
-            ->expects($this->any())
-            ->method('get')
-            ->with('id')
-            ->willReturn(1);
-
         $page = new ContentNode();
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($page);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getEnvironmentForView($page, $this->listener->getMetaFieldLabelPrefix());
-        $event = $this->getEventForView($env);
 
+        $event = new BeforeListRenderEvent($env, new ScrollData(), $page);
         $this->listener->onContentNodeView($event);
     }
 
     public function testOnLandingContentNodeEdit()
     {
         $env = $this->getEnvironmentForEdit();
-        $event = $this->getEventForEdit($env);
+        $page = new ContentNode();
+        $event = new BeforeListRenderEvent($env, new ScrollData(), $page);
 
         $this->listener->onContentNodeEdit($event);
     }

@@ -39,10 +39,8 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->em = $this->createMock(EntityManager::class);
     }
 
     protected function tearDown()
@@ -51,6 +49,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @deprecated Don't mock DTO. Just instantiate it.
      * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getBeforeListRenderEvent()
@@ -65,6 +64,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @deprecated Don't mock DTO. Just instantiate it.
      * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getBeforeListRenderEventMock()
@@ -75,6 +75,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @deprecated Don't mock DTO. Just instantiate it.
      * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
      */
     protected function getScrollData()
@@ -82,7 +83,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
         $scrollData = $this->createMock(ScrollData::class);
 
-        $scrollData->expects($this->any())
+        $scrollData->expects($this->once())
             ->method('addBlock');
 
         $scrollData->expects($this->any())

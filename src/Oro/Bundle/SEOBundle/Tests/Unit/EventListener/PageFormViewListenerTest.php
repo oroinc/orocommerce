@@ -4,6 +4,8 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\SEOBundle\EventListener\PageFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 class PageFormViewListenerTest extends BaseFormViewListenerTestCase
 {
@@ -14,7 +16,7 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new PageFormViewListener($this->requestStack, $this->translator, $this->doctrineHelper);
+        $this->listener = new PageFormViewListener($this->translator);
     }
 
     protected function tearDown()
@@ -26,29 +28,24 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
 
     public function testOnLandingPageView()
     {
-        $this->request
-            ->expects($this->any())
-            ->method('get')
-            ->with('id')
-            ->willReturn(1);
-
         $page = new Page();
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($page);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getEnvironmentForView($page, $this->listener->getMetaFieldLabelPrefix());
-        $event = $this->getEventForView($env);
+        $scrollData = new ScrollData();
+
+        $event = new BeforeListRenderEvent($env, $scrollData, $page);
 
         $this->listener->onPageView($event);
     }
 
     public function testOnLandingPageEdit()
     {
+        $page = new Page();
+
         $env = $this->getEnvironmentForEdit();
-        $event = $this->getEventForEdit($env);
+        $scrollData = new ScrollData();
+
+        $event = new BeforeListRenderEvent($env, $scrollData, $page);
 
         $this->listener->onPageEdit($event);
     }

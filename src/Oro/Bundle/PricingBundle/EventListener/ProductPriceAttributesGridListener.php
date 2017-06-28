@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\DataGridBundle\Exception\UnexpectedTypeException;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ArrayDatasource\ArrayDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
@@ -11,21 +15,18 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-
-use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceAttributesGridListener
 {
     /**
      * @var DoctrineHelper
      */
-    protected $helper;
+    protected $doctrineHelper;
 
     /**
      * @var PriceAttributePricesProvider
      */
-    protected $provider;
+    protected $priceAttributePricesProvider;
 
     /**
      * @var TranslatorInterface
@@ -33,7 +34,6 @@ class ProductPriceAttributesGridListener
     protected $translator;
 
     /**
-     * ProductPriceAttributesGridListener constructor.
      * @param DoctrineHelper $helper
      * @param PriceAttributePricesProvider $provider
      * @param TranslatorInterface $translator
@@ -43,8 +43,8 @@ class ProductPriceAttributesGridListener
         PriceAttributePricesProvider $provider,
         TranslatorInterface $translator
     ) {
-        $this->helper = $helper;
-        $this->provider = $provider;
+        $this->doctrineHelper = $helper;
+        $this->priceAttributePricesProvider = $provider;
         $this->translator = $translator;
     }
 
@@ -54,14 +54,12 @@ class ProductPriceAttributesGridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
-        $priceListId = $event->getDatagrid()->getParameters()->get('price_list_id');
-        if (!$priceListId) {
-            throw new \LogicException('Cant find price list id among datagrid`s parameters');
-        }
+        $priceListId = $this->getParameter($event->getDatagrid(), 'price_list_id');
+
         /** @var PriceAttributePriceList|null $priceList */
-        $priceList = $this->helper->getEntity(PriceAttributePriceList::class, $priceListId);
+        $priceList = $this->doctrineHelper->getEntity(PriceAttributePriceList::class, $priceListId);
         if (!$priceList) {
-            throw new \LogicException("Cant find price list with id '$priceListId'");
+            throw new \LogicException(sprintf('Can not find price attribute price list (id: %d)', $priceListId));
         }
 
         $config = $event->getConfig();
@@ -84,23 +82,29 @@ class ProductPriceAttributesGridListener
      */
     public function onBuildAfter(BuildAfter $event)
     {
-        $datasource = $event->getDatagrid()->getDatasource();
+        $datagrid = $event->getDatagrid();
+        $datasource = $datagrid->getDatasource();
+
         if (!$datasource instanceof ArrayDatasource) {
-            throw new \LogicException('Wrong datasource type');
-        }
-        $productId = $event->getDatagrid()->getParameters()->get('product_id');
-        $priceListId = $event->getDatagrid()->getParameters()->get('price_list_id');
-        if (!$productId || !$priceListId) {
-            throw new \LogicException('Cant find required price list & product ids among datagrid`s parameters');
+            throw new UnexpectedTypeException($datasource, ArrayDatasource::class);
         }
 
+        $productId = $this->getParameter($datagrid, 'product_id');
+        $priceListId = $this->getParameter($datagrid, 'price_list_id');
+
         /** @var Product|null $product */
-        $product = $this->helper->getEntity(Product::class, $productId);
-        /** @var PriceAttributePriceList|null $priceList */
-        $priceList = $this->helper->getEntity(PriceAttributePriceList::class, $priceListId);
-        if (!$product || !$priceList) {
-            throw new \LogicException('Cant find price list or product with specified ids');
+        $product = $this->doctrineHelper->getEntity(Product::class, $productId);
+
+        if (!$product) {
+            throw new \LogicException(sprintf('Can not find product (id: %d)', $productId));
         }
+
+        /** @var PriceAttributePriceList|null $priceList */
+        $priceList = $this->doctrineHelper->getEntity(PriceAttributePriceList::class, $priceListId);
+        if (!$priceList) {
+            throw new \LogicException(sprintf('Can not find price attribute price list (id: %d)', $priceListId));
+        }
+
         $datasource->setArraySource($this->createSource($priceList, $product));
     }
 
@@ -114,10 +118,12 @@ class ProductPriceAttributesGridListener
         $source = [];
         $currencies = $priceList->getCurrencies();
 
-        /** @var ProductUnit $unit */
+        $priceAttributePrices = $this->priceAttributePricesProvider
+            ->getPricesWithUnitAndCurrencies($priceList, $product);
+
         /** @var PriceAttributeProductPrice[] $prices */
-        foreach ($this->provider->getPrices($priceList, $product) as $unitCode => $prices) {
-            $row = ['unit' => $this->capitalize($unitCode)];
+        foreach ($priceAttributePrices as $unitCode => $prices) {
+            $row = ['unit' => $unitCode];
             foreach ($currencies as $currency) {
                 $result = !empty($prices[$currency]) ?
                     $prices[$currency]->getPrice()->getValue() :
@@ -127,16 +133,23 @@ class ProductPriceAttributesGridListener
             }
             $source[] = $row;
         }
+
         return $source;
     }
 
     /**
-     * @desc own variant of ucfirst() because last one does not work with UTF-8
-     * @param string $string
-     * @return string
+     * @param DatagridInterface $datagrid
+     * @param string $parameterName
+     * @return mixed
      */
-    protected function capitalize($string)
+    protected function getParameter(DatagridInterface $datagrid, $parameterName)
     {
-        return mb_strtoupper(mb_substr($string, 0, 1)) . mb_substr($string, 1);
+        $value = $datagrid->getParameters()->get($parameterName);
+
+        if ($value === null) {
+            throw new \LogicException(sprintf('Parameter "%s" must be set', $parameterName));
+        }
+
+        return $value;
     }
 }
