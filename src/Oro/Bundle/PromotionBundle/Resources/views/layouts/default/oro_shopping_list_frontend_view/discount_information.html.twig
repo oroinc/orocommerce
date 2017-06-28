@@ -1,13 +1,13 @@
 {% block _promotion_line_items_list_discount_info_widget %}
-    {% set matchedDiscount = parent.lineItemDiscounts[lineItem.id] is not empty ? parent.lineItemDiscounts[lineItem.id] : null %}
-    {% if matchedDiscount is defined and matchedDiscount.value > 0 %}
+    {% set matchedDiscount = parent.lineItemDiscounts.contains(lineItem) ? parent.lineItemDiscounts[lineItem] : null %}
+    {% if matchedDiscount is not null and matchedDiscount.total.value > 0 %}
         <table class="table borderless paddingless mb0-md">
             <tbody>
             <tr>
                 <td>{{ 'oro.frontend.shoppinglist.view.discount.label'|trans }}</td>
                 <td class="text-right">
                     <span data-name="discount-value">
-                        {{ matchedDiscount|oro_format_price }}
+                        {{ matchedDiscount.total|oro_format_price }}
                     </span>
                 </td>
             </tr>

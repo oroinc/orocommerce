@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'discount_information.html.twig'
+        - '@setOption':
+            id: 'checkout_order_summary_line_items'
+            optionName: 'lineItemDiscounts'
+            optionValue: '=data["oro_promotion_discounts_information"].getDiscountLineItemDiscounts(data["checkout"].getSourceEntity())'
+        - '@add':
+            id: 'promotion_checkout_line_items_list_discount_info'
+            parentId: 'checkout_order_summary_line_item_price_column'
+            blockType: block
+            siblingId: 'checkout_order_summary_line_item_price_per_item'

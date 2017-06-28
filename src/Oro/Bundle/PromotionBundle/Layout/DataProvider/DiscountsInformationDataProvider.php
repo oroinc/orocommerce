@@ -30,18 +30,21 @@ class DiscountsInformationDataProvider
 
     /**
      * @param object $sourceEntity
-     * @return array|Price[]
+     * @return \SplObjectStorage
      */
-    public function getDiscountLineItemDiscounts($sourceEntity): array
+    public function getDiscountLineItemDiscounts($sourceEntity): \SplObjectStorage
     {
-        $info = [];
+        $info = new \SplObjectStorage();
         $currency = $this->currencyManager->getUserCurrency();
         if ($this->promotionExecutor->supports($sourceEntity)) {
             $discountContext = $this->promotionExecutor->execute($sourceEntity);
             foreach ($discountContext->getLineItems() as $lineItem) {
-                $info[$lineItem->getSourceLineItem()->getId()] = Price::create(
-                    $lineItem->getDiscountTotal(),
-                    $currency
+                $info->attach(
+                    $lineItem->getSourceLineItem(),
+                    [
+                        'total' => Price::create($lineItem->getDiscountTotal(), $currency),
+                        'details' => $lineItem->getDiscountsInformation()
+                    ]
                 );
             }
         }
