@@ -1,26 +1,54 @@
 {% block __oro_checkout_content__checkout_information_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout"}) %}
-    <div{{ block('block_attributes') }}>
-        <div class="checkout__body">
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block _checkout_form_fields_widget %}
+    {{ block_widget(block) }}
+    {{ form_rest(form) }}
+{% endblock %}
+
+{% block _checkout_view_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view"}) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _checkout_shipping_information_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
+    <div {{ block('block_attributes') }}>
+        <h2 class="checkout-view__title">
+            <span class="checkout-view__badge">1</span>{{ 'Shipping information'|trans }}
+        </h2>
+        <div class="checkout-view__column-inner">
             {{ block_widget(block) }}
         </div>
     </div>
 {% endblock %}
 
-{% block _checkout_form_fields_widget %}
-    {{ block_widget(block) }}
+{% block _checkout_billing_information_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
+    <div {{ block('block_attributes') }}>
+        <h2 class="checkout-view__title">
+            <span class="checkout-view__badge">2</span>{{ 'Billing information'|trans }}
+        </h2>
+        <div class="checkout-view__column-inner">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
 
-    {{ form_rest(form) }}
+{% block _checkout_summary_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _shipping_address_widget -%}
     {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
-        <fieldset class="grid__row grid__row--offset-none">
-            <div class="grid__column grid__column--offset-y grid__column--6">
-                {{ renderAddress(checkout.shippingAddress) }}
-            </div>
-        </fieldset>
+        {{ renderAddress(checkout.shippingAddress) }}
     {% else %}
         {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
         {% set hasCustomAddress = false %}
@@ -40,22 +68,12 @@
                  hideInputOnShipTo: true
              }|json_encode }}">
 
-            <div class="grid">
-                <div class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--6">
-                        {{ form_row(form.shipping_address.customerAddress) }}
-                    </div>
-                </div>
-            </div>
+            {{ form_row(form.shipping_address.customerAddress) }}
 
             {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
 
             {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-                <fieldset class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--offset-y">
-                        {{ form_row(form.ship_to_billing_address) }}
-                    </div>
-                </fieldset>
+                {{ form_row(form.ship_to_billing_address) }}
             {% endif %}
         </div>
     {% endif %}
@@ -66,11 +84,7 @@
         {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
         {% if workflowItem.data.get('disallow_billing_address_edit') %}
             {% set billingAddress = checkout.billingAddress %}
-            <fieldset class="grid__row grid__row--offset-none">
-                <div class="grid__column grid__column--offset-y grid__column--6">
-                    {{ renderAddress(checkout.billingAddress) }}
-                </div>
-            </fieldset>
+            {{ renderAddress(checkout.billingAddress) }}
         {% else %}
             {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
             {% set hasCustomAddress = false %}
@@ -89,13 +103,7 @@
                      }
                  }|json_encode }}">
 
-                <div class="grid">
-                    <div class="grid__row grid__row--offset-none">
-                        <div class="grid__column grid__column--6">
-                            {{ form_row(form.billing_address.customerAddress) }}
-                        </div>
-                    </div>
-                </div>
+                {{ form_row(form.billing_address.customerAddress) }}
 
                 {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress) }}
             </div>
@@ -116,10 +124,8 @@
 {% block _shipping_methods_hidden_widget %}
     {{ form_errors(form.shipping_method) }}
     <div class="hidden">
-        <fieldset class="grid__row grid__row--offset-none">
-            {{ form_widget(form.shipping_method) }}
-            {{ form_widget(form.shipping_method_type) }}
-        </fieldset>
+        {{ form_widget(form.shipping_method) }}
+        {{ form_widget(form.shipping_method_type) }}
     </div>
 
     {{ block_widget(block) }}
@@ -127,9 +133,7 @@
 
 {% block _payment_methods_hidden_widget %}
     <div class="hidden">
-        <fieldset class="grid__row grid__row--offset-none">
-            {{ form_widget(form.payment_method) }}
-        </fieldset>
+        {{ form_widget(form.payment_method) }}
 
         {% if form.payment_save_for_later is defined %}
             <div data-page-component-module="orocheckout/js/app/components/payment-save-for-later-component">
@@ -176,7 +180,7 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addShipDate"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y grid__column--12 toggle-block">
+                <div class="grid__column grid__column--offset-y toggle-block">
                     <label for="addShipDate" class="custom-checkbox toggle-block__trigger {% if checkout.shipUntil is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate" {% if checkout.shipUntil is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -201,7 +205,7 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addPoNumber"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y grid__column--6 toggle-block">
+                <div class="grid__column grid__column--offset-y toggle-block">
                     <label for="addPoNumber" class="custom-checkbox toggle-block__trigger {% if checkout.poNumber is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber" {% if checkout.poNumber is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -215,7 +219,7 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addNote"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y grid__column--6 toggle-block">
+                <div class="grid__column grid__column--offset-y toggle-block">
                     <label for="addNote" class="custom-checkbox toggle-block__trigger {% if checkout.customerNotes is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addNote" id="addNote" {% if checkout.customerNotes is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -234,7 +238,7 @@
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
                 <fieldset class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--offset-y grid__column--6">
+                    <div class="grid__column grid__column--offset-y">
                         {{ form_row(form.remove_source, removeElementOptions) }}
                     </div>
                 </fieldset>
@@ -243,21 +247,27 @@
     </div>
 {%- endblock %}
 
-{% block _checkout_button_continue_widget -%}
+{% block _checkout_button_continue_right_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-
-    {{ block_widget(block) }}
-
     {% if transitionData is defined and transitionData %}
-        {% set transition = transitionData.transition %}
-
+        {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
+        <div class="order-checkout-widget text-right">
+            <button type="submit"
+                    class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-l checkout__submit-btn"
+                    {{ _layout.transitionAttrbiutes(transitionData, checkout) }}
+                    {{ _layout.conditionMessages(transitionData) }}
+            >
+                {{ transitionData.transition.label|trans({},'workflows') }}
+            </button>
+        </div>
+            
         <div {{ UI.renderPageComponentAttributes({
             module: 'orocheckout/js/app/components/shipping-transition-button-component',
             options: {
-                _sourceElement: '.checkout__form__submit',
+                _sourceElement: '.checkout__submit-btn',
                 'enabled': transitionData.isAllowed,
-                'hasForm': transition.hasForm()
+                'hasForm': transitionData.transition.hasForm()
             }
         }) }}></div>
     {% endif %}
-{% endblock -%}
+{% endblock %}
