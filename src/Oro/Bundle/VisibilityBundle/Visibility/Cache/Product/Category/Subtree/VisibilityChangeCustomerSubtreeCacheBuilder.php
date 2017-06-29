@@ -82,7 +82,6 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
      */
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
-
         return $qb->leftJoin(
             'OroVisibilityBundle:Visibility\CustomerCategoryVisibility',
             'cv',

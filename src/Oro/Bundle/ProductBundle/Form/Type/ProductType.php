@@ -48,8 +48,10 @@ class ProductType extends AbstractType
      * @param DefaultProductUnitProviderInterface $provider
      * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(DefaultProductUnitProviderInterface $provider, UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        DefaultProductUnitProviderInterface $provider,
+        UrlGeneratorInterface $urlGenerator
+    ) {
         $this->provider = $provider;
         $this->urlGenerator = $urlGenerator;
     }

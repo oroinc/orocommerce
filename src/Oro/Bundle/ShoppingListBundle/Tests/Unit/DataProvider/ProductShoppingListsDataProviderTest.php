@@ -75,7 +75,6 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         array $lineItems = [],
         array $expected = null
     ) {
-
         $this->shoppingListManager
             ->expects($this->any())
             ->method('getCurrent')

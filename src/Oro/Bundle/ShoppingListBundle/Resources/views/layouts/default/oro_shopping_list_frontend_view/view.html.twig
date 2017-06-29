@@ -269,7 +269,7 @@
 
 {% block _shopping_list_line_items_list_item_configurable_products_widget %}
     {% if parent.configurableProducts[lineItem.product.id] is defined %}
-        {% for field in configurableProducts[lineItem.product.id] %}
+        {% for field in parent.configurableProducts[lineItem.product.id] %}
             <div>{{ field.label|trans }}:
                 {% if field.type == 'boolean' %}
                     {{ field.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
