@@ -125,9 +125,10 @@ class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterfa
      */
     public function __construct()
     {
-        parent::__construct();
         $this->schedules = new ArrayCollection();
         $this->priceRules = new ArrayCollection();
+
+        parent::__construct();
     }
 
     /**
