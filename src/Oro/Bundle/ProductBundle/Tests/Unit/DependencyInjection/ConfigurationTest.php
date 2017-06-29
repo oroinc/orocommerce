@@ -86,7 +86,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'featured_products_segment_id' => [
-                    'value' => null,
+                    'value' => '@oro_product.provider.default_value.featured_products',
                     'scope' => 'app'
                 ],
                 'product_collections_indexation_cron_schedule' => [
@@ -102,7 +102,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'new_arrivals_products_segment_id' => [
-                    'value' => null,
+                    'value' => '@oro_product.provider.default_value.new_arrivals',
                     'scope' => 'app',
                 ],
                 'new_arrivals_max_items' => [

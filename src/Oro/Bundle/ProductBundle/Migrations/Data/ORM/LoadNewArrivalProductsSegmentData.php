@@ -11,13 +11,33 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadNewArrivalProductsSegmentData extends AbstractFixture implements DependentFixtureInterface
+class LoadNewArrivalProductsSegmentData extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
-    const NEW_ARRIVALS_SEGMENT_NAME = 'New Arrivals';
+    /**
+     * @internal
+     */
+    const NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.new_arrival.name';
 
     /**
-     * {@inheritdoc}
+     * @var string
+     */
+    private $newArrivalsSegmentName;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->newArrivalsSegmentName = $container->getParameter(self::NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
@@ -28,11 +48,11 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements Depen
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $segmentName = self::NEW_ARRIVALS_SEGMENT_NAME;
+        $segmentName = $this->newArrivalsSegmentName;
 
         if ($this->isSegmentAlreadyExists($manager, $segmentName)) {
             return;

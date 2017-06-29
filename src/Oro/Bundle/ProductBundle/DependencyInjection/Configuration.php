@@ -57,14 +57,18 @@ class Configuration implements ConfigurationInterface
                 self::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
                 self::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
                 self::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center'],
-                self::FEATURED_PRODUCTS_SEGMENT_ID => ['value' => null],
+                self::FEATURED_PRODUCTS_SEGMENT_ID => [
+                    'value' => '@oro_product.provider.default_value.featured_products'
+                ],
                 self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 self::DIRECT_URL_PREFIX => ['value' => ''],
                 self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
                 self::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
                 self::BRAND_DIRECT_URL_PREFIX => ['value' => ''],
                 self::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
-                self::NEW_ARRIVALS_PRODUCT_SEGMENT_ID => ['value' => null],
+                self::NEW_ARRIVALS_PRODUCT_SEGMENT_ID => [
+                    'value' => '@oro_product.provider.default_value.new_arrivals'
+                ],
                 self::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
                 self::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
                 self::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
