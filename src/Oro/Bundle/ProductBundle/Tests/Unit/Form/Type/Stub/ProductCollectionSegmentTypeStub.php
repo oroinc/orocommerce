@@ -55,5 +55,4 @@ class ProductCollectionSegmentTypeStub extends AbstractType
             'scope_value' => ProductCollectionSegmentType::DEFAULT_SCOPE_VALUE
         ]);
     }
-
 }
