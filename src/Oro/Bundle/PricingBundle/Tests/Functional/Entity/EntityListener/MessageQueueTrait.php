@@ -15,7 +15,7 @@ trait MessageQueueTrait
     protected function cleanScheduledMessages()
     {
         $this->sendScheduledMessages();
-        $this->getMessageCollector()->clear();
+        static::getMessageCollector()->clear();
     }
 
     protected function sendScheduledMessages()
@@ -33,8 +33,8 @@ trait MessageQueueTrait
 
     protected function sendScheduledRelationMessages()
     {
-            static::getContainer()
-                ->get('oro_pricing.price_list_relation_trigger_handler')
-                ->sendScheduledTriggers();
+        static::getContainer()
+            ->get('oro_pricing.price_list_relation_trigger_handler')
+            ->sendScheduledTriggers();
     }
 }
