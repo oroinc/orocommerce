@@ -239,7 +239,6 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
             ->method('getEntityMetadata')
             ->willReturnCallback(
                 function ($object) use ($mappings) {
-
                     $class = is_object($object) ? ClassUtils::getClass($object) : ClassUtils::getRealClass($object);
 
                     $metadata = new ClassMetadata($class);

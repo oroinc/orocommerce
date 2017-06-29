@@ -5,6 +5,7 @@ config:
         'orosale/js/app/views/line-items-view': 'bundles/orosale/js/app/views/line-items-view.js'
         'orosale/js/app/components/quote-product-to-order-component': 'bundles/orosale/js/app/components/quote-product-to-order-component.js'
         'orosale/js/app/components/quote-demand-component': 'bundles/orosale/js/app/components/quote-demand-component.js'
+        'orosale/js/app/components/quote-possible-shipping-methods-component': 'bundles/orosale/js/app/components/quote-possible-shipping-methods-component.js'
         'orosale/js/validator/quote-product-offer-quantity': 'bundles/orosale/js/validator/quote-product-offer-quantity.js'
         'orosale/js/app/views/address-view': 'bundles/orosale/js/app/views/address-view.js'
         'orosale/js/app/views/product-add-to-rfq-view': 'bundles/orosale/js/app/views/product-add-to-rfq-view.js'
