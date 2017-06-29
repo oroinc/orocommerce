@@ -169,4 +169,4 @@ oro:
             matching_items.label: Matching Items
     promotion_discount:
         order:
-            label: 'Promotion discount'
+            label: 'Discount'

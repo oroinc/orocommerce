@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
