@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 class SchedulesIntersectionValidator extends ConstraintValidator
 {
     /**
-     * @param PriceListSchedule $value The value that should be validated
+     * @param PriceListSchedule|mixed $value The value that should be validated
      * @param Constraint|SchedulesIntersection $constraint The constraint for the validation
      */
     public function validate($value, Constraint $constraint)
@@ -23,6 +23,10 @@ class SchedulesIntersectionValidator extends ConstraintValidator
         $this->validateSchedules($value, $constraint);
     }
 
+    /**
+     * @param PriceListSchedule $validatedSchedule
+     * @param Constraint $constraint
+     */
     protected function validateSchedules(PriceListSchedule $validatedSchedule, Constraint $constraint)
     {
         if (null === $validatedSchedule->getPriceList()) {

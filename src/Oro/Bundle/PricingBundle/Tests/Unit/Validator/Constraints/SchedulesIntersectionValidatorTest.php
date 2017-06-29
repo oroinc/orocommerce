@@ -32,10 +32,9 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
         $validator->initialize($context);
 
         $pl = (new PriceList())->setSchedules($collection);
-        foreach($collection as $date) {
-            $date->setPriceList($pl);
-            $validator->validate($date, $constraint);
-        }
+        $date = reset($collection);
+        $date->setPriceList($pl);
+        $validator->validate($date, $constraint);
     }
 
     /**
@@ -86,9 +85,8 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
      * @dataProvider validateFailDataProvider
      *
      * @param array $collection
-     * @param array $intersections
      */
-    public function testValidateFail(array $collection, array $intersections)
+    public function testValidateFail(array $collection)
     {
         $constraint = new SchedulesIntersection();
         $context = $this->getContextMock();
@@ -103,7 +101,7 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
             ->with(self::MESSAGE, [])
             ->willReturn($builder);
 
-        $builder->expects($this->exactly(count($intersections)))
+        $builder->expects($this->once())
             ->method('atPath')
             ->with(PriceListScheduleType::ACTIVE_AT_FIELD)
             ->willReturn($this->getBuilderMock());
@@ -113,10 +111,10 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
         $validator = new SchedulesIntersectionValidator();
         $validator->initialize($context);
         $pl = (new PriceList())->setSchedules($collection);
-        foreach($collection as $date) {
-            $date->setPriceList($pl);
-            $validator->validate($date, $constraint);
-        }
+
+        $date = reset($collection);
+        $date->setPriceList($pl);
+        $validator->validate($date, $constraint);
     }
 
     /**
@@ -144,66 +142,57 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
                 'collection' => [
                     [null, '2016-02-01'],
                     ['2016-01-15', null],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
 
             'intersects' => [
                 'collection' => [
                     ['2016-01-01', '2016-02-01'],
                     ['2016-01-15', '2016-03-01'],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
             'intersects, right = null' => [
                 'collection' => [
                     ['2016-01-01', '2016-02-01'],
                     ['2016-01-15', null],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
             'intersects, both right = null' => [
                 'collection' => [
                     ['2016-01-01', null],
                     ['2016-01-15', null],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
             'intersects, left = null' => [
                 'collection' => [
                     [null, '2016-02-01'],
                     ['2016-01-15', '2016-03-01'],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
 
             'contains' => [
                 'collection' => [
                     ['2016-01-01', '2016-04-01'],
                     ['2016-02-01', '2016-03-01'],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
             'contains, left = null' => [
                 'collection' => [
                     [null, '2016-04-01'],
                     ['2016-02-01', '2016-03-01'],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
             'contains, right = null' => [
                 'collection' => [
                     ['2016-01-01', null],
                     ['2016-02-01', '2016-03-01'],
-                ],
-                'intersections' => [0, 1]
+                ]
             ],
             'contains, all null' => [
                 'collection' => [
                     [null, null],
                     ['2016-01-01', '2016-01-02'],
-                ],
-                'intersections' => [0, 1]
+                ]
             ]
         ];
     }
