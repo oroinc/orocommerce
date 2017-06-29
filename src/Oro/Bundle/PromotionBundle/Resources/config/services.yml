@@ -215,6 +215,13 @@ services:
         arguments:
             - '@oro_segment.segment_manager'
 
+    oro_promotion.provider.applied_discounts_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\OrdersAppliedDiscountsProvider
+        public: false
+        arguments:
+            - '@oro.cache.memory_cache_chain'
+            - '@oro_entity.doctrine_helper'
+
     oro_promotion.provider.subtotal_provider:
         class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
         public: false
