@@ -32,6 +32,10 @@
         }
     }
 
+    // Slider mode
+    .embedded-arrows {
+        margin: 0 $embedded-list-slider-btn-arrow-width;
+    }
 
     // Tiles mode
     .embedded-list {
@@ -43,13 +47,7 @@
 
 @include breakpoint('desktop') {
     .embedded-products {
-        // Slider mode
-        .embedded-list-slider {
-            margin: 0 $embedded-list-slider-btn-arrow-width;
-        }
-
         // Tiles mode
-
         .embedded-list {
             &__item {
                 &:not(:nth-child(#{$embedded-products-item-count-desktop}n)) {
