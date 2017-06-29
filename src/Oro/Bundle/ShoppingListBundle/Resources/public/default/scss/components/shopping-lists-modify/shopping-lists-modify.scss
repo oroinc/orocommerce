@@ -44,7 +44,7 @@
 
         border: 0;
         background: transparent;
-        color: get-color('additiolal', 'ultra');
+        color: get-color('additional', 'ultra');
 
         @include badge($badge-size: 26px, $badge-f-size: 14px, $badge-radius: 3px);
 
