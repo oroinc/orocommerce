@@ -15,7 +15,7 @@ use Symfony\Component\DomCrawler\Crawler;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
+abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
 {
     const WORKFLOW_NAME = '';
     const WORKFLOW_TITLE = '';
