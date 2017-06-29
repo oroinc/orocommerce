@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
 
 /**
  * @ORM\Table(name="oro_price_list")
@@ -33,7 +34,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class PriceList extends BasePriceList
+class PriceList extends ExtendPriceList
 {
     /**
      * @var bool
