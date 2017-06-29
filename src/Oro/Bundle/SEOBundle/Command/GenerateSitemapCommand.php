@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Command;
 
-use Oro\Bundle\SEOBundle\Async\Topics;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,8 +25,9 @@ class GenerateSitemapCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
-        $messageProducer->send(Topics::GENERATE_SITEMAP, '');
+        $scheduleGenerationProvider = $this->getContainer()
+            ->get('oro_seo.provider.sitemap_generation_scheduler');
+        $scheduleGenerationProvider->scheduleSend();
         $output->writeln('<info>Sitemap generation scheduled</info>');
     }
 }
