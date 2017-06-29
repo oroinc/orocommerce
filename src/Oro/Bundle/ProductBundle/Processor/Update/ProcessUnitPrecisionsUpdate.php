@@ -54,6 +54,10 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
         return $requestData;
     }
 
+    /**
+     * @param $unitPrecision
+     * @param $pointer
+     */
     protected function validateRequiredFields($unitPrecision, $pointer)
     {
         if (isset($unitPrecision[JsonApi::ID])) {

@@ -50,7 +50,6 @@ class ProductUnitPrecisionRepository extends EntityRepository
             ->where('p.id = :productId')
             ->setParameter('productId', $productId);
 
-
         return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 }
