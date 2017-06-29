@@ -144,3 +144,23 @@ PricingBundle
 - Service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`
     - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
     - method `postRemove` has additional argument `ProductUnitPrecision $precision`.
+- Added API for entities:
+    - `Oro\Bundle\PricingBundle\Entity\PriceList`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListSchedule`
+    - `Oro\Bundle\PricingBundle\Entity\PriceRule`
+- Added API processors:
+    - `Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChangeProcessor` to handle price list status changes
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemesProcessor` to update price rule lexemes while saving price list
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleDeleteListProcessor` to rebuild combined price list while deleting list of price list schedules
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleDeleteProcessor` to rebuild combined price list while deleting single price list schedule
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleSaveProcessor` to rebuild combined price list while saving price list schedule
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor` to change price list contains schedule field while deleting list of price list schedules
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteProcessor` to change price list contains schedule field while deleting single price list schedule
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteListProcessor` to update price rule lexemes while deleting list of price rules
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteProcessor` to update price rule lexemes while deleting single price rule
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesPriceRuleProcessor` to update price rule lexemes while saving price rule
+- Added `Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber` for adding currently created schedule to price list
+
+ValidationBundle
+--------------
+ - Added `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOf` constraint and `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator` validator for validating that one of some fields in a group should be blank
