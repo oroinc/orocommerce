@@ -152,6 +152,19 @@ services:
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 
+    oro_promotion.promotion.checkout_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\CheckoutContextDataConverter
+        public: false
+        arguments:
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_scope.scope_manager'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.provider.checkout_subtotal_amount_provider'
+        tags:
+            - { name: 'oro_promotion.promotion_context_converter' }
+
     oro_promotion.discount.strategy_registry:
         class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry
         public: false

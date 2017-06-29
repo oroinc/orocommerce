@@ -10,6 +10,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider;
+use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -52,7 +53,7 @@ class DiscountsInformationDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('execute');
 
         $result = $this->provider->getDiscountLineItemDiscounts($entity);
-        $this->assertInstanceOf(\SplObjectStorage::class, $result);
+        $this->assertInstanceOf(ObjectStorage::class, $result);
         $this->assertEquals(0, $result->count());
     }
 
@@ -93,28 +94,28 @@ class DiscountsInformationDataProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($discountContext);
 
         $result = $this->provider->getDiscountLineItemDiscounts($entity);
-        $this->assertInstanceOf(\SplObjectStorage::class, $result);
+        $this->assertInstanceOf(ObjectStorage::class, $result);
         $this->assertCount(2, $result);
         $this->assertResultHasData($result, $lineItem1, 30, 'USD', [$discountInformation1]);
         $this->assertResultHasData($result, $lineItem2, 80.3, 'USD', [$discountInformation2]);
     }
 
     /**
-     * @param \SplObjectStorage $result
+     * @param ObjectStorage $result
      * @param object $lineItem
      * @param float $value
      * @param string $currency
      * @param array $expectedDetails
      */
     private function assertResultHasData(
-        \SplObjectStorage $result,
+        ObjectStorage $result,
         $lineItem,
         $value,
         $currency,
         array $expectedDetails
     ) {
         $this->assertTrue($result->contains($lineItem));
-        $info = $result->offsetGet($lineItem);
+        $info = $result->get($lineItem);
         $this->assertInternalType('array', $info);
         $this->assertArrayHasKey('total', $info);
         $this->assertInstanceOf(Price::class, $info['total']);

@@ -2,20 +2,36 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CronBundle\Tests\Unit\Form\Type\Stub\ScheduleIntervalsCollectionTypeStub;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCollectionSegmentTypeStub;
+use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Validation;
 
 class PromotionTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /**
      * @var PromotionType
      */
@@ -27,6 +43,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         parent::setUp();
+
         $this->type = new PromotionType();
     }
 
@@ -35,6 +52,19 @@ class PromotionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $em = $this->createMock(EntityManagerInterface::class);
+        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->any())
+            ->method('getEntityManagerForClass')
+            ->with(Product::class, false)
+            ->willReturn($em);
+
+        /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject $configProvider */
+        $configProvider = $this->createMock(ConfigProvider::class);
+        /** @var Translator|\PHPUnit_Framework_MockObject_MockObject $translator */
+        $translator = $this->createMock(Translator::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -42,21 +72,28 @@ class PromotionTypeTest extends FormIntegrationTestCase
                     new ScheduleIntervalsCollectionTypeStub(),
                     new ScopeCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionTypeStub(),
+                    new ProductCollectionSegmentTypeStub(),
+                    new EntityType(
+                        [
+                            'order' => $this->getEntity(DiscountConfiguration::class, ['type' => 'order']),
+                        ],
+                        DiscountConfigurationType::NAME
+                    ),
                 ],
-                []
+                [
+                    'form' => [new TooltipFormExtension($configProvider, $translator)],
+                ]
             ),
-            $this->getValidatorExtension(true)
+            new ValidatorExtension(Validation::createValidator())
         ];
     }
 
     public function testBuildForm()
     {
-        $this->markTestSkipped(
-            'Remove after BB-10092, for now it is no needed to add stub for temporary solution with EntityType'
-        );
         $form = $this->factory->create($this->type, null);
         $this->assertTrue($form->has('rule'));
         $this->assertTrue($form->has('useCoupons'));
+        $this->assertTrue($form->has('discountConfiguration'));
         $this->assertTrue($form->has('schedules'));
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('productsSegment'));
@@ -69,14 +106,8 @@ class PromotionTypeTest extends FormIntegrationTestCase
      * @param array $submittedData
      * @param Promotion $expectedData
      */
-    public function testSubmit(array $submittedData, Promotion $expectedData)
+    public function testSubmit(Promotion $defaultData, array $submittedData, Promotion $expectedData)
     {
-        $this->markTestSkipped(
-            'Remove after BB-10092, for now it is no needed to add stub for temporary solution with EntityType'
-        );
-
-        $defaultData = new Promotion();
-
         $form = $this->factory->create($this->type, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -90,6 +121,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitDataProvider()
     {
@@ -120,8 +152,29 @@ class PromotionTypeTest extends FormIntegrationTestCase
             ->setText($descriptionString);
         $promotion->addDescription($description);
 
+        $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['type' => 'order']);
+        $promotion->setDiscountConfiguration($discountConfiguration);
+        $promotion->setProductsSegment((new Segment())->setName('some name'));
+
+        $editedRuleEnabled = false;
+        $editedRuleName = 'some new name';
+        $editedUseCoupons = false;
+        $editedRuleSortOrder = 15;
+        $editedRuleStopProcessing = false;
+        $editedRuleExpression = 'some new expression';
+        $editedPromotion = clone $promotion;
+        $editedRule = clone $rule;
+        $editedRule->setEnabled($editedRuleEnabled);
+        $editedRule->setName($editedRuleName);
+        $editedRule->setSortOrder($editedRuleSortOrder);
+        $editedRule->setStopProcessing($editedRuleStopProcessing);
+        $editedRule->setExpression($editedRuleExpression);
+        $editedPromotion->setRule($editedRule);
+        $editedPromotion->setUseCoupons($editedUseCoupons);
+
         return [
             'new promotion' => [
+                'defaultData' => new Promotion(),
                 'submittedData' => [
                     'rule' => [
                         'name' => $ruleName,
@@ -130,12 +183,29 @@ class PromotionTypeTest extends FormIntegrationTestCase
                         'stopProcessing' => $ruleStopProcessing,
                         'expression' => $ruleExpression,
                     ],
+                    'discountConfiguration' => 'order',
+                    'productsSegment' => ['name' => 'some name'],
                     'useCoupons' => $useCoupons,
                     'labels' => [['string' => $labelString]],
                     'descriptions' => [['text' => $descriptionString]],
                 ],
                 'expectedData' => $promotion,
-            ]
+            ],
+            'edit promotion' => [
+                'defaultData' => $promotion,
+                'submittedData' => [
+                    'rule' => [
+                        'name' => $editedRuleName,
+                        'enabled' => $editedRuleEnabled,
+                        'sortOrder' => $editedRuleSortOrder,
+                        'stopProcessing' => $editedRuleStopProcessing,
+                        'expression' => $editedRuleExpression,
+                    ],
+                    'discountConfiguration' => 'order',
+                    'useCoupons' => $editedUseCoupons,
+                ],
+                'expectedData' => $editedPromotion,
+            ],
         ];
     }
 
