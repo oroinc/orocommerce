@@ -61,7 +61,6 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
             PriceList::class,
             $schedule->getPriceList()->getId()
         );
-
     }
 
     public function testCreate()
