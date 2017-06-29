@@ -38,6 +38,60 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider validateFailDataProvider
+     *
+     * @param array $collection
+     */
+    public function testValidateOnApiForm(array $collection)
+    {
+        $constraint = new SchedulesIntersection();
+        $context = $this->getContextMock();
+        $builder = $this->getBuilderMock();
+        $formMock = $this->createMock(\Symfony\Component\Form\Form::class);
+        $config = $this->createMock(\Symfony\Component\Form\FormConfigInterface::class);
+
+        $formMock
+            ->expects(static::once())
+            ->method('getConfig')
+            ->willReturn($config);
+
+        $config
+            ->expects(static::once())
+            ->method('hasOption')
+            ->with('api_context')
+            ->willReturn(true);
+
+        $builder->expects($this->any())
+            ->method('addViolation')
+            ->willReturn($builder);
+
+        $context
+            ->expects(static::once())
+            ->method('getRoot')
+            ->willReturn($formMock);
+
+        $context->expects($this->any())
+            ->method('buildViolation')
+            ->with(self::MESSAGE, [])
+            ->willReturn($builder);
+
+        $builder->expects($this->never())
+            ->method('atPath')
+            ->with(PriceListScheduleType::ACTIVE_AT_FIELD)
+            ->willReturn($this->getBuilderMock());
+
+        $collection = $this->normalizeCollection($collection);
+
+        $validator = new SchedulesIntersectionValidator();
+        $validator->initialize($context);
+        $pl = (new PriceList())->setSchedules($collection);
+
+        $date = reset($collection);
+        $date->setPriceList($pl);
+        $validator->validate($date, $constraint);
+    }
+
+    /**
      * @return array
      */
     public function validateSuccessDataProvider()

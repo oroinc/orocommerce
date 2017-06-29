@@ -48,6 +48,44 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
         );
     }
 
+    public function testUpdateSchedulesIntersectASD()
+    {
+        $schedule = $this->getScheduleToTest();
+
+        /** @var PriceListSchedule $scheduleToUpdate */
+        $scheduleToUpdate = $this->getReference('schedule.2');
+
+        $response = $this->request(
+            'PATCH',
+            $this->getUrl(
+                'oro_rest_api_patch',
+                [
+                    'entity' => 'pricelistschedules',
+                    'id' => $scheduleToUpdate->getId(),
+                ]
+            ),
+            [
+                'data' =>
+                    [
+                        'type' => 'pricelistschedules',
+                        'id' => (string)$scheduleToUpdate->getId(),
+                        'attributes' =>
+                            [
+                                'deactivateAt' => $schedule->getDeactivateAt()
+                                    ->add(new \DateInterval('P1D'))
+                                    ->format('c'),
+                            ],
+                    ],
+            ]
+        );
+
+        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
+        static::assertContains(
+            'Price list schedule segments should not intersect',
+            $response->getContent()
+        );
+    }
+
     public function testCombinedPriceListBuildOnScheduleCreate()
     {
         $defaultPriceList = $this->getPriceListRepository()->getDefault();
