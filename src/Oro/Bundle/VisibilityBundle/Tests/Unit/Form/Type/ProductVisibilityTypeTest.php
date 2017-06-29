@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\Type\ProductVisibilityType;
 
-class PruductVisibilityTypeTest extends FormIntegrationTestCase
+class ProductVisibilityTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var ProductVisibilityType

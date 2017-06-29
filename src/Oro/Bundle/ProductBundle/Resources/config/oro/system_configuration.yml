@@ -7,6 +7,11 @@ system_configuration:
         allowed_statuses:
             title: oro.product.system_configuration.groups.allowed_statuses.title
             icon: 'fa-list'
+        related_items:
+            title: oro.product.system_configuration.groups.related_items.title
+            icon: 'fa-cog'
+        related_products:
+            title: oro.product.system_configuration.groups.related_products.title
         product_unit:
             title: oro.product.system_configuration.groups.product_unit.title
             icon: 'fa-briefcase'
@@ -28,7 +33,7 @@ system_configuration:
             title: oro.product.system_configuration.groups.product_image_watermark.title
         featured_products:
             title: oro.product.system_configuration.groups.featured_products.title
-            icon: 'fa-certificate'
+            icon: 'fa-star'
         featured_products_segment:
             title: oro.product.system_configuration.groups.featured_products_segment.title
         quick_order:
@@ -41,8 +46,40 @@ system_configuration:
             icon: 'fa-list'
         product_collections_general:
             title: oro.product.system_configuration.groups.product_collections_general.title
+        product_promotions:
+            title: oro.product.system_configuration.groups.product_promotions.title
+            icon: 'fa-certificate'
+        new_product_icons:
+            title: oro.product.system_configuration.groups.new_product_icons.title
 
     fields:
+        oro_product.related_products_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 30
+            options:
+                label: oro.product.system_configuration.fields.enable_related_products.label
+
+        oro_product.related_products_bidirectional:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.related_products_bidirectional.label
+                tooltip: oro.product.system_configuration.fields.related_products_bidirectional.tooltip
+
+        oro_product.max_number_of_related_products:
+            data_type: integer
+            type: integer
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.max_number_of_related_products.label
+                tooltip: oro.product.system_configuration.fields.max_number_of_related_products.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+
         oro_product.unit_rounding_type:
             data_type: string
             type: choice
@@ -165,6 +202,16 @@ system_configuration:
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
+        oro_product.brand_direct_url_prefix:
+            data_type: string
+            type: oro_redirect_sluggable_prefix
+            options:
+                label: oro.product.system_configuration.fields.brand_direct_url_prefix.label
+                data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
+                required: false
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
+
         oro_product.product_collections_indexation_cron_schedule:
             data_type: string
             type: choice
@@ -190,6 +237,20 @@ system_configuration:
                         value: 0
                     - Type: integer
 
+        oro_product.product_promotion_show_on_product_view:
+            data_type: boolean
+            type: choice
+            options:
+                label: oro.product.system_configuration.fields.show_on_product_view.label
+                tooltip: oro.product.form.tooltip.show_on_product_view
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    false: oro.product.system_configuration.fields.show_on_product_view.type.no.label
+                    true: oro.product.system_configuration.fields.show_on_product_view.type.yes.label
+
     tree:
         system_configuration:
             platform:
@@ -201,8 +262,19 @@ system_configuration:
                                     oro_redirect_direct_urls:
                                         children:
                                             - oro_product.product_direct_url_prefix
+                                            - oro_product.brand_direct_url_prefix
             commerce:
                 children:
+                    catalog:
+                        children:
+                            related_items:
+                                priority: 100
+                                children:
+                                    related_products:
+                                        children:
+                                            - oro_product.related_products_enabled
+                                            - oro_product.related_products_bidirectional
+                                            - oro_product.max_number_of_related_products
                     product:
                         priority: 700
                         children:
@@ -234,6 +306,12 @@ system_configuration:
                                     featured_products_segment:
                                         children:
                                             - oro_product.featured_products_segment_id
+                            product_promotions:
+                                priority: 50
+                                children:
+                                    new_product_icons:
+                                        children:
+                                            - oro_product.product_promotion_show_on_product_view
                             product_collections:
                                 priority: 0
                                 children:
@@ -258,3 +336,17 @@ system_configuration:
                                     quick_order_form:
                                         children:
                                             - oro_product.enable_quick_order_form
+
+        organization_configuration:
+            commerce:
+                children:
+                    catalog:
+                        children:
+                            related_items:
+                                children:
+                                    related_products:
+                                        children:
+                                            - oro_product.related_products_enabled
+                                            - oro_product.related_products_bidirectional
+                                            - oro_product.max_number_of_related_products
+

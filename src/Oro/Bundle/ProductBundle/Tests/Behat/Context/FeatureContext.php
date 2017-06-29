@@ -612,4 +612,62 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             sprintf('Tag "%s" inside element "%s" is found', $element, $tag)
         );
     }
+
+    /**
+     * @Given /^"([^"]*)" option for related products is enabled$/
+     * @param string $option
+     */
+    public function optionForRelatedProductsIsEnabled($option)
+    {
+        switch ($option) {
+            case 'Enable Related Products':
+                $option = 'oro_product.related_products_enabled';
+                break;
+            case 'Maximum Number Of Assigned Items':
+                $option = 'oro_product.max_number_of_related_products';
+                break;
+            case 'Assign In Both Directions':
+                $option = 'oro_product.related_products_bidirectional';
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('There is no mapping to `%s` options', $option));
+        }
+
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set($option, 1);
+        $configManager->flush();
+    }
+
+    /**
+     * @Then /^(?:|I )should see "([^"]*)" for "([^"]*)" product$/
+     */
+    public function shouldSeeForProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        self::assertTrue($element->isValid());
+    }
+
+    /**
+     * @Then /^(?:|I )should not see "([^"]*)" for "([^"]*)" product$/
+     */
+    public function shouldNotSeeForProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        self::assertFalse($element->isValid());
+    }
+
+    /**
+     * @Then /^(?:|I )click "([^"]*)" for "([^"]*)" product$/
+     */
+    public function clickElementforSelectedProduct($elementName, $SKU)
+    {
+        $productItem = $this->findElementContains('ProductItem', $SKU);
+        self::assertNotNull($productItem);
+        $element = $this->createElement($elementName, $productItem);
+        $element->click();
+    }
 }

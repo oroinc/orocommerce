@@ -10,14 +10,14 @@
 
     {{ UI.cancelButton(path('oro_product_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if resource_granted('oro_product_create') %}
+    {% if is_granted('oro_product_create') %}
         {% set saveAndDuplicateButton = UI.saveActionButton({
             'label': 'oro.product.ui.save_and_duplicate'|trans,
             'action': 'save_and_duplicate'
         }) %}
         {% set html = html ~ saveAndDuplicateButton %}
     {% endif %}
-    {% if entity.id or resource_granted('oro_product_update') %}
+    {% if entity.id or is_granted('oro_product_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -59,7 +59,9 @@
     {% set generalData = generalData|merge([
         form_row(form.slugPrototypesWithRedirect),
         form_row(form.status),
-        form_row(form.featured)
+        form_row(form.featured),
+        form_row(form.newArrival),
+        form_row(form.brand)
     ]) %}
 
     {% if oro_is_product_primary_unit_visible(entity) %}

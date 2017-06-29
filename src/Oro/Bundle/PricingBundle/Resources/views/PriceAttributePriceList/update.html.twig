@@ -11,7 +11,7 @@
 
     {{ UI.cancelButton(path('oro_pricing_price_attribute_price_list_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_pricing_price_attribute_price_list_update') %}
+    {% if entity.id or is_granted('oro_pricing_price_attribute_price_list_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

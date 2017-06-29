@@ -13,6 +13,58 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
 
+    SelectRelatedProductsGrid:
+      selector: 'div[data-page-component-name="products-related-products-select"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    RelatedProductsEditGrid:
+      selector: 'div[data-page-component-name="products-related-items-edit"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    RelatedProductsViewGrid:
+      selector: 'div[data-page-component-name="products-related-items-view"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    SelectRelatedProductsGridFilters:
+      selector: 'div[data-page-component-name="products-related-products-select"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    SelectRelatedProductsGridToolbarActions:
+        selector: 'div[data-page-component-name="products-related-products-select"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    SelectRelatedProductsGridFiltersState:
+        selector: 'div[data-page-component-name="products-related-products-select"] div.filters-state'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    SelectRelatedProductsGridFilterItem:
+      selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    SelectRelatedProductsGridFilterStringItem:
+      selector: 'div[data-page-component-name="products-related-products-select"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
+
+    RelatedProductsEditGridFilters:
+      selector: 'div[data-page-component-name="products-related-items-edit"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    RelatedProductsEditGridToolbarActions:
+        selector: 'div[data-page-component-name="products-related-items-edit"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    RelatedProductsEditGridFiltersState:
+        selector: 'div[data-page-component-name="products-related-items-edit"] div.filters-state'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    RelatedProductsEditGridFilterItem:
+      selector: 'div[data-page-component-name="products-related-items-edit"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+
+    RelatedProductsEditGridFilterStringItem:
+      selector: 'div[data-page-component-name="products-related-items-edit"] div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
+
     ProductForm:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
@@ -29,6 +81,18 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//div[@id[starts-with(.,"oro_product_variantFields-uid")]]'
             element: Configurable Attributes
+          Color: 'oro_product[Color]'
+          Size: 'oro_product[Size]'
+
+    RelatedProductsConfig:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Maximum Number Of Assigned Items Use Default: 'related_items[oro_product___max_number_of_related_products][use_parent_scope_value]'
+          Maximum Number Of Assigned Items: 'related_items[oro_product___max_number_of_related_products][value]'
+          Enable Related Products Use Default: 'related_items[oro_product___related_products_enabled][use_parent_scope_value]'
+          Enable Related Products: 'related_items[oro_product___related_products_enabled][value]'
 
     Product Family Form:
       selector: 'div#container'
@@ -60,6 +124,9 @@ oro_behat_extension:
 
     AdvancedFilter:
       selector: '.collapse-view__trigger.btn .fa-filter'
+
+    Enable Related Products:
+      selector: '[name="related_items[oro_product___related_products_enabled][value]"]'
 
     Field Condition:
       selector: 'li[data-widget="fieldCondition"]'
@@ -160,6 +227,31 @@ oro_behat_extension:
       selector: 'button[name="oro_website_search_search_button"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Galery View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"gallery-view")]'
+    NoImage View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"no-image-view")]'
+    List View Button:
+      selector:
+        type: xpath
+        locator: '//a[contains (@data-catalog-view-trigger,"list-view")]'
+
+    NewArrivalStiker:
+      selector: '.product-sticker--icon-new_arrival'
+
+    NewArrivalText:
+      selector: '.product-sticker--text-new_arrival'
+
+    ViewDetails:
+      selector: 'a.view-product'
+
+    ProductItem:
+      selector: 'div.product-item'
+
     Product Collection Variant Label:
       selector:
         type: 'xpath'
@@ -207,11 +299,34 @@ oro_behat_extension:
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
+    Promotions Form:
+      selector: 'form[name="product_promotions"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Show On Product View Default: 'product_promotions[oro_product___product_promotion_show_on_product_view][use_parent_scope_value]'
+          Show On Product View: 'product_promotions[oro_product___product_promotion_show_on_product_view][value]'
+
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
 
     GridPagination:
       selector: 'div.tab-pane.active div.toolbar div.pagination input'
+
+    Clear Brand:
+          selector:
+            type: xpath
+            locator: '//div[contains(@id,"s2id_oro_product_brand-uid")]//abbr[@class="select2-search-choice-close"]'
+
+    Brand Form:
+      selector: 'form[name="oro_brand"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_brand[names][values][default]'
+          Meta Title: 'oro_brand[metaTitles][values][default]'
+          Meta Description: 'oro_brand[metaDescriptions][values][default]'
+          Meta Keywords: 'oro_brand[metaKeywords][values][default]'
 
   suites:
     # Revert by OPI-52
@@ -249,6 +364,17 @@ oro_behat_extension:
         - OroUserBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product'
+    OroProductBundleRelatedItems:
+      contexts:
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroSecurityBundle::ACLContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroConfigBundle::FeatureContext
+        - OroUserBundle::FeatureContext
+      paths:
+        - '@OroProductBundle/Tests/Behat/Features/related-items'
     OroProductBundleOther:
       contexts:
         - OroApplicationBundle::CommerceMainContext

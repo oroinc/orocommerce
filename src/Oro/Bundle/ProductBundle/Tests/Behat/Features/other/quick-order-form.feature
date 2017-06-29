@@ -1,6 +1,6 @@
 @ticket-BB-7523
 @automatically-ticket-tagged
-@fixture-Products.yml
+@fixture-quick_order_product.yml
 Feature: Quick order form
   In order to provide customers with ability to quickly start an order
   As customer

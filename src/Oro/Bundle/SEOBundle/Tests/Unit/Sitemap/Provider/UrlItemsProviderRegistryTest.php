@@ -14,54 +14,29 @@ class UrlItemsProviderRegistryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = new UrlItemsProviderRegistry();
+        $providers = [
+            'first_provider' => $this->getProviderMock(),
+            'second_provider' => $this->getProviderMock()
+        ];
+        $this->registry = new UrlItemsProviderRegistry($providers);
     }
 
     public function testGetProviders()
     {
-        $firstProviderName = 'first_provider';
-        $firstProviderMock = $this->getProviderMock();
-        $secondProviderName = 'second_provider';
-        $secondProviderMock = $this->getProviderMock();
-        $this->registry->addProvider($firstProviderMock, $firstProviderName);
-        $this->registry->addProvider($secondProviderMock, $secondProviderName);
-        
         $this->assertEquals(
             [
-                $firstProviderName => $firstProviderMock,
-                $secondProviderName => $secondProviderMock,
+                'first_provider' => $this->getProviderMock(),
+                'second_provider' => $this->getProviderMock()
             ],
-            $this->registry->getProviders()
+            $this->registry->getProvidersIndexedByNames()
         );
     }
-    
-    public function testGetProviderNames()
-    {
-        $firstProviderName = 'first_provider';
-        $firstProviderMock = $this->getProviderMock();
-        $secondProviderName = 'second_provider';
-        $secondProviderMock = $this->getProviderMock();
-        $this->registry->addProvider($firstProviderMock, $firstProviderName);
-        $this->registry->addProvider($secondProviderMock, $secondProviderName);
 
-        $this->assertEquals(
-            [
-                $firstProviderName,
-                $secondProviderName,
-            ],
-            $this->registry->getProviderNames()
-        );
-    }
-    
     public function testGetProviderByName()
     {
-        $providerName = 'first_provider';
-        $providerMock = $this->getProviderMock();
-        $this->registry->addProvider($providerMock, $providerName);
-
         $this->assertEquals(
-            $providerMock,
-            $this->registry->getProviderByName($providerName)
+            $this->getProviderMock(),
+            $this->registry->getProviderByName('first_provider')
         );
         $this->assertNull($this->registry->getProviderByName('some_other_name'));
     }

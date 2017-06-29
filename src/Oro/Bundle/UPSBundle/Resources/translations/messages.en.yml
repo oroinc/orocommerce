@@ -34,6 +34,7 @@ oro:
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge
+                surcharge.tooltip: The payment method surcharge applies to the shipping cost whenever this shipping method is selected. Additional options surcharge may apply on top of the payment method surcharge.
 
         connection_validation:
             button.text: Check UPS Connection

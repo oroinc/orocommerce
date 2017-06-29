@@ -6,10 +6,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {
@@ -37,8 +38,11 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     /** @var string */
     protected $scope;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var Session */
     protected $session;
@@ -49,20 +53,23 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
     /**
      * @param UrlGeneratorInterface $router
      * @param ProductDataStorage $storage
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface $tokenAccessor
      * @param Session $session
      * @param TranslatorInterface $translator
      */
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor,
         Session $session,
         TranslatorInterface $translator
     ) {
         $this->router = $router;
         $this->storage = $storage;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenAccessor = $tokenAccessor;
         $this->session = $session;
         $this->translator = $translator;
     }
@@ -114,7 +121,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
             return true;
         }
 
-        return $this->securityFacade->hasLoggedUser() && $this->securityFacade->isGranted($this->acl);
+        return $this->tokenAccessor->hasUser() && $this->authorizationChecker->isGranted($this->acl);
     }
 
     /**

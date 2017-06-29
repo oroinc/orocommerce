@@ -11,6 +11,10 @@ layout:
             optionValue: '=data["top_selling_items"].getAll()'
         - '@setOption':
             id: top_selling_products
+            optionName: items_data.stickers
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["featured_products"].getAll())'
+        - '@setOption':
+            id: top_selling_products
             optionName: label
             optionValue: oro.order.top_selling_items.label
         - '@setOption':

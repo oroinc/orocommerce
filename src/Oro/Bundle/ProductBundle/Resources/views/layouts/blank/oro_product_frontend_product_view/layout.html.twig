@@ -49,6 +49,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_gallery_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-gallery-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_main_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__main'
@@ -90,6 +100,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_brand_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-view__brand'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_additional_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__additional'
@@ -114,6 +134,14 @@
         {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ block_widget(block) }}</span>
     </p>
 {% endblock %}
+
+{% block _product_view_attribute_group_general_attribute_text_brand_widget %}
+    <div class="brand">
+        <span class="product-view-brand">{{ 'oro.product.brand.entity_label'|trans }}:</span>
+        <span class="product-view-brand-title">{{ block_widget(block) }}</span>
+    </div>
+{% endblock %}
+
 
 {% block _product_media_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}

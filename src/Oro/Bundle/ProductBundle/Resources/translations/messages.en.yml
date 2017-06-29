@@ -29,11 +29,19 @@ oro:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
         parent_variant_links.label: Parent Product Variant Links
+        quick_edit.label: Quick edit
         images.label: Images
+        is_related.label: Is Related
+        related_to_products.label: Related Products
+        related_by_products.label: Products that are related to this Product
         anything.label: Any Text
         featured_products.label: Featured Products
         featured:
             label: Is Featured
+            yes: Yes
+            no: No
+        new_arrival:
+            label: New Arrival
             yes: Yes
             no: No
         time_period.label: Time Period
@@ -90,6 +98,8 @@ oro:
             no_page_template: No page template
             choose: Choose Product...
             product_required: Please select a product first...
+            tooltip:
+                show_on_product_view: The new product icon will be displayed on the product view page.
         form.add_row: Add More Rows
 
         productunit:
@@ -163,6 +173,8 @@ oro:
                 update.label: '[Product Attribute] Edit attribute'
                 view.label: '[Product Attribute] View attributes'
                 remove.label: '[Product Attribute] Remove attribute'
+            related_products:
+                edit.label: '[Related Products] Edit related products'
 
         rounding:
             type:
@@ -181,9 +193,15 @@ oro:
             inventory: Inventory
             images: Images
             design: Design
+            relatedItems: Related Items
 
         widgets:
             product_information: Product Information
+            select_related_products:
+              title: Select related products for {{ sku }} - {{ name }}
+              label: Select related products
+              limit_has_been_reached: Limit of related products has been reached
+            select_products: Select products
 
         controller:
             product.saved.message: Product has been saved
@@ -201,6 +219,8 @@ oro:
                 backend_inventory_statuses_visibility.title: 'Management Console'
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
+                related_items.title: 'Related Items'
+                related_products.title: 'Related Products'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
                 product_images.title: 'Product Images'
@@ -209,7 +229,16 @@ oro:
                 featured_products_segment.title: 'Featured Products Segment'
                 quick_order.title: Quick Order Form
                 quick_order_form.title: Quick Order Form
+                new_product_icons.title: New Product Icons
+                product_promotions.title: Promotions
             fields:
+                enable_related_products.label: 'Enable Related Products'
+                related_products_bidirectional:
+                    label: 'Assign in Both Directions'
+                    tooltip: 'If this option is enabled, the current product will automatically be added as a related product to all of its related products.'
+                max_number_of_related_products:
+                    label: 'Maximum Number of Assigned Items'
+                    tooltip: 'You may use this option to set the limit on the number of related products that the catalog managers can link.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
@@ -255,6 +284,12 @@ oro:
                         Only segments with type "Product" are listed here.
                 page_template.label: Page Template
                 product_direct_url_prefix.label: 'Product URL prefix'
+                show_on_product_view:
+                    label: Show on Product View
+                    tooltip: The new product icon will be displayed on the product view page.
+                    type:
+                        yes.label: Yes
+                        no.label: No
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
@@ -330,6 +365,59 @@ oro:
 
         field_is_used_as_variant_field:
             message: "Cannot remove field because it's used as a variant field in the following configurable products: %skuList%"
+
+        sticker:
+            new_arrival: 'New Arrival'
+            top_selling: 'Top Selling'
+
+        brand:
+            owner:
+                label: Owner
+            label:                Brand
+            entity_label:         Brand
+            entity_plural_label:  Brands
+
+            descriptions:
+                label:    Description
+            id:
+                label:    Id
+            meta_titles:
+                label:    Meta title
+            meta_descriptions:
+                label:    Meta description
+            meta_keywords:
+                label:    Meta keyword
+            names:
+                label:    Name
+            short_descriptions:
+                label:    Short description
+            slug_prototypes:
+                label:    Slug prototype
+            slugs:
+                label:    Slug
+            organization:
+                label:    Organization
+            owner:
+                label:    Owner
+            status:
+                label:    Status
+                disabled: Disabled
+                enabled:  Enabled
+
+            menu:
+                entity_plural_label:  Product Brands
+                description:          Product Brands
+
+            form:
+                choose: Choose brand
+                update:
+                    sections:
+                        general:    'General'
+                        seo:        'SEO'
+                    messages:
+                        saved:      'Brand has been saved'
+                        notBlank:   'This field cannot be blank'
+
 
     product_unit.each:
         label:
@@ -440,3 +528,4 @@ oro:
         quick_order_form:
             label: Quick Order Form
             description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
+

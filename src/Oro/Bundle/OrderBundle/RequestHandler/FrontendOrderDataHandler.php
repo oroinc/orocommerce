@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
@@ -21,27 +21,27 @@ class FrontendOrderDataHandler
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var PaymentTermProvider  */
     protected $paymentTermProvider;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param RequestStack $requestStack
-     * @param SecurityFacade $securityFacade
-     * @param PaymentTermProvider $paymentTermProvider
+     * @param ManagerRegistry        $registry
+     * @param RequestStack           $requestStack
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param PaymentTermProvider    $paymentTermProvider
      */
     public function __construct(
         ManagerRegistry $registry,
         RequestStack $requestStack,
-        SecurityFacade $securityFacade,
+        TokenAccessorInterface $tokenAccessor,
         PaymentTermProvider $paymentTermProvider
     ) {
         $this->registry = $registry;
         $this->requestStack = $requestStack;
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
         $this->paymentTermProvider = $paymentTermProvider;
     }
 
@@ -60,7 +60,7 @@ class FrontendOrderDataHandler
      */
     public function getCustomerUser()
     {
-        $customerUser = $this->securityFacade->getLoggedUser();
+        $customerUser = $this->tokenAccessor->getUser();
         if (!$customerUser instanceof CustomerUser) {
             throw new \InvalidArgumentException('Only CustomerUser can create an Order');
         }

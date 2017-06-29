@@ -11,7 +11,7 @@
   )|escape %}
 
   <i class="{{ oro_entity_config_value(order.sourceEntityClass, 'icon') }}"></i>
-  {% if sourceEntity is not null and resource_granted('VIEW', sourceEntity) %}
+  {% if sourceEntity is not null and is_granted('VIEW', sourceEntity) %}
       <a href="{{ oro_entity_view_link(order.sourceEntityClass, order.sourceEntityId) }}">
           {{ sourceDocumenttitle }}
       </a>
@@ -29,7 +29,7 @@
             {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
             {{ currency.convert_to_base_currency(order.subtotalObject, '', order, 'subtotal') }}
 
-            {% if resource_granted('VIEW', order.customer) %}
+            {% if is_granted('VIEW', order.customer) %}
                 {% set customerView = UI.renderUrl(path('oro_customer_customer_view', {'id': order.customer.id}), order.customer|oro_format_name|default('oro.ui.empty'|trans)) %}
             {% else %}
                 {% set customerView = order.customer|oro_format_name|trim %}
@@ -38,7 +38,7 @@
 
             {% set customerUserView = '' %}
             {% if order.customerUser is not empty %}
-                {% if resource_granted('VIEW', order.customerUser) %}
+                {% if is_granted('VIEW', order.customerUser) %}
                     {% set customerUserView = UI.renderUrl(path('oro_customer_customer_user_view', {'id': order.customerUser.id}), order.customerUser|oro_format_name|default('oro.ui.empty'|trans)) %}
                 {% else %}
                     {% set customerUserView = order.customerUser|oro_format_name|trim %}
