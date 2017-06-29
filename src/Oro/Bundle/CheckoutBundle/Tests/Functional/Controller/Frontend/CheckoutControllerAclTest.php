@@ -53,7 +53,10 @@ class CheckoutControllerAclTest extends WebTestCase
         $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-checkouts-grid',
-            ]
+            ],
+            [],
+            true,
+            'oro_frontend_datagrid_index'
         );
 
         self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
@@ -82,7 +85,7 @@ class CheckoutControllerAclTest extends WebTestCase
             'NOT AUTHORISED' => [
                 'user' => '',
                 'indexResponseStatus' => 401,
-                'gridResponseStatus' => 403,
+                'gridResponseStatus' => 401,
                 'data' => [],
             ],
             'BASIC: own orders' => [

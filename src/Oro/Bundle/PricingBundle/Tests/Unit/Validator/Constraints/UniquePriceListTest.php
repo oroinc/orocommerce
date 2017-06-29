@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraint;
 
 class UniquePriceListTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testGetTargets()
     {
         $constraint = new UniquePriceList();
