@@ -25,7 +25,6 @@ class ContentNodeTreeResolverFacade implements ContentNodeTreeResolverInterface
         ContentNodeTreeResolverInterface $defaultResolver,
         ContentNodeTreeResolverInterface $cachedResolver
     ) {
-
         $this->defaultResolver = $defaultResolver;
         $this->cachedResolver = $cachedResolver;
     }

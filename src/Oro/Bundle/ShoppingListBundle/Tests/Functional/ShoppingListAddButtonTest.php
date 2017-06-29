@@ -8,7 +8,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class ShoppingListAddButtonTest extends WebTestCase
 {
-
     protected function setUp()
     {
         $this->initClient(

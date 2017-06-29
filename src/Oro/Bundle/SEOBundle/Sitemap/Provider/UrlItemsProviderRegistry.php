@@ -4,7 +4,7 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 
-class UrlItemsProviderRegistry
+class UrlItemsProviderRegistry implements UrlItemsProviderRegistryInterface
 {
     /**
      * @var array|UrlItemsProviderInterface[]
@@ -12,34 +12,23 @@ class UrlItemsProviderRegistry
     private $providers = [];
 
     /**
-     * @param UrlItemsProviderInterface $provider
-     * @param string $name
+     * @param array $providers
      */
-    public function addProvider(UrlItemsProviderInterface $provider, $name)
+    public function __construct(array $providers)
     {
-        $this->providers[$name] = $provider;
+        $this->providers = $providers;
     }
 
     /**
-     * @return array|UrlItemsProviderInterface[]
+     * {@inheritDoc}
      */
-    public function getProviders()
+    public function getProvidersIndexedByNames()
     {
         return $this->providers;
     }
 
     /**
-     * @return array
-     */
-    public function getProviderNames()
-    {
-        return array_keys($this->providers);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return null|UrlItemsProviderInterface
+     * {@inheritDoc}
      */
     public function getProviderByName($name)
     {

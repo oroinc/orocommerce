@@ -18,7 +18,6 @@
         "box/spout": "2.3.*",
         "myclabs/deep-copy": "1.5.*",
         "bower-asset/jquery-creditcardvalidator": "1.0",
-        "bower-asset/jquery-validate": "1.11.1",
         "bower-asset/elevatezoom3": "3.0.8.1",
         "besimple/soap-client": "^0.2.6"
     },

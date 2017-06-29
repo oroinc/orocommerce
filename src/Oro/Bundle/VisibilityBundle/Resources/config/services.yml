@@ -570,3 +570,11 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.manager'
             - '@oro_scope.scope_manager'
+
+    oro_visibility.product_visibility.widget_provider.actions:
+        parent: oro_ui.widget_provider.action_button.abstract
+        arguments:
+            - oro_product_visibility_button
+            - oro_product_visibility_link
+        tags:
+            - { name: oro_ui.view_action_provider, group: activity, priority: -200 }

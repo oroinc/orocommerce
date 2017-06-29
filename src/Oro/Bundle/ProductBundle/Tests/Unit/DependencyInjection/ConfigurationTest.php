@@ -33,7 +33,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'settings' => [
-                'resolved' => 1,
+                'resolved' => true,
+                'related_products_enabled' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
+                'related_products_bidirectional' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'max_number_of_related_products' => [
+                    'value' => 25,
+                    'scope' => 'app'
+                ],
                 'unit_rounding_type' => [
                     'value' => RoundingServiceInterface::ROUND_HALF_UP,
                     'scope' => 'app'

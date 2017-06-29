@@ -12,7 +12,7 @@ class FieldsProvider implements FieldsProviderInterface
     /**
      * @var array
      */
-    static protected $supportedNumericTypes = [
+    protected static $supportedNumericTypes = [
         'integer' => true,
         'float' => true,
         'money' => true,
@@ -22,7 +22,7 @@ class FieldsProvider implements FieldsProviderInterface
     /**
      * @var array
      */
-    static protected $supportedRelationTypes = [
+    protected static $supportedRelationTypes = [
         'ref-one' => true,
         'manyToOne' => true
     ];

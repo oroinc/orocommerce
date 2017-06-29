@@ -9,5 +9,4 @@ interface QueryExpressionConverterConverterAwareInterface extends
     QueryExpressionConverterInterface,
     ConverterAwareInterface
 {
-
 }
