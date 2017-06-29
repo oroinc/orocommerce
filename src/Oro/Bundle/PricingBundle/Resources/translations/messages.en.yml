@@ -16,19 +16,35 @@ oro.pricing:
         withoutPrice: N/A
 
     pricelist:
-        actual.label: Actual
-        entity_label: Price List
-        entity_plural_label: Price Lists
-        entity_description: Represents price list information
-        id.label: Id
-        name.label: Name
+        entity_label: 'Price List'
+        entity_plural_label: 'Price Lists'
+        entity_description: 'Represents price list information'
+        id.label: 'Id'
+        actual:
+            label: 'Actual'
+            description: 'Defines whether all price list processes was finished'
+        name:
+            label: 'Name'
+            description: 'The name of the price list'
         sortOrder.label: Sort Order
-        default.label: Is Default
-        active.label: Active
+        default:
+            label: 'Is Default'
+            description: 'Defines whether the price list is used by default'
+        active:
+            label: 'Active'
+            description: 'Defines whether the price list is active'
         currencies.label: Currencies
         schedule.label: Schedule
         has_price_list.label: Has Price List
-        product_assignment_rule.label: Rule
+        price_rules:
+            label: 'Price Rules'
+            description: 'Price rules to apply to the price list'
+        schedules:
+            label: 'Schedules'
+            description: 'Price list schedules'
+        product_assignment_rule:
+            label: 'Rule'
+            description: 'Defines on what products price list rules would apply'
         set_default:
             label: Set default
             message: The "{{ priceListName }}" has been made default
@@ -39,7 +55,9 @@ oro.pricing:
         merge_allowed.label: Merge Allowed
         merge_allowed.yes.label: Yes
         merge_allowed.no.label: No
-        contain_schedule.label: Contain Schedules
+        contain_schedule:
+            label: 'Contain Schedules'
+            description: 'Defines whether the price list has schedules'
         owner.label: 'Owner'
         organization.label: 'Organization'
         assigned_products.label: 'Assigned Products'

@@ -103,7 +103,9 @@ oro:
             entity_plural_label: Product Units
             entity_description: Represents product units information
             code.label: Code
-            default_precision.label: Default Precision
+            default_precision:
+                label: 'Default Precision'
+                description: 'Default Precision for the product unit'
             form.choose: Choose Unit...
             removed: '{title} - removed'
 
