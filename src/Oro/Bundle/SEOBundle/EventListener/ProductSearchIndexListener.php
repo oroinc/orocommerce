@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
@@ -45,6 +46,38 @@ class ProductSearchIndexListener
     }
 
     /**
+     * @param Product|Category $entity
+     * @param Localization $localization
+     * @return array
+     */
+    protected function getMetaFieldsForEntity($entity, $localization)
+    {
+        return [
+            $entity->getMetaTitle($localization),
+            $entity->getMetaDescription($localization),
+            $entity->getMetaKeyword($localization)
+        ];
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param int $id
+     * @param string $metaField
+     * @param int $localization_id
+     */
+    protected function addPlaceholderToEvent($event, $productId, $metaField, $localizationId)
+    {
+        $metaField = $this->cleanUpString($metaField);
+        $event->addPlaceholderField(
+            $productId,
+            IndexDataProvider::ALL_TEXT_L10N_FIELD,
+            $metaField,
+            [LocalizationIdPlaceholder::NAME => $localizationId],
+            true
+        );
+    }
+
+    /**
      * @param IndexEntityEvent $event
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
@@ -64,42 +97,24 @@ class ProductSearchIndexListener
         foreach ($products as $product) {
             // Localized fields
             $category = &$categoryMap[$product->getId()];
+            $brand = $product->getBrand();
             foreach ($localizations as $localization) {
-                $metaDescription = $this->cleanUpString($product->getMetaDescription($localization));
-                $event->addPlaceholderField(
-                    $product->getId(),
-                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                    $metaDescription,
-                    [LocalizationIdPlaceholder::NAME => $localization->getId()],
-                    true
-                );
-
-                $metaKeyword = $this->cleanUpString($product->getMetaKeyword($localization));
-                $event->addPlaceholderField(
-                    $product->getId(),
-                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                    $metaKeyword,
-                    [LocalizationIdPlaceholder::NAME => $localization->getId()],
-                    true
-                );
-
+                if (null !== $brand) {
+                    $event->addPlaceholderField(
+                        $product->getId(),
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        (string)$brand->getName($localization),
+                        [LocalizationIdPlaceholder::NAME => $localization->getId()],
+                        true
+                    );
+                }
+                foreach ($this->getMetaFieldsForEntity($product, $localization) as $metaField) {
+                    $this->addPlaceholderToEvent($event, $product->getId(), $metaField, $localization->getId());
+                }
                 if (!empty($category)) {
-                    $categoryDescription = $this->cleanUpString($category->getMetaDescription($localization));
-                    $event->addPlaceholderField(
-                        $product->getId(),
-                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                        $categoryDescription,
-                        [LocalizationIdPlaceholder::NAME => $localization->getId()],
-                        true
-                    );
-                    $categoryKeyword = $this->cleanUpString($category->getMetaKeyword($localization));
-                    $event->addPlaceholderField(
-                        $product->getId(),
-                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
-                        $categoryKeyword,
-                        [LocalizationIdPlaceholder::NAME => $localization->getId()],
-                        true
-                    );
+                    foreach ($this->getMetaFieldsForEntity($category, $localization) as $metaField) {
+                        $this->addPlaceholderToEvent($event, $product->getId(), $metaField, $localization->getId());
+                    }
                 }
             }
         }

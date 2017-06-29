@@ -11,7 +11,10 @@ oro_behat_extension:
         - OroShippingBundle::SingleCurrencyContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::CustomerUserContext
+        - OroCustomerBundle::GridContext
         - OroCheckoutBundle::FeatureContext
+        - OroSaleBundle::FeatureContext
+        - OroOrderBundle::OrderContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -60,7 +63,7 @@ oro_behat_extension:
         class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     OpenOrdersGridFilterItem:
-      selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filter-items-hint span'
+      selector: 'div.filter-items-hint span'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
 
     PastOrdersGrid:

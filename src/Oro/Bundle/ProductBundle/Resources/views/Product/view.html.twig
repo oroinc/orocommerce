@@ -63,6 +63,8 @@
                         'info': productInfo,
                         'generatedSugs': Redirect.renderGeneratedSlugs(entity.slugs),
                         'featured': UI.renderProperty('oro.product.featured.label'|trans, entity.featured ? 'oro.product.featured.yes'|trans : 'oro.product.featured.no'|trans),
+                        'newArrival': UI.renderProperty('oro.product.new_arrival.label'|trans, entity.newArrival ? 'oro.product.new_arrival.yes'|trans : 'oro.product.new_arrival.no'|trans),
+                        'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand),
                     }
                 },
                 {'data' : {
@@ -124,16 +126,35 @@
         }
     }) %}
 
+    {% set relatedItemsSubblocks = [] %}
+
+    {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
+        {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
+            dataGrid.renderGrid('products-related-products-view', {'relatedProducts': get_related_products_ids(entity)}),
+            placeholder('oro_product_related_items_view', {'entity':  entity})
+        ]) %}
+    {% endif %}
+
     {% if upsellProductsEnabled %}
+        {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
+            dataGrid.renderGrid('products-upsell-products-view', {'upsellProductIds': get_upsell_products_ids(entity)}),
+            placeholder('oro_product_upsell_products_view', {'entity':  entity})
+        ]) %}
+    {% endif %}
+
+    {% if relatedItemsSubblocks|length %}
         {% set dataBlocks = dataBlocks|merge({
             'relatedItems': {
-                'title': 'oro.product.sections.upsellItems'|trans,
-                'priority': 0,
+                'title': 'oro.product.sections.relatedItems'|trans,
+                'headerLinkContent': UII.link({
+                        path: path('oro_product_related_items_update', {id: entity.id}),
+                        label: 'oro.product.quick_edit.label'|trans,
+                        iCss: 'fa-edit',
+                        class: 'quick-editable pull-right'
+                    }),
+                'priority': 10,
                 'subblocks': [{
-                    'data': [
-                        dataGrid.renderGrid('products-related-items-view', {'upsellProductIds': get_upsell_products_ids(entity)}),
-                        placeholder('oro_product_upsell_products_view', {'entity':  entity})
-                    ]
+                    'data': relatedItemsSubblocks
                 }]
             }
         }) %}

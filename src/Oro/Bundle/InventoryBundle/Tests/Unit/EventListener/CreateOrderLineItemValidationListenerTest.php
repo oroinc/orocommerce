@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -17,11 +15,12 @@ use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
+
+use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,11 +33,6 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
      * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $translator;
-
-    /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $requestStack;
 
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -61,17 +55,13 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
         $this->translator = $this->getMockBuilder(Translator::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestStack = $this->getMockBuilder(RequestStack::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->inventoryQuantityManager = $this->getMockBuilder(InventoryQuantityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->createOrderLineItemValidationListener = new CreateOrderLineItemValidationListener(
             $this->inventoryQuantityManager,
             $this->doctrineHelper,
-            $this->translator,
-            $this->requestStack
+            $this->translator
         );
     }
 
@@ -104,6 +94,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
 
     public function testWrongContext()
     {
+        /** @var LineItemValidateEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(LineItemValidateEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -144,56 +135,35 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
 
     protected function prepareEvent()
     {
+        $event = $this->getMockBuilder(LineItemValidateEvent::class)->disableOriginalConstructor()->getMock();
+
         $numberOfItems = 5;
-        $event = $this->getMockBuilder(LineItemValidateEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowStep = $this->createMock(WorkflowStep::class);
-        $checkout = $this->createMock(Checkout::class);
-        $checkoutSource = $this->createMock(CheckoutSourceStub::class);
-        $shoppingList = $this->createMock(ShoppingList::class);
         $product = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
-        $lineItem = $this->createMock(LineItem::class);
-        $request = $this->createMock(Request::class);
-        $request->expects($this->once())
-            ->method('isMethod')
-            ->with('POST')
-            ->willReturn(true);
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
-        $lineItem->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
-        $lineItem->expects($this->once())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $lineItem->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($numberOfItems);
-        $checkout->expects($this->any())
-            ->method('getSource')
-            ->willReturn($checkoutSource);
-        $checkoutSource->expects($this->any())
-            ->method('getShoppingList')
-            ->willReturn($shoppingList);
-        $shoppingList->expects($this->once())
-            ->method('getLineItems')
-            ->willReturn([$lineItem]);
-        $workflowItem->expects($this->any())
-            ->method('getEntity')
-            ->willReturn($checkout);
-        $workflowStep->expects($this->once())
-            ->method('getName')
-            ->willReturn('order_review');
-        $workflowItem->expects($this->once())
-            ->method('getCurrentStep')
-            ->willReturn($workflowStep);
-        $event->expects($this->any())
-            ->method('getContext')
-            ->willReturn($workflowItem);
+
+        $lineItem = $this->createMock(CheckoutLineItemInterface::class);
+        $lineItem->expects($this->any())->method('getProduct')->willReturn($product);
+        $lineItem->expects($this->once())->method('getProductUnit')->willReturn($productUnit);
+        $lineItem->expects($this->any())->method('getQuantity')->willReturn($numberOfItems);
+
+        $checkoutLineItemsHolder = $this->createMock(CheckoutLineItemsHolderInterface::class);
+        $checkoutLineItemsHolder->expects($this->once())->method('getLineItems')->willReturn([$lineItem]);
+
+        $checkoutSource = $this->createMock(CheckoutSourceStub::class);
+        $checkoutSource->expects($this->any())->method('getEntity')->willReturn($checkoutLineItemsHolder);
+
+        $checkout = $this->createMock(Checkout::class);
+        $checkout->expects($this->any())->method('getSource')->willReturn($checkoutSource);
+
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $workflowItem->expects($this->any())->method('getEntity')->willReturn($checkout);
+
+        $workflowStep = $this->createMock(WorkflowStep::class);
+        $workflowStep->expects($this->once())->method('getName')->willReturn('order_review');
+
+        $workflowItem->expects($this->once())->method('getCurrentStep')->willReturn($workflowStep);
+
+        $event->expects($this->any())->method('getContext')->willReturn($workflowItem);
 
         return $event;
     }

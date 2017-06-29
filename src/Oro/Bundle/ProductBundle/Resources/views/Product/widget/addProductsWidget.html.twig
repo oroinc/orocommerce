@@ -1,0 +1,15 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+<div class="widget-content">
+    {% block widget_content %}
+        {{ dataGrid.renderGrid(gridName, parameters, {'enableViews': false, 'enableToggleFilters': false}) }}
+
+        <fieldset class="form-horizontal">
+            <div class="widget-actions form-actions" style="display: none;">
+                <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+
+                <button data-action-name="addProducts" type="button" class="btn">{{ 'Add'|trans }}</button>
+            </div>
+        </fieldset>
+    {% endblock %}
+</div>

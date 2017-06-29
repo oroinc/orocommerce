@@ -20,7 +20,7 @@
 
     {{ UI.cancelButton(path('oro_rfp_request_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_rfp_frontend_request_create') %}
+    {% if entity.id or is_granted('oro_rfp_frontend_request_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

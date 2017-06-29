@@ -16,6 +16,9 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceListFormExtension;
+use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
 
 class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 {
@@ -58,7 +61,13 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         $oroCollectionType = new CollectionType();
         $priceListCollectionType = new PriceListCollectionType();
         $priceListWithPriorityType = new PriceListSelectWithPriorityType();
-
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_pricing.price_strategy')
+            ->willReturn(MergePricesCombiningStrategy::NAME);
         return [
             new PreloadedExtension(
                 [
@@ -68,7 +77,10 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                     $entityType->getName() => $entityType,
                 ],
-                ['form' => [new SortableExtension()]]
+                [
+                    'form' => [new SortableExtension()],
+                    PriceListSelectWithPriorityType::NAME => [new PriceListFormExtension($configManager)]
+                ]
             ),
             new ValidatorExtension(Validation::createValidator()),
         ];

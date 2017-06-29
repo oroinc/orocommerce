@@ -28,10 +28,14 @@ trait LoadDemoMetaDataTrait
      * @param $seoFieldValue
      * @return LocalizedFallbackValue
      */
-    protected function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
+    protected function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue, $isString = false)
     {
         $seoField = new LocalizedFallbackValue();
-        $seoField->setText($seoFieldValue);
+        if ($isString) {
+            $seoField->setString($seoFieldValue);
+        } else {
+            $seoField->setText($seoFieldValue);
+        }
 
         $manager->persist($seoField);
 

@@ -3,7 +3,7 @@
 {% set pageTitle = 'oro.catalog.category.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('oro_catalog_category_create') %}
+    {% if is_granted('oro_catalog_category_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('oro_catalog_category_create', { 'id' : rootCategory.id }),
@@ -19,7 +19,7 @@
     {% set treeOptions = {
         'view' : 'orocatalog/js/app/views/tree-manage-view',
         'data' : oro_category_list(),
-        'updateAllowed' : resource_granted('oro_catalog_category_update'),
+        'updateAllowed' : is_granted('oro_catalog_category_update'),
         'onSelectRoute' : 'oro_catalog_category_update',
         'onMoveRoute' : 'oro_catalog_category_move'
     } %}
@@ -40,7 +40,7 @@
         {% endblock sidebar %}
 
         {% block content %}
-            {% if resource_granted('oro_catalog_category_create') and resource_granted('oro_catalog_category_update') %}
+            {% if is_granted('oro_catalog_category_create') and is_granted('oro_catalog_category_update') %}
                 <div class="tree-empty-content scrollable-container">
                     {{ 'oro.catalog.template.select_existing_or_create_new'|trans }}
                 </div>

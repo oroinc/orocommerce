@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -129,15 +130,21 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
 
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setSubTotal')
+            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
+            ->willReturnSelf();
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setCurrency')
+            ->with($order->getCurrency());
+
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createShippingContextBuilder')
-            ->with(
-                $order->getCurrency(),
-                Price::create($order->getSubtotal(), $order->getCurrency()),
-                $order,
-                (string)$order->getId()
-            )
+            ->with($order, (string)$order->getId())
             ->willReturn($this->contextBuilder);
 
         $this->factory->create($order);
@@ -172,15 +179,21 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             ->expects($this->never())
             ->method('setLineItems');
 
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setSubTotal')
+            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
+            ->willReturnSelf();
+
+        $this->contextBuilder
+            ->expects($this->once())
+            ->method('setCurrency')
+            ->with($order->getCurrency());
+
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createShippingContextBuilder')
-            ->with(
-                $order->getCurrency(),
-                Price::create($order->getSubtotal(), $order->getCurrency()),
-                $order,
-                (string)$order->getId()
-            )
+            ->with($order, (string)$order->getId())
             ->willReturn($this->contextBuilder);
 
         $this->factory->create($order);

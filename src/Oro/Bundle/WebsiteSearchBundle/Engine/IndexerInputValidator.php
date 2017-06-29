@@ -44,7 +44,6 @@ class IndexerInputValidator
         $classOrClasses,
         array $context
     ) {
-
         if (is_array($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
             throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
         }

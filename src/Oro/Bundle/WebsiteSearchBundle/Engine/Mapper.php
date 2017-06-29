@@ -29,7 +29,7 @@ class Mapper
         $result = [];
 
         foreach ($selects as $select) {
-            list ($type, $name) = Criteria::explodeFieldTypeName($select);
+            list($type, $name) = Criteria::explodeFieldTypeName($select);
 
             if (isset($selectAliases[$name])) {
                 $resultName = $selectAliases[$name];

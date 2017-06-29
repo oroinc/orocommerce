@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 
 class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -48,7 +49,7 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+            LoadCategoryProductData::class,
         ];
     }
 }

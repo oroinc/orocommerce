@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 
 class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_TestCase
@@ -16,7 +16,7 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
     private $channelType;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $methodIdentifierGenerator;
 
@@ -40,7 +40,7 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
         $this->channelType = 'integration_shipping_method';
 
         $this->methodIdentifierGenerator = $this->createMock(
-            IntegrationMethodIdentifierGeneratorInterface::class
+            IntegrationIdentifierGeneratorInterface::class
         );
         $this->handler = $this->createMock(
             ShippingMethodDisableHandlerInterface::class

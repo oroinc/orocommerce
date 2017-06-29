@@ -414,7 +414,11 @@ class OrderControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
-        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        $titleBlock = $crawler->filter('.responsive-section')
+            ->eq(2)
+            ->filter('.scrollspy-title')
+            ->filter('.pull-left')
+            ->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
@@ -439,7 +443,11 @@ class OrderControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
-        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        $titleBlock = $crawler->filter('.responsive-section')
+            ->eq(2)
+            ->filter('.scrollspy-title')
+            ->filter('.pull-left')
+            ->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
@@ -464,7 +472,11 @@ class OrderControllerTest extends WebTestCase
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
-        $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
+        $titleBlock = $crawler->filter('.responsive-section')
+            ->eq(2)
+            ->filter('.scrollspy-title')
+            ->filter('.pull-left')
+            ->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
@@ -528,7 +540,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected function getCurrentUser()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
+        return $this->getContainer()->get('oro_security.token_accessor')->getUser();
     }
 
     /**

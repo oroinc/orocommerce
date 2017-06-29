@@ -1,0 +1,34 @@
+oro_behat_extension:
+  suites:
+    OroSaleBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - OroDataGridBundle::GridContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroSaleBundle::FeatureContext
+      paths:
+        - '@OroSaleBundle/Tests/Behat/Features'
+
+  elements:
+    Quote Frontend Page:
+      class: Oro\Bundle\SaleBundle\Tests\Behat\Element\QuoteFrontendPage
+      selector: '.quote'
+
+    Quote Form:
+      selector: 'form[name^="oro_sale_quote"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          CustomerUser:
+              type: 'css'
+              locator: 'input[name="oro_sale_quote[customerUser]"]'
+              element: Select2Entity
+          LineItemProduct:
+              type: 'css'
+              locator: 'input[name="oro_sale_quote[quoteProducts][0][product]"]'
+              element: Select2Entity
+          LineItemPrice: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
