@@ -28,11 +28,18 @@ class AppliedDiscount
     protected $type;
 
     /**
-     * @ORM\Column(name="amount", type="float", nullable=true)
+     * @ORM\Column(name="amount", type="float")
      *
      * @var float
      */
     protected $amount;
+
+    /**
+     * @ORM\Column(name="currency", type="string", length=50)
+     *
+     * @var string
+     */
+    protected $currency;
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\Order")
@@ -166,5 +173,27 @@ class AppliedDiscount
     public function setOptions(array $options)
     {
         $this->options = $options;
+
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return $this
+     */
+    public function setCurrency(string $currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
     }
 }
