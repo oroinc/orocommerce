@@ -10,15 +10,15 @@ Feature: Rule Editor with Autocomplete in Price List
       | Active     | true          |
 
     When I click on "Product Assignment Rule"
-    Then I should see "product..." in typeahead suggestions for "Product Assignment Rule"
-    When I select "product..." from typeahead suggestions for "Product Assignment Rule"
+    Then I should see "product…" in typeahead suggestions for "Product Assignment Rule"
+    When I select "product…" from typeahead suggestions for "Product Assignment Rule"
     And I should see "featured" in typeahead suggestions for "Product Assignment Rule"
     And I should see 20 typeahead suggestions for "Product Assignment Rule"
     When I type "product.featured " in "Product Assignment Rule"
     Then I should see 16 typeahead suggestions for "Product Assignment Rule"
     When type "product.featured + " in "Product Assignment Rule"
-    Then I should see "product..." in typeahead suggestions for "Product Assignment Rule"
-    And I should see "pricelist..." in typeahead suggestions for "Product Assignment Rule"
+    Then I should see "product…" in typeahead suggestions for "Product Assignment Rule"
+    And I should see "pricelist…" in typeahead suggestions for "Product Assignment Rule"
     When type "product.featured == true" in "Product Assignment Rule"
     And I save and close form
     Then I should see "Price List has been saved" flash message
@@ -32,7 +32,7 @@ Feature: Rule Editor with Autocomplete in Price List
       | Active     | true          |
 
     When I click on "Product Assignment Rule"
-    Then I should see "pricelist..." in typeahead suggestions for "Product Assignment Rule"
+    Then I should see "pricelist…" in typeahead suggestions for "Product Assignment Rule"
     When I type "pricelist[1]" in "Product Assignment Rule"
     Then I should see "Default Price List"
     When I click on "Price List Select Clear Button"
@@ -63,26 +63,26 @@ Feature: Rule Editor with Autocomplete in Price List
 
     When I click "Price Calculation Unit Expression Button"
     And I click on "Price Calculation Unit Expression"
-    And I select "pricelist..." from typeahead suggestions for "Price Calculation Unit Expression"
+    And I select "pricelist…" from typeahead suggestions for "Price Calculation Unit Expression"
     Then Price Calculation Unit Expression field should has pricelist[]. value
     When I click on "Price List Select Grid Button"
     And I click on Default Price List in grid
-    And I select "prices..." from typeahead suggestions for "Price Calculation Unit Expression"
+    And I select "prices…" from typeahead suggestions for "Price Calculation Unit Expression"
     And I select "unit" from typeahead suggestions for "Price Calculation Unit Expression"
     Then Price Calculation Unit Expression field should has pricelist[1].prices.unit  value
 
     When I click "Price Calculation Currency Expression Button"
     And I click on "Price Calculation Currency Expression"
-    And I select "pricelist..." from typeahead suggestions for "Price Calculation Currency Expression"
+    And I select "pricelist…" from typeahead suggestions for "Price Calculation Currency Expression"
     Then Price Calculation Currency Expression field should has pricelist[]. value
     When I click on "Price List Select Grid Button"
     And I click on Default Price List in grid
-    And I select "prices..." from typeahead suggestions for "Price Calculation Currency Expression"
+    And I select "prices…" from typeahead suggestions for "Price Calculation Currency Expression"
     And I select "currency" from typeahead suggestions for "Price Calculation Currency Expression"
     Then Price Calculation Currency Expression field should has pricelist[1].prices.currency  value
 
     When I click on "Price Calculation Calculate As"
-    And I select "pricelist..." from typeahead suggestions for "Price Calculation Calculate As"
+    And I select "pricelist…" from typeahead suggestions for "Price Calculation Calculate As"
     And I click on "Price List Select Grid Button"
     And I click on Default Price List in grid
     And I select "prices" from typeahead suggestions for "Price Calculation Calculate As"
@@ -92,7 +92,7 @@ Feature: Rule Editor with Autocomplete in Price List
     And I type "pricelist[1].prices.quantity + 1" in "Price Calculation Calculate As"
 
     And I click on "Price Calculation Condition"
-    And I should see "product..." in typeahead suggestions for "Price Calculation Condition"
+    And I should see "product…" in typeahead suggestions for "Price Calculation Condition"
     And I type "pricelist[2].prices.unit == product.primaryUnitPrecision.unit" in "Price Calculation Condition"
 
     When I save and close form
