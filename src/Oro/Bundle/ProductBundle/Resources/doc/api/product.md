@@ -15,7 +15,7 @@
 Create a new Product record.
 The created record is returned in the response.
 
-Static options for product attributes
+##### 1. Static options for product attributes
 
 | Attribute| Options | Description |
 |----------|---------|-------------|
@@ -26,11 +26,46 @@ Static options for product attributes
 | status | "enabled" / "disabled" |  |
 | featured | true / false |  |
 | newArrival | true / false |  |
+| | | |
 
-{@inheritdoc}
+##### 2. Creating related entities together with the Product entity:
+
+When creating a Product entity there are certain relations or associations with other entities
+which require by default that you specify their type and id so that they are loaded.
+
+But if you need to create a new entity from a relation, you have the option to do so, but you must
+use the **"included"** section. See documentation about this section [here](https://www.orocrm.com/documentation/current/book/data-api#create-and-update-related-resources-together-with-a-primary-api-resource)
+
+For example, if we look at the manageInventory field, in the **"data"** section
+
+      "manageInventory": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "1abcd"
+        }
+      }
+
+we have a temporary ID (recomended to be a GUID, as the documentation says) "1abcd" which is
+used to identify the data used for creating this entity, data taken from the **"included"** section :
+
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "1abcd",
+      "attributes": {
+        "fallback": "systemConfig",
+        "scalarValue": null,
+        "arrayValue": null
+      }
+    }
+
+The same applies to other relation entities like "localizedfallbackvalues" type, which are used for
+properties like "names", "descriptions", "shortDescriptions", and also meta fields. You can see in
+the detailed example for product creation.
+
 
 
 {@request:json_api}
+
 Example:
 
 `</admin/api/products>`
