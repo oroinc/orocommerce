@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolationPerTest
  */
-class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
+class ShippingRuleControllerTest extends WebTestCase
 {
     protected function setUp()
     {
