@@ -89,7 +89,6 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-
         $data = new OrderDiscount();
 
         $form = $this->factory->create($this->formType, $data, ['currency' => 'USD', 'total' => 99]);

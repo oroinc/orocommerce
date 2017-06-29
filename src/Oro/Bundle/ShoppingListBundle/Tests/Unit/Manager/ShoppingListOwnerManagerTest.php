@@ -134,7 +134,6 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetOwnerPermissionDenied()
     {
-
         $repo = $this->getMockBuilder(EntityRepository::class)->disableOriginalConstructor()->getMock();
         $this->registry->method('getRepository')
             ->with(CustomerUser::class)

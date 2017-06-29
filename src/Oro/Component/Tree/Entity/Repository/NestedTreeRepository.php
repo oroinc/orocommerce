@@ -16,5 +16,4 @@ use Gedmo\Tree\Entity\Repository\NestedTreeRepository as GedmoNestedTreeReposito
  */
 class NestedTreeRepository extends GedmoNestedTreeRepository
 {
-
 }

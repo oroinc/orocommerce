@@ -28,7 +28,12 @@ All existing classes were updated to use new services instead of the `SecurityFa
 
 AuthorizeNetBundle
 ------------------
-- AuthorizeNetBundle extracted into individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
+- AuthorizeNetBundle extracted to individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
+
+CatalogBundle
+-------------
+- Class `Oro\Bundle\CatalogBundle\EventListenerFormViewListener`
+    - changed signature of `__construct` method. Dependency on `RequestStack` was removed.
 
 CheckoutBundle
 --------------
@@ -97,6 +102,24 @@ SEOBundle
 -------------
 - metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added. 
 MetaTitle is displayed as default view page title.
+- Class `Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener`
+    - changed signature of `__construct` method:
+        - dependency on `RequestStack` was removed
+        - dependency on `DoctrineHelper` was removed
+    - method `setBlockPriority` was removed
+- Service `oro_seo.event_listener.product_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+- Service `oro_seo.event_listener.category_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+- Service ` oro_seo.event_listener.page_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+- Service `oro_seo.event_listener.content_node_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+
 
 PaymentBundle
 -------------
@@ -144,6 +167,10 @@ PricingBundle
 - Service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`
     - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
     - method `postRemove` has additional argument `ProductUnitPrecision $precision`.
+- Class `Oro\Bundle\PricingBundle\EventListener\FormViewListener`
+    - changed signature of `__construct` method:
+        - dependency on `RequestStack` was removed.
+        - dependency on `Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider` was added.
 - Added API for entities:
     - `Oro\Bundle\PricingBundle\Entity\PriceList`
     - `Oro\Bundle\PricingBundle\Entity\PriceListSchedule`
