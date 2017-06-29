@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Context\Builder\Basic\Factory;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\Builder\Basic\BasicShippingContextBuilder;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
@@ -23,7 +22,7 @@ class BasicShippingContextBuilderFactory implements ShippingContextBuilderFactor
 
     /**
      * @param ShippingLineItemCollectionFactoryInterface $collectionFactory
-     * @param ShippingOriginProvider $shippingOriginProvider
+     * @param ShippingOriginProvider                     $shippingOriginProvider
      */
     public function __construct(
         ShippingLineItemCollectionFactoryInterface $collectionFactory,
@@ -36,15 +35,9 @@ class BasicShippingContextBuilderFactory implements ShippingContextBuilderFactor
     /**
      * {@inheritDoc}
      */
-    public function createShippingContextBuilder(
-        $currency,
-        Price $subTotal,
-        $sourceEntity,
-        $sourceEntityId
-    ) {
+    public function createShippingContextBuilder($sourceEntity, $sourceEntityId)
+    {
         return new BasicShippingContextBuilder(
-            $currency,
-            $subTotal,
             $sourceEntity,
             $sourceEntityId,
             $this->collectionFactory,

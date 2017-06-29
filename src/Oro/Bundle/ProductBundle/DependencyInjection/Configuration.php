@@ -12,6 +12,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     const ROOT_NODE = 'oro_product';
+    const RELATED_PRODUCTS_ENABLED = 'related_products_enabled';
+    const RELATED_PRODUCTS_BIDIRECTIONAL = 'related_products_bidirectional';
+    const MAX_NUMBER_OF_RELATED_PRODUCTS = 'max_number_of_related_products';
+    const MAX_NUMBER_OF_RELATED_PRODUCTS_COUNT = 25;
     const SINGLE_UNIT_MODE = 'single_unit_mode';
     const SINGLE_UNIT_MODE_SHOW_CODE = 'single_unit_mode_show_code';
     const DEFAULT_UNIT = 'default_unit';
@@ -21,8 +25,11 @@ class Configuration implements ConfigurationInterface
     const FEATURED_PRODUCTS_SEGMENT_ID = 'featured_products_segment_id';
     const ENABLE_QUICK_ORDER_FORM = 'enable_quick_order_form';
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
+    const BRAND_DIRECT_URL_PREFIX = 'brand_direct_url_prefix';
     const PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE = 'product_collections_indexation_cron_schedule';
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
+    const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
+    const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
 
     /**
      * {@inheritDoc}
@@ -36,6 +43,11 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
+                self::RELATED_PRODUCTS_ENABLED => ['value' => true],
+                self::RELATED_PRODUCTS_BIDIRECTIONAL => ['value' => false],
+                self::MAX_NUMBER_OF_RELATED_PRODUCTS => [
+                    'value' => self::MAX_NUMBER_OF_RELATED_PRODUCTS_COUNT,
+                ],
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
                 self::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
                 self::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],
@@ -53,7 +65,11 @@ class Configuration implements ConfigurationInterface
                 self::FEATURED_PRODUCTS_SEGMENT_ID => ['value' => null],
                 self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 self::DIRECT_URL_PREFIX => ['value' => ''],
-                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE]
+                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
+                self::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
+                self::BRAND_DIRECT_URL_PREFIX => ['value' => ''],
+                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
+                self::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
             ]
         );
 

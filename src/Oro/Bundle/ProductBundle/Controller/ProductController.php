@@ -40,10 +40,13 @@ class ProductController extends Controller
         $pageTemplate = $this->get('oro_product.provider.page_template_provider')
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
 
+        $relatedProductsEnabled = $this->get('oro_product.related_item.related_product.config_provider')->isEnabled();
+
         return [
             'entity' => $product,
             'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
-            'pageTemplate' => $pageTemplate
+            'pageTemplate' => $pageTemplate,
+            'relatedProductsEnabled' => $relatedProductsEnabled,
         ];
     }
 
@@ -152,17 +155,36 @@ class ProductController extends Controller
     }
 
     /**
+     * Quick edit product form
+     *
+     * @Route("/related-items-update/{id}", name="oro_product_related_items_update", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("oro_related_products_edit")
+     * @param Product $product
+     *
+     * @return array|RedirectResponse
+     */
+    public function updateRelatedItemsAction(Product $product)
+    {
+        if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
+        return $this->update($product, 'oro_product_related_items_update');
+    }
+
+    /**
      * @param Product $product
      * @return array|RedirectResponse
      */
-    protected function update(Product $product)
+    protected function update(Product $product, $routeName = 'oro_product_update')
     {
         return $this->get('oro_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->createForm(ProductType::NAME, $product),
-            function (Product $product) {
+            function (Product $product) use ($routeName) {
                 return [
-                    'route' => 'oro_product_update',
+                    'route' => $routeName,
                     'parameters' => ['id' => $product->getId()]
                 ];
             },
@@ -285,16 +307,33 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/add-products-widget", name="oro_add_products_widget")
+     * @Route(
+     *     "/get-possible-products-for-related-products/{id}",
+     *     name="oro_product_possible_products_for_related_products",
+     *     requirements={"id"="\d+"}
+     * )
+     * @Template(template="OroProductBundle:Product:selectRelatedProducts.html.twig")
+     *
+     * @param Product $product
+     * @return array
+     */
+    public function getPossibleProductsForRelatedProductsAction(Product $product)
+    {
+        return ['product' => $product];
+    }
+
+    /**
+     * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
      * @AclAncestor("oro_product_view")
      * @Template
      */
-    public function addProductsWidgetAction(Request $request)
+    public function addProductsWidgetAction(Request $request, $gridName)
     {
         $hiddenProducts = $request->get('hiddenProducts');
 
         return [
-            'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : []
+            'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : [],
+            'gridName' => $gridName,
         ];
     }
 }

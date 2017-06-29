@@ -38,5 +38,5 @@ trait ConfigTestTrait
     /**
      * @return string
      */
-    protected abstract function getExtensionAlias();
+    abstract protected function getExtensionAlias();
 }

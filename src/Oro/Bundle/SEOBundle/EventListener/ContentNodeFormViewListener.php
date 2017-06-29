@@ -4,7 +4,6 @@ namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class ContentNodeFormViewListener extends BaseFormViewListener
 {
@@ -13,7 +12,7 @@ class ContentNodeFormViewListener extends BaseFormViewListener
      */
     public function onContentNodeView(BeforeListRenderEvent $event)
     {
-        $this->addViewPageBlock($event, ContentNode::class);
+        $this->addViewPageBlock($event);
     }
 
     /**
@@ -26,14 +25,21 @@ class ContentNodeFormViewListener extends BaseFormViewListener
 
     /**
      * @param ScrollData $scrollData
+     * @param string $titleTemplate
      * @param string $descriptionTemplate
      * @param string $keywordsTemplate
+     * @param int $priority
      */
-    protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate)
-    {
+    protected function addSEOBlock(
+        ScrollData $scrollData,
+        $titleTemplate,
+        $descriptionTemplate,
+        $keywordsTemplate,
+        $priority = 10
+    ) {
         // Set priorities to existing blocks to be able to pass new block in the middle
         $data = $scrollData->getData();
-        if (count($data[ScrollData::DATA_BLOCKS]) > 0) {
+        if (isset($data[ScrollData::DATA_BLOCKS]) && count($data[ScrollData::DATA_BLOCKS]) > 0) {
             foreach ($data[ScrollData::DATA_BLOCKS] as $i => &$block) {
                 if (!array_key_exists(ScrollData::PRIORITY, $block)) {
                     $block[ScrollData::PRIORITY] = $i * 10 + 1;
@@ -42,7 +48,7 @@ class ContentNodeFormViewListener extends BaseFormViewListener
         }
         $scrollData->setData($data);
 
-        parent::addSEOBlock($scrollData, $descriptionTemplate, $keywordsTemplate);
+        parent::addSEOBlock($scrollData, $titleTemplate, $descriptionTemplate, $keywordsTemplate);
     }
 
     /**

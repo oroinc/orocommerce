@@ -33,7 +33,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'settings' => [
-                'resolved' => 1,
+                'resolved' => true,
+                'related_products_enabled' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
+                'related_products_bidirectional' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'max_number_of_related_products' => [
+                    'value' => 25,
+                    'scope' => 'app'
+                ],
                 'unit_rounding_type' => [
                     'value' => RoundingServiceInterface::ROUND_HALF_UP,
                     'scope' => 'app'
@@ -81,12 +93,24 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => '',
                     'scope' => 'app'
                 ],
+                'brand_direct_url_prefix' => [
+                    'value' => '',
+                    'scope' => 'app'
+                ],
                 'featured_products_segment_id' => [
                     'value' => null,
                     'scope' => 'app'
                 ],
                 'product_collections_indexation_cron_schedule' => [
                     'value' => '0 * * * *',
+                    'scope' => 'app'
+                ],
+                'product_promotion_show_on_product_view' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'product_collections_mass_action_limitation' => [
+                    'value' => 500,
                     'scope' => 'app'
                 ]
             ]

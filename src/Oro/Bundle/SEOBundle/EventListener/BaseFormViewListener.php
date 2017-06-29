@@ -19,87 +19,53 @@ abstract class BaseFormViewListener
     protected $translator;
 
     /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
-     * @var int
-     */
-    protected $blockPriority = 10;
-
-    /**
-     * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(
-        RequestStack $requestStack,
-        TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper
-    ) {
-        $this->requestStack = $requestStack;
-        $this->translator = $translator;
-        $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
-     * @param int $blockPriority
-     * @return BaseFormViewListener
-     */
-    public function setBlockPriority($blockPriority)
+    public function __construct(TranslatorInterface $translator)
     {
-        $this->blockPriority = $blockPriority;
-
-        return $this;
+        $this->translator = $translator;
     }
 
     /**
      * @param BeforeListRenderEvent $event
-     * @param string $entityClass
+     * @param int $priority
      */
-    protected function addViewPageBlock(BeforeListRenderEvent $event, $entityClass)
+    protected function addViewPageBlock(BeforeListRenderEvent $event, $priority = 10)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return;
-        }
-
-        $objectId = (int)$request->get('id');
-        if (!$objectId) {
-            return;
-        }
-
-        $object = $this->doctrineHelper->getEntityReference($entityClass, $objectId);
+        $object = $event->getEntity();
         if (!$object) {
             return;
         }
 
         $twigEnv = $event->getEnvironment();
-        $descriptionTemplate = $twigEnv->render('OroSEOBundle:SEO:description_view.html.twig', [
+        $titleTemplate = $twigEnv->render('OroSEOBundle:SEO:title_view.html.twig', [
             'entity' => $object,
             'labelPrefix' => $this->getMetaFieldLabelPrefix()
+        ]);
+        $descriptionTemplate = $twigEnv->render('OroSEOBundle:SEO:description_view.html.twig', [
+            'entity' => $object,
+            'labelPrefix' => $this->getMetaFieldLabelPrefix(),
         ]);
         $keywordsTemplate = $twigEnv->render('OroSEOBundle:SEO:keywords_view.html.twig', [
             'entity' => $object,
-            'labelPrefix' => $this->getMetaFieldLabelPrefix()
+            'labelPrefix' => $this->getMetaFieldLabelPrefix(),
         ]);
 
-        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate);
+        $this->addSEOBlock($event->getScrollData(), $titleTemplate, $descriptionTemplate, $keywordsTemplate, $priority);
     }
 
     /**
      * @param BeforeListRenderEvent $event
+     * @param int $priority
      */
-    protected function addEditPageBlock(BeforeListRenderEvent $event)
+    protected function addEditPageBlock(BeforeListRenderEvent $event, $priority = 10)
     {
         $twigEnv = $event->getEnvironment();
         $formView = $event->getFormView();
+        $titleTemplate = $twigEnv->render(
+            'OroSEOBundle:SEO:title_update.html.twig',
+            ['form' => $formView]
+        );
         $descriptionTemplate = $twigEnv->render(
             'OroSEOBundle:SEO:description_update.html.twig',
             ['form' => $formView]
@@ -109,20 +75,28 @@ abstract class BaseFormViewListener
             ['form' => $formView]
         );
 
-        $this->addSEOBlock($event->getScrollData(), $descriptionTemplate, $keywordsTemplate);
+        $this->addSEOBlock($event->getScrollData(), $titleTemplate, $descriptionTemplate, $keywordsTemplate, $priority);
     }
 
     /**
      * @param ScrollData $scrollData
+     * @param string $titleTemplate
      * @param string $descriptionTemplate
      * @param string $keywordsTemplate
+     * @param int $priority
      */
-    protected function addSEOBlock(ScrollData $scrollData, $descriptionTemplate, $keywordsTemplate)
-    {
+    protected function addSEOBlock(
+        ScrollData $scrollData,
+        $titleTemplate,
+        $descriptionTemplate,
+        $keywordsTemplate,
+        $priority = 10
+    ) {
         $blockLabel = $this->translator->trans('oro.seo.label');
-        $scrollData->addNamedBlock(self::SEO_BLOCK_ID, $blockLabel, $this->blockPriority);
+        $scrollData->addNamedBlock(self::SEO_BLOCK_ID, $blockLabel, $priority);
         $leftSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
         $rightSubBlock = $scrollData->addSubBlock(self::SEO_BLOCK_ID);
+        $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $titleTemplate, 'metaTitles');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $leftSubBlock, $descriptionTemplate, 'metaDescriptions');
         $scrollData->addSubBlockData(self::SEO_BLOCK_ID, $rightSubBlock, $keywordsTemplate, 'metaKeywords');
     }

@@ -24,7 +24,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function testRequest($requestClass, $requestString, $error = [])
     {
         if ($error) {
-            list ($exception, $message) = $error;
+            list($exception, $message) = $error;
             $this->expectException($exception);
             $this->expectExceptionMessage($message);
         }

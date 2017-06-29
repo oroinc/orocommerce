@@ -11,6 +11,11 @@ layout:
             optionName: grid_render_parameters.enableViews
             optionValue: false
 
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.isStickyFilters
+            optionValue: true
+
         - '@addTree':
             items:
                 product_index_page:
@@ -20,4 +25,10 @@ layout:
             tree:
                 page_content:
                     product_index_page:
-                        product_grid_container:
+                        product_grid_container: ~
+
+        - '@add':
+            id: sticky_element_toolbar
+            parentId: top_sticky_panel_content
+            siblingId: sticky_header_row
+            blockType: block

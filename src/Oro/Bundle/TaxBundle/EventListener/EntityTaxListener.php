@@ -85,7 +85,24 @@ class EntityTaxListener
         // Entities with ID can be processed in preFlush
         if ($this->getIdentifier($entity, $event->getEntityManager())) {
             try {
-                $this->taxManager->saveTax($entity, false);
+                // Always calculate taxes for entity which doesn't have it
+                $taxValue = $this->taxManager->getTaxValue($entity);
+                if (!$taxValue->getId()) {
+                    $this->taxManager->saveTax($entity, false);
+
+                    return;
+                }
+
+                // preFlush event called for all entities in UoW identityMap
+                // No need to store taxes every time
+                $storedTaxResult = $this->taxManager->loadTax($entity);
+                $calculatedTaxResult = $this->taxManager->getTax($entity);
+
+                // Compare result objects by serializing results
+                // it allows to compare only significant fields
+                if ($storedTaxResult->jsonSerialize() != $calculatedTaxResult->jsonSerialize()) {
+                    $this->taxManager->saveTax($entity, false);
+                }
             } catch (TaxationDisabledException $e) {
                 // Taxation disabled, skip tax saving
             }

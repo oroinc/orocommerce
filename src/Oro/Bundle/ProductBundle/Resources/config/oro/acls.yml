@@ -65,3 +65,9 @@ acls:
         category: "catalog"
         bindings:
             - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeFamilyController, method: deleteAction }
+
+    oro_related_products_edit:
+        type: action
+        label: oro.product.acl.related_products.edit.label
+        group_name: ""
+        category: "catalog"

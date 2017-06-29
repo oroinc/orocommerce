@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -15,7 +15,7 @@ class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
      * @param array $productIds
      * @param array $orderBy
      *
-     * @return ProductPrice[]
+     * @return PriceAttributeProductPrice[]
      */
     public function findByPriceAttributeProductPriceIdsAndProductIds(
         $priceAttributePriceListIds,

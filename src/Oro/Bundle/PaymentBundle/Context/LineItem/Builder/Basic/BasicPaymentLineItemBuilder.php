@@ -47,20 +47,17 @@ class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
     private $productSku;
 
     /**
-     * @param Price $price
      * @param ProductUnit $unit
      * @param string $unitCode
      * @param int $quantity
      * @param ProductHolderInterface $productHolder
      */
     public function __construct(
-        Price $price,
         ProductUnit $unit,
         $unitCode,
         $quantity,
         ProductHolderInterface $productHolder
     ) {
-        $this->price = $price;
         $this->unit = $unit;
         $this->unitCode = $unitCode;
         $this->quantity = $quantity;
@@ -73,12 +70,11 @@ class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
     public function getResult()
     {
         $params = [
-            PaymentLineItem::FIELD_PRICE => $this->price,
             PaymentLineItem::FIELD_PRODUCT_UNIT => $this->unit,
             PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => $this->unitCode,
             PaymentLineItem::FIELD_QUANTITY => $this->quantity,
             PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->productHolder,
-            PaymentLineItem::FIELD_ENTITY_IDENTIFIER => $this->productHolder->getEntityIdentifier()
+            PaymentLineItem::FIELD_ENTITY_IDENTIFIER => $this->productHolder->getEntityIdentifier(),
         ];
 
         if (null !== $this->product) {
@@ -87,6 +83,10 @@ class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
 
         if (null !== $this->productSku) {
             $params[PaymentLineItem::FIELD_PRODUCT_SKU] = $this->productSku;
+        }
+
+        if (null !== $this->price) {
+            $params[PaymentLineItem::FIELD_PRICE] = $this->price;
         }
 
         return new PaymentLineItem($params);
@@ -108,6 +108,16 @@ class BasicPaymentLineItemBuilder implements PaymentLineItemBuilderInterface
     public function setProductSku($sku)
     {
         $this->productSku = $sku;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPrice(Price $price)
+    {
+        $this->price = $price;
 
         return $this;
     }

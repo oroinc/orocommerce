@@ -32,6 +32,9 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         /** @var Country $germany */
         $germany = $repository->findOneBy(['name' => 'Germany']);
         $this->referenceRepository->set('germany', $germany);
+        /** @var Country $us */
+        $us = $repository->findOneBy(['name' => 'United States']);
+        $this->referenceRepository->set('united_states', $us);
 
         /** @var RegionRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroAddressBundle:Region');
@@ -57,6 +60,9 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         /** @var ProductUnit $each */
         $each = $repository->findOneBy(['code' => 'each']);
         $this->referenceRepository->set('each', $each);
+        /** @var ProductUnit $set */
+        $set = $repository->findOneBy(['code' => 'set']);
+        $this->referenceRepository->set('set', $set);
 
         /** @var AddressTypeRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroAddressBundle:AddressType');
@@ -77,7 +83,7 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $repository = $this->getEntityManager()->getRepository('OroPricingBundle:PriceList');
         /** @var PriceList $pricelist1*/
         $pricelist1 = $repository->findOneBy(['id' => '1']);
-        $this->referenceRepository->set('pricelist1', $pricelist1);
+        $this->referenceRepository->set('defaultPriceList', $pricelist1);
 
         /** @var WebsiteRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroWebsiteBundle:Website');

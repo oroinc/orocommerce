@@ -6,7 +6,6 @@ use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 
 class CollectContextEventTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testAddContextValue()
     {
         $websiteId = 1;

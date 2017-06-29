@@ -46,7 +46,7 @@
         {% set cancelPath = path('oro_content_node_update', { 'id': entity.parentNode.id }) %}
     {% endif %}
 
-    {% if entity.id is not empty and resource_granted('oro_web_catalog_update') %}
+    {% if entity.id is not empty and is_granted('oro_web_catalog_update') %}
         {{ UI.button({
             'path' : path('oro_content_node_create', { 'id': entity.id }),
             'iCss': 'fa-book',
@@ -138,7 +138,7 @@
     {% set treeOptions = {
         'key' : 'web-catalog',
         'data' : oro_web_catalog_tree(web_catalog),
-        'updateAllowed' : resource_granted('oro_web_catalog_update'),
+        'updateAllowed' : is_granted('oro_web_catalog_update'),
         'onRootSelectRoute': 'oro_content_node_update',
         'onSelectRoute' : 'oro_content_node_update',
         'onMoveRoute' : 'oro_content_node_move',

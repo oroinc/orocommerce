@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit;
 
-use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\KernelInterface;
-
-use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesCompilerPass;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesCompilerPass;
+use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\FullListUrlProvidersCompilerPass;
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 use Oro\Bundle\SEOBundle\OroSEOBundle;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,6 +24,7 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
         $bundle->build($container);
 
         $fields = [
+            'metaTitle' => 'metaTitles',
             'metaDescription' => 'metaDescriptions',
             'metaKeyword' => 'metaKeywords'
         ];
@@ -33,6 +35,7 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
                     Product::class => $fields,
                     Category::class => $fields,
                     Page::class => $fields,
+                    Brand::class => $fields,
                 ]),
                 new ContentNodeFieldsChangesCompilerPass(
                     array_values($fields),
@@ -42,7 +45,15 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
                     array_values($fields),
                     'oro_catalog.event_listener.category_content_variant_index'
                 ),
-                new UrlItemsProviderCompilerPass(),
+                new UrlItemsProviderCompilerPass(
+                    'oro_seo.sitemap.provider.url_items_provider_registry',
+                    'oro_seo.sitemap.url_items_provider'
+                ),
+                new UrlItemsProviderCompilerPass(
+                    'oro_seo.sitemap.provider.website_access_denied_urls_provider_registry',
+                    'oro_seo.sitemap.website_access_denied_urls_provider'
+                ),
+                new FullListUrlProvidersCompilerPass(),
             ],
             $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses()
         );
