@@ -54,6 +54,19 @@ class OrdersAppliedDiscountsProvider
 
     /**
      * @param int $orderId
+     * @return float
+     */
+    public function getOrderDiscountAmount(int $orderId): float
+    {
+        $amount = 0.0;
+        foreach ($this->getOrderDiscounts($orderId) as $appliedDiscount) {
+            $amount += $appliedDiscount->getAmount();
+        }
+        return $amount;
+    }
+
+    /**
+     * @param int $orderId
      * @return string
      */
     protected function getCacheKey(int $orderId): string
