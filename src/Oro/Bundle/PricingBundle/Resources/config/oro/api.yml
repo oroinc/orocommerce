@@ -43,4 +43,8 @@ api:
                 priceList:
                     actions:
                         update_relationship: false
-        Oro\Bundle\PricingBundle\Entity\PriceRule: ~
+        Oro\Bundle\PricingBundle\Entity\PriceRule:
+            subresources:
+                priceList:
+                    actions:
+                        update_relationship: false
