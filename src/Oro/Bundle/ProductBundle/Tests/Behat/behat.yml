@@ -65,6 +65,14 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-related-items-edit"] div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
+    ProductForm Step One:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Type: 'oro_product_step_one[type]'
+          Attribute Family: 'oro_product_step_one[attributeFamily]'
+
     ProductForm:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
