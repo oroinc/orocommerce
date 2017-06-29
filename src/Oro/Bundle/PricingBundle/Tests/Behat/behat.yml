@@ -61,8 +61,6 @@ oro_behat_extension:
     Price Calculation Condition:
       selector: 'textarea[name="oro_pricing_price_list[priceRules][0][ruleCondition]"]'
     Price List Select Grid Button:
-      selector: '.active.entity-create-or-select-container .entity-select-btn'
+      selector: '.active.expression-editor-data-source .entity-select-btn'
     Price List Select Clear Button:
-      selector: '.active.entity-create-or-select-container .select2-search-choice-close'
-
-
+      selector: '.active.expression-editor-data-source .select2-search-choice-close'
