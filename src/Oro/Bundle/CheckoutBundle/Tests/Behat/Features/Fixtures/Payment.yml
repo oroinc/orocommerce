@@ -13,6 +13,7 @@ Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
         rule: '@paymentRule'
         methodConfigs: ['@paymentMethodConfig']
         currency: 'USD'
+        organization: '@organization'
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     paymentTerm:

@@ -123,15 +123,15 @@ class AddMultiCurrencyFields implements
      */
     public static function fillCurrencyFieldsWithDefaultValue(QueryBag $queries)
     {
-         $queries->addPostQuery(
-             new SqlMigrationQuery(
-                 'UPDATE oro_order SET subtotal_currency=currency, total_currency=currency'
-             )
-         );
-         $queries->addPostQuery(
-             new SqlMigrationQuery(
-                 'UPDATE oro_order SET base_subtotal_value=subtotal_value, base_total_value=total_value'
-             )
-         );
+        $queries->addPostQuery(
+            new SqlMigrationQuery(
+                'UPDATE oro_order SET subtotal_currency=currency, total_currency=currency'
+            )
+        );
+        $queries->addPostQuery(
+            new SqlMigrationQuery(
+                'UPDATE oro_order SET base_subtotal_value=subtotal_value, base_total_value=total_value'
+            )
+        );
     }
 }

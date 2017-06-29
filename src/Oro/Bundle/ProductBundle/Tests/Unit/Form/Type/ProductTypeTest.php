@@ -76,7 +76,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected $urlGenerator;
 
-    /** @var  ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $defaultProductUnitProvider;
 
     /**
@@ -93,7 +95,9 @@ class ProductTypeTest extends FormIntegrationTestCase
         ],
     ];
 
-    /** @var AttributeFamily */
+    /**
+     * @var AttributeFamily
+     */
     protected $attributeFamily;
 
     /**
