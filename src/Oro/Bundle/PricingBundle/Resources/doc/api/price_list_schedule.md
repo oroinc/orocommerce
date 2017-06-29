@@ -12,7 +12,8 @@ Get a collection of PriceListSchedule entities
 
 ### create
 
-Create a new PriceListSchedule entity.
+Create a new PriceListSchedule entity. The `activeAt`, `deactivateAt` fields should not intersect with
+values from other schedules for one price list.
 Example:
 ```
 {
@@ -36,8 +37,9 @@ Example:
 
 ### update
 
-Update one PriceListSchedule entity.
-
+Update one PriceListSchedule entity. The `activeAt`, `deactivateAt` fields should not intersect with
+values from other schedules for one price list. The `priceList` field is not allowed to be updated,
+you should delete wrong schedule and create a new one.
 Example:
  
 ```

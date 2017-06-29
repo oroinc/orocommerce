@@ -35,4 +35,5 @@ api:
                 priceList:
                     actions:
                         update_relationship: false
-        Oro\Bundle\PricingBundle\Entity\PriceRule: ~
+        Oro\Bundle\PricingBundle\Entity\PriceRule:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_rule.md'

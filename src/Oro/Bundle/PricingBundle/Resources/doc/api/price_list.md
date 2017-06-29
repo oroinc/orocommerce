@@ -107,8 +107,9 @@ Example:
 
 ### update
 
-Update one PriceList entity. The Fields `createdAt`, `updatedAt`, `containSchedule` are not configurable
-in API and are set automatically.
+Update one PriceList entity. The fields `createdAt`, `updatedAt`, `containSchedule` are not configurable
+in API and are set automatically. The fields `priceRules`, `schedules` are not allowed to be updated,
+to modify them you should delete wrong price list and create a new one.
 Example:
  
 ```
