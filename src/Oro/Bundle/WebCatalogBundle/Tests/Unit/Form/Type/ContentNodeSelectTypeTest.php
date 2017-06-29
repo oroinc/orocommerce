@@ -13,7 +13,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIden
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-class EntityTreeSelectTypeTest extends FormIntegrationTestCase
+class ContentNodeSelectTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 

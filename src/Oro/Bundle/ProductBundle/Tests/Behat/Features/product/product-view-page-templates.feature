@@ -132,7 +132,7 @@ Feature: Product View Page Templates
   Scenario: Prepare configurable products
     And I go to Products / Products
     And I click Edit gtsh_l in grid
-    And I fill form with:
+    And I fill "ProductForm" with:
       | Color  | Green |
       | Size   | L     |
       | Remark | Test text for Green simple product |
@@ -141,7 +141,7 @@ Feature: Product View Page Templates
 
     And I go to Products / Products
     And I click Edit rtsh_m in grid
-    And I fill form with:
+    And I fill "ProductForm" with:
       | Color  | Red     |
       | Size   | M       |
       | Remark | Test text for Red simple product |

@@ -7,7 +7,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductUnitTest extends EntityTestCase
 {
-
     public function testProperties()
     {
         $properties = [

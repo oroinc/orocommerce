@@ -83,7 +83,7 @@ class PriceForProductUnitExistsValidator extends ConstraintValidator
                 if ($productPriceAttribute->getUnit()->getCode() === $productUnitPrecision->getUnit()->getCode() &&
                     $productPriceAttribute->getPrice()->getValue() !== null
                 ) {
-                        return false;
+                    return false;
                 }
             }
         }

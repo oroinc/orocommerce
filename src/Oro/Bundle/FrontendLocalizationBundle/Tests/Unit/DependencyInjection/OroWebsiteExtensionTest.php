@@ -5,7 +5,7 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Unit\DependencyInjection;
 use Oro\Bundle\FrontendLocalizationBundle\DependencyInjection\OroFrontendLocalizationExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
-class OroFrontendLocalizationExtensionTest extends ExtensionTestCase
+class OroWebsiteExtensionTest extends ExtensionTestCase
 {
     public function testLoad()
     {

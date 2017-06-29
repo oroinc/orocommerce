@@ -39,6 +39,8 @@ layout:
                     blockType: container
                 product_view_description_container:
                     blockType: container
+                product_view_brand_container:
+                    blockType: container
                 product_view_additional_container:
                     blockType: container
                 product_view_attribute_group_general:
@@ -74,6 +76,7 @@ layout:
                                 product_view_specification_container: ~
                                 product_view_description_container:
                                     product_view_line_item_container: ~
+                                product_view_brand_container: ~
                                 product_view_attribute_group_general: ~
                                 product_view_main_attributes_container: ~
                         product_view_additional_container: ~
@@ -84,6 +87,9 @@ layout:
         - '@move':
             id: product_view_attribute_group_general_attribute_localized_fallback_descriptions
             parentId: product_view_description_container
+        - '@move':
+            id: product_view_attribute_group_general_attribute_text_brand
+            parentId: product_view_brand_container
         - '@setOption':
             id: product_view_attribute_group_general_attribute_localized_fallback_shortDescriptions
             optionName: visible

@@ -64,6 +64,7 @@
                         'generatedSugs': Redirect.renderGeneratedSlugs(entity.slugs),
                         'featured': UI.renderProperty('oro.product.featured.label'|trans, entity.featured ? 'oro.product.featured.yes'|trans : 'oro.product.featured.no'|trans),
                         'newArrival': UI.renderProperty('oro.product.new_arrival.label'|trans, entity.newArrival ? 'oro.product.new_arrival.yes'|trans : 'oro.product.new_arrival.no'|trans),
+                        'brand': UI.renderProperty('oro.product.brand.label'|trans, entity.brand),
                     }
                 },
                 {'data' : {
@@ -125,6 +126,26 @@
         }
     }) %}
 
+    {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
+        {% set dataBlocks = dataBlocks|merge({
+            'relatedItems': {
+                'title': 'oro.product.sections.relatedItems'|trans,
+                'headerLinkContent': UII.link({
+                        path: path('oro_product_related_items_update', {id: entity.id}),
+                        label: 'oro.product.quick_edit.label'|trans,
+                        iCss: 'fa-edit',
+                        class: 'quick-editable pull-right'
+                    }),
+                'priority': 10,
+                'subblocks': [{
+                    'data': [
+                        dataGrid.renderGrid('products-related-items-view', {'relatedProducts': get_related_products_ids(entity)}),
+                        placeholder('oro_product_related_items_view', {'entity':  entity})
+                    ]
+                }]
+            }
+        }) %}
+    {% endif %}
     {% if pageTemplate == null %}
         {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
     {% else %}

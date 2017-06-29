@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -93,7 +94,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
 
         $shippingRule->setRule($rule)
             ->setOrganization($this->getOrganization($manager))
-            ->setCurrency(CurrencyConfig::DEFAULT_CURRENCY)
+            ->setCurrency($this->getDefaultCurrency())
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);
@@ -109,11 +110,9 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
     {
         if ($this->hasReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION)) {
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
-        } else {
-            return $manager
-                ->getRepository('OroOrganizationBundle:Organization')
-                ->getFirst();
         }
+
+        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
     }
 
     /**
@@ -126,5 +125,18 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         return $this->container
             ->get('oro_payment_term.config.integration_method_identifier_generator')
             ->generateIdentifier($channel);
+    }
+
+    /**
+     * @return string
+     */
+    private function getDefaultCurrency()
+    {
+        /** @var ConfigManager $configManager * */
+        $configManager = $this->container->get('oro_config.global');
+
+        $currencyConfigKey = CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY);
+
+        return $configManager->get($currencyConfigKey) ?: CurrencyConfig::DEFAULT_CURRENCY;
     }
 }

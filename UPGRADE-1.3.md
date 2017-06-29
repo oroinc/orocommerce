@@ -60,7 +60,18 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
 - Class `Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy`
     - method `setSecurityFacade` was replaced with `setTokenAccessor`
-
+- Adding Brand functionality to ProductBundle
+    - New class `Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController` was added
+    - New class `Oro\Bundle\ProductBundle\Controller\BrandController` was added
+    - New entity `Oro\Bundle\ProductBundle\Entity\Brand` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandType` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandSelectType` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandStatusType` was added
+    - New form handler `Oro\Bundle\ProductBundle\Form\Handler\BrandHandler` was added
+    - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
+    - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
+    - New service `oro_product.brand.manager.api` registered
+    
 PaymentBundle
 -------------
 - Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
@@ -84,7 +95,7 @@ PayPalBundle
 
 SEOBundle
 -------------
-- metaTitles for `Product`, `Category`, `Page`, `WebCatalog` were added. 
+- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added. 
 MetaTitle is displayed as default view page title.
 
 PaymentBundle
