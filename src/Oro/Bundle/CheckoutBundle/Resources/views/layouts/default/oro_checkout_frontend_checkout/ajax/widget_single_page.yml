@@ -9,6 +9,14 @@ layout:
 
         - '@addTree':
             items:
+                checkout_view:
+                    blockType: container
+                checkout_shipping_information:
+                    blockType: container
+                checkout_billing_information:
+                    blockType: container
+                checkout_summary:
+                    blockType: container
                 billing_address:
                     blockType: checkout_form_fields
                     options:
@@ -42,6 +50,8 @@ layout:
                 shipping_methods:
                     blockType: shipping_methods
                     options:
+                        attr:
+                            class: 'checkout-view__shipping-methods'
                         class_prefix: 'checkout'
                         methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
                         currentShippingMethod: '=data["checkout"].getShippingMethod()'
@@ -69,7 +79,7 @@ layout:
                     blockType: payment_methods
                     options:
                         attr:
-                            class: 'checkout-payment-methods'
+                            class: 'checkout-payment-methods checkout-view__payment-methods'
                         class_prefix: 'checkout'
                         views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                         currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
@@ -89,22 +99,42 @@ layout:
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
+                checkout_button_continue_right:
+                    blockType: checkout_transition_continue
+                    options:
+                        transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                        checkout: '=data["checkout"]'
+
             tree:
                 checkout_form_fields:
-                    billing_address: ~
-                    shipping_address: ~
-                    shipping_methods_wrapper:
-                        shipping_methods_hidden: ~
-                        shipping_methods:
-                            shipping_methods_template:
-                                shipping_methods_template_methods: ~
-                    payment_methods_wrapper:
-                        payment_methods_hidden: ~
-                        payment_methods: ~
-                        payment_additional_data: ~
-                    additional_options: ~
+                    checkout_view:
+                        checkout_shipping_information:
+                            shipping_address: ~
+                            shipping_methods_wrapper:
+                                shipping_methods_hidden: ~
+                                shipping_methods:
+                                    shipping_methods_template:
+                                        shipping_methods_template_methods: ~
+                        checkout_billing_information:
+                            billing_address: ~
+                            payment_methods_wrapper:
+                                payment_methods_hidden: ~
+                                payment_methods: ~
+                                payment_additional_data: ~
+                        checkout_summary:
+                            additional_options: ~
+                    checkout_button_continue_right: ~
+
+        - '@move':
+            id: checkout_order_summary
+            parentId: checkout_summary
+            siblingId: additional_options
 
         - '@remove':
             id: checkout_sidebar
+        - '@remove':
+            id: checkout_button_continue
+        - '@remove':
+            id: checkout_button_back
 
-    conditions: 'context["workflowStepName"]=="checkout"'
+    conditions: 'context["workflowStepName"]=="checkout" && context["widget_container"]'
