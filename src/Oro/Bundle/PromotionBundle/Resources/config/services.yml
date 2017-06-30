@@ -106,6 +106,12 @@ services:
     oro_promotion.discount.context_converter.registry:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
         public: false
+        calls:
+            - ['registerConverter', ['@oro_promotion.discount.order_context_converter']]
+
+    oro_promotion.discount.order_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderDiscountContextConverter
+        public: false
 
     oro_promotion.discount.shopping_list_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
@@ -315,5 +321,5 @@ services:
     oro_promotion.discount_manager:
         class: Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager
         arguments:
-            - '@oro_promotion.promotion_executor'
+            - '@service_container'
 

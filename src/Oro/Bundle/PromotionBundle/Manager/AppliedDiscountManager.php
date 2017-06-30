@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Manager;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
@@ -10,15 +12,15 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 
 class AppliedDiscountManager
 {
-    /** @var PromotionExecutor */
-    protected $promotionExecutor;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
      * @param PromotionExecutor $promotionExecutor
      */
-    public function setPromotionExecutor(PromotionExecutor $promotionExecutor)
+    public function __construct(ContainerInterface $container)
     {
-        $this->promotionExecutor = $promotionExecutor;
+        $this->container = $container;
     }
     /**
      * @param Order $order
@@ -26,7 +28,8 @@ class AppliedDiscountManager
      */
     public function getAppliedDiscounts(Order $order)
     {
-        $discountContext = $this->promotionExecutor->execute($order);
+        $promotionExecutor = $this->container->get('oro_promotion.promotion_executor');
+        $discountContext = $promotionExecutor->execute($order);
         /** @var DiscountInterface[] $discountsData */
         $discountsData = array_merge(
             $discountContext->getSubtotalDiscounts(),
