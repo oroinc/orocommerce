@@ -112,7 +112,7 @@ oro:
                 allow_user_configuration.label: 'Allow User Configuration'
                 available_user_options.label: 'Available User Options'
                 contact_info_user_option.label: 'Customer Visible Contact Info'
-                contact_info_manual_text.label: 'Manual Contact Info'
+                contact_info_manual_text.label: 'Enter Contact Info'
                 guest_contact_info_text.label: 'Guest Contact'
 
         privilege:

@@ -55,12 +55,14 @@ class ContactInfoUserOptionsProvider implements OptionProviderWithDefaultValueIn
     }
 
     /**
+     * @param null $scopeIdentifier
+     *
      * @return string
      */
-    public function getSelectedOption()
+    public function getSelectedOption($scopeIdentifier = null)
     {
         $key = Configuration::getConfigKeyByName(Configuration::CONTACT_INFO_USER_OPTION);
-        $option = $this->configManager->get($key);
+        $option = $this->configManager->get($key, false, false, $scopeIdentifier);
         if (!in_array($option, $this->getOptions(), true)) {
             $option = $this->getDefaultOption();
         }
