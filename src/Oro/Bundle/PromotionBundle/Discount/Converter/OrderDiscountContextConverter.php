@@ -25,7 +25,10 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
             $discountLineItems = $this->getDiscountLineItem($orderLineItem());
         }
 
-        return new (new DiscountContext())->setLineItems($discountLineItems);
+        $discountContext = new DiscountContext();
+        $discountContext->setLineItems($discountLineItems);
+
+        return $discountContext;
     }
 
     /**
