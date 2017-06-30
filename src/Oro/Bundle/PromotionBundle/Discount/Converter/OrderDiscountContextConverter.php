@@ -22,7 +22,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
         /**@var Order $sourceEntity */
         $orderLineItems = $sourceEntity->getLineItems();
         foreach ($orderLineItems as $orderLineItem) {
-            $discountLineItems = $this->getDiscountLineItem($orderLineItem());
+            $discountLineItems[] = $this->getDiscountLineItem($orderLineItem);
         }
 
         $discountContext = new DiscountContext();

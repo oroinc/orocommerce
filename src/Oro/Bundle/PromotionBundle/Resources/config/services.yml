@@ -132,6 +132,13 @@ services:
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
         public: false
+        calls:
+            - ['registerConverter', ['@oro_promotion.promotion.discount_context_data_converter']]
+
+    oro_promotion.promotion.discount_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter
+        arguments:
+            - '@oro_scope.scope_manager'
 
     oro_promotion.promotion.shopping_list_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
