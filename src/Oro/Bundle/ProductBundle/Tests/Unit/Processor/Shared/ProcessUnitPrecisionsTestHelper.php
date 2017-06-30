@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared;
 
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProcessUnitPrecisionsTestHelper
 {
@@ -188,5 +190,75 @@ class ProcessUnitPrecisionsTestHelper
                 ]
             ]
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function createUpdateRequestData()
+    {
+        return [
+            "data" => [
+                "type" => "products",
+                "attributes" => [
+                    "sku" => "test-api",
+                    "status" => "enabled",
+                    "variantFields" => [],
+                    "createdAt" => "2017-06-13T07:12:06Z",
+                    "updatedAt" => "2017-06-13T07:12:31Z",
+                    "productType" => "simple",
+                    "featured" => true
+                ],
+                "relationships" => [
+                    "primaryUnitPrecision" => [
+                        "unit_code" => "each",
+                    ],
+                    "unitPrecisions" => [
+                        "data" => [
+                            0 => [
+                                "type" => "productunitprecisions",
+                                "unit_code" => "each",
+                                "unit_precision" => "0",
+                                "conversion_rate" => "2",
+                                "sell" => "1"
+                            ],
+                            1 => [
+                                "type" => "productunitprecisions",
+                                "unit_code" => "item",
+                                "unit_precision" => "0",
+                                "conversion_rate" => "2",
+                                "sell" => "1"
+                            ],
+                            2 => [
+                                "type" => "productunitprecisions",
+                                "unit_code" => "set",
+                                "unit_precision" => "0",
+                                "conversion_rate" => "2",
+                                "sell" => "1"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param $codes
+     * @return array
+     */
+    public static function getProducUnitPrecisions($codes)
+    {
+        $productUnitPrecisions = [];
+        foreach ($codes as $code) {
+            $productUnitPrecision = new ProductUnitPrecision();
+            $productUnit = new ProductUnit();
+            $productUnit->setCode($code);
+            $productUnitPrecision->setUnit($productUnit);
+
+            $productUnitPrecisions[] = $productUnitPrecision;
+        }
+
+        return $productUnitPrecisions;
     }
 }
