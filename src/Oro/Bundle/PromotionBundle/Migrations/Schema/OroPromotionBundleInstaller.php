@@ -49,6 +49,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->createOroPromotionScheduleTable($schema);
         $this->createOroPromotionScopeTable($schema);
         $this->createOroPromotionToCouponTable($schema);
+        $this->createOroPromotionAppliedDiscountTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroPromotionForeignKeys($schema);
@@ -57,6 +58,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->addOroPromotionScheduleForeignKeys($schema);
         $this->addOroPromotionScopeForeignKeys($schema);
         $this->addOroPromotionToCouponForeignKeys($schema);
+        $this->addOroPromotionAppliedDiscountForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
     }
@@ -174,6 +176,27 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->setPrimaryKey(['promotion_id', 'scope_id']);
         $table->addIndex(['promotion_id']);
         $table->addIndex(['scope_id']);
+    }
+
+    /**
+     * Create oro_promotion_applied_discount table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroPromotionAppliedDiscountTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_promotion_applied_discount');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
+        $table->addColumn('order_id', 'integer', ['notnull' => false]);
+        $table->addColumn('type', 'string', ['length' => 50]);
+        $table->addColumn('amount', 'float');
+        $table->addColumn('currency', 'string');
+        $table->addColumn('config_options', 'json_array');
+        $table->addColumn('options', 'json_array');
+        $table->addIndex(['promotion_id']);
+        $table->addIndex(['order_id']);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -332,6 +355,28 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
             ['coupon_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_promotion_applied_discount foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPromotionAppliedDiscountForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_promotion_applied_discount');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_promotion'),
+            ['promotion_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order'),
+            ['order_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
