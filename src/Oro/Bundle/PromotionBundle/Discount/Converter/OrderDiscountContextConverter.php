@@ -36,7 +36,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
      * @param OrderLineItem $orderLineItem
      * @return DiscountLineItem
      */
-    public function getDiscountLineItem(OrderLineItem $orderLineItem): DiscountLineItem
+    protected function getDiscountLineItem(OrderLineItem $orderLineItem): DiscountLineItem
     {
         return (new DiscountLineItem())
             ->setSourceLineItem($orderLineItem)

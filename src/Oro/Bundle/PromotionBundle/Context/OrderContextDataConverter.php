@@ -37,7 +37,7 @@ class OrderContextDataConverter implements ContextDataConverterInterface
             self::SUBTOTAL => $entity->getSubtotal(),
             self::SHIPPING_ADDRESS => $entity->getShippingAddress(),
             self::BILLING_ADDRESS => $entity->getBillingAddress(),
-            self::SHIPPING_METHOD => $entity->getShippingMethodType(),
+            self::SHIPPING_METHOD => $entity->getShippingMethod(),
             self::CUSTOMER => $entity->getCustomer(),
             self::CUSTOMER_USER => $entity->getCustomerUser(),
             self::CUSTOMER_GROUP => $entity->getCustomer()->getGroup(),
