@@ -33,7 +33,7 @@ class CategoryControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],
         ];
-        $parameters['oro_catalog_category']['metaTitles']['values']['default'] = LoadCategoryMetaData::META_TITLES;
+
         $parameters['oro_catalog_category']['metaDescriptions']['values']['default'] =
             LoadCategoryMetaData::META_DESCRIPTIONS;
         $parameters['oro_catalog_category']['metaKeywords']['values']['default'] =
@@ -48,7 +48,6 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(LoadCategoryMetaData::META_TITLES, $html);
         $this->assertContains(LoadCategoryMetaData::META_DESCRIPTIONS, $html);
         $this->assertContains(LoadCategoryMetaData::META_KEYWORDS, $html);
     }
