@@ -13,5 +13,4 @@ interface ComposedShippingMethodConfigurationInterface extends
     OverriddenCostShippingMethodConfigurationInterface,
     MethodLockedShippingMethodConfigurationInterface
 {
-
 }

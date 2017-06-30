@@ -14,6 +14,7 @@ define(function(require) {
 
     ProductShoppingListsWidget = DialogWidget.extend(_.extend({}, ElementsHelper, {
         options: $.extend(true, {}, DialogWidget.prototype.options, {
+            actionWrapperTemplate: _.template('<div class="action-wrapper"/>'),
             preventModelRemoval: true,
             template: '',
             dialogOptions: {

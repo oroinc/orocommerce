@@ -1,13 +1,13 @@
 {% macro renderPossibleShippingMethods(
     form,
-    events = {}
+    events = {},
+    component = 'oroorder/js/app/components/possible-shipping-methods-component',
+    savedShippingMethod = null
 ) %}
-    {% set options = {view: 'oroorder/js/app/views/possible-shipping-methods-view'} %}
-    {% if events|length > 0 %}
-        {% set options = options|merge({events: events}) %}
-    {% endif %}
-    <div data-page-component-module="oroui/js/app/components/view-component"
-         data-page-component-options="{{ options|json_encode }}"
+    <div data-page-component-module="{{ component }}"
+        {% if events|length > 0 %}
+            data-page-component-options="{{ { events: events, savedShippingMethod: savedShippingMethod }|json_encode }}"
+        {% endif %}
          class="possible_shipping_methods_container">
         <div class="btn-group">
             <span
