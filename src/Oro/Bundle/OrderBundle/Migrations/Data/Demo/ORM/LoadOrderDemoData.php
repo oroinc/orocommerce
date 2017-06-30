@@ -90,15 +90,13 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         $rateConverter = $this->container->get('oro_currency.converter.rate');
 
+        $regularCustomerUser = $this->getCustomerUser($manager);
+        $guestCustomerUser = $this->getCustomerUser($manager, true);
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            if ($row['isGuest']) {
-                $customerUser = $this->getGuestCustomerUser($manager);
-            } else {
-                $customerUser = $this->getCustomerUser($manager);
-            }
-
+            $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
             $order = new Order();
 
             $billingAddress = [
@@ -185,20 +183,12 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
     /**
      * @param ObjectManager $manager
-     * @return CustomerUser|null
+     * @param bool $isGuest
+     * @return null|CustomerUser
      */
-    protected function getCustomerUser(ObjectManager $manager)
+    protected function getCustomerUser(ObjectManager $manager, $isGuest = false)
     {
-        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => false]);
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @return CustomerUser|null
-     */
-    protected function getGuestCustomerUser(ObjectManager $manager)
-    {
-        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => true]);
+        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => $isGuest]);
     }
 
     /**
