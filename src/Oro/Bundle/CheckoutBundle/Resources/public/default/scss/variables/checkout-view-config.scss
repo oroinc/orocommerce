@@ -11,9 +11,9 @@ $checkout-view-align-items: flex-start !default;
 $checkout-view-column-width: 30% !default;
 $checkout-view-column-last-width: 40% !default;
 $checkout-view-column-margin: 0 0 10px !default;
-$checkout-view-column-padding: 0 30px !default;
+$checkout-view-column-padding: 0 25px !default;
 
-$checkout-view-column-inner-padding: 0 0 0 43px !default;
+$checkout-view-column-inner-padding: 0 !default;
 
 $checkout-view-title-margin: 0 0 10px !default;
 $checkout-view-title-color: get-color('additional', 'dark') !default;

@@ -52,6 +52,7 @@
     {% else %}
         {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
         {% set hasCustomAddress = false %}
+        {% set compact = true %}
         {% if form.shipping_address.id.vars.value %}
             {% set hasCustomAddress = not form.shipping_address.vars.value.customerUserAddress and not form.shipping_address.vars.value.customerAddress %}
         {% endif %}
@@ -70,7 +71,7 @@
 
             {{ form_row(form.shipping_address.customerAddress) }}
 
-            {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
+            {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress, compact) }}
 
             {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
                 {{ form_row(form.ship_to_billing_address) }}
@@ -88,6 +89,7 @@
         {% else %}
             {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
             {% set hasCustomAddress = false %}
+            {% set compact = true %}
             {% if form.billing_address.id.vars.value %}
                 {% set hasCustomAddress = not form.billing_address.vars.value.customerUserAddress and not form.billing_address.vars.value.customerAddress %}
             {% endif %}
@@ -105,7 +107,7 @@
 
                 {{ form_row(form.billing_address.customerAddress) }}
 
-                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress) }}
+                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, compact) }}
             </div>
         {% endif %}
 
@@ -180,7 +182,7 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addShipDate"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y toggle-block">
+                <div class="grid__column grid__column--12 grid__column grid__column--offset-y toggle-block">
                     <label for="addShipDate" class="custom-checkbox toggle-block__trigger {% if checkout.shipUntil is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate" {% if checkout.shipUntil is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -205,7 +207,7 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addPoNumber"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y toggle-block">
+                <div class="grid__column grid__column--12 grid__column--offset-y toggle-block">
                     <label for="addPoNumber" class="custom-checkbox toggle-block__trigger {% if checkout.poNumber is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber" {% if checkout.poNumber is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -219,13 +221,13 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addNote"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y toggle-block">
+                <div class="grid__column grid__column--12 grid__column--offset-y toggle-block">
                     <label for="addNote" class="custom-checkbox toggle-block__trigger {% if checkout.customerNotes is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addNote" id="addNote" {% if checkout.customerNotes is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
                         <span class="custom-checkbox__text">{{ "oro.checkout.order_review.note"|trans }}</span>
                     </label>
-                    <div class="toggle-block__content checkout__form__order-not">
+                    <div class="toggle-block__content">
                         {{ form_widget(form.customer_notes, {'attr': {'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
                     </div>
                 </div>
@@ -238,7 +240,7 @@
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
                 <fieldset class="grid__row grid__row--offset-none">
-                    <div class="grid__column grid__column--offset-y">
+                    <div class="grid__column grid__column--12 grid__column--offset-y">
                         {{ form_row(form.remove_source, removeElementOptions) }}
                     </div>
                 </fieldset>

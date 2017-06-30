@@ -7,9 +7,6 @@ layout:
         - '@setBlockTheme':
             themes: '../templates/single_page.html.twig'
 
-        - '@remove':
-            id: checkout_sidebar
-
         - '@addTree':
             items:
                 billing_address:
@@ -106,5 +103,8 @@ layout:
                         payment_methods: ~
                         payment_additional_data: ~
                     additional_options: ~
+
+        - '@remove':
+            id: checkout_sidebar
 
     conditions: 'context["workflowStepName"]=="checkout"'

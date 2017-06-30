@@ -101,10 +101,13 @@
         &__column {
             &:not(:last-child) {
                 width: 50%;
+                padding-right: 0;
             }
 
             &:first-child,
             &:last-child {
+                padding-left: 0;
+
                 &::after {
                     content: none;
                 }
@@ -125,16 +128,6 @@
             
             &:not(:last-child) {
                 width: 100%;
-            }
-        }
-    }
-}
-
-@include breakpoint('mobile-landscape') {
-    .checkout-view {
-        &__column {
-            &-inner {
-                padding: 0 0 0 10px;
             }
         }
     }

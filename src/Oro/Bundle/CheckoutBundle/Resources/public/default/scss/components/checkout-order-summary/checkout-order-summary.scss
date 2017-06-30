@@ -147,6 +147,10 @@
     &__price {
         width: 240px;
     }
+
+    .scrollable-content {
+        max-height: 100%;
+    }
 }
 
 @include breakpoint('mobile-landscape') {
