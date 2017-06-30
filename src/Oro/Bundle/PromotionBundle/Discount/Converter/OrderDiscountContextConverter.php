@@ -26,6 +26,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
         }
 
         $discountContext = new DiscountContext();
+        $discountContext->setSubtotal($sourceEntity->getSubtotal() ?? 0);
         $discountContext->setLineItems($discountLineItems);
 
         return $discountContext;
@@ -38,6 +39,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
     public function getDiscountLineItem(OrderLineItem $orderLineItem): DiscountLineItem
     {
         return (new DiscountLineItem())
+            ->setSourceLineItem($orderLineItem)
             ->setProduct($orderLineItem->getProduct())
             ->setQuantity($orderLineItem->getQuantity())
             ->setProductUnit($orderLineItem->getProductUnit())
