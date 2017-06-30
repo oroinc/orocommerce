@@ -326,6 +326,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
 
         $this->client->submit($form);
 
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('transitionSuccess = true', $this->client->getResponse()->getContent());
     }
 
