@@ -320,8 +320,8 @@ services:
     oro_promotion.event_listener.order:
         class: Oro\Bundle\PromotionBundle\EventListener\ORM\OrderEventListener
         public: false
-        calls:
-             - [ setAppliedDiscountManager, ['@oro_promotion.discount_manager']]
+        arguments:
+             - '@oro_promotion.discount_manager'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
 

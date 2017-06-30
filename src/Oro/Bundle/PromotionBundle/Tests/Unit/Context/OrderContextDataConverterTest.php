@@ -35,7 +35,7 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testGetContextData()
-    {   
+    {
         $currency = 'USD';
         $lineItemsCollection = new ArrayCollection([new OrderLineItem()]);
         $address = new OrderAddress();

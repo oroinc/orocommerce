@@ -8,9 +8,7 @@ use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityExcepti
 
 class OrderContextDataConverter implements ContextDataConverterInterface
 {
-    /**
-     * @var ScopeManager
-     */
+    /**@var ScopeManager */
     protected $scopeManager;
 
     /** @param ScopeManager $scopeManager */
@@ -21,6 +19,7 @@ class OrderContextDataConverter implements ContextDataConverterInterface
 
     /**
      * @param Order $entity
+     * @throws UnsupportedSourceEntityException
      * {@inheritdoc}
      */
     public function getContextData($entity): array

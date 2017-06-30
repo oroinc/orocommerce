@@ -16,12 +16,15 @@ class AppliedDiscountManager
     protected $container;
 
     /**
-     * @param PromotionExecutor $promotionExecutor
+     *  Using service container instead of concrete class due circular reference
+     *
+     * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
+
     /**
      * @param Order $order
      * @return array|null
@@ -30,6 +33,7 @@ class AppliedDiscountManager
     {
         $promotionExecutor = $this->container->get('oro_promotion.promotion_executor');
         $discountContext = $promotionExecutor->execute($order);
+
         /** @var DiscountInterface[] $discountsData */
         $discountsData = array_merge(
             $discountContext->getSubtotalDiscounts(),
