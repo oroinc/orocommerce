@@ -68,6 +68,7 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
 
     /**
      * @param array $unitPrecisionInfo
+     * @param $productUnitPrecisions
      * @return array
      */
     protected function createOrUpdateUnitPrecision(array $unitPrecisionInfo, $productUnitPrecisions)
@@ -148,7 +149,6 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
 
     /**
      * @param $additionalUnitPrecisions
-     * @param $primaryUnitPrecision
      * @return mixed
      */
     protected function normalizeUnitPrecisions($additionalUnitPrecisions)
