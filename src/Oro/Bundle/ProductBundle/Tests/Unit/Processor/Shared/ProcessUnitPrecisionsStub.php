@@ -42,13 +42,8 @@ class ProcessUnitPrecisionsStub extends ProcessUnitPrecisions
         ];
     }
 
-    public function validateUnitPrecisions($unitPrecisionInfo, $pointer)
+    public function setContext($context)
     {
-        return true;
-    }
-
-    public function validatePrimaryUnitPrecision($primaryUnitPrecisionInfo, $pointer)
-    {
-        return true;
+        $this->context = $context;
     }
 }
