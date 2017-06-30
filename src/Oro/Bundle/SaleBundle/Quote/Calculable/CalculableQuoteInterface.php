@@ -6,5 +6,4 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 
 interface CalculableQuoteInterface extends LineItemsAwareInterface
 {
-
 }

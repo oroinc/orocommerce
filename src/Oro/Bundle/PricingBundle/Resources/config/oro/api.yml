@@ -24,8 +24,18 @@ api:
                     exclude : true
                 priceListCurrencies:
                     data_type: array
+            subresources:
+                priceRules:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                schedules:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list_schedule.md'
+            form_event_subscriber: oro_pricing.api_form_subscriber.add_schdules_to_price_list
             actions:
                 update:
                     fields:
@@ -37,3 +47,7 @@ api:
                         update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceRule:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_rule.md'
+            subresources:
+                priceList:
+                    actions:
+                        update_relationship: false

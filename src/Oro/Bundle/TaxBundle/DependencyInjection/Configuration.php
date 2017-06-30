@@ -12,7 +12,6 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class Configuration implements ConfigurationInterface
 {
-
     const ADDRESS_RESOLVER_GRANULARITY = 'address_resolver_granularity';
 
     /**

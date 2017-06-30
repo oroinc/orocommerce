@@ -10,7 +10,7 @@ use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
-use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Job\DependentJobContext;
@@ -43,9 +43,9 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     private $producer;
 
     /**
-     * @var UrlItemsProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $providerRegistry;
+    private $websiteUrlProvidersService;
 
     /**
      * @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -86,7 +86,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->producer = $this->createMock(MessageProducerInterface::class);
-        $this->providerRegistry = $this->createMock(UrlItemsProviderRegistry::class);
+        $this->websiteUrlProvidersService = $this->createMock(WebsiteUrlProvidersServiceInterface::class);
         $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
         $this->messageFactory = $this->getMockBuilder(SitemapMessageFactory::class)
             ->disableOriginalConstructor()
@@ -103,7 +103,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
             $this->jobRunner,
             $this->dependentJobService,
             $this->producer,
-            $this->providerRegistry,
+            $this->websiteUrlProvidersService,
             $this->websiteProvider,
             $this->indexMessageFactory,
             $this->messageFactory,
@@ -121,7 +121,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['key' => 'value'];
         $message = $this->getMessage($messageId, $data);
         $website = $this->getWebsite();
-        $providerNames = $this->getProviderNames();
+        $providerNames = $this->getWebsiteProvidersByNames($website);
         $job = $this->getJobAndRunUnique($messageId);
         $this->expectCreateDelayed([$website], $providerNames);
 
@@ -162,7 +162,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['key' => 'value'];
         $message = $this->getMessage($messageId, $data);
         $website = $this->getWebsite();
-        $providerNames = $this->getProviderNames();
+        $providerNames = $this->getWebsiteProvidersByNames($website);
         $job = $this->getJobAndRunUnique($messageId);
         $this->expectCreateDelayed([$website], $providerNames);
 
@@ -204,7 +204,8 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
         $messageId = 777;
         $message = $this->getMessage($messageId);
         $websites = $this->getWebsites();
-        $providerNames = $this->getProviderNames();
+        $providerNames = [];
+        $providerNames = array_merge($providerNames, $this->getWebsiteProvidersByNames($websites[0]));
         $job = $this->getJobAndRunUnique($messageId);
         $this->expectCreateDelayed($websites, $providerNames);
 
@@ -307,16 +308,22 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param WebsiteInterface $website
+     *
      * @return array
      */
-    private function getProviderNames()
+    private function getWebsiteProvidersByNames(WebsiteInterface $website)
     {
-        $providerNames = ['first', 'second'];
-        $this->providerRegistry->expects($this->once())
-            ->method('getProviderNames')
+        $providerNames = [
+            'first' => '',
+            'second' => ''
+        ];
+        $this->websiteUrlProvidersService->expects(static::any())
+            ->method('getWebsiteProvidersIndexedByNames')
+            ->with($website)
             ->willReturn($providerNames);
 
-        return $providerNames;
+        return array_keys($providerNames);
     }
 
     /**
