@@ -18,7 +18,7 @@ oro.pricing:
     pricelist:
         entity_label: 'Price List'
         entity_plural_label: 'Price Lists'
-        entity_description: 'Represents price list information'
+        entity_description: 'A price list is a list of product quantities with their prices in the base or additional currencies. Price lists are used to determine prices for catalog products in the store front.'
         id.label: 'Id'
         actual:
             label: 'Actual'
