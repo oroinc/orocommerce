@@ -46,7 +46,7 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $shippingCost = (new Price())->setValue(1.0)->setCurrency('USD');
         $subTotal = 1.0;
         $scopeCriteria = $this->getScopeCriteria();
-        
+
         $expectedResult = [
             ContextDataConverterInterface::SHIPPING_COST => $shippingCost,
             ContextDataConverterInterface::LINE_ITEMS => $lineItemsCollection,
