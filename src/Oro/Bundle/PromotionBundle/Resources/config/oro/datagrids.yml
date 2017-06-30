@@ -85,3 +85,43 @@ datagrids:
         extends: products-select-grid-base
         options:
             export: true
+
+    promotion-order-applied-discount-grid:
+        acl_resource: oro_promotion_view
+        source:
+            type: orm
+            query:
+                select:
+                    - promotion.id
+                    - discount.amount
+                    - rule.name
+                from:
+                    - { table: OroPromotionBundle:AppliedDiscount, alias: discount }
+                join:
+                    inner:
+                        - { join: discount.promotion, alias: promotion }
+                        - { join: promotion.rule, alias: rule}
+                where:
+                    and:
+                        - discount.order = :orderId
+            bind_parameters:
+                - orderId
+        columns:
+            name:
+                label: oro.promotion.rule.name.label
+            amount:
+                label: amount
+        sorters:
+            columns:
+                name:
+                    data_name: rule.name
+                amount:
+                    data_name: discount.amount
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: rule.name
+                amount:
+                    type: number-range
+                    data_name: discount.amount
