@@ -21,6 +21,30 @@ class AddSchedulesToPriceListApiFormSubscriberTest extends \PHPUnit_Framework_Te
         $this->testedSubscriber = new AddSchedulesToPriceListApiFormSubscriber();
     }
 
+    /**
+     * @param $formMock
+     * @param $priceListScheduleMock
+     * @param $eventMock
+     */
+    protected function prepareMocksForSubmit($formMock, $priceListScheduleMock, $eventMock)
+    {
+        $formMock
+            ->expects(static::once())
+            ->method('has')
+            ->with('priceList')
+            ->willReturn(true);
+
+        $eventMock
+            ->expects(static::once())
+            ->method('getData')
+            ->willReturn($priceListScheduleMock);
+
+        $eventMock
+            ->expects(static::once())
+            ->method('getForm')
+            ->willReturn($formMock);
+    }
+
     public function testGetSubscriberEvents()
     {
         $this->assertEquals(
@@ -38,21 +62,7 @@ class AddSchedulesToPriceListApiFormSubscriberTest extends \PHPUnit_Framework_Te
         $priceListMock = $this->createMock(PriceList::class);
         $eventMock = $this->createMock(FormEvent::class);
 
-        $formMock
-            ->expects(static::once())
-            ->method('has')
-            ->with('priceList')
-            ->willReturn(true);
-
-        $eventMock
-            ->expects(static::once())
-            ->method('getData')
-            ->willReturn($priceListScheduleMock);
-
-        $eventMock
-            ->expects(static::once())
-            ->method('getForm')
-            ->willReturn($formMock);
+        $this->prepareMocksForSubmit($formMock, $priceListScheduleMock, $eventMock);
 
         $priceListScheduleMock
             ->expects(static::once())
@@ -63,6 +73,27 @@ class AddSchedulesToPriceListApiFormSubscriberTest extends \PHPUnit_Framework_Te
             ->expects(static::once())
             ->method('addSchedule')
             ->with($priceListScheduleMock);
+
+        $this->testedSubscriber->onSubmit($eventMock);
+    }
+
+    public function testOnSubmitNoPriceList()
+    {
+        $formMock = $this->createMock(FormInterface::class);
+        $priceListScheduleMock = $this->createMock(PriceListSchedule::class);
+        $priceListMock = $this->createMock(PriceList::class);
+        $eventMock = $this->createMock(FormEvent::class);
+
+        $this->prepareMocksForSubmit($formMock, $priceListScheduleMock, $eventMock);
+
+        $priceListScheduleMock
+            ->expects(static::once())
+            ->method('getPriceList')
+            ->willReturn(null);
+
+        $priceListMock
+            ->expects(static::never())
+            ->method('addSchedule');
 
         $this->testedSubscriber->onSubmit($eventMock);
     }
@@ -126,41 +157,6 @@ class AddSchedulesToPriceListApiFormSubscriberTest extends \PHPUnit_Framework_Te
         $priceListScheduleMock
             ->expects(static::never())
             ->method('getPriceList');
-
-        $priceListMock
-            ->expects(static::never())
-            ->method('addSchedule');
-
-        $this->testedSubscriber->onSubmit($eventMock);
-    }
-
-    public function testOnSubmitNoPriceList()
-    {
-        $formMock = $this->createMock(FormInterface::class);
-        $priceListScheduleMock = $this->createMock(PriceListSchedule::class);
-        $priceListMock = $this->createMock(PriceList::class);
-        $eventMock = $this->createMock(FormEvent::class);
-
-        $formMock
-            ->expects(static::once())
-            ->method('has')
-            ->with('priceList')
-            ->willReturn(true);
-
-        $eventMock
-            ->expects(static::once())
-            ->method('getData')
-            ->willReturn($priceListScheduleMock);
-
-        $eventMock
-            ->expects(static::once())
-            ->method('getForm')
-            ->willReturn($formMock);
-
-        $priceListScheduleMock
-            ->expects(static::once())
-            ->method('getPriceList')
-            ->willReturn(null);
 
         $priceListMock
             ->expects(static::never())
