@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_content_widget %}
-    <div {{ block('block_attributes') }}
+       <div {{ block('block_attributes') }}
             id="shopping_list_view_container_content"
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
@@ -16,6 +16,11 @@
             data-layout="separate">
         {{ block_widget(block) }}
     </div>
+    {% if not app.user %}
+        <div class="notification-flash notification-flash--warning">
+            {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}
@@ -145,44 +150,51 @@
 {% block _shopping_list_line_items_list_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table"}) %}
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'orofrontend/js/app/components/empty-items-component',
-        options: {eventName: 'frontend:item:delete'}
-    }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list-empty">
-        <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
-            module: 'oroui/js/app/components/view-component',
-            layout: 'separate',
-            options: {
-                view: 'oroshoppinglist/js/app/views/line-items-view'
-            }
-        }) }}>
-            <thead>
-            <tr>
-                <th colspan="2"><small>{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
-                <th><small>{{ 'oro.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
-                <th><small>{{ 'oro.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
-                <th class="text-right"><small>{{ 'oro.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
-                <th class="w70"><small>&nbsp;</small></th>
-            </tr>
-            </thead>
-            {% for lineItem in shoppingList.lineItems %}
-            {% set mainProduct = lineItem.product %}
-            {% if lineItem.parentProduct is not null %}
-                {% set mainProduct = lineItem.parentProduct %}
-            {% endif %}
-            <tbody class="line_item">
-                {% do block|merge_context({
-                    lineItem: lineItem,
-                    mainProduct: mainProduct,
-                    parent: block.vars,
-                    loop: loop
-                }) %}
-                {{ block('container_widget') }}
-            </tbody>
-            {% endfor %}
-        </table>
-    </div>
+    {% if shoppingList.lineItems.count() %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table"}) %}
+        <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+            module: 'orofrontend/js/app/components/empty-items-component',
+            options: {eventName: 'frontend:item:delete'}
+        }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list-empty">
+            <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
+                module: 'oroui/js/app/components/view-component',
+                layout: 'separate',
+                options: {
+                    view: 'oroshoppinglist/js/app/views/line-items-view'
+                }
+            }) }}>
+                <thead>
+                <tr>
+                    <th colspan="2"><small>{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
+                    <th><small>{{ 'oro.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
+                    <th><small>{{ 'oro.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
+                    <th class="text-right"><small>{{ 'oro.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
+                    <th class="w70"><small>&nbsp;</small></th>
+                </tr>
+                </thead>
+                {% for lineItem in shoppingList.lineItems %}
+                {% set mainProduct = lineItem.product %}
+                {% if lineItem.parentProduct is not null %}
+                    {% set mainProduct = lineItem.parentProduct %}
+                {% endif %}
+                <tbody class="line_item">
+                    {% do block|merge_context({
+                        lineItem: lineItem,
+                        mainProduct: mainProduct,
+                        parent: block.vars,
+                        loop: loop
+                    }) %}
+                    {{ block('container_widget') }}
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <div class="cart-list-empty">
+            <span class="cart-list-empty__icon"><i class="fa-shopping-cart"></i></span>
+            <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_products_available'|trans }}</span>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _shopping_list_line_items_list_row_widget %}
@@ -259,7 +271,7 @@
 
 {% block _shopping_list_line_items_list_item_configurable_products_widget %}
     {% if parent.configurableProducts[lineItem.product.id] is defined %}
-        {% for field in configurableProducts[lineItem.product.id] %}
+        {% for field in parent.configurableProducts[lineItem.product.id] %}
             <div>{{ field.label|trans }}:
                 {% if field.type == 'boolean' %}
                     {{ field.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}

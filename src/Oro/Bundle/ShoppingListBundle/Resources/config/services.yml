@@ -210,9 +210,7 @@ services:
     oro_shopping_list.event_listener.frontend_product_datagrid:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
         arguments:
-            - "@oro_security.token_accessor"
-            - "@oro_security.acl_helper"
-            - "@doctrine"
+            - "@oro_shopping_list.data_provider.product_shopping_lists"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -321,6 +319,7 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_shopping_list.shopping_list_provider.cache'
 
     oro_shopping_list.voter.guest_shopping_list_voter:
         class: 'Oro\Bundle\ShoppingListBundle\Voter\GuestShoppingListVoter'
@@ -352,3 +351,21 @@ services:
             - "@oro_shopping_list.manager.shopping_list_limit"
         tags:
             - { name: twig.extension }
+
+    oro_shopping_list.event_listener.interective_login:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\InteractiveLoginListener'
+        arguments:
+            - '@oro_customer.customer_visitor_manager'
+            - '@oro_shopping_list.manager.guest_shopping_list_migration'
+            - '@logger'
+            - '@oro_config.manager'
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
+
+    oro_shopping_list.manager.guest_shopping_list_migration:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager'
+        lazy: true
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shopping_list.manager.shopping_list_limit'
+            - '@oro_shopping_list.shopping_list.manager'

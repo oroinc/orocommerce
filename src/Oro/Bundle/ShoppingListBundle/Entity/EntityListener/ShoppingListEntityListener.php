@@ -36,7 +36,7 @@ class ShoppingListEntityListener
         if (!$shoppingList->getOwner()) {
             $settingsKey = TreeUtils::getConfigKey(
                 OroShoppingListExtension::ALIAS,
-                Configuration::DEFAULT_QUEST_SHOPPING_LIST_OWNER
+                Configuration::DEFAULT_GUEST_SHOPPING_LIST_OWNER
             );
 
             $userId = $this->configManager->get($settingsKey);

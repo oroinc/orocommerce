@@ -29,7 +29,7 @@ class SystemConfigListener
     {
         $settingsKey = implode(
             ConfigManager::SECTION_VIEW_SEPARATOR,
-            [OroShoppingListExtension::ALIAS, Configuration::DEFAULT_QUEST_SHOPPING_LIST_OWNER]
+            [OroShoppingListExtension::ALIAS, Configuration::DEFAULT_GUEST_SHOPPING_LIST_OWNER]
         );
         $settings = $event->getSettings();
         if (is_array($settings) && array_key_exists($settingsKey, $settings)) {

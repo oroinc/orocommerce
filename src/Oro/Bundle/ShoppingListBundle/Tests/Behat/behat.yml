@@ -1,4 +1,18 @@
 oro_behat_extension:
+  suites:
+    OroShoppingListBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\SalesBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+      paths:
+        - '@OroShoppingListBundle/Tests/Behat/Features'
   elements:
     ShoppingList:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
@@ -7,3 +21,17 @@ oro_behat_extension:
     ShoppingListTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
+
+    FrontendLineItemForm:
+      selector: 'form[id^="oro_product_frontend_line_item"]'
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
+    ShoppingListWidget:
+      selector: '.shopping-list-widget'
+      
+    FrontendSearchButton:
+      selector: '.search-widget__submit'

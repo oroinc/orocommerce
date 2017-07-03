@@ -1,0 +1,2 @@
+include:
+    - ../../../../../../../../../commerce/src/Oro/Bundle/ProductBundle/Tests/Behat/Features/Fixtures/Products.yml

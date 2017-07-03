@@ -90,12 +90,9 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
 
     public function testRestrictsVisibilityForJustProductsWithProductAlias()
     {
-        $productAlias = $this->getContainer()->get('oro_website_search.provider.search_mapping')
-            ->getEntityAlias(Product::class);
-
         $query = new Query();
 
-        $query->from([$productAlias]);
+        $query->from(['oro_product_WEBSITE_ID']);
 
         $this->engine->search($query);
 
