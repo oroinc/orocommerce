@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\DataMapper;
 
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
+use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Form\DataMapper\DiscountConfigurationDataMapper;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -102,6 +103,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
         $expectedData = [
             AbstractDiscount::DISCOUNT_VALUE => 123,
             AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
+            AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_AMOUNT,
             self::ANY_FIELD => null
         ];
         $valueBasedOnData = MultiCurrency::create(
@@ -110,9 +112,13 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
         );
 
         $forms = $this->getForms();
+        $this->addTypeForm($forms);
         $forms[DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD]->expects($this->any())
             ->method('getData')
             ->will($this->returnValue($valueBasedOnData));
+        $forms[AbstractDiscount::DISCOUNT_TYPE]->expects($this->any())
+            ->method('getData')
+            ->will($this->returnValue(DiscountInterface::TYPE_AMOUNT));
 
         $actualData = [];
         $this->dataMapper->mapFormsToData($forms, $actualData);
@@ -122,10 +128,14 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
 
     public function testMapPercentDiscountDataToForm()
     {
-        $data = [AbstractDiscount::DISCOUNT_VALUE => 123];
+        $data = [
+            AbstractDiscount::DISCOUNT_VALUE => 123,
+            AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT
+        ];
         $valueBasedOnData = 123;
 
         $forms = $this->getForms();
+        $this->addTypeForm($forms);
         $forms[DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD]->expects($this->once())
             ->method('setData')
             ->with($valueBasedOnData);
@@ -137,14 +147,19 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
     {
         $expectedData = [
             AbstractDiscount::DISCOUNT_VALUE => 123,
-            self::ANY_FIELD => null
+            self::ANY_FIELD => null,
+            AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT
         ];
         $valueBasedOnData =123;
 
         $forms = $this->getForms();
+        $this->addTypeForm($forms);
         $forms[DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD]->expects($this->any())
             ->method('getData')
             ->will($this->returnValue($valueBasedOnData));
+        $forms[AbstractDiscount::DISCOUNT_TYPE]->expects($this->any())
+            ->method('getData')
+            ->will($this->returnValue(DiscountInterface::TYPE_PERCENT));
 
         $actualData = [];
         $this->dataMapper->mapFormsToData($forms, $actualData);
@@ -208,7 +223,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['setData', 'getData'])
             ->getMock();
 
-        $config = new FormConfigBuilder(self::ANY_FIELD, '\stdClass', $this->dispatcher);
+        $config = new FormConfigBuilder(self::ANY_FIELD, \stdClass::class, $this->dispatcher);
         $anyFieldForm = $this->getMockBuilder(Form::class)
             ->setConstructorArgs([$config])
             ->setMethods(['setData', 'getData'])
@@ -222,5 +237,22 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit_Framework_TestCase
         ]);
 
         return $forms;
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject[]|FormInterface[] $forms
+     */
+    private function addTypeForm(&$forms)
+    {
+        $config = new FormConfigBuilder(
+            AbstractDiscount::DISCOUNT_TYPE,
+            \stdClass::class,
+            $this->dispatcher
+        );
+        $discountTypeForm = $this->getMockBuilder(Form::class)
+            ->setConstructorArgs([$config])
+            ->setMethods(['setData', 'getData'])
+            ->getMock();
+        $forms[AbstractDiscount::DISCOUNT_TYPE] = $discountTypeForm;
     }
 }

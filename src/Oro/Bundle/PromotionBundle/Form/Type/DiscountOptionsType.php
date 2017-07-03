@@ -17,7 +17,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Type;
 
 class DiscountOptionsType extends AbstractType
 {
@@ -111,7 +110,7 @@ class DiscountOptionsType extends AbstractType
             FormUtils::replaceField(
                 $event->getForm(),
                 self::AMOUNT_DISCOUNT_VALUE_FIELD,
-                ['required' => false, 'attr' => ['class' => 'hide'], 'validation_groups' => ['Default']]
+                ['required' => false, 'attr' => ['class' => 'hide'], 'value_constraints' => []]
             );
             FormUtils::replaceField(
                 $event->getForm(),
@@ -189,7 +188,7 @@ class DiscountOptionsType extends AbstractType
                     'label' => 'oro.discount_options.general.value.label',
                     'compact' => false,
                     'data_class' => MultiCurrency::class,
-                    'validation_groups' => ['ValueRequired', 'Default'],
+                    'value_constraints' => [new NotBlank()],
                     'attr' => $amountFieldVisible ? [] : ['class' => 'hide'],
                 ]
             )
@@ -199,7 +198,7 @@ class DiscountOptionsType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'oro.discount_options.general.value.label',
-                    'constraints' => [new NotBlank(), new Type(['type' => 'numeric'])],
+                    'constraints' => [new NotBlank()],
                     'attr' => $percentFieldVisible ? [] : ['class' => 'hide'],
                 ]
             );
