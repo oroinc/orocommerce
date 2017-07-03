@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Processor\Update;
 
-use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository;
