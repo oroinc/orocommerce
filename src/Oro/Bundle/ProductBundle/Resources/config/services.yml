@@ -762,6 +762,8 @@ services:
             - '@oro_product.provider.custom_field_provider'
             - '@oro_product.provider.product_variant_availability_provider'
             - '@property_accessor'
+        calls:
+            - [setProductVariantFieldValueHandlerRegistry, ['@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry']]
         tags:
             - { name: layout.data_provider, alias: oro_product_configurable_products }
 
