@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemsToDiscountLineItemsConverter
 {
@@ -23,8 +23,8 @@ class LineItemsToDiscountLineItemsConverter
     }
 
     /**
-     * @param LineItem[]|array $lineItems
-     * @return array
+     * @param ProductLineItemInterface[]|array $lineItems
+     * @return DiscountLineItem[]
      */
     public function convert(array $lineItems): array
     {

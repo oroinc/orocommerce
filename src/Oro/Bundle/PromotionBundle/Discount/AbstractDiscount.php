@@ -89,7 +89,7 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function getDiscountCurrency(): string
+    public function getDiscountCurrency()
     {
         return $this->discountCurrency;
     }
