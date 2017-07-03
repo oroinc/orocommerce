@@ -54,17 +54,16 @@ system_configuration:
                                             - oro_shopping_list.backend_product_visibility
                     sales:
                         children:
-                            guest_shopping_list:
-                                children:
-                                    guest_shopping_list_user_section:
-                                        children:
-                                            - oro_shopping_list.default_guest_shopping_list_owner
-                                    guest_shopping_list.enable:
-                                        children:
-                                            - oro_shopping_list.availability_for_guests
                             shopping_list:
                                 children:
                                     shopping_list_limit_section:
                                         children:
                                             - oro_shopping_list.shopping_list_limit
+                                    guest_shopping_list.enable:
+                                        children:
+                                            - oro_shopping_list.availability_for_guests
+                                    guest_shopping_list_user_section:
+                                        children:
+                                            - oro_shopping_list.default_guest_shopping_list_owner
+
 

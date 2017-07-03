@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -46,6 +47,11 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
     private $guestShoppingListMigrationManager;
 
     /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
+    /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $logger;
@@ -59,13 +65,15 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->visitorManager                    = $this->createMock(CustomerVisitorManager::class);
         $this->logger                            = $this->createMock(LoggerInterface::class);
         $this->request                           = new Request();
+        $this->configManager                     = $this->createMock(ConfigManager::class);
         $this->event                             = $this->getMockBuilder(InteractiveLoginEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->listener                          = new InteractiveLoginListener(
             $this->visitorManager,
             $this->guestShoppingListMigrationManager,
-            $this->logger
+            $this->logger,
+            $this->configManager
         );
     }
 
@@ -74,6 +82,11 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
 
         $this->configureToken();
 
@@ -87,6 +100,10 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             base64_encode(json_encode(self::VISITOR_CREDENTIALS))
         );
 
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
         $this->configureToken();
 
         $this->event->expects($this->once())
@@ -113,6 +130,10 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRequest')
             ->willReturn($this->request);
 
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
         $this->configureToken();
 
         $visitor = new CustomerVisitorStub();
@@ -138,6 +159,10 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRequest')
             ->willReturn($this->request);
 
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
         $this->configureToken();
 
         $visitor = new CustomerVisitorStub();
@@ -162,6 +187,11 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
         $customerUser = $this->configureToken();
 
         $shoppingList = new ShoppingList();
@@ -189,7 +219,14 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->event->expects($this->once())
             ->method('getRequest')
             ->willReturn($this->request);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
+
         $customerUser = $this->configureToken();
+
         $shoppingList = new ShoppingList();
         $shoppingList->addLineItem(new LineItem());
         $visitor = new CustomerVisitorStub();
@@ -231,7 +268,30 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testNotCustomerLogin()
     {
+        $this->configManager->expects($this->never())
+            ->method('get');
         $this->configureToken(false);
+        $this->event->expects($this->never())
+            ->method('getRequest')
+            ->willReturn($this->request);
+
+        $this->visitorManager->expects($this->never())
+            ->method('find');
+
+        $this->guestShoppingListMigrationManager->expects($this->never())
+            ->method('migrateGuestShoppingList');
+
+        $this->listener->onInteractiveLogin($this->event);
+    }
+
+    public function testGuestShoppingListConfigurationDisabled()
+    {
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(false);
+
+        $this->configureToken();
         $this->event->expects($this->never())
             ->method('getRequest')
             ->willReturn($this->request);
