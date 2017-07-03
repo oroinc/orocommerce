@@ -34,7 +34,7 @@ define(function(require) {
                 return;
             }
 
-            var productUnits = model.get('product_units');
+            var productUnits = _.keys(model.get('product_units'));
 
             if (productUnits) {
                 var select = this.options._sourceElement.find('select');

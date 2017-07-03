@@ -19,7 +19,8 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'quantity': ['keyup', 'onQuantityChange']
+            'quantity': ['input', 'onQuantityChange'],
+            'unit': ['change', 'onUnitChange']
         },
 
         modelElements: {
@@ -93,7 +94,13 @@ define(function(require) {
         },
 
         onQuantityChange: function(e) {
+            this.filterQuantityField(e);
             this.setModelValueFromElement(e, 'quantity', 'quantity');
+        },
+
+        onUnitChange: function(e) {
+            var $quantityField = this.getElement('quantity');
+            $quantityField.val(this.predefinedValueByPrecision($quantityField.val(), e.target.value));
         },
 
         changeUnitLabel: function() {
@@ -143,14 +150,34 @@ define(function(require) {
         },
 
         filterQuantityField: function(event) {
-            var precision = this.model.get('product_units')[this.model.get('unit')] || 0;
-            var value = event.target.value.replace(/[^0-9\.]/g, '');
-            var match = value.match(
-                new RegExp('(\\d*' + (precision > 0 ? '\\.' : '') + ')?\\d{0,' + precision + '}', 'g')
-            );
+            if (event.target.value === this.model.get('quantity')) {
+                return;
+            }
 
-            value = match[0].indexOf('.') === -1 ? match.join('') : match[0];
-            event.target.value = value;
+            var $input = $(event.target);
+
+            $input.val(this.predefinedValueByPrecision($input.val(), this.model.get('unit')));
+        },
+
+        predefinedValueByPrecision: function(value, unit) {
+            var newValue;
+            var parts = value.split(/(\.)/gi).slice(0, 3);
+            var precision = this.model.get('product_units')[unit] || 0;
+
+            if (precision === 0) {
+                newValue = parts[0];
+            } else if (precision > 0) {
+
+                if (parts[2]) {
+                    parts[2] = parts[2].slice(0, precision);
+                }
+                newValue = parts.join('');
+
+            } else {
+                newValue = value;
+            }
+
+            return newValue;
         },
 
         dispose: function() {
