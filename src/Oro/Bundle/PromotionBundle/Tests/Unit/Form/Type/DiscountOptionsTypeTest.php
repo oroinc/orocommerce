@@ -17,6 +17,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -218,6 +219,20 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
             );
 
         $this->formType->setDefaultOptions($resolver);
+    }
+
+    public function testFinishView()
+    {
+        $form = $this->factory->create($this->formType);
+        $view = $form->createView();
+        $this->assertArrayHasKey('attr', $view->vars);
+        $this->assertArraySubset(
+            [
+                'data-page-component-module' => $form->getConfig()->getOption('page_component'),
+                'data-page-component-options' => json_encode($form->getConfig()->getOption('page_component_options'))
+            ],
+            $view->vars['attr']
+        );
     }
 
     /**

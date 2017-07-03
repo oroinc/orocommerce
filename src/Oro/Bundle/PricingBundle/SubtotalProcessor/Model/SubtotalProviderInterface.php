@@ -12,13 +12,6 @@ interface SubtotalProviderInterface
     public function getName();
 
     /**
-     * Get provider type
-     *
-     * @return string
-     */
-    public function getType();
-
-    /**
      * Get entity subtotal
      *
      * @param $entity

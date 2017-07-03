@@ -64,14 +64,6 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getType()
-    {
-        return self::TYPE;
-    }
-
-    /**
      * @param DiscountAwareInterface|LineItemsAwareInterface $entity
      *
      * @return Subtotal[]

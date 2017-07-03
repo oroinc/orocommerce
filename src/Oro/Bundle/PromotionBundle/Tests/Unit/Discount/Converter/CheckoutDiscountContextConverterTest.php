@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Converter;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalAmountProvider;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Discount\Converter\CheckoutDiscountContextConverter;
-use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter;
+use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
@@ -18,19 +16,14 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class CheckoutDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var OrderLineItemsToDiscountLineItemsConverter|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutToOrderConverter|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $lineItemsConverter;
+    private $checkoutToOrderConverter;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountContextConverterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $checkoutLineItemsManager;
-
-    /**
-     * @var CheckoutSubtotalAmountProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $checkoutSubtotalAmountProvider;
+    private $orderDiscountContextConverter;
 
     /**
      * @var CheckoutDiscountContextConverter
@@ -39,40 +32,36 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->lineItemsConverter = $this->createMock(OrderLineItemsToDiscountLineItemsConverter::class);
-        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
-        $this->checkoutSubtotalAmountProvider = $this->createMock(CheckoutSubtotalAmountProvider::class);
+        $this->checkoutToOrderConverter = $this->createMock(CheckoutToOrderConverter::class);
+        $this->orderDiscountContextConverter = $this->createMock(DiscountContextConverterInterface::class);
         $this->converter = new CheckoutDiscountContextConverter(
-            $this->lineItemsConverter,
-            $this->checkoutLineItemsManager,
-            $this->checkoutSubtotalAmountProvider
+            $this->checkoutToOrderConverter,
+            $this->orderDiscountContextConverter
         );
     }
 
     public function testConvert()
     {
         $sourceEntity = $this->getCheckout();
-        $subtotal = 100.0;
-        $lineItems = [new OrderLineItem()];
-        $discountLineItems = [new DiscountLineItem()];
-        $this->checkoutSubtotalAmountProvider->expects($this->once())
-            ->method('getSubtotalAmount')
+        $order = new Order();
+
+        $discountContext = new DiscountContext();
+        $discountContext->setSubtotal(100.0);
+        $discountContext->setLineItems([new DiscountLineItem()]);
+
+        $this->checkoutToOrderConverter
+            ->expects($this->any())
+            ->method('getOrder')
             ->with($sourceEntity)
-            ->willReturn($subtotal);
-        $this->checkoutLineItemsManager->expects($this->once())
-            ->method('getData')
-            ->with($sourceEntity)
-            ->willReturn(new ArrayCollection($lineItems));
-        $this->lineItemsConverter->expects($this->once())
+            ->willReturn($order);
+
+        $this->orderDiscountContextConverter
+            ->expects($this->any())
             ->method('convert')
-            ->with($lineItems)
-            ->willReturn($discountLineItems);
+            ->with($order)
+            ->willReturn($discountContext);
 
-        $expectedDiscountContext = new DiscountContext();
-        $expectedDiscountContext->setSubtotal($subtotal);
-        $expectedDiscountContext->setLineItems($discountLineItems);
-
-        $this->assertEquals($expectedDiscountContext, $this->converter->convert($sourceEntity));
+        $this->assertEquals($discountContext, $this->converter->convert($sourceEntity));
     }
 
     public function testConvertUnsupportedException()

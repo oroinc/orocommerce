@@ -138,6 +138,18 @@ class LineItemsDiscountTest extends \PHPUnit_Framework_TestCase
                 'lineItemQuantity' => 10,
                 'expectedDiscount' => 20.0
             ],
+            'fixed amount discount greater than amount' => [
+                'options' => [
+                    DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE => 'item',
+                    AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
+                    AbstractDiscount::DISCOUNT_VALUE => 200,
+                    AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
+                    LineItemsDiscount::APPLY_TO => LineItemsDiscount::LINE_ITEMS_TOTAL,
+                ],
+                'subtotal' => 100.0,
+                'lineItemQuantity' => 10,
+                'expectedDiscount' => 100.0
+            ],
             'fixed amount discount each item with maximum qty' => [
                 'options' => [
                     DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE => 'item',

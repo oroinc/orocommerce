@@ -81,10 +81,8 @@ class DiscountOptionsType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['attr']['data-page-component-module'] = $form->getConfig()->getOption('page_component');
-        $view->vars['attr']['data-page-component-options'] = json_encode(
-            $form->getConfig()->getOption('page_component_options')
-        );
+        $view->vars['attr']['data-page-component-module'] = $options['page_component'];
+        $view->vars['attr']['data-page-component-options'] = json_encode($options['page_component_options']);
     }
 
     /**

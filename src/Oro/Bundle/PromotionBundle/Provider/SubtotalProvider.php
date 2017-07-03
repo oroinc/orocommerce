@@ -59,14 +59,6 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     /**
      * {@inheritdoc}
      */
-    public function getType()
-    {
-        return self::TYPE;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSubtotal($entity)
     {
         $discountContext = $this->promotionExecutor->execute($entity);

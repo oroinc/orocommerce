@@ -45,4 +45,11 @@ class DiscountFormTypeProviderTest extends \PHPUnit_Framework_TestCase
             $this->discountFormTypeRegistry->getFormTypes()
         );
     }
+
+    public function testGetDefaultFormTypeException()
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Default discount type is not provided.');
+        $this->discountFormTypeRegistry->getDefaultFormType();
+    }
 }

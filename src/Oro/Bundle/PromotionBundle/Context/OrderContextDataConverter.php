@@ -3,15 +3,15 @@
 namespace Oro\Bundle\PromotionBundle\Context;
 
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
-use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
+use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ShoppingListContextDataConverter implements ContextDataConverterInterface
+class OrderContextDataConverter implements ContextDataConverterInterface
 {
     /**
      * @var CustomerUserRelationsProvider
@@ -19,7 +19,7 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     protected $relationsProvider;
 
     /**
-     * @var LineItemsToDiscountLineItemsConverter
+     * @var OrderLineItemsToDiscountLineItemsConverter
      */
     protected $lineItemsConverter;
 
@@ -34,40 +34,40 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     protected $scopeManager;
 
     /**
-     * @var LineItemNotPricedSubtotalProvider
+     * @var SubtotalProviderInterface
      */
-    protected $lineItemNotPricedSubtotalProvider;
+    protected $lineItemSubtotalProvider;
 
     /**
      * @param CustomerUserRelationsProvider $relationsProvider
-     * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
+     * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ScopeManager $scopeManager
-     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+     * @param SubtotalProviderInterface $lineItemSubtotalProvider
      */
     public function __construct(
         CustomerUserRelationsProvider $relationsProvider,
-        LineItemsToDiscountLineItemsConverter $lineItemsConverter,
+        OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
         ScopeManager $scopeManager,
-        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+        SubtotalProviderInterface $lineItemSubtotalProvider
     ) {
         $this->relationsProvider = $relationsProvider;
         $this->lineItemsConverter = $lineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeManager = $scopeManager;
-        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
+        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
     }
 
     /**
-     * @param ShoppingList $entity
+     * @param Order $entity
      * {@inheritdoc}
      */
     public function getContextData($entity): array
     {
         if (!$this->supports($entity)) {
             throw new UnsupportedSourceEntityException(
-                sprintf('Entity "%s" is not supported.', get_class($entity))
+                sprintf('Source entity "%s" is not supported.', get_class($entity))
             );
         }
 
@@ -77,8 +77,7 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
         if (!$customerGroup && $entity->getCustomer()) {
             $customerGroup = $entity->getCustomer()->getGroup();
         }
-        $currency = $this->userCurrencyManager->getUserCurrency();
-        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($entity, $currency);
+        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($entity);
 
         return [
             self::CUSTOMER_USER => $entity->getCustomerUser(),
@@ -86,8 +85,12 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
             self::CUSTOMER_GROUP => $customerGroup,
             self::LINE_ITEMS => $this->getLineItems($entity),
             self::SUBTOTAL => $subtotal->getAmount(),
-            self::CURRENCY => $currency,
+            self::CURRENCY => $this->userCurrencyManager->getUserCurrency(),
             self::CRITERIA => $this->scopeManager->getCriteria('promotion'),
+            self::BILLING_ADDRESS => $entity->getBillingAddress(),
+            self::SHIPPING_ADDRESS => $entity->getShippingAddress(),
+            self::SHIPPING_COST => $entity->getShippingCost(),
+            self::SHIPPING_METHOD => $entity->getShippingMethod(),
         ];
     }
 
@@ -96,15 +99,17 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
      */
     public function supports($entity): bool
     {
-        return $entity instanceof ShoppingList;
+        return $entity instanceof Order;
     }
 
     /**
-     * @param ShoppingList $entity
-     * @return DiscountLineItem[]|array
+     * @param Order $entity
+     * @return DiscountLineItem[]
      */
-    private function getLineItems(ShoppingList $entity)
+    protected function getLineItems(Order $entity)
     {
-        return $this->lineItemsConverter->convert($entity->getLineItems()->toArray());
+        return $this->lineItemsConverter->convert(
+            $entity->getLineItems()->toArray()
+        );
     }
 }

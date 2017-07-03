@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Test\Unit\Layout\DataProvider\DTO;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
+use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\UnsupportedObjectException;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ObjectStorageTest extends \PHPUnit_Framework_TestCase
@@ -51,5 +52,13 @@ class ObjectStorageTest extends \PHPUnit_Framework_TestCase
         $storage->attach($lineItem, $data);
         $this->assertTrue($storage->contains($lineItem));
         $this->assertTrue($storage->contains($sameLineItem));
+    }
+
+    public function testUnsupportedObjectException()
+    {
+        $lineItem = new \stdClass();
+        $storage = new ObjectStorage();
+        $this->expectException(UnsupportedObjectException::class);
+        $storage->contains($lineItem);
     }
 }

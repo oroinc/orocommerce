@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalAmountProvider;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -12,33 +11,20 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class CheckoutDiscountContextConverter implements DiscountContextConverterInterface
 {
     /**
-     * @var OrderLineItemsToDiscountLineItemsConverter
+     * @var CheckoutToOrderConverter
      */
-    protected $lineItemsConverter;
-
+    private $checkoutToOrderConverter;
     /**
-     * @var CheckoutLineItemsManager
+     * @var DiscountContextConverterInterface
      */
-    protected $checkoutLineItemsManager;
+    private $orderDiscountContextConverter;
 
-    /**
-     * @var CheckoutSubtotalAmountProvider
-     */
-    protected $checkoutSubtotalAmountProvider;
-
-    /**
-     * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
-     * @param CheckoutLineItemsManager $checkoutLineItemsManager
-     * @param CheckoutSubtotalAmountProvider $checkoutSubtotalAmountProvider
-     */
     public function __construct(
-        OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter,
-        CheckoutLineItemsManager $checkoutLineItemsManager,
-        CheckoutSubtotalAmountProvider $checkoutSubtotalAmountProvider
+        CheckoutToOrderConverter $checkoutToOrderConverter,
+        DiscountContextConverterInterface $orderDiscountContextConverter
     ) {
-        $this->lineItemsConverter = $lineItemsConverter;
-        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
-        $this->checkoutSubtotalAmountProvider = $checkoutSubtotalAmountProvider;
+        $this->checkoutToOrderConverter = $checkoutToOrderConverter;
+        $this->orderDiscountContextConverter = $orderDiscountContextConverter;
     }
 
     /**
@@ -52,18 +38,9 @@ class CheckoutDiscountContextConverter implements DiscountContextConverterInterf
                 sprintf('Source entity "%s" is not supported.', get_class($sourceEntity))
             );
         }
+        $order = $this->checkoutToOrderConverter->getOrder($sourceEntity);
 
-        $discountContext = new DiscountContext();
-
-        $subtotal = $this->checkoutSubtotalAmountProvider->getSubtotalAmount($sourceEntity);
-        $discountContext->setSubtotal($subtotal);
-
-        $discountLineItems = $this->lineItemsConverter->convert(
-            $this->checkoutLineItemsManager->getData($sourceEntity)->toArray()
-        );
-        $discountContext->setLineItems($discountLineItems);
-
-        return $discountContext;
+        return $this->orderDiscountContextConverter->convert($order);
     }
 
     /**
