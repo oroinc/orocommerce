@@ -89,6 +89,9 @@ ShippingBundle
  - `oroshipping/js/app/views/shipping-rule-method-view` - changed options, functions, functionality
  - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
  - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
+ - previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
+ - previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
+
 
 PayPalBundle
 --------------
@@ -199,3 +202,8 @@ SaleBundle
     - oro_quote_review_and_approve
     - oro_quote_add_free_form_items
 - Added new workflow `b2b_quote_backoffice_approvals`
+
+FlatRateShippingBundle
+----------------------
+- previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
+
