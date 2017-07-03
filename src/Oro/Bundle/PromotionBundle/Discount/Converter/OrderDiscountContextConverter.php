@@ -16,7 +16,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
     /**
      * @var DiscountContextConverterRegistry
      */
-    private $converterRegistry;
+    private $converter;
     /**
      * @var DoctrineHelper
      */
@@ -28,11 +28,11 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
      */
     public function __construct(
         LineItemsToDiscountLineItemsConverter $lineItemsConverter,
-        DiscountContextConverterRegistry $converterRegistry,
+        DiscountContextConverterInterface $converter,
         DoctrineHelper $doctrineHelper
     ) {
         $this->lineItemsConverter = $lineItemsConverter;
-        $this->converterRegistry = $converterRegistry;
+        $this->converter = $converter;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -62,7 +62,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
             if (!$sourceEntity) {
                 throw new UnsupportedSourceEntityException('Cant convert empty Order into DiscountContext');
             }
-            return $this->converterRegistry->convert($sourceEntity);
+            return $this->converter->convert($sourceEntity);
         }
 
         $discountContext = new DiscountContext();
