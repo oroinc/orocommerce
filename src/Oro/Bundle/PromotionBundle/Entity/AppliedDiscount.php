@@ -28,7 +28,7 @@ class AppliedDiscount
     protected $type;
 
     /**
-     * @ORM\Column(name="amount", type="float", nullable=true)
+     * @ORM\Column(name="amount", type="float")
      *
      * @var float
      */
