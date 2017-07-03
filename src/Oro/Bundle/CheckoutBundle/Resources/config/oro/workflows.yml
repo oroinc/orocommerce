@@ -69,6 +69,8 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            visitor_email:
+                type: string
         steps:
             enter_billing_address:
                 order: 10
@@ -182,6 +184,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        visitor_email:
+                            form_type: oro_customer_visitor_email_address
             continue_to_shipping_method:
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
@@ -467,6 +471,14 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                 actions:
+                    - '@call_method':
+                        conditions:
+                            '@not_empty': $visitor_email
+                        parameters:
+                            object: $checkout.customerUser
+                            method: setEmail
+                            method_parameters:
+                                - $visitor_email
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@assign_value': [$shipping_method, null]
                     - '@call_method':

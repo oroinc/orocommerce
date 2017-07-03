@@ -1,0 +1,11 @@
+security:
+    firewalls:
+        guest_checkout:
+            pattern:                 ^/customer/checkout
+            context:                 customer_identity
+            anonymous_customer_user: true
+
+        guest_checkout_wsse_secured:
+            pattern:                 ^/api/rest.* #@TODO: must be updated
+            context:                 customer_identity
+            anonymous_customer_user: true

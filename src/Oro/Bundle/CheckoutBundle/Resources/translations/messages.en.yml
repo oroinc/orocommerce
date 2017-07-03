@@ -164,6 +164,8 @@ oro:
                             middle_name: ""
                             last_name: ""
                             sufix: ""
+                        visitor:
+                            email: ""
         form:
             address.manual: Enter other address
             address.select.billing.label: SELECT BILLING ADDRESS

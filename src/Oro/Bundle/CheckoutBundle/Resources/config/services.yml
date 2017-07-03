@@ -468,3 +468,8 @@ services:
         decorates: oro_payment.provider.result_messages
         public: false
         arguments: ['@oro_checkout.provider.payment_method_provider']
+
+    oro_checkout.action.default_checkout_owner_setter:
+        class: Oro\Bundle\CheckoutBundle\Action\DefaultCheckoutOwnerSetter
+        arguments:
+            - '@oro_entity.doctrine_helper'
