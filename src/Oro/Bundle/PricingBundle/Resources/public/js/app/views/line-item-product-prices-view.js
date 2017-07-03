@@ -3,6 +3,7 @@ define(function(require) {
 
     var LineItemProductPricesView;
     var _ = require('underscore');
+    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var ProductPricesEditableView = require('oropricing/js/app/views/product-prices-editable-view');
 
@@ -17,8 +18,12 @@ define(function(require) {
 
         modelEvents: _.extend({}, ProductPricesEditableView.prototype.modelEvents, {
             'id updateTierPrices': ['change', 'updateTierPrices'],
-            'currency changePricesCurrency': ['change', 'changePricesCurrency']
+            'currency updatePriceValue': ['change', 'updatePriceValue'],
+            'unit updatePriceValue': ['change', 'updatePriceValue'],
+            'quantity updatePriceValue': ['change', 'updatePriceValue']
         }),
+
+        storedValues: {},
 
         /**
          * @inheritDoc
@@ -26,11 +31,20 @@ define(function(require) {
         deferredInitialize: function(options) {
             LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 
+            if (!this.options.editable) {
+                this.getElement('priceValue').prop('readonly', true);
+                var productId = this.model.get('id');
+                if (!_.isUndefined(productId) && productId.length && this.model.get('price')) {
+                    // store current values
+                    this.storedValues = _.extend({}, this.model.attributes);
+                }
+            }
+
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
-            mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);
+            mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
 
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
-                this.setTierPrices(tierPrices, true);
+                this.setTierPrices(tierPrices, false);
             }, this));
 
             this.updateTierPrices();
@@ -39,18 +53,14 @@ define(function(require) {
         updateTierPrices: function() {
             var productId = this.model.get('id');
             if (productId.length === 0) {
-                this.setTierPrices({});
+                this.refreshTierPrices({});
             } else {
                 mediator.trigger(
                     'pricing:load:products-tier-prices',
                     [productId],
-                    _.bind(this.setTierPrices, this)
+                    _.bind(this.refreshTierPrices, this)
                 );
             }
-        },
-
-        changePricesCurrency: function() {
-            this.setTierPrices(this.tierPrices);
         },
 
         /**
@@ -79,6 +89,20 @@ define(function(require) {
         },
 
         /**
+         * @param {Object} tierPrices
+         */
+        refreshTierPrices: function(tierPrices) {
+            var productId = this.model.get('id');
+            this.setTierPrices(tierPrices, false);
+            if (!this.options.editable) {
+                this.filterValues();
+                if (productId) {
+                    this.updatePriceValue();
+                }
+            }
+        },
+
+        /**
          * @param {Array} items
          */
         collectLineItems: function(items) {
@@ -94,6 +118,57 @@ define(function(require) {
             }
         },
 
+        filterValues: function() {
+            var productId = this.model.get('id');
+            var prices = {};
+            if (!_.isUndefined(productId) && productId.length !== 0) {
+                prices = this.tierPrices[productId] || {};
+            }
+            var currencies = [];
+            var units = [];
+
+            _.each(prices, function(price) {
+                currencies.push(price.currency);
+                units.push(price.unit);
+            });
+            if (!_.isUndefined(this.storedValues.price)) {
+                currencies.push(this.storedValues.currency);
+                units.push(this.storedValues.unit);
+            } else if (_.isUndefined(productId) || productId.length === 0) {
+                currencies.push(this.model.get('currency'));
+                units.push(this.model.get('unit'));
+            }
+
+            // we always filter only initial list of currencies
+            this.getElement('currency')
+                .find('option')
+                .filter(function() {
+                    return (-1 === $.inArray(this.value, currencies));
+                })
+                .remove();
+
+            this.model.trigger('product:unit:filter-values', units);
+        },
+
+        updatePriceValue: function() {
+            this.setTierPrices(this.tierPrices);
+            if (!this.options.editable) {
+                var price;
+                if (this.storedValues &&
+                    this.model.get('id') === this.storedValues.id &&
+                    this.model.get('unit') === this.storedValues.unit &&
+                    this.model.get('quantity') === this.storedValues.quantity &&
+                    this.model.get('currency') === this.storedValues.currency
+                ) {
+                    price = this.storedValues;
+                } else {
+                    price = this.findPrice();
+                }
+                this.setPriceValue(price ? price.price : null);
+                this.getElement('priceValue').addClass('matched-price');
+            }
+        },
+
         /**
          * @inheritDoc
          */
@@ -103,6 +178,8 @@ define(function(require) {
             }
 
             mediator.off(null, null, this);
+
+            delete this.storedValues;
 
             LineItemProductPricesView.__super__.dispose.call(this);
         }

@@ -82,6 +82,16 @@ class Quote extends ExtendQuote implements
     const INTERNAL_STATUS_DELETED = 'deleted';
     const INTERNAL_STATUS_SENT_TO_CUSTOMER = 'sent_to_customer';
 
+    const FRONTEND_INTERNAL_STATUSES = [
+        'template',
+        'open',
+        'sent_to_customer',
+        'expired',
+        'accepted',
+        'declined',
+        'cancelled',
+    ];
+
     /**
      * @var int
      *
@@ -204,6 +214,20 @@ class Quote extends ExtendQuote implements
      * )
      */
     protected $expired = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="prices_changed", type="boolean", options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $pricesChanged = false;
 
     /**
      * @var QuoteAddress
@@ -485,6 +509,26 @@ class Quote extends ExtendQuote implements
     public function setExpired($expired)
     {
         $this->expired = (bool)$expired;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPricesChanged(): bool
+    {
+        return $this->pricesChanged;
+    }
+
+    /**
+     * @param bool $pricesChanged
+     *
+     * @return Quote
+     */
+    public function setPricesChanged(bool $pricesChanged): Quote
+    {
+        $this->pricesChanged = (bool)$pricesChanged;
 
         return $this;
     }
