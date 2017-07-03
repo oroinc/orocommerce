@@ -92,8 +92,7 @@ datagrids:
             type: orm
             query:
                 select:
-                    - promotion.id
-                    - discount.amount
+                    - SUM(discount.amount) AS discount_amount
                     - rule.name
                 from:
                     - { table: OroPromotionBundle:AppliedDiscount, alias: discount }
@@ -104,24 +103,26 @@ datagrids:
                 where:
                     and:
                         - discount.order = :orderId
+                groupBy: rule.id
             bind_parameters:
                 - orderId
         columns:
             name:
                 label: oro.promotion.rule.name.label
-            amount:
+            discount_amount:
                 label: amount
         sorters:
             columns:
                 name:
                     data_name: rule.name
-                amount:
-                    data_name: discount.amount
+                discount_amount:
+                    data_name: discount_amount
         filters:
             columns:
                 name:
                     type: string
                     data_name: rule.name
-                amount:
+                discount_amount:
                     type: number-range
-                    data_name: discount.amount
+                    data_name: discount_amount
+                    filter_by_having: true
