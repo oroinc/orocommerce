@@ -12,7 +12,7 @@ oro_behat_extension:
     elements:
         LocalizationSwitcher:
             class: Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element\LocalizationSwitcherElement
-            selector: 'div.oro-localization-switcher .oro-toolbar__content'
+            selector: 'div.oro-localization-switcher__toggle'
 
         LocalizationSwitcherOptions:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -20,7 +20,7 @@ oro_behat_extension:
 
         LocalizationSwitcherActiveOption:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-            selector: 'div.oro-localization-switcher .oro-toolbar__link--active'
+            selector: 'div.oro-localization-switcher .primary-menu__link--current'
 
         CreateLocalizationForm:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

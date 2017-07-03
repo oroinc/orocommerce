@@ -1,12 +1,12 @@
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
-        <div class="pull-right dropdown"
+        <div class="pull-right dropdown oro-localization-switcher"
              data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
              data-page-component-options="{{ {
                  'selectedLocalization': selected_localization.titles|localized_value,
                  'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
              }|json_encode }}">
-            <div class="oro-toolbar__content" data-toggle="dropdown">
+            <div class="oro-localization-switcher__toggle" data-toggle="dropdown">
                 {{ selected_localization.titles|localized_value }}
                 <span class="oro-toolbar__icon">
                     <i class="fa-angle-down"></i>
