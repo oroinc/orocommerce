@@ -89,4 +89,30 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             ->get('router')
             ->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
     }
+
+    /**
+     * @Then  I visit store frontend as guest
+     */
+    public function iVisitStoreFrontendAsGuest()
+    {
+        $this->visitPath($this->getUrl('oro_frontend_root'));
+        $this->waitForAjax();
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    protected function getUrl($path)
+    {
+        return $this->getContainer()->get('router')->generate($path);
+    }
+
+    /**
+     * @Then I open shopping list widget
+     */
+    public function iOpenShoppingListWidget()
+    {
+        $this->createElement('ShoppingListWidget')->click();
+    }
 }
