@@ -13,7 +13,7 @@
 ### create
 
 Create a new Product record.
-The created record is returned in the response.
+The created record is returned in the response. [See product create](#post--admin-api-products)
 
 ##### 1. Static options for product attributes
 
@@ -62,7 +62,19 @@ The same applies to other relation entities like "localizedfallbackvalues" type,
 properties like "names", "descriptions", "shortDescriptions", and also meta fields. You can see in
 the detailed example for product creation.
 
+##### 3. Using ProductPrecisionUnits:
 
+A ProductPrecisionUnit is a relation between the product and unit of quantity and other details like
+conversion rates. Also, there is the concept of the primary ProductPrecisionUnit which is actually the
+default precision unit, and it is mandatory.
+
+There are a few restrictions and situations that the API caller should know:
+
+- not sending the **"primaryUnitPrecision"** will make the first item in the **"unitPrecisions"** list become
+the primary unit precision
+
+- when sending the "primaryUnitPrecision" you need to specify the unit code, but it is mandatory that
+this unit code is found between the items of the **"unitPrecisions"**
 
 {@request:json_api}
 
@@ -108,6 +120,14 @@ Example:
           }
         ]
       },
+      "slugPrototypes": {
+        "data": [
+          {
+            "type": "localizedfallbackvalues",
+            "id": "slug-id-1"
+          }
+        ]
+      },
       "taxCode": {
         "data": {
           "type": "producttaxcodes",
@@ -125,6 +145,13 @@ Example:
       },
       "unitPrecisions": {
         "data": [
+          {
+            "type": "productunitprecisions",
+            "unit_code": "set",
+            "unit_precision": "0",
+            "conversion_rate": "2",
+            "sell": "1"
+          },
           {
             "type": "productunitprecisions",
             "unit_code": "each",
@@ -270,6 +297,20 @@ Example:
           }
         }
       }
+    },
+    {
+      "type": "localizedfallbackvalues",
+      "id": "slug-id-1",
+      "attributes": {
+        "fallback": null,
+        "string": "test-prod-slug",
+        "text": null
+      },
+      "relationships": {
+        "localization": {
+          "data": null
+        }
+      }
     }
   ]
 }
@@ -278,9 +319,30 @@ Example:
 
 ### update
 
-Edit a specific Product record.
+Edit a specific Product record. [See product create](#post--admin-api-products) documentation for examples
+and explanations.
 
-{@inheritdoc}
+Other details
+
+##### 1. Using ProductPrecisionUnits:
+
+Besides what it is mentioned in the create Product section above, for the ProductPrecisionUnits
+there are a few more restrictions and situations that the API caller should know:
+
+- inside an item of the **"unitPrecisions"** list, if we have the "id" field, the only mandatory
+field remaining mandatory is the "unit_code"
+the primary unit precision
+
+- if we send in the list of **"unitPrecisions"** a new "unit_code" that is not found among the
+list of unit precisions on the Product main entity, then it will be created and added to the list
+
+- if in the **"primaryUnitPrecision"** we send a new "unit_code", other then what it is found on
+the current product primary unit precision, then the current primary unit precision will be replaced
+with the newly provided one
+
+
+##### 2. Updating "localizedfallbackvalues" (localized fields) and "entityfieldfallbackvalues" (options with fallbacks) types
+
 
 {@request:json_api}
 Example:
@@ -290,60 +352,52 @@ Example:
 ```JSON
 {
   "data":
-    {
-      "type": "products",
-      "attributes": {
-        "sku": "test-api",
-        "status": "enabled",
-        "variantFields": [],
-        "createdAt": "2017-06-13T07:12:06Z",
-        "updatedAt": "2017-06-13T07:12:31Z",
-        "productType": "simple",
-        "featured": true
+  {
+    "type": "products",
+    "id": "68",
+    "attributes": {
+      "sku": "test-api-31",
+      "status": "enabled",
+      "variantFields": [],
+      "productType": "simple",
+      "featured": true,
+      "newArrival": false
+    },
+    "relationships": {
+      "owner": {
+        "data": {
+          "type": "businessunits",
+          "id": "1"
+        }
       },
-      "relationships": {
-        "owner": {
-          "data": {
-            "type": "businessunits",
-            "id": "1"
-          }
-        },
-        "organization": {
-          "data": {
-            "type": "organizations",
-            "id": "1"
-          }
-        },
-        "primaryUnitPrecision":{
-          "unit_code": "set"
-        },
-        "unitPrecisions": {
-          "data": [
-            {
-              "type": "productunitprecisions",
-              "unit_code": "each"
-              "unit_precision": "0",
-              "conversion_rate": "2",
-              "sell": "1"
-            },
-            {
-              "type": "productunitprecisions",
-              "unit_code": "item",
-              "unit_precision": "0",
-              "conversion_rate": "2",
-              "sell": "1"
-            }
-          ]
-        },
-        "inventory_status": {
-          "data": {
-            "type": "prodinventorystatuses",
-            "id": "out_of_stock"
-          }
+      "organization": {
+        "data": {
+          "type": "organizations",
+          "id": "1"
+        }
+      },
+      "taxCode": {
+        "data": {
+          "type": "producttaxcodes",
+          "id": "2"
+        }
+      },
+      "attributeFamily": {
+        "data": {
+          "type": "attributefamilies",
+          "id": "1"
+        }
+      },
+      "inventory_status": {
+        "data": {
+          "type": "prodinventorystatuses",
+          "id": "out_of_stock"
         }
       }
     }
+  }
 }
+
 
 ```
 {@/request}
@@ -355,3 +409,29 @@ Example:
 ### delete_list
 
 {@inheritdoc}
+
+## FIELDS
+
+### sku
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### decrementQuantity
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### category
+
+#### create
+
+{@inheritdoc}
+
+Specify the category of the product
