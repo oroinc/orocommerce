@@ -1,4 +1,13 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroFrontendLocalizationBundle:layouts:default/layout.html.twig'
+            themes: 'layout.html.twig'
+        - '@addTree':
+            items:
+                localization_switcher_trigger:
+                    blockType: block
+                    prepend: false
+                    siblingId: header_row_customer
+            tree:
+                header_row:
+                    localization_switcher_trigger: ~
