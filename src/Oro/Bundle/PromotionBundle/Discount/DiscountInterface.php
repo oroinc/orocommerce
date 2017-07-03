@@ -49,9 +49,9 @@ interface DiscountInterface
     /**
      * Currency ISO 4217 code
      *
-     * @return string
+     * @return string|null
      */
-    public function getDiscountCurrency(): string;
+    public function getDiscountCurrency();
 
     /**
      * Add information about discount to context

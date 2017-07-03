@@ -11,6 +11,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class AppliedDiscount
 {
+    const OPTION_CLASS = 'discount_class';
+    const OPTION_LINE_ITEM_ID = 'line_item_id';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="id")

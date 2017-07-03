@@ -62,6 +62,6 @@ class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
             ->setOptions([])
             ->setPromotion($promotion);
 
-        $this->assertEquals([$appliedDiscount], $this->appliedDiscountManager->getAppliedDiscounts($order));
+        $this->assertEquals([$appliedDiscount], $this->appliedDiscountManager->createAppliedDiscounts($order));
     }
 }

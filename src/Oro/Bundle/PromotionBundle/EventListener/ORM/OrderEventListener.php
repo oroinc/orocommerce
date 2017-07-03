@@ -24,13 +24,8 @@ class OrderEventListener
      */
     public function prePersist(Order $order, LifecycleEventArgs $args)
     {
-        /** @var $appliedDiscounts */
-        $appliedDiscounts = $this->discountManager->getAppliedDiscounts($order);
-        if ($appliedDiscounts) {
-            $entityManager = $args->getEntityManager();
-            foreach ($appliedDiscounts as $discount) {
-                $entityManager->persist($discount);
-            }
+        foreach ($this->discountManager->createAppliedDiscounts($order) as $discount) {
+            $args->getEntityManager()->persist($discount);
         }
     }
 }
