@@ -34,6 +34,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const QUOTE12 = 'sale.quote.12';
     const QUOTE13 = 'sale.quote.13';
     const QUOTE_DRAFT = 'sale.quote.draft';
+    const QUOTE_PRICE_CHANGED = 'sale.quote.price_changed';
 
     const PRODUCT1  = 'product-1';
     const PRODUCT2  = 'product-2';
@@ -54,7 +55,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public static $items = [
         self::QUOTE1 => [
             'qid'       => self::QUOTE1,
-            'internal_status' => 'open',
+            'internal_status' => 'draft',
             'customer_status' => 'open',
             'products'  => [
                 self::PRODUCT1 => [
@@ -89,7 +90,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE2 => [
             'qid'           => self::QUOTE2,
-            'internal_status' => 'open',
+            'internal_status' => 'draft',
             'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT1,
             'products'      => [],
@@ -230,7 +231,16 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'customer' => LoadUserData::PARENT_ACCOUNT,
             'customerUser' => LoadUserData::PARENT_ACCOUNT_USER2,
             'products' => [],
-        ]
+        ],
+        self::QUOTE_PRICE_CHANGED => [
+            'qid' => self::QUOTE_PRICE_CHANGED,
+            'internal_status' => 'draft',
+            'customer_status' => 'open',
+            'customer' => LoadUserData::PARENT_ACCOUNT,
+            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER2,
+            'products' => [],
+            'pricesChanged' => true,
+        ],
     ];
 
     /**
@@ -283,7 +293,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
                 ->setValidUntil($this->getValidUntil($item))
-                ->setExpired(array_key_exists('expired', $item) ? $item['expired'] : false);
+                ->setExpired($item['expired'] ?? false)
+                ->setPricesChanged($item['pricesChanged'] ?? false);
 
             if (!empty($item['estimatedShippingCostAmount'])) {
                 $quote->setEstimatedShippingCostAmount($item['estimatedShippingCostAmount'])->setCurrency('USD');
