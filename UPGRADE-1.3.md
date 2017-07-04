@@ -147,6 +147,7 @@ PaymentBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+- Unused abstract classes `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig` and `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig` was removed.
 
 RFPBundle
 ---------
