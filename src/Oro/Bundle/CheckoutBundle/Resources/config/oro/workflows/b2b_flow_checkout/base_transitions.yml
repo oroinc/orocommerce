@@ -4,12 +4,10 @@ workflows:
             __start__:
                 is_start: true
                 is_hidden: true
-                step_to: enter_billing_address
                 transition_definition: __start___definition
 
             start_from_shoppinglist:
                 is_start: true
-                step_to: enter_billing_address
                 is_unavailable_hidden: true
                 transition_definition: start_from_shoppinglist_definition
                 frontend_options:
@@ -20,7 +18,6 @@ workflows:
 
             start_from_quickorderform:
                 is_start: true
-                step_to: enter_billing_address
                 is_unavailable_hidden: true
                 transition_definition: start_from_quickorderform_definition
                 frontend_options:
@@ -38,11 +35,9 @@ workflows:
                 acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
 
             finish_checkout:
-                step_to: order_created
                 transition_definition: finish_checkout_definition
                 is_hidden: true
 
             payment_error:
-                step_to: enter_payment
                 transition_definition: unblock_and_recalculate_definition
                 is_hidden: true

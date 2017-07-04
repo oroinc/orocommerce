@@ -1,6 +1,21 @@
 workflows:
     b2b_flow_checkout:
         transitions:
+            __start__:
+                step_to: enter_billing_address
+
+            start_from_shoppinglist:
+                step_to: enter_billing_address
+
+            start_from_quickorderform:
+                step_to: enter_billing_address
+
+            finish_checkout:
+                step_to: order_created
+
+            payment_error:
+                step_to: enter_payment
+
             continue_to_shipping_address:
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
