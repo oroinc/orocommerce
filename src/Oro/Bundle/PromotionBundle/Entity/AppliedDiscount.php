@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 /**
  * @ORM\Table(name="oro_promotion_applied_discount")
@@ -11,9 +12,6 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class AppliedDiscount
 {
-    const OPTION_CLASS = 'discount_class';
-    const OPTION_LINE_ITEM_ID = 'line_item_id';
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="id")
@@ -24,11 +22,11 @@ class AppliedDiscount
     protected $id;
 
     /**
-     * @ORM\Column(name="type", type="string", length=50)
+     * @ORM\Column(name="class", type="string")
      *
      * @var string
      */
-    protected $type;
+    protected $class;
 
     /**
      * @ORM\Column(name="amount", type="float")
@@ -61,6 +59,13 @@ class AppliedDiscount
     protected $promotion;
 
     /**
+     * @ORM\Column(name="promotion_name", type="text")
+     *
+     * @var string
+     */
+    protected $promotionName;
+
+    /**
      * @ORM\Column(name="config_options", type="json_array")
      *
      * @var array
@@ -68,11 +73,12 @@ class AppliedDiscount
     protected $configOptions = [];
 
     /**
-     * @ORM\Column(name="options", type="json_array")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem")
+     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      *
-     * @var array
+     * @var OrderLineItem|null
      */
-    protected $options = [];
+    protected $lineItem;
 
     /**
      * @return int
@@ -85,18 +91,18 @@ class AppliedDiscount
     /**
      * @return string
      */
-    public function getType(): string
+    public function getClass(): string
     {
-        return $this->type;
+        return $this->class;
     }
 
     /**
-     * @param string $type
-     * @return $this
+     * @param string $class
+     * @return AppliedDiscount
      */
-    public function setType(string $type)
+    public function setClass(string $class): AppliedDiscount
     {
-        $this->type = $type;
+        $this->class = $class;
 
         return $this;
     }
@@ -159,6 +165,25 @@ class AppliedDiscount
     }
 
     /**
+     * @return string
+     */
+    public function getPromotionName(): string
+    {
+        return $this->promotionName;
+    }
+
+    /**
+     * @param string $promotionName
+     * @return AppliedDiscount
+     */
+    public function setPromotionName(string $promotionName): AppliedDiscount
+    {
+        $this->promotionName = $promotionName;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getConfigOptions(): array
@@ -178,26 +203,6 @@ class AppliedDiscount
     }
 
     /**
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param array $options
-     * @return $this
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
-
-    /**
      * @return string
      */
     public function getCurrency(): string
@@ -212,6 +217,25 @@ class AppliedDiscount
     public function setCurrency(string $currency)
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return OrderLineItem|null
+     */
+    public function getLineItem()
+    {
+        return $this->lineItem;
+    }
+
+    /**
+     * @param OrderLineItem $lineItem
+     * @return AppliedDiscount
+     */
+    public function setLineItem(OrderLineItem $lineItem): AppliedDiscount
+    {
+        $this->lineItem = $lineItem;
 
         return $this;
     }

@@ -54,7 +54,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
             );
         }
 
-        if (!$entity->getId()) {
+        if ($entity->getSubtotal() === null) {
             $sourceEntity = $this->doctrineHelper->getEntity(
                 $entity->getSourceEntityClass(),
                 $entity->getSourceEntityId()

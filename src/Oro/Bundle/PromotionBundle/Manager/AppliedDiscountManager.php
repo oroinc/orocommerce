@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Manager;
 
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -39,9 +40,13 @@ class AppliedDiscountManager
             $appliedDiscounts[] = $this->createAppliedDiscount($order, $shippingDiscountInfo);
         }
         foreach ($discountContext->getLineItems() as $discountLineItem) {
-            $options = [AppliedDiscount::OPTION_LINE_ITEM_ID => $discountLineItem->getSourceLineItem()->getId()];
             foreach ($discountLineItem->getDiscountsInformation() as $discountInfo) {
-                $appliedDiscounts[] = $this->createAppliedDiscount($order, $discountInfo, $options);
+                $appliedDiscount = $this->createAppliedDiscount($order, $discountInfo);
+                $lineItem = $discountLineItem->getSourceLineItem();
+                if ($lineItem instanceof OrderLineItem) {
+                    $appliedDiscount->setLineItem($lineItem);
+                }
+                $appliedDiscounts[] = $appliedDiscount;
             }
         }
         return $appliedDiscounts;
@@ -50,30 +55,23 @@ class AppliedDiscountManager
     /**
      * @param Order $order
      * @param DiscountInformation $discountInfo
-     * @param array $options
      * @return AppliedDiscount
      */
-    protected function createAppliedDiscount(
-        Order $order,
-        DiscountInformation $discountInfo,
-        array $options = []
-    ): AppliedDiscount {
-
+    protected function createAppliedDiscount(Order $order, DiscountInformation $discountInfo): AppliedDiscount
+    {
         $discount = $discountInfo->getDiscount();
         $promotion = $discount->getPromotion();
         if (!$promotion) {
             throw new \LogicException('required parameter "promotion" of discount is missing');
         }
-
-        $options[AppliedDiscount::OPTION_CLASS] = get_class($discount);
         return (new AppliedDiscount())
             ->setOrder($order)
-            ->setType($discount->getDiscountType())
+            ->setClass(get_class($discount))
             ->setAmount($discountInfo->getDiscountAmount())
-            ->setCurrency($discount->getDiscountCurrency() ?? $order->getCurrency())
+            ->setCurrency($order->getCurrency())
             ->setConfigOptions($promotion->getDiscountConfiguration()->getOptions())
-            ->setOptions($options)
-            ->setPromotion($promotion);
+            ->setPromotion($promotion)
+            ->setPromotionName($promotion->getRule()->getName());
     }
 
     /**
