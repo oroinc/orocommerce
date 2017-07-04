@@ -3,16 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PriceListController extends Controller
 {
@@ -115,11 +113,9 @@ class PriceListController extends Controller
      */
     protected function update(PriceList $priceList)
     {
-        $form = $this->createForm(PriceListType::NAME, $priceList);
-
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,
-            $form,
+            $this->createForm(PriceListType::NAME, $priceList),
             function (PriceList $priceList) {
                 return [
                     'route' => 'oro_pricing_price_list_update',
