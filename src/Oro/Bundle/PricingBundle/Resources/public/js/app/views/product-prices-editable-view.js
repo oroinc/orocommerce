@@ -30,7 +30,8 @@ define(function(require) {
 
         options: {
             matchedPriceEnabled: true,
-            precision: 4
+            precision: 4,
+            editable: true
         },
 
         templates: {
@@ -45,6 +46,13 @@ define(function(require) {
             this.templates = $.extend(true, {}, this.templates, options.templates || {});
 
             ProductPricesEditableView.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        deferredInitialize: function(options) {
+            ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
         },
 
         /**
@@ -88,7 +96,7 @@ define(function(require) {
 
         initPriceOverridden: function() {
             this.priceOverriddenInitialized = true;
-            if (!this.options.matchedPriceEnabled) {
+            if (!this.options.matchedPriceEnabled || !this.options.editable) {
                 return;
             }
             var $priceOverridden = $(_.template(
@@ -131,7 +139,7 @@ define(function(require) {
                 model: this.model.attributes,
                 prices: this.prices,
                 matchedPrice: this.findPrice(),
-                clickable: true,
+                clickable: this.options.editable,
                 formatter: NumberFormatter
             }));
         },

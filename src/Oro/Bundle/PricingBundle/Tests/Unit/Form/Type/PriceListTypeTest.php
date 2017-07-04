@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -22,6 +23,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
+    use PriceRuleEditorAwareTestTrait;
+
     const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Customer';
     const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup';
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
@@ -63,12 +66,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper */
-        $currencyNameHelper = $this
-            ->getMockBuilder('Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper')
+        /** @var CurrencyNameHelper|\PHPUnit_Framework_MockObject_MockObject $currencyNameHelper */
+        $currencyNameHelper = $this->getMockBuilder(CurrencyNameHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-
 
         $currencySelectType = new CurrencySelectionTypeStub();
         $entityIdentifierType = new EntityIdentifierType(
@@ -84,20 +85,23 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
         return [
             new PreloadedExtension(
-                [
-                    $currencySelectType->getName() => $currencySelectType,
-                    $entityIdentifierType->getName() => $entityIdentifierType,
-                    CollectionType::NAME => new CollectionType(),
-                    PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
-                    OroDateTimeType::NAME => new OroDateTimeType(),
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $currencyProvider,
-                        $localeSettings,
-                        $currencyNameHelper
-                    ),
-                    'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')]),
-                    PriceRuleType::NAME => new PriceRuleType()
-                ],
+                array_merge(
+                    [
+                        $currencySelectType->getName() => $currencySelectType,
+                        $entityIdentifierType->getName() => $entityIdentifierType,
+                        CollectionType::NAME => new CollectionType(),
+                        PriceListScheduleType::NAME => new PriceListScheduleType(new PropertyAccessor()),
+                        OroDateTimeType::NAME => new OroDateTimeType(),
+                        CurrencySelectionType::NAME => new CurrencySelectionType(
+                            $currencyProvider,
+                            $localeSettings,
+                            $currencyNameHelper
+                        ),
+                        'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')]),
+                        PriceRuleType::NAME => new PriceRuleType(),
+                    ],
+                    $this->getPriceRuleEditorExtension()
+                ),
                 []
             )
         ];

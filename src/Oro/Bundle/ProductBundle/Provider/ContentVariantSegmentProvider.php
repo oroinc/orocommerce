@@ -134,7 +134,6 @@ class ContentVariantSegmentProvider
      */
     private function getContentVariantClass()
     {
-
         $em = $this->doctrineHelper->getEntityManager(Segment::class);
         $metadata = $em->getClassMetadata(ContentVariantInterface::class);
         if ($metadata) {

@@ -1,4 +1,6 @@
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    constraints:
+        - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: { groups: ['Checkout'] }
     properties:
         street:
             - NotBlank:
@@ -7,9 +9,6 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
             - NotBlank:
                 groups: [ Checkout ]
         postalCode:
-            - NotBlank:
-                groups: [ Checkout ]
-        region:
             - NotBlank:
                 groups: [ Checkout ]
         firstName:

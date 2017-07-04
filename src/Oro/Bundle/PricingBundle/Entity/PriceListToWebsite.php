@@ -15,5 +15,4 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PriceListToWebsite extends BasePriceListRelation
 {
-
 }
