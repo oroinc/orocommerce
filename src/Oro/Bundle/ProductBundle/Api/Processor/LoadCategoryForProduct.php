@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Request\AbstractDocumentBuilder;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder;
 use Oro\Bundle\ApiBundle\Request\RequestType;
@@ -11,7 +12,6 @@ use Oro\Bundle\ApiBundle\Util\ValueNormalizerUtil;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 
 class LoadCategoryForProduct implements ProcessorInterface
 {

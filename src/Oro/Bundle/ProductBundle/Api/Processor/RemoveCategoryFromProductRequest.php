@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Api\Processor;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\ErrorSource;
 use Oro\Bundle\ApiBundle\Request\Constraint;
@@ -11,6 +14,7 @@ use Oro\Bundle\ApiBundle\Request\ValueNormalizer;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ApiBundle\Util\ValueNormalizerUtil;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -30,12 +34,12 @@ class RemoveCategoryFromProductRequest implements ProcessorInterface
     protected $valueNormalizer;
 
     /**
-     * @var \Doctrine\ORM\EntityManager|null
+     * @var EntityManager|null
      */
     protected $categoryEm;
 
     /**
-     * @var \Doctrine\ORM\EntityRepository|\Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository
+     * @var EntityRepository|CategoryRepository
      */
     protected $categoryRepo;
 
@@ -85,7 +89,7 @@ class RemoveCategoryFromProductRequest implements ProcessorInterface
     /**
      * @param ContextInterface $context
      * @param array $relationships
-     * @return \Extend\Entity\EX_OroCatalogBundle_Category|null|Category
+     * @return Category|null
      */
     protected function validateCategoryRequest(ContextInterface $context, $relationships)
     {
