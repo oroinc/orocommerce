@@ -1,5 +1,38 @@
 api:
     entities:
+        Oro\Bundle\PricingBundle\Entity\PriceList:
+            actions:
+                create:
+                    fields:
+                        createdAt:
+                            exclude: true
+                        updatedAt:
+                            exclude: true
+                        containSchedule:
+                            exclude: true
+                update:
+                    fields:
+                        createdAt:
+                            exclude: true
+                        updatedAt:
+                            exclude: true
+                        containSchedule:
+                            exclude: true
+            fields:
+                prices:
+                    exclude : true
+                priceListCurrencies:
+                    data_type: array
+            subresources:
+                priceRules:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                schedules:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+
         Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
             actions:
                 update:

@@ -24,4 +24,18 @@ trait MessageQueueTrait
         self::getContainer()->get('oro_pricing.price_list_trigger_handler')
             ->sendScheduledTriggers();
     }
+
+    protected function cleanScheduledRelationMessages()
+    {
+        $this->sendScheduledRelationMessages();
+
+        static::getMessageCollector()->clear();
+    }
+
+    protected function sendScheduledRelationMessages()
+    {
+        static::getContainer()
+            ->get('oro_pricing.price_list_relation_trigger_handler')
+            ->sendScheduledTriggers();
+    }
 }

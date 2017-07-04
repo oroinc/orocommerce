@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
@@ -17,6 +16,11 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadPriceListRelations extends AbstractFixture implements DependentFixtureInterface
 {
+    const PRICE_LIST_TO_WEBSITE_1 = 'price_list_6_US';
+    const PRICE_LIST_TO_WEBSITE_2 = 'price_list_1_US';
+    const PRICE_LIST_TO_WEBSITE_3 = 'price_list_3_US';
+    const PRICE_LIST_TO_WEBSITE_4 = 'price_list_3_Canada';
+
     /**
      * @var array
      */
@@ -24,16 +28,19 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
         'US' => [
             'priceLists' => [
                 [
+                    'reference' => self::PRICE_LIST_TO_WEBSITE_1,
                     'priceList' => 'price_list_6',
                     'sort_order' => 200,
                     'mergeAllowed' => false,
                 ],
                 [
+                    'reference' => self::PRICE_LIST_TO_WEBSITE_2,
                     'priceList' => 'price_list_1',
                     'sort_order' => 100,
                     'mergeAllowed' => true,
                 ],
                 [
+                    'reference' => self::PRICE_LIST_TO_WEBSITE_3,
                     'priceList' => 'price_list_3',
                     'sort_order' => 50,
                     'mergeAllowed' => false,
@@ -107,6 +114,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
         'Canada' => [
             'priceLists' => [
                 [
+                    'reference' => self::PRICE_LIST_TO_WEBSITE_4,
                     'priceList' => 'price_list_3',
                     'sort_order' => 100,
                     'mergeAllowed' => true,
@@ -166,6 +174,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 $this->fillRelationData($priceListToWebsite, $website, $priceListData);
 
                 $manager->persist($priceListToWebsite);
+                $this->setReference($priceListData['reference'], $priceListToWebsite);
             }
 
             foreach ($priceListsData['priceListsToCustomers'] as $customerReference => $priceLists) {
