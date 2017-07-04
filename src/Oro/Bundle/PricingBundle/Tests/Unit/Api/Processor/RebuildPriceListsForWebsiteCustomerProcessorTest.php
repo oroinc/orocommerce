@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Api\Processor\RebuildPriceListsForWebsiteCustomerPr
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceListsTestCase
 {
@@ -24,11 +25,23 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
         );
     }
 
-    public function testProcessForNullResult()
+    public function testProcessForNotWebsiteAware()
     {
         $context = $this->createContext(null);
 
-        $this->relationChangesHandler->expects(static::any())
+        $this->relationChangesHandler
+            ->expects(static::never())
+            ->method('handleCustomerGroupChange');
+
+        $this->processor->process($context);
+    }
+
+    public function testProcessForNotCustomerAware()
+    {
+        $context = $this->createContext($this->createMock(WebsiteAwareInterface::class));
+
+        $this->relationChangesHandler
+            ->expects(static::never())
             ->method('handleCustomerGroupChange');
 
         $this->processor->process($context);
@@ -42,7 +55,8 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
 
         $context = $this->createContext($fallback);
 
-        $this->relationChangesHandler->expects(static::once())
+        $this->relationChangesHandler
+            ->expects(static::once())
             ->method('handleCustomerChange')
             ->with($customer, $website);
 
@@ -61,7 +75,8 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
 
         $context = $this->createContext([$fallback, $fallback, $fallback2]);
 
-        $this->relationChangesHandler->expects(static::exactly(2))
+        $this->relationChangesHandler
+            ->expects(static::exactly(2))
             ->method('handleCustomerChange')
             ->withConsecutive(
                 [$customer, $website],
@@ -79,7 +94,8 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
 
         $context = $this->createContext($relation);
 
-        $this->relationChangesHandler->expects(static::once())
+        $this->relationChangesHandler
+            ->expects(static::once())
             ->method('handleCustomerChange')
             ->with($customer, $website);
 
@@ -98,7 +114,8 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
 
         $context = $this->createContext([$relation, $relation, $relation2]);
 
-        $this->relationChangesHandler->expects(static::exactly(2))
+        $this->relationChangesHandler
+            ->expects(static::exactly(2))
             ->method('handleCustomerChange')
             ->withConsecutive(
                 [$customer, $website],
@@ -116,7 +133,8 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
     private function createCustomer(int $id)
     {
         $customer = $this->createMock(Customer::class);
-        $customer->expects(static::any())
+        $customer
+            ->expects(static::any())
             ->method('getId')
             ->willReturn($id);
 
@@ -132,7 +150,8 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
     private function createFallback(Customer $customer, Website $website): PriceListCustomerFallback
     {
         $fallback = new PriceListCustomerFallback();
-        $fallback->setCustomer($customer)
+        $fallback
+            ->setCustomer($customer)
             ->setWebsite($website)
             ->setFallback(0);
 
@@ -148,7 +167,8 @@ class RebuildPriceListsForWebsiteCustomerProcessorTest extends RebuildPriceLists
     private function createPriceListToCustomer(Customer $customer, Website $website): PriceListToCustomer
     {
         $relation = new PriceListToCustomer();
-        $relation->setCustomer($customer)
+        $relation
+            ->setCustomer($customer)
             ->setWebsite($website);
 
         return $relation;

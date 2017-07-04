@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAwareInterface;
 
 /**
  * @ORM\Table(name="oro_price_list_to_customer", uniqueConstraints={
@@ -15,7 +15,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
  * })
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository")
  */
-class PriceListToCustomer extends BasePriceListRelation
+class PriceListToCustomer extends BasePriceListRelation implements CustomerAwareInterface
 {
     /**
      * @var Customer
