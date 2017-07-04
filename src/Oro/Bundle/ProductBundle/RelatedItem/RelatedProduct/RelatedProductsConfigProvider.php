@@ -36,4 +36,22 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_BIDIRECTIONAL));
     }
+
+    /**
+     * @return int
+     */
+    public function getMinimumItems()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MIN_ITEMS_COUNT));
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumItems()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MAX_ITEMS_COUNT));
+    }
 }
