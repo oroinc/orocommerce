@@ -79,7 +79,6 @@ ProductBundle
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandSelectType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandStatusType` was added
-    - New form handler `Oro\Bundle\ProductBundle\Form\Handler\BrandHandler` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
     - New service `oro_product.brand.manager.api` registered
