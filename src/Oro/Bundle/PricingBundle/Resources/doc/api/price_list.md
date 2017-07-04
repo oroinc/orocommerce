@@ -4,7 +4,7 @@
 
 ### get
 
-Get detailes of the price list by its ID.
+Get details of the price list by its ID.
 
 {@inheritdoc}
 

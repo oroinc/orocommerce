@@ -18,14 +18,12 @@ Get a collection of price rules. A collection may contain all price rules or may
 
 Create a new price rule. The values for `priceList` and `priority` fields are required.
 
-**Limitations:**
-* Either `currency` or `currencyExpression` value should be provided.
-* Either `quantity` or `quantityExpression` value should be provided.
-* Either `productUnit` or `productUnitExpression` value should be provided.
+Information about the currency, quantity, and product unit is required for price rule creation. 
+Currency, quantity, and product unit may be defined either by the value or via regular expression the value matches.
+The values should be provided in the `currency`, `quantity`, and `productUnit` fields (or the plain fields).
+The regular expressions should be provided in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` (or the regular expression fields).
 
-Leaving these pairs of values empty or providing both values is not allowed. 
-
-Please, provide an exactly matching values for the `currency`, `quantity`, and `productUnit` fields. Use the regular expression in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` values.
+The plain and regular expression fields are mutually exclusive. Do not leave both parameters unset and do not set both parameters in the same request. 
 
 {@inheritdoc}
 
@@ -65,14 +63,12 @@ Example:
 
 Update a price rule identified by ID. 
 
-**Limitations:**
-* Either `currency` or `currencyExpression` value should be provided.
-* Either `quantity` or `quantityExpression` value should be provided.
-* Either `productUnit` or `productUnitExpression` value should be provided.
+Information about the currency, quantity, and product unit is required for price rule creation. 
+Currency, quantity, and product unit may be defined either by the value or via regular expression the value matches.
+The values should be provided in the `currency`, `quantity`, and `productUnit` fields (or the plain fields).
+The regular expressions should be provided in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` (or the regular expression fields).
 
-Leaving these pairs of values empty or providing both values is not allowed. 
-
-Please, provide an exactly matching values for the `currency`, `quantity`, and `productUnit` fields. Use the regular expression in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` values.
+The plain and regular expression fields are mutually exclusive. Do not leave both parameters unset and do not set both parameters in the same request. 
 
 The `priceList` value is not allowed to be updated. 
 
@@ -147,7 +143,7 @@ Defines which product price currency in a price list would be affected by the ru
 
 ### currencyExpression
 
-Defines an expression to calculate a product price currency value to which apply the rule
+Defines an expression to calculate a product price currency value to which the rule applies
 
 #### create, update
 
@@ -155,7 +151,7 @@ Defines an expression to calculate a product price currency value to which apply
 
 ### quantity
 
-Defines a product quantity to which apply the rule
+Defines a product quantity to which the rule applies
 
 #### create, update
 
@@ -163,7 +159,7 @@ Defines a product quantity to which apply the rule
 
 ### quantityExpression
 
-Defines an expression to calculate a product quantity value to which apply the rule
+Defines an expression to calculate a product quantity value to which the rule applies
 
 #### create, update
 
@@ -171,7 +167,7 @@ Defines an expression to calculate a product quantity value to which apply the r
 
 ### productUnit
 
-Defines a product unit to which apply the rule
+Defines a product unit to which the rule applies
 
 #### create, update
 
@@ -179,7 +175,7 @@ Defines a product unit to which apply the rule
 
 ### productUnitExpression
 
-Defines an expression to calculate a product unit code to which apply the rule
+Defines an expression to calculate a product unit code to which the price rule applies
 
 #### create, update
 
@@ -195,11 +191,11 @@ Price Rule priority in a price list
 
 ### ruleCondition
 
-Condition to apply the rule
-
+Condition that should match for the rule to apply
+ 
 ### rule
 
-Rule for calculating product price
+Rule that is used for calculating product price
 
 ## SUBRESOURCES
 
@@ -207,7 +203,7 @@ Rule for calculating product price
 
 #### get_subresource
 
-Get full information about the rule price list
+Get complete information about the price list the price rule applies for
 
 #### get_relationship
 
@@ -217,7 +213,7 @@ Get price list ID for a specific price rule
 
 #### get_subresource
 
-Get full information about the rule product unit
+Get complete information about the product unit the price rule applies for
 
 #### get_relationship
 
