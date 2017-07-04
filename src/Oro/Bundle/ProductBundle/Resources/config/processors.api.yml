@@ -22,3 +22,10 @@ services:
         arguments: ['@oro_api.doctrine_helper']
         tags:
             - { name: oro.api.processor, action: update, group: transform_data, priority: -99 }
+
+    oro_product.create.validate_product_names:
+        class: Oro\Bundle\ProductBundle\Processor\Create\ValidateProductNamesCreate
+        arguments:
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', requestType: json_api, priority: 89 }
