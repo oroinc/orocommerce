@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -17,7 +18,6 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-
 use Oro\Bundle\ProductBundle\Model\ExtendBrand;
 
 /**
@@ -96,10 +96,10 @@ use Oro\Bundle\ProductBundle\Model\ExtendBrand;
  */
 class Brand extends ExtendBrand implements
     OrganizationAwareInterface,
-    \JsonSerializable,
     SluggableInterface,
     DatesAwareInterface
 {
+    use DatesAwareTrait;
     use SluggableTrait;
 
     const STATUS_DISABLED = 'disabled';
@@ -135,45 +135,6 @@ class Brand extends ExtendBrand implements
      *  )
      */
     protected $status = self::STATUS_ENABLED;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          },
-     *          "importexport"={
-     *              "excluded"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
-
-    /**
-     * @var bool
-     */
-    protected $updatedAtSet;
 
     /**
      * @var BusinessUnit
@@ -361,52 +322,6 @@ class Brand extends ExtendBrand implements
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return Brand
-     */
-    public function setCreatedAt(\DateTime $createdAt = null)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return Brand
-     */
-    public function setUpdatedAt(\DateTime $updatedAt = null)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUpdatedAtSet()
-    {
-        return $this->updatedAtSet;
     }
 
     /**
@@ -602,16 +517,5 @@ class Brand extends ExtendBrand implements
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'id' => $this->getId(),
-            'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
-        ];
     }
 }

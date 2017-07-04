@@ -22,9 +22,10 @@ datagrids:
         columns:
             name:
                 label: oro.promotion.rule.name.label
-            useCoupons:
-                label: oro.promotion.use_coupons.label
-                frontend_type: boolean
+#            TODO: uncomment after BB-9489
+#            useCoupons:
+#                label: oro.promotion.use_coupons.label
+#                frontend_type: boolean
             createdAt:
                 label: oro.ui.created_at
                 frontend_type: datetime
@@ -38,8 +39,9 @@ datagrids:
             columns:
                 name:
                     data_name: rule.name
-                useCoupons:
-                    data_name: promotion.useCoupons
+#                TODO: uncomment after BB-9489
+#                useCoupons:
+#                    data_name: promotion.useCoupons
                 createdAt:
                     data_name: promotion.createdAt
                 updatedAt:
@@ -51,9 +53,10 @@ datagrids:
                 name:
                     type: string
                     data_name: rule.name
-                useCoupons:
-                    type: boolean
-                    data_name: promotion.useCoupons
+#                TODO: uncomment after BB-9489
+#                useCoupons:
+#                    type: boolean
+#                    data_name: promotion.useCoupons
                 createdAt:
                     type:      datetime
                     data_name: promotion.createdAt

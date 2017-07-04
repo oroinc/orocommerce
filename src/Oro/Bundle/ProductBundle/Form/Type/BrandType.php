@@ -13,7 +13,7 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 
 class BrandType extends AbstractType
 {
-    const NAME = 'oro_brand';
+    const NAME = 'oro_product_brand';
 
     /** @var  string */
     protected $dataClass;
@@ -117,5 +117,13 @@ class BrandType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
     }
 }
