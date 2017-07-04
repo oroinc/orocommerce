@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Api\Processor;
+namespace Oro\Bundle\CatalogBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\CatalogBundle\Entity\Category;

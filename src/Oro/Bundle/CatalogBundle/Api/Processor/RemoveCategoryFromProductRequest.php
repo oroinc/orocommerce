@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Api\Processor;
+namespace Oro\Bundle\CatalogBundle\Api\Processor;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
