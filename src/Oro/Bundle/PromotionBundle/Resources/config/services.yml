@@ -107,16 +107,6 @@ services:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
         public: false
 
-    oro_promotion.discount.order_context_converter:
-        class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderDiscountContextConverter
-        public: false
-        arguments:
-            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
-            - '@oro_promotion.discount.context_converter.registry'
-            - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: 'oro_promotion.discount_context_converter' }
-
     oro_promotion.discount.shopping_list_context_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
         public: false
@@ -158,13 +148,6 @@ services:
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
         public: false
-
-    oro_promotion.promotion.discount_context_data_converter:
-        class: Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter
-        arguments:
-            - '@oro_scope.scope_manager'
-        tags:
-            - { name: 'oro_promotion.promotion_context_converter' }
 
     oro_promotion.promotion.shopping_list_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter

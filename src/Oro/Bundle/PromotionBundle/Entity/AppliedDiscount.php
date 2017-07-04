@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -12,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="oro_promotion_applied_discount")
  * @ORM\Entity()
  */
-class AppliedDiscount
+class AppliedDiscount implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
