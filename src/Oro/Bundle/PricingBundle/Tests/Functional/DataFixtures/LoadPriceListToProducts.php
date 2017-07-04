@@ -8,7 +8,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 
 class LoadPriceListToProducts extends AbstractFixture implements DependentFixtureInterface
 {

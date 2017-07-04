@@ -1,0 +1,11 @@
+workflows:
+    b2b_quote_backoffice_approvals:
+        variable_definitions:
+            variables:
+                price_override_triggers_approval:
+                    type: boolean
+                    value: true
+                    options:
+                        form_options:
+                            tooltip: true
+        defaults: {active: true}

@@ -3,6 +3,11 @@
 namespace Oro\Bundle\PromotionBundle\Context;
 
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
+use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
+use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -11,21 +16,47 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     /**
      * @var CustomerUserRelationsProvider
      */
-    private $relationsProvider;
+    protected $relationsProvider;
+
+    /**
+     * @var LineItemsToDiscountLineItemsConverter
+     */
+    protected $lineItemsConverter;
+
+    /**
+     * @var UserCurrencyManager
+     */
+    protected $userCurrencyManager;
 
     /**
      * @var ScopeManager
      */
-    private $scopeManager;
+    protected $scopeManager;
+
+    /**
+     * @var LineItemNotPricedSubtotalProvider
+     */
+    protected $lineItemNotPricedSubtotalProvider;
 
     /**
      * @param CustomerUserRelationsProvider $relationsProvider
+     * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
+     * @param UserCurrencyManager $userCurrencyManager
      * @param ScopeManager $scopeManager
+     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      */
-    public function __construct(CustomerUserRelationsProvider $relationsProvider, ScopeManager $scopeManager)
-    {
+    public function __construct(
+        CustomerUserRelationsProvider $relationsProvider,
+        LineItemsToDiscountLineItemsConverter $lineItemsConverter,
+        UserCurrencyManager $userCurrencyManager,
+        ScopeManager $scopeManager,
+        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
+    ) {
         $this->relationsProvider = $relationsProvider;
+        $this->lineItemsConverter = $lineItemsConverter;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeManager = $scopeManager;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
     }
 
     /**
@@ -34,20 +65,29 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
      */
     public function getContextData($entity): array
     {
+        if (!$this->supports($entity)) {
+            throw new UnsupportedSourceEntityException(
+                sprintf('Entity "%s" is not supported.', get_class($entity))
+            );
+        }
+
         $customerUser = $entity->getCustomerUser();
         $customer = $this->relationsProvider->getCustomer($customerUser);
         $customerGroup = $this->relationsProvider->getCustomerGroup($customerUser);
         if (!$customerGroup && $entity->getCustomer()) {
             $customerGroup = $entity->getCustomer()->getGroup();
         }
+        $currency = $this->userCurrencyManager->getUserCurrency();
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($entity, $currency);
 
         return [
-            self::CRITERIA => $this->scopeManager->getCriteria('promotion'),
             self::CUSTOMER_USER => $entity->getCustomerUser(),
             self::CUSTOMER => $customer ?: $entity->getCustomer(),
             self::CUSTOMER_GROUP => $customerGroup,
             self::LINE_ITEMS => $this->getLineItems($entity),
-            self::CURRENCY => 'USD' // TODO replace with customer user currency. Be aware of admin and cli calls
+            self::SUBTOTAL => $subtotal->getAmount(),
+            self::CURRENCY => $currency,
+            self::CRITERIA => $this->scopeManager->getCriteria('promotion'),
         ];
     }
 
@@ -60,12 +100,11 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     }
 
     /**
-     * @todo use discount line items, extract discount line items creation by SL line items and reuse in both converters
      * @param ShoppingList $entity
-     * @return array
+     * @return DiscountLineItem[]|array
      */
     private function getLineItems(ShoppingList $entity)
     {
-        return $entity->getLineItems()->toArray();
+        return $this->lineItemsConverter->convert($entity->getLineItems()->toArray());
     }
 }

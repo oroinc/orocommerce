@@ -7,7 +7,7 @@ use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Command\GenerateSitemapCommand;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-class ReindexCommandTest extends WebTestCase
+class GenerateSitemapCommandTest extends WebTestCase
 {
     use MessageQueueExtension;
 

@@ -97,7 +97,6 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AbstractPay
      */
     protected function getExtensions()
     {
-
         $translatableEntity = $this->getTranslatableEntity();
 
         return [

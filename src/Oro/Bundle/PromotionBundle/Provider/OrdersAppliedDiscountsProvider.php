@@ -45,8 +45,9 @@ class OrdersAppliedDiscountsProvider
         }
 
         $discounts = $this->doctrineHelper->getEntityRepositoryForClass(AppliedDiscount::class)->findBy([
-            'order' => $orderId
+            'order' => $orderId,
         ]);
+
         $this->cache->save($cacheKey, $discounts);
 
         return $discounts;
@@ -62,6 +63,7 @@ class OrdersAppliedDiscountsProvider
         foreach ($this->getOrderDiscounts($orderId) as $appliedDiscount) {
             $amount += $appliedDiscount->getAmount();
         }
+
         return $amount;
     }
 

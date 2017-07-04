@@ -241,7 +241,6 @@ class ProductPriceRepository extends BaseProductPriceRepository
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
-
         throw new \LogicException('Method locked because of sharded tables');
     }
 
