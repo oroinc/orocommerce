@@ -72,7 +72,6 @@ ProductBundle
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandSelectType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandStatusType` was added
-    - New form handler `Oro\Bundle\ProductBundle\Form\Handler\BrandHandler` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
     - New service `oro_product.brand.manager.api` registered
@@ -171,3 +170,31 @@ PricingBundle
     - changed signature of `__construct` method:
         - dependency on `RequestStack` was removed.
         - dependency on `Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider` was added.
+
+SaleBundle
+----------
+- Added Voter `Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter`, Checks if given Quote contains internal status, triggered only for Commerce Application.
+- Updated entity `Oro\Bundle\SaleBundle\Entity\Quote`
+    - Added constant `FRONTEND_INTERNAL_STATUSES` that holds all available internal statuses for Commerce Application
+    - Added new property `pricesChanged`, that indicates if prices were changed.
+- Added Datagrid Listener `Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener`, appends frontend datagrid query with proper frontend internal statuses.
+- Added Subscriber `Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber`, discards price modifications and free form inputs, if there are no permissions for those operations
+- Updated FormType `Oro\Bundle\SaleBundle\Form\Type\QuoteType`
+    - changed constructor signature, now it awaits:
+        - third argument should be an instance of `Symfony\Component\EventDispatcher\EventSubscriberInterface`
+        - fourth argument should be an instance of `Oro\Bundle\SecurityBundle\SecurityFacade`
+- Following ACL permissions moved to `Quote` category
+    - oro_quote_address_shipping_customer_use_any
+    - oro_quote_address_shipping_customer_use_any_backend
+    - oro_quote_address_shipping_customer_user_use_default
+    - oro_quote_address_shipping_customer_user_use_default_backend
+    - oro_quote_address_shipping_customer_user_use_any
+    - oro_quote_address_shipping_customer_user_use_any_backend
+    - oro_quote_address_shipping_allow_manual
+    - oro_quote_address_shipping_allow_manual_backend
+    - oro_quote_payment_term_customer_can_override
+- Added new permission to `Quote` category
+    - oro_quote_prices_override
+    - oro_quote_review_and_approve
+    - oro_quote_add_free_form_items
+- Added new workflow `b2b_quote_backoffice_approvals`

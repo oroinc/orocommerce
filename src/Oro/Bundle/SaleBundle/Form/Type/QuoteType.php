@@ -15,7 +15,9 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -38,16 +40,28 @@ class QuoteType extends AbstractType
     /** @var ConfigManager */
     protected $configManager;
 
+    /** @var EventSubscriberInterface */
+    protected $quoteFormSubscriber;
+
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
     /**
      * @param QuoteAddressSecurityProvider $quoteAddressSecurityProvider
      * @param ConfigManager $configManager
+     * @param EventSubscriberInterface $quoteFormSubscriber
+     * @param SecurityFacade $securityFacade
      */
     public function __construct(
         QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        EventSubscriberInterface $quoteFormSubscriber,
+        SecurityFacade $securityFacade
     ) {
         $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
         $this->configManager = $configManager;
+        $this->quoteFormSubscriber = $quoteFormSubscriber;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -112,6 +126,8 @@ class QuoteType extends AbstractType
                     'add_label' => 'oro.sale.quoteproduct.add_label',
                     'options' => [
                         'compact_units' => true,
+                        'allow_prices_override' => $options['allow_prices_override'],
+                        'allow_add_free_form_items' => $options['allow_add_free_form_items'],
                     ]
                 ]
             )
@@ -122,6 +138,8 @@ class QuoteType extends AbstractType
                 'label' => 'oro.sale.quote.assigned_customer_users.label',
             ]);
         $this->addShippingFields($builder, $quote);
+
+        $builder->addEventSubscriber($this->quoteFormSubscriber);
 
         if ($this->quoteAddressSecurityProvider->isAddressGranted($quote, AddressType::TYPE_SHIPPING)) {
             $builder
@@ -180,6 +198,8 @@ class QuoteType extends AbstractType
         $resolver->setDefaults([
             'data_class'    => $this->dataClass,
             'intention'     => 'sale_quote',
+            'allow_prices_override' => $this->securityFacade->isGranted('oro_quote_prices_override'),
+            'allow_add_free_form_items' => $this->securityFacade->isGranted('oro_quote_add_free_form_items'),
         ]);
     }
 

@@ -24,6 +24,7 @@ define(function(require) {
             classNotesSellerActive: 'quote-lineitem-notes-seller-active',
             productSelect: '.quote-lineitem-product-select input[type="hidden"]',
             productSkuLabel: '.quote-lineitem-product-sku-label',
+            productSkuInput: '.quote-lineitem-product-free-form input[data-name="field__product-sku"]',
             productReplacementSelect: '.quote-lineitem-product-replacement-select input[type="hidden"]',
             offersQuantitySelector: '.quote-lineitem-offers-quantity input',
             offersPriceValueSelector: '.quote-lineitem-offers-price input:first',
@@ -36,6 +37,7 @@ define(function(require) {
             addItemButton: '.add-list-item',
             productSelectLink: '.quote-lineitem-product-select-link',
             freeFormLink: '.quote-lineitem-free-form-link',
+            allowEditFreeForm: true,
             productFormContainer: '.quote-lineitem-product-form',
             freeFormContainer: '.quote-lineitem-product-free-form',
             fieldsRowContainer: '.fields-row',
@@ -196,6 +198,9 @@ define(function(require) {
 
             this.checkAddButton();
             this.checkAddNotes();
+            if (this.isFreeForm && !this.options.allowEditFreeForm) {
+                this.setReadonlyState();
+            }
 
             this.updateValidation();
         },
@@ -224,7 +229,7 @@ define(function(require) {
         },
 
         checkAddButton: function() {
-            var enabled = Boolean(this.getProductId()) || this.isFreeForm;
+            var enabled = Boolean(this.getProductId()) || (this.isFreeForm && this.options.allowEditFreeForm);
             this.$addItemButton.toggle(enabled);
         },
 
@@ -547,6 +552,27 @@ define(function(require) {
                     required: 'oro.sale.quoteproduct.product.blank'
                 }
             });
+        },
+
+        /**
+         * Disable items update
+         */
+        setReadonlyState: function() {
+            var self = this;
+
+            self.$el.find(self.options.productFreeFormInput).prop('readonly', true);
+            self.$el.find(self.options.productSkuInput).prop('readonly', true);
+            self.$el.find(self.options.productReplacementFreeFormInput).prop('readonly', true);
+            self.$el.find('.removeLineItem').prop('disabled', true);
+            self.$el.find('.removeRow').prop('disabled', true);
+
+            var widgets = this.$el.find(self.options.itemWidget);
+            $.each(widgets, function(index, widget) {
+                $(widget).find(self.options.unitsSelect).prop('readonly', true);
+                $(widget).find(self.options.offersPriceValueSelector).prop('readonly', true);
+                $(widget).find(self.options.offersQuantitySelector).prop('readonly', true);
+            });
+
         },
 
         dispose: function() {
