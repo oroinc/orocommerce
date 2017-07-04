@@ -46,6 +46,10 @@ CheckoutBundle
 --------------
 - Class `Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter`
     - method `getSecurityFacade` was replaced with `getAuthorizationChecker`
+- Class `Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider`
+    - changed signature of `__construct` method:
+        - dependency on `CheckoutLineItemsManager` and `MapperInterface` were replaced with `CheckoutToOrderConverter`
+- Added class `Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter` responsible for creation of an `Order` based on the `Checkout`
 
 WebsiteSearchBundle
 -------------------

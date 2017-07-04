@@ -3,9 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -23,9 +22,9 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutToOrderConverter|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $checkoutLineItemsManager;
+    protected $checkoutToOrderConverter;
 
     /**
      * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -38,32 +37,19 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
     protected $provider;
 
     /**
-     * @var MapperInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $mapper;
-
-    /**
      * @var CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $checkoutShippingMethodsProvider;
 
     public function setUp()
     {
-        $this->checkoutLineItemsManager = $this
-            ->getMockBuilder(CheckoutLineItemsManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->totalsProvider = $this
-            ->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->mapper = $this->createMock(MapperInterface::class);
+        $this->checkoutToOrderConverter = $this->createMock(CheckoutToOrderConverter::class);
+        $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);
         $this->checkoutShippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
 
         $this->provider = new CheckoutTotalsProvider(
-            $this->checkoutLineItemsManager,
+            $this->checkoutToOrderConverter,
             $this->totalsProvider,
-            $this->mapper,
             $this->checkoutShippingMethodsProvider
         );
     }
@@ -102,29 +88,51 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($checkout)
             ->willReturn($price);
 
-        $this->mapper
+        $this->checkoutToOrderConverter
             ->expects(static::once())
-            ->method('map')
-            ->with($checkout, ['lineItems' => $lineItems])
-            ->willReturn($order);
-
-        $this->checkoutLineItemsManager
-            ->expects(static::once())
-            ->method('getData')
+            ->method('getOrder')
             ->with($checkout)
-            ->willReturn($lineItems);
+            ->willReturn($order);
 
         $this->totalsProvider
             ->expects(static::once())
             ->method('enableRecalculation');
 
+        $totals = [
+            'total' => [
+                'type' => 'total',
+                'label' => 'Total',
+                'amount' => 10,
+                'currency' => 'USD',
+                'visible' => true,
+                'data' => null
+            ],
+            'subtotals' => [
+                [
+                    'type' => 'subtotal',
+                    'label' => 'Subtotal',
+                    'amount' => 10,
+                    'currency' => 'USD',
+                    'visible' => true,
+                    'data' => null
+                ]
+            ]
+        ];
         $this->totalsProvider
             ->expects(static::once())
             ->method('getTotalWithSubtotalsAsArray')
             ->with($order)
             ->will(
                 $this->returnCallback(
-                    function (Order $order) use ($lineItems, $price, $address, $customer, $website, $organization) {
+                    function (Order $order) use (
+                        $lineItems,
+                        $price,
+                        $address,
+                        $customer,
+                        $website,
+                        $organization,
+                        $totals
+                    ) {
                         static::assertEquals($lineItems, $order->getLineItems());
                         static::assertEquals($price, $order->getShippingCost());
                         static::assertSame($address, $order->getBillingAddress());
@@ -132,10 +140,12 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
                         static::assertSame($customer, $order->getCustomer());
                         static::assertSame($website, $order->getWebsite());
                         static::assertSame($organization, $order->getOrganization());
+
+                        return $totals;
                     }
                 )
             );
 
-        $this->provider->getTotalsArray($checkout);
+        $this->assertSame($totals, $this->provider->getTotalsArray($checkout));
     }
 }

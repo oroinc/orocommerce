@@ -172,3 +172,6 @@ oro:
         shoppinglist:
             view:
                 discount.label: 'Discount:'
+        checkout:
+            view:
+                discount.label: 'Discount:'

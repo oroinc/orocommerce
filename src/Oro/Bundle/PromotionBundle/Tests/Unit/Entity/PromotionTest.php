@@ -48,4 +48,14 @@ class PromotionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertPropertyCollections(new Promotion(), $collections);
     }
+
+    public function testResetScopes()
+    {
+        $promotion = new Promotion();
+        $this->assertEmpty($promotion->getScopes());
+        $promotion->addScope(new Scope());
+        $this->assertNotEmpty($promotion->getScopes());
+        $promotion->resetScopes();
+        $this->assertEmpty($promotion->getScopes());
+    }
 }
