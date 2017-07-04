@@ -1,0 +1,6 @@
+imports:
+    - { resource: 'b2b_quote_backoffice_approvals/attributes.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/variables.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/steps.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/transitions.yml' }
+    - { resource: 'b2b_quote_backoffice_approvals/transition_definitions.yml' }

@@ -4,6 +4,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\BrandSelectTypeStub;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -22,6 +28,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
@@ -42,28 +49,22 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantFieldsCollectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 class ProductTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const DATA_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
+    const DATA_CLASS = \Oro\Bundle\ProductBundle\Entity\Product::class;
 
     /**
      * @var ProductType
@@ -75,7 +76,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected $urlGenerator;
 
-    /** @var  ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $defaultProductUnitProvider;
 
     /**
@@ -92,7 +95,9 @@ class ProductTypeTest extends FormIntegrationTestCase
         ],
     ];
 
-    /** @var AttributeFamily */
+    /**
+     * @var AttributeFamily
+     */
     protected $attributeFamily;
 
     /**
@@ -136,6 +141,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->productUnitLabelFormatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
             ->disableOriginalConstructor()
             ->getMock();
+
 
         parent::setUp();
     }
@@ -237,6 +243,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     PageTemplateType::class => new PageTemplateType($pageTemplatesManager),
                     LocalizedSlugWithRedirectType::NAME
                     => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
+                    BrandSelectType::NAME => new BrandSelectTypeStub(),
                 ],
                 [
                     'form' => [

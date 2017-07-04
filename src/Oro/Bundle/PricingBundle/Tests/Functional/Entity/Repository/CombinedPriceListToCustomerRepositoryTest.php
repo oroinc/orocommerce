@@ -10,7 +10,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 
 class CombinedPriceListToCustomerRepositoryTest extends AbstractCombinedPriceListRelationRepositoryTest
 {
-
     public function testDeleteInvalidRelations()
     {
         /** @var  CombinedPriceList $combinedPriceList */

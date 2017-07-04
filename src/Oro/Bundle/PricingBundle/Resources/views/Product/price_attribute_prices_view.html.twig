@@ -1,0 +1,26 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+<h5>{{ priceList.name }}</h5>
+{% if priceList.currencies|length > 2 %}
+    {{ dataGrid.renderGrid('product-price-attributes-grid:' ~ priceList.id, {product_id: product.id, price_list_id: priceList.id}) }}
+{% else %}
+    <div class="controls">
+        <div class="control-label">
+            <table class="grid product-price-attributes">
+                <tbody>
+                {% for unitCode, prices in priceAttributePrices %}
+                    <tr>
+                        <td>{{ unitCode|capitalize }}</td>
+                        {% for currency in priceList.currencies %}
+                            {% if prices[currency] is defined %}
+                                <td>{{ prices[currency].price.value|oro_format_currency({'currency': currency}) }}</td>
+                            {% else %}
+                                <td>{{ 'oro.pricing.priceAttribute.withoutPrice'|trans }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endif %}

@@ -312,7 +312,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     {
         $crawler = $this->openRequestWorkflowWidget($request);
 
-        $this->assertContains('RFQ Backoffice', $crawler->html());
+        $this->assertContains('RFQ Management Flow', $crawler->html());
         $link = $crawler->selectLink($linkTitle);
         $this->assertNotEmpty($link, 'Transit button not found');
 
@@ -353,7 +353,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
         $this->assertNotEmpty($crawler->html());
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('RFQ Backoffice', $crawler->html());
+        $this->assertContains('RFQ Management Flow', $crawler->html());
 
         return $crawler;
     }

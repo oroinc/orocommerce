@@ -1,7 +1,7 @@
 {% block _web_catalog_menu_list_widget %}
     {% set attr =  layout_attr_defaults(attr, {'~class': ' main-menu'}) %}
 
-    <ul {{ block('block_attributes') }} data-collapse-container>
+    <ul {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </ul>
 {% endblock %}
@@ -18,20 +18,7 @@
         {% set categoryAttr = categoriesAttr %}
         {% if hasSublist  %}
             {% set categoryAttr = layout_attr_defaults(categoryAttr, {
-                '~class': ' main-menu__item--ancestor',
-                'data-dropdown-trigger': true,
-                'data-page-component-module': 'oroui/js/app/components/viewport-component',
-                '~data-page-component-options': {
-                    viewport: {
-                        maxScreenType: 'tablet',
-                    },
-                    component: 'oroui/js/app/components/jquery-widget-component',
-                    widgetModule: 'oroui/js/widget/collapse-widget',
-                    trigger: '[data-collapse-trigger-second]',
-                    container: '[data-collapse-container-second]',
-                    hideSibling: true,
-                    open: false
-                }
+                '~class': ' main-menu__item--ancestor'
             }) %}
         {% endif  %}
         {% do block|merge_context({'category': category}) %}
@@ -86,7 +73,9 @@
     {% set content %}
         <li class="main-menu-column__item">
             <a class="main-menu-column__link" href="#">
-                <img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_3.jpg' %}{{ asset_url }}{% endimage %}">
+                <img class="main-menu-column__image"
+                     src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_3.jpg' %}{{ asset_url }}{% endimage %}
+                ">
             </a>
         </li>
     {% endset %}
@@ -98,12 +87,16 @@
     {% set content %}
         <li class="main-menu-column__item">
             <a class="main-menu-column__link" href="#">
-                <img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}">
+                <img class="main-menu-column__image"
+                     src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}
+                ">
             </a>
         </li>
         {#<li class="main-menu-column__item">#}
             {#<a class="main-menu-column__link" href="#">#}
-                {#<img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}">#}
+                {#<img class="main-menu-column__image"
+                       src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}
+                  ">#}
             {#</a>#}
         {#</li>#}
     {% endset %}
@@ -159,16 +152,19 @@
     <li {{ block('block_attributes') }}>
         {% set hasSublist = category.children is not empty %}
         <a href="{{ app.request.uriForPath(category.url) }}"
-           class="main-menu__link" data-collapse-trigger-second>
+           class="main-menu__link">
             <span class="main-menu__text">{{ category.label }}</span>
             {% if hasSublist %}
                 <span class="main-menu__taptick">
-                    <i class="fa-angle-down fa--no-offset"></i>        
+                    <i class="fa-angle-down fa--no-offset"></i>
                 </span>
             {% endif %}
         </a>
         {% if hasSublist %}
-            <button data-toggle="dropdown" aria-haspopup="true" class="main-menu__button-arrow">
+            <button class="main-menu__button-arrow"
+                    data-toggle="dropdown"
+                    data-go-to="next"
+            >
                 <i class="fa-angle-down fa--no-offset"></i>
             </button>
             {{ block(sub_block) }}
@@ -177,7 +173,7 @@
 {% endblock %}
 
 {% block _web_catalog_menu_main_menu_sub_block_simple %}
-    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle>
         <div class="main-menu-columns main-menu-columns--single">
             <div class="main-menu-column">
                 <ul class="main-menu-column__inner">
@@ -190,7 +186,7 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_head %}
-    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle>
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
@@ -199,30 +195,18 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_second_level_column %}
-    {% set collapseView =  layout_attr_defaults(attr, {
-        viewport: {
-            maxScreenType: 'tablet',
-        },
-        component: 'oroui/js/app/components/jquery-widget-component',
-        widgetModule: 'oroui/js/widget/collapse-widget',
-        trigger: '[data-collapse-trigger-third]',
-        container: '[data-collapse-container-third]',
-        open: false
-    }) %}
-    <div class="main-menu-column collapse-view {{ addClass|default('') }}"
-         data-page-component-module="oroui/js/app/components/viewport-component"
-         data-page-component-options="{{ collapseView|json_encode }}">
-        <div class="main-menu-column__title" data-collapse-trigger-third>
-            {{ label }} <i class="main-menu-column__icon fa-angle-down"></i>
-        </div>
-        <{{ contentTag|default('ul') }} class="main-menu-column__inner" data-collapse-container-third>
+    <div class="main-menu-column {{ addClass|default('') }}">
+        <p class="main-menu-column__title">
+            {{ label }}
+        </p>
+        <{{ contentTag|default('ul') }} class="main-menu-column__inner">
             {{ content }}
         </{{ contentTag|default('ul') }}>
     </div>
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_mega %}
-    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle>
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\EventListener;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SEOBundle\Entity\WebCatalogProductLimitation;
 use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
@@ -95,9 +96,10 @@ class WebCatalogProductLimiterTest extends WebTestCase
 
     public function testProductLimitationEntriesErasedWithTruncate()
     {
-        $this->markTestSkipped(
-            'This skip should be removed, and test should be executed after fix of BAP-14180'
-        );
+        if ($this->getContainer()->getParameter('database_driver') === DatabaseDriverInterface::DRIVER_MYSQL) {
+            $this->markTestSkipped('Truncate table calls implicit commit and violates isolation');
+        }
+
         $this->loadFixtures([
             LoadWebCatalogProductLimitationData::class
         ]);

@@ -82,18 +82,17 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface
 
         if (DatabasePlatformInterface::DATABASE_POSTGRESQL === $this->connection->getDatabasePlatform()->getName()) {
             $queryBag->addPreQuery("ALTER TABLE $tableName DROP CONSTRAINT $oldCompositeIndexName");
+            $table->addColumn('id', 'integer', ['autoincrement' => true]);
+            $queryBag->addPostQuery("ALTER TABLE $tableName ADD PRIMARY KEY (id)");
         } else {
-            $table->dropPrimaryKey();
+            $queryBag->addPreQuery("ALTER TABLE $tableName DROP PRIMARY KEY");
+            $queryBag->addQuery("ALTER TABLE $tableName ADD `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY");
         }
-
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
 
         $table->addUniqueIndex(
             $uniqueConstrainFields,
             $newUniqueIndexName
         );
-
-        $queryBag->addPostQuery("ALTER TABLE $tableName ADD PRIMARY KEY (id)");
 
         return $this;
     }

@@ -47,7 +47,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @var boolean
      *
-     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false, options={"default": true})
+     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false, options={"default":true})
      */
     protected $mergeAllowed = true;
 
@@ -57,18 +57,6 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return BasePriceListRelation
-     */
-    public function setId($id): self
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     /**
