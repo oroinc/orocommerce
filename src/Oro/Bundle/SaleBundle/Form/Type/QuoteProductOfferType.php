@@ -4,6 +4,8 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -106,9 +108,18 @@ class QuoteProductOfferType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
+                'allow_prices_override' => true,
                 'intention' => 'sale_quote_product_offer',
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['allow_prices_override'] = $options['allow_prices_override'];
     }
 
     /**
