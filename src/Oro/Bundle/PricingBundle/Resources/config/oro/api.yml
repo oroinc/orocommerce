@@ -1,7 +1,5 @@
 api:
     entities:
-        Oro\Bundle\PricingBundle\Entity\PriceListToWebsite: ~
-        Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback: ~
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup: ~
         Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback: ~
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomer: ~

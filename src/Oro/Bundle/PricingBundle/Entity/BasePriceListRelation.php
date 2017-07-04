@@ -60,18 +60,6 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     }
 
     /**
-     * @param int $id
-     *
-     * @return BasePriceListRelation
-     */
-    public function setId($id): self
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
      * @return int
      */
     public function getSortOrder()
