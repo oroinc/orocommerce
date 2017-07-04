@@ -3,7 +3,12 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Manager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
+use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
+use Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\OrderDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
@@ -15,53 +20,73 @@ use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 
 class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $container;
-
     /** @var AppliedDiscountManager */
     protected $appliedDiscountManager;
 
+    /** @var PromotionExecutor|\PHPUnit_Framework_MockObject_MockObject */
+    protected $promotionExecutor;
+
     protected function setUp()
     {
-        $this->container = $this->createMock(ContainerInterface::class);
-        $this->appliedDiscountManager = new AppliedDiscountManager($this->container);
+        $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
+        $container = $this->createMock(ContainerInterface::class);
+        $container->expects($this->any())
+            ->method('get')
+            ->with('oro_promotion.promotion_executor')
+            ->willReturn($this->promotionExecutor);
+
+        $this->appliedDiscountManager = new AppliedDiscountManager($container);
     }
 
     public function testGetAppliedDiscounts()
     {
-        /** @var Order|\PHPUnit_Framework_MockObject_MockObject $order **/
-        $order = $this->createMock(Order::class);
+        $promotion = new Promotion();
+        $promotion->setRule((new Rule())->setName('first promotion'));
+        $promotion->setDiscountConfiguration((new DiscountConfiguration())->setOptions([1, 2, 3]));
 
-        $promotion = (new Promotion())->setDiscountConfiguration((new DiscountConfiguration())->setOptions([]));
+        $order = new Order();
+        $order->setCurrency('USD');
 
-        $orderDiscount = $this->createMock(OrderDiscount::class);
-        $orderDiscount->expects($this->once())->method('getPromotion')->willReturn($promotion);
-        $orderDiscount->expects($this->once())->method('getDiscountType')->willReturn('percent');
-        $orderDiscount->expects($this->once())->method('getDiscountValue')->willReturn(10.0);
-        $orderDiscount->expects($this->once())->method('getDiscountCurrency')->willReturn('USD');
+        $orderDiscount = new OrderDiscount(new ShippingDiscount());
+        $orderDiscount->setPromotion($promotion);
 
-        $discountContext = $this->createMock(DiscountContext::class);
-        $discountContext->expects($this->once())->method('getSubtotalDiscounts')->willReturn([$orderDiscount]);
-        $discountContext->expects($this->once())->method('getShippingDiscounts')->willReturn([]);
-        $discountContext->expects($this->once())->method('getLineItems')->willReturn([]);
+        $discountContext = new DiscountContext();
+        $discountContext->addSubtotalDiscountInformation(
+            new DiscountInformation($orderDiscount, 12.34)
+        );
 
-        $promotionExecutor = $this->createMock(PromotionExecutor::class);
-        $promotionExecutor->expects($this->once())->method('execute')->with($order)
-            ->willReturn($discountContext);
+        $lineItemDiscount = new LineItemsDiscount(new ShippingDiscount());
+        $lineItemDiscount->setPromotion($promotion);
 
-        $this->container->expects($this->once())->method('get')
-            ->with('oro_promotion.promotion_executor')
-            ->willReturn($promotionExecutor);
+        $orderLineItem = new OrderLineItem();
+        $discountLineItem = new DiscountLineItem();
+        $discountLineItem->addDiscountInformation(
+            new DiscountInformation($lineItemDiscount, 56.78)
+        );
+        $discountLineItem->setSourceLineItem($orderLineItem);
+        $discountContext->addLineItem($discountLineItem);
 
-        $appliedDiscount = (new AppliedDiscount())
-            ->setOrder($order)
-            ->setType('percent')
-            ->setAmount(10.0)
-            ->setCurrency('USD')
-            ->setConfigOptions($promotion->getDiscountConfiguration()->getOptions())
-            ->setOptions([])
-            ->setPromotion($promotion);
+        $this->promotionExecutor->expects($this->once())->method('execute')->with($order)->willReturn($discountContext);
 
-        $this->assertEquals([$appliedDiscount], $this->appliedDiscountManager->createAppliedDiscounts($order));
+        $this->assertEquals([
+            (new AppliedDiscount())
+                ->setOrder($order)
+                ->setClass(OrderDiscount::class)
+                ->setAmount(12.34)
+                ->setCurrency('USD')
+                ->setConfigOptions([1, 2, 3])
+                ->setPromotion($promotion)
+                ->setPromotionName('first promotion'),
+            (new AppliedDiscount())
+                ->setOrder($order)
+                ->setClass(LineItemsDiscount::class)
+                ->setAmount(56.78)
+                ->setCurrency('USD')
+                ->setConfigOptions([1, 2, 3])
+                ->setPromotion($promotion)
+                ->setPromotionName('first promotion')
+                ->setLineItem($orderLineItem)
+        ], $this->appliedDiscountManager->createAppliedDiscounts($order));
+
     }
 }
