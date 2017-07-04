@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\ChainProcessor\ContextInterface;
 use PHPUnit\Framework\TestCase;
 
-class RebuildPriceListsTest extends TestCase
+abstract class RebuildPriceListsTestCase extends TestCase
 {
     /**
      * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject

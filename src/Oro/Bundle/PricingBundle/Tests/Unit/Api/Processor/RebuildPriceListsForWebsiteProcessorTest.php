@@ -7,7 +7,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class RebuildPriceListsForWebsiteProcessorTest extends RebuildPriceListsTest
+class RebuildPriceListsForWebsiteProcessorTest extends RebuildPriceListsTestCase
 {
     /**
      * @var RebuildPriceListsForWebsiteProcessor
