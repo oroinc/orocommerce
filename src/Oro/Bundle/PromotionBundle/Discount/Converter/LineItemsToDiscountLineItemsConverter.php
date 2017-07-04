@@ -3,11 +3,10 @@
 namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
-class LineItemsToDiscountLineItemsConverter
+class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountLineItemsConverter
 {
     /**
      * @var FrontendProductPricesDataProvider
@@ -23,18 +22,21 @@ class LineItemsToDiscountLineItemsConverter
     }
 
     /**
-     * @param LineItem[]|array $lineItems
-     * @return array
+     * {@inheritdoc}
      */
     public function convert(array $lineItems): array
     {
-        $shoppingListPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems);
         $discountLineItems = [];
+        $shoppingListPrices = $this->productPricesDataProvider->getProductsMatchedPrice($lineItems);
+
+        /** @var LineItem[] $lineItems */
         foreach ($lineItems as $lineItem) {
-            $discountLineItem = new DiscountLineItem();
+            $discountLineItem = $this->createDiscountLineItem($lineItem);
+            if (!$discountLineItem) {
+                continue;
+            }
 
             $unitCode = $lineItem->getProductUnitCode();
-
             $price = null;
             if (isset($shoppingListPrices[$lineItem->getProduct()->getId()][$unitCode])) {
                 /** @var Price $price */
@@ -44,12 +46,6 @@ class LineItemsToDiscountLineItemsConverter
             } else {
                 $discountLineItem->setSubtotal(0);
             }
-
-            $discountLineItem->setQuantity($lineItem->getQuantity());
-            $discountLineItem->setProduct($lineItem->getProduct());
-            $discountLineItem->setProductUnit($lineItem->getProductUnit());
-            $discountLineItem->setSourceLineItem($lineItem);
-
             $discountLineItems[] = $discountLineItem;
         }
 

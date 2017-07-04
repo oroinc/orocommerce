@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Layout\DataProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
+use Oro\Bundle\PromotionBundle\Layout\DataProvider\DTO\ObjectStorage;
 
 class DiscountsInformationDataProvider
 {
@@ -30,18 +31,21 @@ class DiscountsInformationDataProvider
 
     /**
      * @param object $sourceEntity
-     * @return array|Price[]
+     * @return ObjectStorage
      */
-    public function getDiscountLineItemDiscounts($sourceEntity): array
+    public function getDiscountLineItemDiscounts($sourceEntity): ObjectStorage
     {
-        $info = [];
+        $info = new ObjectStorage();
         $currency = $this->currencyManager->getUserCurrency();
         if ($this->promotionExecutor->supports($sourceEntity)) {
             $discountContext = $this->promotionExecutor->execute($sourceEntity);
             foreach ($discountContext->getLineItems() as $lineItem) {
-                $info[$lineItem->getSourceLineItem()->getId()] = Price::create(
-                    $lineItem->getDiscountTotal(),
-                    $currency
+                $info->attach(
+                    $lineItem->getSourceLineItem(),
+                    [
+                        'total' => Price::create($lineItem->getDiscountTotal(), $currency),
+                        'details' => $lineItem->getDiscountsInformation()
+                    ]
                 );
             }
         }
