@@ -677,7 +677,6 @@ class OroProductBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['brand_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_E42C1AB4EB576E89');
-        $table->addIndex(['brand_id'], 'IDX_E42C1AB444F5D008', []);
     }
 
     /**
@@ -714,7 +713,6 @@ class OroProductBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['brand_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_FA144D83EB576E89');
-        $table->addIndex(['brand_id'], 'IDX_FA144D8344F5D008', []);
     }
 
     /**
@@ -729,7 +727,6 @@ class OroProductBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['brand_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_70031058EB576E89');
-        $table->addIndex(['brand_id'], 'IDX_7003105844F5D008', []);
     }
 
     /**
@@ -835,7 +832,6 @@ class OroProductBundleInstaller implements
     {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $table->addColumn('brand_id', 'integer', ['notnull' => false]);
-        $table->addIndex(['brand_id'], 'IDX_1BEDF27B44F5D008', []);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_brand'),
             ['brand_id'],
