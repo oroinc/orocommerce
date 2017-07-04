@@ -15,9 +15,8 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @group CommunityEdition
- *
  * @dbIsolationPerTest
+ * @group CommunityEdition
  */
 class PriceListToWebsiteTest extends RestJsonApiTestCase
 {
