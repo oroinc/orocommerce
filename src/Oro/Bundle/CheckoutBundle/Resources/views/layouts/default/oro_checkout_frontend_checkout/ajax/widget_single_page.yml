@@ -99,12 +99,6 @@ layout:
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
 
-                checkout_button_continue_right:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
-                        checkout: '=data["checkout"]'
-
             tree:
                 checkout_form_fields:
                     checkout_view:
@@ -123,12 +117,20 @@ layout:
                                 payment_additional_data: ~
                         checkout_summary:
                             additional_options: ~
-                    checkout_button_continue_right: ~
 
         - '@move':
             id: checkout_order_summary
             parentId: checkout_summary
             siblingId: additional_options
+
+        - '@add':
+            id: checkout_button_continue_right
+            blockType: checkout_transition_continue
+            parentId: checkout_summary
+            siblingId: checkout_order_summary
+            options:
+                transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                checkout: '=data["checkout"]'
 
         - '@remove':
             id: checkout_sidebar
