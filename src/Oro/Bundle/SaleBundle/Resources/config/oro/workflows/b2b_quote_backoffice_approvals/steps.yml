@@ -1,0 +1,23 @@
+workflows:
+    b2b_quote_backoffice_approvals:
+        steps:
+            draft:
+                allowed_transitions:
+                    - 'submit_for_review_transition'
+            submitted_for_review:
+                order: 110
+                allowed_transitions:
+                    - 'review_transition'
+            under_review:
+                order: 120
+                allowed_transitions:
+                    - 'return_transition'
+                    - 'approve_and_send_to_customer_transition'
+                    - 'approve_transition'
+                    - 'decline_by_reviewer_transition'
+            approved:
+                order: 130
+                allowed_transitions:
+                    - 'send_to_customer_transition'
+            not_approved:
+                order: 140

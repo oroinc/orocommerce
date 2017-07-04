@@ -1,0 +1,25 @@
+workflows:
+    b2b_quote_backoffice_default:
+        attributes:
+            copy_notes:
+                type: bool
+                options:
+                    virtual: true
+            expire_quote:
+                type: string
+                options:
+                    virtual: true
+            original_quote:
+                type: entity
+                options:
+                    class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+                    virtual: true
+            email:
+                type: object
+                options:
+                    class: 'Oro\Bundle\EmailBundle\Form\Model\Email'
+                    virtual: true
+            appendSignature:
+                type: bool
+                options:
+                    virtual: true

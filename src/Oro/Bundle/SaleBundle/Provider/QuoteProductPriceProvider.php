@@ -37,12 +37,11 @@ class QuoteProductPriceProvider
 
     /**
      * @param Quote $quote
+     *
      * @return array
      */
     public function getTierPrices(Quote $quote)
     {
-        $tierPrices = [];
-
         $productIds = $quote->getQuoteProducts()->filter(
             function (QuoteProduct $quoteProduct) {
                 return $quoteProduct->getProduct() !== null;
@@ -53,6 +52,30 @@ class QuoteProductPriceProvider
             }
         );
 
+        return $this->fetchTierPrices($quote, $productIds->toArray());
+    }
+
+    /**
+     * @param Quote $quote
+     * @param array $productIds
+     *
+     * @return array
+     */
+    public function getTierPricesForProducts(Quote $quote, array $productIds)
+    {
+        return $this->fetchTierPrices($quote, $productIds);
+    }
+
+    /**
+     * @param Quote $quote
+     * @param array $productIds
+     *
+     * @return array
+     */
+    protected function fetchTierPrices(Quote $quote, array $productIds)
+    {
+        $tierPrices = [];
+
         if ($productIds) {
             $priceList = $this->getPriceList($quote);
             if (!$priceList) {
@@ -60,7 +83,7 @@ class QuoteProductPriceProvider
             }
             $tierPrices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
                 $priceList->getId(),
-                $productIds->toArray()
+                $productIds
             );
             if (!$tierPrices) {
                 $tierPrices = [];

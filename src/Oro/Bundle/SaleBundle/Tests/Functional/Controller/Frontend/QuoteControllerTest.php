@@ -120,9 +120,6 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE13,
                         ],
                         [
-                            'qid' => LoadQuoteData::QUOTE2,
-                        ],
-                        [
                             'qid' => LoadQuoteData::QUOTE3,
                         ],
                         [
@@ -153,9 +150,6 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE13,
-                        ],
-                        [
-                            'qid' => LoadQuoteData::QUOTE2,
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE3,
@@ -210,9 +204,6 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE13,
                         ],
                         [
-                            'qid' => LoadQuoteData::QUOTE2,
-                        ],
-                        [
                             'qid' => LoadQuoteData::QUOTE3,
                         ],
                         [
@@ -232,7 +223,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE9,
-                        ]
+                        ],
                     ],
                     'columns' => array_merge(['customerUserName'], $defaultColumns),
                 ],
@@ -616,7 +607,7 @@ class QuoteControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+        static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
     public function testGridAccessDeniedForAnonymousUsers()
