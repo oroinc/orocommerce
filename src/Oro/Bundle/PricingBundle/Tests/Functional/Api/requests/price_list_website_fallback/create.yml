@@ -1,0 +1,9 @@
+data:
+    type: 'pricelistwebsitefallbacks'
+    attributes:
+        fallback: 1
+    relationships:
+        website:
+            data:
+                type: 'websites'
+                id: '<toString(@CA->id)>'

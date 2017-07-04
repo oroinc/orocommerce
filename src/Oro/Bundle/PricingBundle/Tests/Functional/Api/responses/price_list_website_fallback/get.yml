@@ -1,0 +1,10 @@
+data:
+    type: 'pricelistwebsitefallbacks'
+    id: '<toString(@US_price_list_fallback->id)>'
+    attributes:
+        fallback: 0
+    relationships:
+        website:
+            data:
+                type: 'websites'
+                id: '<toString(@US->id)>'

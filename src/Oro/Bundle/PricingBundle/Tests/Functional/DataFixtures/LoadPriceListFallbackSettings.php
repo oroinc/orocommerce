@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
@@ -18,6 +17,9 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadPriceListFallbackSettings extends AbstractFixture implements DependentFixtureInterface
 {
+    const WEBSITE_FALLBACK_1 = 'US_price_list_fallback';
+    const WEBSITE_FALLBACK_2 = 'Canada_price_list_fallback';
+
     /**
      * @var array
      */
@@ -45,8 +47,14 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
             ],
         ],
         'website' => [
-            'US' => PriceListWebsiteFallback::CONFIG,
-            'Canada' => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
+            LoadWebsiteData::WEBSITE1 => [
+                'reference' => self::WEBSITE_FALLBACK_1,
+                'fallback' => PriceListWebsiteFallback::CONFIG,
+            ],
+            LoadWebsiteData::WEBSITE2 => [
+                'reference' => self::WEBSITE_FALLBACK_2,
+                'fallback' => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
+            ],
         ],
     ];
 
@@ -99,15 +107,16 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
             }
         }
 
-        foreach ($this->fallbackSettings['website'] as $websiteReference => $fallbackValue) {
+        foreach ($this->fallbackSettings['website'] as $websiteReference => $fallbackData) {
             /** @var Website $website */
             $website = $this->getReference($websiteReference);
 
             $priceListWebsiteFallback = new PriceListWebsiteFallback();
             $priceListWebsiteFallback->setWebsite($website);
-            $priceListWebsiteFallback->setFallback($fallbackValue);
+            $priceListWebsiteFallback->setFallback($fallbackData['fallback']);
 
             $manager->persist($priceListWebsiteFallback);
+            $this->setReference($fallbackData['reference'], $priceListWebsiteFallback);
         }
         $manager->flush();
     }
