@@ -358,7 +358,8 @@ services:
     oro_promotion.provider.applied_discount_subtotal:
         class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountSubtotalProvider
         public: false
-        arguments: ['@oro_promotion.provider.applied_discounts_provider']
+        arguments:
+            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@translator'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 50 }
-
