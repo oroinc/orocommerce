@@ -64,11 +64,11 @@ class RelatedProductDataProvider
     }
 
     /**
-     * @param Product[] $relatedProducts
+     * @param Product[] $products
      * @return bool
      */
-    private function hasMoreThanRequiredMinimum($relatedProducts)
+    private function hasMoreThanRequiredMinimum($products)
     {
-        return count($relatedProducts) >= (int)$this->configProvider->getMinimumItems();
+        return count($products) !== 0 && count($products) >= (int)$this->configProvider->getMinimumItems();
     }
 }

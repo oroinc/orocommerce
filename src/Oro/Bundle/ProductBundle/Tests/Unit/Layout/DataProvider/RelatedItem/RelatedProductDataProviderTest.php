@@ -43,6 +43,17 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testDoesNotReturnRelatedProductsIfFinderDoesNotFindAny()
+    {
+        $this->finderReturnsRelatedProducts([]);
+        $this->restrictionReturnsRelatedProducts(new ArrayCollection([
+            $this->getEntity(Product::class, ['id' => 2]),
+            $this->getEntity(Product::class, ['id' => 3]),
+        ]));
+
+        $this->assertEmpty($this->dataProvider->getRelatedProducts(new Product()));
+    }
+
     public function testReturnRelatedProducts()
     {
         $relatedProducts = new ArrayCollection([
@@ -152,7 +163,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
             $restrictedProducts = $restrictedProducts->slice(0, $max);
         }
 
-        $this->restrictedRepository->expects($this->once())
+        $this->restrictedRepository->expects($this->any())
             ->method('findProducts')
             ->willReturn($restrictedProducts);
     }

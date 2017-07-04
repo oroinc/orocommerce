@@ -151,6 +151,9 @@ oro:
                 additional.label: Additional
                 listing.label: Listing
 
+        related_products:
+            label: Related Products
+
         lineitem:
             unit.label: Unit
             quantity:
