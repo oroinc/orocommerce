@@ -8,7 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener;
 
-class ScopedProductSearchQueryRestrictionEventListenerTest extends AbstractProductQueryRestrictionEventListenerTest
+class ScopedProductSearchQueryRestrictionEventListenerTest extends
+ AbstractProductSearchQueryRestrictionEventListenerTest
 {
     const SCOPE = 'test_scope';
 

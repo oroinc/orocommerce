@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Model;
 
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
-use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
@@ -14,7 +14,7 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var UrlItemsProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlItemsProviderRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $providerRegistry;
 
@@ -30,7 +30,7 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->providerRegistry = $this->getMockBuilder(UrlItemsProviderRegistry::class)
+        $this->providerRegistry = $this->getMockBuilder(UrlItemsProviderRegistryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
@@ -56,7 +56,7 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
         $type = 'some_type';
         $this->providerRegistry->expects($this->once())
-            ->method('getProviderNames')
+            ->method('getProvidersIndexedByNames')
             ->willReturn([$type]);
 
         $this->expectException(\InvalidArgumentException::class);
@@ -79,8 +79,8 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
         $type = 'some_type';
         $this->providerRegistry->expects($this->once())
-            ->method('getProviderNames')
-            ->willReturn([$type]);
+            ->method('getProvidersIndexedByNames')
+            ->willReturn([$type => 'testProvider']);
 
         $this->assertEquals(
             [
@@ -104,8 +104,8 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
         $type = 'some_type';
         $this->providerRegistry->expects($this->once())
-            ->method('getProviderNames')
-            ->willReturn([$type]);
+            ->method('getProvidersIndexedByNames')
+            ->willReturn([$type => 'testProvider']);
 
         $website = $this->createWebsiteMock($websiteId);
         $this->websiteRepository->expects($this->once())
@@ -132,8 +132,8 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $type = 'some_type';
         $this->providerRegistry->expects($this->once())
-            ->method('getProviderNames')
-            ->willReturn([$type]);
+            ->method('getProvidersIndexedByNames')
+            ->willReturn([$type => 'testProvider']);
 
         $message = [
             SitemapMessageFactory::WEBSITE_ID => $websiteId,
@@ -154,8 +154,8 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $type = 'some_type';
         $this->providerRegistry->expects($this->once())
-            ->method('getProviderNames')
-            ->willReturn([$type]);
+            ->method('getProvidersIndexedByNames')
+            ->willReturn([$type => 'testProvider']);
 
         $jobId = 888;
         $message = [
@@ -177,8 +177,8 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $type = 'some_type';
         $this->providerRegistry->expects($this->once())
-            ->method('getProviderNames')
-            ->willReturn([$type]);
+            ->method('getProvidersIndexedByNames')
+            ->willReturn([$type => 'testProvider']);
 
         $jobId = 888;
         $message = [

@@ -28,7 +28,12 @@ All existing classes were updated to use new services instead of the `SecurityFa
 
 AuthorizeNetBundle
 ------------------
-- AuthorizeNetBundle extracted into individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
+- AuthorizeNetBundle extracted to individual package. See [https://github.com/orocommerce/OroAuthorizeNetBundle](https://github.com/orocommerce/OroAuthorizeNetBundle) for details.
+
+CatalogBundle
+-------------
+- Class `Oro\Bundle\CatalogBundle\EventListenerFormViewListener`
+    - changed signature of `__construct` method. Dependency on `RequestStack` was removed.
 
 CheckoutBundle
 --------------
@@ -60,7 +65,17 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
 - Class `Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy`
     - method `setSecurityFacade` was replaced with `setTokenAccessor`
-
+- Adding Brand functionality to ProductBundle
+    - New class `Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController` was added
+    - New class `Oro\Bundle\ProductBundle\Controller\BrandController` was added
+    - New entity `Oro\Bundle\ProductBundle\Entity\Brand` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandType` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandSelectType` was added
+    - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandStatusType` was added
+    - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
+    - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
+    - New service `oro_product.brand.manager.api` registered
+    
 PaymentBundle
 -------------
 - Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
@@ -84,8 +99,26 @@ PayPalBundle
 
 SEOBundle
 -------------
-- metaTitles for `Product`, `Category`, `Page`, `WebCatalog` were added. 
+- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added. 
 MetaTitle is displayed as default view page title.
+- Class `Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener`
+    - changed signature of `__construct` method:
+        - dependency on `RequestStack` was removed
+        - dependency on `DoctrineHelper` was removed
+    - method `setBlockPriority` was removed
+- Service `oro_seo.event_listener.product_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+- Service `oro_seo.event_listener.category_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+- Service ` oro_seo.event_listener.page_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+- Service `oro_seo.event_listener.content_node_form_view`
+    - dependency on `@request_stack` was removed
+    - dependency on `@oro_entity.doctrine_helper` was removed
+
 
 PaymentBundle
 -------------
@@ -127,3 +160,41 @@ ShippingBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+        
+PricingBundle
+--------------
+- Service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`
+    - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
+    - method `postRemove` has additional argument `ProductUnitPrecision $precision`.
+- Class `Oro\Bundle\PricingBundle\EventListener\FormViewListener`
+    - changed signature of `__construct` method:
+        - dependency on `RequestStack` was removed.
+        - dependency on `Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider` was added.
+
+SaleBundle
+----------
+- Added Voter `Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter`, Checks if given Quote contains internal status, triggered only for Commerce Application.
+- Updated entity `Oro\Bundle\SaleBundle\Entity\Quote`
+    - Added constant `FRONTEND_INTERNAL_STATUSES` that holds all available internal statuses for Commerce Application
+    - Added new property `pricesChanged`, that indicates if prices were changed.
+- Added Datagrid Listener `Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener`, appends frontend datagrid query with proper frontend internal statuses.
+- Added Subscriber `Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber`, discards price modifications and free form inputs, if there are no permissions for those operations
+- Updated FormType `Oro\Bundle\SaleBundle\Form\Type\QuoteType`
+    - changed constructor signature, now it awaits:
+        - third argument should be an instance of `Symfony\Component\EventDispatcher\EventSubscriberInterface`
+        - fourth argument should be an instance of `Oro\Bundle\SecurityBundle\SecurityFacade`
+- Following ACL permissions moved to `Quote` category
+    - oro_quote_address_shipping_customer_use_any
+    - oro_quote_address_shipping_customer_use_any_backend
+    - oro_quote_address_shipping_customer_user_use_default
+    - oro_quote_address_shipping_customer_user_use_default_backend
+    - oro_quote_address_shipping_customer_user_use_any
+    - oro_quote_address_shipping_customer_user_use_any_backend
+    - oro_quote_address_shipping_allow_manual
+    - oro_quote_address_shipping_allow_manual_backend
+    - oro_quote_payment_term_customer_can_override
+- Added new permission to `Quote` category
+    - oro_quote_prices_override
+    - oro_quote_review_and_approve
+    - oro_quote_add_free_form_items
+- Added new workflow `b2b_quote_backoffice_approvals`

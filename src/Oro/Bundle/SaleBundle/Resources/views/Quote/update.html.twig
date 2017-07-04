@@ -162,33 +162,33 @@
     {% endif %}
 
     {% set shippingInformation %}
+        <div class="quote-shipping-methods-info">
+            {% set component = 'orosale/js/app/components/quote-possible-shipping-methods-component' %}
 
-        {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
-            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
+            {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
+                {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
+                {% set savedShippingMethod = methodLabel ~ get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
+                ': ' ~ entity.estimatedShippingCost|oro_format_price()
+                %}
+            {% endif %}
 
             {{ UI.renderAttribute('oro.sale.quote.shipping_method.label'|trans,
-                '<div class="control-label selected-shipping-method">' ~
-                methodLabel ~
-                get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
-                ': ' ~ entity.estimatedShippingCost|oro_format_price() ~ '</div>'
+                '<div class="quote_possible_shipping_methods_container">' ~
+                SM.renderPossibleShippingMethods(form, quoteEntryPointEvents, component, savedShippingMethod|default(null)) ~ '</div>'
             ) }}
-        {% endif %}
 
-        {{ UI.renderAttribute('oro.sale.quote.form.shipping_options.label'|trans,
-            SM.renderPossibleShippingMethods(form, quoteEntryPointEvents)
-        ) }}
+            {% set options = {
+                view: 'oroorder/js/app/views/shipping-cost-view'
+            } %}
 
-        {%  set options = {
-            view: 'oroorder/js/app/views/shipping-cost-view'
-        } %}
+            <div data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ options|json_encode }}">
+                {{ form_row(form.overriddenShippingCostAmount) }}
+            </div>
 
-        <div data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ options|json_encode }}">
-            {{ form_row(form.overriddenShippingCostAmount) }}
+            {{ form_row(form.shippingMethodLocked) }}
+            {{ form_row(form.allowUnlistedShippingMethod) }}
         </div>
-
-        {{ form_row(form.shippingMethodLocked) }}
-        {{ form_row(form.allowUnlistedShippingMethod) }}
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{

@@ -1,0 +1,127 @@
+workflows:
+    b2b_quote_backoffice_default:
+        transitions:
+            edit_transition:
+                step_to: draft
+                transition_definition: edit_transition_definition
+                frontend_options:
+                    icon: 'fa-edit'
+                display_type: page
+                form_type: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
+                form_options:
+                    configuration:
+                        handler: default
+                        template: 'OroSaleBundle:Quote:update.html.twig'
+                        data_provider: quote_update
+                        data_attribute: quote
+
+            clone_transition:
+                step_to: draft
+                transition_definition: clone_transition_definition
+                frontend_options:
+                    icon: 'fa-files-o'
+            delete_transition:
+                step_to: deleted
+                transition_definition: delete_transition_definition
+                frontend_options:
+                    icon: 'fa-trash'
+            undelete_transition:
+                step_to: draft
+                transition_definition: undelete_transition_definition
+                frontend_options:
+                    icon: 'fa-undo'
+            send_to_customer_transition:
+                step_to: sent_to_customer
+                transition_definition: send_to_customer_transition_definition
+                dialog_template: 'OroSaleBundle:Workflow:emailNotification.html.twig'
+                frontend_options:
+                    icon: 'fa-envelope'
+                    dialog:
+                        dialogOptions:
+                            allowMaximize: true
+                            allowMinimize: true
+                            dblclick: maximize
+                            maximizedHeightDecreaseBy: minimize-bar
+                            width: 1000
+                            height: 600
+                form_options:
+                    attribute_fields:
+                        email:
+                            form_type: oro_email_email
+                            options:
+                                translation_domain: messages
+                    form_init:
+                        - '@call_service_method':
+                            attribute: $email
+                            service: oro_sale.helper.notification
+                            method: getEmailModel
+                            method_parameters: [$quote]
+                        - '@call_service_method':
+                            attribute: $appendSignature
+                            service: oro_config.manager
+                            method: get
+                            method_parameters: ['oro_email.append_signature']
+
+            cancel_transition:
+                step_to: closed
+                transition_definition: cancel_transition_definition
+                frontend_options:
+                    icon: 'fa-close'
+            expire_transition:
+                step_to: closed
+                transition_definition: expire_transition_definition
+                frontend_options:
+                    icon: 'fa-clock-o'
+                    confirmation:
+                        title: oro.sale.quote.actions.quote_expire_title
+                        message: oro.sale.quote.actions.quote_expire_confirm
+                        okText: oro.sale.quote.actions.mark_as_expired
+            create_new_quote_transition:
+                step_to: sent_to_customer
+                transition_definition: create_new_quote_transition_definition
+                frontend_options:
+                    icon: 'fa-plus'
+                form_options:
+                    attribute_fields:
+                        copy_notes:
+                            form_type: checkbox
+                            options:
+                                data: true
+                        expire_quote:
+                            form_type: choice
+                            options:
+                                required: true
+                                choices:
+                                    no: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.no.label
+                                    yes: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.yes.label
+                                    after_accept: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.after_accept.label
+            accept_transition:
+                step_to: closed
+                transition_definition: accept_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+                        event: update
+                        field: customer_status
+                        require: "entity.getCustomerStatus().getId() === 'accepted'"
+            decline_transition:
+                step_to: closed
+                transition_definition: decline_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+                        event: update
+                        field: customer_status
+                        require: "entity.getCustomerStatus().getId() === 'declined'"
+            decline_by_customer_transition:
+                step_to: closed
+                transition_definition: decline_by_customer_transition_definition
+                frontend_options:
+                    icon: 'fa-close'
+            reopen_transition:
+                step_to: closed
+                transition_definition: reopen_transition_definition
+                frontend_options:
+                    icon: 'fa-undo'

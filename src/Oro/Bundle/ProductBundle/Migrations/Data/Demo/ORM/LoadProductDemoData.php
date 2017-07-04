@@ -3,13 +3,20 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Oro\Bundle\ProductBundle\Entity\Brand;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
@@ -18,11 +25,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
+class LoadProductDemoData extends AbstractFixture implements
+    ContainerAwareInterface,
+    DependentFixtureInterface
 {
     use UserUtilityTrait;
 
@@ -42,6 +48,16 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     protected $productUnits = [];
 
     /**
+     * {@inheritDoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadBrandDemoData',
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
@@ -51,6 +67,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
     /**
      * {@inheritdoc}
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function load(ObjectManager $manager)
     {
@@ -106,7 +124,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
 
             $shortDescription = new LocalizedFallbackValue();
             $shortDescription->setText($row['description']);
-
+            $brand = $manager->getRepository(Brand::class)->find($row['brand_id']);
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
@@ -119,7 +137,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addShortDescription($shortDescription)
                 ->setType($row['type'])
                 ->setFeatured($row['featured'])
-                ->setNewArrival($row['new_arrival']);
+                ->setNewArrival($row['new_arrival'])
+                ->setBrand($brand);
 
             $this->setPageTemplate($product, $row);
 
@@ -280,7 +299,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 $image = $productImage->getImage();
                 $filterName = $dimension->getName();
                 $imagePath = $attachmentManager->getFilteredImageUrl($image, $filterName);
-
 
                 if ($filteredImage = $imageResizer->resizeImage($image, $filterName)) {
                     $mediaCacheManager->store($filteredImage->getContent(), $imagePath);

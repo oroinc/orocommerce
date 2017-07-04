@@ -48,8 +48,10 @@ class ProductType extends AbstractType
      * @param DefaultProductUnitProviderInterface $provider
      * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(DefaultProductUnitProviderInterface $provider, UrlGeneratorInterface $urlGenerator)
-    {
+    public function __construct(
+        DefaultProductUnitProviderInterface $provider,
+        UrlGeneratorInterface $urlGenerator
+    ) {
         $this->provider = $provider;
         $this->urlGenerator = $urlGenerator;
     }
@@ -72,6 +74,7 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
+            ->add('brand', BrandSelectType::NAME, ['label' => 'oro.product.brand.label'])
             ->add(
                 'inventory_status',
                 'oro_enum_select',

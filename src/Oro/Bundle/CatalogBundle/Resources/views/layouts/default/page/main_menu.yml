@@ -2,10 +2,3 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'main_menu.html.twig'
-        - '@add':
-            id: main_menu_label
-            parentId: main_menu_container
-            blockType: text
-            options:
-                text: '=data["category"].getRootCategory()'
-            prepend: true

@@ -33,7 +33,12 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
             new \Swift_Transport_NullTransport(new \Swift_Events_SimpleEventDispatcher())
         );
 
+        $notificationListener = $this->container->get('oro_workflow.listener.workflow_transition_record');
+        $notificationListener->setEnabled(false);
+
         parent::load($manager);
+
+        $notificationListener->setEnabled(true);
 
         $this->container->set('swiftmailer.mailer.default.transport.real', $transport);
     }
@@ -44,7 +49,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
     protected function getWorkflows()
     {
         return [
-            'b2b_quote_backoffice_default',
+            'b2b_quote_backoffice_approvals',
         ];
     }
 
@@ -54,7 +59,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
     protected function getIgnoredTransitions()
     {
         return [
-            'b2b_quote_backoffice_default' => [
+            'b2b_quote_backoffice_approvals' => [
                 'edit_transition',
                 'clone_transition',
                 'create_new_quote_transition',

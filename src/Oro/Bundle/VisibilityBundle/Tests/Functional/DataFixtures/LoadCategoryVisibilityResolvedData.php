@@ -52,7 +52,6 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
      */
     protected function createCategoryVisibilities(Category $category, array $categoryData)
     {
-
         $this->createCategoryVisibility($category, $categoryData['all']);
 
         $this->createCustomerGroupCategoryVisibilities($category, $categoryData['groups']);

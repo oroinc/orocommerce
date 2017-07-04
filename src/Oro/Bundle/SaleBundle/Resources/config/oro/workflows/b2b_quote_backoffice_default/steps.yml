@@ -1,0 +1,28 @@
+workflows:
+    b2b_quote_backoffice_default:
+        steps:
+            draft:
+                order: 100
+                allowed_transitions:
+                    - edit_transition
+                    - clone_transition
+                    - delete_transition
+                    - send_to_customer_transition
+            sent_to_customer:
+                order: 200
+                allowed_transitions:
+                    - cancel_transition
+                    - expire_transition
+                    - delete_transition
+                    - create_new_quote_transition
+                    - accept_transition
+                    - decline_transition
+                    - decline_by_customer_transition
+            closed:
+                order: 300
+                allowed_transitions:
+                    - reopen_transition
+            deleted:
+                order: 400
+                allowed_transitions:
+                    - undelete_transition
