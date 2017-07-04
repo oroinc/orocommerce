@@ -16,9 +16,12 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const DEFAULT_PRICE_LIST_ID = 1;
 
     /**
@@ -38,13 +41,9 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->productPriceProvider = $this->createMock(ProductPriceProvider::class);
 
-        $this->treeHandler = $this->getMockBuilder(
-            'Oro\Bundle\PricingBundle\Model\PriceListTreeHandler'
-        )
+        $this->treeHandler = $this->getMockBuilder(PriceListTreeHandler::class)
             ->setMethods(['getPriceList', 'getPriceListByCustomer'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -78,7 +77,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             $quote->addQuoteProduct($quoteProduct);
         }
 
-        $this->treeHandler->expects($this->once())
+        $this->treeHandler->expects($this->any())
             ->method('getPriceList')
             ->with($customer, $website)
             ->willReturn($quotePriceList);
@@ -100,6 +99,56 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider getTierPricesDataProvider
+     * @param PriceList|null $quotePriceList
+     * @param QuoteProduct[] $quoteProducts
+     * @param array|null $productPriceProviderArgs
+     * @param int $tierPricesCount
+     */
+    public function testGetTierPricesForProducts(
+        $quotePriceList,
+        $quoteProducts,
+        $productPriceProviderArgs,
+        $tierPricesCount
+    ) {
+        $website = new Website();
+        $customer = new Customer();
+
+        $quote = new Quote();
+        $quote->setWebsite($website)->setCustomer($customer);
+
+        $this->treeHandler->expects($this->any())
+            ->method('getPriceList')
+            ->with($customer, $website)
+            ->willReturn($quotePriceList);
+
+        if ($productPriceProviderArgs) {
+            call_user_func_array(
+                [
+                    $this->productPriceProvider->expects($this->once())->method('getPriceByPriceListIdAndProductIds'),
+                    'with'
+                ],
+                $productPriceProviderArgs
+            )->willReturn(range(0, $tierPricesCount - 1));
+        }
+
+        $result = $this->quoteProductPriceProvider->getTierPricesForProducts(
+            $quote,
+            array_filter(
+                array_map(
+                    function (QuoteProduct $quoteProduct) {
+                        return $quoteProduct->getProduct() ? $quoteProduct->getProduct()->getId() : null;
+                    },
+                    $quoteProducts
+                )
+            )
+        );
+
+        $this->assertInternalType('array', $result);
+        $this->assertCount($tierPricesCount, $result);
+    }
+
+    /**
      * @return array
      */
     public function getTierPricesDataProvider()
@@ -107,7 +156,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $quoteProduct = $this->getQuoteProduct();
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
 
-        $quotePriceList = $this->setEntityId(new CombinedPriceList(), 2);
+        $quotePriceList = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
 
         $product1 = $quoteProduct->getProduct();
 
@@ -184,7 +233,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $quoteProduct = $this->getQuoteProduct();
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
 
-        $quotePriceList = $this->setEntityId(new CombinedPriceList(), 2);
+        $quotePriceList = $this->getEntity(CombinedPriceList::class, ['id' => 2]);
 
         $product1 = $quoteProduct->getProduct();
 
@@ -251,7 +300,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $quoteProductOffer3->setProductUnit($productUnit);
 
         /** @var Product $product1 */
-        $product1 = $this->setEntityId(new Product(), 1);
+        $product1 = $this->getEntity(Product::class, ['id' => 1]);
 
         switch ($type) {
             case 'empty':
@@ -267,20 +316,5 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 break;
         }
         return $quoteProduct;
-    }
-
-    /**
-     * @param object $entity
-     * @param int $id
-     * @return object
-     */
-    protected function setEntityId($entity, $id)
-    {
-        $reflectionObject = new \ReflectionObject($entity);
-        $reflectionProperty = $reflectionObject->getProperty('id');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($entity, $id);
-
-        return $entity;
     }
 }

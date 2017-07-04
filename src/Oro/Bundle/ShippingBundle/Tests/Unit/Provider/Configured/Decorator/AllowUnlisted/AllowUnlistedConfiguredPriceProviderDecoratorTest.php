@@ -10,6 +10,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AllowUnlisted\AllowUnlistedConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
+
 // @codingStandardsIgnoreEnd
 
 class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framework_TestCase

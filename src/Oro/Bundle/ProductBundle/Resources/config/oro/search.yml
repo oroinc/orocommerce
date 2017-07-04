@@ -48,3 +48,45 @@ search:
                         name: text
                         target_type: text
                         target_fields: [shortDescriptions]
+
+    Oro\Bundle\ProductBundle\Entity\Brand:
+        alias:                          oro_brand
+        title_fields:                   [defaultName]
+        route:
+            name:                       oro_brand_update
+            parameters:
+                id:                     id
+        search_template:                OroProductBundle:Product:searchResult.html.twig
+        fields:
+            -
+                name: names
+                relation_type: many-to-many
+                relation_fields:
+                    -
+                        name: string
+                        target_type: text
+                        target_fields: [names]
+            -
+                name:                   defaultDescription
+                target_type:            text
+                target_fields:          [defaultDescription]
+            -
+                name:                   defaultShortDescription
+                target_type:            text
+                target_fields:          [defaultShortDescription]
+            -
+                name: descriptions
+                relation_type: many-to-many
+                relation_fields:
+                    -
+                        name: text
+                        target_type: text
+                        target_fields: [descriptions]
+            -
+                name: shortDescriptions
+                relation_type: many-to-many
+                relation_fields:
+                    -
+                        name: text
+                        target_type: text
+                        target_fields: [shortDescriptions]

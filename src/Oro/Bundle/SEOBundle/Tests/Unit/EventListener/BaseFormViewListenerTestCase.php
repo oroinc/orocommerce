@@ -2,38 +2,11 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
-class BaseFormViewListenerTestCase extends FormViewListenerTestCase
+abstract class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 {
-    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
-    protected $request;
-
-    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-    protected $requestStack;
-
-    protected function tearDown()
-    {
-        unset($this->request, $this->requestStack);
-
-        parent::tearDown();
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->request = $this->getRequest();
-
-        $this->requestStack = $this->createMock(RequestStack::class);
-        $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
-    }
-
     /**
      * @param object $entityObject
      * @param string $labelPrefix
@@ -78,7 +51,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     }
 
     /**
-     * @return \Twig_Environment
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
      */
     protected function getEnvironmentForEdit()
     {
@@ -96,55 +69,5 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
             ]);
 
         return $env;
-    }
-
-    /**
-     * @param \Twig_Environment $env
-     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getEventForView(\Twig_Environment $env)
-    {
-        $event = $this->getBeforeListRenderEvent();
-
-        $event->expects($this->once())
-            ->method('getEnvironment')
-            ->willReturn($env);
-
-        return $event;
-    }
-
-    /**
-     * @param \Twig_Environment $env
-     * @return BeforeListRenderEvent
-     */
-    protected function getEventForEdit(\Twig_Environment $env)
-    {
-        $event = $this->getEventForView($env);
-
-        $event->expects($this->once())
-            ->method('getFormView')
-            ->willReturn(new FormView());
-
-        return $event;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getScrollData()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->createMock(ScrollData::class);
-
-        $scrollData->expects($this->once())
-            ->method('addNamedBlock');
-
-        $scrollData->expects($this->any())
-            ->method('addSubBlock');
-
-        $scrollData->expects($this->any())
-            ->method('addSubBlockData');
-
-        return $scrollData;
     }
 }

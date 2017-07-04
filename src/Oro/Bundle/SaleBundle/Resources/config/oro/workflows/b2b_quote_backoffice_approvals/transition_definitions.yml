@@ -1,0 +1,78 @@
+workflows:
+    b2b_quote_backoffice_approvals:
+        transition_definitions:
+            submit_for_review_transition_definition:
+                preconditions:
+                    '@and':
+                        - '@not':
+                            - '@acl_granted': 'oro_quote_review_and_approve'
+                        - '@equal': [true, '$price_override_triggers_approval']
+                        - '@equal': [true, '$quote.prices_changed']
+                actions:
+                    - '@create_note': ['$comment', '$quote']
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'submitted_for_review'
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.submit_for_review.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
+            send_to_customer_transition_definition:
+                preconditions:
+                    '@or':
+                        - '@acl_granted': 'oro_quote_review_and_approve'
+                        - '@or':
+                            - '@equal': [false, $price_override_triggers_approval]
+                            - '@equal': [false, $quote.prices_changed]
+                            - '@equal': [$approved, true]
+            review_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'under_review'
+                    - '@unset_value': [$approved]
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.review.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
+            return_transition_definition:
+                actions:
+                    - '@create_note': ['$comment', '$quote']
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'draft'
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.return.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
+            approve_transition_definition:
+                actions:
+                    - '@create_note': ['$comment', '$quote']
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'reviewed'
+                    - '@assign_value': [$approved, true]
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.approve.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
+            decline_by_reviewer_transition_definition:
+                actions:
+                    - '@create_note': ['$comment', '$quote']
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'not_approved'
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.decline_by_reviewer.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid

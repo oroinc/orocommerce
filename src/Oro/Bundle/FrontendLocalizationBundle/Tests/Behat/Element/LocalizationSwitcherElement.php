@@ -14,7 +14,6 @@ class LocalizationSwitcherElement extends Element
     {
         $switcherOptions = $this->elementFactory->createElement('LocalizationSwitcherOptions');
         $options = array_map(function (NodeElement $a) {
-
             return $a->getText();
         }, $switcherOptions->findAll('css', 'li'));
         sort($options);

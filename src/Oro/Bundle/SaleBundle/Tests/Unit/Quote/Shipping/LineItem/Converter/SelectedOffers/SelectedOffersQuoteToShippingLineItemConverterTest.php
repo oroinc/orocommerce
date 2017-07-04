@@ -11,6 +11,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShipp
 // @codingStandardsIgnoreStart
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\SelectedOffers\SelectedOffersQuoteToShippingLineItemConverter;
 use Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\LineItem\Converter\AbstractOffersQuoteToShippingLineItemConverterTest;
+
 // @codingStandardsIgnoreEnd
 
 class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQuoteToShippingLineItemConverterTest

@@ -8,7 +8,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,12 +38,6 @@ class QuoteController extends Controller
      */
     public function viewAction(Quote $quote)
     {
-        $status = $quote->getInternalStatus();
-        $statuses = [Quote::INTERNAL_STATUS_DRAFT, Quote::INTERNAL_STATUS_DELETED];
-        if ($status && in_array($status->getId(), $statuses, true)) {
-            throw $this->createNotFoundException();
-        }
-
         if (!$quote->isAcceptable()) {
             $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
         }

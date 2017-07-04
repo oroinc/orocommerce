@@ -40,7 +40,7 @@ class InventoryLevelControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $inventoryButton = $crawler->filterXPath('//a[@title="Inventory"]');
+        $inventoryButton = $crawler->filterXPath('//a[@title="Manage Inventory"]');
         $this->assertEquals(1, $inventoryButton->count());
 
         $updateUrl = $inventoryButton->attr('data-url');
