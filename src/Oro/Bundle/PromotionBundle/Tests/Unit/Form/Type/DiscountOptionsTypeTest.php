@@ -17,6 +17,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -135,6 +136,54 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    /**
+     * @dataProvider submitInvalidDataProvider
+     *
+     * @param array $submittedData
+     */
+    public function testSubmitInvalid($submittedData)
+    {
+        $form = $this->factory->create(
+            $this->formType,
+            []
+        );
+        $form->submit($submittedData);
+        $this->assertFalse($form->isValid());
+    }
+
+    /**
+     * @return array
+     */
+    public function submitInvalidDataProvider()
+    {
+        return [
+            'invalid type percent' => [
+                'submittedData' => [
+                    AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT,
+                    DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD => 'abc'
+                ]
+            ],
+            'null percent' => [
+                'submittedData' => [
+                    AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT,
+                    DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD => null
+                ]
+            ],
+            'invalid type amount value' => [
+                'submittedData' => [
+                    AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_AMOUNT,
+                    DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD => ['value' => '123$', 'currency' => 'USD'],
+                ]
+            ],
+            'null amount' => [
+                'submittedData' => [
+                    AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_AMOUNT,
+                    DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD => ['value' => null, 'currency' => 'USD'],
+                ]
+            ]
+        ];
+    }
+
     public function testSetDefaultOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
@@ -170,6 +219,20 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
             );
 
         $this->formType->setDefaultOptions($resolver);
+    }
+
+    public function testFinishView()
+    {
+        $form = $this->factory->create($this->formType);
+        $view = $form->createView();
+        $this->assertArrayHasKey('attr', $view->vars);
+        $this->assertArraySubset(
+            [
+                'data-page-component-module' => $form->getConfig()->getOption('page_component'),
+                'data-page-component-options' => json_encode($form->getConfig()->getOption('page_component_options'))
+            ],
+            $view->vars['attr']
+        );
     }
 
     /**

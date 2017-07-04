@@ -14,6 +14,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 
 class PromotionType extends AbstractType
 {
@@ -58,7 +59,8 @@ class PromotionType extends AbstractType
                 ScopeCollectionType::NAME,
                 [
                     'label' => 'oro.promotion.restrictions.label',
-                    'required' => false,
+                    'required' => true,
+                    'constraints' => [new Count(['min' => 1])],
                     'entry_options' => [
                         'scope_type' => self::SCOPE_TYPE
                     ],

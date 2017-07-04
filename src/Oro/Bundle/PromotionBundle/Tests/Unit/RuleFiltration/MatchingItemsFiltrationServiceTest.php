@@ -90,8 +90,15 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $secondPromotion = $this->createPromotion($secondPromotionSegment, self::UNIT_CODE_ITEM);
         $thirdPromotionSegment = new Segment();
         $thirdPromotion = $this->createPromotion($thirdPromotionSegment, self::UNIT_CODE_ITEM);
+        $fourthPromotionSegment = new Segment();
+        $promotionWithNotUnitAwareDiscountAndWithoutProducts = $this->createPromotion($fourthPromotionSegment);
 
-        $ruleOwners = [$firstPromotion, $secondPromotion, $thirdPromotion];
+        $ruleOwners = [
+            $firstPromotion,
+            $secondPromotion,
+            $thirdPromotion,
+            $promotionWithNotUnitAwareDiscountAndWithoutProducts,
+        ];
 
         $product = new Product();
         $lineItems = [
@@ -103,12 +110,13 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $this->configureFiltrationService();
 
         $this->matchingProductsProvider
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(4))
             ->method('getMatchingProducts')
             ->willReturnMap([
                 [$firstPromotionSegment, $lineItems, [$product]],
                 [$secondPromotionSegment, $lineItems, []],
-                [$thirdPromotionSegment, $lineItems, [$product]]
+                [$thirdPromotionSegment, $lineItems, [$product]],
+                [$fourthPromotionSegment, $lineItems, []]
             ]);
 
         $this->assertEquals(
@@ -119,12 +127,15 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Segment $segment
-     * @param string $productUnitCode
+     * @param string|null $productUnitCode
      * @return Promotion
      */
-    private function createPromotion(Segment $segment, $productUnitCode)
+    private function createPromotion(Segment $segment, $productUnitCode = null)
     {
-        $options[DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE] = $productUnitCode;
+        $options = [];
+        if ($productUnitCode) {
+            $options[DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE] = $productUnitCode;
+        }
         $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['options' => $options]);
 
         /** @var Promotion|\PHPUnit_Framework_MockObject_MockObject $promotion */

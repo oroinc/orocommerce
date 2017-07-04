@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
@@ -41,6 +42,11 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
     private $scopeManager;
 
     /**
+     * @var LineItemNotPricedSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $lineItemNotPricedSubtotalProvider;
+
+    /**
      * @var ShoppingListContextDataConverter
      */
     private $converter;
@@ -51,11 +57,13 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $this->lineItemsConverter = $this->createMock(LineItemsToDiscountLineItemsConverter::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
+        $this->lineItemNotPricedSubtotalProvider = $this->createMock(LineItemNotPricedSubtotalProvider::class);
         $this->converter = new ShoppingListContextDataConverter(
             $this->relationsProvider,
             $this->lineItemsConverter,
             $this->userCurrencyManager,
-            $this->scopeManager
+            $this->scopeManager,
+            $this->lineItemNotPricedSubtotalProvider
         );
     }
 
@@ -85,12 +93,14 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $customerGroup = new CustomerGroup();
         $customer = new Customer();
         $customerUser = new CustomerUser();
-        $subtotal = new Subtotal();
         $lineItem = new LineItem();
         $entity = new ShoppingList();
         $entity->setCustomerUser($customerUser);
-        $entity->setSubtotal($subtotal);
         $entity->addLineItem($lineItem);
+
+        $subtotalAmount = 100.0;
+        $subtotal = new Subtotal();
+        $subtotal->setAmount($subtotalAmount);
 
         $this->relationsProvider->expects($this->once())
             ->method('getCustomer')
@@ -104,12 +114,17 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $currency = $this->getCurrency();
         $scopeCriteria = $this->getScopeCriteria();
 
+        $this->lineItemNotPricedSubtotalProvider->expects($this->any())
+            ->method('getSubtotalByCurrency')
+            ->with($entity, $currency)
+            ->willReturn($subtotal);
+
         $expectedData = [
             ContextDataConverterInterface::CUSTOMER_USER => $customerUser,
             ContextDataConverterInterface::CUSTOMER => $customer,
             ContextDataConverterInterface::CUSTOMER_GROUP => $customerGroup,
             ContextDataConverterInterface::LINE_ITEMS => $discountLineItems,
-            ContextDataConverterInterface::SUBTOTAL => $subtotal,
+            ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
             ContextDataConverterInterface::CURRENCY => $currency,
             ContextDataConverterInterface::CRITERIA => $scopeCriteria,
         ];
@@ -122,13 +137,15 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $customer = new Customer();
         $customer->setGroup($customerGroup);
         $customerUser = new CustomerUser();
-        $subtotal = new Subtotal();
         $lineItem = new LineItem();
         $entity = new ShoppingList();
         $entity->setCustomerUser($customerUser);
         $entity->setCustomer($customer);
-        $entity->setSubtotal($subtotal);
         $entity->addLineItem($lineItem);
+
+        $subtotalAmount = 100.0;
+        $subtotal = new Subtotal();
+        $subtotal->setAmount($subtotalAmount);
 
         $this->relationsProvider->expects($this->once())
             ->method('getCustomer')
@@ -142,12 +159,17 @@ class ShoppingListContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $currency = $this->getCurrency();
         $scopeCriteria = $this->getScopeCriteria();
 
+        $this->lineItemNotPricedSubtotalProvider->expects($this->any())
+            ->method('getSubtotalByCurrency')
+            ->with($entity, $currency)
+            ->willReturn($subtotal);
+
         $expectedData = [
             ContextDataConverterInterface::CUSTOMER_USER => $customerUser,
             ContextDataConverterInterface::CUSTOMER => $customer,
             ContextDataConverterInterface::CUSTOMER_GROUP => $customerGroup,
             ContextDataConverterInterface::LINE_ITEMS => $discountLineItems,
-            ContextDataConverterInterface::SUBTOTAL => $subtotal,
+            ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
             ContextDataConverterInterface::CURRENCY => $currency,
             ContextDataConverterInterface::CRITERIA => $scopeCriteria,
         ];

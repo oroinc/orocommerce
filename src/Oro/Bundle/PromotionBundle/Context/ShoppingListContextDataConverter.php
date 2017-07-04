@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Context;
 
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
@@ -33,21 +34,29 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     protected $scopeManager;
 
     /**
+     * @var LineItemNotPricedSubtotalProvider
+     */
+    protected $lineItemNotPricedSubtotalProvider;
+
+    /**
      * @param CustomerUserRelationsProvider $relationsProvider
      * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ScopeManager $scopeManager
+     * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      */
     public function __construct(
         CustomerUserRelationsProvider $relationsProvider,
         LineItemsToDiscountLineItemsConverter $lineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
-        ScopeManager $scopeManager
+        ScopeManager $scopeManager,
+        LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
     ) {
         $this->relationsProvider = $relationsProvider;
         $this->lineItemsConverter = $lineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeManager = $scopeManager;
+        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
     }
 
     /**
@@ -68,14 +77,16 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
         if (!$customerGroup && $entity->getCustomer()) {
             $customerGroup = $entity->getCustomer()->getGroup();
         }
+        $currency = $this->userCurrencyManager->getUserCurrency();
+        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($entity, $currency);
 
         return [
             self::CUSTOMER_USER => $entity->getCustomerUser(),
             self::CUSTOMER => $customer ?: $entity->getCustomer(),
             self::CUSTOMER_GROUP => $customerGroup,
             self::LINE_ITEMS => $this->getLineItems($entity),
-            self::SUBTOTAL => $entity->getSubtotal(),
-            self::CURRENCY => $this->userCurrencyManager->getUserCurrency(),
+            self::SUBTOTAL => $subtotal->getAmount(),
+            self::CURRENCY => $currency,
             self::CRITERIA => $this->scopeManager->getCriteria('promotion'),
         ];
     }

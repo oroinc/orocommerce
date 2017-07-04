@@ -127,11 +127,33 @@ services:
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 
+    oro_promotion.discount.order_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderDiscountContextConverter
+        public: false
+        arguments:
+            - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+        tags:
+            - { name: 'oro_promotion.discount_context_converter' }
+
+    oro_promotion.discount.checkout_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\CheckoutDiscountContextConverter
+        public: false
+        arguments:
+            - '@oro_checkout.data_provider.converter.checkout_to_order'
+            - '@oro_promotion.discount.order_context_converter'
+        tags:
+            - { name: 'oro_promotion.discount_context_converter' }
+
     oro_promotion.discount.line_items_to_discount_line_items_converter:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
         public: false
         arguments:
              - '@oro_shopping_list.data_provider.frontend_product_prices'
+
+    oro_promotion.discount.order_line_items_to_discount_line_items_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter
+        public: false
 
     oro_promotion.promotion.context_data_converter_registry:
         class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
@@ -152,6 +174,28 @@ services:
             - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
             - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        tags:
+            - { name: 'oro_promotion.promotion_context_converter' }
+
+    oro_promotion.promotion.order_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter
+        public: false
+        arguments:
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_scope.scope_manager'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+        tags:
+            - { name: 'oro_promotion.promotion_context_converter' }
+
+    oro_promotion.promotion.checkout_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\CheckoutContextDataConverter
+        public: false
+        arguments:
+            - '@oro_checkout.data_provider.converter.checkout_to_order'
+            - '@oro_promotion.promotion.order_context_data_converter'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
 

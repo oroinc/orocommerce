@@ -2,73 +2,70 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount\Converter;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 
 class OrderDiscountContextConverter implements DiscountContextConverterInterface
 {
     /**
-     * @var LineItemsToDiscountLineItemsConverter
+     * @var OrderLineItemsToDiscountLineItemsConverter
      */
     protected $lineItemsConverter;
-    /**
-     * @var DiscountContextConverterRegistry
-     */
-    private $converter;
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
 
     /**
-     * OrderDiscountContextConverter constructor.
-     * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
+     * @var SubtotalProviderInterface
+     */
+    protected $lineItemsSubtotalProvider;
+
+    /**
+     * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
+     * @param SubtotalProviderInterface $lineItemsSubtotalProvider
      */
     public function __construct(
-        LineItemsToDiscountLineItemsConverter $lineItemsConverter,
-        DiscountContextConverterInterface $converter,
-        DoctrineHelper $doctrineHelper
+        OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter,
+        SubtotalProviderInterface $lineItemsSubtotalProvider
     ) {
         $this->lineItemsConverter = $lineItemsConverter;
-        $this->converter = $converter;
-        $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /** {@inheritdoc} */
-    public function supports($sourceEntity): bool
-    {
-        return $sourceEntity instanceof Order;
+        $this->lineItemsSubtotalProvider = $lineItemsSubtotalProvider;
     }
 
     /**
      * {@inheritdoc}
-     * @param Order $entity
      */
-    public function convert($entity): DiscountContext
+    public function convert($sourceEntity): DiscountContext
     {
-        if (!$this->supports($entity)) {
+        /** @var Order $sourceEntity */
+        if (!$this->supports($sourceEntity)) {
             throw new UnsupportedSourceEntityException(
-                sprintf('Source entity "%s" is not supported.', get_class($entity))
+                sprintf('Source entity "%s" is not supported.', get_class($sourceEntity))
             );
-        }
-
-        if ($entity->getSubtotal() === null) {
-            $sourceEntity = $this->doctrineHelper->getEntity(
-                $entity->getSourceEntityClass(),
-                $entity->getSourceEntityId()
-            );
-            if (!$sourceEntity) {
-                throw new UnsupportedSourceEntityException('Cant convert empty Order into DiscountContext');
-            }
-            return $this->converter->convert($sourceEntity);
         }
 
         $discountContext = new DiscountContext();
-        $discountContext->setSubtotal($entity->getSubtotal());
-        $discountContext->setLineItems($this->lineItemsConverter->convert($entity->getLineItems()->toArray()));
-        return $discountContext;
 
+        $subtotal = $this->lineItemsSubtotalProvider->getSubtotal($sourceEntity);
+        $discountContext->setSubtotal($subtotal->getAmount());
+        $shippingCost = $sourceEntity->getShippingCost();
+        if ($shippingCost instanceof Price) {
+            $discountContext->setShippingCost($shippingCost->getValue());
+        }
+
+        $discountLineItems = $this->lineItemsConverter->convert(
+            $sourceEntity->getLineItems()->toArray()
+        );
+        $discountContext->setLineItems($discountLineItems);
+
+        return $discountContext;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($sourceEntity): bool
+    {
+        return $sourceEntity instanceof Order;
     }
 }

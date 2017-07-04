@@ -68,9 +68,13 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit_Framework_TestC
         $lineItem->setProduct($product);
         $lineItem->setQuantity(10);
 
+        $lineItemWithoutProduct = new LineItem();
+        $lineItemWithoutProduct->setUnit($productUnit);
+        $lineItemWithoutProduct->setQuantity(10);
+
         return [
             'with matched prices' => [
-                'lineItems' => [$lineItem],
+                'lineItems' => [$lineItem, $lineItemWithoutProduct],
                 'matchedPrices' => [
                     $productId => [
                         $unitCode => $price
@@ -87,7 +91,7 @@ class LineItemsToDiscountLineItemsConverterTest extends \PHPUnit_Framework_TestC
                 ]
             ],
             'without matched prices' => [
-                'lineItems' => [$lineItem],
+                'lineItems' => [$lineItem, $lineItemWithoutProduct],
                 'matchedPrices' => [
                     $productId => [
                         'box' => $price
