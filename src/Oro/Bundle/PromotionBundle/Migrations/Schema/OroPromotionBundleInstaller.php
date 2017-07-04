@@ -190,11 +190,13 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('line_item_id', 'integer', ['notnull' => false]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
-        $table->addColumn('amount', 'float', []);
-        $table->addColumn('currency', 'string', ['length' => 50]);
+        $table->addColumn('amount', 'decimal', ['precision' => 19, 'scale' => 4]);
+        $table->addColumn('currency', 'string', ['length' => 3]);
         $table->addColumn('config_options', 'json_array', []);
         $table->addColumn('promotion_name', 'text', []);
-        $table->addColumn('class', 'string', ['length' => 255]);
+        $table->addColumn('class', 'text', []);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
     }
 

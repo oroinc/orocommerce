@@ -3,8 +3,10 @@
 namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="oro_promotion_applied_discount")
@@ -12,6 +14,8 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
  */
 class AppliedDiscount
 {
+    use DatesAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer", name="id")
@@ -22,21 +26,21 @@ class AppliedDiscount
     protected $id;
 
     /**
-     * @ORM\Column(name="class", type="string")
+     * @ORM\Column(name="class", type="text")
      *
      * @var string
      */
     protected $class;
 
     /**
-     * @ORM\Column(name="amount", type="float")
+     * @ORM\Column(name="amount", type="money_value")
      *
      * @var float
      */
     protected $amount;
 
     /**
-     * @ORM\Column(name="currency", type="string", length=50)
+     * @ORM\Column(name="currency", type="currency", length=3)
      *
      * @var string
      */
