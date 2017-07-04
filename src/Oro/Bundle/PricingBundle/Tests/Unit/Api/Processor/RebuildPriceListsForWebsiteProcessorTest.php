@@ -127,6 +127,4 @@ class RebuildPriceListsForWebsiteProcessorTest extends RebuildPriceListsTestCase
 
         return $relation;
     }
-
-
 }
