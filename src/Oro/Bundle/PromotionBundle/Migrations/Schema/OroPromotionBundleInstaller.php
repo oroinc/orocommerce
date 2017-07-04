@@ -196,27 +196,6 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     }
 
     /**
-     * Create oro_promotion_applied_discount table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPromotionAppliedDiscountTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_promotion_applied_discount');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
-        $table->addColumn('order_id', 'integer', ['notnull' => false]);
-        $table->addColumn('type', 'string', ['length' => 50]);
-        $table->addColumn('amount', 'float');
-        $table->addColumn('currency', 'string');
-        $table->addColumn('config_options', 'json_array');
-        $table->addColumn('options', 'json_array');
-        $table->addIndex(['promotion_id']);
-        $table->addIndex(['order_id']);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
      * Create oro_promotion_to_coupon table
      *
      * @param Schema $schema
