@@ -75,6 +75,7 @@
         </div>
     {% endset %}
 
+    {# TODO: add 'form_row(form.useCoupons)' to general block after BB-9489 #}
     {% set dataBlocks = [
         {
             'title': 'oro.promotion.blocks.general'|trans,
@@ -86,8 +87,7 @@
                     form_row(form.rule.name),
                     form_row(form.rule.sortOrder),
                     form_row(form.rule.enabled, {'label': 'oro.promotion.rule.enabled.label'}),
-                    form_row(form.rule.stopProcessing),
-                    form_row(form.useCoupons)
+                    form_row(form.rule.stopProcessing)
                 ]
             }]
         },
