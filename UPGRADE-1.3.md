@@ -75,6 +75,15 @@ ProductBundle
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
     - New service `oro_product.brand.manager.api` registered
+- Interface `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface`
+    - New method `getHumanReadableValue` was added
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Symfony\Component\Translation\TranslatorInterface` was added.
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
+- Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
+    
     
 PaymentBundle
 -------------
