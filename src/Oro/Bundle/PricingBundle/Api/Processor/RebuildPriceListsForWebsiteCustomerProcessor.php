@@ -30,17 +30,19 @@ class RebuildPriceListsForWebsiteCustomerProcessor implements ProcessorInterface
     {
         $websiteCustomerAwareEntities = $context->getResult();
 
-        if (!$websiteCustomerAwareEntities) {
-            return;
-        }
-
         if (!is_array($websiteCustomerAwareEntities)) {
             $websiteCustomerAwareEntities = [$websiteCustomerAwareEntities];
         }
 
         $processed = [];
-        /** @var WebsiteAwareInterface|CustomerAwareInterface $entity */
         foreach ($websiteCustomerAwareEntities as $entity) {
+            if (!$entity instanceof WebsiteAwareInterface) {
+                continue;
+            }
+            if (!$entity instanceof CustomerAwareInterface) {
+                continue;
+            }
+
             $customer = $entity->getCustomer();
             $website = $entity->getWebsite();
 

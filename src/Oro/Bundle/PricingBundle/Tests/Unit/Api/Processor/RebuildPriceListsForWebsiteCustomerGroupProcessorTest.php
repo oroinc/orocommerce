@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Api\Processor\RebuildPriceListsForWebsiteCustomerGr
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPriceListsTestCase
 {
@@ -24,15 +25,28 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
         );
     }
 
-    public function testProcessForNullResult()
+    public function testProcessForNotWebsiteAware()
     {
         $context = $this->createContext(null);
 
-        $this->relationChangesHandler->expects(static::any())
+        $this->relationChangesHandler
+            ->expects(static::never())
             ->method('handleCustomerGroupChange');
 
         $this->processor->process($context);
     }
+
+    public function testProcessForNotCustomerGroupAware()
+    {
+        $context = $this->createContext($this->createMock(WebsiteAwareInterface::class));
+
+        $this->relationChangesHandler
+            ->expects(static::never())
+            ->method('handleCustomerGroupChange');
+
+        $this->processor->process($context);
+    }
+
 
     public function testProcessForCustomerGroupFallback()
     {
@@ -42,7 +56,8 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
 
         $context = $this->createContext($fallback);
 
-        $this->relationChangesHandler->expects(static::once())
+        $this->relationChangesHandler
+            ->expects(static::once())
             ->method('handleCustomerGroupChange')
             ->with($group, $website);
 
@@ -61,7 +76,8 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
 
         $context = $this->createContext([$fallback, $fallback, $fallback2]);
 
-        $this->relationChangesHandler->expects(static::exactly(2))
+        $this->relationChangesHandler
+            ->expects(static::exactly(2))
             ->method('handleCustomerGroupChange')
             ->withConsecutive(
                 [$group, $website],
@@ -79,7 +95,8 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
 
         $context = $this->createContext($relation);
 
-        $this->relationChangesHandler->expects(static::once())
+        $this->relationChangesHandler
+            ->expects(static::once())
             ->method('handleCustomerGroupChange')
             ->with($group, $website);
 
@@ -98,7 +115,8 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
 
         $context = $this->createContext([$relation, $relation, $relation2]);
 
-        $this->relationChangesHandler->expects(static::exactly(2))
+        $this->relationChangesHandler
+            ->expects(static::exactly(2))
             ->method('handleCustomerGroupChange')
             ->withConsecutive(
                 [$group, $website],
@@ -116,7 +134,8 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
     private function createCustomerGroup(int $id)
     {
         $customerGroup = $this->createMock(CustomerGroup::class);
-        $customerGroup->expects(static::any())
+        $customerGroup
+            ->expects(static::any())
             ->method('getId')
             ->willReturn($id);
 
@@ -132,7 +151,8 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
     private function createPriceListToCustomerGroup(CustomerGroup $group, Website $website): PriceListToCustomerGroup
     {
         $relation = new PriceListToCustomerGroup();
-        $relation->setCustomerGroup($group)
+        $relation
+            ->setCustomerGroup($group)
             ->setWebsite($website);
 
         return $relation;
@@ -147,7 +167,8 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
     private function createFallback(CustomerGroup $group, Website $website): PriceListCustomerGroupFallback
     {
         $fallback = new PriceListCustomerGroupFallback();
-        $fallback->setCustomerGroup($group)
+        $fallback
+            ->setCustomerGroup($group)
             ->setWebsite($website)
             ->setFallback(0);
 

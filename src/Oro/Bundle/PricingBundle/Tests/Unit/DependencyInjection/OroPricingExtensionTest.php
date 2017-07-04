@@ -21,7 +21,6 @@ class OroPricingExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'oro_pricing.api.rebuild_price_lists_for_website',
             'oro_pricing.api.rebuild_price_lists_for_website_customer_group',
             'oro_pricing.api.rebuild_price_lists_for_website_customer',
         ];
