@@ -131,6 +131,7 @@ class QuoteProductTypeTest extends AbstractTest
                 $this->assertArrayHasKey('intention', $options);
                 $this->assertArrayHasKey('page_component', $options);
                 $this->assertArrayHasKey('page_component_options', $options);
+                $this->assertArrayHasKey('allow_add_free_form_items', $options);
 
                 return true;
             }))
@@ -171,6 +172,11 @@ class QuoteProductTypeTest extends AbstractTest
      */
     public function finishViewProvider()
     {
+        $defaultOptions = [
+            'compact_units' => true,
+            'allow_add_free_form_items' => true,
+        ];
+
         return [
             'empty quote product' => [
                 'input'     => [
@@ -180,6 +186,7 @@ class QuoteProductTypeTest extends AbstractTest
                     'allUnits' => [],
                     'options' => [
                         'compact_units' => false,
+                        'allow_add_free_form_items' => false,
                     ],
                 ],
                 'expected'  => [
@@ -191,6 +198,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
                         'isFreeForm' => false,
+                        'allowEditFreeForm' => false,
                     ],
                 ],
             ],
@@ -204,6 +212,7 @@ class QuoteProductTypeTest extends AbstractTest
                     ],
                     'options' => [
                         'compact_units' => false,
+                        'allow_add_free_form_items' => true,
                     ],
                 ],
                 'expected'  => [
@@ -217,6 +226,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
                         'isFreeForm' => false,
+                        'allowEditFreeForm' => true,
                     ],
                 ],
             ],
@@ -233,6 +243,7 @@ class QuoteProductTypeTest extends AbstractTest
                     ],
                     'options' => [
                         'compact_units' => false,
+                        'allow_add_free_form_items' => true,
                     ],
                 ],
                 'expected'  => [
@@ -257,6 +268,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'allowEditFreeForm' => true,
                         'isFreeForm' => false,
                     ],
                 ],
@@ -272,9 +284,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'unit3',
                         'unit4',
                     ],
-                    'options' => [
-                        'compact_units' => true,
-                    ],
+                    'options' => $defaultOptions,
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
@@ -298,6 +308,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => true,
+                        'allowEditFreeForm' => true,
                         'isFreeForm' => false,
                     ],
                 ],
@@ -312,9 +323,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'unit3',
                         'unit4',
                     ],
-                    'options' => [
-                        'compact_units' => true,
-                    ],
+                    'options' => $defaultOptions,
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
@@ -328,6 +337,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => true,
+                        'allowEditFreeForm' => true,
                         'isFreeForm' => true,
                     ],
                 ],
@@ -342,9 +352,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'unit3',
                         'unit4',
                     ],
-                    'options' => [
-                        'compact_units' => true,
-                    ],
+                    'options' => $defaultOptions,
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
@@ -358,6 +366,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => true,
+                        'allowEditFreeForm' => true,
                         'isFreeForm' => true,
                     ],
                 ],

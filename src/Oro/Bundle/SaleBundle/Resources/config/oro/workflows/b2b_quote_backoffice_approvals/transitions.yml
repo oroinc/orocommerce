@@ -1,0 +1,106 @@
+workflows:
+    b2b_quote_backoffice_approvals:
+        transitions:
+            send_to_customer_transition:
+                is_unavailable_hidden: true
+
+            submit_for_review_transition:
+                step_to: submitted_for_review
+                transition_definition: submit_for_review_transition_definition
+                is_unavailable_hidden: true
+                frontend_options:
+                    icon: 'fa-list-alt'
+                form_options:
+                    attribute_fields:
+                        comment:
+                            form_type: textarea
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
+
+            review_transition:
+                step_to: under_review
+                acl_resource: oro_quote_review_and_approve
+                transition_definition: review_transition_definition
+                is_unavailable_hidden: true
+                frontend_options:
+                    icon: 'fa-eye'
+
+            return_transition:
+                step_to: draft
+                acl_resource: oro_quote_review_and_approve
+                transition_definition: return_transition_definition
+                frontend_options:
+                    icon: 'fa-reply'
+                form_options:
+                    attribute_fields:
+                        comment:
+                            form_type: textarea
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
+
+            approve_and_send_to_customer_transition:
+                step_to: sent_to_customer
+                acl_resource: oro_quote_review_and_approve
+                transition_definition: send_to_customer_transition_definition
+                dialog_template: 'OroSaleBundle:Workflow:emailNotification.html.twig'
+                frontend_options:
+                    icon: 'fa-envelope'
+                    dialog:
+                        dialogOptions:
+                            allowMaximize: true
+                            allowMinimize: true
+                            dblclick: maximize
+                            maximizedHeightDecreaseBy: minimize-bar
+                            width: 1000
+                            height: 600
+                form_options:
+                    attribute_fields:
+                        email:
+                            form_type: oro_email_email
+                            options:
+                                translation_domain: messages
+                    form_init:
+                        - '@call_service_method':
+                            attribute: $email
+                            service: oro_sale.helper.notification
+                            method: getEmailModel
+                            method_parameters: [$quote]
+                        - '@call_service_method':
+                            attribute: $appendSignature
+                            service: oro_config.manager
+                            method: get
+                            method_parameters: ['oro_email.append_signature']
+
+            approve_transition:
+                step_to: approved
+                acl_resource: oro_quote_review_and_approve
+                transition_definition: approve_transition_definition
+                frontend_options:
+                    icon: 'fa-thumbs-o-up'
+                form_options:
+                    attribute_fields:
+                        comment:
+                            form_type: textarea
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
+
+            decline_by_reviewer_transition:
+                step_to: not_approved
+                acl_resource: oro_quote_review_and_approve
+                transition_definition: decline_by_reviewer_transition_definition
+                frontend_options:
+                    icon: 'fa-thumbs-o-down'
+                form_options:
+                    attribute_fields:
+                        comment:
+                            form_type: textarea
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
