@@ -3,10 +3,10 @@
 namespace Oro\Bundle\UPSBundle\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
@@ -37,9 +37,9 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $shippingPriceCache;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
-    private $methodIdentifierGenerator;
+    private $integrationIdentifierGenerator;
 
     /**
      * @var UPSShippingMethodTypeFactoryInterface
@@ -52,13 +52,13 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $integrationIconProvider;
 
     /**
-     * @param UPSTransport                                  $transport
-     * @param PriceRequestFactory                           $priceRequestFactory
-     * @param LocalizationHelper                            $localizationHelper
-     * @param IntegrationIconProviderInterface              $integrationIconProvider
-     * @param ShippingPriceCache                            $shippingPriceCache
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
-     * @param UPSShippingMethodTypeFactoryInterface         $methodTypeFactory
+     * @param UPSTransport                            $transport
+     * @param PriceRequestFactory                     $priceRequestFactory
+     * @param LocalizationHelper                      $localizationHelper
+     * @param IntegrationIconProviderInterface        $integrationIconProvider
+     * @param ShippingPriceCache                      $shippingPriceCache
+     * @param IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator
+     * @param UPSShippingMethodTypeFactoryInterface   $methodTypeFactory
      */
     public function __construct(
         UPSTransport $transport,
@@ -66,14 +66,14 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
         LocalizationHelper $localizationHelper,
         IntegrationIconProviderInterface $integrationIconProvider,
         ShippingPriceCache $shippingPriceCache,
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
+        IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
         UPSShippingMethodTypeFactoryInterface $methodTypeFactory
     ) {
         $this->transport = $transport;
         $this->priceRequestFactory = $priceRequestFactory;
         $this->localizationHelper = $localizationHelper;
         $this->shippingPriceCache = $shippingPriceCache;
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
+        $this->integrationIdentifierGenerator = $integrationIdentifierGenerator;
         $this->methodTypeFactory = $methodTypeFactory;
         $this->integrationIconProvider = $integrationIconProvider;
     }
@@ -102,7 +102,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
      */
     private function getIdentifier(Channel $channel)
     {
-        return $this->methodIdentifierGenerator->generateIdentifier($channel);
+        return $this->integrationIdentifierGenerator->generateIdentifier($channel);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
@@ -21,7 +21,7 @@ class UPSShippingMethodTypeFactoryTest extends \PHPUnit_Framework_TestCase
     private $typeIdentifierGenerator;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $methodIdentifierGenerator;
 
@@ -48,7 +48,7 @@ class UPSShippingMethodTypeFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->typeIdentifierGenerator = $this->createMock(UPSMethodTypeIdentifierGeneratorInterface::class);
-        $this->methodIdentifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
+        $this->methodIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->transport = $this->createMock(UPSTransport::class);
         $this->priceRequestFactory = $this->createMock(PriceRequestFactory::class);
         $this->shippingPriceCache = $this->createMock(ShippingPriceCache::class);

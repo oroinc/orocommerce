@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHandler;
 
+use Psr\Log\LoggerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Model\EnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
@@ -16,6 +17,9 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
 
     /** @var EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $enumValueProvider;
+
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $logger;
 
     /** @var EnumVariantFieldValueHandler */
     private $handler;
@@ -33,7 +37,13 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->handler = new EnumVariantFieldValueHandler($this->doctrineHelper, $this->enumValueProvider);
+        $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->handler = new EnumVariantFieldValueHandler(
+            $this->doctrineHelper,
+            $this->enumValueProvider,
+            $this->logger
+        );
     }
 
     /**
@@ -44,6 +54,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
         unset(
             $this->doctrineHelper,
             $this->enumValueProvider,
+            $this->logger,
             $this->handler
         );
     }

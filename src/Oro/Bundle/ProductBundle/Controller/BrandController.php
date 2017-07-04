@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -33,45 +34,41 @@ class BrandController extends Controller
      * @Route("/create", name="oro_brand_create")
      * @Template("OroProductBundle:Brand:update.html.twig")
      *
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new Brand());
+        return $this->update(new Brand(), $request);
     }
 
     /**
      * @Route("/update/{id}", name="oro_brand_update", requirements={"id"="\d+"})
      * @Template
      *
-     * @param Brand $brand
+     * @param Brand   $brand
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(Brand $brand)
+    public function updateAction(Brand $brand, Request $request)
     {
-        return $this->update($brand);
+        return $this->update($brand, $request);
     }
 
     /**
-     * @param Brand $brand
-     *
+     * @param Brand   $brand
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function update(Brand $brand)
+    protected function update(Brand $brand, Request $request)
     {
-        if ($this->get('oro_product.form.handler.brand')->process($brand)) {
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                $this->get('translator')->trans('oro.product.brand.form.update.messages.saved')
-            );
-
-            return $this->get('oro_ui.router')->redirect($brand);
-        }
-
-        return [
-            'entity'        => $brand,
-            'form'          => $this->get('oro_product.form.brand')->createView()
-        ];
+        return $this->get('oro_form.update_handler')->update(
+            $brand,
+            $this->createForm(BrandType::NAME, $brand),
+            $this->get('translator')->trans('oro.product.brand.form.update.messages.saved'),
+            $request,
+            null
+        );
     }
 
     /**

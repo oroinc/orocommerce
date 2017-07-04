@@ -21,6 +21,7 @@ oro:
             shipping_method_locked.label: 'Shipping Method Locked'
             allow_unlisted_shipping_method.label: 'Allow Unlisted Shipping Method'
             expired.label: 'Expired'
+            prices_changed.label: 'Prices Changed'
             not_expired.label: 'Not Expired'
             po_number.label: 'PO Number'
             ship_until.label: 'Do Not Ship Later Than'
@@ -89,6 +90,11 @@ oro:
                 quote.sent.success: 'Quote #%id% successfully sent to customer'
                 quote.cancel.success: 'Quote #%id% successfully cancelled'
                 quote.decline.success: 'Quote #%id% successfully declined'
+                quote.submit_for_review.success: 'Quote #%id% successfully submitted for review'
+                quote.review.success: 'Quote #%id% on review'
+                quote.return.success: 'Quote #%id% returned'
+                quote.approve.success: 'Quote #%id% approved'
+                quote.decline_by_reviewer.success: 'Quote #%id% declined'
 
             form:
                 address:
@@ -96,6 +102,8 @@ oro:
                     choose_or_create: Select an existing address or enter a new address below
                     manual: Enter other address
                 shipping_options.label: 'Shipping Options'
+                error:
+                    price_override: 'Price overriding allowed by tier price only'
 
             datagrid:
                 customer.label: 'Quotes'
@@ -234,11 +242,14 @@ oro:
 
         security:
             permission:
-                address_shipping_customer_use_any: "[Quote] Use any shipping address from the customer address book"
-                address_shipping_customer_user_use_default: "[Quote] Use the default shipping address from the customer user's address book"
-                address_shipping_customer_user_use_any: "[Quote] Use any shipping address from the customer user's address book"
-                address_shipping_allow_manual: "[Quote] Enter the shipping address manually"
-                payment_term_customer_can_override: "[Quote] Override customer payment term"
+                address_shipping_customer_use_any: "Use any shipping address from the customer address book"
+                address_shipping_customer_user_use_default: "Use the default shipping address from the customer user's address book"
+                address_shipping_customer_user_use_any: "Use any shipping address from the customer user's address book"
+                address_shipping_allow_manual: "Enter the shipping address manually"
+                payment_term_customer_can_override: "Override customer payment term"
+                quote_prices_override: "Override quote prices"
+                quote_review_and_approve: "Review and approve quotes"
+                add_free_form_items: "Add free-form items"
 
     frontend:
         sale:

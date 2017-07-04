@@ -72,10 +72,18 @@ ProductBundle
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandSelectType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandStatusType` was added
-    - New form handler `Oro\Bundle\ProductBundle\Form\Handler\BrandHandler` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
     - New service `oro_product.brand.manager.api` registered
+- Interface `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface`
+    - New method `getHumanReadableValue` was added
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Symfony\Component\Translation\TranslatorInterface` was added.
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
+- Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
+    
     
 PaymentBundle
 -------------
@@ -89,6 +97,7 @@ ShippingBundle
  - `oroshipping/js/app/views/shipping-rule-method-view` - changed options, functions, functionality
  - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
  - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
+ - previously deprecated interface `\Oro\Bundle\ShippingBundle\Identifier\IntegrationMethodIdentifierGeneratorInterface` is removed along with its implementations and usages. Use `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` instead.
 
 PayPalBundle
 --------------
@@ -138,6 +147,7 @@ PaymentBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+- Unused abstract classes `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig` and `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig` was removed.
 
 RFPBundle
 ---------
@@ -191,3 +201,39 @@ PricingBundle
 ValidationBundle
 --------------
  - Added `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOf` constraint and `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator` validator for validating that one of some fields in a group should be blank
+
+SaleBundle
+----------
+- Added Voter `Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter`, Checks if given Quote contains internal status, triggered only for Commerce Application.
+- Updated entity `Oro\Bundle\SaleBundle\Entity\Quote`
+    - Added constant `FRONTEND_INTERNAL_STATUSES` that holds all available internal statuses for Commerce Application
+    - Added new property `pricesChanged`, that indicates if prices were changed.
+- Added Datagrid Listener `Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener`, appends frontend datagrid query with proper frontend internal statuses.
+- Added Subscriber `Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber`, discards price modifications and free form inputs, if there are no permissions for those operations
+- Updated FormType `Oro\Bundle\SaleBundle\Form\Type\QuoteType`
+    - changed constructor signature, now it awaits:
+        - third argument should be an instance of `Symfony\Component\EventDispatcher\EventSubscriberInterface`
+        - fourth argument should be an instance of `Oro\Bundle\SecurityBundle\SecurityFacade`
+- Following ACL permissions moved to `Quote` category
+    - oro_quote_address_shipping_customer_use_any
+    - oro_quote_address_shipping_customer_use_any_backend
+    - oro_quote_address_shipping_customer_user_use_default
+    - oro_quote_address_shipping_customer_user_use_default_backend
+    - oro_quote_address_shipping_customer_user_use_any
+    - oro_quote_address_shipping_customer_user_use_any_backend
+    - oro_quote_address_shipping_allow_manual
+    - oro_quote_address_shipping_allow_manual_backend
+    - oro_quote_payment_term_customer_can_override
+- Added new permission to `Quote` category
+    - oro_quote_prices_override
+    - oro_quote_review_and_approve
+    - oro_quote_add_free_form_items
+- Added new workflow `b2b_quote_backoffice_approvals`
+
+UPSBundle
+---------
+- Class `Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+
+FlatRateShippingBundle
+----------------------
+- Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.

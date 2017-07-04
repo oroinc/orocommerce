@@ -4,15 +4,19 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Symfony\Component\HttpFoundation\Request;
+
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoriesProductsProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 
-class CategoriesProductsProviderTest extends WebTestCase
+class CategoriesProductsProviderTest extends FrontendWebTestCase
 {
     /** @var ManagerRegistry */
     protected $registry;
@@ -20,8 +24,8 @@ class CategoriesProductsProviderTest extends WebTestCase
     /** @var CategoryRepository */
     protected $categoryRepository;
 
-    /** @var ProductManager */
-    protected $productManager;
+    /** @var ProductRepository */
+    protected $searchRepository;
 
     /**
      * @inheritdoc
@@ -34,17 +38,28 @@ class CategoriesProductsProviderTest extends WebTestCase
             [
                 LoadCategoryData::class,
                 LoadCategoryProductData::class,
+                LoadWebsiteData::class,
+                LoadProductsToIndex::class,
             ]
         );
 
+        $this->getContainer()->get('oro_website_search.indexer')
+            ->reindex(Product::class);
+
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        $this->setCurrentWebsite('default');
+
         $this->registry = $this->getContainer()->get('doctrine');
         $this->categoryRepository = $this->registry->getRepository('OroCatalogBundle:Category');
-        $this->productManager = $this->getContainer()->get('oro_product.product.manager');
+        $this->searchRepository = $this->getContainer()->get('oro_product.website_search.repository.product');
     }
 
     public function testGetCountByCategories()
     {
-        $provider = new CategoriesProductsProvider($this->categoryRepository, $this->productManager);
+        $provider = new CategoriesProductsProvider(
+            $this->categoryRepository,
+            $this->searchRepository
+        );
 
         $categoryIds = [
             $this->getCategoryId(LoadCategoryData::FIRST_LEVEL),
@@ -59,11 +74,11 @@ class CategoriesProductsProviderTest extends WebTestCase
         $result = $provider->getCountByCategories($categoryIds);
 
         $expectedResult = [
-            $this->getCategoryId(LoadCategoryData::FIRST_LEVEL) => 7,
+            $this->getCategoryId(LoadCategoryData::FIRST_LEVEL) => 6,
             $this->getCategoryId(LoadCategoryData::SECOND_LEVEL1) => 3,
-            $this->getCategoryId(LoadCategoryData::SECOND_LEVEL2) => 3,
+            $this->getCategoryId(LoadCategoryData::SECOND_LEVEL2) => 2,
             $this->getCategoryId(LoadCategoryData::THIRD_LEVEL1) => 2,
-            $this->getCategoryId(LoadCategoryData::THIRD_LEVEL2) => 3,
+            $this->getCategoryId(LoadCategoryData::THIRD_LEVEL2) => 2,
             $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL1) => 1,
             $this->getCategoryId(LoadCategoryData::FOURTH_LEVEL2) => 2,
         ];
