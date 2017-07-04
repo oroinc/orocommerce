@@ -4,21 +4,22 @@
 
 ### get
 
-Get one PriceList entity
+Get detailes of the price list by its ID.
 
 {@inheritdoc}
 
 ### get_list
 
-Get a collection of PriceList entities
+Get the collection of PriceList details. A collection may contain all price lists or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
 ### create
 
-Create a new PriceList entity. The Fields `createdAt`, `updatedAt`, `containSchedule` are not configurable
-in API and are set automatically. Use `priceListCurrencies` field to set price list currencies as 
-an array of strings - currency codes.
+Create a new price list. Use `priceListCurrencies` field to set price list currencies as an array of strings.
+Every string should match the existing currency code.
+**Note:** The fields `createdAt`, `updatedAt`, `containSchedule` cannot be set via the API 
+as their values are generated automatically.
 
 {@inheritdoc}
 
@@ -118,9 +119,11 @@ Example:
 
 ### update
 
-Update one PriceList entity. The fields `createdAt`, `updatedAt`, `containSchedule` are not configurable
-in API and are set automatically. The fields `priceRules`, `schedules` are not allowed to be updated,
-to modify them you should delete wrong price list and create a new one.
+Update details of the price list identified by ID.
+**Notes:**
+* The values for the fields `updatedAt`, `containSchedule` cannot are set via the API as their values are generated automatically.
+* The fields `createdAt`, `priceRules`, `schedules` are not allowed to be updated.
+To modify the relationship with price rules and/or price list schedules, delete the incorrect price list and create a new one including the correct price rules and price schedule.
 
 {@inheritdoc}
 
@@ -146,13 +149,13 @@ Example:
 
 ### delete
 
-Delete one PriceList entity
+Delete a price list identified by ID.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of PriceList entities
+Delete a collection of price lists. A collection may contain all price lists or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 

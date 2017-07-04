@@ -4,22 +4,28 @@
 
 ### get
 
-Get one PriceRule entity
+Get a price rule by ID.
 
 {@inheritdoc}
 
 ### get_list
 
-Get a collection of PriceRule entities
+Get a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
 ### create
 
-Create a new PriceRule entity. Required fields are: `priceList`, `priority`. 
-One of these fields should be blank but not both of them: `currency` or `currencyExpression`, 
-`quantity` or `quantityExpression`, `productUnit` or `productUnitExpression`. It is allowed to set
-an exact value or expression for these fields.
+Create a new price rule. The values for `priceList` and `priority` fields are required.
+
+**Limitations:**
+* Either `currency` or `currencyExpression` value should be provided.
+* Either `quantity` or `quantityExpression` value should be provided.
+* Either `productUnit` or `productUnitExpression` value should be provided.
+
+Leaving these pairs of values empty or providing both values is not allowed. 
+
+Please, provide an exactly matching values for the `currency`, `quantity`, and `productUnit` fields. Use the regular expression in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` values.
 
 {@inheritdoc}
 
@@ -57,10 +63,20 @@ Example:
 
 ### update
 
-Update one PriceRule entity. One of the fields: `currency` or `currencyExpression`,
-`quantity` or `quantityExpression`, `productUnit` or `productUnitExpression` should be blank but
-not both of them. `priceList` field is not allowed to be updated, you should delete wrong price rule
-and create a new one.
+Update a price rule identified by ID. 
+
+**Limitations:**
+* Either `currency` or `currencyExpression` value should be provided.
+* Either `quantity` or `quantityExpression` value should be provided.
+* Either `productUnit` or `productUnitExpression` value should be provided.
+
+Leaving these pairs of values empty or providing both values is not allowed. 
+
+Please, provide an exactly matching values for the `currency`, `quantity`, and `productUnit` fields. Use the regular expression in the `currencyExpression`, `quantityExpression`, and `productUnitExpression` values.
+
+The `priceList` value is not allowed to be updated. 
+
+To modify the relationship with the price list, delete the incorrect price rule and create a new one including the correct price list relationship.
 
 {@inheritdoc}
 
@@ -93,13 +109,13 @@ Example:
 
 ### delete
 
-Delete one PriceRule entity
+Delete a price rule identified by ID.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of PriceRule entities
+Delete a collection of price rules. A collection may contain all price rules or may be filtered using the standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
 
 {@inheritdoc}
 
