@@ -9,7 +9,7 @@ services:
         class: Oro\Bundle\ProductBundle\Processor\Create\ProcessPrecisionsAfterValidationCreate
         arguments: ['@oro_api.doctrine_helper']
         tags:
-            - { name: oro.api.processor, action: create, group: transform_data, priority: -99 }
+            - { name: oro.api.processor, action: create, group: transform_data, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: -99 }
 
     oro_product.update.process_unit_precisions:
             class: Oro\Bundle\ProductBundle\Processor\Update\ProcessUnitPrecisionsUpdate
@@ -21,4 +21,4 @@ services:
         class: Oro\Bundle\ProductBundle\Processor\Update\ProcessPrecisionsAfterValidationUpdate
         arguments: ['@oro_api.doctrine_helper']
         tags:
-            - { name: oro.api.processor, action: update, group: transform_data, priority: -99 }
+            - { name: oro.api.processor, action: update, group: transform_data, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: -99 }

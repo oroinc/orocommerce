@@ -4,3 +4,4 @@ api:
             actions:
                 create: false
                 delete: false
+                delete_list: false
