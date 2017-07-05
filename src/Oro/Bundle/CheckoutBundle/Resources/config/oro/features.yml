@@ -3,6 +3,6 @@ features:
         label: oro.checkout.system_configuration.fields.guest_checkout.label
         description: oro.checkout.system_configuration.fields.guest_checkout.tooltip
         toggle: oro_checkout.guest_checkout
-        strategy: affirmative
         routes:
             - 'oro_checkout_frontend_checkout'
+        strategy: affirmative
