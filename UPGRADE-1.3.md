@@ -60,6 +60,9 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
 - Class `Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy`
     - method `setSecurityFacade` was replaced with `setTokenAccessor`
+- Class `Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery` was removed
+- Class `Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId` was removed
+- Class `Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId` was removed
 
 PaymentBundle
 -------------
@@ -127,3 +130,10 @@ ShippingBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+
+InventoryBundle
+--------------
+- Class `Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleInventoryLevelQuery` was removed
+- Class `Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData` was removed
+- Previously deprecated class `Oro\Bundle\InventoryBundle\Api\Processor\JsonApi\FixProductUnitPrecisionUnitCodeFilter` was now removed
+- Inventory API has changed. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/InventoryBundle/doc/api/inventory-level.md) for more information.

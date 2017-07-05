@@ -1,6 +1,7 @@
 api:
     entities:
         Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+            documentation_resource: '@OroInventoryBundle/Resources/doc/api/inventory-level.md'
             actions:
                 create: false
                 delete: false
