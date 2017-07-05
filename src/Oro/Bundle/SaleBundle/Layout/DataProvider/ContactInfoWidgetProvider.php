@@ -26,8 +26,10 @@ class ContactInfoWidgetProvider
      * @param TokenAccessorInterface       $tokenAccessor
      * @param ContactInfoProviderInterface $contactInfoProvider
      */
-    public function __construct(TokenAccessorInterface $tokenAccessor, ContactInfoProviderInterface $contactInfoProvider)
-    {
+    public function __construct(
+        TokenAccessorInterface $tokenAccessor,
+        ContactInfoProviderInterface $contactInfoProvider
+    ) {
         $this->tokenAccessor = $tokenAccessor;
         $this->contactInfoProvider = $contactInfoProvider;
     }
