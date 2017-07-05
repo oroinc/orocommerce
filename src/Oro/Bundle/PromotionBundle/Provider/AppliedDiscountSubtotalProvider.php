@@ -20,10 +20,9 @@ class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    protected $translator;
 
     /**
-     * AppliedDiscountSubtotalProvider constructor.
      * @param OrdersAppliedDiscountsProvider $discountsProvider
      * @param TranslatorInterface $translator
      */
