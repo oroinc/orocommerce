@@ -1,45 +1,47 @@
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
-        <div class="pull-right dropdown oro-localization-switcher"
-             data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
-             data-page-component-options="{{ {
-                 'selectedLocalization': selected_localization.titles|localized_value,
-                 'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
-             }|json_encode }}">
-            <div class="oro-localization-switcher__toggle" data-toggle="dropdown">
-                {{ selected_localization.titles|localized_value }}
-                <span class="oro-toolbar__icon">
-                    <i class="fa-angle-down"></i>
-                </span>
-            </div>
+        <div class="pull-right"
+                data-localization-menu-container>
+            <div class="dropdown localization-switcher"
+                 data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
+                 data-page-component-options="{{ {
+                     'selectedLocalization': selected_localization.titles|localized_value,
+                     'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
+                 }|json_encode }}">
+                <button type="button" class="localization-switcher__toggle" data-toggle="dropdown">
+                    {{ selected_localization.titles|localized_value }}
+                    <span class="oro-toolbar__icon">
+                        <i class="fa-angle-down"></i>
+                    </span>
+                </button>
 
-            <div class="dropdown-menu dropdown-menu-right"
-                 data-options="{&quot;container&quot;: true, &quot;align&quot;: &quot;right&quot;}"
-                 data-localization-menu-container
-            >
-                <ul class="primary-menu primary-menu--vertical">
-                    {% for localization in localizations %}
-                        {% set itemCurrentClass = '' %}
-                        {% set linkCurrentClass = '' %}
-                        {% if selected_localization.id == localization.id %}
-                            {% set itemCurrentClass = 'primary-menu__item--current' %}
-                            {% set linkCurrentClass = 'primary-menu__link--current' %}
-                        {% endif %}
-
-                        <li class="primary-menu__item {{ itemCurrentClass }}">
-                            {% set title = localization.titles|localized_value %}
+                <div class="dropdown-menu dropdown-menu-right"
+                     data-options="{&quot;align&quot;: &quot;right&quot;}"
+                >
+                    <ul class="primary-menu primary-menu--vertical">
+                        {% for localization in localizations %}
+                            {% set itemCurrentClass = '' %}
+                            {% set linkCurrentClass = '' %}
                             {% if selected_localization.id == localization.id %}
-                                <span class="primary-menu__link {{ linkCurrentClass }}">
-                                    {{ title }}
-                                </span>
-                            {% else %}
-                                <a class="primary-menu__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
-                                    {{ title }}
-                                </a>
+                                {% set itemCurrentClass = 'primary-menu__item--current' %}
+                                {% set linkCurrentClass = 'primary-menu__link--current' %}
                             {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
+
+                            <li class="primary-menu__item {{ itemCurrentClass }}">
+                                {% set title = localization.titles|localized_value %}
+                                {% if selected_localization.id == localization.id %}
+                                    <span class="primary-menu__link {{ linkCurrentClass }}">
+                                        {{ title }}
+                                    </span>
+                                {% else %}
+                                    <a class="primary-menu__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
+                                        {{ title }}
+                                    </a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
     {% endif %}
