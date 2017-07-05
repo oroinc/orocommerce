@@ -2,8 +2,8 @@
 @ticket-BB-9255
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-OroCheckoutBundle:OroCheckoutBundle:Checkout.yml
-@fixture-OroCheckoutBundle:OroCheckoutBundle:InventoryLevel.yml
+@fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroCheckoutBundle:InventoryLevel.yml
 Feature: Open Orders Grid
   In order to see Totals and sort by Subtotals
   As a Buyer
