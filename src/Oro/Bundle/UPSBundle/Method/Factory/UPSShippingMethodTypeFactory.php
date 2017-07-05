@@ -3,7 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
@@ -20,9 +20,9 @@ class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterf
     private $typeIdentifierGenerator;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
-    private $methodIdentifierGenerator;
+    private $integrationIdentifierGenerator;
 
     /**
      * @var UPSTransport
@@ -41,20 +41,20 @@ class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterf
 
     /**
      * @param UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
-     * @param UPSTransport $transport
-     * @param PriceRequestFactory $priceRequestFactory
-     * @param ShippingPriceCache $shippingPriceCache
+     * @param IntegrationIdentifierGeneratorInterface   $integrationIdentifierGenerator
+     * @param UPSTransport                              $transport
+     * @param PriceRequestFactory                       $priceRequestFactory
+     * @param ShippingPriceCache                        $shippingPriceCache
      */
     public function __construct(
         UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
+        IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
         UPSTransport $transport,
         PriceRequestFactory $priceRequestFactory,
         ShippingPriceCache $shippingPriceCache
     ) {
         $this->typeIdentifierGenerator = $typeIdentifierGenerator;
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
+        $this->integrationIdentifierGenerator = $integrationIdentifierGenerator;
         $this->transport = $transport;
         $this->priceRequestFactory = $priceRequestFactory;
         $this->shippingPriceCache = $shippingPriceCache;
@@ -70,7 +70,7 @@ class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterf
         return new UPSShippingMethodType(
             $this->getIdentifier($channel, $service),
             $this->getLabel($service),
-            $this->methodIdentifierGenerator->generateIdentifier($channel),
+            $this->integrationIdentifierGenerator->generateIdentifier($channel),
             $service,
             $this->getSettings($channel),
             $this->transport,
