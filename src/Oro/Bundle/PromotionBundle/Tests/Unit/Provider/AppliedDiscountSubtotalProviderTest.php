@@ -33,19 +33,21 @@ class AppliedDiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsSupportedFail()
     {
-        $this->discountProvider->expects($this->once())->method('getOrderDiscounts')->willReturn([]);
         $this->assertFalse($this->provider->isSupported(new \stdClass()));
 
         $order = new Order();
+        $this->assertFalse($this->provider->isSupported($order));
+
         $this->setValue($order, 'id', 123);
+        $this->discountProvider->expects($this->once())->method('getOrderDiscountAmount')->willReturn(0);
         $this->assertFalse($this->provider->isSupported($order));
     }
 
     public function testIsSupported()
     {
         $this->discountProvider->expects($this->once())
-            ->method('getOrderDiscounts')
-            ->willReturn([new AppliedDiscount(), new AppliedDiscount()]);
+            ->method('getOrderDiscountAmount')
+            ->willReturn(12.34);
 
         $order = new Order();
         $this->setValue($order, 'id', 123);

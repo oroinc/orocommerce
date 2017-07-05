@@ -3,15 +3,19 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 use Oro\Bundle\PromotionBundle\Provider\SubtotalProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -57,30 +61,24 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(SubtotalProvider::NAME, $this->provider->getName());
     }
 
-    /**
-     * @dataProvider supportedDataProvider
-     * @param bool $isSupported
-     */
-    public function testIsSupported($isSupported)
+    public function testIsSupported()
     {
+        $order1 = new Order();
+        $this->setValue($order1, 'id', 123);
+        $order2 = new Order();
         $entity = new \stdClass();
 
-        $this->promotionExecutor->expects($this->once())
+        $this->promotionExecutor->expects($this->any())
             ->method('supports')
-            ->with($entity)
-            ->willReturn($isSupported);
-        $this->assertSame($isSupported, $this->provider->isSupported($entity));
-    }
+            ->will($this->returnValueMap([
+                [$order1, true],
+                [$order2, true],
+                [$entity, false],
+            ]));
 
-    /**
-     * @return array
-     */
-    public function supportedDataProvider(): array
-    {
-        return [
-            [true],
-            [false]
-        ];
+        $this->assertFalse($this->provider->isSupported($order1));
+        $this->assertFalse($this->provider->isSupported($entity));
+        $this->assertTrue($this->provider->isSupported($order2));
     }
 
     public function testGetSubtotal()

@@ -9,8 +9,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
 {
-    const NAME = 'oro_promotion.subtotal_discount';
-    const TYPE = 'discount';
+    const NAME = 'oro_promotion.subtotal_applied_discount';
+    const TYPE = 'applied_discount';
 
     /**
      * @var OrdersAppliedDiscountsProvider
@@ -50,7 +50,7 @@ class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
         $subtotal = new Subtotal();
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
         $subtotal->setType(self::TYPE);
-        $subtotal->setLabel($this->translator->trans('oro.promotion_discount.order.label'));
+        $subtotal->setLabel($this->translator->trans('oro.promotion.discount.subtotal.order.label'));
         $subtotal->setVisible(true);
         $subtotal->setCurrency($entity->getCurrency());
         $subtotal->setAmount($this->discountsProvider->getOrderDiscountAmount($entity->getId()));
@@ -65,7 +65,10 @@ class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
         if (!$entity instanceof Order) {
             return false;
         }
-        if (!$this->discountsProvider->getOrderDiscounts($entity->getId())) {
+        if (!$entity->getId()) {
+            return false;
+        }
+        if ($this->discountsProvider->getOrderDiscountAmount($entity->getId()) <= 0) {
             return false;
         }
         return true;

@@ -167,9 +167,6 @@ oro:
                     discount_optins.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
-    promotion_discount:
-        order:
-            label: 'Discount'
     frontend:
         shoppinglist:
             view:

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
@@ -83,6 +84,9 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     public function isSupported($entity)
     {
+        if ($entity instanceof Order && $entity->getId()) {
+            return false;   // see AppliedDiscountSubtotalProvider
+        }
         return $this->promotionExecutor->supports($entity);
     }
 
