@@ -39,6 +39,11 @@ class QuoteBackofficeDefaultWorkflowTest extends BaseQuoteBackofficeWorkflowTest
         '__start__',
     ];
 
+    public function testApplicableWorkflows()
+    {
+        $this->assertApplicableWorkflows();
+    }
+
     protected function activateWorkflow()
     {
         $this->manager->deactivateWorkflow('b2b_quote_backoffice_approvals');
