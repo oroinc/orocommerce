@@ -167,7 +167,8 @@ define(function(require) {
             }
 
             if (buttons.length === 1) {
-                buttons = _.first(buttons).find(this.options.buttonsSelector);
+                var decoreClass = this.dropdownWidget.options.decoreClass || '';
+                buttons = _.first(buttons).find(this.options.buttonsSelector).addClass(decoreClass);
             }
 
             return buttons;
