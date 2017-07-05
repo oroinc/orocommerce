@@ -369,3 +369,9 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list_limit'
             - '@oro_shopping_list.shopping_list.manager'
+
+    oro_shopping_list.customer_visitor.authorization_checker:
+        class: Oro\Bundle\ShoppingListBundle\Security\CustomerVisitorAuthorizationChecker
+        arguments:
+            - '@security.authorization_checker'
+            - '@security.token_storage'

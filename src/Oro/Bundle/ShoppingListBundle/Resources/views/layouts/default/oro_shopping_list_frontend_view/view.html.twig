@@ -113,10 +113,9 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_frontend_patch_entity_data',
+                                route: 'oro_api_patch_shopping_list',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
-                                    className: oro_class_name(shoppingList, true),
                                     id: shoppingList.id
                                 }
                             }
@@ -475,7 +474,7 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_frontend_patch_entity_data',
+                                route: 'oro_api_shopping_list_frontend_patch_line_item',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
                                     className: oro_class_name(lineItem, true),
