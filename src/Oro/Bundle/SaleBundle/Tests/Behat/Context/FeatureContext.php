@@ -3,11 +3,14 @@
 namespace Oro\Bundle\SaleBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Element\NodeElement;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\FormBundle\Tests\Behat\Element\Select;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -91,7 +94,66 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: And I should see "Sales Representative Info" block with:
+     * |Charlie Sheen       |
+     *
+     * @Then /^I should see "(?P<block>[^"]*)" block with:$/
+     * @param string    $block
+     * @param TableNode $table
+     */
+    public function iShouldSeeOnFrontendRequestPageStatus($block, TableNode $table)
+    {
+        $elements = $this->findAllElements($block);
+        foreach ($elements as $element) {
+            $html = $element->getHtml();
+            foreach ($table->getColumn(0) as $item) {
+                if (strpos($html, $item) === false) {
+                    $a=1;
+                }
+                self::assertContains($item, $html);
+            }
+        }
+    }
+
+    /**
+     * @Then /^I should not see "([^"]*)" for "([^"]*)" select$/
+     * @param string $label
+     * @param string $field
+     */
+    public function iShouldNotSeeOptionForSelect($label, $field)
+    {
+        /** @var Select $element */
+        $element = $this->createElement($field);
+        /** @var NodeElement[] $options */
+        $options = $element->findAll('css', 'option');
+
+        foreach ($options as $option) {
+            static::assertNotEquals($label, $option->getValue());
+        }
+    }
+
+    /**
+     * @Then /^I should see "([^"]*)" for "([^"]*)" select$/
+     * @param string $label
+     * @param string $field
+     */
+    public function iShouldSeeOptionForSelect($label, $field)
+    {
+        /** @var Select $element */
+        $element = $this->createElement($field);
+        /** @var NodeElement[] $options */
+        $options = $element->findAll('css', 'option');
+
+        $optionValues = [];
+        foreach ($options as $option) {
+            $optionValues[] = $option->getText();
+        }
+        static::assertContains($label, $optionValues);
+    }
+
+    /**
      * @param string $qid
+     *
      * @return Quote
      */
     protected function getQuote($qid)
@@ -101,6 +163,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @param string $className
+     *
      * @return ObjectRepository
      */
     protected function getRepository($className)
