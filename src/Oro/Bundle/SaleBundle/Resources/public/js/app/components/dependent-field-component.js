@@ -67,7 +67,7 @@ define(function(require) {
 
             this.$el = this.options._sourceElement;
             this.$form = this.$el.closest('form');
-            this.$dependee = this.$form.find('[data-dependee-id="'+ this.$el.data('dependOn') +'"]');
+            this.$dependee = this.$form.find('[data-dependee-id="' + this.$el.data('dependOn') + '"]');
 
             this.updateDependentFields();
             this.$dependee.on('change', $.proxy(this.updateDependentFields, this));
@@ -89,7 +89,7 @@ define(function(require) {
         /**
          * @returns {Array}
          */
-        getDependeeValue: function () {
+        getDependeeValue: function() {
             var value = [];
 
             if (this.$dependee.is(':checkbox')) {
@@ -108,14 +108,14 @@ define(function(require) {
         /**
          * @returns {string}
          */
-        getShowIf: function () {
+        getShowIf: function() {
             return this.$el.data('showIf');
         },
 
         /**
          * @returns {string}
          */
-        getHideIf: function () {
+        getHideIf: function() {
             return this.$el.data('hideIf');
         },
 
@@ -124,7 +124,7 @@ define(function(require) {
          *
          * @returns {boolean}
          */
-        evaluateCondition: function () {
+        evaluateCondition: function() {
             var condition = this.evaluateDisjunction(this.getShowIf());
 
             // Evaluate hide condition only if it is specified.
@@ -140,7 +140,7 @@ define(function(require) {
          *
          * @returns {boolean}
          */
-        evaluateConjunction: function (condition) {
+        evaluateConjunction: function(condition) {
             var conditionsCol = typeof condition === 'string' ? condition.split(/\s?\&\s?/) : [];
             var value = this.getDependeeValue();
 
@@ -162,7 +162,7 @@ define(function(require) {
          *
          * @returns {boolean}
          */
-        evaluateDisjunction: function (condition) {
+        evaluateDisjunction: function(condition) {
             var conditionsCol = typeof condition === 'string' ? condition.split(/\s?\|\s?/) : [];
             var value = this.getDependeeValue();
             var result;
