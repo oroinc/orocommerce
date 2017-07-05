@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\ShippingBundle\Checker;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class ShippingMethodEnabledByIdentifierChecker implements ShippingMethodEnabledByIdentifierCheckerInterface
 {
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    private $registry;
+    private $shippingMethodProvider;
 
     /**
-     * @param ShippingMethodRegistry $registry
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(ShippingMethodRegistry $registry)
+    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
-        $this->registry = $registry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -24,8 +24,8 @@ class ShippingMethodEnabledByIdentifierChecker implements ShippingMethodEnabledB
      */
     public function isEnabled($identifier)
     {
-        return $this->registry->getShippingMethod($identifier) !== null ?
-            $this->registry->getShippingMethod($identifier)->isEnabled() :
+        return $this->shippingMethodProvider->getShippingMethod($identifier) !== null ?
+            $this->shippingMethodProvider->getShippingMethod($identifier)->isEnabled() :
             false;
     }
 }

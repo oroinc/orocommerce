@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -12,16 +12,16 @@ use Symfony\Component\Form\FormEvents;
 class MethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
-     * @param ShippingMethodRegistry $methodRegistry
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(ShippingMethodRegistry $methodRegistry)
+    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -49,7 +49,7 @@ class MethodConfigCollectionSubscriber implements EventSubscriberInterface
         }
 
         foreach ($data as $index => $methodConfig) {
-            $shippingMethod = $this->methodRegistry->getShippingMethod($methodConfig->getMethod());
+            $shippingMethod = $this->shippingMethodProvider->getShippingMethod($methodConfig->getMethod());
             if (!$shippingMethod) {
                 $data->remove($index);
                 $form->remove($index);
@@ -74,7 +74,7 @@ class MethodConfigCollectionSubscriber implements EventSubscriberInterface
         $filteredSubmittedData = [];
         foreach ($submittedData as $index => $itemData) {
             if (array_key_exists('method', $itemData)
-                && $this->methodRegistry->getShippingMethod($itemData['method']) !== null
+                && $this->shippingMethodProvider->getShippingMethod($itemData['method']) !== null
             ) {
                 $filteredSubmittedData[$index] = $itemData;
             } else {

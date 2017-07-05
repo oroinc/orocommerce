@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
-class ShippingMethodRegistry implements ShippingMethodProviderInterface
+class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
 {
     /**
      * @var ShippingMethodProviderInterface[]
@@ -55,21 +55,5 @@ class ShippingMethodRegistry implements ShippingMethodProviderInterface
             }
         }
         return false;
-    }
-
-    /**
-     * @return ShippingMethodInterface[]
-     */
-    public function getTrackingAwareShippingMethods()
-    {
-        $result = [];
-        foreach ($this->providers as $provider) {
-            foreach ($provider->getShippingMethods() as $shippingMethod) {
-                if ($shippingMethod instanceof ShippingTrackingAwareInterface) {
-                    $result[$shippingMethod->getIdentifier()] = $shippingMethod;
-                }
-            }
-        }
-        return $result;
     }
 }
