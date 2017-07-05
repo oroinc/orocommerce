@@ -217,30 +217,6 @@ class Promotion extends ExtendPromotion implements
     protected $useCoupons = false;
 
     /**
-     * @var Collection|Coupon[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\PromotionBundle\Entity\Coupon"
-     * )
-     * @ORM\JoinTable(name="oro_promotion_to_coupon",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="coupon_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $coupons;
-
-    /**
      * @var Segment
      *
      * @ORM\ManyToOne(
@@ -259,7 +235,6 @@ class Promotion extends ExtendPromotion implements
         $this->descriptions = new ArrayCollection();
         $this->scopes = new ArrayCollection();
         $this->schedules = new ArrayCollection();
-        $this->coupons = new ArrayCollection();
     }
 
     /**
@@ -470,40 +445,6 @@ class Promotion extends ExtendPromotion implements
     public function setUseCoupons($useCoupons)
     {
         $this->useCoupons = $useCoupons;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Coupon[]
-     */
-    public function getCoupons()
-    {
-        return $this->coupons;
-    }
-
-    /**
-     * @param Coupon $coupon
-     * @return $this
-     */
-    public function addCoupon(Coupon $coupon)
-    {
-        if (!$this->coupons->contains($coupon)) {
-            $this->coupons->add($coupon);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Coupon $coupon
-     * @return $this
-     */
-    public function removeCoupon(Coupon $coupon)
-    {
-        if ($this->coupons->contains($coupon)) {
-            $this->coupons->removeElement($coupon);
-        }
 
         return $this;
     }
