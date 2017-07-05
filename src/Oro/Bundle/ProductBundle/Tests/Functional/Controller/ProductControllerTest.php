@@ -513,16 +513,9 @@ class ProductControllerTest extends ProductHelperTestCase
     {
         // @codingStandardsIgnoreStart
         return [
-            'Product name set, redirect strategy empty' => [
-                'requestParams' => [
-                    'productName' => 'New product name',
-                ],
-                'redirectStrategy' => null,
-                'expected' => '{"showRedirectConfirmation":true,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
-            ],
             'Product name empty, redirect strategy empty' => [
                 'requestParams' => [],
-                'redirectStrategy' => null,
+                'redirectStrategy' => Configuration::STRATEGY_ASK,
                 'expected' => '{"showRedirectConfirmation":true,"slugsData":[]}',
             ],
             'Product name set, redirect strategy ask' => [
@@ -626,7 +619,7 @@ class ProductControllerTest extends ProductHelperTestCase
         );
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $this->assertEquals(9, $crawler->filter('.featured-product')->count());
+        $this->assertEquals(3, $crawler->filter('.featured-product')->count());
     }
 
     public function testValidationForLocalizedFallbackValues()

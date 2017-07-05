@@ -9,6 +9,7 @@ use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMeth
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\Locked\MethodLockedConfiguredPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
+
 // @codingStandardsIgnoreEnd
 
 class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framework_TestCase

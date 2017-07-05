@@ -26,6 +26,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         static::assertEquals('oro_product.'.$key, $configKey);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessConfiguration()
     {
         $configuration = new Configuration();
@@ -33,7 +36,19 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             'settings' => [
-                'resolved' => 1,
+                'resolved' => true,
+                'related_products_enabled' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
+                'related_products_bidirectional' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
+                'max_number_of_related_products' => [
+                    'value' => 25,
+                    'scope' => 'app'
+                ],
                 'unit_rounding_type' => [
                     'value' => RoundingServiceInterface::ROUND_HALF_UP,
                     'scope' => 'app'
@@ -86,7 +101,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'featured_products_segment_id' => [
-                    'value' => null,
+                    'value' => '@oro_product.provider.default_value.featured_products',
                     'scope' => 'app'
                 ],
                 'product_collections_indexation_cron_schedule' => [
@@ -102,7 +117,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'new_arrivals_products_segment_id' => [
-                    'value' => null,
+                    'value' => '@oro_product.provider.default_value.new_arrivals',
                     'scope' => 'app',
                 ],
                 'new_arrivals_max_items' => [

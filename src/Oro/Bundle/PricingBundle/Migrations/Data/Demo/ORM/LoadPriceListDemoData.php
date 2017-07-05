@@ -40,22 +40,48 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
-        $currencies = [$this->container->get('oro_currency.config.currency')->getDefaultCurrency()];
+        $currencies = $this->container->get('oro_currency.config.currency')->getCurrencyList();
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $priceList = new PriceList();
-            $priceList
-                ->setName($row['name'])
-                ->setDefault((bool)$row['default'])
-                ->setCurrencies($currencies);
-
-            $manager->persist($priceList);
+            $this->processRow($manager, $row, $currencies);
         }
 
         fclose($handler);
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param array $row
+     * @param array $currencies
+     */
+    protected function processRow(ObjectManager $manager, array $row, array $currencies)
+    {
+        $priceList = $this->getPriceList($manager, $row['name']);
+        $priceList->setDefault((bool)$row['default'])
+            ->setCurrencies(array_unique(array_merge($currencies, $priceList->getCurrencies())));
+
+        $manager->persist($priceList);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $name
+     *
+     * @return PriceList
+     */
+    protected function getPriceList(ObjectManager $manager, $name)
+    {
+        $priceList = $manager->getRepository('OroPricingBundle:PriceList')->findOneBy(['name' => $name]);
+
+        if (!$priceList) {
+            $priceList = new PriceList();
+            $priceList->setName($name);
+        }
+
+        return $priceList;
     }
 }

@@ -25,6 +25,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -613,6 +614,31 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Given /^"([^"]*)" option for related products is enabled$/
+     * @param string $option
+     */
+    public function optionForRelatedProductsIsEnabled($option)
+    {
+        switch ($option) {
+            case 'Enable Related Products':
+                $option = 'oro_product.related_products_enabled';
+                break;
+            case 'Maximum Number Of Assigned Items':
+                $option = 'oro_product.max_number_of_related_products';
+                break;
+            case 'Assign In Both Directions':
+                $option = 'oro_product.related_products_bidirectional';
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('There is no mapping to `%s` options', $option));
+        }
+
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set($option, 1);
+        $configManager->flush();
+    }
+
+    /**
      * @Then /^(?:|I )should see "([^"]*)" for "([^"]*)" product$/
      */
     public function shouldSeeForProduct($elementName, $SKU)
@@ -687,7 +713,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * Assert that embedded block contains specified products with specified sticker.
-     * Example: Then should see "New Arrival Stiker" for the following products in the "Featured Products Block":
+     * Example: Then should see "New Arrival Sticker" for the following products in the "Featured Products Block":
      *            | SKU  |
      *            | SKU1 |
      *            | SKU2 |
@@ -710,7 +736,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * Assert that embedded block contains specified products without specified sticker.
-     * Example: Then should not see "New Arrival Stiker" for the following products in the "Featured Products Block":
+     * Example: Then should not see "New Arrival Sticker" for the following products in the "Featured Products Block":
      *            | SKU  |
      *            | SKU1 |
      *            | SKU2 |

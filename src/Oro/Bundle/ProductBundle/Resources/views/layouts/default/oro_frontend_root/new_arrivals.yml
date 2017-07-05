@@ -12,7 +12,11 @@ layout:
         - '@setOption':
             id: new_arrival_products
             optionName: items
-            optionValue: '=data["new_arrivals"].getNewArrivals()'
+            optionValue: '=data["new_arrivals"].getProducts()'
+        - '@appendOption':
+            id: new_arrival_product
+            optionName: attr.class
+            optionValue: new-arrival-product
         - '@setOption':
             id: new_arrival_products
             optionName: label

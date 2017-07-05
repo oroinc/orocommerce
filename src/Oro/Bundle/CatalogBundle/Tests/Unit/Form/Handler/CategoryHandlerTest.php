@@ -63,7 +63,6 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
     public function testProcessValidData()
     {
-
         $event = new AfterFormProcessEvent($this->form, $this->entity);
         $this->eventDispatcher
             ->expects($this->once())

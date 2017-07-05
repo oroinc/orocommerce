@@ -14,7 +14,6 @@ trait LoadDemoMetaDataTrait
     public function addMetaFieldsData(ObjectManager $manager, array $entities)
     {
         foreach ($entities as $entity) {
-            $entity->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle', true));
             $entity->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
             $entity->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
 

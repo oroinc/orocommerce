@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
-class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
+class LineItemsTest extends \PHPUnit_Framework_TestCase
 {
     use TwigExtensionTestCaseTrait;
 
