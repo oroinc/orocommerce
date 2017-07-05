@@ -16,11 +16,6 @@
             data-layout="separate">
         {{ block_widget(block) }}
     </div>
-    {% if not app.user %}
-        <div class="notification-flash notification-flash--warning">
-            {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans }}
-        </div>
-    {% endif %}
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}

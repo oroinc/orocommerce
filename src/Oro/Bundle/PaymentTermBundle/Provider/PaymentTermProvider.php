@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 
@@ -64,8 +65,11 @@ class PaymentTermProvider
 
         $paymentTermEvent = new ResolvePaymentTermEvent();
 
-        /** @var CustomerUser $user */
-        if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
+        if ($token && ($token->getUser() instanceof CustomerUser || $token instanceof AnonymousCustomerUserToken)) {
+            /** @var CustomerUser $user */
+            $user = $token instanceof AnonymousCustomerUserToken ?
+                $token->getVisitor()->getCustomerUser() :
+                $token->getUser();
             $paymentTermEvent->setPaymentTerm($this->getPaymentTerm($user->getCustomer()));
         }
 

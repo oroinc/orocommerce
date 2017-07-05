@@ -8,6 +8,7 @@ use Symfony\Component\Yaml\Parser;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -155,5 +156,21 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         }
 
         return $data;
+    }
+
+    public function testIsManualEditGrantedForCustomerVisitor()
+    {
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $this->tokenAccessor->expects($this->once())
+            ->method('getToken')
+            ->will($this->returnValue($token));
+
+        $type = 'billing';
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->with(sprintf(OrderAddressSecurityProvider::MANUAL_EDIT_ACTION, $type))
+            ->willReturn(true);
+
+        $this->assertTrue($this->provider->isManualEditGranted($type));
     }
 }

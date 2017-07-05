@@ -31,7 +31,7 @@ class DefaultCheckoutOwnerSetter
             return;
         }
         /**
-         * @TODO: Must be updated when requirements will be clarified
+         * @TODO: Value must be get from configuration settings
          */
         /** @var User $owner */
         $owner = $this->doctrineHelper->getEntityRepositoryForClass(User::class)->findOneBy([]);

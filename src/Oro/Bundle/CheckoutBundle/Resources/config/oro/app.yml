@@ -1,11 +1,6 @@
 security:
     firewalls:
         guest_checkout:
-            pattern:                 ^/customer/checkout
-            context:                 customer_identity
-            anonymous_customer_user: true
-
-        guest_checkout_wsse_secured:
-            pattern:                 ^/api/rest.* #@TODO: must be updated
+            pattern:                 ^/customer/checkout|^/api/rest/latest/workflow/start/b2b_flow_checkout|^/api/latest/country/regions
             context:                 customer_identity
             anonymous_customer_user: true

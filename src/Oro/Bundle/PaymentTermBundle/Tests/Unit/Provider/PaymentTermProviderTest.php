@@ -5,6 +5,8 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Provider;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -145,7 +147,28 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
         $token = $this->createMock(TokenInterface::class);
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
-        $token->expects($this->once())->method('getUser')->willReturn($customerUser);
+        $token->expects($this->exactly(2))->method('getUser')->willReturn($customerUser);
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+        $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
+    }
+
+    public function testGetCurrentForCustomerVisitor()
+    {
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+        $paymentTerm = new PaymentTerm();
+        $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
+            ->willReturn($paymentTerm);
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $visitor = new CustomerVisitor();
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer(new Customer());
+        $visitor->setCustomerUser($customerUser);
+        $token->expects($this->once())
+            ->method('getVisitor')
+            ->will($this->returnValue($visitor));
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
         $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
     }
