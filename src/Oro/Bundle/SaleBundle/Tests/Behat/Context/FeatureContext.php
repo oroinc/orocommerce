@@ -107,9 +107,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         foreach ($elements as $element) {
             $html = $element->getHtml();
             foreach ($table->getColumn(0) as $item) {
-                if (strpos($html, $item) === false) {
-                    $a=1;
-                }
                 self::assertContains($item, $html);
             }
         }
