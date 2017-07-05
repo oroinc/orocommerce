@@ -174,6 +174,7 @@ ShippingBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+- Class `Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider` which never used was removed.
         
 PricingBundle
 --------------
