@@ -73,25 +73,6 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     }
 
     /**
-     * @deprecated since 1.2 will be removed in 1.3. Use getEnabledRulesByMethod instead.
-     *
-     * @param string $methodId
-     *
-     * @return ShippingMethodsConfigsRule[]
-     */
-    public function getConfigsWithEnabledRuleAndMethod($methodId)
-    {
-        $query = $this->createQueryBuilder('methodsConfigsRule')
-            ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
-            ->innerJoin('methodsConfigsRule.rule', 'rule')
-            ->andWhere('rule.enabled = true')
-            ->andWhere('methodConfigs.method = :methodId')
-            ->setParameter('methodId', $methodId);
-
-        return $this->aclHelper->apply($query)->getResult();
-    }
-
-    /**
      * @param bool $onlyEnabled
      *
      * @return mixed

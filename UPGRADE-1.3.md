@@ -99,6 +99,9 @@ ShippingBundle
  - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
  - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
  - previously deprecated interface `\Oro\Bundle\ShippingBundle\Identifier\IntegrationMethodIdentifierGeneratorInterface` is removed along with its implementations and usages. Use `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` instead.
+ - previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
+ - previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
+
 
 PayPalBundle
 --------------
@@ -243,3 +246,4 @@ UPSBundle
 FlatRateShippingBundle
 ----------------------
 - Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+- previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
