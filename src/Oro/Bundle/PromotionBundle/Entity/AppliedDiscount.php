@@ -3,10 +3,11 @@
 namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="oro_promotion_applied_discount")
@@ -26,11 +27,11 @@ class AppliedDiscount implements DatesAwareInterface
     protected $id;
 
     /**
-     * @ORM\Column(name="type", type="string", length=255)
+     * @ORM\Column(name="class", type="text")
      *
      * @var string
      */
-    protected $type;
+    protected $class;
 
     /**
      * @ORM\Column(name="amount", type="money_value")
@@ -63,7 +64,7 @@ class AppliedDiscount implements DatesAwareInterface
     protected $promotion;
 
     /**
-     * @ORM\Column(name="promotion_name", type="string", length=255)
+     * @ORM\Column(name="promotion_name", type="text")
      *
      * @var string
      */
@@ -77,16 +78,17 @@ class AppliedDiscount implements DatesAwareInterface
     protected $configOptions = [];
 
     /**
-     * @ORM\Column(name="options", type="json_array")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem")
+     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      *
-     * @var array
+     * @var OrderLineItem|null
      */
-    protected $options = [];
+    protected $lineItem;
 
     /**
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -94,18 +96,18 @@ class AppliedDiscount implements DatesAwareInterface
     /**
      * @return string
      */
-    public function getType()
+    public function getClass(): string
     {
-        return $this->type;
+        return $this->class;
     }
 
     /**
-     * @param string $type
-     * @return $this
+     * @param string $class
+     * @return AppliedDiscount
      */
-    public function setType(string $type)
+    public function setClass(string $class): AppliedDiscount
     {
-        $this->type = $type;
+        $this->class = $class;
 
         return $this;
     }
@@ -113,7 +115,7 @@ class AppliedDiscount implements DatesAwareInterface
     /**
      * @return float
      */
-    public function getAmount()
+    public function getAmount(): float
     {
         return $this->amount;
     }
@@ -132,7 +134,7 @@ class AppliedDiscount implements DatesAwareInterface
     /**
      * @return Order
      */
-    public function getOrder()
+    public function getOrder(): Order
     {
         return $this->order;
     }
@@ -170,16 +172,16 @@ class AppliedDiscount implements DatesAwareInterface
     /**
      * @return string
      */
-    public function getPromotionName()
+    public function getPromotionName(): string
     {
         return $this->promotionName;
     }
 
     /**
      * @param string $promotionName
-     * @return $this
+     * @return AppliedDiscount
      */
-    public function setPromotionName(string $promotionName)
+    public function setPromotionName(string $promotionName): AppliedDiscount
     {
         $this->promotionName = $promotionName;
 
@@ -206,28 +208,9 @@ class AppliedDiscount implements DatesAwareInterface
     }
 
     /**
-     * @return array
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param array $options
-     * @return $this
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
-    public function getCurrency()
+    public function getCurrency(): string
     {
         return $this->currency;
     }
@@ -239,6 +222,25 @@ class AppliedDiscount implements DatesAwareInterface
     public function setCurrency(string $currency)
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return OrderLineItem|null
+     */
+    public function getLineItem()
+    {
+        return $this->lineItem;
+    }
+
+    /**
+     * @param OrderLineItem $lineItem
+     * @return AppliedDiscount
+     */
+    public function setLineItem(OrderLineItem $lineItem): AppliedDiscount
+    {
+        $this->lineItem = $lineItem;
 
         return $this;
     }

@@ -66,7 +66,7 @@ class PromotionExecutor
         $discountContext = $this->discountContextConverter->convert($sourceEntity);
         $discounts = [];
         foreach ($this->promotionProvider->getPromotions($sourceEntity) as $promotion) {
-            $discount = $this->discountFactory->create($promotion->getDiscountConfiguration());
+            $discount = $this->discountFactory->create($promotion->getDiscountConfiguration(), $promotion);
             $discount->setMatchingProducts(
                 $this->matchingProductsProvider->getMatchingProducts(
                     $promotion->getProductsSegment(),

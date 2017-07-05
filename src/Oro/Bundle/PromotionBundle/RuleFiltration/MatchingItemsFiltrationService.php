@@ -44,6 +44,9 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
         $lineItems = $context[ContextDataConverterInterface::LINE_ITEMS] ?? [];
+        if ($lineItems instanceof \Traversable) {
+            $lineItems = iterator_to_array($lineItems);
+        }
 
         $filteredOwners = $ruleOwners;
         if (!empty($lineItems)) {
