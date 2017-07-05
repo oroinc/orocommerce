@@ -50,6 +50,11 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         '__start__',
     ];
 
+    public function testApplicableWorkflows()
+    {
+        $this->assertApplicableWorkflows();
+    }
+
     public function testReviewReturn()
     {
         $this->assertSubmitForReviewAndReview();
