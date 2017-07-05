@@ -22,6 +22,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
@@ -30,6 +31,8 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\TestFrameworkBundle\Test\Form\MutableFormEventSubscriber;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\PreloadedExtension;
@@ -40,18 +43,20 @@ class QuoteTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
-    /**
-     * @var QuoteType
-     */
+    /** @var QuoteType */
     protected $formType;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteAddressSecurityProvider */
     protected $quoteAddressSecurityProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
     protected $configManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteFormSubscriber */
+    protected $quoteFormSubscriber;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
+    protected $securityFacade;
 
     /**
      * {@inheritdoc}
@@ -60,34 +65,54 @@ class QuoteTypeTest extends AbstractTest
     {
         parent::setUp();
 
-        $this->quoteAddressSecurityProvider = $this
-            ->getMockBuilder(QuoteAddressSecurityProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->quoteAddressSecurityProvider = $this->createMock(QuoteAddressSecurityProvider::class);
 
-        $this->configManager = $this
-            ->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_currency.default_currency')
             ->willReturn('USD');
 
-        $this->formType = new QuoteType($this->quoteAddressSecurityProvider, $this->configManager);
+        $this->quoteFormSubscriber = $this->createMock(QuoteFormSubscriber::class);
+        $this->quoteFormSubscriber = new MutableFormEventSubscriber($this->quoteFormSubscriber);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_currency.default_currency')
+            ->willReturn('USD');
+
+        $this->securityFacade = $this->createMock(SecurityFacade::class);
+
+        $this->formType = new QuoteType(
+            $this->quoteAddressSecurityProvider,
+            $this->configManager,
+            $this->quoteFormSubscriber,
+            $this->securityFacade
+        );
+
         $this->formType->setDataClass(Quote::class);
     }
 
     public function testConfigureOptions()
     {
+        $this->securityFacade->expects($this->at(0))
+            ->method('isGranted')
+            ->with('oro_quote_prices_override')
+            ->willReturn(true);
+        $this->securityFacade->expects($this->at(1))
+            ->method('isGranted')
+            ->with('oro_quote_add_free_form_items')
+            ->willReturn(false);
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
         $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class'    => 'Oro\Bundle\SaleBundle\Entity\Quote',
-                    'intention'     => 'sale_quote',
+                    'data_class' => 'Oro\Bundle\SaleBundle\Entity\Quote',
+                    'intention' => 'sale_quote',
+                    'allow_prices_override' => true,
+                    'allow_add_free_form_items' => false,
                 ]
             );
 
@@ -126,7 +151,6 @@ class QuoteTypeTest extends AbstractTest
         $quote->setAllowUnlistedShippingMethod($allowedUnlistedShippingMethod);
 
         $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface')->getMock();
-
 
         /** @var User $owner */
         $owner = $this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId);
@@ -323,7 +347,7 @@ class QuoteTypeTest extends AbstractTest
         ];
     }
 
-    public function testBuildFormWithPaymetTerm()
+    public function testBuildFormWithPaymentTerm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
@@ -335,11 +359,15 @@ class QuoteTypeTest extends AbstractTest
 
         $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
         $builder->expects($this->once())->method('get')->willReturn($builder);
+        $builder->expects($this->once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
 
-        $this->formType->buildForm($builder, ['data' => $quote]);
+        $this->formType->buildForm(
+            $builder,
+            ['data' => $quote, 'allow_prices_override' => true, 'allow_add_free_form_items' => true]
+        );
     }
 
-    public function testBuildFormWithNoPaymetTerm()
+    public function testBuildFormWithNoPaymentTerm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
@@ -347,8 +375,12 @@ class QuoteTypeTest extends AbstractTest
 
         $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
         $builder->expects($this->once())->method('get')->willReturn($builder);
+        $builder->expects($this->once())->method('addEventSubscriber')->with($this->quoteFormSubscriber);
 
-        $this->formType->buildForm($builder, ['data' => $quote]);
+        $this->formType->buildForm(
+            $builder,
+            ['data' => $quote, 'allow_prices_override' => true, 'allow_add_free_form_items' => true]
+        );
     }
 
     /**
