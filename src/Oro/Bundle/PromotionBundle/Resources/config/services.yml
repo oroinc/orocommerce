@@ -355,6 +355,9 @@ services:
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
 
+    oro_promotion.placeholder.order_additional_placeholder_filter:
+        class: Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter
+
     oro_promotion.event_listener.order:
         class: Oro\Bundle\PromotionBundle\EventListener\ORM\OrderEventListener
         public: false
@@ -368,3 +371,11 @@ services:
         arguments:
             - '@service_container'
 
+    oro_promotion.form.listener.order_form_listener:
+        class: Oro\Bundle\PromotionBundle\Form\Listener\OrderFormListener
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_promotion.discount_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: beforeFlush }
