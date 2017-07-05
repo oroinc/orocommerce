@@ -26,6 +26,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         static::assertEquals('oro_product.'.$key, $configKey);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessConfiguration()
     {
         $configuration = new Configuration();

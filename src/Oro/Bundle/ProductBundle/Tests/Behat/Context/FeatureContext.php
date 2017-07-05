@@ -25,6 +25,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -712,7 +713,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * Assert that embedded block contains specified products with specified sticker.
-     * Example: Then should see "New Arrival Stiker" for the following products in the "Featured Products Block":
+     * Example: Then should see "New Arrival Sticker" for the following products in the "Featured Products Block":
      *            | SKU  |
      *            | SKU1 |
      *            | SKU2 |
@@ -735,7 +736,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * Assert that embedded block contains specified products without specified sticker.
-     * Example: Then should not see "New Arrival Stiker" for the following products in the "Featured Products Block":
+     * Example: Then should not see "New Arrival Sticker" for the following products in the "Featured Products Block":
      *            | SKU  |
      *            | SKU1 |
      *            | SKU2 |

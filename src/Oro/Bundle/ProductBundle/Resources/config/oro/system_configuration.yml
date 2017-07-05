@@ -238,6 +238,7 @@ system_configuration:
                     - GreaterThan:
                         value: 0
                     - Type: integer
+                    - NotBlank: ~
 
         oro_product.product_promotion_show_on_product_view:
             data_type: boolean

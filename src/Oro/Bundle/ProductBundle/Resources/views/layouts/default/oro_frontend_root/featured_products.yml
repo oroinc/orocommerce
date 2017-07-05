@@ -8,11 +8,15 @@ layout:
         - '@setOption':
             id: featured_products
             optionName: items
-            optionValue: '=data["featured_products"].getAll()'
+            optionValue: '=data["featured_products"].getProducts()'
         - '@setOption':
             id: featured_products
             optionName: items_data.stickers
-            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["featured_products"].getAll())'
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["featured_products"].getProducts())'
+        - '@appendOption':
+            id: featured_product
+            optionName: attr.class
+            optionValue: featured-product
         - '@setOption':
             id: featured_products
             optionName: label

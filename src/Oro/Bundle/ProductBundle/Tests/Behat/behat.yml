@@ -248,7 +248,7 @@ oro_behat_extension:
         type: xpath
         locator: '//a[contains (@data-catalog-view-trigger,"list-view")]'
 
-    NewArrivalStiker:
+    NewArrivalSticker:
       selector: '.product-sticker--icon-new_arrival'
 
     NewArrivalText:

@@ -7,10 +7,11 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 
-class NewArrivalsProvider
+class NewArrivalsProvider implements ProductsProviderInterface
 {
     /**
      * @var SegmentManager
@@ -51,9 +52,9 @@ class NewArrivalsProvider
     }
 
     /**
-     * @return Product[]
+     * {@inheritDoc}
      */
-    public function getNewArrivals()
+    public function getProducts()
     {
         if (!$this->isMinAndMaxLimitsValid() || !$this->getSegmentId()) {
             return [];

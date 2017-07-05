@@ -21,5 +21,6 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
+        - OroShoppingListBundle::FeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

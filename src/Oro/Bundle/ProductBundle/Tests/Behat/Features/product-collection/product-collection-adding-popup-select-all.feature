@@ -109,4 +109,4 @@ Feature:
     Then I should see "This value should be of type integer"
     And I fill in "Mass Action Limit" with "some string"
     And I click "Save settings"
-    Then Mass Action Limit field should has 500 value
+    Then I should see "This value should not be blank."

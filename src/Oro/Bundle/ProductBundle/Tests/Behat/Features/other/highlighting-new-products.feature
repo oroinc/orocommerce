@@ -1,4 +1,4 @@
-@fixture-HighlightingNewProducts.yml
+@fixture-highlighting_new_products.yml
 Feature: Highlighting new products
   In order to highlight selected new products
   As an Administrator
@@ -42,36 +42,36 @@ Feature: Highlighting new products
     And save and close form
     Then I should see "Product has been saved" flash message
 
-  Scenario: New Arrival Stiker for a not logged in user
+  Scenario: New Arrival Sticker for a not logged in user
     Given I proceed as the User
     And I am on the homepage
     When I click "NewCategory"
-    Then should see "New Arrival Stiker" for "PSKU1" product
-    And should not see "New Arrival Stiker" for "PSKU2" product
+    Then should see "New Arrival Sticker" for "PSKU1" product
+    And should not see "New Arrival Sticker" for "PSKU2" product
     When I click "Galery View Button"
-    Then should see "New Arrival Stiker" for "PSKU1" product
-    And should not see "New Arrival Stiker" for "PSKU2" product
+    Then should see "New Arrival Sticker" for "PSKU1" product
+    And should not see "New Arrival Sticker" for "PSKU2" product
     When I click "NoImage View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     And should see "New Arrival Text" for "PSKU1" product
     And should not see "New Arrival Text" for "PSKU2" product
 
-  Scenario: New Arrival Stiker for logged in user
+  Scenario: New Arrival Sticker for logged in user
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "NewCategory"
     When I click "List View Button"
-    Then should see "New Arrival Stiker" for "PSKU1" product
-    And should not see "New Arrival Stiker" for "PSKU2" product
+    Then should see "New Arrival Sticker" for "PSKU1" product
+    And should not see "New Arrival Sticker" for "PSKU2" product
     When I click "Galery View Button"
-    Then should see "New Arrival Stiker" for "PSKU1" product
-    And should not see "New Arrival Stiker" for "PSKU2" product
+    Then should see "New Arrival Sticker" for "PSKU1" product
+    And should not see "New Arrival Sticker" for "PSKU2" product
     When I click "NoImage View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     And should see "New Arrival Text" for "PSKU1" product
     And should not see "New Arrival Text" for "PSKU2" product
 
-  Scenario: New Arrival Stiker on product view page - active
+  Scenario: New Arrival Sticker on product view page - active
     Given I proceed as the Admin
     And go to System/ Configuration
     And click "Promotions" on configuration sidebar
@@ -83,13 +83,13 @@ Feature: Highlighting new products
     And I proceed as the User
     And I click "List View Button"
     When click "View Details" for "PSKU1" product
-    Then I should see an "New Arrival Stiker" element
+    Then I should see an "New Arrival Sticker" element
     And click "Sign Out"
     And click "NewCategory"
     When click "View Details" for "PSKU1" product
-    Then I should see an "New Arrival Stiker" element
+    Then I should see an "New Arrival Sticker" element
 
-  Scenario: New Arrival Stiker on product view page - not active
+  Scenario: New Arrival Sticker on product view page - not active
     Given I proceed as the Admin
     When fill "Promotions form" with:
       |Show On Product View Default|true|
@@ -97,11 +97,11 @@ Feature: Highlighting new products
     Then I should see "Configuration saved" flash message
     And I proceed as the User
     When reload the page
-    Then I should not see an "New Arrival Stiker" element
+    Then I should not see an "New Arrival Sticker" element
     And I signed in as AmandaRCole@example.org on the store frontend
     And click "NewCategory"
     When click "View Details" for "PSKU1" product
-    Then I should not see an "New Arrival Stiker" element
+    Then I should not see an "New Arrival Sticker" element
     And click "Sign Out"
 
   Scenario: UnAssign product
@@ -113,26 +113,26 @@ Feature: Highlighting new products
     And save and close form
     Then I should see "Product has been saved" flash message
 
-  Scenario: New Arrival Stiker for not loged user (UnAssign)
+  Scenario: New Arrival Sticker for not loged user (UnAssign)
     Given I proceed as the User
     And I am on the homepage
     When I click "NewCategory"
     And I click "List View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     When I click "Galery View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     When I click "NoImage View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Text" for "PSKU1" product
 
-  Scenario: New Arrival Stiker for loged user (UnAssign)
+  Scenario: New Arrival Sticker for loged user (UnAssign)
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     And I click "NewCategory"
     When I click "List View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     When I click "Galery View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     When I click "NoImage View Button"
-    Then should not see "New Arrival Stiker" for "PSKU1" product
+    Then should not see "New Arrival Sticker" for "PSKU1" product
     And should not see "New Arrival Text" for "PSKU1" product

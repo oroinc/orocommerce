@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -16,11 +15,6 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var Cache|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $cache;
-
     /**
      * @var FeaturedProductsProvider
      */
@@ -55,14 +49,12 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
         $this->productSegmentProvider = $this->createMock(ProductSegmentProviderInterface::class);
         $this->productManager = $this->createMock(ProductManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->cache = $this->createMock(Cache::class);
 
         $this->provider = new FeaturedProductsProvider(
             $this->segmentManager,
             $this->productSegmentProvider,
             $this->productManager,
-            $this->configManager,
-            $this->cache
+            $this->configManager
         );
     }
 
@@ -107,7 +99,7 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($qb, [])
             ->willReturn($restrictionQB);
 
-        $this->assertEquals(['result'], $this->provider->getAll());
+        $this->assertEquals(['result'], $this->provider->getProducts());
     }
 
     public function testGetAllWithoutConfig()
@@ -126,7 +118,7 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('getEntityQueryBuilder');
 
-        $this->assertEquals([], $this->provider->getAll());
+        $this->assertEquals([], $this->provider->getProducts());
     }
 
     public function testGetCollectionWithoutSegment()
@@ -147,7 +139,7 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('getEntityQueryBuilder');
 
-        $this->assertEquals([], $this->provider->getAll());
+        $this->assertEquals([], $this->provider->getProducts());
     }
 
     public function testGetAllWithoutQueryBuilder()
@@ -177,6 +169,6 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('restrictQueryBuilder');
 
-        $this->assertEquals([], $this->provider->getAll());
+        $this->assertEquals([], $this->provider->getProducts());
     }
 }

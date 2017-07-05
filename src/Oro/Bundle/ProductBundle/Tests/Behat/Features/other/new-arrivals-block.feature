@@ -1,4 +1,4 @@
-@fixture-NewArrivalsBlock.yml
+@fixture-new_arrivals_block.yml
 Feature: New Arrivals Block
   In order to promote new arrivals on the store homepage
   As an Administrator
@@ -67,7 +67,8 @@ Feature: New Arrivals Block
     And go to System/ Configuration
     And click "Promotions" on configuration sidebar
     And fill "Promotions Form" with:
-    |Product Segment Default|true|
+      |Product Segment Default|false         |
+      |Product Segment        |Choose segment|
     And submit form
     When I proceed as the User
     And reload the page
@@ -77,8 +78,6 @@ Feature: New Arrivals Block
 
   Scenario: "New Arrival" on and Featured segment selected
     Given I proceed as the Admin
-    And go to System/ Configuration
-    And click "Promotions" on configuration sidebar
     And fill "Promotions Form" with:
       |Product Segment Default|false            |
       |Product Segment        |Featured Products|
@@ -99,12 +98,12 @@ Feature: New Arrivals Block
       |SKU5|
       |SKU6|
       |SKU7|
-    And should see "New Arrival Stiker" for the following products in the "Featured Products Block":
+    And should see "New Arrival Sticker" for the following products in the "Featured Products Block":
       |SKU |
       |SKU5|
       |SKU6|
       |SKU7|
-    And should not see "New Arrival Stiker" for the following products in the "New Arrivals Block":
+    And should not see "New Arrival Sticker" for the following products in the "New Arrivals Block":
       |SKU |
       |SKU5|
       |SKU6|
@@ -125,8 +124,9 @@ Feature: New Arrivals Block
   Scenario: Minimum Items is set low then the actual
     Given I proceed as the Admin
     And fill "Promotions Form" with:
-      |Maximum Items|3|
-      |Minimum Items|4|
+      |Product Segment Default|true|
+      |Maximum Items          |3   |
+      |Minimum Items          |4   |
     And submit form
     And I proceed as the User
     When reload the page
@@ -190,12 +190,12 @@ Feature: New Arrivals Block
       |SKU1|
       |SKU2|
       |SKU3|
-    And should see "New Arrival Stiker" for the following products in the "Featured Products Block":
+    And should see "New Arrival Sticker" for the following products in the "Featured Products Block":
       |SKU |
       |SKU5|
       |SKU6|
       |SKU7|
-    And should not see "New Arrival Stiker" for the following products in the "New Arrivals Block":
+    And should not see "New Arrival Sticker" for the following products in the "New Arrivals Block":
       |SKU |
       |SKU4|
       |SKU5|

@@ -2,23 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
 use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-class FeaturedProductsProvider
+class FeaturedProductsProvider implements ProductsProviderInterface
 {
     const FEATURED_PRODUCTS_CACHE_KEY = 'oro_product.layout.data_provider.featured_products_featured_products';
-
-    /**
-     * @var Cache
-     */
-    private $cache;
 
     /**
      * @var SegmentManager
@@ -45,42 +39,23 @@ class FeaturedProductsProvider
      * @param ProductSegmentProviderInterface $productSegmentProvider
      * @param ProductManager                  $productManager
      * @param ConfigManager                   $configManager
-     * @param Cache                           $cache
      */
     public function __construct(
         SegmentManager $segmentManager,
         ProductSegmentProviderInterface $productSegmentProvider,
         ProductManager $productManager,
-        ConfigManager $configManager,
-        Cache $cache
+        ConfigManager $configManager
     ) {
         $this->segmentManager = $segmentManager;
         $this->productSegmentProvider = $productSegmentProvider;
         $this->productManager = $productManager;
         $this->configManager = $configManager;
-        $this->cache = $cache;
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function getAll()
-    {
-        $items = [];
-        if ($this->cache->contains(static::FEATURED_PRODUCTS_CACHE_KEY)) {
-            $items = $this->cache->fetch(static::FEATURED_PRODUCTS_CACHE_KEY);
-        } else {
-            $items = $this->fetchProducts();
-            $this->cache->save(static::FEATURED_PRODUCTS_CACHE_KEY, $items);
-        }
-
-        return $items;
-    }
-
-    /**
-     * @return array|Product[]
-     */
-    private function fetchProducts()
+    public function getProducts()
     {
         $segment = $this->getSegment();
         if ($segment) {

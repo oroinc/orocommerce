@@ -75,7 +75,7 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
         $this->productSegmentProvider->expects(static::never())
             ->method('getProductSegmentById');
 
-        static::assertEquals([], $this->provider->getNewArrivals());
+        static::assertEquals([], $this->provider->getProducts());
     }
 
     /**
@@ -110,7 +110,7 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
             ->with(1)
             ->willReturn(null);
 
-        static::assertEquals([], $this->provider->getNewArrivals());
+        static::assertEquals([], $this->provider->getProducts());
     }
 
     public function testGetNewArrivalsNoSegmentInConfig()
@@ -126,7 +126,7 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
         $this->productSegmentProvider->expects(static::never())
             ->method('getProductSegmentById');
 
-        static::assertEquals([], $this->provider->getNewArrivals());
+        static::assertEquals([], $this->provider->getProducts());
     }
 
     public function testGetNewArrivalsNoQueryBuilder()
@@ -151,7 +151,7 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($segment)
             ->willReturn(null);
 
-        static::assertEquals([], $this->provider->getNewArrivals());
+        static::assertEquals([], $this->provider->getProducts());
     }
 
     /**
@@ -206,7 +206,7 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getResult')
             ->willReturn($products);
 
-        static::assertEquals($expectedProducts, $this->provider->getNewArrivals());
+        static::assertEquals($expectedProducts, $this->provider->getProducts());
     }
 
     /**
@@ -305,6 +305,6 @@ class NewArrivalsProviderTest extends \PHPUnit_Framework_TestCase
         static::assertEquals([
             $product1,
             $product2,
-        ], $this->provider->getNewArrivals());
+        ], $this->provider->getProducts());
     }
 }
