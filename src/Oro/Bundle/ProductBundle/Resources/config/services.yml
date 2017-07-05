@@ -745,10 +745,13 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity_extend.enum_value_provider'
+            - '@logger'
 
     oro_product.product_variant_field.field_value_handler.boolean_type_handler:
         public: false
         class: 'Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler'
+        arguments:
+            - '@translator'
 
     oro_product.product_variant.type_handler.enum_type_handler:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler'
@@ -809,6 +812,7 @@ services:
             - '@oro_product.provider.custom_field_provider'
             - '@oro_product.provider.product_variant_availability_provider'
             - '@property_accessor'
+            - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
         tags:
             - { name: layout.data_provider, alias: oro_product_configurable_products }
 

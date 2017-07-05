@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -54,7 +55,8 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 class Promotion extends ExtendPromotion implements
     DatesAwareInterface,
     OrganizationAwareInterface,
-    RuleOwnerInterface
+    RuleOwnerInterface,
+    ScheduleIntervalsAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;

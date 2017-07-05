@@ -5,7 +5,6 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         useCoupons:
             - NotBlank: ~
         schedules:
-            - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection: ~
             - Valid: ~
         scopes:
             - Valid: ~
@@ -15,3 +14,11 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
             - Valid: ~
         descriptions:
             - Valid: ~
+
+Oro\Bundle\PromotionBundle\Entity\PromotionSchedule:
+    constraints:
+        - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+            chain:
+                activeAt: 'Active At'
+                deactivateAt: 'Deactivate At'
