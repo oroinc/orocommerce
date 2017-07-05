@@ -65,7 +65,7 @@ class BrandTypeTest extends WebTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(BrandType::class, $this->type->getName());
+        $this->assertEquals(BrandType::NAME, $this->type->getName());
     }
 
     public function testBuildForm()

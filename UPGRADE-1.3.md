@@ -72,10 +72,18 @@ ProductBundle
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandSelectType` was added
     - New form type `Oro\Bundle\ProductBundle\Form\Type\BrandStatusType` was added
-    - New form handler `Oro\Bundle\ProductBundle\Form\Handler\BrandHandler` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
     - New service `oro_product.brand.manager.api` registered
+- Interface `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface`
+    - New method `getHumanReadableValue` was added
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Symfony\Component\Translation\TranslatorInterface` was added.
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
+- Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
+    
     
 PaymentBundle
 -------------
@@ -89,6 +97,7 @@ ShippingBundle
  - `oroshipping/js/app/views/shipping-rule-method-view` - changed options, functions, functionality
  - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
  - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
+ - previously deprecated interface `\Oro\Bundle\ShippingBundle\Identifier\IntegrationMethodIdentifierGeneratorInterface` is removed along with its implementations and usages. Use `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` instead.
  - previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
  - previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
 
@@ -141,6 +150,7 @@ PaymentBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+- Unused abstract classes `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig` and `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig` was removed.
 
 RFPBundle
 ---------
@@ -203,7 +213,11 @@ SaleBundle
     - oro_quote_add_free_form_items
 - Added new workflow `b2b_quote_backoffice_approvals`
 
+UPSBundle
+---------
+- Class `Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+
 FlatRateShippingBundle
 ----------------------
+- Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
 - previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
-
