@@ -186,6 +186,7 @@ oro.pricing:
 
     sections:
         general: General
+        additional: Additional
         price_rules: Price Calculation Rules
         product_assignment: Product Assignment
 
