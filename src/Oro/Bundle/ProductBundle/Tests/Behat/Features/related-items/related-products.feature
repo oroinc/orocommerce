@@ -1,5 +1,5 @@
-@fixture-products.yml
-@fixture-system_users.yml
+@fixture-OroProductBundle:products.yml
+@fixture-OroProductBundle:system_users.yml
 @feature-BB-8377
 Feature: Editing related products
   In order to propose my customer some other products

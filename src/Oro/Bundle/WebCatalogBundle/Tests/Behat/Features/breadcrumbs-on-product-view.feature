@@ -1,4 +1,4 @@
-@fixture-web_catalog_for_breadcrumbs.yml
+@fixture-OroWebCatalogBundle:web_catalog_for_breadcrumbs.yml
 Feature: Product view page breadcrumbs
 
   Scenario: Create content nodes in web catalog and mark web catalog as default
