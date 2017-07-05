@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @method static ContainerInterface getContainer
@@ -16,7 +15,7 @@ trait MessageQueueTrait
     protected function cleanScheduledMessages()
     {
         $this->sendScheduledMessages();
-        $this->getMessageCollector()->clear();
+        static::getMessageCollector()->clear();
     }
 
     protected function sendScheduledMessages()
