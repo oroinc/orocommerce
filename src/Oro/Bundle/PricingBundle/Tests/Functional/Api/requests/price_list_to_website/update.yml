@@ -1,6 +1,0 @@
-data:
-    type: 'pricelisttowebsites'
-    id: '<toString(@price_list_6_US->id)>'
-    attributes:
-        sortOrder: '87'
-        mergeAllowed: true

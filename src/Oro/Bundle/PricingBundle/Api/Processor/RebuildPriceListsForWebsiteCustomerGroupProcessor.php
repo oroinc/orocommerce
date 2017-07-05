@@ -30,17 +30,19 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessor implements ProcessorInte
     {
         $websiteCustomerGroupAwareEntities = $context->getResult();
 
-        if (!$websiteCustomerGroupAwareEntities) {
-            return;
-        }
-
         if (!is_array($websiteCustomerGroupAwareEntities)) {
             $websiteCustomerGroupAwareEntities = [$websiteCustomerGroupAwareEntities];
         }
 
         $processed = [];
-        /** @var WebsiteAwareInterface|CustomerGroupAwareInterface $entity */
         foreach ($websiteCustomerGroupAwareEntities as $entity) {
+            if (!$entity instanceof WebsiteAwareInterface) {
+                continue;
+            }
+            if (!$entity instanceof CustomerGroupAwareInterface) {
+                continue;
+            }
+
             $group = $entity->getCustomerGroup();
             $website = $entity->getWebsite();
 

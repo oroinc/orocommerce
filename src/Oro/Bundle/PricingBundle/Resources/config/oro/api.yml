@@ -32,30 +32,6 @@ api:
                     actions:
                         update_relationship: false
                         add_relationship: false
-
-        Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
-            actions:
-                update:
-                    fields:
-                        website:
-                            exclude: true
-            subresources:
-                website:
-                    actions:
-                        update_relationship: false
-                priceList:
-                    actions:
-                        update_relationship: false
-        Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback:
-            actions:
-                update:
-                    fields:
-                        website:
-                            exclude: true
-            subresources:
-                website:
-                    actions:
-                        update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
             actions:
                 update:
