@@ -1,5 +1,6 @@
 datagrids:
     pricing-price-list-select-grid:
+        extended_entity_name: '%oro_pricing.entity.price_list.class%'
         acl_resource:      oro_pricing_price_list_view
         options:
             entityHint:        price lists
@@ -8,7 +9,7 @@ datagrids:
             query:
                 select:
                     - priceList.id
-                    - priceList.name
+                    - priceList.name as priceListName
                     - priceList.default
                     - priceList.createdAt
                     - priceList.updatedAt
@@ -26,6 +27,7 @@ datagrids:
         columns:
             name:
                 label:         oro.pricing.pricelist.name.label
+                data_name:     priceListName
             default:
                 label:         oro.pricing.pricelist.default.label
                 frontend_type: boolean
@@ -45,7 +47,7 @@ datagrids:
         sorters:
             columns:
                 name:
-                    data_name: priceList.name
+                    data_name: priceListName
                 createdAt:
                     data_name: priceList.createdAt
                 updatedAt:
@@ -60,7 +62,7 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: priceList.name
+                    data_name: priceListName
                 createdAt:
                     type:      datetime
                     data_name: priceList.createdAt

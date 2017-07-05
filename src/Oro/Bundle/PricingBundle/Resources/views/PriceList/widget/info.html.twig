@@ -19,6 +19,8 @@
             {% if entity.isActive() and not entity.schedules.isEmpty() %}
                 {{ UI.renderHtmlProperty('oro.pricing.pricelist.schedule.label'|trans, _self.schedule(entity.schedules)) }}
             {% endif %}
+
+            {{ entityConfig.renderDynamicFields(entity) }}
         </div>
     </div>
 </div>
