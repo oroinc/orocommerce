@@ -42,11 +42,30 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
         }
 
         return $this->translator->transChoice(
-            sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $isShort ? 'short' : 'full'),
+            sprintf('%s.%s.value.%s', $this->getTranslationPrefix(), $unitCode, $this->getSuffix($value, $isShort)),
             $value,
             [
                 '%count%' => $value
             ]
         );
+    }
+
+    /**
+     * @param float $value
+     * @param bool $isShort
+     *
+     * @return string
+     */
+    protected function getSuffix($value, $isShort)
+    {
+        $suffix = $isShort ? 'short' : 'full';
+        if ((double)$value !== (double)(int)$value) {
+            $suffix .= '_fraction';
+            if ($value > 1) {
+                $suffix .= '_gt_1';
+            }
+        }
+
+        return $suffix;
     }
 }

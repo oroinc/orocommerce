@@ -5,15 +5,15 @@ namespace Oro\Bundle\FlatRateShippingBundle\Factory;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFactoryInterface
 {
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
     private $identifierGenerator;
 
@@ -28,12 +28,12 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
     private $integrationIconProvider;
 
     /**
-     * @param IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
-     * @param LocalizationHelper                            $localizationHelper
-     * @param IntegrationIconProviderInterface              $integrationIconProvider
+     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
+     * @param LocalizationHelper                      $localizationHelper
+     * @param IntegrationIconProviderInterface        $integrationIconProvider
      */
     public function __construct(
-        IntegrationMethodIdentifierGeneratorInterface $identifierGenerator,
+        IntegrationIdentifierGeneratorInterface $identifierGenerator,
         LocalizationHelper $localizationHelper,
         IntegrationIconProviderInterface $integrationIconProvider
     ) {
