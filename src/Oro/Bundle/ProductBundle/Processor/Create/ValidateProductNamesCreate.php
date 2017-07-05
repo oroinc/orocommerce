@@ -15,7 +15,7 @@ class ValidateProductNamesCreate extends ValidateRequestData
      */
     protected function validateRelationships(array $data, $pointer)
     {
-        return $this->validateRequired($data, self::NAMES_RELATION, $pointer) &&
-        $this->validateArray($data[self::NAMES_RELATION], JsonApiDocumentBuilder::DATA, $pointer, true);
+        return $this->validateRequired($data, self::NAMES_RELATION, $pointer)
+            && $this->validateArray($data[self::NAMES_RELATION], JsonApiDocumentBuilder::DATA, $pointer, true);
     }
 }
