@@ -14,7 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 /**
  * @internal
  */
-class CustomerVisitorAuthorizationChecker
+class CustomerVisitorAuthorizationChecker implements AuthorizationCheckerInterface
 {
     /**
      * @var AuthorizationCheckerInterface
@@ -39,11 +39,9 @@ class CustomerVisitorAuthorizationChecker
     /**
      * Grant access to customer visitor own shopping lists and line items only.
      *
-     * @param string $attribute
-     * @param object $object
-     * @return bool
+     * {@inheritDoc}
      */
-    public function isGranted($attribute, $object)
+    public function isGranted($attribute, $object = null)
     {
         $token = $this->tokenStorage->getToken();
 
