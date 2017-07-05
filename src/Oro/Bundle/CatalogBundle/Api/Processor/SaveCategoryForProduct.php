@@ -38,14 +38,15 @@ class SaveCategoryForProduct implements ProcessorInterface
             ->getEntityRepository(Category::class)
             ->findOneByProductSku($product->getSku());
 
+        $em = $this->doctrineHelper->getEntityManager(Category::class);
         if ($currentCategory instanceof Category) {
             $currentCategory->removeProduct($product);
             // need to flush before adding setting new category
-            $this->doctrineHelper->getEntityManager(Category::class)->flush();
+            $em->flush($currentCategory);
         }
 
         $category->addProduct($product);
-        $this->doctrineHelper->getEntityManager(Category::class)->flush();
+        $em->flush($currentCategory);
         $context->remove(RemoveCategoryFromProductRequest::CATEGORY);
     }
 }
