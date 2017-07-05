@@ -6,6 +6,12 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -18,10 +24,6 @@ use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariant
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,14 +45,25 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     /** @var EnumVariantFieldValueHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $enumHandler;
 
+    /** @var BooleanVariantFieldValueHandler|\PHPUnit_Framework_MockObject_MockObject */
+    protected $boolHandler;
+
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcher;
+
+    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $translator;
 
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
+        $variantFieldValueHandlerRegistry = new ProductVariantFieldValueHandlerRegistry();
+
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->boolHandler = new BooleanVariantFieldValueHandler($this->translator);
+
         $this->productRepository = $this->getMockBuilder(ProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -81,13 +94,14 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $variantFieldValueHandlerRegistry = new ProductVariantFieldValueHandlerRegistry();
-        $boolHandler = new BooleanVariantFieldValueHandler();
+        $logger = $this->createMock(LoggerInterface::class);
+
         $this->enumHandler = $this->getMockBuilder(EnumVariantFieldValueHandler::class)
-            ->setConstructorArgs([$doctrineHelper, $enumValueProvider])
+            ->setConstructorArgs([$doctrineHelper, $enumValueProvider, $logger])
             ->setMethods(['getPossibleValues'])
             ->getMock();
-        $variantFieldValueHandlerRegistry->addHandler($boolHandler);
+
+        $variantFieldValueHandlerRegistry->addHandler($this->boolHandler);
         $variantFieldValueHandlerRegistry->addHandler($this->enumHandler);
 
         $propertyAccessor = PropertyAccess::createPropertyAccessor();

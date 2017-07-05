@@ -5,7 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 
 class PayPalConfig
@@ -30,24 +30,24 @@ class PayPalConfig
     private $paymentActionsDataProvider;
 
     /**
-     * @var CardTypesDataProviderInterface
+     * @var CreditCardTypesDataProviderInterface
      */
-    private $cardTypesDataProvider;
+    private $creditCardTypesDataProvider;
 
     /**
-     * @param PaymentActionsDataProviderInterface $paymentActionsDataProvider
-     * @param CardTypesDataProviderInterface      $cardTypesDataProvider
-     * @param ConfigManager                       $configManager
-     * @param PayPalConfigKeysProvider            $keysProvider
+     * @param PaymentActionsDataProviderInterface  $paymentActionsDataProvider
+     * @param CreditCardTypesDataProviderInterface $creditCardTypesDataProvider
+     * @param ConfigManager                        $configManager
+     * @param PayPalConfigKeysProvider             $keysProvider
      */
     public function __construct(
         PaymentActionsDataProviderInterface $paymentActionsDataProvider,
-        CardTypesDataProviderInterface $cardTypesDataProvider,
+        CreditCardTypesDataProviderInterface $creditCardTypesDataProvider,
         ConfigManager $configManager,
         PayPalConfigKeysProvider $keysProvider
     ) {
         $this->paymentActionsDataProvider = $paymentActionsDataProvider;
-        $this->cardTypesDataProvider = $cardTypesDataProvider;
+        $this->creditCardTypesDataProvider = $creditCardTypesDataProvider;
         $this->configManager = $configManager;
         $this->keysProvider = $keysProvider;
     }
@@ -207,7 +207,7 @@ class PayPalConfig
     {
         $configTypes = $this->getConfigValue($this->keysProvider->getAllowedCreditCardTypesKey()) ?: [];
 
-        $actualTypes = $this->cardTypesDataProvider->getCardTypes();
+        $actualTypes = $this->creditCardTypesDataProvider->getCardTypes();
 
         $configTypes = array_filter($configTypes, function ($configType) use ($actualTypes) {
             return in_array($configType, $actualTypes, true);

@@ -163,6 +163,11 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-user-view, method: onCustomerUserView }
 
+    oro_sale.event_listener.datagrid.frontend_quote:
+        class: 'Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.frontend-quotes-grid, method: onResultBeforeQuery }
+
     oro_sale.provider.quote_entity_name:
           class: Oro\Bundle\SaleBundle\Provider\QuoteEntityNameProvider
           public: false
@@ -198,6 +203,14 @@ services:
     oro_sale.storage.return_route_storage:
         class: 'Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage'
         parent: oro_product.storage.session_data_storage
+
+    oro_sale.acl.voter.frontend_quote_permission_voter:
+        class: 'Oro\Bundle\SaleBundle\Acl\Voter\FrontendQuotePermissionVoter'
+        public: false
+        arguments:
+            - '@oro_action.provider.current_application'
+        tags:
+            - { name: security.voter }
 
     oro_sale.provider.contact_info_source_options_provider:
         class: 'Oro\Bundle\SaleBundle\Provider\ContactInfoSourceOptionsProvider'

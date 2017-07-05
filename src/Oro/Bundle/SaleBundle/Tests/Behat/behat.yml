@@ -7,8 +7,11 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroActivityListBundle::ActivityContext
         - OroApplicationBundle::CommerceMainContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroSecurityBundle::ACLContext
         - OroSaleBundle::FeatureContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
