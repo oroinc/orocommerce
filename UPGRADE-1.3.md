@@ -88,7 +88,8 @@ ProductBundle
 PaymentBundle
 -------------
 - Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
-- Previously deprecated class`Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` is removed, `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` should be used instead.
+- Previously deprecated class `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` is removed, `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` should be used instead.
+- Previously deprecated method `Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::computeStatus` is removed. Use `getPaymentStatus` instead.
 
 ShippingBundle
 -------------
@@ -106,6 +107,8 @@ PayPalBundle
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface` added. It is used to get required parameters instead of constants.
 - Class `Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListen`
     - property `$allowedIPs` changed from `private` to `protected`
+- Previously deprecated `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is removed. Use `Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+- Previously deprecated interface `Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is removed. Use `Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
 
 SEOBundle
 -------------
