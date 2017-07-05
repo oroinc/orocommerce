@@ -9,7 +9,7 @@ use Oro\Component\Website\WebsiteInterface;
 
 class RestrictSitemapEntitiesEventTest extends \PHPUnit_Framework_TestCase
 {
-     /**
+    /**
      * @var RestrictSitemapEntitiesEvent
      */
     protected $restrictSitemapEntitiesEvent;

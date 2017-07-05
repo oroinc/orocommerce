@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 class BuyXGetYDiscountOptionsType extends AbstractType
 {
@@ -39,7 +41,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
                 IntegerType::class,
                 [
                     'label' => 'oro.discount_options.buy_x_get_y_type.buy_x.label',
-                    'constraints' => [new GreaterThanZero()],
+                    'constraints' => [new Type('integer'), new NotBlank(), new GreaterThanZero()],
                 ]
             )
             ->add(
@@ -47,7 +49,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
                 IntegerType::class,
                 [
                     'label' => 'oro.discount_options.buy_x_get_y_type.get_y.label',
-                    'constraints' => [new GreaterThanZero()],
+                    'constraints' => [new Type('integer'), new NotBlank(), new GreaterThanZero()],
                 ]
             )
             ->add(
@@ -74,7 +76,7 @@ class BuyXGetYDiscountOptionsType extends AbstractType
                     'label' => 'oro.discount_options.buy_x_get_y_type.limit_times.label',
                     'tooltip' => 'oro.discount_options.buy_x_get_y_type.limit_times.tooltip',
                     'required' => false,
-                    'constraints' => [new GreaterThanZero()],
+                    'constraints' => [new Type('integer'), new GreaterThanZero()],
                 ]
             );
     }

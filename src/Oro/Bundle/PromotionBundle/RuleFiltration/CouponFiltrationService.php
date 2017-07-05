@@ -37,10 +37,6 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
      */
     private function isCouponApplied(RuleOwnerInterface $ruleOwner): bool
     {
-        if ($ruleOwner instanceof Promotion && $ruleOwner->isUseCoupons()) {
-            return false;
-        }
-
-        return true;
+        return !($ruleOwner instanceof Promotion && $ruleOwner->isUseCoupons());
     }
 }

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Dumper;
 
-use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -14,11 +14,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class SitemapDumper implements SitemapDumperInterface
 {
     const SITEMAP_FILENAME_TEMPLATE = 'sitemap-%s-%s.xml';
-
-    /**
-     * @var UrlItemsProviderRegistry
-     */
-    private $providerRegistry;
 
     /**
      * @var SitemapStorageFactory
@@ -31,6 +26,11 @@ class SitemapDumper implements SitemapDumperInterface
     private $filesystemAdapter;
 
     /**
+     * @var WebsiteUrlProvidersServiceInterface
+     */
+    private $websiteUrlProvidersService;
+
+    /**
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
@@ -41,20 +41,20 @@ class SitemapDumper implements SitemapDumperInterface
     private $storageType;
 
     /**
-     * @param UrlItemsProviderRegistry $providerRegistry
+     * @param WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService
      * @param SitemapStorageFactory $sitemapStorageFactory
      * @param SitemapFilesystemAdapter $filesystemAdapter
      * @param EventDispatcherInterface $eventDispatcher
      * @param string $storageType
      */
     public function __construct(
-        UrlItemsProviderRegistry $providerRegistry,
+        WebsiteUrlProvidersServiceInterface $websiteUrlProvidersService,
         SitemapStorageFactory $sitemapStorageFactory,
         SitemapFilesystemAdapter $filesystemAdapter,
         EventDispatcherInterface $eventDispatcher,
         $storageType
     ) {
-        $this->providerRegistry = $providerRegistry;
+        $this->websiteUrlProvidersService = $websiteUrlProvidersService;
         $this->sitemapStorageFactory = $sitemapStorageFactory;
         $this->filesystemAdapter = $filesystemAdapter;
         $this->eventDispatcher = $eventDispatcher;
@@ -75,10 +75,10 @@ class SitemapDumper implements SitemapDumperInterface
      */
     public function dump(WebsiteInterface $website, $version, $type = null)
     {
-        if ($type) {
-            $providers[$type] = $this->providerRegistry->getProviderByName($type);
-        } else {
-            $providers = $this->providerRegistry->getProviders();
+        $providers = $this->websiteUrlProvidersService->getWebsiteProvidersIndexedByNames($website);
+        if (isset($providers[$type])) {
+            $provider[$type] = $providers[$type];
+            $providers = $provider;
         }
 
         foreach ($providers as $providerType => $provider) {

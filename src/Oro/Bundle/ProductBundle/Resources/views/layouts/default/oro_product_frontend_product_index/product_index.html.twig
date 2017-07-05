@@ -21,3 +21,19 @@
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
+
+{% block _filter_container_tpl_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-grid-toolbar': 'top',
+        'data-sticky-target': 'top-sticky-panel',
+        'data-proxy-data': 'true',
+        'data-sticky': {
+            'isSticky': true,
+            'autoWidth': true,
+            'toggleClass': 'toolbar-sticky-container',
+            'placeholderId': 'sticky_element_toolbar'
+        }
+    }) %}
+
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}

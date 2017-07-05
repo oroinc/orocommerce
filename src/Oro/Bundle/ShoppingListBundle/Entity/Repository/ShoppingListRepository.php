@@ -63,7 +63,7 @@ class ShoppingListRepository extends EntityRepository
      */
     public function findByUserAndId(AclHelper $aclHelper, $id)
     {
-         $qb = $this->createQueryBuilder('list')
+        $qb = $this->createQueryBuilder('list')
             ->select('list')
             ->andWhere('list.id = :id')
             ->setParameter('id', $id);

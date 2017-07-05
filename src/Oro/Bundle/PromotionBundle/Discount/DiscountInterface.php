@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 /**
  * Discount services MUST BE registered with shared: false
@@ -48,9 +49,9 @@ interface DiscountInterface
     /**
      * Currency ISO 4217 code
      *
-     * @return string
+     * @return string|null
      */
-    public function getDiscountCurrency(): string;
+    public function getDiscountCurrency();
 
     /**
      * Add information about discount to context
@@ -66,4 +67,19 @@ interface DiscountInterface
      * @return float
      */
     public function calculate($entity): float;
+
+    /**
+     * Get related promotion
+     *
+     * @return Promotion|null
+     */
+    public function getPromotion();
+
+    /**
+     * Set related promotion
+     *
+     * @param Promotion $promotion
+     * @return void
+     */
+    public function setPromotion(Promotion $promotion);
 }

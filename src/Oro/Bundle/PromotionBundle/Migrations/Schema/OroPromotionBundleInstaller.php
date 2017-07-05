@@ -187,15 +187,16 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     {
         $table = $schema->createTable('oro_promotion_applied_discount');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
+        $table->addColumn('line_item_id', 'integer', ['notnull' => false]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
-        $table->addColumn('type', 'string', ['length' => 50]);
-        $table->addColumn('amount', 'float');
-        $table->addColumn('currency', 'string');
-        $table->addColumn('config_options', 'json_array');
-        $table->addColumn('options', 'json_array');
-        $table->addIndex(['promotion_id']);
-        $table->addIndex(['order_id']);
+        $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
+        $table->addColumn('amount', 'decimal', ['precision' => 19, 'scale' => 4]);
+        $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addColumn('config_options', 'json_array', []);
+        $table->addColumn('promotion_name', 'text', []);
+        $table->addColumn('class', 'text', []);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -369,6 +370,12 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_promotion'),
             ['promotion_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order_line_item'),
+            ['line_item_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

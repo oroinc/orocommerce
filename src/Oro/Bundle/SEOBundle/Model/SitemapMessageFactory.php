@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Model;
 
-use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistryInterface;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,12 +13,12 @@ class SitemapMessageFactory extends AbstractSitemapMessageFactory
     const JOB_ID = 'jobId';
 
     /**
-     * @var UrlItemsProviderRegistry
+     * @var UrlItemsProviderRegistryInterface
      */
     private $providerRegistry;
 
     /**
-     * @param UrlItemsProviderRegistry $providerRegistry
+     * @param UrlItemsProviderRegistryInterface $providerRegistry
      */
     public function setProviderRegistry($providerRegistry)
     {
@@ -83,7 +83,7 @@ class SitemapMessageFactory extends AbstractSitemapMessageFactory
 
         $resolver->setAllowedValues(
             self::TYPE,
-            $this->providerRegistry->getProviderNames()
+            array_keys($this->providerRegistry->getProvidersIndexedByNames())
         );
 
         return $resolver;

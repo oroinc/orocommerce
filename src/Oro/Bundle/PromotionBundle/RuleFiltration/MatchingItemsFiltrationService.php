@@ -44,6 +44,9 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
         $lineItems = $context[ContextDataConverterInterface::LINE_ITEMS] ?? [];
+        if ($lineItems instanceof \Traversable) {
+            $lineItems = iterator_to_array($lineItems);
+        }
 
         $filteredOwners = $ruleOwners;
         if (!empty($lineItems)) {
@@ -53,13 +56,17 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
                 }
                 $discountOptions = $ruleOwner->getDiscountConfiguration()->getOptions();
 
+                $matchingProducts = $this->matchingProductsProvider
+                    ->getMatchingProducts($ruleOwner->getProductsSegment(), $lineItems);
+
+                if (!$matchingProducts) {
+                    return false;
+                }
+
                 // Skip promotions that are not unit aware
                 if (!array_key_exists(UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE, $discountOptions)) {
                     return true;
                 }
-
-                $matchingProducts = $this->matchingProductsProvider
-                    ->getMatchingProducts($ruleOwner->getProductsSegment(), $lineItems);
 
                 return $this->hasMatchedProductUnit(
                     $lineItems,

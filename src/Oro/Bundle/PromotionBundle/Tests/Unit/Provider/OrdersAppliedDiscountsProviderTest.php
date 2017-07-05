@@ -32,6 +32,7 @@ class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->provider = new OrdersAppliedDiscountsProvider($this->cache, $doctrineHelper);
     }
+
     public function testGetOrderDiscountsFromCache()
     {
         $discounts = [new AppliedDiscount(), new AppliedDiscount()];
@@ -55,5 +56,25 @@ class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
         $this->cache->expects($this->once())->method('save');
 
         $this->assertSame($discounts, $this->provider->getOrderDiscounts($orderId));
+    }
+
+    public function testGetOrderDiscountAmount()
+    {
+        $orderId = 123;
+
+        $expectedAmount = 3.3;
+        $discounts = [
+            (new AppliedDiscount())->setAmount(1.1),
+            (new AppliedDiscount())->setAmount(2.2),
+        ];
+
+        $this->cache->expects($this->once())->method('contains')->willReturn(false);
+
+        $this->repository->expects($this->once())
+            ->method('findBy')
+            ->with(['order' => $orderId])
+            ->willReturn($discounts);
+
+        $this->assertSame($expectedAmount, $this->provider->getOrderDiscountAmount($orderId));
     }
 }

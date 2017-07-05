@@ -237,9 +237,9 @@ services:
     oro_pricing.event_listener.form_view:
         class: 'Oro\Bundle\PricingBundle\EventListener\FormViewListener'
         arguments:
-            - '@request_stack'
             - '@translator'
             - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.providers.price_attribute_prices'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -1044,6 +1044,21 @@ services:
         parent: oro_form.form.handler.default
         arguments:
             - '@oro_pricing.manager.price_manager'
+
+    oro_pricing.providers.price_attribute_prices:
+        class: Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider
+        public: false
+        arguments: ['@oro_entity.doctrine_helper']
+
+    oro_pricing.event_listener.product_price_attributes_grid:
+        class: Oro\Bundle\PricingBundle\EventListener\ProductPriceAttributesGridListener
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.providers.price_attribute_prices'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-price-attributes-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-price-attributes-grid, method: onBuildAfter }
 
     oro_pricing.pricing_strategy.strategy_register:
         class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister

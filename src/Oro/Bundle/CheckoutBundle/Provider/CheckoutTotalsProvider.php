@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider;
 
-use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class CheckoutTotalsProvider
 {
     /**
-     * @var CheckoutLineItemsManager
+     * @var CheckoutToOrderConverter
      */
-    protected $checkoutLineItemsManager;
+    protected $checkoutToOrderConverter;
 
     /**
      * @var TotalProcessorProvider
@@ -21,30 +20,22 @@ class CheckoutTotalsProvider
     protected $totalsProvider;
 
     /**
-     * @var MapperInterface
-     */
-    protected $mapper;
-
-    /**
      * @var CheckoutShippingMethodsProviderInterface
      */
     protected $checkoutShippingMethodsProvider;
 
     /**
-     * @param CheckoutLineItemsManager                 $checkoutLineItemsManager
-     * @param TotalProcessorProvider                   $totalsProvider
-     * @param MapperInterface                          $mapper
+     * @param CheckoutToOrderConverter $checkoutToOrderConverter
+     * @param TotalProcessorProvider $totalsProvider
      * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
      */
     public function __construct(
-        CheckoutLineItemsManager $checkoutLineItemsManager,
+        CheckoutToOrderConverter $checkoutToOrderConverter,
         TotalProcessorProvider $totalsProvider,
-        MapperInterface $mapper,
         CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
     ) {
-        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->checkoutToOrderConverter = $checkoutToOrderConverter;
         $this->totalsProvider = $totalsProvider;
-        $this->mapper = $mapper;
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
@@ -56,8 +47,7 @@ class CheckoutTotalsProvider
     public function getTotalsArray(Checkout $checkout)
     {
         $checkout->setShippingCost($this->checkoutShippingMethodsProvider->getPrice($checkout));
-        $data = ['lineItems' => $this->checkoutLineItemsManager->getData($checkout)];
-        $order = $this->mapper->map($checkout, $data);
+        $order = $this->checkoutToOrderConverter->getOrder($checkout);
         $this->totalsProvider->enableRecalculation();
 
         return $this->totalsProvider->getTotalWithSubtotalsAsArray($order);

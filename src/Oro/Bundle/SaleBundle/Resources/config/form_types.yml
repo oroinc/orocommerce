@@ -9,6 +9,8 @@ services:
         arguments:
             - "@oro_sale.provider.quote_address_security"
             - '@oro_config.global'
+            - '@oro_sale.form.event_listener.quote_update'
+            - '@oro_security.security_facade'
         calls:
             - [setDataClass, ['%oro_sale.entity.quote.class%']]
         tags:
@@ -104,3 +106,9 @@ services:
             - '@oro_product.visibility.unit'
         tags:
             - { name: form.type, alias: oro_sale_quote_product_demand_offer_choice }
+
+    oro_sale.form.event_listener.quote_update:
+        class: 'Oro\Bundle\SaleBundle\Form\EventListener\QuoteFormSubscriber'
+        arguments:
+            - '@oro_sale.provider.quote_product_price'
+            - '@translator'
