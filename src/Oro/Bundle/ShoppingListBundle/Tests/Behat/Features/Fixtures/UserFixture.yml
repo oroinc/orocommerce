@@ -1,0 +1,13 @@
+Oro\Bundle\UserBundle\Entity\User:
+    new_admin_user:
+        username: newadmin
+        email: newadmin@example.com
+        firstName: Admin
+        lastName: User
+        password: 123456
+        salt: 123456
+        organization: '@organization'
+        organizations: ['@organization']
+        owner: '@business_unit'
+        roles: ['@userRole']
+        businessUnits: ['@business_unit']

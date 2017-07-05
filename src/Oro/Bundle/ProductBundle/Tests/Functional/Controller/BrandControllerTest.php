@@ -64,9 +64,9 @@ class BrandControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_brand[names][values][default]'] = $name;
-        $form['oro_brand[descriptions][values][default]'] = $description;
-        $form['oro_brand[shortDescriptions][values][default]'] = $shortDescription;
+        $form['oro_product_brand[names][values][default]'] = $name;
+        $form['oro_product_brand[descriptions][values][default]'] = $description;
+        $form['oro_product_brand[shortDescriptions][values][default]'] = $shortDescription;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -91,9 +91,9 @@ class BrandControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_brand[names][values][default]'] = $nameDefaultNew;
-        $form['oro_brand[descriptions][values][default]'] = $descriptionDefaultNew;
-        $form['oro_brand[shortDescriptions][values][default]'] = $shortDescriptionDefaultNew;
+        $form['oro_product_brand[names][values][default]'] = $nameDefaultNew;
+        $form['oro_product_brand[descriptions][values][default]'] = $descriptionDefaultNew;
+        $form['oro_product_brand[shortDescriptions][values][default]'] = $shortDescriptionDefaultNew;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -103,15 +103,15 @@ class BrandControllerTest extends WebTestCase
         $this->assertContains("Brand has been saved", $result->getContent());
         $this->assertEquals(
             $nameDefaultNew,
-            $crawler->filter('input[name="oro_brand[names][values][default]"]')->extract(['value'])[0]
+            $crawler->filter('input[name="oro_product_brand[names][values][default]"]')->extract(['value'])[0]
         );
         $this->assertEquals(
             $descriptionDefaultNew,
-            $crawler->filter('textarea[name="oro_brand[descriptions][values][default]"]')->html()
+            $crawler->filter('textarea[name="oro_product_brand[descriptions][values][default]"]')->html()
         );
         $this->assertEquals(
             $shortDescriptionDefaultNew,
-            $crawler->filter('textarea[name="oro_brand[shortDescriptions][values][default]"]')->html()
+            $crawler->filter('textarea[name="oro_product_brand[shortDescriptions][values][default]"]')->html()
         );
     }
 
@@ -145,7 +145,7 @@ class BrandControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getPhpValues();
-        $formValues['oro_brand']['slugPrototypesWithRedirect'] = [
+        $formValues['oro_product_brand']['slugPrototypesWithRedirect'] = [
             'slugPrototypes' => [
                 'values' => [
                     'default' => 'default-slug',

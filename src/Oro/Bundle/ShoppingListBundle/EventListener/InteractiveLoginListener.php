@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -31,18 +32,26 @@ class InteractiveLoginListener
     private $logger;
 
     /**
-     * @param CustomerVisitorManager            $visitorManager
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    /**
+     * @param CustomerVisitorManager $visitorManager
      * @param GuestShoppingListMigrationManager $guestShoppingListMigrationManager
-     * @param LoggerInterface                   $logger
+     * @param LoggerInterface $logger
+     * @param ConfigManager $configManager
      */
     public function __construct(
         CustomerVisitorManager $visitorManager,
         GuestShoppingListMigrationManager $guestShoppingListMigrationManager,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ConfigManager $configManager
     ) {
         $this->visitorManager                    = $visitorManager;
         $this->guestShoppingListMigrationManager = $guestShoppingListMigrationManager;
         $this->logger                            = $logger;
+        $this->configManager                     = $configManager;
     }
 
     /**
@@ -52,7 +61,7 @@ class InteractiveLoginListener
     {
         $user = $event->getAuthenticationToken()->getUser();
 
-        if (!$user instanceof CustomerUser) {
+        if (!$user instanceof CustomerUser || !$this->configManager->get('oro_shopping_list.availability_for_guests')) {
             return;
         }
 

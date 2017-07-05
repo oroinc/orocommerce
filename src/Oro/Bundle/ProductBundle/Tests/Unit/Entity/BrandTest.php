@@ -60,19 +60,6 @@ class BrandTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('localized_name', (string)$brand);
     }
 
-    public function testJsonSerialize()
-    {
-        $brand = new Brand();
-        $id = 123;
-        $refBrand = new \ReflectionObject($brand);
-        $refId = $refBrand->getProperty('id');
-        $refId->setAccessible(true);
-        $refId->setValue($brand, $id);
-        $brand->addName((new LocalizedFallbackValue())->setString('1234'));
-
-        $this->assertEquals('{"id":123,"name":"1234"}', json_encode($brand));
-    }
-
     public function testPrePersist()
     {
         $brand = new Brand();

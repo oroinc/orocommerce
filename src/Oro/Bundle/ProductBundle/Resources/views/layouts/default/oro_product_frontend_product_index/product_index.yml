@@ -11,11 +11,6 @@ layout:
             optionName: grid_render_parameters.enableViews
             optionValue: false
 
-        - '@setOption':
-            id: product_datagrid
-            optionName: grid_render_parameters.toolbarOptions.isStickyFilters
-            optionValue: true
-
         - '@addTree':
             items:
                 product_index_page:

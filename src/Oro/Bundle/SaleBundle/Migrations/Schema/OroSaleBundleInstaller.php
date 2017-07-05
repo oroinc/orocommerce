@@ -64,7 +64,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_14';
+        return 'v1_15';
     }
 
     /**
@@ -170,6 +170,7 @@ class OroSaleBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false]);
         $table->addColumn('expired', 'boolean', ['default' => false]);
+        $table->addColumn('prices_changed', 'boolean', ['default' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
