@@ -180,6 +180,10 @@ ShippingBundle
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
 - Class `Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider` which never used was removed.
+- Added interface `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface` and class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider` which implement this interface.
+- Class `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry` was renamed to `Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider`
+    - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
+- Service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
         
 PricingBundle
 --------------

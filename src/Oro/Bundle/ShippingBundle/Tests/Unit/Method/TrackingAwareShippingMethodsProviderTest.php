@@ -4,66 +4,26 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Method\Stub\TrackingAwareShippingMethodStub;
 
-class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
+class TrackingAwareShippingMethodsProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ShippingMethodRegistry
-     */
-    protected $registry;
-
     /**
      * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $provider;
+    private $shippingMethodProvider;
 
     /**
-     * {@inheritDoc}
+     * @var TrackingAwareShippingMethodsProvider
      */
+    private $trackingAwareShippingMethodsProvider;
+
     protected function setUp()
     {
-        $this->registry = new ShippingMethodRegistry();
-
-        $this->provider = $this->getMockBuilder(ShippingMethodProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
-    public function testGetMethods()
-    {
-        $shippingMethods = $this->registry->getShippingMethods();
-        $this->assertInternalType('array', $shippingMethods);
-        $this->assertEmpty($shippingMethods);
-    }
-
-    public function testRegistry()
-    {
-        $method = $this->createMock(ShippingMethodInterface::class);
-
-        $this->provider->expects($this->once())
-            ->method('getShippingMethods')
-            ->willReturn(['test_name' => $method]);
-
-        $this->provider->expects($this->once())
-            ->method('getShippingMethod')
-            ->with('test_name')
-            ->willReturn($method);
-
-        $this->provider->expects($this->once())
-            ->method('hasShippingMethod')
-            ->with('test_name')
-            ->willReturn(true);
-
-        $this->registry->addProvider($this->provider);
-        $this->assertEquals($method, $this->registry->getShippingMethod('test_name'));
-        $this->assertEquals(['test_name' => $method], $this->registry->getShippingMethods());
-    }
-
-    public function testRegistryWrongMethod()
-    {
-        $this->assertNull($this->registry->getShippingMethod('wrong_name'));
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $this->trackingAwareShippingMethodsProvider =
+            new TrackingAwareShippingMethodsProvider($this->shippingMethodProvider);
     }
 
     /**
@@ -74,12 +34,14 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetTrackingAwareShippingMethods(array $methods, $trackingAwareCount)
     {
-        $this->provider->expects($this->once())
+        $this->shippingMethodProvider->expects(static::once())
             ->method('getShippingMethods')
             ->willReturn($methods);
-        $this->registry->addProvider($this->provider);
 
-        $this->assertCount($trackingAwareCount, $this->registry->getTrackingAwareShippingMethods());
+        static::assertCount(
+            $trackingAwareCount,
+            $this->trackingAwareShippingMethodsProvider->getTrackingAwareShippingMethods()
+        );
     }
 
     /**
@@ -90,9 +52,9 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'methods' => [
-                  $this->mockShippingMethod(ShippingMethodInterface::class, 'method1'),
-                  $this->mockShippingMethod(ShippingMethodInterface::class, 'method2'),
-                  $this->mockShippingMethod(TrackingAwareShippingMethodStub::class, 'method3')
+                    $this->mockShippingMethod(ShippingMethodInterface::class, 'method1'),
+                    $this->mockShippingMethod(ShippingMethodInterface::class, 'method2'),
+                    $this->mockShippingMethod(TrackingAwareShippingMethodStub::class, 'method3')
                 ],
                 'trackingAwareCount' => 1,
             ],
@@ -123,6 +85,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $class
      * @param string $identifier
+     *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function mockShippingMethod($class, $identifier)
@@ -131,6 +94,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
         $method->expects(static::any())
             ->method('getIdentifier')
             ->willReturn($identifier);
+
         return $method;
     }
 }
