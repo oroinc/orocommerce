@@ -106,6 +106,7 @@ class OrderFormListenerTest extends \PHPUnit_Framework_TestCase
             ->method('deleteByOrder')
             ->with($order);
         $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())->method('clear')->with(AppliedDiscount::class);
         $entityManager->expects($this->once())
             ->method('getRepository')
             ->with(AppliedDiscount::class)
