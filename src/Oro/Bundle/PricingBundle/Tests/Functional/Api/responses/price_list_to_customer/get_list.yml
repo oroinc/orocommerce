@@ -1,0 +1,153 @@
+data:
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_US_1->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_US_1->sortOrder'
+            mergeAllowed: '@price_list_to_customer_US_1->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1_1->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_1->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@US->id)>'
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_US_2->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_US_2->sortOrder'
+            mergeAllowed: '@price_list_to_customer_US_2->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1_1->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_2->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@US->id)>'
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_US_3->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_US_3->sortOrder'
+            mergeAllowed: '@price_list_to_customer_US_3->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1.3->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_6->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@US->id)>'
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_US_4->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_US_4->sortOrder'
+            mergeAllowed: '@price_list_to_customer_US_4->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1.3->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_4->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@US->id)>'
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_US_5->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_US_5->sortOrder'
+            mergeAllowed: '@price_list_to_customer_US_5->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1.3->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_2->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@US->id)>'
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_US_6->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_US_6->sortOrder'
+            mergeAllowed: '@price_list_to_customer_US_6->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1.2->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_2->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@US->id)>'
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_canada_1->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_canada_1->sortOrder'
+            mergeAllowed: '@price_list_to_customer_canada_1->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1_1->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_1->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@Canada->id)>'
+    -
+        type: 'pricelisttocustomers'
+        id: '<toString(@price_list_to_customer_canada_2->id)>'
+        attributes:
+            sortOrder: '@price_list_to_customer_canada_2->sortOrder'
+            mergeAllowed: '@price_list_to_customer_canada_2->mergeAllowed'
+        relationships:
+            customer:
+                data:
+                    type: 'customers'
+                    id: '<toString(@customer.level_1.1.1->id)>'
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_5->id)>'
+            website:
+                data:
+                    type: 'websites'
+                    id: '<toString(@Canada->id)>'
