@@ -39,7 +39,8 @@ class CustomerVisitorAuthorizationCheckerTest extends \PHPUnit_Framework_TestCas
         $this->tokenStorage = $this->createMock(TokenStorage::class);
 
         $this->customerVisitorAuthorizationChecker = new CustomerVisitorAuthorizationChecker(
-            $this->authorizationChecker, $this->tokenStorage
+            $this->authorizationChecker,
+            $this->tokenStorage
         );
     }
 
