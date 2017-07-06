@@ -52,6 +52,8 @@ api:
                     actions:
                         update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
@@ -70,6 +72,8 @@ api:
                     actions:
                         update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
@@ -85,6 +89,8 @@ api:
                     actions:
                         update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
@@ -104,6 +110,8 @@ api:
                         update_relationship: false
 
         Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
+            form_event_subscriber:
+                - oro_website.form_subscriber.default_website
             actions:
                 update:
                     fields:
