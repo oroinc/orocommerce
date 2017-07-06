@@ -97,14 +97,6 @@ class NewArrivalsProvider implements ProductsProviderInterface
     }
 
     /**
-     * @return bool
-     */
-    public function isUseSliderOnMobile()
-    {
-        return (bool)$this->getValueFromConfig(Configuration::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE);
-    }
-
-    /**
      * @param QueryBuilder $qb
      *
      * @return QueryBuilder
