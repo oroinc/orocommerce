@@ -7,6 +7,7 @@ use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedDiscountException;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedTypeException;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -77,6 +78,38 @@ class DiscountFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($configurationOptions);
 
         $this->discountFactory->create($configuration);
+    }
+
+    public function testCreateWithPromotion()
+    {
+        $type = 'oro_promotion.test_type';
+        $serviceName = 'oro_promotion.test_type.service';
+
+        /** @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject $discount */
+        $discount = $this->createMock(DiscountInterface::class);
+
+        $configurationOptions = ['option' => 'option_value'];
+
+        $configuration = new DiscountConfiguration();
+        $configuration->setType($type);
+        $configuration->setOptions($configurationOptions);
+
+        $this->discountFactory->addType($type, $serviceName);
+
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with($serviceName)
+            ->willReturn($discount);
+
+        $discount->expects($this->once())
+            ->method('configure')
+            ->with($configurationOptions);
+
+        $promotion = new Promotion();
+
+        $discount = $this->discountFactory->create($configuration, $promotion);
+
+        $this->assertSame($promotion, $discount->getPromotion());
     }
 
     public function testCreateUnsupportedTypeException()

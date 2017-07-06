@@ -356,7 +356,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
 
     oro_promotion.event_listener.order:
-        class: Oro\Bundle\PromotionBundle\EventListener\ORM\OrderEventListener
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
         public: false
         arguments:
              - '@oro_promotion.discount_manager'
@@ -367,4 +367,3 @@ services:
         class: Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager
         arguments:
             - '@service_container'
-
