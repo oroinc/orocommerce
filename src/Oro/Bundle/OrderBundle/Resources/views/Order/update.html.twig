@@ -19,6 +19,7 @@
     {% if entity.id or is_granted('oro_order_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
+    {% set html = html ~ placeholder('order_update_additional_nav_buttons', {entity: entity}) %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
@@ -43,6 +44,7 @@
 } %}
 
 {% block content_data %}
+    {% placeholder order_update_additional_info with {entity: entity} %}
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
