@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodChoicesProviderInterface
 {
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
      * @var ShippingMethodChoicesProviderInterface
@@ -17,14 +17,14 @@ class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodCho
     protected $provider;
 
     /**
-     * @param ShippingMethodRegistry                 $methodRegistry
+     * @param ShippingMethodProviderInterface        $shippingMethodProvider
      * @param ShippingMethodChoicesProviderInterface $provider
      */
     public function __construct(
-        ShippingMethodRegistry $methodRegistry,
+        ShippingMethodProviderInterface $shippingMethodProvider,
         ShippingMethodChoicesProviderInterface $provider
     ) {
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
         $this->provider = $provider;
     }
 
@@ -36,7 +36,7 @@ class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodCho
         $methods = $this->provider->getMethods($translate);
         $enabledMethods = [];
         foreach ($methods as $methodId => $label) {
-            $method = $this->methodRegistry->getShippingMethod($methodId);
+            $method = $this->shippingMethodProvider->getShippingMethod($methodId);
             if ($method->isEnabled()) {
                 $enabledMethods[$methodId] = $label;
             }

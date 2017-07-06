@@ -1,0 +1,32 @@
+oro_behat_extension:
+  pages:
+    Promotion Create:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionCreate
+      route: 'oro_promotion_create'
+    Promotion Edit:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionEdit
+      route: 'oro_promotion_update'
+    Promotion View:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionView
+      route: 'oro_promotion_view'
+
+  elements:
+    Promotion Form:
+      selector: 'form[name="oro_promotion"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_promotion[rule][name]'
+          Discount Value: 'oro_promotion[discountConfiguration][options][amount_discount_value][value]'
+          Discount Value (%): 'oro_promotion[discountConfiguration][options][percent_discount_value]'
+          Active At (first):
+            type: 'css'
+            locator: '.schedule-intervals [name$="[activeAt]"]:first-child'
+          Deactivate At (first):
+            type: 'css'
+            locator: '.schedule-intervals [name$="[deactivateAt]"]:first-child'
+          Labels: 'oro_promotion[labels][values][default]'
+          Descriptions: 'oro_promotion[descriptions][values][default]'
+          Discount: 'oro_promotion[discountConfiguration][type]'
+          Type: 'oro_promotion[discountConfiguration][options][discount_type]'
+          Currency: 'oro_promotion[discountConfiguration][options][amount_discount_value][currency]'

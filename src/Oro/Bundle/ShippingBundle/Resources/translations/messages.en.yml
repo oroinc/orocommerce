@@ -142,7 +142,11 @@ oro:
             short_plural: lbs
         value:
             full: '{0} none|{1} %count% pound|]1,Inf] %count% pounds'
+            full_fraction: '%count% pound'
+            full_fraction_gt_1: '%count% pounds'
             short: '{0} none|{1} %count% lb|]1,Inf] %count% lbs'
+            short_fraction: '%count% lb'
+            short_fraction_gt_1: '%count% lbs'
 
     weight_unit.kg:
         label:
@@ -152,7 +156,11 @@ oro:
             short_plural: kgs
         value:
             full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
+            full_fraction: '%count% kilogram'
+            full_fraction_gt_1: '%count% kilograms'
             short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
+            short_fraction: '%count% kg'
+            short_fraction_gt_1: '%count% kg'
 
     length_unit.inch:
         label:

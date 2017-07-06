@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -12,16 +12,16 @@ class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface,
     use LoggerAwareTrait;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    private $methodRegistry;
+    private $shippingMethodProvider;
 
     /**
-     * @param ShippingMethodRegistry $methodRegistry
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(ShippingMethodRegistry $methodRegistry)
+    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -29,8 +29,8 @@ class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface,
      */
     public function getIcon($identifier)
     {
-        if ($this->methodRegistry->hasShippingMethod($identifier)) {
-            $method = $this->methodRegistry->getShippingMethod($identifier);
+        if ($this->shippingMethodProvider->hasShippingMethod($identifier)) {
+            $method = $this->shippingMethodProvider->getShippingMethod($identifier);
 
             if ($method instanceof ShippingMethodIconAwareInterface) {
                 return $method->getIcon();

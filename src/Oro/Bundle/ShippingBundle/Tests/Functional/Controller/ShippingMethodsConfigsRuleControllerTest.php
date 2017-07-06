@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
@@ -24,9 +24,9 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
     use FlatRateIntegrationTrait;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $registry;
+    protected $shippingMethodProvider;
 
     /**
      * @var Translator;
@@ -43,7 +43,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
                 LoadUserData::class
             ]
         );
-        $this->registry = static::getContainer()->get('oro_shipping.shipping_method.registry');
+        $this->shippingMethodProvider = static::getContainer()->get('oro_shipping.shipping_method_provider');
         $this->translator = static::getContainer()->get('translator');
     }
 
@@ -152,7 +152,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $shipMethodsLabels = [];
         foreach ($shipMethods as $method) {
             $shipMethodsLabels[] = $this->translator
-                ->trans($this->registry->getShippingMethod($method->getMethod())->getLabel());
+                ->trans($this->shippingMethodProvider->getShippingMethod($method->getMethod())->getLabel());
         }
 
         $expectedData =
@@ -241,7 +241,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $destination = $shippingRule->getDestinations();
         $this->assertContains((string)$destination[0], $html);
         $methodConfigs = $shippingRule->getMethodConfigs();
-        $label = $this->registry
+        $label = $this->shippingMethodProvider
             ->getShippingMethod($methodConfigs[0]->getMethod())
             ->getLabel();
         $this->assertContains($this->translator->trans($label), $html);
@@ -355,7 +355,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         $destination = $shippingRule->getDestinations();
         static::assertContains((string)$destination[0], $html);
         $methodConfigs = $shippingRule->getMethodConfigs();
-        $label = $this->registry
+        $label = $this->shippingMethodProvider
             ->getShippingMethod($methodConfigs[0]->getMethod())
             ->getLabel();
         static::assertContains($this->translator->trans($label), $html);

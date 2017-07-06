@@ -15,9 +15,10 @@ use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType;
 use Oro\Bundle\PromotionBundle\Form\Type\PromotionType;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\ScopeStub;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
-use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -139,26 +140,24 @@ class PromotionTypeTest extends FormIntegrationTestCase
             ->setExpression($ruleExpression);
         $promotion->setRule($rule);
 
-        $useCoupons = true;
-        $promotion->setUseCoupons($useCoupons);
-
         $labelString = 'some label';
         $label = (new LocalizedFallbackValue())
             ->setString($labelString);
         $promotion->addLabel($label);
+        $promotion->addScope((new ScopeStub())->setLocale('EN'));
 
         $descriptionString = 'some description';
         $description = (new LocalizedFallbackValue())
             ->setText($descriptionString);
         $promotion->addDescription($description);
 
+        /** @var DiscountConfiguration $discountConfiguration */
         $discountConfiguration = $this->getEntity(DiscountConfiguration::class, ['type' => 'order']);
         $promotion->setDiscountConfiguration($discountConfiguration);
         $promotion->setProductsSegment((new Segment())->setName('some name'));
 
         $editedRuleEnabled = false;
         $editedRuleName = 'some new name';
-        $editedUseCoupons = false;
         $editedRuleSortOrder = 15;
         $editedRuleStopProcessing = false;
         $editedRuleExpression = 'some new expression';
@@ -170,7 +169,6 @@ class PromotionTypeTest extends FormIntegrationTestCase
         $editedRule->setStopProcessing($editedRuleStopProcessing);
         $editedRule->setExpression($editedRuleExpression);
         $editedPromotion->setRule($editedRule);
-        $editedPromotion->setUseCoupons($editedUseCoupons);
 
         return [
             'new promotion' => [
@@ -185,9 +183,11 @@ class PromotionTypeTest extends FormIntegrationTestCase
                     ],
                     'discountConfiguration' => 'order',
                     'productsSegment' => ['name' => 'some name'],
-                    'useCoupons' => $useCoupons,
                     'labels' => [['string' => $labelString]],
                     'descriptions' => [['text' => $descriptionString]],
+                    'scopes' => [
+                        ['locale' => 'EN']
+                    ]
                 ],
                 'expectedData' => $promotion,
             ],
@@ -202,7 +202,9 @@ class PromotionTypeTest extends FormIntegrationTestCase
                         'expression' => $editedRuleExpression,
                     ],
                     'discountConfiguration' => 'order',
-                    'useCoupons' => $editedUseCoupons,
+                    'scopes' => [
+                        ['locale' => 'EN']
+                    ]
                 ],
                 'expectedData' => $editedPromotion,
             ],
