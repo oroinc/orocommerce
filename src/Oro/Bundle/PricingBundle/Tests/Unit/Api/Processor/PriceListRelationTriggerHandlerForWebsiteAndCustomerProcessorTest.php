@@ -6,10 +6,11 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor\PriceListRelationTriggerHandlerProcessorTestCase as BaseTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
-class PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessorTest extends RebuildPriceListsTestCase
+class PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessorTest extends BaseTestCase
 {
     /**
      * @var PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessor
