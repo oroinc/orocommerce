@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalInterface;
+use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalTrait;
 
 /**
@@ -67,6 +68,14 @@ class PriceListSchedule implements ScheduleIntervalInterface
     public function getPriceList()
     {
         return $this->priceList;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScheduleIntervalsHolder()
+    {
+        return $this->getPriceList();
     }
 
     /**

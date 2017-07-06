@@ -17,12 +17,14 @@ use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class DiscountOptionsTypeTest extends FormIntegrationTestCase
 {
     /**

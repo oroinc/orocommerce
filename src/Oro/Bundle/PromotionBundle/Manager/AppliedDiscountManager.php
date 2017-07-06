@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Manager;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 
@@ -16,7 +15,6 @@ class AppliedDiscountManager
     protected $container;
 
     /**
-     * Using service container instead of concrete class due circular reference
      * @param ContainerInterface $container
      */
     public function __construct(ContainerInterface $container)
@@ -49,6 +47,7 @@ class AppliedDiscountManager
                 $appliedDiscounts[] = $appliedDiscount;
             }
         }
+
         return $appliedDiscounts;
     }
 
@@ -61,15 +60,21 @@ class AppliedDiscountManager
     {
         $discount = $discountInfo->getDiscount();
         $promotion = $discount->getPromotion();
+
         if (!$promotion) {
             throw new \LogicException('required parameter "promotion" of discount is missing');
         }
+
+        $discountConfiguration = $promotion->getDiscountConfiguration();
+        $discountType = $discountConfiguration->getType();
+        $discountConfigurationOptions = $discountConfiguration->getOptions();
+
         return (new AppliedDiscount())
             ->setOrder($order)
-            ->setClass(get_class($discount))
+            ->setType($discountType)
             ->setAmount($discountInfo->getDiscountAmount())
             ->setCurrency($order->getCurrency())
-            ->setConfigOptions($promotion->getDiscountConfiguration()->getOptions())
+            ->setConfigOptions($discountConfigurationOptions)
             ->setPromotion($promotion)
             ->setPromotionName($promotion->getRule()->getName());
     }
@@ -79,6 +84,7 @@ class AppliedDiscountManager
      */
     protected function getPromotionExecutor(): PromotionExecutor
     {
+        // Using DI container instead of concrete service due to circular reference
         return $this->container->get('oro_promotion.promotion_executor');
     }
 }

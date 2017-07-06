@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
+use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider;
@@ -23,6 +25,11 @@ class ConfigurableProductProviderTest extends \PHPUnit_Framework_TestCase
      * @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $productVariantAvailabilityProvider;
+
+    /**
+     * @var ProductVariantFieldValueHandlerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $productVariantFieldValueHandlerRegistry;
 
     /**
      * @var array
@@ -57,10 +64,14 @@ class ConfigurableProductProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->productVariantFieldValueHandlerRegistry =
+            $this->createMock(ProductVariantFieldValueHandlerRegistry::class);
+
         $this->configurableProductProvider = new ConfigurableProductProvider(
             $this->customFieldProvider,
             $this->productVariantAvailabilityProvider,
-            $this->getPropertyAccessor()
+            $this->getPropertyAccessor(),
+            $this->productVariantFieldValueHandlerRegistry
         );
     }
 
@@ -77,7 +88,7 @@ class ConfigurableProductProviderTest extends \PHPUnit_Framework_TestCase
         $expectedField = [
             2 => [
                 'size' => [
-                    'value' => true,
+                    'value' => 'Yes',
                     'label' => 'Size',
                     'type' => 'boolean'
                 ]
@@ -107,6 +118,20 @@ class ConfigurableProductProviderTest extends \PHPUnit_Framework_TestCase
         $this->customFieldProvider->expects($this->any())
             ->method('getEntityCustomFields')
             ->willReturn($this->exampleCustomFields);
+
+        $boolHandler = $this->createMock(ProductVariantFieldValueHandlerInterface::class);
+
+        $boolHandler->expects($this->once())
+            ->method('getHumanReadableValue')
+            ->willReturnCallback(function ($value) {
+                return $value ? 'Yes' : 'No';
+            });
+
+        $this->productVariantFieldValueHandlerRegistry->expects($this->any())
+            ->method('getVariantFieldValueHandler')
+            ->with('boolean')
+            ->willReturn($boolHandler);
+
         $this->assertEquals($expectedField, $this->configurableProductProvider->getLineItemProduct($lineItem));
     }
 

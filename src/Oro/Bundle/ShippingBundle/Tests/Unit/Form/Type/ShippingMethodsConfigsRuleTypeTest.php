@@ -23,7 +23,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationTyp
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollectionSubscriberProxy;
@@ -64,9 +64,9 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $methodConfigSubscriber;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var CompositeShippingMethodProvider
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
      * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -85,8 +85,8 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        $this->methodRegistry = new ShippingMethodRegistry();
-        $this->methodRegistry->addProvider(new ShippingMethodProviderStub());
+        $this->shippingMethodProvider = new CompositeShippingMethodProvider();
+        $this->shippingMethodProvider->addProvider(new ShippingMethodProviderStub());
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
@@ -98,10 +98,10 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->methodTypeConfigCollectionSubscriber
-            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
-        $this->methodConfigSubscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+            ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
+        $this->methodConfigSubscriber->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
         $this->methodConfigCollectionSubscriber
-            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+            ->setFactory($this->factory)->setMethodRegistry($this->shippingMethodProvider);
 
         /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
@@ -244,7 +244,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                     ShippingMethodConfigCollectionType::class
                     => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
                     ShippingMethodConfigType::class
-                    => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->methodRegistry),
+                    => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->shippingMethodProvider),
                     ShippingMethodTypeConfigCollectionType::class =>
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(

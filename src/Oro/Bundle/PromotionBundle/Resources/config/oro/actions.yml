@@ -90,7 +90,6 @@ action_groups:
                     - [[shallowCopy], [propertyName, [rule]]]
                     - [[keep], [propertyName, [useCoupons]]]
                     - [[keep], [propertyName, [scopes]]]
-                    - [[emptyCollection], [propertyName, [coupons]]]
                     - [[shallowCopy], [propertyName, [discountConfiguration]]]
                     - [[shallowCopy], [propertyName, [productsSegment]]]
                     - [[collection], [propertyName, [schedules]]]
