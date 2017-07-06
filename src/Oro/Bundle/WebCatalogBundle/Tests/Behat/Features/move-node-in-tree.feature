@@ -1,6 +1,6 @@
 @ticket-BB-8426
 @automatically-ticket-tagged
-@fixture-web_catalog.yml
+@fixture-OroWebCatalogBundle:web_catalog.yml
 Feature: Move node in tree
   In order to change order of nodes or nesting
   As site administrator

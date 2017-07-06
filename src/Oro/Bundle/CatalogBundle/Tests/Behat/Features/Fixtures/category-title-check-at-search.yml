@@ -1,0 +1,54 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locvalue1:
+    string: 'Product1'
+  locvalue2:
+    string: 'Product2'
+  localNewCategory:
+    string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@each'
+    precision: '1'
+  precision2:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'PSKU1'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locvalue1']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+  product2:
+    sku: 'PSKU2'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision2'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locvalue2']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+  products:
+    __construct: [['@product1', '@product2']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+  categoryLightingProducts:
+    addTitle: ['@localNewCategory']
+    setParentCategory: [1]
+    setProducts: ['@products']

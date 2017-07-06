@@ -1,4 +1,4 @@
-@fixture-new_arrivals_block.yml
+@fixture-OroProductBundle:new_arrivals_block.yml
 Feature: New Arrivals Block
   In order to promote new arrivals on the store homepage
   As an Administrator

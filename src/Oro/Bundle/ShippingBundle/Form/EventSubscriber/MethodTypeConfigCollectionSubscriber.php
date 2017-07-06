@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
@@ -17,16 +17,16 @@ use Symfony\Component\Form\FormInterface;
 class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
-     * @param ShippingMethodRegistry $methodRegistry
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(ShippingMethodRegistry $methodRegistry)
+    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -55,7 +55,7 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
         }
 
         $methodConfig = $form->getParent()->getData();
-        $method = $this->methodRegistry->getShippingMethod($methodConfig->getMethod());
+        $method = $this->shippingMethodProvider->getShippingMethod($methodConfig->getMethod());
 
         $renderedTypes = [];
         foreach ($data as $index => $typeConfig) {
@@ -95,7 +95,7 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
         }
 
         $methodIdentifier = $form->getParent()->get('method')->getData();
-        $method = $this->methodRegistry->getShippingMethod($methodIdentifier);
+        $method = $this->shippingMethodProvider->getShippingMethod($methodIdentifier);
 
         foreach ($submittedData as $index => $methodTypeData) {
             $type = $method->getType($methodTypeData['type']);

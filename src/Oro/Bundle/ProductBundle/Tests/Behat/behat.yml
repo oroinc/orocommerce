@@ -360,10 +360,6 @@ oro_behat_extension:
   suites:
     # Revert by OPI-52
     OroProductBundle:
-      contexts: []
-      paths:
-        - /dev/null
-    OroProductBundleProductCollection:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
@@ -378,44 +374,5 @@ oro_behat_extension:
         - OroUserBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
-    OroProductBundleProduct:
-      contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroSecurityBundle::ACLContext
-        - OroSEOBundle::FeatureContext
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroUserBundle::FeatureContext
-      paths:
         - '@OroProductBundle/Tests/Behat/Features/product'
-    OroProductBundleRelatedItems:
-      contexts:
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroSecurityBundle::ACLContext
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroConfigBundle::FeatureContext
-        - OroUserBundle::FeatureContext
-      paths:
-        - '@OroProductBundle/Tests/Behat/Features/related-items'
-    OroProductBundleOther:
-      contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroSecurityBundle::ACLContext
-        - OroSEOBundle::FeatureContext
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroUserBundle::FeatureContext
-      paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

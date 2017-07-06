@@ -2,8 +2,8 @@
 @automatically-ticket-tagged
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-Checkout.yml
-@fixture-InventoryLevel.yml
+@fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroCheckoutBundle:InventoryLevel.yml
 @community-edition-only
 Feature: Checkout workflow
   In order to create order on front store

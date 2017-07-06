@@ -11,24 +11,69 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType;
 class SchedulesIntersectionValidator extends ConstraintValidator
 {
     /**
-     * @param PriceListSchedule[] $value The value that should be validated
+     * @param PriceListSchedule|mixed $value The value that should be validated
      * @param Constraint|SchedulesIntersection $constraint The constraint for the validation
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$this->isIterable($value)) {
-            throw new \InvalidArgumentException('Constraint value should be iterable');
+        if (!$value instanceof PriceListSchedule) {
+            throw new \InvalidArgumentException('Constraint value should be of type ' . PriceListSchedule::class);
         }
 
-        foreach ($value as $index => $schedule) {
-            if ($this->hasIntersection($value, $schedule)) {
-                $path = sprintf('[%d].%s', $index, PriceListScheduleType::ACTIVE_AT_FIELD);
-                $this->context
-                    ->buildViolation($constraint->message, [])
-                    ->atPath($path)
-                    ->addViolation();
-            }
+        $this->validateSchedules($value, $constraint);
+    }
+
+    /**
+     * @param PriceListSchedule $validatedSchedule
+     * @param Constraint $constraint
+     */
+    protected function validateSchedules(PriceListSchedule $validatedSchedule, Constraint $constraint)
+    {
+        if (null === $validatedSchedule->getPriceList()) {
+            return;
         }
+
+        $schedules = $validatedSchedule->getPriceList()->getSchedules();
+
+        if (false === $this->hasIntersection($schedules, $validatedSchedule)) {
+            return;
+        }
+
+        $form = $this->context->getRoot();
+
+        /**
+         * This is here to provide proper validation for API request on schedule PATCH
+         * https://github.com/symfony/symfony/pull/10567
+         */
+        if ($form instanceof \Symfony\Component\Form\Form
+            && $form->getConfig()->hasOption('api_context')) {
+            $this->buildViolationOnApiForm($constraint);
+
+            return;
+        }
+
+        $this->buildDefaultViolation($constraint);
+    }
+
+    /**
+     * @param Constraint $constraint
+     */
+    protected function buildDefaultViolation(Constraint $constraint)
+    {
+        $this->context
+            ->buildViolation($constraint->message)
+            ->atPath(PriceListScheduleType::ACTIVE_AT_FIELD)
+            ->addViolation();
+    }
+
+    /**
+     * @param Constraint $constraint
+     */
+    protected function buildViolationOnApiForm(Constraint $constraint)
+    {
+        $this->context
+            ->buildViolation($constraint->message)
+            ->addViolation();
     }
 
     /**
@@ -79,14 +124,5 @@ class SchedulesIntersectionValidator extends ConstraintValidator
         }
 
         return ((null === $aLeft || $aLeft <= $bRight) && (null === $bRight || $aRight >= $bLeft));
-    }
-
-    /**
-     * @param mixed $var
-     * @return bool
-     */
-    protected function isIterable($var)
-    {
-        return is_array($var) || $var instanceof \Traversable;
     }
 }
