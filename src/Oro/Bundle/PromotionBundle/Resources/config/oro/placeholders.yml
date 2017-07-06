@@ -6,6 +6,14 @@ placeholders:
                 line_item_discount_information: ~
                 buy_x_get_y_discount_information: ~
 
+        order_update_additional_nav_buttons:
+            items:
+                save_without_discounts_recalculation_button: ~
+
+        order_update_additional_info:
+            items:
+                promotion_discounts_information_notice: ~
+
     items:
         order_discount_information:
             applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, order)"
@@ -16,3 +24,9 @@ placeholders:
         buy_x_get_y_discount_information:
             applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, buy_x_get_y)"
             template: OroPromotionBundle:Promotion:discountPlaceholders/buyXGetY.html.twig
+        save_without_discounts_recalculation_button:
+            applicable: "@oro_promotion.placeholder.order_additional_placeholder_filter->isApplicable($entity$)"
+            template: OroPromotionBundle:Promotion:orderPlaceholders/saveWithoutDiscountsRecalculationButton.html.twig
+        promotion_discounts_information_notice:
+            applicable: "@oro_promotion.placeholder.order_additional_placeholder_filter->isApplicable($entity$)"
+            template: OroPromotionBundle:Promotion:orderPlaceholders/informationNotice.html.twig

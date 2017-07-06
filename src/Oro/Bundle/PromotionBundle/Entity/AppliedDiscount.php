@@ -11,7 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 /**
  * @ORM\Table(name="oro_promotion_applied_discount")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository")
  */
 class AppliedDiscount implements DatesAwareInterface
 {

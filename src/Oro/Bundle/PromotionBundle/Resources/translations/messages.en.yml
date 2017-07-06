@@ -169,3 +169,9 @@ oro:
         checkout:
             view:
                 discount.label: 'Row Discount:'
+    order:
+        promotions:
+            nav_button:
+                information_notice: Promotion discounts will be recalculated after order saving
+                important: Important
+                save_without_discounts_recalculation: Save Without Discounts Recalculation
