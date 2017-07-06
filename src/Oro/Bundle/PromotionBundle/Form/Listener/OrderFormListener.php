@@ -66,8 +66,10 @@ class OrderFormListener
             return;
         }
 
-        $actionParameter = $this->requestStack->getCurrentRequest()->get(Router::ACTION_PARAMETER);
-        if ($actionParameter === self::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION) {
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request &&
+            $request->get(Router::ACTION_PARAMETER) === self::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION
+        ) {
             return;
         }
 
