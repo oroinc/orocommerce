@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class RebuildPriceListsForWebsiteCustomerGroupProcessor implements ProcessorInterface
+class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor implements ProcessorInterface
 {
     /**
      * @var PriceListRelationTriggerHandler

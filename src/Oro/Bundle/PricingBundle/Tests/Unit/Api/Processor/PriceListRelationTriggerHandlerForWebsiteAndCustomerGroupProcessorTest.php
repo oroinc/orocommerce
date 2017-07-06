@@ -3,16 +3,17 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\PricingBundle\Api\Processor\RebuildPriceListsForWebsiteCustomerGroupProcessor;
+use Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
+use Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor\PriceListRelationTriggerHandlerProcessorTestCase as BaseTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
-class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPriceListsTestCase
+class PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessorTest extends BaseTestCase
 {
     /**
-     * @var RebuildPriceListsForWebsiteCustomerGroupProcessor
+     * @var PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor
      */
     private $processor;
 
@@ -20,7 +21,7 @@ class RebuildPriceListsForWebsiteCustomerGroupProcessorTest extends RebuildPrice
     {
         parent::setUp();
 
-        $this->processor = new RebuildPriceListsForWebsiteCustomerGroupProcessor(
+        $this->processor = new PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor(
             $this->relationChangesHandler
         );
     }
