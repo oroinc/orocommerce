@@ -18,6 +18,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
@@ -86,6 +87,8 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $data = Yaml::parse(file_get_contents($filePath));
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
+        $productsList = [];
+
         foreach ($data as $item) {
             $unit = $this->getReference('product_unit.milliliter');
 
@@ -107,6 +110,8 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setType($item['type'])
                 ->setFeatured($item['featured']);
 
+            $productsList[$product->getSku()] = $product;
+
             $this->addAdvancedValue($item, $product);
 
             $manager->persist($product);
@@ -115,6 +120,18 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 sprintf('product_unit_precision.%s', implode('.', [$product->getSku(), $unit->getCode()])),
                 $unitPrecision
             );
+
+            if (isset($item['related_products'])) {
+                foreach ($item['related_products'] as $relatedProduct) {
+                    if (isset($productsList[$relatedProduct])) {
+                        $relatedProducts = new RelatedProduct();
+                        $relatedProducts->setProduct($product)
+                            ->setRelatedProduct($productsList[$relatedProduct]);
+
+                        $manager->persist($relatedProducts);
+                    }
+                }
+            }
         }
 
         $manager->flush();

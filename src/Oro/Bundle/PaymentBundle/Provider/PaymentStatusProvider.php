@@ -48,18 +48,6 @@ class PaymentStatusProvider
     }
 
     /**
-     * @deprecated since 1.2, will be removed in 1.3. Use PaymentStatusProvider::getPaymentStatus instead
-     *
-     * @param object $entity
-     * @param ArrayCollection $paymentTransactions
-     * @return string
-     */
-    public function computeStatus($entity, ArrayCollection $paymentTransactions)
-    {
-        return $this->getStatusByEntityAndTransactions($entity, $paymentTransactions);
-    }
-
-    /**
      * @param object $entity
      * @param ArrayCollection $paymentTransactions
      * @return string

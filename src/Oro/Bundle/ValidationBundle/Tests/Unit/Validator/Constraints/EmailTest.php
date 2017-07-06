@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraints\EmailValidator;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Email;
 
-class EmailTestTest extends \PHPUnit_Framework_TestCase
+class EmailTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Email */
     protected $constraint;

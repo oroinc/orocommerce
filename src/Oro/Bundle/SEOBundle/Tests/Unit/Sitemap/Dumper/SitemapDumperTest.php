@@ -3,12 +3,12 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Dumper;
 
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
-use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Website\WebsiteUrlProvidersServiceInterface;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -19,9 +19,9 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
     const STORAGE_TYPE = 'url';
 
     /**
-     * @var UrlItemsProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteUrlProvidersServiceInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $providerRegistry;
+    private $websiteUrlProvidersService;
 
     /**
      * @var SitemapFilesystemAdapter|\PHPUnit_Framework_MockObject_MockObject
@@ -45,9 +45,7 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->providerRegistry = $this->getMockBuilder(UrlItemsProviderRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->websiteUrlProvidersService = $this->createMock(WebsiteUrlProvidersServiceInterface::class);
 
         $this->sitemapStorageFactory = $this->getMockBuilder(SitemapStorageFactory::class)
             ->disableOriginalConstructor()
@@ -60,7 +58,7 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->dumper = new SitemapDumper(
-            $this->providerRegistry,
+            $this->websiteUrlProvidersService,
             $this->sitemapStorageFactory,
             $this->filesystemAdapter,
             $this->eventDispatcher,
@@ -81,12 +79,12 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
             ->method('getUrlItems')
             ->with($website)
             ->willReturn([$urlItem]);
-
-        $this->providerRegistry
-            ->expects($this->once())
-            ->method('getProviderByName')
-            ->with(self::PRODUCT_PROVIDER_TYPE)
-            ->willReturn($provider);
+        $providers[self::PRODUCT_PROVIDER_TYPE] = $provider;
+        $this->websiteUrlProvidersService
+            ->expects(static::once())
+            ->method('getWebsiteProvidersIndexedByNames')
+            ->with($website)
+            ->willReturn($providers);
 
         /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $urlsStorage */
         $urlsStorage = $this->createMock(SitemapStorageInterface::class);
@@ -130,11 +128,12 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
             ->method('getUrlItems')
             ->with($website)
             ->willReturn([$firstUrlItem, $secondUrlItem, $thirdUrlItem]);
-
-        $this->providerRegistry
-            ->expects($this->once())
-            ->method('getProviderByName')
-            ->willReturn($productProvider);
+        $providers[self::PRODUCT_PROVIDER_TYPE] = $productProvider;
+        $this->websiteUrlProvidersService
+            ->expects(static::once())
+            ->method('getWebsiteProvidersIndexedByNames')
+            ->with($website)
+            ->willReturn($providers);
 
         $firstUrlsStorage = $this->createMock(SitemapStorageInterface::class);
 
@@ -203,9 +202,10 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
             ->willReturn([$pageUrlItem]);
 
         $pageProviderType = 'page';
-        $this->providerRegistry
+        $this->websiteUrlProvidersService
             ->expects($this->once())
-            ->method('getProviders')
+            ->method('getWebsiteProvidersIndexedByNames')
+            ->with($website)
             ->willReturn([self::PRODUCT_PROVIDER_TYPE => $productProvider, $pageProviderType => $pageProvider]);
 
         $productUrlsStorage = $this->createMock(SitemapStorageInterface::class);

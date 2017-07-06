@@ -44,7 +44,6 @@ class LoadTaxRules extends BaseLoadTaxRules
      */
     public function load(ObjectManager $manager)
     {
-
         $this->createTaxRuleWithJurisdiction(
             $manager,
             $this->getTaxJurisdictionByReference(LoadTaxJurisdictions::JURISDICTION_US_ONLY),

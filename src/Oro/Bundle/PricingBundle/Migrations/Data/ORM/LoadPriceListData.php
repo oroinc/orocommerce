@@ -3,14 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\CurrencyBundle\Migrations\Data\ORM\SetDefaultCurrencyFromLocale;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
-class LoadPriceListData extends AbstractFixture implements ContainerAwareInterface
+class LoadPriceListData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /** @var string */
     const DEFAULT_PRICE_LIST_NAME = 'Default Price List';
@@ -19,6 +21,16 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            SetDefaultCurrencyFromLocale::class
+        ];
+    }
 
     /**
      * {@inheritDoc}

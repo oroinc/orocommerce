@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Method\Handler;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisableHandlerInterface
 {
@@ -19,23 +19,23 @@ class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisabl
     private $repository;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    private $methodRegistry;
+    private $shippingMethodProvider;
 
     /**
      * @param ShippingMethodDisableHandlerInterface $handler
      * @param ShippingMethodsConfigsRuleRepository  $repository
-     * @param ShippingMethodRegistry                $methodRegistry
+     * @param ShippingMethodProviderInterface       $shippingMethodProvider
      */
     public function __construct(
         ShippingMethodDisableHandlerInterface $handler,
         ShippingMethodsConfigsRuleRepository $repository,
-        ShippingMethodRegistry $methodRegistry
+        ShippingMethodProviderInterface $shippingMethodProvider
     ) {
         $this->handler = $handler;
         $this->repository = $repository;
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -65,7 +65,7 @@ class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisabl
         foreach ($methodConfigs as $methodConfig) {
             $methodId = $methodConfig->getMethod();
             if ($methodId !== $disabledMethodId) {
-                $method = $this->methodRegistry->getShippingMethod($methodId);
+                $method = $this->shippingMethodProvider->getShippingMethod($methodId);
                 if ($method->isEnabled()) {
                     return true;
                 }
