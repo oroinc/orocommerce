@@ -109,7 +109,6 @@ class AddStringSuffixAction extends AbstractAction
         $suffixLength = mb_strlen($suffix);
 
         if ($suffixLength > $maxLength) {
-
             return $title;
         }
         $resultLength = $maxLength - $suffixLength;
