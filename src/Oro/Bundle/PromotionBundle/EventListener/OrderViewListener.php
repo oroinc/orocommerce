@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\EventListeners;
+namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -29,7 +29,7 @@ class OrderViewListener
         /** @var Order $order */
         $order = $event->getEntity();
 
-        $template = $event->getEnvironment()->render('@OroPromotion/Order/discounts_view.html.twig', [
+        $template = $event->getEnvironment()->render('OroPromotionBundle:Order:discounts_view.html.twig', [
             'entity' => $order,
         ]);
 

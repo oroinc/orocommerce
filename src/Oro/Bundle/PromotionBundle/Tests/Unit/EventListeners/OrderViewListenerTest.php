@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PromotionBundle\EventListeners\OrderViewListener;
+use Oro\Bundle\PromotionBundle\EventListener\OrderViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
 {

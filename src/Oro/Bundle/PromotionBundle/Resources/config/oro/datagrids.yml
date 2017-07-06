@@ -95,7 +95,7 @@ datagrids:
             type: orm
             query:
                 select:
-                    - SUM(discount.amount) AS discount_amount
+                    - SUM(discount.amount) AS discountAmount
                     - discount.promotionName AS name
                     - discount.currency AS currency
                 from:
@@ -109,7 +109,7 @@ datagrids:
         columns:
             name:
                 label: oro.applied_discount.name
-            discount_amount:
+            discountAmount:
                 label: oro.applied_discount.amount
                 type: twig
                 frontend_type: html
@@ -118,14 +118,14 @@ datagrids:
             columns:
                 name:
                     data_name: discount.promotionName
-                discount_amount:
-                    data_name: discount_amount
+                discountAmount:
+                    data_name: discountAmount
         filters:
             columns:
                 name:
                     type: string
                     data_name: discount.promotionName
-                discount_amount:
+                discountAmount:
                     type: number-range
-                    data_name: discount_amount
+                    data_name: discountAmount
                     filter_by_having: true
