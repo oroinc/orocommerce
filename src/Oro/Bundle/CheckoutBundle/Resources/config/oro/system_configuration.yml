@@ -5,6 +5,11 @@ system_configuration:
             icon: fa-book
         orders_history_open_orders:
             title: oro.checkout.system_configuration.groups.open_orders.title
+        checkout:
+            title: oro.checkout.system_configuration.groups.checkout.title
+            icon: fa-credit-card
+        guest_checkout_owner_section:
+            title: oro.checkout.system_configuration.groups.guest_checkout_owner.title
 
     fields:
         oro_checkout.frontend_open_orders_separate_page:
@@ -17,6 +22,18 @@ system_configuration:
                      - No
                      - Yes
 
+        oro_checkout.default_guest_checkout_owner:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            priority: 20
+            options:
+                label: oro.checkout.system_configuration.fields.default_guest_checkout_owner.title
+                tooltip: oro.checkout.system_configuration.fields.default_guest_checkout_owner.tooltip
+                required: true
+                resettable: true
+                constraints:
+                    - NotBlank: ~
     tree:
         system_configuration:
             commerce:
@@ -28,3 +45,10 @@ system_configuration:
                                     orders_history_open_orders:
                                         children:
                                             - oro_checkout.frontend_open_orders_separate_page
+                    sales:
+                        children:
+                            checkout:
+                                children:
+                                    guest_checkout_owner_section:
+                                        children:
+                                            - oro_checkout.default_guest_checkout_owner

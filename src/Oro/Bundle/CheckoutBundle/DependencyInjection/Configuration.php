@@ -9,6 +9,8 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
+    const DEFAULT_GUEST_CHECKOUT_OWNER = 'default_guest_checkout_owner';
+
     /**
      * {@inheritDoc}
      */
@@ -24,7 +26,8 @@ class Configuration implements ConfigurationInterface
                 'frontend_open_orders_separate_page' => [
                     'type' => 'boolean',
                     'value' => false
-                ]
+                ],
+                self::DEFAULT_GUEST_CHECKOUT_OWNER => ['type' => 'string', 'value' => null],
             ]
         );
 

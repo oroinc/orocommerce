@@ -468,3 +468,12 @@ services:
         decorates: oro_payment.provider.result_messages
         public: false
         arguments: ['@oro_checkout.provider.payment_method_provider']
+
+    oro_checkout.event_listener.system_config:
+        class: Oro\Bundle\CheckoutBundle\EventListener\SystemConfigListener
+        arguments:
+            - '@doctrine'
+            - '%oro_user.entity.class%'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_checkout.default_guest_checkout_owner, method: onSettingsSaveBefore }

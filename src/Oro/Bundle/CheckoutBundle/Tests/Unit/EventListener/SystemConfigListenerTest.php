@@ -1,0 +1,136 @@
+<?php
+
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+
+use Oro\Bundle\CheckoutBundle\DependencyInjection\Configuration;
+use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
+use Oro\Bundle\CheckoutBundle\EventListener\SystemConfigListener;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
+use Oro\Bundle\ConfigBundle\Utils\TreeUtils;
+use Oro\Bundle\UserBundle\Entity\User;
+
+class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
+{
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var string
+     */
+    protected $ownerClass;
+
+    /**
+     * @var SystemConfigListener
+     */
+    protected $listener;
+
+    protected function setUp()
+    {
+        $this->registry   = $this->createMock(ManagerRegistry::class);
+        $this->ownerClass = User::class;
+        $this->listener   = new SystemConfigListener($this->registry, $this->ownerClass);
+    }
+
+    /**
+     * @dataProvider invalidSettingsDataProvider
+     * @param mixed $settings
+     */
+    public function testOnFormPreSetDataInvalidSettings($settings)
+    {
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+        $event = $this->getEvent($settings);
+
+        $this->listener->onFormPreSetData($event);
+    }
+
+    /**
+     * @dataProvider invalidSettingsDataProvider
+     * @param mixed $settings
+     */
+    public function testOnSettingsSaveBeforeInvalidSettings($settings)
+    {
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+        $event = $this->getEvent($settings);
+
+        $this->listener->onSettingsSaveBefore($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidSettingsDataProvider()
+    {
+        $key = TreeUtils::getConfigKey(
+            OroCheckoutExtension::ALIAS,
+            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
+        );
+
+        return [
+            [[]],
+            [[null]],
+            [['bar' => 'foo']],
+            [[new \stdClass()]],
+            [[$key => ['bar' => 'foo']]],
+            [[$key => ['value' => null]]]
+        ];
+    }
+
+    public function testOnFormPreSetData()
+    {
+        $id      = 1;
+        $key     = TreeUtils::getConfigKey(
+            OroCheckoutExtension::ALIAS,
+            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
+        );
+        $owner   = new $this->ownerClass;
+        $manager = $this->createMock(ObjectManager::class);
+        $manager->expects($this->once())
+            ->method('find')
+            ->with($this->ownerClass, $id)
+            ->will($this->returnValue($owner));
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with($this->ownerClass)
+            ->will($this->returnValue($manager));
+
+        $event = $this->getEvent([$key => ['value' => $id]]);
+
+        $this->listener->onFormPreSetData($event);
+
+        $this->assertEquals([$key => ['value' => $owner]], $event->getSettings());
+    }
+
+    public function testOnSettingsSaveBefore()
+    {
+        $id    = 1;
+        $owner = $this->createMock($this->ownerClass);
+        $owner->expects($this->once())
+            ->method('getId')
+            ->will($this->returnValue($id));
+        $event = $this->getEvent(['value' => $owner]);
+
+        $this->listener->onSettingsSaveBefore($event);
+
+        $this->assertEquals(['value' => $id], $event->getSettings());
+    }
+
+    /**
+     * @param array $settings
+     * @return ConfigSettingsUpdateEvent
+     */
+    protected function getEvent(array $settings)
+    {
+        /** @var ConfigManager $configManager */
+        $configManager = $this->createMock(ConfigManager::class);
+
+        return new ConfigSettingsUpdateEvent($configManager, $settings);
+    }
+}
