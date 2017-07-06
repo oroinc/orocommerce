@@ -2,6 +2,7 @@ config:
     paths:
         'oro/datagrid/action/add-products-mass-action': 'bundles/oroshoppinglist/js/datagrid/action/add-products-mass-action.js'
         'oroshoppinglist/js/app/components/add-product-component': 'bundles/oroshoppinglist/js/app/components/add-product-component.js'
+        'oroshoppinglist/js/app/components/shopping-list-create-component': 'bundles/oroshoppinglist/js/app/components/shopping-list-create-component.js'
         'oroshoppinglist/js/app/views/line-item-view': 'bundles/oroshoppinglist/js/app/views/line-item-view.js'
         'oroshoppinglist/js/app/views/line-items-view': 'bundles/oroshoppinglist/js/app/views/line-items-view.js'
         'oroshoppinglist/js/app/views/product-add-to-shopping-list-view': 'bundles/oroshoppinglist/js/app/views/product-add-to-shopping-list-view.js'
