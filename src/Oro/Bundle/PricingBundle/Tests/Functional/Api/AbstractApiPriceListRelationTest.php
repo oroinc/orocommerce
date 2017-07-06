@@ -3,6 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+use Oro\Bundle\PricingBundle\Entity\PriceListFallback;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,20 +22,53 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
      */
     abstract protected function getAliceFilesFolderName(): string;
 
+    /**
+     * @return BasePriceListRelation|PriceListFallback
+     */
     abstract protected function getFirstRelation();
 
     /**
-     * @param int $entityId
      * @param string $associationName
      * @param string $associationId
      */
-    protected function assertGetSubResource($entityId, $associationName, $associationId)
+    protected function assertGetSubResource(string $associationName, string $associationId)
     {
-        $response = $this->getSubresource(
-            ['entity' => $this->getApiEntityName(), 'id' => $entityId, 'association' => $associationName]
-        );
+        $response = $this->getSubresource([
+            'entity' => $this->getApiEntityName(),
+            'id' => $this->getFirstRelation()->getId(),
+            'association' => $associationName
+        ]);
+
         $result = json_decode($response->getContent(), true);
+
         self::assertEquals($associationId, $result['data']['id']);
+    }
+
+    /**
+     * @param string $associationName
+     * @param string $associationClassName
+     * @param string $associationId
+     */
+    protected function assertGetRelationship(
+        string $associationName,
+        string $associationClassName,
+        string $associationId
+    ) {
+        $response = $this->getRelationship([
+            'entity' => $this->getApiEntityName(),
+            'id' => $this->getFirstRelation()->getId(),
+            'association' => $associationName
+        ]);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => $this->getEntityType($associationClassName),
+                    'id' => (string)$associationId
+                ]
+            ],
+            $response
+        );
     }
 
     public function testGet()
