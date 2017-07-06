@@ -28,8 +28,8 @@ Feature: Managing promotions
       | Website                      | Default               |
       | Customer                     | first customer        |
       | Customer Group               | All Customers         |
-      | Labels                       | Promotion label       |
-      | Descriptions                 | Promotion description |
+#      | Labels                       | Promotion label       |
+#      | Descriptions                 | Promotion description |
     And I press "Add" in "Matching Items" section
     And I check PSKU1 record in "Add Products Popup" grid
     And I click "Add" in modal window
