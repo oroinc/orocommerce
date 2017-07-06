@@ -46,6 +46,13 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
     abstract protected function getEntityRepository(): EntityRepository;
 
     /**
+     * @param BasePriceListRelation $entity
+     *
+     * @return array
+     */
+    abstract protected function prepareRebuildPriceListMessagesForEntity(BasePriceListRelation $entity): array;
+
+    /**
      * @return array
      */
     abstract protected function getDeleteListFilter();
@@ -54,13 +61,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
      * @return array
      */
     abstract protected function getExpectedRebuildMessagesOnDeleteList(): array;
-
-    /**
-     * @param BasePriceListRelation $entity
-     *
-     * @return array
-     */
-    abstract protected function prepareRebuildPriceListMessagesForEntity(BasePriceListRelation $entity): array;
 
     /**
      * @return BasePriceListRelation
@@ -111,6 +111,7 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
             $this->getUrl('oro_rest_api_post', $routeParameters),
             $parameters
         );
+
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
         static::assertContains(
             'unique entity constraint',
@@ -154,7 +155,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
         $this->cleanScheduledRelationMessages();
 
         $relation = $this->getFirstRelation();
-
         $id = $relation->getId();
 
         $expectedMessage = $this->prepareRebuildPriceListMessagesForEntity($relation);
@@ -178,11 +178,9 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
         $this->cleanScheduledRelationMessages();
 
         $relation = $this->getFirstRelation();
-
         $id = $relation->getId();
 
         $expectedMessage = $this->prepareRebuildPriceListMessagesForEntity($relation);
-
         $expectedMergedAllowed = !$relation->isMergeAllowed();
         $expectedSortOrder = 999;
 
@@ -204,7 +202,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
 
         static::assertSame($expectedSortOrder, $updatedRelation->getSortOrder());
         static::assertSame($expectedMergedAllowed, $updatedRelation->isMergeAllowed());
-
         static::assertMessageSent(Topics::REBUILD_COMBINED_PRICE_LISTS, $expectedMessage);
     }
 
@@ -227,7 +224,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
                 'association' => 'priceList',
             ]
         );
-
         $this->assertResponseContains(
             [
                 'data' => [
@@ -245,7 +241,6 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
                 'association' => 'website',
             ]
         );
-
         $this->assertResponseContains(
             [
                 'data' => [
