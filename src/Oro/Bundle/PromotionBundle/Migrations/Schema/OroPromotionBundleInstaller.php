@@ -318,7 +318,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
             $schema->getTable('oro_order_line_item'),
             ['line_item_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_order'),
