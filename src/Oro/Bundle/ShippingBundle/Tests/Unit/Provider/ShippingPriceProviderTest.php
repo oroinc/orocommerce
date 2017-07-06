@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
@@ -29,9 +29,9 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected $shippingRulesProvider;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $shippingMethodProvider;
 
     /**
      * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
@@ -76,8 +76,8 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ])
         ];
 
-        $this->registry = $this->createMock(ShippingMethodRegistry::class);
-        $this->registry->expects($this->any())
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $this->shippingMethodProvider->expects($this->any())
             ->method('getShippingMethod')
             ->will($this->returnCallback(function ($methodId) use ($methods) {
                 return array_key_exists($methodId, $methods) ? $methods[$methodId] : null;
@@ -86,11 +86,11 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
             ->disableOriginalConstructor()->getMock();
 
-        $viewFactory = new ShippingMethodViewFactory($this->registry);
+        $viewFactory = new ShippingMethodViewFactory($this->shippingMethodProvider);
 
         $this->shippingPriceProvider = new ShippingPriceProvider(
             $this->shippingRulesProvider,
-            $this->registry,
+            $this->shippingMethodProvider,
             $this->priceCache,
             $viewFactory
         );
