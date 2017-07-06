@@ -5,6 +5,7 @@ oro:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
+        sku_uppercase.label: SKU
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
