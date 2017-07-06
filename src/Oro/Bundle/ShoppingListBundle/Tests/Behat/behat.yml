@@ -7,3 +7,13 @@ oro_behat_extension:
     ShoppingListTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
+
+    ShoppingListLineItem:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
+      selector: 'tbody.line_item'
+
+    ShoppingListLineItemProductSku:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+          type: 'xpath'
+          locator: '//div[text()[contains(.,"SKU #:")]]/span'

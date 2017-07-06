@@ -1,0 +1,69 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    lineItemDiscountPromotionLabel:
+        string: 'Line Item Discount Promotion'
+    lineItemDiscountPromotionDesc:
+        string: 'Line Item Discount Promotion Description'
+    orderDiscountPromotionLabel:
+        string: 'Order Discount Promotion'
+    orderDiscountPromotionDesc:
+        string: 'Order Discount Promotion Description'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    lineItemDiscountPromotionSegment:
+        name: 'Promotion Matching Products #1'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+    orderDiscountPromotionSegment:
+        name: 'Promotion Matching Products #2'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    lineItemDiscountPromotionDiscountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.5
+            apply_to: 'line_items_total'
+    orderDiscountPromotionDiscountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    lineItemDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'lineItemDiscountPromotionRule'
+    orderDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'orderDiscountPromotionRule'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    lineItemDiscountPromotion:
+        addLabel: ['@lineItemDiscountPromotionLabel']
+        addDescription: ['@lineItemDiscountPromotionDesc']
+        addScope: [1]
+        productsSegment: '@lineItemDiscountPromotionSegment'
+        rule: '@lineItemDiscountPromotionRule'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+    orderDiscountPromotion:
+        addLabel: ['@orderDiscountPromotionLabel']
+        addDescription: ['@orderDiscountPromotionDesc']
+        addScope: [1]
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@orderDiscountPromotionRule'
+        discountConfiguration: '@orderDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'

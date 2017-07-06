@@ -4,6 +4,10 @@ oro_behat_extension:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\Order
       selector: '.page-content'
 
+    OrderLineItemProductSku:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div:contains("Item #:") > span'
+
     OrderTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.page-title .page-title__text'

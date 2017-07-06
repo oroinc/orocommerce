@@ -1,4 +1,18 @@
 oro_behat_extension:
+  suites:
+    OroPromotionBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroConfigBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroPromotionBundle::PromotionContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroCustomerBundle::GridContext
+      paths:
+        - '@OroPromotionBundle/Tests/Behat/Features'
+
   pages:
     Promotion Create:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionCreate
@@ -30,3 +44,53 @@ oro_behat_extension:
           Discount: 'oro_promotion[discountConfiguration][type]'
           Type: 'oro_promotion[discountConfiguration][options][discount_type]'
           Currency: 'oro_promotion[discountConfiguration][options][amount_discount_value][currency]'
+
+    Product Inventory Options Form:
+      selector: 'form[name="product_options"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Use Default: 'product_options[oro_inventory___decrement_inventory][use_parent_scope_value]'
+          Managed Inventory: 'product_options[oro_inventory___decrement_inventory][value]'
+
+    PromotionCheckoutStep:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep
+      selector: 'div[data-role="checkout-content"]'
+
+    PromotionCheckoutStepDiscountSubtotal:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+          type: xpath
+          locator: '//div[contains(@class, "order-checkout-widget")]//td[text()="Discount"]/following-sibling::td'
+
+    PromotionCheckoutStepLineItem:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStepLineItem
+      selector: 'table[data-scrollable-inner-content] > tbody > tr[data-scrollable-content-body]'
+
+    PromotionOrder:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrder
+      selector: '.page-content'
+
+    PromotionOrderDiscountSubtotal:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+          type: xpath
+          locator: '//div[contains(@class, "order-checkout-widget")]//td[text()="Discount"]/following-sibling::td'
+
+    PromotionOrderLineItem:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderLineItem
+      selector: 'tr.grid-row'
+
+    PromotionShoppingList:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingList
+      selector: '#shopping_list_view_container_content'
+
+    PromotionShoppingListDiscountSubtotal:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+          type: xpath
+          locator: '//tbody[@data-totals-container]//td[text()="Discount"]/following-sibling::td'
+
+    PromotionShoppingListLineItem:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem
+      selector: 'tbody.line_item'
