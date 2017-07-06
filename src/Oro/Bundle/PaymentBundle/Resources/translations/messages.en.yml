@@ -68,7 +68,7 @@ oro:
         paymentmethodsconfigsrule:
             entity_short_label: Payment Rule
             entity_short_plural_label: Payment Rules
-            entity_label: Payment Methods Configs Rule
+            entity_label: Payment Rule
             entity_plural_label: Payment Methods Configs Rules
             id.label: Id
             method_configs.label: Payment Methods Configs
