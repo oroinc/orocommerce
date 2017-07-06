@@ -60,14 +60,13 @@ services:
             - '@oro_promotion.rule_filtration.schedule_decorator.inner'
             - '@oro_cron.checker.schedule_interval_checker'
 
-#    TODO: uncomment after BB-9489
-#    oro_promotion.rule_filtration.coupon_decorator:
-#        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
-#        decorates: oro_promotion.rule_filtration.service
-#        decoration_priority: 250
-#        public: false
-#        arguments:
-#            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+    oro_promotion.rule_filtration.coupon_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 250
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
 
     oro_promotion.rule_filtration.matching_items:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
@@ -368,3 +367,10 @@ services:
         class: Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager
         arguments:
             - '@service_container'
+
+    oro_promotion.event_listener.order_view_listener:
+        class: Oro\Bundle\PromotionBundle\EventListeners\OrderViewListener
+        arguments: ['@translator']
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
+
