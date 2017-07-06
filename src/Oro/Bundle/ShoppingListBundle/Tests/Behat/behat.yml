@@ -8,11 +8,13 @@ oro_behat_extension:
         - OroProductBundle::FeatureContext
         - OroSalesBundle::FeatureContext
         - OroRedirectBundle::SlugPrototypesContext
-        - OroSecurityBundle::ACLContext
+        - OroCustomerBundle::ACLContext
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroShoppingListBundle::FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'
   elements:
@@ -27,3 +29,11 @@ oro_behat_extension:
     Edit Shopping List Label:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="start-editing"]'
+
+    Shopping List Line Items Table:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: '#shopping_list_view_container_content > div.cart-table > table'
+
+    Frontend Shopping Lists Dropdown:
+      selector: 'div.shopping-list-widget'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

@@ -36,37 +36,37 @@ Feature: Duplicate Lists
     And click "Account"
     And click "Roles"
     And click edit "Buyer" in grid
-    And user have "None" permissions for "Duplicate" "Shopping List" entity
+    And click "Shopping"
+    And select following permissions:
+      | Shopping List | Duplicate:None |
     And click "Save"
     And I proceed as the User
     And I signed in as NancyJSallee@example.org on the store frontend
-    And type "SKU" in "search"
-    And click "Search Button"
-    And I wait for action
-    And add "SKU1" product with "item" unit and "10" quantity to the shopping list
-    And add "SKU2" product with "item" unit and "11" quantity to the shopping list
-    When open page with shopping list "Shopping List"
-    Then I should not see following buttons:
+    When open page with shopping list "My Shopping List"
+    Then I should see "My Shopping List"
+    And I should not see following buttons:
       |Duplicate List|
 
   Scenario: Front - user with permissions
     Given I proceed as the Admin
     And click "Roles"
     And click edit "Customizable" in grid
-    And user have "User (Own)" permissions for "Duplicate" "Shopping List" entity
+    And click "Shopping"
+    And select following permissions:
+      |Shopping List|Duplicate:User|
     And click "Save"
     And I proceed as the User
     When reload the page
     Then I should see following buttons:
       |Duplicate List|
     When click "Duplicate List"
-    Then should see 'Shopping list "Shopping list" has been duplicated' flash message
-    And should see "Shopping list (copied"
-    And I should see following "Shopping list" grid:
+    Then should see 'Shopping list "My Shopping List" has been duplicated' flash message
+    And should see "My Shopping List (copied"
+    And I should see following line items in "Shopping List Line Items Table":
       |SKU |Quantity|Unit|
       |SKU1|10      |item|
       |SKU2|11      |item|
-    And open page with shopping list "Shopping List"
+    And open page with shopping list "My Shopping List"
     And click "Edit Shopping List Label"
     And type "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" in "value"
     And click "Save"
@@ -86,16 +86,19 @@ Feature: Duplicate Lists
     When reload the page
     Then I should see following buttons:
       |Duplicate List|
-    Then should see 'Shopping list "Shopping list" has been duplicated' flash message
-    And should see "Should be changed"
+    And click "Duplicate List"
+    Then should see 'Shopping list "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" has been duplicated' flash message
+    And should see "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,… (copied"
     And should see following grid:
       |SKU |Product |Quantity|Unit|
       |SKU1|Product1|10      |item|
       |SKU2|Product2|11      |item|
-    And click Sign out in user menu
+    And click Logout in user menu
     And I signed in as NancyJSallee@example.org on the store frontend
-    When open page with shopping list "Should be changed"
-    Then should see following "Shopping list" grid:
+    Then click "Frontend Shopping Lists Dropdown"
+    And click "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,… (copied"
+    And I should see "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,… (copied"
+    And I should see following line items in "Shopping List Line Items Table":
       |SKU |Quantity|Unit|
       |SKU1|10      |item|
       |SKU2|11      |item|

@@ -183,3 +183,29 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
     productUnitPrecision: '@precision2'
     quantity: 100
     warehouse: '@testWarehouse'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+   shoppinglist1:
+       owner: '@charlie'
+       label: 'My Shopping List'
+       customerUser: '@nancy'
+       website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+   lineitem1:
+       product: '@product1'
+       quantity: '10'
+       unit: '@item'
+       owner: '@charlie'
+       customerUser: '@nancy'
+       shoppingList: '@shoppinglist1'
+       organization: '@organization'
+
+   lineitem2:
+       product: '@product2'
+       quantity: '11'
+       unit: '@item'
+       owner: '@charlie'
+       customerUser: '@nancy'
+       shoppingList: '@shoppinglist1'
+       organization: '@organization'
