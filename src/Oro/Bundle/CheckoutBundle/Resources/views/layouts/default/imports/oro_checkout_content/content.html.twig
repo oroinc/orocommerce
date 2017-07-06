@@ -141,7 +141,7 @@
                                 <td class="checkout-order-summary__table-col checkout-order-summary__product">
                                     <h3 class="product-item__title product-item__title_in-cart">
                                         {% if mainProduct is not null %}
-                                            <a href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.defaultName }}</a>
+                                            <a href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.names|localized_value }}</a>
                                         {% else %}
                                             {{ lineItem.freeFormProduct }}
                                         {% endif %}
