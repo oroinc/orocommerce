@@ -113,4 +113,18 @@ class PriceListTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $priceList->getPriceRules());
         $this->assertSame($priceList->getPriceRules()->first(), $priceRule2);
     }
+
+    public function testPriceListCurrencies()
+    {
+        $priceList = $this->createPriceList();
+        $currencies = ['1', '2'];
+
+        $priceList->setPriceListCurrencies($currencies);
+
+        static::assertSame($currencies, $priceList->getPriceListCurrencies());
+
+        $priceList->setPriceListCurrencies(null);
+
+        static::assertEmpty($priceList->getPriceListCurrencies());
+    }
 }
