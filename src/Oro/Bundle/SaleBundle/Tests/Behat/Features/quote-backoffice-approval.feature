@@ -1,6 +1,6 @@
 @ticket-BB-9130
 @automatically-ticket-tagged
-@fixture-QuoteBackofficeApprovalsFixture.yml
+@fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
 Feature: Quote Backoffice Approvals Workflow
   In order to edit quote internal statuses and aprove quotes after price changes
   As an Administrator

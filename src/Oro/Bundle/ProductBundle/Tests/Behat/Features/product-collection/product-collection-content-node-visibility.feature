@@ -1,4 +1,4 @@
-@fixture-product_collection_webcatalog.yml
+@fixture-OroProductBundle:product_collection_webcatalog.yml
 Feature:
   In order to provider user with Product Collection functionality
   As a Buyer

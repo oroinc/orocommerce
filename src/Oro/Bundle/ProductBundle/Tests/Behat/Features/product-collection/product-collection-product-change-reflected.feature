@@ -1,4 +1,4 @@
-@fixture-product_collection_add.yml
+@fixture-OroProductBundle:product_collection_add.yml
 Feature:
   In order to changes products included in product collection to reflected on store frontend
   As an Administrator

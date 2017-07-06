@@ -1,4 +1,4 @@
-@fixture-RFQWorkflows.yml
+@fixture-OroRFPBundle:RFQWorkflows.yml
 @ticket-BB-7962
 Feature: Default RFQ Workflows
 
