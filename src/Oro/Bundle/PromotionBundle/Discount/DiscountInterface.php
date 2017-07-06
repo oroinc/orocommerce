@@ -79,7 +79,6 @@ interface DiscountInterface
      * Set related promotion
      *
      * @param Promotion $promotion
-     * @return void
      */
     public function setPromotion(Promotion $promotion);
 }

@@ -357,7 +357,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
 
     oro_promotion.event_listener.order:
-        class: Oro\Bundle\PromotionBundle\EventListener\ORM\OrderEventListener
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
         public: false
         arguments:
              - '@oro_promotion.discount_manager'
@@ -374,4 +374,3 @@ services:
         arguments: ['@translator']
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
-
