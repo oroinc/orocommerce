@@ -4,15 +4,21 @@ oro:
         entity_plural_label: Products
         entity_description: Represents product information
         id.label: Id
-        sku.label: SKU
         sku_uppercase.label: SKU
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
-        sku.placeholder: "Enter Item Number"
+        sku:
+          label: SKU
+          placeholder: "Enter Product Name or Item Number"
+          not_found: Item Number Cannot Be Found
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields.label: Configurable Attributes
+        unit.label: Unit
+        price.label: Price
+        has_variants.label: Has Variants
+        variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
         status.label: Status
         type.label: Type
@@ -322,29 +328,41 @@ oro:
                 mfg: 'MFG Model #:'
                 view_details: 'View Details'
             quick_add:
-                title: Quick Order
+                title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
+                clear: Clear All
                 copy_paste:
                     title: 'Paste your order'
-                    description: 'Copy and paste your order with the item # and the QTY separated by tabs.'
+                    description: 'Copy and paste your order with the item #, quantity (and optionally units), separated by spaces, semicolons or commas.'
                     placeholder: 'Copy and paste your order.'
                     continue:
                         label: Continue
                 import_from_file:
-                    title: Import Excel .CSV File
-                    description: 'Import From File description'
+                    title: 'Upload your order'
+                    title_dialog: 'Import Excel .CSV File'
+                    description: 'Drag and drop a .CSV, .XLS or .ODF file here, or select them from your computer.'
+                    label_directions: 'Get Directions'
+                    continue.label: Submit
                 import_validation:
+                    back: Back
                     title: Import validation results
                     total_items: Total number of records
                     valid_items: Valid items
-                    invalid_items: Records with errors
+                    invalid_items: Errors
                     number_of_items: Number of items
                     validator:
-                        not_found: 'Item number %sku% not found.'
-                        invalid_format: 'Row #%index% has invalid format.'
-
+                        not_found: 'Item number {{ value }} not found.'
+                        product_not_found: 'Item number {{ sku }} not found.'
+                        invalid_format: 'Row #{{ index }} has invalid format.'
+                        invalid_precision: 'Row #{{ index }} has invalid precision for unit ''{{ unit }}''.'
+                        invalid_unit: 'Row #{{ index }}. Unit ''{{ unit }}'' doesn''t exist for product {{ sku }}.'
+                        invalid_quantity: 'Row #{{ index }}. Quantity should be greater than 0.'
+                    empty_file:
+                        error.message: 'We have not been able to identify any product references in the uploaded file.'
 
                 continue.label: Verify Order
+                cancel.label: Cancel
+                add_to_form.label: Add to Form
                 messages:
                     not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
                     component_not_accessible: Can't process request, component not accessible
@@ -571,4 +589,18 @@ oro:
         quick_order_form:
             label: Quick Order Form
             description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
-
+        quick_add_import_help_widget:
+            important: Important
+            invalid_records: We have not been able to identify some of the product references in the uploaded file. Please review the data below and make necessary corrections to upload again.
+            incorrect_message: We have not been able to identify any product references in the uploaded file.
+            import_multiple_products: Follow the steps below to import multiple products using an CSV, XLSX or ODS file.
+            click_here_to_download: Click here to download
+            templates_conjunction: or
+            templates:
+                csv: the CSV template
+                xlsx: the XLSX template
+                ods: the ODS template
+            enter_item_numbers:
+                message: Enter item numbers in Column A and quantities needed in Column B. Please do not include any prefixes, dashes, or other punctuation in the item numbers.
+            save_the_file:
+                message: Save the file on your computer. CSV format (.csv) is recommended and click Upload.

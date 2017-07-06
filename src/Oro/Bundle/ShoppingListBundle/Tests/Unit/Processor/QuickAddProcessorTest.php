@@ -116,71 +116,71 @@ class QuickAddProcessorTest extends AbstractQuickAddProcessorTest
             'new shopping list' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
-                        ['productSku' => 'sku2', 'productQuantity' => 3],
+                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'kg'],
                     ]
                 ],
                 new Request(),
                 ['sku1' => 1, 'sku2' => 2],
-                [1 => 2, 2 => 3],
+                ['SKU1' => ['item' => 2], 'SKU2' => ['kg' => 3]]
             ],
             'shopping list with same products couple of times' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
-                        ['productSku' => 'sku1', 'productQuantity' => 3],
-                        ['productSku' => 'sku1', 'productQuantity' => 4],
-                        ['productSku' => 'sku2', 'productQuantity' => 5],
-                        ['productSku' => 'sku2', 'productQuantity' => 6],
+                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku1', 'productQuantity' => 3, 'productUnit' => 'kg'],
+                        ['productSku' => 'sku1', 'productQuantity' => 4, 'productUnit' => 'set'],
+                        ['productSku' => 'sku2', 'productQuantity' => 5, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 6, 'productUnit' => 'kg'],
                     ]
                 ],
                 new Request(),
                 ['sku1' => 1, 'sku2' => 2],
-                [1 => 9, 2 => 11],
+                ['SKU1' => ['item' => 2, 'kg' => 3, 'set' => 4], 'SKU2' => ['item' => 5, 'kg' => 6]]
             ],
             'shopping list with products skus in descending order' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 11],
-                        ['productSku' => 'sku2', 'productQuantity' => 12],
+                        ['productSku' => 'sku1', 'productQuantity' => 11, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 12, 'productUnit' => 'kg'],
                     ]
                 ],
                 new Request(),
-                ['sku2' => 2, 'sku1' => 1],
-                [1 => 11, 2 => 12],
+                [],
+                ['SKU2' => ['kg' => 12], 'SKU1' => ['item' => 11]]
             ],
             'existing shopping list' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
-                        ['productSku' => 'sku2', 'productQuantity' => 3],
+                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'kg'],
                     ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
                 ['sku1' => 1, 'sku2' => 2],
-                [1 => 2, 2 => 3],
+                ['SKU1' => ['item' => 2], 'SKU2' => ['kg' => 3]]
             ],
             'ids sorting' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku2', 'productQuantity' => 3],
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
+                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'item'],
+                        ['productSku' => 'SKU1', 'productQuantity' => 2, 'productUnit' => 'kg'],
                     ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
                 ['sku2' => 2, 'sku1' => 1],
-                [1 => 2, 2 => 3],
+                ['SKU1' => ['kg' => 2], 'SKU2' => ['item' => 3]]
             ],
             'process failed' => [
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
-                        ['productSku' => 'sku2', 'productQuantity' => 3],
+                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'kg'],
                     ],
                 ],
                 new Request(),
                 ['sku1' => 1, 'sku2' => 2],
-                [1 => 2, 2 => 3],
+                ['SKU1' => ['kg' => 2], 'SKU2' => ['item' => 3]],
                 true
             ],
         ];

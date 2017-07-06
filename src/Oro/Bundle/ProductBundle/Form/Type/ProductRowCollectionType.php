@@ -16,7 +16,7 @@ class ProductRowCollectionType extends AbstractType
 {
     const NAME = 'oro_product_row_collection';
 
-    const ROW_COUNT_INITIAL = 5;
+    const ROW_COUNT_INITIAL = 8;
 
     const ROW_COUNT_ADD = 5;
 
