@@ -2,8 +2,7 @@
 namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
 class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProviderInterface
@@ -14,18 +13,20 @@ class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProvi
     protected $provider;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $registry;
+    protected $shippingMethodProvider;
 
     /**
-     * @param ShippingPriceProviderInterface $provider
-     * @param ShippingMethodRegistry $registry
+     * @param ShippingPriceProviderInterface  $provider
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(ShippingPriceProviderInterface $provider, ShippingMethodRegistry $registry)
-    {
+    public function __construct(
+        ShippingPriceProviderInterface $provider,
+        ShippingMethodProviderInterface $shippingMethodProvider
+    ) {
         $this->provider = $provider;
-        $this->registry = $registry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -36,7 +37,7 @@ class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProvi
         $methodViewCollection = clone $this->provider->getApplicableMethodsViews($context);
         $methodViews = $methodViewCollection->getAllMethodsViews();
         foreach ($methodViews as $methodId => $methodView) {
-            $method = $this->registry->getShippingMethod($methodId);
+            $method = $this->shippingMethodProvider->getShippingMethod($methodId);
             if (!$method->isEnabled()) {
                 $methodViewCollection->removeMethodView($methodId);
             }
