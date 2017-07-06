@@ -471,14 +471,22 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                 actions:
-                    - '@call_method':
+                    - '@tree':
                         conditions:
                             '@not_empty': $visitor_email
-                        parameters:
-                            object: $checkout.customerUser
-                            method: setEmail
-                            method_parameters:
-                                - $visitor_email
+                        actions:
+                            - '@call_method':
+                                parameters:
+                                    object: $checkout.customerUser
+                                    method: setEmail
+                                    method_parameters:
+                                        - $visitor_email
+                            - '@assign_value': [$checkout.customerUser.namePrefix, $billing_address.namePrefix]
+                            - '@assign_value': [$checkout.customerUser.firstName, $billing_address.firstName]
+                            - '@assign_value': [$checkout.customerUser.middleName, $billing_address.middleName]
+                            - '@assign_value': [$checkout.customerUser.lastName, $billing_address.lastName]
+                            - '@assign_value': [$checkout.customerUser.nameSuffix, $billing_address.nameSuffix]
+                    - '@assign_value': [$shipping_method, null]
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@assign_value': [$shipping_method, null]
                     - '@call_method':
