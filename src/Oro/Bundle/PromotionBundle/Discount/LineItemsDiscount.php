@@ -58,7 +58,7 @@ class LineItemsDiscount extends ShippingAwareDiscount implements DiscountProduct
 
         foreach ($discountContext->getLineItems() as $discountLineItem) {
             foreach ($this->getMatchingProducts() as $discountMatchingProduct) {
-                if ($discountLineItem->getProduct() === $discountMatchingProduct
+                if ($discountLineItem->getProduct()->getId() === $discountMatchingProduct->getId()
                     && $discountLineItem->getProductUnitCode() === $this->discountProductUnitCode
                 ) {
                     $discountLineItem->addDiscount($this);

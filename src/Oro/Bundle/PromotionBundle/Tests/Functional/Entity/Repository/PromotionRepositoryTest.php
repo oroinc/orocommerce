@@ -34,7 +34,7 @@ class PromotionRepositoryTest extends WebTestCase
         /** @var Segment $segment */
         $segment = $this->getReference(LoadSegmentData::PRODUCT_DYNAMIC_SEGMENT);
         /** @var Promotion $expectedPromotion */
-        $expectedPromotion = $this->getReference(LoadPromotionData::SIMPLE_PROMOTION);
+        $expectedPromotion = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
 
         $actual = $this->repository->findPromotionByProductSegment($segment);
         $this->assertInstanceOf(Promotion::class, $actual);

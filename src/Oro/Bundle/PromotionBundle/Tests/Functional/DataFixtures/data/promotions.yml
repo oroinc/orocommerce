@@ -1,0 +1,668 @@
+promo_order_0_USD:
+    rule:
+        name: 'promo_order_0_USD_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 0
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_10_USD:
+    rule:
+        name: 'promo_order_10_USD_rule'
+        sortOrder: 200
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 10
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_10_EUR:
+    rule:
+        name: 'promo_order_10_EUR_rule'
+        sortOrder: 300
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 10
+            discount_currency: 'EUR'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_12.777_USD:
+    rule:
+        name: 'promo_order_12.777_USD_rule'
+        sortOrder: 400
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 12.777
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_0_USD_stop_processing:
+    rule:
+        name: 'promo_order_0_USD_stop_processing_rule'
+        sortOrder: 500
+        enabled: false
+        stopFurtherRuleProcessing: true
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 0.0
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_15.89%:
+    rule:
+        name: 'promo_order_15.89%_rule'
+        sortOrder: 600
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1589
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_12.78%:
+    rule:
+        name: 'promo_order_12.78%_rule'
+        sortOrder: 700
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1278
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_0%:
+    rule:
+        name: 'promo_order_0%_rule'
+        sortOrder: 800
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_50%_without_scope:
+    rule:
+        name: 'promo_order_50%_without_scope_rule'
+        sortOrder: 900
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+
+promo_order_10_USD_stop_processing:
+    rule:
+        name: 'promo_order_10_USD_stop_processing_rule'
+        sortOrder: 1000
+        enabled: false
+        stopFurtherRuleProcessing: true
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 10
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_15%:
+    rule:
+        name: 'promo_order_15%_rule'
+        sortOrder: 1100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.15
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_20%:
+    rule:
+        name: 'promo_order_20%_rule'
+        sortOrder: 1200
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.2
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_33_USD_unsuitable_expression:
+    rule:
+        name: 'promo_order_33_USD_unsuitable_expression_rule'
+        sortOrder: 1300
+        enabled: false
+        stopFurtherRuleProcessing: false
+        expression: 'some unsuitable expression'
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 20
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_20_USD_with_expression:
+    rule:
+        name: 'promo_order_20_USD_with_expression_rule'
+        sortOrder: 1400
+        enabled: false
+        stopFurtherRuleProcessing: true
+        expression: 'currency = "USD"'
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 20
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_40%:
+    rule:
+        name: 'promo_order_40%_rule'
+        sortOrder: 1500
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.4
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_25%:
+    rule:
+        name: 'promo_order_25%_rule'
+        sortOrder: 1600
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.25
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_25_USD:
+    rule:
+        name: 'promo_order_25_USD_rule'
+        sortOrder: 1700
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 25
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_40%_stop_processing:
+    rule:
+        name: 'promo_order_40%_stop_processing_rule'
+        sortOrder: 1800
+        enabled: false
+        stopFurtherRuleProcessing: true
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.4
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_1_USD:
+    rule:
+        name: 'promo_order_1_USD_rule'
+        sortOrder: 1900
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_2_USD:
+    rule:
+        name: 'promo_order_2_USD_rule'
+        sortOrder: 2000
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 2
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+    schedules: [{activateAt: '2015-01-01', deactivateAt: '2016-01-01'}]
+
+promo_order_3_USD:
+    rule:
+        name: 'promo_order_3_USD_rule'
+        sortOrder: 2100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 3
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_15_USD:
+    rule:
+        name: 'promo_order_15_USD_rule'
+        sortOrder: 2200
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 15
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_45_USD:
+    rule:
+        name: 'promo_order_45_USD_rule'
+        sortOrder: 2300
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 45
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+    schedules: [{activateAt: '2015-01-01', deactivateAt: '2016-01-01'}]
+
+promo_order_30_USD:
+    rule:
+        name: 'promo_order_30_USD_rule'
+        sortOrder: 2400
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 30
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_5_USD:
+    rule:
+        name: 'promo_order_5_USD_rule'
+        sortOrder: 2500
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 5
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_5_USD_without_matching_products:
+    rule:
+        name: 'promo_order_5_USD_without_matching_products_rule'
+        sortOrder: 2600
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_empty_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 5
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_order_100%_expired_schedule:
+    rule:
+        name: 'promo_order_100%_expired_schedule_rule'
+        sortOrder: 2700
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'percent'
+            discount_value: 1
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+    schedules: [{activateAt: '2015-01-01', deactivateAt: '2016-01-01'}]
+
+promo_order_42_USD:
+    rule:
+        name: 'promo_order_42_USD_rule'
+        sortOrder: 2800
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 42
+            discount_currency: 'USD'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_line_item_each_1_USD:
+    rule:
+        name: 'promo_line_item_each_1_USD_rule'
+        sortOrder: 2900
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+            discount_product_unit_code: 'liter'
+            apply_to: 'each_item'
+            maximum_qty: 2
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_line_item_each_20%:
+    rule:
+        name: 'promo_line_item_each_20%_rule'
+        sortOrder: 3000
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.2
+            discount_product_unit_code: 'liter'
+            apply_to: 'each_item'
+            maximum_qty: 10
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_line_item_each_1_USD_stop_processing:
+    rule:
+        name: 'promo_line_item_each_1_USD_rule'
+        sortOrder: 3100
+        enabled: false
+        stopFurtherRuleProcessing: true
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+            discount_product_unit_code: 'liter'
+            apply_to: 'each_item'
+            maximum_qty: 2
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_line_item_each_50%:
+    rule:
+        name: 'promo_line_item_each_50%_rule'
+        sortOrder: 3200
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.5
+            discount_product_unit_code: 'liter'
+            apply_to: 'each_item'
+            maximum_qty: 10
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_line_item_total_40%:
+    rule:
+        name: 'promo_line_item_total_40%_rule'
+        sortOrder: 3300
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.4
+            discount_product_unit_code: 'liter'
+            apply_to: 'line_items_total'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_line_item_total_1_USD:
+    rule:
+        name: 'promo_line_item_total_1_USD_stop_processing_rule'
+        sortOrder: 3400
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'line_item'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+            discount_product_unit_code: 'liter'
+            apply_to: 'line_items_total'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_2_USD_apply_to_each_y:
+    rule:
+        name: 'promo_buy_x_get_y_2_USD_apply_to_each_y_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'amount'
+            discount_value: 2
+            discount_currency: 'USD'
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_each_y'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_2_USD_apply_to_each_y_with_limit1:
+    rule:
+        name: 'promo_buy_x_get_y_2_USD_apply_to_each_y_with_limit1_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'amount'
+            discount_value: 2
+            discount_currency: 'USD'
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_each_y'
+            discount_limit: 1
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_10%_apply_to_each_y:
+    rule:
+        name: 'promo_buy_x_get_y_10%_apply_to_each_y_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_each_y'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_10%_apply_to_each_y_with_limit1:
+    rule:
+        name: 'promo_buy_x_get_y_10%_apply_to_each_y_with_limit1_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_each_y'
+            discount_limit: 1
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_2_USD_apply_to_xy_total:
+    rule:
+        name: 'promo_buy_x_get_y_2_USD_apply_to_xy_total_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'amount'
+            discount_value: 2
+            discount_currency: 'USD'
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_xy_total'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_2_USD_apply_to_xy_total_with_limit1:
+    rule:
+        name: 'promo_buy_x_get_y_2_USD_apply_to_xy_total_with_limit1_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'amount'
+            discount_value: 2
+            discount_currency: 'USD'
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_xy_total'
+            discount_limit: 1
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_10%_apply_to_xy_total:
+    rule:
+        name: 'promo_buy_x_get_y_5_USD_apply_to_xy_total_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_xy_total'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_buy_x_get_y_10%_apply_to_xy_total_with_limit1:
+    rule:
+        name: 'promo_buy_x_get_y_10%_apply_to_xy_total_with_limit1_rule'
+        sortOrder: 100
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'buy_x_get_y'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.1
+            buy_x: 1
+            get_y: 1
+            discount_product_unit_code: 'liter'
+            discount_apply_to: 'apply_to_xy_total'
+            discount_limit: 1
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]

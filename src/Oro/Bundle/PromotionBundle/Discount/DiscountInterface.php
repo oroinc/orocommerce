@@ -21,7 +21,7 @@ interface DiscountInterface
     /**
      * @return array|Product[]
      */
-    public function getMatchingProducts(): array;
+    public function getMatchingProducts();
 
     /**
      * @param array|Product[] $products

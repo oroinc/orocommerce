@@ -90,7 +90,7 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function getMatchingProducts(): array
+    public function getMatchingProducts()
     {
         return $this->matchingProducts;
     }

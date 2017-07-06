@@ -52,7 +52,7 @@ class PromotionControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        $promotionId = $this->getReference(LoadPromotionData::SIMPLE_PROMOTION)->getId();
+        $promotionId = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_promotion_update', ['id' => $promotionId]));
 
         $form = $crawler->selectButton('Save and Close')->form();
@@ -67,7 +67,7 @@ class PromotionControllerTest extends WebTestCase
 
     public function testView()
     {
-        $promotionId = $this->getReference(LoadPromotionData::SIMPLE_PROMOTION)->getId();
+        $promotionId = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId();
         $this->client->request('GET', $this->getUrl('oro_promotion_view', ['id' => $promotionId]));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -78,6 +78,6 @@ class PromotionControllerTest extends WebTestCase
      */
     protected function getOwnerId()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser()->getId();
+        return $this->getContainer()->get('oro_security.token_accessor')->getUserId();
     }
 }
