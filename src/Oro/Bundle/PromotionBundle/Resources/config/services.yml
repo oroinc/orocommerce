@@ -373,8 +373,9 @@ services:
             - '@service_container'
 
     oro_promotion.event_listener.order_view_listener:
-        class: Oro\Bundle\PromotionBundle\EventListeners\OrderViewListener
-        arguments: ['@translator']
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderViewListener
+        arguments:
+            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
