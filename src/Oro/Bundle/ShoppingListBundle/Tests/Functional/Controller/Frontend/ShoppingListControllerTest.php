@@ -245,14 +245,13 @@ class ShoppingListControllerTest extends WebTestCase
     public function ACLProvider()
     {
         return [
-            //Todo: Uncomment after #BB-10265 done
-            /*'VIEW (anonymous user)' => [
+            'VIEW (anonymous user)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => '',
                 'status' => 403,
                 'expectedCreateOrderButtonVisible' => false
-            ],*/
+            ],
             'VIEW (user from another customer)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
@@ -321,7 +320,6 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testViewListForGuest()
     {
-        $this->markTestSkipped('Should be fixed in #BB-10265');
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_view'));
         $response = $this->client->getResponse();
 
