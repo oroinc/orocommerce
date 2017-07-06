@@ -6,7 +6,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
-use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -54,13 +53,12 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
 
-        /** @var CreditCardTypesDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $cardTypesDataProvider */
-        $cardTypesDataProvider = $this->createMock(CreditCardTypesDataProviderInterface::class);
-        $cardTypesDataProvider->expects($this->any())
+        $creditCardTypesDataProvider = $this->createMock(CreditCardTypesDataProviderInterface::class);
+        $creditCardTypesDataProvider->expects($this->any())
             ->method('getCardTypes')
             ->willReturn(self::CARD_TYPES);
 
-        $cardTypesDataProvider->expects($this->any())
+        $creditCardTypesDataProvider->expects($this->any())
             ->method('getDefaultCardTypes')
             ->willReturn(self::CARD_TYPES);
 
@@ -76,7 +74,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         $this->formType = new PayPalSettingsType(
             $this->translator,
             $this->encoder,
-            $cardTypesDataProvider,
+            $creditCardTypesDataProvider,
             $this->paymentActionsDataProvider
         );
 
@@ -203,9 +201,8 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
      */
     public function testPreSetData($defaultValue, $expected)
     {
-        /** @var CreditCardTypesDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $cardTypesDataProvider */
-        $cardTypesDataProvider = $this->createMock(CreditCardTypesDataProviderInterface::class);
-        $cardTypesDataProvider
+        $creditCardTypesDataProvider = $this->createMock(CreditCardTypesDataProviderInterface::class);
+        $creditCardTypesDataProvider
             ->expects(static::any())
             ->method('getDefaultCardTypes')
             ->willReturn(self::CARD_TYPES);
@@ -213,7 +210,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         $formType = new PayPalSettingsType(
             $this->translator,
             $this->encoder,
-            $cardTypesDataProvider,
+            $creditCardTypesDataProvider,
             $this->paymentActionsDataProvider
         );
 
@@ -247,29 +244,5 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
                 'expected' => ['visa'],
             ],
         ];
-    }
-
-    /**
-     * @TODO remove in v1.3, when CardTypesDataProviderInterface is removed.
-     */
-    public function testPreSetDataWithDeprecatedInterface()
-    {
-        /** @var CardTypesDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $cardTypesDataProvider */
-        $cardTypesDataProvider = $this->createMock(CardTypesDataProviderInterface::class);
-
-        $formType = new PayPalSettingsType(
-            $this->translator,
-            $this->encoder,
-            $cardTypesDataProvider,
-            $this->paymentActionsDataProvider
-        );
-
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->createMock(FormEvent::class);
-        $event
-            ->expects(static::never())
-            ->method('getData');
-
-        $formType->preSetData($event);
     }
 }

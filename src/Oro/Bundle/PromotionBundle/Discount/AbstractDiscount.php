@@ -110,12 +110,17 @@ abstract class AbstractDiscount implements DiscountInterface
         $this->matchingProducts = $products;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getPromotion(): Promotion
     {
         return $this->promotion;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setPromotion(Promotion $promotion)
     {
         $this->promotion = $promotion;

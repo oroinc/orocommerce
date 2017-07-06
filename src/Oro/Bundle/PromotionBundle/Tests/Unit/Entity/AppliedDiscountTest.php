@@ -16,13 +16,13 @@ class AppliedDiscountTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['id', 123, false],
-            ['class', 'test-class', false],
+            ['type', 'test-type', false],
             ['amount', 123.456, false],
             ['currency', 'USD', false],
             ['order', new Order(), false],
             ['promotion', new Promotion(), false],
             ['promotionName', 'test-promotion', false],
-            ['configOptions', [1, 2, 3], false],
+            ['configOptions', [1, 2, 3]],
             ['lineItem', new OrderLineItem(), false],
         ];
 

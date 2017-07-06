@@ -57,6 +57,7 @@ class DiscountFactory
             );
         }
         $discount->configure($configuration->getOptions());
+
         if ($promotion) {
             $discount->setPromotion($promotion);
         }

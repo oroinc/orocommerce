@@ -3,19 +3,19 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Manager;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
-use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\OrderDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 
 class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
@@ -40,9 +40,12 @@ class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAppliedDiscounts()
     {
+        $discountConfiguration = (new DiscountConfiguration())
+            ->setOptions([1, 2, 3])
+            ->setType('test-type');
         $promotion = new Promotion();
         $promotion->setRule((new Rule())->setName('first promotion'));
-        $promotion->setDiscountConfiguration((new DiscountConfiguration())->setOptions([1, 2, 3]));
+        $promotion->setDiscountConfiguration($discountConfiguration);
 
         $order = new Order();
         $order->setCurrency('USD');
@@ -68,10 +71,10 @@ class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->promotionExecutor->expects($this->once())->method('execute')->with($order)->willReturn($discountContext);
 
-        $this->assertEquals([
+        $expected = [
             (new AppliedDiscount())
                 ->setOrder($order)
-                ->setClass(OrderDiscount::class)
+                ->setType('test-type')
                 ->setAmount(12.34)
                 ->setCurrency('USD')
                 ->setConfigOptions([1, 2, 3])
@@ -79,14 +82,15 @@ class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
                 ->setPromotionName('first promotion'),
             (new AppliedDiscount())
                 ->setOrder($order)
-                ->setClass(LineItemsDiscount::class)
+                ->setType('test-type')
                 ->setAmount(56.78)
                 ->setCurrency('USD')
                 ->setConfigOptions([1, 2, 3])
                 ->setPromotion($promotion)
                 ->setPromotionName('first promotion')
-                ->setLineItem($orderLineItem)
-        ], $this->appliedDiscountManager->createAppliedDiscounts($order));
+                ->setLineItem($orderLineItem),
+        ];
 
+        $this->assertEquals($expected, $this->appliedDiscountManager->createAppliedDiscounts($order));
     }
 }

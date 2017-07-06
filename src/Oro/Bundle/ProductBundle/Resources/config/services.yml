@@ -10,8 +10,6 @@ parameters:
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
-    oro_product.provider.brand_status_provider.class: Oro\Bundle\ProductBundle\Provider\BrandStatusProvider
-
 services:
     oro_product.product.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
@@ -747,10 +745,13 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity_extend.enum_value_provider'
+            - '@logger'
 
     oro_product.product_variant_field.field_value_handler.boolean_type_handler:
         public: false
         class: 'Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler'
+        arguments:
+            - '@translator'
 
     oro_product.product_variant.type_handler.enum_type_handler:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler'
@@ -811,6 +812,7 @@ services:
             - '@oro_product.provider.custom_field_provider'
             - '@oro_product.provider.product_variant_availability_provider'
             - '@property_accessor'
+            - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
         tags:
             - { name: layout.data_provider, alias: oro_product_configurable_products }
 
@@ -993,7 +995,7 @@ services:
             - '@oro_datagrid.extension.pager.orm.pager'
 
     oro_product.provider.brand_status_provider:
-        class: '%oro_product.provider.brand_status_provider.class%'
+        class: 'Oro\Bundle\ProductBundle\Provider\BrandStatusProvider'
 
     oro_product.service.product_collection_definition_converter:
         class: Oro\Bundle\ProductBundle\Service\ProductCollectionDefinitionConverter
