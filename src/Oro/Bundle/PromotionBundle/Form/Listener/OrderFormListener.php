@@ -66,16 +66,17 @@ class OrderFormListener
             return;
         }
 
+        $em = $this->getManager();
+        $em->clear(AppliedDiscount::class);
         $request = $this->requestStack->getCurrentRequest();
         if ($request &&
             $request->get(Router::ACTION_PARAMETER) === self::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION
         ) {
             return;
         }
-
         $this->getRepository()->deleteByOrder($data);
         foreach ($this->appliedDiscountManager->createAppliedDiscounts($data) as $appliedDiscount) {
-            $this->getManager()->persist($appliedDiscount);
+            $em->persist($appliedDiscount);
         }
     }
 
