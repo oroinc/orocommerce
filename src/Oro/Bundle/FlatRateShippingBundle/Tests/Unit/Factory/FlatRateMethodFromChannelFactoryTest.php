@@ -6,9 +6,9 @@ use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,7 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
     private $integrationIconProvider;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $identifierGenerator;
 
@@ -37,7 +37,7 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->identifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
+        $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
 
         $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
             ->disableOriginalConstructor()

@@ -24,10 +24,6 @@
     {{ form_widget(form) }}
 {% endblock %}
 
-{% block oro_paypal_paypal_password_type_widget %}
-    {{ block('password_widget') }}
-{% endblock %}
-
 {% block oro_paypal_settings_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     <fieldset class="form-horizontal">

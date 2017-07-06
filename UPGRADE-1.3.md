@@ -75,11 +75,22 @@ ProductBundle
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandRoutingInformationProvider` was added
     - New provider `Oro\Bundle\ProductBundle\Provider\BrandStatusProvider` was added
     - New service `oro_product.brand.manager.api` registered
+- Interface `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface`
+    - New method `getHumanReadableValue` was added
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Symfony\Component\Translation\TranslatorInterface` was added.
+- Class `Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler`
+    - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
+- Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
+    - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
+- Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
+    
     
 PaymentBundle
 -------------
 - Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
-- Previously deprecated class`Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` is removed, `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` should be used instead.
+- Previously deprecated class `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` is removed, `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` should be used instead.
+- Previously deprecated method `Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider::computeStatus` is removed. Use `getPaymentStatus` instead.
 
 ShippingBundle
 -------------
@@ -88,6 +99,10 @@ ShippingBundle
  - `oroshipping/js/app/views/shipping-rule-method-view` - changed options, functions, functionality
  - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
  - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
+ - previously deprecated interface `\Oro\Bundle\ShippingBundle\Identifier\IntegrationMethodIdentifierGeneratorInterface` is removed along with its implementations and usages. Use `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` instead.
+ - previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
+ - previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
+
 
 PayPalBundle
 --------------
@@ -96,6 +111,8 @@ PayPalBundle
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Host\HostAddressProviderInterface` added. It is used to get required parameters instead of constants.
 - Class `Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListen`
     - property `$allowedIPs` changed from `private` to `protected`
+- Previously deprecated `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is removed. Use `Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType` instead.
+- Previously deprecated interface `Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is removed. Use `Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.
 
 SEOBundle
 -------------
@@ -137,6 +154,9 @@ PaymentBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+- Unused abstract classes `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig` and `Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig` was removed.
+- Unused trait `Oro\Bundle\PaymentBundle\Method\Config\CountryAwarePaymentConfigTrait` was removed.
+- Unused interface `Oro\Bundle\PaymentBundle\Method\Config\CountryConfigAwareInterface` was removed.
 
 RFPBundle
 ---------
@@ -160,15 +180,17 @@ ShippingBundle
         - `setPrice` method is added
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
+- Class `Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider` which never used was removed.
+- Added interface `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface` and class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider` which implement this interface.
+- Class `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry` was renamed to `Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider`
+    - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
+- Service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
 
 OrderBundle
 -----------
 - Return value of method `Oro\Bundle\OrderBundle\Manager\AbstractAddressManager:getGroupedAddresses` changed from `array` to `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection`
 - Removed protected method `Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
 
-SaleBundle
-----------
-- Removed protected method `Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
         
 PricingBundle
 --------------
@@ -179,6 +201,26 @@ PricingBundle
     - changed signature of `__construct` method:
         - dependency on `RequestStack` was removed.
         - dependency on `Oro\Bundle\PricingBundle\Provider\PriceAttributePricesProvider` was added.
+- Added API for entities:
+    - `Oro\Bundle\PricingBundle\Entity\PriceList`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListSchedule`
+    - `Oro\Bundle\PricingBundle\Entity\PriceRule`
+- Added API processors:
+    - `Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChangeProcessor` to handle price list status changes
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemesProcessor` to update price rule lexemes while saving price list
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleDeleteListProcessor` to rebuild combined price list while deleting list of price list schedules
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleDeleteProcessor` to rebuild combined price list while deleting single price list schedule
+    - `Oro\Bundle\PricingBundle\Api\Processor\BuildCombinedPriceListOnScheduleSaveProcessor` to rebuild combined price list while saving price list schedule
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor` to change price list contains schedule field while deleting list of price list schedules
+    - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteProcessor` to change price list contains schedule field while deleting single price list schedule
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteListProcessor` to update price rule lexemes while deleting list of price rules
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteProcessor` to update price rule lexemes while deleting single price rule
+    - `Oro\Bundle\PricingBundle\Api\UpdateLexemesPriceRuleProcessor` to update price rule lexemes while saving price rule
+- Added `Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber` for adding currently created schedule to price list
+
+ValidationBundle
+--------------
+ - Added `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOf` constraint and `Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator` validator for validating that one of some fields in a group should be blank
 
 SaleBundle
 ----------
@@ -207,3 +249,13 @@ SaleBundle
     - oro_quote_review_and_approve
     - oro_quote_add_free_form_items
 - Added new workflow `b2b_quote_backoffice_approvals`
+- Removed protected method `Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
+
+UPSBundle
+---------
+- Class `Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+
+FlatRateShippingBundle
+----------------------
+- Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+- previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
