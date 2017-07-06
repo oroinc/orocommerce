@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
@@ -18,6 +17,11 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadPriceListFallbackSettings extends AbstractFixture implements DependentFixtureInterface
 {
+    const WEBSITE_CUSTOMER_GROUP_FALLBACK_1 = 'US_customer_group1_price_list_fallback';
+    const WEBSITE_CUSTOMER_GROUP_FALLBACK_2 = 'US_customer_group2_price_list_fallback';
+    const WEBSITE_CUSTOMER_GROUP_FALLBACK_3 = 'Canada_customer_group1_price_list_fallback';
+    const WEBSITE_CUSTOMER_GROUP_FALLBACK_4 = 'Canada_customer_group2_price_list_fallback';
+
     /**
      * @var array
      */
@@ -36,12 +40,28 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
         ],
         'customerGroup' => [
             LoadWebsiteData::WEBSITE1 => [
-                'customer_group.group1' => PriceListCustomerGroupFallback::WEBSITE,
-                'customer_group.group2' => PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_GROUP_FALLBACK_1,
+                    'group' => 'customer_group.group1',
+                    'fallback' => PriceListCustomerGroupFallback::WEBSITE,
+                ],
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_GROUP_FALLBACK_2,
+                    'group' => 'customer_group.group2',
+                    'fallback' => PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+                ],
             ],
             LoadWebsiteData::WEBSITE2 => [
-                'customer_group.group1' => PriceListCustomerGroupFallback::WEBSITE,
-                'customer_group.group2' => PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_GROUP_FALLBACK_3,
+                    'group' => 'customer_group.group1',
+                    'fallback' => PriceListCustomerGroupFallback::WEBSITE,
+                ],
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_GROUP_FALLBACK_4,
+                    'group' => 'customer_group.group2',
+                    'fallback' => PriceListCustomerGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
+                ],
             ],
         ],
         'website' => [
@@ -86,16 +106,17 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
         foreach ($this->fallbackSettings['customerGroup'] as $websiteReference => $fallbackSettings) {
             /** @var Website $website */
             $website = $this->getReference($websiteReference);
-            foreach ($fallbackSettings as $customerGroupReference => $fallbackValue) {
+            foreach ($fallbackSettings as $fallbackData) {
                 /** @var CustomerGroup $customerGroup */
-                $customerGroup = $this->getReference($customerGroupReference);
+                $customerGroup = $this->getReference($fallbackData['group']);
 
                 $priceListCustomerGroupFallback = new PriceListCustomerGroupFallback();
                 $priceListCustomerGroupFallback->setCustomerGroup($customerGroup);
                 $priceListCustomerGroupFallback->setWebsite($website);
-                $priceListCustomerGroupFallback->setFallback($fallbackValue);
+                $priceListCustomerGroupFallback->setFallback($fallbackData['fallback']);
 
                 $manager->persist($priceListCustomerGroupFallback);
+                $this->setReference($fallbackData['reference'], $priceListCustomerGroupFallback);
             }
         }
 
