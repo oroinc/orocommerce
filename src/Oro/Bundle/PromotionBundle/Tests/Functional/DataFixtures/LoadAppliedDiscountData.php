@@ -17,7 +17,7 @@ class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtur
     protected static $appliedDiscounts = [
         self::SIMPLE_APPLIED_DISCOUNT => [
             'order' => LoadOrders::ORDER_1,
-            'class' => \stdClass::class,
+            'type' => 'order',
             'amount' => 10.00,
             'currency' => 'USD',
             'promotion_name' => 'Some name',
@@ -41,7 +41,7 @@ class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtur
     {
         foreach (static::$appliedDiscounts as $reference => $appliedDiscountData) {
             $appliedDiscount = new AppliedDiscount();
-            $appliedDiscount->setClass($appliedDiscountData['class']);
+            $appliedDiscount->setType($appliedDiscountData['type']);
             $appliedDiscount->setAmount($appliedDiscountData['amount']);
             $appliedDiscount->setCurrency($appliedDiscountData['currency']);
             $appliedDiscount->setPromotionName($appliedDiscountData['promotion_name']);
