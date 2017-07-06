@@ -20,7 +20,7 @@ oro:
             product_unit:
                 label: Product Unit
             apply_to:
-                label: Apply Discount Value To
+                label: Apply Discount To
                 choices:
                     each_item: Each Item
                     line_items_total: Line Items Total
@@ -33,7 +33,7 @@ oro:
             product_unit:
                 label: Product Unit
             apply_to:
-                label: Apply Discount Value To
+                label: Apply Discount To
                 choices:
                     apply_to_each_y: Each Y Item Separately
                     apply_to_xy_total: X + Y Total
@@ -45,7 +45,6 @@ oro:
         entity_plural_label: Promotions
         entity_description: Represents promotion information
         id.label: ID
-        coupons.label: Coupons
         descriptions.label: Descriptions
         descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration
@@ -101,10 +100,10 @@ oro:
                 for_matching_items_only: For Matching Items Only
                 for_shipment_with_matching_items: For Shipment With Matching Items
             strategy:
-                apply_all.label: Apply All
-                profitable.label: Profitable
+                apply_all.label: Combine All Discounts
+                profitable.label: Best Value Discount Only
             subtotal:
-                order.label: 'Order Discount'
+                order.label: 'Discount'
                 shipping.label: 'Shipping Discount'
 
         discountconfiguration:
@@ -119,11 +118,6 @@ oro:
                 type.label: Type
                 discount_value.label: Discount Value
                 free_shipping.label: Free Shipping
-
-        coupon:
-            entity_label: Coupon
-            entity_plural_label: Coupons
-            id.label: ID
 
         promotionschedule:
             entity_label: Promotion Schedule
@@ -171,7 +165,7 @@ oro:
     frontend:
         shoppinglist:
             view:
-                discount.label: 'Discount:'
+                discount.label: 'Row Discount:'
         checkout:
             view:
-                discount.label: 'Discount:'
+                discount.label: 'Row Discount:'

@@ -1,0 +1,26 @@
+data:
+    type: 'pricelists'
+    attributes:
+        default: false
+        active: true
+        actual: true
+        productAssignmentRule: 'product.category.id == 1'
+        name: 'New'
+        priceListCurrencies: ['USD', 'RUB']
+    relationships:
+        schedules:
+            data:
+                -
+                    type: 'pricelistschedules'
+                    id: '<toString(@schedule.5->id)>'
+                -
+                    type: 'pricelistschedules'
+                    id: '<toString(@schedule.6->id)>'
+        priceRules:
+            data:
+                -
+                    type: 'pricerules'
+                    id: '<toString(@price_list_1_price_rule_1->id)>'
+                -
+                    type: 'pricerules'
+                    id: '<toString(@price_list_1_price_rule_2->id)>'

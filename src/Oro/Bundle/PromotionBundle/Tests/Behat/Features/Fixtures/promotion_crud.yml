@@ -1,0 +1,57 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    all_customers:
+        name: 'All Customers'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'first customer'
+        organization: '@organization'
+        owner: '@admin'
+        group: '@all_customers'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProduct1Name:
+        string: 'Product 1'
+
+    localProduct2Name:
+        string: 'Product 2'
+
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision1:
+        unit: '@item'
+        precision: '1'
+
+    productUnitPrecision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code'
+        addLabel: ['@localProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@productUnitPrecision1'
+        addName: ['@localProduct1Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+    product2:
+        type: 'simple'
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@productUnitPrecision2'
+        addName: ['@localProduct2Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'

@@ -10,4 +10,4 @@ layout:
             id: 'promotion_checkout_line_items_list_discount_info'
             parentId: 'checkout_order_summary_line_item_price_column'
             blockType: block
-            siblingId: 'checkout_order_summary_line_item_price_per_item'
+            siblingId: 'checkout_order_summary_line_item_price_row_total'

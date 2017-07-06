@@ -42,13 +42,11 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     {
         /** Tables generation **/
         $this->createOroPromotionTable($schema);
-        $this->createOroPromotionCouponTable($schema);
         $this->createOroPromotionDescriptionTable($schema);
         $this->createOroPromotionDiscountConfigTable($schema);
         $this->createOroPromotionLabelTable($schema);
         $this->createOroPromotionScheduleTable($schema);
         $this->createOroPromotionScopeTable($schema);
-        $this->createOroPromotionToCouponTable($schema);
         $this->createOroPromotionAppliedDiscountTable($schema);
 
         /** Foreign keys generation **/
@@ -57,7 +55,6 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->addOroPromotionLabelForeignKeys($schema);
         $this->addOroPromotionScheduleForeignKeys($schema);
         $this->addOroPromotionScopeForeignKeys($schema);
-        $this->addOroPromotionToCouponForeignKeys($schema);
         $this->addOroPromotionAppliedDiscountForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
@@ -82,20 +79,6 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['discount_config_id']);
-    }
-
-    /**
-     * Create oro_promotion_coupon table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPromotionCouponTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_promotion_coupon');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -193,19 +176,6 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create oro_promotion_to_coupon table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPromotionToCouponTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_promotion_to_coupon');
-        $table->addColumn('promotion_id', 'integer', []);
-        $table->addColumn('coupon_id', 'integer', []);
-        $table->setPrimaryKey(['promotion_id', 'coupon_id']);
     }
 
     /**
@@ -325,28 +295,6 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_scope'),
             ['scope_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_promotion_to_coupon foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroPromotionToCouponForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_promotion_to_coupon');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_promotion'),
-            ['promotion_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_promotion_coupon'),
-            ['coupon_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
