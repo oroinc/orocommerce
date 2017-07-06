@@ -1,0 +1,67 @@
+data:
+    -
+        type: 'pricelistschedules'
+        id: '<toString(@schedule.1->id)>'
+        attributes:
+            activeAt: '@schedule.1->activeAt->format("Y-m-d\TH:i:s\Z")'
+            deactivateAt: '@schedule.1->deactivateAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_1->id)>'
+    -
+        type: 'pricelistschedules'
+        id: '<toString(@schedule.2->id)>'
+        attributes:
+            activeAt: '@schedule.2->activeAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_1->id)>'
+    -
+        type: 'pricelistschedules'
+        id: '<toString(@schedule.3->id)>'
+        attributes:
+            activeAt: '@schedule.3->activeAt->format("Y-m-d\TH:i:s\Z")'
+            deactivateAt: '@schedule.3->deactivateAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_1->id)>'
+
+    -
+        type: 'pricelistschedules'
+        id: '<toString(@schedule.4->id)>'
+        attributes:
+            activeAt: '@schedule.4->activeAt->format("Y-m-d\TH:i:s\Z")'
+            deactivateAt: '@schedule.4->deactivateAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_2->id)>'
+
+    -
+        type: 'pricelistschedules'
+        id: '<toString(@schedule.5->id)>'
+        attributes:
+            deactivateAt: '@schedule.5->deactivateAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_3->id)>'
+
+    -
+        type: 'pricelistschedules'
+        id: '<toString(@schedule.6->id)>'
+        attributes:
+            activeAt: '@schedule.6->activeAt->format("Y-m-d\TH:i:s\Z")'
+        relationships:
+            priceList:
+                data:
+                    type: 'pricelists'
+                    id: '<toString(@price_list_4->id)>'

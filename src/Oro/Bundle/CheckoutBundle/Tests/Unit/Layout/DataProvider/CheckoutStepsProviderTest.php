@@ -7,7 +7,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutStepsProvider;
 
-class CheckoutStepsDataProviderTest extends \PHPUnit_Framework_TestCase
+class CheckoutStepsProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 

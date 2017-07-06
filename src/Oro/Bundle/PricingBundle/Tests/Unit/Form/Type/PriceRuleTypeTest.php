@@ -15,6 +15,8 @@ use Symfony\Component\Form\PreloadedExtension;
 
 class PriceRuleTypeTest extends FormIntegrationTestCase
 {
+    use PriceRuleEditorAwareTestTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -30,14 +32,17 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
 
         return [
             new PreloadedExtension(
-                [
-                    CurrencySelectionType::NAME => new CurrencySelectionType(
-                        $currencyProvider,
-                        $localeSettings,
-                        $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
-                    ),
-                    'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')])
-                ],
+                array_merge(
+                    [
+                        CurrencySelectionType::NAME => new CurrencySelectionType(
+                            $currencyProvider,
+                            $localeSettings,
+                            $this->getMockBuilder(CurrencyNameHelper::class)->disableOriginalConstructor()->getMock()
+                        ),
+                        'entity' => new EntityType(['item' => (new ProductUnit())->setCode('item')])
+                    ],
+                    $this->getPriceRuleEditorExtension()
+                ),
                 []
             )
         ];

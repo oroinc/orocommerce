@@ -7,7 +7,7 @@ use Oro\Bundle\RFPBundle\EventListener\CustomerViewListener;
 
 class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
 {
-     /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject */
     protected $featureChecker;
 
     protected function setUp()

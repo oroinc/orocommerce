@@ -10,7 +10,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 
 class CombinedPriceListToWebsiteRepositoryTest extends AbstractCombinedPriceListRelationRepositoryTest
 {
-
     public function testDeleteInvalidRelations()
     {
         /** @var  CombinedPriceList $combinedPriceList */

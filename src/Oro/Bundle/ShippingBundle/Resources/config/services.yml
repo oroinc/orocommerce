@@ -226,7 +226,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
         arguments:
             - '@oro_shipping.methods_configs_rules.provider'
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider.cache'
             - '@oro_shipping.method.view_factory'
 
@@ -237,7 +237,7 @@ services:
         decoration_priority: 255
         arguments:
              - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
-             - '@oro_shipping.shipping_method.registry'
+             - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.methods_configs_rules.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
@@ -274,14 +274,6 @@ services:
             - '@request'
             - '@doctrine.orm.entity_manager'
 
-    oro_shipping.layout.data_provider.shipping_methods:
-          class: 'Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider'
-          arguments:
-              - '@oro_shipping.shipping_price.provider'
-              - '@oro_shipping.shipping_method.registry'
-          tags:
-              - { name: layout.data_provider, alias: shipping_methods }
-
     oro_shipping.shipping_origin.provider:
         class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
         arguments:
@@ -296,7 +288,7 @@ services:
     oro_shipping.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
         arguments:
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider'
         tags:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
@@ -378,7 +370,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory'
         public: false
         arguments:
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.method.composed_configuration_builder_factory:
         class: 'Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationBuilderFactory'
@@ -406,7 +398,7 @@ services:
     oro_shipping.provider.basic_shipping_methods_choices:
         class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
         arguments:
-        - '@oro_shipping.shipping_method.registry'
+        - '@oro_shipping.shipping_method_provider'
         - '@translator'
 
     oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator:
@@ -415,13 +407,13 @@ services:
          decorates: oro_shipping.provider.basic_shipping_methods_choices
          decoration_priority: 255
          arguments:
-             - '@oro_shipping.shipping_method.registry'
+             - '@oro_shipping.shipping_method_provider'
              - '@oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator.inner'
 
     oro_shipping.checker.shipping_method_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
         arguments:
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.checker.shipping_rule_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
@@ -440,7 +432,7 @@ services:
         arguments:
             - '@oro_shipping.method_disable_handler.decorator.inner'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.repository.shipping_method_config:
         class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository'
@@ -485,7 +477,7 @@ services:
     oro_shipping.method.provider.type.label.provider:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Label\Type\BasicMethodTypeLabelsProvider'
         arguments:
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_method_provider'
 
     oro_shipping.method.provider.type.non_deletable.shipping_rules_method_type_identifier_provider:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\ShippingRulesNonDeletableMethodTypeIdentifiersProvider'
@@ -495,7 +487,7 @@ services:
     oro_shipping.provider.shipping_method_icon:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProvider'
         arguments:
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_method_provider'
         calls:
             - ['setLogger', ['@logger']]
         public: false

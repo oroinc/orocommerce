@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceListType extends AbstractType
 {
@@ -25,10 +26,10 @@ class PriceListType extends AbstractType
         $priceList = $builder->getData();
 
         $builder
-            ->add('name', 'text', ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
+            ->add('name', TextType::class, ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
             ->add(
                 self::SCHEDULES_FIELD,
-                CollectionType::NAME,
+                CollectionType::class,
                 [
                     'type' => PriceListScheduleType::NAME,
                     'by_reference' => false,
@@ -37,7 +38,7 @@ class PriceListType extends AbstractType
             )
             ->add(
                 'currencies',
-                CurrencySelectionType::NAME,
+                CurrencySelectionType::class,
                 [
                     'multiple' => true,
                     'required' => true,
@@ -48,14 +49,14 @@ class PriceListType extends AbstractType
             )
             ->add(
                 'active',
-                'checkbox',
+                CheckboxType::class,
                 [
                     'label' => 'oro.pricing.pricelist.active.label'
                 ]
             )
             ->add(
                 'productAssignmentRule',
-                'textarea',
+                PriceRuleEditorType::class,
                 [
                     'label' => 'oro.pricing.pricelist.product_assignment_rule.label',
                     'required' => false
@@ -63,7 +64,7 @@ class PriceListType extends AbstractType
             )
             ->add(
                 'priceRules',
-                CollectionType::NAME,
+                CollectionType::class,
                 [
                     'type' => PriceRuleType::NAME,
                     'label' => false,

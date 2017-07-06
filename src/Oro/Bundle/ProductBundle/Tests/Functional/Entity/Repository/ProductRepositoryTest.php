@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
 
 /**
@@ -23,8 +24,8 @@ class ProductRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
+            ProductFixture::class,
+            LoadProductImageData::class,
         ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
@@ -417,5 +418,40 @@ class ProductRepositoryTest extends WebTestCase
         $result = $this->repository->findByAttributeValue(Product::TYPE_SIMPLE, 'names', $name->getId(), true);
         $this->assertCount(1, $result);
         $this->assertInstanceOf(Product::class, $result[0]);
+    }
+
+    public function testSkuUppercaseField()
+    {
+        $skus = ['product-1', 'product-2'];
+        $uppercaseSkus = ['PRODUCT-1', 'PRODUCT-2'];
+
+        $result1 = $this->getRepository()->getProductsIdsBySku($skus);
+        $result2 = $this->getRepository()->getProductsIdsBySku($uppercaseSkus);
+
+        $this->assertEquals($result1, $result2);
+
+        $result1 = $this->getRepository()->getProductWithNamesBySku($skus);
+        $result2 = $this->getRepository()->getProductWithNamesBySku($uppercaseSkus);
+
+        $this->assertEquals($result1, $result2);
+
+        $result1 = $this->getRepository()
+            ->getFilterProductWithNamesQueryBuilder($skus)
+            ->getQuery()->getArrayResult();
+        $result2 = $this->getRepository()
+            ->getFilterProductWithNamesQueryBuilder($uppercaseSkus)
+            ->getQuery()->getArrayResult();
+
+        $this->assertEquals($result1, $result2);
+
+        $result1 = $this->getRepository()->getPrimaryUnitPrecisionCode($skus[0]);
+        $result2 = $this->getRepository()->getPrimaryUnitPrecisionCode($uppercaseSkus[0]);
+
+        $this->assertEquals($result1, $result2);
+
+        $result1 = $this->getRepository()->findOneBySku($skus[0]);
+        $result2 = $this->getRepository()->findOneBySku($uppercaseSkus[0]);
+
+        $this->assertEquals($result1, $result2);
     }
 }

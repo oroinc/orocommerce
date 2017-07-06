@@ -277,13 +277,6 @@ datagrids:
                     left:
                         - { join: quote.customerUser, alias: quoteCustomerUser }
                         - { join: quote.customer_status, alias: customerStatus }
-                where:
-                    and:
-                        - IDENTITY(quote.internal_status) IS NULL OR IDENTITY(quote.internal_status) NOT IN (:internalStatuses)
-            bind_parameters:
-                -
-                    name: internalStatuses
-                    default: [deleted, draft]
         columns:
             qid:
                 label:         oro.frontend.sale.quote.qid.label
