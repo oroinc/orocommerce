@@ -60,13 +60,14 @@ services:
             - '@oro_promotion.rule_filtration.schedule_decorator.inner'
             - '@oro_cron.checker.schedule_interval_checker'
 
-    oro_promotion.rule_filtration.coupon_decorator:
-        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
-        decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 250
-        public: false
-        arguments:
-            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+#    TODO: uncomment after BB-9489
+#    oro_promotion.rule_filtration.coupon_decorator:
+#        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
+#        decorates: oro_promotion.rule_filtration.service
+#        decoration_priority: 250
+#        public: false
+#        arguments:
+#            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
 
     oro_promotion.rule_filtration.matching_items:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
@@ -355,6 +356,9 @@ services:
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
 
+    oro_promotion.placeholder.order_additional_placeholder_filter:
+        class: Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter
+
     oro_promotion.event_listener.order:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
         public: false
@@ -374,3 +378,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
 
+    oro_promotion.form.listener.order_form_listener:
+        class: Oro\Bundle\PromotionBundle\Form\Listener\OrderFormListener
+        arguments:
+            - '@request_stack'
+            - '@doctrine'
+            - '@oro_promotion.discount_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: beforeFlush }
