@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;  // required by DatesAwareTrait
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -105,7 +105,7 @@ class AppliedDiscount implements DatesAwareInterface
      * @param string $type
      * @return AppliedDiscount
      */
-    public function setType(string $type): AppliedDiscount
+    public function setType(string $type)
     {
         $this->type = $type;
 
@@ -134,7 +134,7 @@ class AppliedDiscount implements DatesAwareInterface
     /**
      * @return Order
      */
-    public function getOrder(): Order
+    public function getOrder()
     {
         return $this->order;
     }
@@ -181,7 +181,7 @@ class AppliedDiscount implements DatesAwareInterface
      * @param string $promotionName
      * @return AppliedDiscount
      */
-    public function setPromotionName(string $promotionName): AppliedDiscount
+    public function setPromotionName(string $promotionName)
     {
         $this->promotionName = $promotionName;
 
@@ -238,7 +238,7 @@ class AppliedDiscount implements DatesAwareInterface
      * @param OrderLineItem $lineItem
      * @return AppliedDiscount
      */
-    public function setLineItem(OrderLineItem $lineItem): AppliedDiscount
+    public function setLineItem(OrderLineItem $lineItem)
     {
         $this->lineItem = $lineItem;
 

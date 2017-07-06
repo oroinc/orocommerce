@@ -96,6 +96,8 @@ class DiscountFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->discountFactory->addType($type, $serviceName);
 
+        $promotion = new Promotion();
+
         $this->container->expects($this->once())
             ->method('get')
             ->with($serviceName)
@@ -105,11 +107,12 @@ class DiscountFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('configure')
             ->with($configurationOptions);
 
-        $promotion = new Promotion();
+        $discount->expects($this->once())
+            ->method('setPromotion')
+            ->with($promotion);
 
-        $discount = $this->discountFactory->create($configuration, $promotion);
 
-        $this->assertSame($promotion, $discount->getPromotion());
+        $this->discountFactory->create($configuration, $promotion);
     }
 
     public function testCreateUnsupportedTypeException()
