@@ -261,6 +261,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
         'class': 'active',
+        'priority': 900,
         'subblocks': [{
             'data': [subtotals]
         }]

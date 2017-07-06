@@ -377,6 +377,7 @@ services:
         arguments: ['@translator']
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
 
     oro_promotion.form.listener.order_form_listener:
         class: Oro\Bundle\PromotionBundle\Form\Listener\OrderFormListener
