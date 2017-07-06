@@ -31,6 +31,7 @@ system_configuration:
             options:
                 required: false
                 label:  oro.sale.system_configuration.fields.contact_details.label
+                resettable: false
                 attr:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'contact_info_source_display'
@@ -78,6 +79,7 @@ system_configuration:
             options:
                 required: false
                 label: oro.sale.system_configuration.fields.contact_info_manual_text.label
+                resettable: false
                 attr:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'oro_sale.contact_info_user_option'
@@ -88,6 +90,7 @@ system_configuration:
             priority: 0
             options:
                 required: false
+                resettable: false
                 label: oro.sale.system_configuration.fields.guest_contact_info_text.label
                 tooltip: oro.sale.form.tooltip.guest_contact_info_text
 
