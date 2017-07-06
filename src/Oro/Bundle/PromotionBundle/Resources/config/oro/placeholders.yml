@@ -10,10 +10,6 @@ placeholders:
             items:
                 save_without_discounts_recalculation_button: ~
 
-        order_update_additional_info:
-            items:
-                promotion_discounts_information_notice: ~
-
     items:
         order_discount_information:
             applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, order)"
@@ -27,6 +23,3 @@ placeholders:
         save_without_discounts_recalculation_button:
             applicable: "@oro_promotion.placeholder.order_additional_placeholder_filter->isApplicable($entity$)"
             template: OroPromotionBundle:Promotion:orderPlaceholders/saveWithoutDiscountsRecalculationButton.html.twig
-        promotion_discounts_information_notice:
-            applicable: "@oro_promotion.placeholder.order_additional_placeholder_filter->isApplicable($entity$)"
-            template: OroPromotionBundle:Promotion:orderPlaceholders/informationNotice.html.twig

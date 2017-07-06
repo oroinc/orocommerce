@@ -26,7 +26,13 @@ class OrderViewListener
      */
     public function onView(BeforeListRenderEvent $event)
     {
-        $this->addPromotionsBlock($event, -75);
+        /** @var Order $order */
+        $order = $event->getEntity();
+        $template = $event->getEnvironment()->render(
+            '@OroPromotion/Order/discounts_promotions.html.twig',
+            ['entity' => $order]
+        );
+        $this->addPromotionsBlock($event, $template, -75);
     }
 
     /**
@@ -34,24 +40,23 @@ class OrderViewListener
      */
     public function onEdit(BeforeListRenderEvent $event)
     {
-        $this->addPromotionsBlock($event, 890);
+        /** @var Order $order */
+        $order = $event->getEntity();
+        $template = $event->getEnvironment()->render(
+            '@OroPromotion/Order/discounts_promotions_with_warning.html.twig',
+            ['entity' => $order]
+        );
+        $this->addPromotionsBlock($event, $template, 890);
     }
 
     /**
      * @param BeforeListRenderEvent $event
+     * @param string $template
      * @param int $priority
      */
-    protected function addPromotionsBlock(BeforeListRenderEvent $event, int $priority)
+    protected function addPromotionsBlock(BeforeListRenderEvent $event, string $template, int $priority)
     {
-        /** @var Order $order */
-        $order = $event->getEntity();
-
-        $template = $event->getEnvironment()->render('@OroPromotion/Order/discounts_promotions_block.html.twig', [
-            'entity' => $order,
-        ]);
-
         $blockTitle = $this->translator->trans('oro.promotion.entity_plural_label');
-
         $scrollData = $event->getScrollData();
         $blockId = $scrollData->addBlock($blockTitle, $priority);
         $subBlockId = $scrollData->addSubBlock($blockId);

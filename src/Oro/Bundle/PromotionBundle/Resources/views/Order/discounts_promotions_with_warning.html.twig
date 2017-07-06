@@ -1,4 +1,8 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
 <div id="column-information-notice" class="alert alert-info">
     <strong>{{ 'oro.order.promotions.nav_button.important'|trans }}</strong>:
     {{ 'oro.order.promotions.nav_button.information_notice'|trans }}
 </div>
+
+{{ dataGrid.renderGrid('promotion-order-applied-discount-grid', { orderId: entity.id }) }}
