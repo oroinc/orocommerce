@@ -82,8 +82,9 @@ class OrderFormListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new Request([
                 Router::ACTION_PARAMETER => OrderFormListener::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION,
             ]));
-        $this->registry->expects($this->never())
-            ->method('getEntityManagerForClass');
+        $this->registry->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->willReturn($this->createMock(EntityManagerInterface::class));
         $this->appliedDiscountManager->expects($this->never())
             ->method('createAppliedDiscounts');
 
