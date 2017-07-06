@@ -23,7 +23,7 @@
             margin: $embedded-product-slider-mode-offset;
         }
 
-        .embedded-arrows {
+        &.embedded-arrows {
             margin: 0 $embedded-list-slider-btn-arrow-width;
         }
 
@@ -51,7 +51,7 @@
             }
         }
 
-        // fixed image height to align slider arrows by middle
+        // Fixed image height to align slider arrows by middle
         .embedded-arrows {
             .product-item__image-holder {
                 height: $embedded-products-item-image-height-desktop;
