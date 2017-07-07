@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Provider\OrdersAppliedDiscountsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class AppliedDiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,24 +30,8 @@ class AppliedDiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new AppliedDiscountSubtotalProvider($this->discountProvider, $this->translator);
     }
 
-    public function testIsSupportedFail()
-    {
-        $this->assertFalse($this->provider->isSupported(new \stdClass()));
-
-        $order = new Order();
-        $this->assertFalse($this->provider->isSupported($order));
-
-        $this->setValue($order, 'id', 123);
-        $this->discountProvider->expects($this->once())->method('getOrderDiscountAmount')->willReturn(0);
-        $this->assertFalse($this->provider->isSupported($order));
-    }
-
     public function testIsSupported()
     {
-        $this->discountProvider->expects($this->once())
-            ->method('getOrderDiscountAmount')
-            ->willReturn(12.34);
-
         $order = new Order();
         $this->setValue($order, 'id', 123);
         $this->assertTrue($this->provider->isSupported($order));
@@ -76,6 +59,5 @@ class AppliedDiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $expectedSubtotal->setAmount(45.67);
 
         $this->assertEquals($expectedSubtotal, $this->provider->getSubtotal($order));
-
     }
 }

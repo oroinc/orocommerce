@@ -46,13 +46,17 @@ class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
      */
     public function getSubtotal($entity)
     {
+        $label = $this->translator->trans('oro.promotion.discount.subtotal.order.label');
+        $amount = $this->discountsProvider->getOrderDiscountAmount($entity->getId());
+
         $subtotal = new Subtotal();
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
         $subtotal->setType(self::TYPE);
-        $subtotal->setLabel($this->translator->trans('oro.promotion.discount.subtotal.order.label'));
-        $subtotal->setVisible(true);
+        $subtotal->setLabel($label);
+        $subtotal->setVisible($amount > 0.0);
         $subtotal->setCurrency($entity->getCurrency());
-        $subtotal->setAmount($this->discountsProvider->getOrderDiscountAmount($entity->getId()));
+        $subtotal->setAmount($amount);
+
         return $subtotal;
     }
 
@@ -64,12 +68,11 @@ class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
         if (!$entity instanceof Order) {
             return false;
         }
+
         if (!$entity->getId()) {
             return false;
         }
-        if ($this->discountsProvider->getOrderDiscountAmount($entity->getId()) <= 0) {
-            return false;
-        }
+
         return true;
     }
 }
