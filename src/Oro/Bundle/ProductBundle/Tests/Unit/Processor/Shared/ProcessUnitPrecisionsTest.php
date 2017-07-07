@@ -112,6 +112,7 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
     {
         $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
         $wrongUnit = ProcessUnitPrecisionsTestHelper::setWrongUnitCode($requestData, 'test_unit');
+        $sameUnit = ProcessUnitPrecisionsTestHelper::setSameUnit($requestData, 'each');
 
         return [
             'valid_unit_precisions' => [
@@ -123,7 +124,7 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
                 'isValid' => false,
             ],
             'unit_non_unique' => [
-                'requestData' => ProcessUnitPrecisionsTestHelper::createRequestDataSameUnitCodes(),
+                'requestData' => $sameUnit,
                 'isValid' => false,
             ],
         ];

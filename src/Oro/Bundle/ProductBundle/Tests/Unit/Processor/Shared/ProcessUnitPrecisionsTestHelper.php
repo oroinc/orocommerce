@@ -100,36 +100,6 @@ class ProcessUnitPrecisionsTestHelper
     }
 
     /**
-     * @return array
-     */
-    public static function createNormalizedRequestData()
-    {
-        return [
-            "sku" => "test-api",
-            "status" => "enabled",
-            "variantFields" => [],
-            "createdAt" => "2017-06-13T07:12:06Z",
-            "updatedAt" => "2017-06-13T07:12:31Z",
-            "productType" => "simple",
-            "featured" => true,
-            "primaryUnitPrecision" => [
-                "type" => "productunitprecisions",
-                "id" => "1",
-            ],
-            "unitPrecisions" => [
-                0 => [
-                    "type" => "productunitprecisions",
-                    "id" => "2"
-                ],
-                1 => [
-                    "type" => "productunitprecisions",
-                    "id" => "3"
-                ]
-            ]
-        ];
-    }
-
-    /**
      * @param array $requestData
      * @param string $unitCode
      * @return array
@@ -153,96 +123,13 @@ class ProcessUnitPrecisionsTestHelper
         return $requestData;
     }
 
-    /**
-     * @return array
-     */
-    public static function createRequestDataSameUnitCodes()
+    public static function setSameUnit(array $requestData, $unitCode)
     {
-        return [
-            "data" => [
-                "type" => "products",
-                "attributes" => [
-                    "sku" => "test-api",
-                    "status" => "enabled",
-                    "variantFields" => [],
-                    "productType" => "simple",
-                    "featured" => true
-                ],
-                "relationships" => [
-                    "primaryUnitPrecision" => [
-                        "data" => [
-                            "type" => "productunitprecisions",
-                            "id" => "primary-unit-id"
-                        ],
-                    ],
-                    "unitPrecisions" => [
-                        "data" => [
-                            0 => [
-                                "type" => "productunitprecisions",
-                                "id" => "unit-precision-1"
-                            ],
-                            1 => [
-                                "type" => "productunitprecisions",
-                                "id" => "unit-precision-2"
-                            ]
-                        ]
-                    ]
-                ]
-            ],
-            "included" => [
-                0 => [
-                    "type" => "productunitprecisions",
-                    "id" => "primary-unit-id",
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "2",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => "item"
-                            ]
-                        ]
-                    ]
-                ],
-                1 => [
-                    "type" => "productunitprecisions",
-                    "id" => "unit-precision-1",
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "2",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => "each"
-                            ]
-                        ]
-                    ]
-                ],
-                2 => [
-                    "type" => "productunitprecisions",
-                    "id" => "unit-precision-2",
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "2",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => "each"
-                            ]
-                        ]
-                    ]
-                ],
-            ]
-        ];
+        foreach ($requestData['included'] as &$data) {
+            $data['relationships']['unit']['data']['id'] = $unitCode;
+        }
+
+        return $requestData;
     }
 
     /**
@@ -254,7 +141,6 @@ class ProcessUnitPrecisionsTestHelper
             "data" => [
                 "type" => "products",
                 "attributes" => [
-                    "sku" => "test-api",
                     "status" => "enabled",
                     "variantFields" => [],
                     "productType" => "simple",
@@ -330,7 +216,7 @@ class ProcessUnitPrecisionsTestHelper
                     "id" => "3",
                     "attributes" => [
                         "precision" => "0",
-                        "conversionRate" => "2",
+                        "conversionRate" => "5",
                         "sell" => "1"
                     ],
                     "relationships" => [
