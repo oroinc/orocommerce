@@ -113,8 +113,8 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
             - { name: oro.api.processor, action: update, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
-            - { name: oro.api.processor, action: delete, group: delete_data, priority: -220, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
-            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: -220, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
             - { name: oro.api.processor, action: create, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_to_customer.class%' }
             - { name: oro.api.processor, action: update, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_to_customer.class%' }
             - { name: oro.api.processor, action: delete, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_to_customer.class%' }
