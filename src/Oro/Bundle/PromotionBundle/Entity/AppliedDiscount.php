@@ -79,7 +79,7 @@ class AppliedDiscount implements DatesAwareInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem")
-     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      *
      * @var OrderLineItem|null
      */
