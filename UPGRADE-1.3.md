@@ -199,6 +199,10 @@ PricingBundle
     - `Oro\Bundle\PricingBundle\Entity\PriceList`
     - `Oro\Bundle\PricingBundle\Entity\PriceListSchedule`
     - `Oro\Bundle\PricingBundle\Entity\PriceRule`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListToCustomer`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback`
 - Added API processors:
     - `Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChangeProcessor` to handle price list status changes
     - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemesProcessor` to update price rule lexemes while saving price list
@@ -210,6 +214,8 @@ PricingBundle
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteListProcessor` to update price rule lexemes while deleting list of price rules
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteProcessor` to update price rule lexemes while deleting single price rule
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesPriceRuleProcessor` to update price rule lexemes while saving price rule
+    - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessor` to rebuild price lists when customer aware relational entities are modified
+    - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor` to rebuild price lists when customer group aware relational entities are modified
 - Added `Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber` for adding currently created schedule to price list
 
 ValidationBundle
@@ -252,3 +258,7 @@ FlatRateShippingBundle
 ----------------------
 - Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
 - previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
+
+WebsiteBundle
+-------------
+- Added `Oro\Bundle\WebsiteBundle\Form\EventSubscriber\DefaultWebsiteSubscriber` to set Default website when not provided on form.
