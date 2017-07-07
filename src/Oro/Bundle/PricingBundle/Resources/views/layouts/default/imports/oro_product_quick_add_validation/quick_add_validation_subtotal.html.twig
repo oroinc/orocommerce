@@ -1,0 +1,24 @@
+{% block _quick_add_validation_additional_fields_subtotal_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ ' text-right'}) %}
+    <div {{ block('block_attributes') }}>
+        {% if price.value is not null %}
+            {{ 'oro.pricing.subtotals.subtotal.label'|trans }}: {{ price.value|localizedcurrency(price.currency) }}
+        {% else %}
+            {{ 'oro.pricing.priceAttribute.withoutPrice'|trans }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block _quick_add_validation_items_table_header_additional_data_subtotal_widget %}
+    <th class="text-right">{{ 'oro.pricing.price.label'|trans }}</th>
+{% endblock %}
+
+{% block _quick_add_validation_valid_items_additional_fields_subtotal_widget %}
+    <td class="text-right">
+        {% if validRow.additionalFields.price.value.value is defined %}
+            {{ additionalFields.price.value.value|localizedcurrency(additionalFields.price.value.currency) }}
+        {% else %}
+            {{ 'oro.pricing.priceAttribute.withoutPrice'|trans }}
+        {% endif %}
+    </td>
+{% endblock %}

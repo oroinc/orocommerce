@@ -14,6 +14,8 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class ProductRowCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -37,12 +39,17 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension(
                 [
                     'oro_collection' => new CollectionType(),
                     ProductRowType::NAME => new ProductRowType(),
                     ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
+                    ProductUnitsType::NAME => new ProductUnitsType($unitsProviderMock)
                 ],
                 []
             ),

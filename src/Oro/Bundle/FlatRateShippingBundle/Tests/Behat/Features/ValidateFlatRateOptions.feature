@@ -1,4 +1,4 @@
-@fixture-FlatRateIntegration.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Check validation for Shipping Rule - Flat rate
   In order to validate flat rate shipping rule options
   As Administrator
