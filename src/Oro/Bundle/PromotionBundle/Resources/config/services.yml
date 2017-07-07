@@ -309,6 +309,13 @@ services:
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 
+    oro_promotion.event_listener.payment_discount_surcharge:
+        class: Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener
+        arguments:
+            - '@oro_promotion.provider.subtotal_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
+
     oro_promotion.form.type.promotion:
         class: Oro\Bundle\PromotionBundle\Form\Type\PromotionType
         tags:
