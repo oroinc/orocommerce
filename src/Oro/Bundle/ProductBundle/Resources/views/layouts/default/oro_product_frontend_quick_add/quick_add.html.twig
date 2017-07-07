@@ -1,17 +1,25 @@
+{% block _page_title_widget %}
+    {% set titleIcon = 'fa-flash' %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block _quick_add_container_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' {{ class_prefix }}'
+        class: attr.class|default('') ~ ' quick-order',
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'oroproduct/js/app/views/quick-add-view'
+        }
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="{{ class_prefix }}__container">
-            {{ block_widget(block) }}
-        </div>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _quick_add_form_widget %}
     {% set attr = attr|merge({
-       class: attr.class|default('') ~ '{{ class_prefix }}__col {{ class_prefix }}__col_two-thirds'
+        class: attr.class|default('') ~ ' quick-order-add',
+        'data-role': 'quick-order-add-container'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -19,7 +27,6 @@
 {% endblock %}
 
 {% block _quick_add_form_start_widget %}
-    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set pageComponentOptions = {
         'componentSelector': '#' ~ form.component.vars.id,
         'additionalSelector': '#' ~ form.additional.vars.id
@@ -34,7 +41,7 @@
 
 {% block _quick_add_form_fields_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ 'row-oro add-products'
+        class: attr.class|default('') ~ 'quick-order-add__content row-oro'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ form_widget(form.products) }}
@@ -44,34 +51,29 @@
     {{ form_errors(form) }}
 {% endblock %}
 
-{% block _quick_add_form_buttons_widget %}
+{% block _quick_add_form_buttons_wrapper_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ '{{ class_prefix }}__form__row {{ class_prefix }}-buttons'
+        class: attr.class|default('') ~ 'quick-order-add__buttons-wrapper',
+        'data-role': 'quick-order-add-buttons'
     }) %}
-    <fieldset {{ block('block_attributes') }}>
-        {% placeholder oro_product_quick_add_buttons %}
-    </fieldset>
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
-{% block _quick_add_import_button_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.clientLink({
-        'dataUrl': path('oro_product_frontend_quick_add_import'),
-        'aCss': 'no-hash import-link download-csv-link',
-        'iCss': 'fa-download',
-        'label' : 'oro.product.frontend.quick_add.import_from_file.title'|trans,
-        'widget' : {
-            'type' : 'quick-add-import',
-            'options' : {
-                'dialogOptions' : {
-                    'title' : 'oro.product.frontend.quick_add.import_from_file.title'|trans,
-                    'modal': true,
-                    'resizable': false,
-                    'width': 820,
-                    'autoResize': true,
-                    'dialogClass': 'ui-dialog-no-scroll'
-                }
-            }
-        }
-    }) }}
+{% block _quick_add_form_clear_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' btn btn--action quick-order-add__clear-button hide',
+        'data-role': 'quick-order-add-clear'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _quick_add_form_buttons_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' quick-order-add__buttons'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% placeholder oro_product_quick_add_buttons %}
+    </div>
 {% endblock %}

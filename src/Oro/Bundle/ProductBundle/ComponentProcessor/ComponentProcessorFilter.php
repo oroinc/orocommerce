@@ -26,8 +26,15 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
     {
         $products = [];
         foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $product) {
-            $products[strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY])] = $product;
+            $upperSku = strtoupper($product[ProductDataStorage::PRODUCT_SKU_KEY]);
+
+            if (!isset($products[$upperSku])) {
+                $products[$upperSku] = [];
+            }
+
+            $products[$upperSku][] = $product;
         }
+
         $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = [];
 
         if (empty($products)) {
@@ -36,11 +43,22 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
 
         $searchQuery = $this->repository->getFilterSkuQuery(array_keys($products));
         /** @var Item[] $filteredProducts */
-        $filteredProducts = $searchQuery->getResult()->toArray();
+        $filteredProducts = $searchQuery->getResult();
 
-        foreach ($filteredProducts as $product) {
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] =
-                $products[strtoupper($product->getSelectedData()['sku'])];
+        if ($filteredProducts === null) {
+            throw new \RuntimeException("Result of search query cannot be null.");
+        }
+
+        $filteredProducts = $filteredProducts->toArray();
+
+        foreach ($filteredProducts as $productEntry) {
+            $product = $productEntry->getSelectedData();
+            if (isset($product['sku'])) {
+                $upperSku = strtoupper($productEntry->getSelectedData()['sku']);
+                foreach ($products[$upperSku] as $product) {
+                    $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $product;
+                }
+            }
         }
 
         return $data;

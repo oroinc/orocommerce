@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
@@ -13,9 +13,9 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject phpdoc
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
      */
-    protected $registry;
+    protected $shippingMethodProvider;
 
     /**
      * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
@@ -29,9 +29,12 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->createMock(ShippingMethodRegistry::class);
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->choicesProvider = new BasicShippingMethodChoicesProvider($this->registry, $this->translator);
+        $this->choicesProvider = new BasicShippingMethodChoicesProvider(
+            $this->shippingMethodProvider,
+            $this->translator
+        );
     }
 
     /**
@@ -48,7 +51,7 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
             ['ups', [], null, null, 'ups translated'],
         ];
 
-        $this->registry->expects($this->once())
+        $this->shippingMethodProvider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn($methods);
 

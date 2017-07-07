@@ -1,4 +1,4 @@
-@fixture-categories.yml
+@fixture-OroCatalogBundle:categories.yml
 Feature: Move category in tree
   In order to change order of categories or nesting
   As site administrator

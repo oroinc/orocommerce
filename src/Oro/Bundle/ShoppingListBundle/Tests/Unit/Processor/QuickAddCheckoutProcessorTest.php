@@ -159,15 +159,10 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
     public function testProcessWhenCommitted()
     {
-        $data = [
-            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                ['productSku' => 'sku1', 'productQuantity' => 2],
-                ['productSku' => 'sku2', 'productQuantity' => 3],
-            ]
-        ];
+        $data = $this->getProductData();
 
         $productIds = ['sku1' => 1, 'sku2' => 2];
-        $productQuantities = [1 => 2, 2 => 3];
+        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
         $shoppingList = new ShoppingList();
 
@@ -205,7 +200,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->with(
                 $this->isInstanceOf(ShoppingList::class),
                 array_values($productIds),
-                $productQuantities
+                $productUnitsQuantities
             )
             ->willReturn(count($data));
 
@@ -219,15 +214,10 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
     public function testProcessWhenActionGroupFailedWithErrors()
     {
-        $data = [
-            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                ['productSku' => 'sku1', 'productQuantity' => 2],
-                ['productSku' => 'sku2', 'productQuantity' => 3],
-            ]
-        ];
+        $data = $this->getProductData();
 
         $productIds = ['sku1' => 1, 'sku2' => 2];
-        $productQuantities = [1 => 2, 2 => 3];
+        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
         $shoppingList = new ShoppingList();
 
@@ -265,7 +255,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->with(
                 $this->isInstanceOf(ShoppingList::class),
                 array_values($productIds),
-                $productQuantities
+                $productUnitsQuantities
             )
             ->willReturn(count($data));
 
@@ -281,12 +271,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
     public function testProcessWhenHandlerThrowsException()
     {
-        $data = [
-            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                ['productSku' => 'sku1', 'productQuantity' => 2],
-                ['productSku' => 'sku2', 'productQuantity' => 3],
-            ]
-        ];
+        $data = $this->getProductData();
 
         $productIds = ['sku1' => 1, 'sku2' => 2];
 
@@ -321,15 +306,10 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
     public function testProcessWhenNoItemsCreatedForShoppingList()
     {
-        $data = [
-            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                ['productSku' => 'sku1', 'productQuantity' => 2],
-                ['productSku' => 'sku2', 'productQuantity' => 3],
-            ]
-        ];
+        $data = $this->getProductData();
 
         $productIds = ['sku1' => 1, 'sku2' => 2];
-        $productQuantities = [1 => 2, 2 => 3];
+        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
 
         $shoppingList = new ShoppingList();
 
@@ -352,7 +332,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->with(
                 $this->isInstanceOf(ShoppingList::class),
                 array_values($productIds),
-                $productQuantities
+                $productUnitsQuantities
             )
             ->willReturn(0);
 
@@ -392,5 +372,68 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->willReturn($flashBag);
 
         $request->setSession($session);
+    }
+
+    /**
+     * @return array
+     */
+    public function processDataProvider()
+    {
+        return [
+            'empty' => [
+                'data' => [],
+                'request' => new Request()
+            ],
+            'not empty' => [
+                'data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'set'],
+                    ]
+                ],
+                'request' => new Request(),
+                'productIds' =>['sku1' => 1, 'sku2' => 2],
+                'productQuantities' => ['sku1' => ['item' => 2], 'sku2' => ['set' => 3]],
+            ],
+            'process failed' => [
+                'data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'set'],
+                    ]
+                ],
+                'request' => new Request(),
+                'productIds' =>['sku1' => 1, 'sku2' => 2],
+                'productQuantities' => ['sku1' => ['item' => 2], 'sku2' => ['set' => 3]],
+                'redirectUrl' => '/account/shoppingList/123',
+                'failed' => true
+            ],
+            'without redirect url' => [
+                'data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
+                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'set'],
+                    ]
+                ],
+                'request' => new Request(),
+                'productIds' =>['sku1' => 1, 'sku2' => 2],
+                'productQuantities' => ['sku1' => ['item' => 2], 'sku2' => ['set' => 3]],
+                'failed' => false,
+                'issetRedirectUrl' => false
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getProductData()
+    {
+        return [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'kg'],
+                ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'liter'],
+            ]
+        ];
     }
 }

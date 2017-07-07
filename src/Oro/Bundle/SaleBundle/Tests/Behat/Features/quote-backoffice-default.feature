@@ -1,6 +1,6 @@
 @ticket-BB-7802
 @automatically-ticket-tagged
-@fixture-QuoteBackofficeDefaultFixture.yml
+@fixture-OroSaleBundle:QuoteBackofficeDefaultFixture.yml
 Feature: Quote Backoffice Default Workflow
   In order to edit quote internal statuses
   As an Administrator

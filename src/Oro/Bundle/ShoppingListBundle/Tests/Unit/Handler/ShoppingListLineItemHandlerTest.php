@@ -56,8 +56,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->authorizationChecker,
             $this->tokenAccessor
         );
-        $this->handler->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
-        $this->handler->setShoppingListClass('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $this->handler->setProductClass(Product::class);
+        $this->handler->setShoppingListClass(ShoppingList::class);
+        $this->handler->setProductUnitClass(ProductUnit::class);
     }
 
     /**
@@ -154,14 +155,14 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $productIds
-     * @param array $productQuantities
+     * @param array $productUnitsWithQuantities
      * @param array $expectedLineItems
      *
      * @dataProvider itemDataProvider
      */
     public function testCreateForShoppingList(
         array $productIds = [],
-        array $productQuantities = [],
+        array $productUnitsWithQuantities = [],
         array $expectedLineItems = []
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
@@ -212,7 +213,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->isType('integer')
         );
 
-        $this->handler->createForShoppingList($shoppingList, $productIds, $productQuantities);
+        $this->handler->createForShoppingList($shoppingList, $productIds, $productUnitsWithQuantities);
     }
 
     /**
@@ -223,7 +224,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [1, 2],
-                [1 => 5],
+                ['SKU1' => ['item' => 5], 'sku2' => ['item' => 3]],
                 [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(1)],
             ],
         ];
@@ -265,12 +266,14 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $product1 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 1)
             ->addUnitPrecision(
                 (new ProductUnitPrecision())->setUnit(new ProductUnit())
-            );
+            )
+            ->setSku('sku1');
 
         $product2 = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', 2)
             ->addUnitPrecision(
                 (new ProductUnitPrecision())->setUnit(new ProductUnit())
-            );
+            )
+            ->setSku('sku1');
 
         $iterableResult = [[$product1], [$product2]];
         $query->expects($this->any())
@@ -289,7 +292,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository */
         $productRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
-            ->setMethods(['getProductsQueryBuilder'])
+            ->setMethods(['getProductsQueryBuilder', 'findOneBy'])
             ->getMock();
 
         $productRepository->expects($this->any())
@@ -301,6 +304,18 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $productUnitRepository */
+        $productUnitRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneBy'])
+            ->getMock();
+
+        $productRepository->expects($this->any())
+            ->method('findOneBy')
+            ->willReturnCallback(function ($unit) {
+                return new ProductUnit($unit);
+            });
+
         $em->expects($this->any())
             ->method('getRepository')
             ->will(
@@ -308,6 +323,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                     [
                         ['Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListRepository],
                         ['Oro\Bundle\ProductBundle\Entity\Product', $productRepository],
+                        ['Oro\Bundle\ProductBundle\Entity\ProductUnit', $productUnitRepository],
                     ]
                 )
             );
