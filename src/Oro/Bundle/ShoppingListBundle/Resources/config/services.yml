@@ -323,11 +323,9 @@ services:
             - '@oro_shopping_list.shopping_list_provider.cache'
 
     oro_shopping_list.voter.guest_shopping_list_voter:
-        class: 'Oro\Bundle\ShoppingListBundle\Voter\GuestShoppingListVoter'
-        arguments:
-            - '@oro_featuretoggle.voter.config_voter'
-            - '@security.token_storage'
-        lazy: true
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_shopping_list'] ]
         tags:
             - { name: oro_featuretogle.voter }
 

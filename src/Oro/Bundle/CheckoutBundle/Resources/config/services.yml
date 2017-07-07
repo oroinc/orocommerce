@@ -470,10 +470,8 @@ services:
         arguments: ['@oro_checkout.provider.payment_method_provider']
 
     oro_checkout.voter.guest_checkout:
-        class: 'Oro\Bundle\CheckoutBundle\Voter\GuestCheckoutVoter'
-        arguments:
-            - '@oro_featuretoggle.voter.config_voter'
-            - '@security.token_storage'
-        lazy: true
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_checkout'] ]
         tags:
             - { name: oro_featuretogle.voter }
