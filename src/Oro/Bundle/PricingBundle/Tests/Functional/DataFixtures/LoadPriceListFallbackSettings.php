@@ -17,6 +17,13 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadPriceListFallbackSettings extends AbstractFixture implements DependentFixtureInterface
 {
+    const WEBSITE_CUSTOMER_FALLBACK_1 = 'US_customer_1_1_price_list_fallback';
+    const WEBSITE_CUSTOMER_FALLBACK_2 = 'US_customer_1_3_price_list_fallback';
+    const WEBSITE_CUSTOMER_FALLBACK_3 = 'US_customer_1_2_price_list_fallback';
+    const WEBSITE_CUSTOMER_FALLBACK_4 = 'Canada_customer_1_1_price_list_fallback';
+    const WEBSITE_CUSTOMER_FALLBACK_5 = 'Canada_customer_1_3_price_list_fallback';
+    const WEBSITE_CUSTOMER_FALLBACK_6 = 'Canada_customer_1_2_price_list_fallback';
+
     const WEBSITE_CUSTOMER_GROUP_FALLBACK_1 = 'US_customer_group1_price_list_fallback';
     const WEBSITE_CUSTOMER_GROUP_FALLBACK_2 = 'US_customer_group2_price_list_fallback';
     const WEBSITE_CUSTOMER_GROUP_FALLBACK_3 = 'Canada_customer_group1_price_list_fallback';
@@ -28,14 +35,38 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
     protected $fallbackSettings = [
         'customer' => [
             LoadWebsiteData::WEBSITE1 => [
-                'customer.level_1_1' => PriceListCustomerFallback::ACCOUNT_GROUP,
-                'customer.level_1.3' => PriceListCustomerFallback::ACCOUNT_GROUP,
-                'customer.level_1.2' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_FALLBACK_1,
+                    'customer' => 'customer.level_1_1',
+                    'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP,
+                ],
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_FALLBACK_2,
+                    'customer' => 'customer.level_1.3',
+                    'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP,
+                ],
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_FALLBACK_3,
+                    'customer' => 'customer.level_1.2',
+                    'fallback' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
+                ],
             ],
             LoadWebsiteData::WEBSITE2 => [
-                'customer.level_1_1' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
-                'customer.level_1.3' => PriceListCustomerFallback::ACCOUNT_GROUP,
-                'customer.level_1.2' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_FALLBACK_4,
+                    'customer' => 'customer.level_1_1',
+                    'fallback' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
+                ],
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_FALLBACK_5,
+                    'customer' => 'customer.level_1.3',
+                    'fallback' => PriceListCustomerFallback::ACCOUNT_GROUP,
+                ],
+                [
+                    'reference' => self::WEBSITE_CUSTOMER_FALLBACK_6,
+                    'customer' => 'customer.level_1.2',
+                    'fallback' => PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY,
+                ],
             ],
         ],
         'customerGroup' => [
@@ -90,16 +121,17 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
         foreach ($this->fallbackSettings['customer'] as $websiteReference => $fallbackSettings) {
             /** @var Website $website */
             $website = $this->getReference($websiteReference);
-            foreach ($fallbackSettings as $customerReference => $fallbackValue) {
+            foreach ($fallbackSettings as $fallbackData) {
                 /** @var Customer $customer */
-                $customer = $this->getReference($customerReference);
+                $customer = $this->getReference($fallbackData['customer']);
 
                 $priceListCustomerFallback = new PriceListCustomerFallback();
                 $priceListCustomerFallback->setCustomer($customer);
                 $priceListCustomerFallback->setWebsite($website);
-                $priceListCustomerFallback->setFallback($fallbackValue);
+                $priceListCustomerFallback->setFallback($fallbackData['fallback']);
 
                 $manager->persist($priceListCustomerFallback);
+                $this->setReference($fallbackData['reference'], $priceListCustomerFallback);
             }
         }
 
