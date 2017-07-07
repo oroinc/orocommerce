@@ -7,6 +7,12 @@ layout:
             optionName: params
             optionValue:
                 '%label%': '=data["title"]'
+        - '@add':
+            id: order_taxes_template
+            blockType: block
+            parentId: head
+            siblingId: ~
+            prepend: false
         - '@addTree':
             items:
                 shopping_list_view_container:

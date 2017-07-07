@@ -2,6 +2,12 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'content.html.twig'
+        - '@add':
+            id: order_taxes_template
+            blockType: block
+            parentId: head
+            siblingId: ~
+            prepend: false
         - '@addTree':
             items:
                 __checkout_content:
