@@ -12,7 +12,7 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['layout-subtree:update:product']
-                        visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).isSimple()'
+                        visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).isSimple() && context["is_logged_in"]'
                 line_item_form:
                     blockType: container
                 line_item_form_start:
@@ -41,5 +41,3 @@ layout:
                             line_item_form_fields: ~
                             product_line_item_form_buttons: ~
                             line_item_form_end: ~
-
-    conditions: 'context["is_logged_in"]'

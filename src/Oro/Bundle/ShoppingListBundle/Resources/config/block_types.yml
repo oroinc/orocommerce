@@ -70,7 +70,7 @@ services:
     oro_shopping_list.layout.block_type.extension.widget_content:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:
-            - [setOptionsConfig, [{savedId: ~, shoppingList: ~}]]
+            - [setOptionsConfig, [{savedId: ~, shoppingList: ~, shoppingListCreateEnabled: ~}]]
             - [setExtendedType, ['widget_content']]
         tags:
             - { name: layout.block_type_extension, alias: widget_content }

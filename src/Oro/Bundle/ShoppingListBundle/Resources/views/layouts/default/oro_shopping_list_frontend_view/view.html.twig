@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_content_widget %}
-    <div {{ block('block_attributes') }}
+       <div {{ block('block_attributes') }}
             id="shopping_list_view_container_content"
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
@@ -16,6 +16,11 @@
             data-layout="separate">
         {{ block_widget(block) }}
     </div>
+    {% if not app.user %}
+        <div class="notification-flash notification-flash--warning">
+            {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans }}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}
@@ -28,36 +33,40 @@
 {% block _shopping_list_title_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% set attr = attr|merge({id: "title-inline-editable"}) %}
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
-        options: {
-            frontend_type: 'title',
-            value: shoppingList.label,
-            fieldName: 'label',
-            insertEditorMethod: 'after',
-            eventChannelId: 'shopping-list-title',
-            metadata: {
-                broadcast_parameters: {
-                    id: shoppingList.id
-                },
-                inline_editing: {
-                    enable: is_granted('oro_shopping_list_frontend_update'),
-                    save_api_accessor: {
-                        route: 'oro_api_frontend_patch_entity_data',
-                        http_method: 'PATCH',
-                        default_route_parameters: {
-                            className: oro_class_name(shoppingList, true),
-                            id: shoppingList.id
+    {% if app.user %} {# inline_editing.enable does not hide edit btn #}
+        <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+            module: 'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component',
+            options: {
+                frontend_type: 'title',
+                value: shoppingList.label,
+                fieldName: 'label',
+                insertEditorMethod: 'after',
+                eventChannelId: 'shopping-list-title',
+                metadata: {
+                    broadcast_parameters: {
+                        id: shoppingList.id
+                    },
+                    inline_editing: {
+                        enable: is_granted('oro_shopping_list_frontend_update'),
+                        save_api_accessor: {
+                            route: 'oro_api_frontend_patch_entity_data',
+                            http_method: 'PATCH',
+                            default_route_parameters: {
+                                className: oro_class_name(shoppingList, true),
+                                id: shoppingList.id
+                            }
                         }
+                    },
+                    view_options: {
+                        tooltip: 'oro.shoppinglist.label.edit.tooltip'|trans,
+                        additionalClass: 'cart-order-title'
                     }
-                },
-                view_options: {
-                    tooltip: 'oro.shoppinglist.label.edit.tooltip'|trans,
-                    additionalClass: 'cart-order-title'
                 }
             }
-        }
-    }) }}>
+        }) }}>
+    {% else %}
+        <div>
+    {% endif %}
         <h1 class="cart-order-title">
             <span>{{ shoppingList.label }}</span>
         </h1>
@@ -71,21 +80,6 @@
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _shopping_list_owner_widget %}
-    {% set options = {
-        shoppingListId: shoppingList.id
-    } %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shopping-list-owner',
-        'data-page-component-module': "oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component",
-        'data-page-component-options': options|json_encode()
-    }) %}
-    <div{{ block('block_attributes') }}>
-        {{ form_label(form, 'oro.frontend.shoppinglist.view.owner.label') }}
-        {{ form_widget(form) }}
     </div>
 {% endblock %}
 
@@ -119,10 +113,9 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_frontend_patch_entity_data',
+                                route: 'oro_api_patch_shopping_list',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
-                                    className: oro_class_name(shoppingList, true),
                                     id: shoppingList.id
                                 }
                             }
@@ -156,44 +149,51 @@
 {% block _shopping_list_line_items_list_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table"}) %}
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'orofrontend/js/app/components/empty-items-component',
-        options: {eventName: 'frontend:item:delete'}
-    }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list-empty">
-        <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
-            module: 'oroui/js/app/components/view-component',
-            layout: 'separate',
-            options: {
-                view: 'oroshoppinglist/js/app/views/line-items-view'
-            }
-        }) }}>
-            <thead>
-            <tr>
-                <th colspan="2"><small>{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
-                <th><small>{{ 'oro.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
-                <th><small>{{ 'oro.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
-                <th class="text-right"><small>{{ 'oro.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
-                <th class="w70"><small>&nbsp;</small></th>
-            </tr>
-            </thead>
-            {% for lineItem in shoppingList.lineItems %}
-            {% set mainProduct = lineItem.product %}
-            {% if lineItem.parentProduct is not null %}
-                {% set mainProduct = lineItem.parentProduct %}
-            {% endif %}
-            <tbody class="line_item">
-                {% do block|merge_context({
-                    lineItem: lineItem,
-                    mainProduct: mainProduct,
-                    parent: block.vars,
-                    loop: loop
-                }) %}
-                {{ block('container_widget') }}
-            </tbody>
-            {% endfor %}
-        </table>
-    </div>
+    {% if shoppingList.lineItems.count() %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table"}) %}
+        <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
+            module: 'orofrontend/js/app/components/empty-items-component',
+            options: {eventName: 'frontend:item:delete'}
+        }) }} data-items-selector=".line_item" data-empty-block-selector=".cart-list-empty">
+            <table class="oro-grid-table oro-grid-table_b-bordered oro-grid-table__verticalp-enlarged mt1-md" {{ UI.renderPageComponentAttributes({
+                module: 'oroui/js/app/components/view-component',
+                layout: 'separate',
+                options: {
+                    view: 'oroshoppinglist/js/app/views/line-items-view'
+                }
+            }) }}>
+                <thead>
+                <tr>
+                    <th colspan="2"><small>{{ 'oro.frontend.shoppinglist.view.item.lable'|trans }}</small></th>
+                    <th><small>{{ 'oro.frontend.shoppinglist.view.availability.lable'|trans }}</small></th>
+                    <th><small>{{ 'oro.frontend.shoppinglist.view.quantity.lable'|trans }}</small></th>
+                    <th class="text-right"><small>{{ 'oro.frontend.shoppinglist.view.price.lable'|trans }}</small></th>
+                    <th class="w70"><small>&nbsp;</small></th>
+                </tr>
+                </thead>
+                {% for lineItem in shoppingList.lineItems %}
+                {% set mainProduct = lineItem.product %}
+                {% if lineItem.parentProduct is not null %}
+                    {% set mainProduct = lineItem.parentProduct %}
+                {% endif %}
+                <tbody class="line_item">
+                    {% do block|merge_context({
+                        lineItem: lineItem,
+                        mainProduct: mainProduct,
+                        parent: block.vars,
+                        loop: loop
+                    }) %}
+                    {{ block('container_widget') }}
+                </tbody>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <div class="cart-list-empty">
+            <span class="cart-list-empty__icon"><i class="fa-shopping-cart"></i></span>
+            <span class="fs24 va-m_md">{{ 'oro.frontend.shoppinglist.view.not_products_available'|trans }}</span>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _shopping_list_line_items_list_row_widget %}
@@ -468,7 +468,7 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_frontend_patch_entity_data',
+                                route: 'oro_api_shopping_list_frontend_patch_line_item',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
                                     className: oro_class_name(lineItem, true),
