@@ -3,9 +3,11 @@ define(function(require) {
 
     var QuickAddImportValidationComponent;
     var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
     var widgetManager = require('oroui/js/widget-manager');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var mediator = require('oroui/js/mediator');
 
     QuickAddImportValidationComponent = BaseComponent.extend({
         /**
@@ -13,51 +15,77 @@ define(function(require) {
          */
         options: {
             _wid: '',
-            containerSelector: '#import-validation',
-            cancelButtonSelector: 'button:reset',
-            navigateButtonSelector: 'button[data-url]',
-            errorToggleSelector: '.error-toggle',
-            errorVisibleClass: 'errors-visible'
+            validItemsCount: 0,
+            itemsTableRows: 'table.quick_add_validation_items tbody tr'
         },
-
-        /**
-         * @property {jQuery}
-         */
-        $container: null,
 
         /**
          * {@inheritDoc}
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$container = $(this.options.containerSelector);
 
-            this.$container.find(this.options.errorToggleSelector).on('click', _.bind(this.toggleErrors, this));
-            this.$container.find(this.options.navigateButtonSelector).on('click', _.bind(this.navigateAction, this));
-            this.$container.find(this.options.cancelButtonSelector).on('click', _.bind(this.cancelAction, this));
+            mediator.on('widget:contentLoad', this.onWidgetRender, this);
         },
 
-        toggleErrors: function(e) {
-            e.preventDefault();
-            this.$container.toggleClass(this.options.errorVisibleClass);
-        },
+        submitAction: function(widget) {
+            var itemRows = $(this.options.itemsTableRows, widget.el);
+            var result = [];
+            var that = this;
 
-        navigateAction: function(e) {
-            var url = $(e.target).attr('data-url');
-            widgetManager.getWidgetInstance(this.options._wid, _.bind(this.loadUrl, url));
-        },
+            itemRows.each(function(index, element) {
+                var $fields = $('td', element);
 
-        loadUrl: function(widget) {
-            widget.setUrl(this);
-            widget.loadContent();
-        },
-
-        cancelAction: function() {
-            widgetManager.getWidgetInstance(this.options._wid, _.bind(this.closeWidget));
+                result.push({
+                    'sku': $fields.get(-1).textContent,
+                    'quantity': $fields.get(1).textContent,
+                    'unit': $fields.get(2).textContent
+                });
+            }).promise().done(function() {
+                mediator.trigger('quick-add-import-form:submit', result);
+                widgetManager.getWidgetInstance(that.options._wid, that.closeWidget);
+            });
         },
 
         closeWidget: function(widget) {
             widget.dispose();
+        },
+
+        onWidgetRender: function() {
+            var title = _.template(this.options.titleTemplate);
+            var subtitle = '';
+            var that = this;
+
+            widgetManager.getWidgetInstance(this.options._wid, function(widget) {
+                var dialogWidget = widget.getWidget();
+                var instanceData = dialogWidget.get(0);
+                var instance = $.data(instanceData, 'ui-dialog');
+
+                widget
+                    .off('adoptedFormSubmitClick')
+                    .on('adoptedFormSubmitClick', _.bind(that.submitAction, that, widget));
+
+                instance._title = function(title) {
+                    if (this.options.title) {
+                        title.html(this.options.title);
+                    } else {
+                        title.html('&#160;');
+                    }
+                };
+
+                if (that.options.validItemsCount !== undefined) {
+                    subtitle = __(
+                        'oro.product.frontend.quick_add.import_validation.subtitle',
+                        {'count': that.options.validItemsCount},
+                        that.options.validItemsCount
+                    );
+                }
+
+                widget.setTitle(title({
+                    title: __('oro.product.frontend.quick_add.import_validation.title'),
+                    subtitle: subtitle
+                }));
+            });
         }
     });
 

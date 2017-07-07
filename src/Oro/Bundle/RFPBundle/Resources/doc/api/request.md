@@ -4,19 +4,19 @@
 
 ### get
 
-Get one Request record.
+Retrieve a specific request record.
 
 {@inheritdoc}
 
 ### get_list
 
-Returns a collection of Requests
+Retrieve a collection of request records.
 
 {@inheritdoc}
 
 ### create
 
-Create a new Request. The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable 
+Create a new request record. The fields `internal_status`, `customer_status`, `requestAdditionalNotes` are not configurable
 by api, because it depends on the workflow states. If you want to create Request together with a related resources such as
 `requestproductitems`, `requestprodict` you can use the included section of a JSON request body. 
 Please take a look at the following example:
@@ -76,7 +76,7 @@ Please take a look at the following example:
 
 ### update
 
-Update existing Request record. The fields `internal_status`, `customer_status`, `requestAdditionalNotes`, 
+Edit a specific request record. The fields `internal_status`, `customer_status`, `requestAdditionalNotes`,
 `createdAt` - can not be updated. If you want to add new related resources: `requestprodict` you can use the included
 section of a JSON request body. Please take a look at the following example:
 
@@ -181,34 +181,34 @@ section of a JSON request body. Please take a look at the following example:
 
 #### get_subresource
 
-Get full information about the product of request for quote.
+Retrieve the product of request for quote.
 
 ### contact
 
 #### get_subresource
 
-Get full information about the person on the customer side who is directly related to the opportunity.
+Retrieve the person on the customer side who is directly related to the opportunity.
 
 ### requestAdditionalNotes
 
 #### get_subresource
 
-Get list of additional notes.
+Retrieve list of additional notes.
 
 ### assignedUsers
 
 #### get_subresource
 
-Get full information about assigned users.
+Retrieve assigned users.
 
 ### organization
 
 #### get_subresource
 
-Get full information about an organization to which the request belongs.
+Retrieve an organization to which the request belongs.
 
 ### owner
 
 #### get_subresource
 
-Get full information about an user who owns the request.
+Retrieve an user who owns the request.

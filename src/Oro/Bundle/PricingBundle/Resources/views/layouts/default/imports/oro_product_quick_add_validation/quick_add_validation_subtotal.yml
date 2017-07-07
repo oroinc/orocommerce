@@ -1,0 +1,20 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'quick_add_validation_subtotal.html.twig'
+        - '@add':
+            id: quick_add_validation_additional_fields_subtotal
+            parentId: quick_add_validation_additional_fields
+            blockType: price
+            options:
+                price: '=data["collection"].getAdditionalFields()["price"].getValue()'
+        - '@add':
+            id: quick_add_validation_valid_items_additional_fields_subtotal
+            parentId: quick_add_validation_valid_items_additional_fields
+            blockType: block
+        - '@add':
+            id: quick_add_validation_items_table_header_additional_data_subtotal
+            parentId: quick_add_validation_valid_items_additional_fields_header
+            blockType: block
+
+    conditions: 'context["import_step"]=="result"'

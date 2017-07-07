@@ -59,6 +59,15 @@
       display: none;
     }
   }
+
+  [class^="cf"] {
+    font-size: 0;
+
+    &:before {
+      color: get-color('ui', 'normal');
+      font-size: $base-font-size;
+    }
+  }
 }
 
 .quick-order__container {
@@ -103,9 +112,30 @@
       float: none;
     }
 
+    .fields-row {
+      .success {
+        padding-left: 30px;
+      }
+    }
+
     .fields-row-error,
     .fields-row-error-autocomplite {
-      margin: 0 7px;
+      .validation-failed {
+        margin: 5px 0 -10px;
+
+        background: none;
+      }
+
+      .validation-passed {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+
+
+        font-size: 16px;
+
+        background: none;
+      }
     }
   }
 
@@ -120,14 +150,12 @@
   margin: 0 -7px 15px;
 
   @media (max-width: $screen-md) {
-    margin: 5px -5px;
+    margin: 0 -5px;
   }
 
   @include clearfix();
 }
 .quick-order__form__row__head {
-  margin-bottom: 0;
-
   label {
     font-weight: 400;
     margin-bottom: 10px;
@@ -148,7 +176,7 @@
   }
 
   &.quick-order__form__col_item {
-    width: 86%;
+    width: calc(100% - 222px);
 
     @media (max-width: $screen-sm) {
       width: 80%;
@@ -156,11 +184,21 @@
   }
 
   &.quick-order__form__col_qty {
-    width: 14%;
+    width: 9%;
+
+    text-align: center;
 
     @media (max-width: $screen-sm) {
       width: 20%;
     }
+
+    .input {
+      text-align: center;
+    }
+  }
+
+  &.quick-order__form__col_unit {
+    width: 16%;
   }
 }
 
@@ -183,10 +221,6 @@
 
   i, span {
     vertical-align: middle;
-  }
-
-  .fa {
-    margin-right: 5px;
   }
 }
 
@@ -253,17 +287,91 @@
   float: right;
   margin: 0;
 
-  .widget-content {
-    .action-button {
-      &.btn-inactive {
-        background-color: get-color('additional', 'middle');
+  .mass-action-controls {
+    .pinned-dropdown {
+      .btn-group {
+        position: relative;
+
+        display: inline-block;
+        min-height: 47px;
+        min-width: 140px;
+        margin-bottom: 0;
+        padding: 0;
+        border: 0;
+        vertical-align: middle;
+        border-radius: 4px;
+
+        background: get-color('additional', 'darker');
+        color: get-color('additional', 'ultra');
+        font-size: 15px;
+        line-height: 1;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+
+        user-select: none;
+        touch-action: manipulation;
+        cursor: pointer;
+
+        > .direct-link {
+          float: left;
+          display: block;
+          width: calc(100% - 36px);
+          margin: 0;
+          padding: 0 15px;
+
+          color: get-color('additional', 'ultra');
+          line-height: 3.1;
+
+          @include ellipsis();
+        }
+
+        &.icons-holder .direct-link {
+          width: 100%;
+        }
+
+        > .dropdown-toggle {
+          float: left;
+          display: block;
+          width: 36px;
+          margin: 0;
+          padding: 0 12px;
+          border-left: 1px solid rgba(255,255,255,.3);
+
+          color: get-color('additional', 'ultra');
+          line-height: 3.1;
+
+          @include ellipsis();
+        }
       }
     }
+
+    @include clearfix();
   }
 
-  .btn-group {
-    .btn:not(.dropdown-toggle) {
-      margin-left: $offset-x-m;
+  .action-button {
+    display: inline-block;
+    margin: 0 10px 0 0;
+    padding: 0 29px;
+    vertical-align: middle;
+    border-radius: 4px;
+
+    background: get-color('additional', 'middle');
+    color: get-color('additional', 'ultra');
+    font-size: $base-font-size;
+    line-height: 3.35;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+
+    user-select: none;
+    touch-action: manipulation;
+    cursor: pointer;
+  }
+
+  .widget-content {
+    .action-button {
+      background-color: get-color('additional', 'darker');
     }
   }
 }
@@ -305,13 +413,6 @@
     width: 100%;
   }
 
-  tr:first-child {
-    th,
-    td {
-      border-top: none;
-    }
-  }
-
   .import-errors {
     display: none;
 
@@ -341,8 +442,10 @@
 
   }
 
-  .hidden-form & {
+  .hidden-form {
+    .quick-order-import-validation__form__row {
       display: none;
+    }
   }
 }
 .ui-dialog {

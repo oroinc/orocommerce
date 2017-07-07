@@ -46,7 +46,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $this->quote = $this->getReference(LoadQuoteData::QUOTE1);
     }
 
-    public function testApplicableWorkflows()
+    protected function assertApplicableWorkflows()
     {
         if ($this->manager->isActiveWorkflow(static::WORKFLOW_NAME)) {
             $this->manager->deactivateWorkflow(static::WORKFLOW_NAME);

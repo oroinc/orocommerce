@@ -1,0 +1,124 @@
+// @theme: default;
+
+.quick-order-add {
+  float: $quick-order-add-float;
+
+  width: $quick-order-add-width;
+
+  &__content {
+    ~ .validation-failed {
+      margin-top: 15px;
+    }
+  }
+
+  &__row {
+    &:not(:first-child) {
+      .quick-order-add__label {
+        display: none;
+      }  
+    }
+  }
+
+  &__row-content {
+    position: relative;
+
+    margin: $quick-order-add-row-content-margin;
+
+    @include clearfix();
+  }
+
+  &__col {
+    float: $quick-order-add-col-float;
+    padding: $quick-order-add-col-padding;
+  }
+
+  &__product {
+    width: $quick-order-add-product-width;
+  }
+
+  &__quantity {
+    width: $quick-order-add-quantity-width;
+  }
+
+  &__unit {
+    width: $quick-order-add-unit-width;
+  }
+
+  &__quantity,
+  &__quantity-input {
+    text-align: center;
+
+    &.input {
+      opacity: 1;
+    }
+  }
+
+  &__label {
+    display: block;
+    margin: $quick-order-add-label-margin;
+
+    font-weight: 400;
+  }
+
+  &__remove-row {
+    display: none;
+
+    position: absolute;
+    bottom: 11px;
+    right: -20px;
+
+    color: get-color('additional', 'middle');
+
+    i {
+      font-size: $base-font-size--m;
+
+      cursor: pointer;
+    }
+  }
+
+  &__clear-button {
+    float: $quick-order-add-clear-button-float;
+  }
+
+  &__buttons-wrapper {
+    margin: $quick-order-add-buttons-wrapper-margin;
+
+    @include clearfix();
+
+    &:first-child {
+      margin: 0 0 10px;
+      padding-bottom: 15px;
+
+      border-bottom: 1px solid get-color('additional', 'light');
+    }
+  }
+
+  &__buttons {
+    float: $quick-order-add-buttons-float;
+
+    .widget-content { //override platform styles
+      .action-button {
+        &.btn-inactive {
+          background-color: get-color('additional', 'middle');
+        }
+      }
+    }
+
+    .btn-group { //override platform styles
+      margin-left: $offset-x-m;
+
+      .btn-group {
+        margin: 0;
+      }
+    }
+  }
+
+  &__error,
+  &__error-autocomplete {
+    .validation-failed, .notification--error { //override platform styles
+      margin: -10px -7px 5px;
+
+      background: none;
+    }
+  }
+}

@@ -112,3 +112,32 @@ services:
         arguments:
             - '@oro_sale.provider.quote_product_price'
             - '@translator'
+
+    oro_sale.form_type.contact_info_customer_options_type:
+        class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoSourceOptionsType
+        arguments:
+            - '@oro_sale.provider.contact_info_source_options_provider'
+        tags:
+            - { name: form.type, alias: oro_sale_contact_info_customer_option }
+
+    oro_sale.form.type.contact_info_user_available_type:
+        class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoUserAvailableOptionsType
+        arguments:
+            - '@oro_sale.provider.contact_info_available_user_options_provider'
+        tags:
+            - { name: form.type, alias: oro_sale_contact_info_user_available_option }
+
+    oro_sale.form.type.contact_info_user_type:
+        class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoUserOptionsType
+        arguments:
+            - '@oro_sale.provider.contact_info_user_options_provider'
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type, alias: oro_sale_contact_info_user_option }
+
+    oro_sale.form.type.contact_manual_text_type:
+        class: Oro\Bundle\SaleBundle\Form\Type\ContactInfoManualTextType
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type, alias: oro_sale_contact_info_manual_text }
