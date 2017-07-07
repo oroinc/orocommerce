@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @group CommunityEdition
@@ -64,7 +65,23 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         return $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_US_1);
     }
 
-    public function getWebsiteForTest(): Website
+    /**
+     * {@inheritDoc}
+     */
+    protected function assertFirstRelationMessageSent()
+    {
+        static::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1_1')->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
+    }
+
+    protected function getWebsiteForTest(): Website
     {
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();
     }
@@ -166,35 +183,6 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         );
     }
 
-    public function testDelete()
-    {
-        $this->cleanScheduledRelationMessages();
-
-        $relation = $this->getFirstRelation();
-        $id = $relation->getId();
-
-        $this->delete(
-            [
-                'entity' => $this->getApiEntityName(),
-                'id' => $id,
-            ]
-        );
-
-        $this->assertNull(
-            $this->getEntityRepository()->find($id)
-        );
-
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $relation->getWebsite()->getId(),
-                PriceListRelationTrigger::ACCOUNT => $relation->getCustomer()->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
-    }
-
     public function testUpdate()
     {
         $this->cleanScheduledRelationMessages();
@@ -210,61 +198,32 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
 
         static::assertSame(999, $updatedRelation->getSortOrder());
         static::assertFalse($updatedRelation->isMergeAllowed());
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $relation->getWebsite()->getId(),
-                PriceListRelationTrigger::ACCOUNT => $relation->getCustomer()->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
+
+        $this->assertFirstRelationMessageSent();
     }
 
     public function testGetSubResources()
     {
         $relation = $this->getFirstRelation();
 
-        $this->assertGetSubResource($relation->getId(), 'priceList', $relation->getPriceList()->getId());
-        $this->assertGetSubResource($relation->getId(), 'customer', $relation->getCustomer()->getId());
+        $this->assertGetSubResourceForFirstRelation('priceList', $relation->getPriceList()->getId());
+        $this->assertGetSubResourceForFirstRelation('customer', $relation->getCustomer()->getId());
     }
 
     public function testGetRelationships()
     {
         $relation = $this->getFirstRelation();
 
-        $response = $this->getRelationship(
-            [
-                'entity' => $this->getApiEntityName(),
-                'id' => $relation->getId(),
-                'association' => 'priceList',
-            ]
-        );
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => $this->getEntityType(PriceList::class),
-                    'id' => (string)$relation->getPriceList()->getId(),
-                ],
-            ],
-            $response
+        $this->assertGetRelationshipForFirstRelation(
+            'priceList',
+            PriceList::class,
+            $relation->getPriceList()->getId()
         );
 
-        $response = $this->getRelationship(
-            [
-                'entity' => $this->getApiEntityName(),
-                'id' => $relation->getId(),
-                'association' => 'customer',
-            ]
-        );
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => $this->getEntityType(Customer::class),
-                    'id' => (string)$relation->getCustomer()->getId(),
-                ],
-            ],
-            $response
+        $this->assertGetRelationshipForFirstRelation(
+            'customer',
+            Customer::class,
+            $relation->getCustomer()->getId()
         );
     }
 }
