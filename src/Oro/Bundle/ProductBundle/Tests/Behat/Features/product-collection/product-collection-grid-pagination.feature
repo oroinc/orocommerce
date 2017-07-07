@@ -1,4 +1,4 @@
-@fixture-product_collections_grids_pagination.yml
+@fixture-OroProductBundle:product_collections_grids_pagination.yml
 Feature:
   In order to use pagination in product collection tab's grids
   As an Administrator

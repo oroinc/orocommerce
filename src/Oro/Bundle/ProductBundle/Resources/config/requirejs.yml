@@ -8,10 +8,10 @@ config:
         'oroproduct/js/app/components/product-autocomplete-component': 'bundles/oroproduct/js/app/components/product-autocomplete-component.js'
         'oroproduct/js/app/components/quick-add-form-button-component': 'bundles/oroproduct/js/app/components/quick-add-form-button-component.js'
         'oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component': 'bundles/oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component.js'
-        'tinymce/plugins/fullscreen/plugin.min': 'empty:'
         'oro/quick-add-import-widget': 'bundles/oroproduct/js/app/widget/quick-add-import-widget.js'
         'oro/product-collection-popup-add-products-widget': 'bundles/oroproduct/js/app/widget/product-collection-popup-add-products-widget.js'
         'oroproduct/js/app/components/quick-add-copy-paste-form-component': 'bundles/oroproduct/js/app/components/quick-add-copy-paste-form-component.js'
+        'oroproduct/js/app/components/quick-add-import-form-component': 'bundles/oroproduct/js/app/components/quick-add-import-form-component.js'
         'oroproduct/js/app/components/quick-add-import-validation-component': 'bundles/oroproduct/js/app/components/quick-add-import-validation-component.js'
         'oroproduct/js/app/components/redirect-component': 'bundles/oroproduct/js/app/components/redirect-component.js'
         'oroproduct/js/app/views/product-quantity-editable-view': 'bundles/oroproduct/js/app/views/product-quantity-editable-view.js'
@@ -20,6 +20,9 @@ config:
         'oroproduct/js/app/views/base-product-view': 'bundles/oroproduct/js/app/views/base-product-view.js'
         'oroproduct/js/app/views/base-product-variants-view': 'bundles/oroproduct/js/app/views/base-product-variants-view.js'
         'oroproduct/js/app/views/line-item-product-view': 'bundles/oroproduct/js/app/views/line-item-product-view.js'
+        'oroproduct/js/app/views/variant-fields-view': 'bundles/oroproduct/js/app/views/variant-fields-view.js'
+        'oroproduct/js/app/views/quick-add-view': 'bundles/oroproduct/js/app/views/quick-add-view.js'
+        'oroproduct/js/app/views/quick-add-item-view': 'bundles/oroproduct/js/app/views/quick-add-item-view.js'
         'oroproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/oroproduct/js/content-processor/product-add-to-dropdown-button.js'
         'oroproduct/js/widget/zoom-widget': 'bundles/oroproduct/js/widget/zoom-widget.js'
         'jquery-elevatezoom': 'bundles/bowerassets/elevatezoom3/jquery.elevatezoom.js'
@@ -33,17 +36,16 @@ config:
         'oroproduct/js/app/datagrid/map-custom-module-name': 'bundles/oroproduct/js/app/datagrid/map-custom-module-name'
         'oroproduct/js/app/datagrid/backend-pageable-collection': 'bundles/oroproduct/js/app/datagrid/backend-pageable-collection.js'
         'oroproduct/js/app/datagrid/sorting/backend-dropdown': 'bundles/oroproduct/js/app/datagrid/sorting/backend-dropdown.js'
+        'oroproduct/js/app/datagrid/listener/related-product-listener': 'bundles/oroproduct/js/app/datagrid/listener/related-product-listener.js'
         'oroproduct/js/app/components/product-name-popup-editor-component': 'bundles/oroproduct/js/app/components/product-name-popup-editor-component.js'
         'oroproduct/js/app/components/product-variant-field-component': 'bundles/oroproduct/js/app/components/product-variant-field-component.js'
         'oroproduct/js/app/components/product-collection-apply-query-component': 'bundles/oroproduct/js/app/components/product-collection-apply-query-component.js'
+        'oro/related-items-widget': 'bundles/oroproduct/js/app/widget/related-items-widget.js'
         'oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent': 'bundles/oroproduct/js/app/components/product-collection-inclusion-exclusion-subcomponent.js'
         'oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent': 'bundles/oroproduct/js/app/components/product-collection-selected-product-grid-subcomponent.js'
         'oro/datagrid/action/trigger-event-for-selected-product-ids-mass-action': 'bundles/oroproduct/js/datagrid/action/trigger-event-for-selected-product-ids-mass-action.js'
 
     shim:
-        'tinymce/plugins/fullscreen/plugin.min':
-            deps:
-                - 'tinymce/tinymce.min'
         'oroproduct/js/app/components/product-unit-selection-limitations-component':
             deps:
                 - 'oroproduct/js/app/components/product-primary-unit-limitations-component'

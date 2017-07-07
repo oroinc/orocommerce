@@ -30,7 +30,10 @@ class QuickAddImportFromFileType extends AbstractType
                                 'mimeTypes' => [
                                     'text/plain',
                                     'application/zip',
-                                    'application/vnd.oasis.opendocument.spreadsheet'
+                                    'application/vnd.oasis.opendocument.spreadsheet',
+                                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                    // xlsx
+                                    'application/octet-stream'
                                 ],
                                 'mimeTypesMessage' => 'oro.product.frontend.quick_add.invalid_file_type'
                             ]

@@ -1,4 +1,4 @@
-@fixture-product_collection_add.yml
+@fixture-OroProductBundle:product_collection_add.yml
 Feature:
   In order to changes products included in product collection to reflected on store frontend
   As an Administrator
@@ -40,12 +40,12 @@ Feature:
     And go to Products/ Products
     And I click view Product 2 in grid
     And I click "Edit"
-    And I fill form with:
+    And I fill "ProductForm" with:
       | SKU | XSKU |
     And I save and close form
     Then I should see "Product has been saved" flash message
 
-  Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at backend
+    Scenario: "Product 2" that already not confirm to filter, excluded from product collection grid at backend
     When I go to Marketing/Web Catalogs
     And I click "Edit Content Tree" on row "Default Web Catalog" in grid
     Then I should see following grid:
@@ -64,7 +64,7 @@ Feature:
     And go to Products/ Products
     And I click view Product 2 in grid
     And I click "Edit"
-    And I fill form with:
+    And I fill "ProductForm" with:
       | SKU | PSKU2 |
     And I save and close form
     Then I should see "Product has been saved" flash message

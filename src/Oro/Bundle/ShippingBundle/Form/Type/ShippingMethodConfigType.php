@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,9 +19,9 @@ class ShippingMethodConfigType extends AbstractType
     const NAME = 'oro_shipping_method_config';
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
      * @var MethodConfigSubscriber
@@ -29,13 +29,15 @@ class ShippingMethodConfigType extends AbstractType
     protected $subscriber;
 
     /**
-     * @param MethodConfigSubscriber $subscriber
-     * @param ShippingMethodRegistry $methodRegistry
+     * @param MethodConfigSubscriber          $subscriber
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(MethodConfigSubscriber $subscriber, ShippingMethodRegistry $methodRegistry)
-    {
+    public function __construct(
+        MethodConfigSubscriber $subscriber,
+        ShippingMethodProviderInterface $shippingMethodProvider
+    ) {
         $this->subscriber = $subscriber;
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -58,7 +60,7 @@ class ShippingMethodConfigType extends AbstractType
         $methodsLabels = [];
         $methodsIcons = [];
         /* @var ShippingMethodInterface|ShippingMethodIconAwareInterface $method */
-        foreach ($this->methodRegistry->getShippingMethods() as $method) {
+        foreach ($this->shippingMethodProvider->getShippingMethods() as $method) {
             $methodsLabels[$method->getIdentifier()] = $method->getLabel();
             $methodsIcons[$method->getIdentifier()] = $method->getIcon();
         }

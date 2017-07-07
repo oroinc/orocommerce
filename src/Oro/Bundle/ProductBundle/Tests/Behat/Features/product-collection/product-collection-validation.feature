@@ -1,4 +1,4 @@
-@fixture-product_collection_add.yml
+@fixture-OroProductBundle:product_collection_add.yml
 Feature:
   In order to be sure that added Product Collection is valid
   As and Administrator

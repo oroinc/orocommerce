@@ -3,7 +3,21 @@ placeholders:
         oro_product_quick_add_buttons:
             items:
                 quick_add_actions_buttons: ~
+        oro_product_related_items_view: ~
+        oro_product_related_items_edit: ~
+        oro_product_related_products_buttons:
+            items:
+                oro_product_select_related_products_button: ~
+
+        requirejs_config_extend:
+            items:
+                oro_product_requirejs_config:
+                    order: 100
 
     items:
         quick_add_actions_buttons:
             template: OroActionBundle:Widget:buttons.html.twig
+        oro_product_select_related_products_button:
+            template: OroProductBundle:Product:selectRelatedProductsButton.html.twig
+        oro_product_requirejs_config:
+            template: OroProductBundle::requirejs.config.js.twig

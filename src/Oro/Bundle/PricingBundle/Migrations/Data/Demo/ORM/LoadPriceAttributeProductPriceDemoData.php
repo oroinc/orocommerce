@@ -12,6 +12,19 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
     /**
+     * @inheritDoc
+     */
+    public function getDependencies()
+    {
+        return array_merge(
+            parent::getDependencies(),
+            [
+                LoadPriceAttributePriceListDemoData::class,
+            ]
+        );
+    }
+
+    /**
      * {@inheritdoc}
      * @param EntityManager $manager
      */
@@ -28,12 +41,8 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
         $headers = fgetcsv($handler, 1000, ',');
 
         $priceAttributes = [
-            'MSRP' => [
-                'currencies' => [$this->getDefaultCurrency()],
-            ],
-            'MAP' => [
-                'currencies' => [$this->getDefaultCurrency()],
-            ],
+            'MSRP',
+            'MAP',
         ];
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
@@ -41,9 +50,9 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
 
             $product = $this->getProductBySku($manager, $row['sku']);
             $productUnit = $this->getProductUnit($manager, $row['unit']);
-            foreach ($priceAttributes as $attributeName => $attributeOptions) {
+            foreach ($priceAttributes as $attributeName) {
                 $priceAttributePriceList = $this->getPriceAttribute($manager, $attributeName);
-                foreach ($attributeOptions['currencies'] as $currency) {
+                foreach ($priceAttributePriceList->getCurrencies() as $currency) {
                     $amount = round($row[$attributeName], 2);
                     $price = Price::create($amount, $currency);
 

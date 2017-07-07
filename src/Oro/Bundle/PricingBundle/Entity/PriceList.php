@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @ORM\Table(name="oro_price_list")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
  * @Config(
@@ -188,7 +189,7 @@ class PriceList extends ExtendPriceList
     public function removeSchedule(PriceListSchedule $schedule)
     {
         $this->schedules->removeElement($schedule);
-        $this->containSchedule = !$this->schedules->isEmpty();
+        $this->refreshContainSchedule();
 
         return $this;
     }
@@ -210,6 +211,11 @@ class PriceList extends ExtendPriceList
         $this->containSchedule = $containSchedule;
 
         return $this;
+    }
+
+    public function refreshContainSchedule()
+    {
+        $this->setContainSchedule(!$this->schedules->isEmpty());
     }
 
     /**
@@ -329,5 +335,33 @@ class PriceList extends ExtendPriceList
         $this->actual = $actual;
 
         return $this;
+    }
+
+    /**
+     * Set API currencies
+     *
+     * @param string[]|null $currencies
+     *
+     * @return PriceList
+     */
+    public function setPriceListCurrencies($currencies): self
+    {
+        if (!$currencies) {
+            $currencies = [];
+        }
+
+        $this->setCurrencies($currencies);
+
+        return $this;
+    }
+
+    /**
+     * Get API currencies
+     *
+     * @return string[]
+     */
+    public function getPriceListCurrencies(): array
+    {
+        return $this->getCurrencies();
     }
 }

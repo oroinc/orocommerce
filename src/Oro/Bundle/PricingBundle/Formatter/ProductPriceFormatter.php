@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Formatter;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
@@ -62,20 +63,50 @@ class ProductPriceFormatter
         foreach ($units as $unit => $pricesData) {
             foreach ($pricesData as $priceData) {
                 $quantity = $priceData['quantity'];
-                $price = $priceData['price'];
-                $index = sprintf('%s_%s', $unit, $quantity);
-                $currencyIsoCode = $priceData['currency'];
-                $productData[$index] = [
-                    'price' => $price,
-                    'currency' => $currencyIsoCode,
-                    'formatted_price' => $this->numberFormatter->formatCurrency($price, $currencyIsoCode),
+                $data = [
+                    'price' => $priceData['price'],
+                    'currencyIsoCode' => $priceData['currency'],
                     'unit' => $unit,
-                    'formatted_unit' => $this->unitLabelFormatter->format($unit),
-                    'quantity' => $quantity,
-                    'quantity_with_unit' => $this->unitValueFormatter->formatCode($quantity, $unit)
+                    'quantity' => $quantity
                 ];
+
+                $index = sprintf('%s_%s', $unit, $quantity);
+                $productData[$index] = $this->getFormattedProductPrice($data);
             }
         }
         return $productData;
+    }
+
+    /**
+     * @param BaseProductPrice $price
+     * @return array
+     */
+    public function formatProductPrice(BaseProductPrice $price)
+    {
+        $data = [
+            'price' => $price->getPrice()->getValue(),
+            'currencyIsoCode' => $price->getPrice()->getCurrency(),
+            'unit' => $price->getUnit()->getCode(),
+            'quantity' => $price->getQuantity()
+        ];
+
+        return $this->getFormattedProductPrice($data);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    private function getFormattedProductPrice(array $data)
+    {
+        return [
+            'price' => $data['price'],
+            'currency' => $data['currencyIsoCode'],
+            'formatted_price' => $this->numberFormatter->formatCurrency($data['price'], $data['currencyIsoCode']),
+            'unit' => $data['unit'],
+            'formatted_unit' => $this->unitLabelFormatter->format($data['unit']),
+            'quantity' => $data['quantity'],
+            'quantity_with_unit' => $this->unitValueFormatter->formatCode($data['quantity'], $data['unit'])
+        ];
     }
 }

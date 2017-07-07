@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Context\LineItem\Collection\Doctri
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 
-class PaymentLineItemCollectionTest extends \PHPUnit_Framework_TestCase
+class DoctrinePaymentLineItemCollectionTest extends \PHPUnit_Framework_TestCase
 {
     public function testCollection()
     {

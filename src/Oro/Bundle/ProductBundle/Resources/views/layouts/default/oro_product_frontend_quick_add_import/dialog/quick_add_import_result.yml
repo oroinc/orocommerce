@@ -1,4 +1,13 @@
 layout:
+    imports:
+        -
+            id: oro_product_quick_add_validation
+            root: widget_content
+        -
+            id: oro_product_quick_add_form
+            root: quick_add_validation
+            namespace: quick_add_import
+
     actions:
         - '@setBlockTheme':
             themes: 'quick_add_import_result.html.twig'
@@ -18,7 +27,7 @@ layout:
             options:
                 type: button
                 action: button
-                text: Back
+                text: 'oro.product.frontend.quick_add.import_validation.back'
                 style: ''
                 attr:
                     'data-url': '=data["backToUrl"]'
@@ -30,12 +39,5 @@ layout:
             id: widget_actions
             parentId: quick_add_form
             siblingId: quick_add_form_buttons
-    imports:
-        -
-            id: oro_product_quick_add_validation
-            root: widget_content
-        -
-            id: oro_product_quick_add_form
-            root: quick_add_validation
     conditions: 'context["import_step"]=="result"'
 

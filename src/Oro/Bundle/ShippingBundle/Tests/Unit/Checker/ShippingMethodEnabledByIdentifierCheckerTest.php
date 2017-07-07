@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Checker;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker;
 
 class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_TestCase
@@ -14,9 +14,9 @@ class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_Te
     protected $method;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $shippingMethodProvider;
 
     /**
      * @var ShippingMethodEnabledByIdentifierChecker
@@ -27,9 +27,11 @@ class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_Te
     {
         $this->method = $this->createMock(ShippingMethodInterface::class);
 
-        $this->registry = $this->createMock(ShippingMethodRegistry::class);
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
-        $this->shippingMethodEnabledByIdentifierChecker = new ShippingMethodEnabledByIdentifierChecker($this->registry);
+        $this->shippingMethodEnabledByIdentifierChecker = new ShippingMethodEnabledByIdentifierChecker(
+            $this->shippingMethodProvider
+        );
     }
 
     public function testIsEnabledForEnabledMethod()
@@ -41,7 +43,7 @@ class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_Te
             ->method('isEnabled')
             ->willReturn(true);
 
-        $this->registry
+        $this->shippingMethodProvider
             ->expects(static::any())
             ->method('getShippingMethod')
             ->with($identifier)
@@ -59,7 +61,7 @@ class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_Te
             ->method('isEnabled')
             ->willReturn(false);
 
-        $this->registry
+        $this->shippingMethodProvider
             ->expects(static::any())
             ->method('getShippingMethod')
             ->with($identifier)
@@ -72,7 +74,7 @@ class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit_Framework_Te
     {
         $identifier = 'shipping_method_1';
 
-        $this->registry
+        $this->shippingMethodProvider
             ->expects(static::any())
             ->method('getShippingMethod')
             ->with($identifier)

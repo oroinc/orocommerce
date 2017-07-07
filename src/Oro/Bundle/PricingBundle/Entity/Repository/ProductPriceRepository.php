@@ -5,11 +5,13 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
@@ -150,6 +152,39 @@ class ProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
+     * @param ShardManager $shardManager
+     * @param PriceList $priceList
+     * @param array $productSkus
+     * @return ProductPrice[]
+     */
+    public function findByPriceListAndProductSkus(ShardManager $shardManager, PriceList $priceList, array $productSkus)
+    {
+        $qb = $this->createQueryBuilder('price');
+
+        // ensure all skus are strings to avoid postgres's "No operator matches the given name and argument type(s)."
+        array_walk($productSkus, function (& $sku) {
+            $sku = (string)$sku;
+        });
+
+        $query = $qb->leftJoin('price.product', 'product')
+            ->andWhere('product.sku in (:productSkus)')
+            ->andWhere('price.priceList = :priceList')
+            ->addOrderBy($qb->expr()->asc('price.unit'))
+            ->addOrderBy($qb->expr()->asc('price.currency'))
+            ->addOrderBy($qb->expr()->asc('price.quantity'))
+            ->setParameters([
+                'productSkus' => $productSkus,
+                'priceList' => $priceList
+            ])
+            ->getQuery();
+
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+
+        return $query->getResult();
+    }
+    
+    /**
      * {@inheritdoc}
      */
     public function getProductIdsByPriceLists(array $priceLists)
@@ -241,7 +276,6 @@ class ProductPriceRepository extends BaseProductPriceRepository
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
-
         throw new \LogicException('Method locked because of sharded tables');
     }
 

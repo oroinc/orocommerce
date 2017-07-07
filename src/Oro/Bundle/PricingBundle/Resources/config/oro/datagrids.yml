@@ -705,3 +705,20 @@ datagrids:
                 link:          update_link
                 icon:          pencil-square-o
                 acl_resource:  oro_pricing_price_attribute_price_list_update
+
+    product-price-attributes-grid:
+        acl_resource:      oro_pricing_price_attribute_price_list_view
+        options:
+            toolbarOptions:
+                hide: true
+                pagination:
+                    onePage: true
+        source:
+            type: array
+        columns:
+            unit:
+                label: oro.pricing.priceAttribute.unit.label
+        sorters:
+            columns:
+                unit:
+                    data_name: unit
