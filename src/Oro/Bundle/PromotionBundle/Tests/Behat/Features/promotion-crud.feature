@@ -1,4 +1,4 @@
-@fixture-promotion_crud.yml
+@fixture-OroPromotionBundle:promotion_crud.yml
 Feature: Managing promotions
   In order to use promotions on front store
   As an Administrator

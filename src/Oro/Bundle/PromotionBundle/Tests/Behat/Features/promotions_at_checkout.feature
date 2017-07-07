@@ -1,7 +1,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-promotions.yml
-@fixture-shopping_list.yml
+@fixture-OroPromotionBundle:promotions.yml
+@fixture-OroPromotionBundle:shopping_list.yml
 Feature: Promotions at Checkout
   In order to find out applied discounts at checkout
   As an site user
