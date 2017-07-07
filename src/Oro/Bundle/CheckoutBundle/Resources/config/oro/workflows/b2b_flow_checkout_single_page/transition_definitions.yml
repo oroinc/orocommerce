@@ -150,8 +150,6 @@ workflows:
                             events: ['extendable_condition.before_order_create']
 
                 actions:
-                    - '@assign_value': [$shipping_method, null]
-
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_update_billing_address
                         parameters_mapping:
