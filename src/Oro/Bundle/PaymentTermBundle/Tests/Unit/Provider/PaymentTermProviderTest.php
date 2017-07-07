@@ -152,7 +152,41 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
     }
 
-    public function testGetCurrentForCustomerVisitor()
+    public function testGetCurrentForCustomerVisitorWithoutCustomerUser()
+    {
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+        $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $visitor = new CustomerVisitor();
+        $token->expects($this->once())
+            ->method('getVisitor')
+            ->will($this->returnValue($visitor));
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+        $this->assertNull($this->provider->getCurrentPaymentTerm());
+    }
+
+    public function testGetCurrentForCustomerVisitorWithoutCustomer()
+    {
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
+        $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+        $visitor = new CustomerVisitor();
+        $customerUser = new CustomerUser();
+        $visitor->setCustomerUser($customerUser);
+        $token->expects($this->exactly(2))
+            ->method('getVisitor')
+            ->will($this->returnValue($visitor));
+        $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
+        $this->assertNull($this->provider->getCurrentPaymentTerm());
+    }
+
+    public function testGetCurrentForCustomerVisitorWithCustomerUser()
     {
         $this->eventDispatcher
             ->expects($this->once())
@@ -166,7 +200,7 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
         $visitor->setCustomerUser($customerUser);
-        $token->expects($this->once())
+        $token->expects($this->exactly(3))
             ->method('getVisitor')
             ->will($this->returnValue($visitor));
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
