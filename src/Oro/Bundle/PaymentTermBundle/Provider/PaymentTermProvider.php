@@ -65,12 +65,20 @@ class PaymentTermProvider
 
         $paymentTermEvent = new ResolvePaymentTermEvent();
 
-        if ($token && ($token->getUser() instanceof CustomerUser || $token instanceof AnonymousCustomerUserToken)) {
-            /** @var CustomerUser $user */
-            $user = $token instanceof AnonymousCustomerUserToken ?
-                $token->getVisitor()->getCustomerUser() :
-                $token->getUser();
-            $paymentTermEvent->setPaymentTerm($this->getPaymentTerm($user->getCustomer()));
+        if ($token) {
+            if ($token->getUser() instanceof CustomerUser) {
+                $user = $token->getUser();
+                $paymentTermEvent->setPaymentTerm($this->getPaymentTerm($user->getCustomer()));
+            } elseif ($token instanceof AnonymousCustomerUserToken
+                && $token->getVisitor()->getCustomerUser()
+                && $token->getVisitor()->getCustomerUser()->getCustomer()
+            ) {
+                $paymentTermEvent->setPaymentTerm(
+                    $this->getPaymentTerm(
+                        $token->getVisitor()->getCustomerUser()->getCustomer()
+                    )
+                );
+            }
         }
 
         $this->eventDispatcher->dispatch(ResolvePaymentTermEvent::NAME, $paymentTermEvent);

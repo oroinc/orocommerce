@@ -1,6 +1,6 @@
 @ticket-BB-9302
 @automatically-ticket-tagged
-@fixture-Products_view_page_templates.yml
+@fixture-OroProductBundle:Products_view_page_templates.yml
 Feature: Product View Page Templates
 
   In order to modify look and feel of the product view page

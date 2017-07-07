@@ -45,6 +45,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
+                        'guest_checkout' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
                         'resolved' => true
                     ]
                 ]

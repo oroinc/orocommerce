@@ -17,7 +17,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
-use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
@@ -39,18 +38,26 @@ class QuickAddRowCollectionBuilder
     protected $eventDispatcher;
 
     /**
+     * @var QuickAddRowInputParser
+     */
+    protected $quickAddRowInputParser;
+
+    /**
      * @param EntityRepository $productRepository
      * @param ProductManager $productManager
      * @param EventDispatcherInterface $eventDispatcher
+     * @param QuickAddRowInputParser $quickAddRowInputParser
      */
     public function __construct(
         EntityRepository $productRepository,
         ProductManager $productManager,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        QuickAddRowInputParser $quickAddRowInputParser
     ) {
         $this->productRepository = $productRepository;
         $this->productManager = $productManager;
         $this->eventDispatcher = $eventDispatcher;
+        $this->quickAddRowInputParser = $quickAddRowInputParser;
     }
 
     /**
@@ -77,13 +84,12 @@ class QuickAddRowCollectionBuilder
                 continue;
             }
 
-            $sku = $product[ProductDataStorage::PRODUCT_SKU_KEY];
-            $quantity = $product[ProductDataStorage::PRODUCT_QUANTITY_KEY];
-
-            $collection->add(new QuickAddRow($index, $sku, $quantity));
+            $collection->add(
+                $this->quickAddRowInputParser->createFromRequest($product, $index)
+            );
         }
 
-        $this->mapProductsAndValidate($collection);
+        $this->mapProducts($collection);
 
         return $collection;
     }
@@ -95,18 +101,27 @@ class QuickAddRowCollectionBuilder
      */
     public function buildFromFile(UploadedFile $file)
     {
+        $lineNumber = 0;
         $collection = new QuickAddRowCollection();
         $collection->setEventDispatcher($this->eventDispatcher);
 
         $reader = $this->createReaderForFile($file);
         $reader->open($file->getRealPath());
-        $collectionBySkus = $this->buildCollectionBySkuFromFile($reader);
 
-        foreach ($collectionBySkus as $sku => $row) {
-            $collection->add(new QuickAddRow($row['lineNumber'], $sku, $row['quantity']));
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                if (0 === $lineNumber || empty($row[0])) {
+                    $lineNumber++;
+                    continue;
+                }
+
+                $collection->add(
+                    $this->quickAddRowInputParser->createFromFileLine($row, $lineNumber++)
+                );
+            }
         }
 
-        $this->mapProductsAndValidate($collection);
+        $this->mapProducts($collection);
 
         return $collection;
     }
@@ -120,62 +135,20 @@ class QuickAddRowCollectionBuilder
         $collection = new QuickAddRowCollection();
         $collection->setEventDispatcher($this->eventDispatcher);
         $lineNumber = 1;
-        $collectionBySkus = [];
 
         $text = trim($text);
         if ($text) {
             foreach (explode(PHP_EOL, $text) as $line) {
                 $data = preg_split('/(\t|\,|\ )+/', $line);
-                $sku = trim($data[0]);
-                $quantity = isset($data[1]) ? (float)trim($data[1]) : null;
-                if (isset($collectionBySkus[$sku])) {
-                    $collectionBySkus[$sku]['quantity'] += $quantity;
-                } else {
-                    $collectionBySkus[$sku] = [
-                        'quantity' => $quantity,
-                        'lineNumber' => $lineNumber++,
-                    ];
-                }
+                $collection->add(
+                    $this->quickAddRowInputParser->createFromCopyPasteTextLine($data, $lineNumber++)
+                );
             }
         }
-        foreach ($collectionBySkus as $sku => $row) {
-            $collection->add(new QuickAddRow($row['lineNumber'], $sku, $row['quantity']));
-        }
 
-        $this->mapProductsAndValidate($collection);
+        $this->mapProducts($collection);
 
         return $collection;
-    }
-
-    /**
-     * @param ReaderInterface $reader
-     * @return array
-     */
-    public function buildCollectionBySkuFromFile($reader)
-    {
-        $collectionBySkus = [];
-        $lineNumber = 0;
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $row) {
-                if (0 === $lineNumber || empty($row[0])) {
-                    $lineNumber++;
-                    continue;
-                }
-                $lineNumber++;
-                $sku = isset($row[0]) ? trim($row[0]) : null;
-                $quantity = isset($row[1]) ? (float)trim($row[1]) : null;
-                if (isset($collectionBySkus[$sku])) {
-                    $collectionBySkus[$sku]['quantity'] += $quantity;
-                } else {
-                    $collectionBySkus[$sku] = [
-                        'quantity' => $quantity,
-                        'lineNumber' => $lineNumber,
-                    ];
-                }
-            }
-        }
-
-        return $collectionBySkus;
     }
 
     /**
@@ -228,9 +201,9 @@ class QuickAddRowCollectionBuilder
     /**
      * @param QuickAddRowCollection $collection
      */
-    private function mapProductsAndValidate(QuickAddRowCollection $collection)
+    private function mapProducts(QuickAddRowCollection $collection)
     {
         $products = $this->getRestrictedProductsBySkus($collection->getSkus());
-        $collection->mapProducts($products)->validate();
+        $collection->mapProducts($products);
     }
 }

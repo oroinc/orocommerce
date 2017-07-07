@@ -114,7 +114,7 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
         $primaryId = null;
         if ($object instanceof PriceList) {
             $primaryId = $object->getId();
-        } elseif ($object instanceof PriceRule) {
+        } elseif ($object instanceof PriceRule && $object->getPriceList() !== null) {
             $primaryId = $object->getPriceList()->getId();
         }
         return $primaryId;

@@ -1,0 +1,29 @@
+// @theme: default;
+
+.quick-order-copy-paste {
+  float: $quick-order-copy-paste-float;
+  clear: $quick-order-copy-paste-clear;
+
+  width: $quick-order-copy-paste-width;
+
+  &__title {
+    margin: $quick-order-copy-paste-title-margin;
+
+    font-size: $base-font-size;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  &__description {
+    margin: $quick-order-copy-paste-description-margin;
+  }
+
+  &__textarea {
+    height: $quick-order-copy-paste-textarea-height;
+  }
+
+  &__buttons {
+    float: right;
+    margin: $quick-order-copy-paste-buttons-margin;
+  }
+}

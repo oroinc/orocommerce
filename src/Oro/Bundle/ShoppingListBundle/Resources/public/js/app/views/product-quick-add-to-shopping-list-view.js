@@ -4,19 +4,11 @@ define(function(require) {
     var ProductQuickAddToShoppingListView;
     var ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
     var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
 
     ProductQuickAddToShoppingListView = ProductAddToShoppingListView.extend({
         initialize: function(options) {
             ProductQuickAddToShoppingListView.__super__.initialize.apply(this, arguments);
             this.options.quickAddComponentPrefix = options.quickAddComponentPrefix;
-
-            if (this.formHasErrors()) {
-                this.$el.addClass('btn-inactive');
-            }
-
-            this.$el.find('.add-to-shopping-list-button').on('click', _.bind(this.submit, this));
-            this.$el.on('click', _.bind(this.submit, this));
         },
 
         _addProductToShoppingList: function(url, urlOptions, formData) {
@@ -30,17 +22,20 @@ define(function(require) {
         /**
          * @param {$.Event} e
          */
-        submit: function(e) {
+        onClick: function(e) {
             e.preventDefault();
             e.stopPropagation();
 
             if (this.formHasErrors()) {
-                e.stopImmediatePropagation();
+                return;
             }
+
+            ProductQuickAddToShoppingListView.__super__.onClick.apply(this, arguments);
         },
 
         formHasErrors: function() {
-            return this.$el.closest('.validation-info').find('.import-errors').length;
+            return !this.$form.validate().valid() ||
+                this.$form.find('.product-autocomplete-error .validation-failed:visible').length;
         }
     });
 

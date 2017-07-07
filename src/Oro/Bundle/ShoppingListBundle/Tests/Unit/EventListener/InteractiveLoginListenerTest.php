@@ -225,8 +225,6 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
 
-        $customerUser = $this->configureToken();
-
         $shoppingList = new ShoppingList();
         $shoppingList->addLineItem(new LineItem());
         $visitor = new CustomerVisitorStub();
@@ -236,6 +234,7 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
             ->willReturn($visitor);
 
+        $customerUser = $this->configureToken();
         $this->guestShoppingListMigrationManager->expects($this->once())
             ->method('migrateGuestShoppingList')
             ->with($visitor, $customerUser, $shoppingList)
