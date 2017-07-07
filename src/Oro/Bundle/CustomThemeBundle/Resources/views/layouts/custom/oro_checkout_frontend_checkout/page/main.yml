@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCheckoutBundle:layouts:custom/oro_checkout_frontend_checkout/templates/main.html.twig'
+            themes: 'OroCustomThemeBundle:layouts:custom/oro_checkout_frontend_checkout/templates/main.html.twig'
 
         - '@setOption':
             id: page_title_container
@@ -12,7 +12,6 @@ layout:
             id: checkout_container
             blockType: container
             parentId: page_content
-            siblingId: checkout_sidebar
 
         - '@move':
             id: checkout_content

@@ -7,4 +7,5 @@ layout:
         - '@move':
             id: checkout_sidebar
             parentId: page_content
+            siblingId: checkout_container
             prepend: true
