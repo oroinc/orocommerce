@@ -10,7 +10,7 @@ oro:
         general:
             type:
                 label: Type
-                tooltip: Discount type
+                tooltip: Based on the type, promotion either enables a discount by some % of the line item price or introduces a fixed discount (e.g. -10USD) off the line item price. Note that when a fixed discount is used, the promotion applies to the order in the selected currency only.
                 choices:
                     amount: Fixed Amount
                     percent: Percent
@@ -26,7 +26,7 @@ oro:
                     line_items_total: Line Items Total
             maximum_qty:
                 label: Maximum Qty Discount is Applied To
-                tooltip: Maximum Qty Discount is Applied To Each Line Item
+                tooltip: The quantity of products of the same type eligible for a discount in a line item/order. For example, when the limit is set to 10 and a buyer orders 100 items, they will be charged the discounted price for 10 items out of 100, and will pay the full price for the remaining 90 items.
         buy_x_get_y_type:
             buy_x.label: Buy X
             get_y.label: Get Y
@@ -39,7 +39,7 @@ oro:
                     apply_to_xy_total: X + Y Total
             limit_times:
                 label: Limit, times
-                tooltip: The limitation on how many sets of X+Y can be applied to a single line item.
+                tooltip: The quantity of discounted groups (X+Y) of the same type eligible for a discount in a line item/order. For example, when the limit is set to 2 and a buyer orders 3 groups of 3+2 items (15 in total), they will be charged the discounted price for 2 groups out of 3, and will pay the full price for the remaining one group.
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
@@ -50,7 +50,7 @@ oro:
         discount_configuration.label: Discount Configuration
         labels.label: Labels
         labels.tooltip: This label will be displayed to user
-        name.tooltip: Name tooltip
+        name.tooltip: The promotion name will show in the order details.
         organization.label: Organization
         owner.label: Owner
         products_segment.label: Product Segment
