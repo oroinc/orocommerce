@@ -50,3 +50,11 @@ services:
                         value: {default: '=data["frontend_product_prices"].getByProduct(entity)'}
         tags:
              - { name: layout.block_type, alias: attribute_prices }
+
+    oro_pricing.layout.type.price:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{price: {required: true}}]]
+            - [setName, ['price']]
+        tags:
+             - { name: layout.block_type, alias: price }

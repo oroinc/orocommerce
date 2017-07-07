@@ -1,7 +1,7 @@
 @ticket-BB-7664
 @automatically-ticket-tagged
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-ShippingMethodsConfigsRule.yml
+@fixture-OroShippingBundle:ShippingMethodsConfigsRule.yml
 Feature: Shipping Method Configurations disappear when removing integration
   #If integration will be disabled, then during saving we need to inform (show pop-up) admin about existing shipping rules which will be disabled/modified after this integration will be disabled. We also have to provide link to the grid with list of such rules in this pop-up.
   #If administrator wants to disable integration temporary, and if shipping rule contain other enabled methods. After integration will be disabled, we have to change shipping rule and mark disabled methods with label “disabled”. If shipping rule contains only one method which was disabled, then we have to disable this rule.

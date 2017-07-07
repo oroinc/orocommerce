@@ -1,4 +1,4 @@
-@fixture-product_collection_edit.yml
+@fixture-OroProductBundle:product_collection_edit.yml
 Feature:
   In order to edit content node
   As an Administrator

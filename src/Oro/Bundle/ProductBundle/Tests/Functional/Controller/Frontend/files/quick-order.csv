@@ -1,7 +1,10 @@
-Item Number,Quantity
+Item Number,Quantity,Unit
 product-1, 1
+product-1, 1.4, liter
+product-1, 5, box
 product-2, 2.55
-product-3, 3
+product-3, 3,
+product-3, 3, liter5
 SKU1,10.0112
 SKU2,asd
 SKU3,
