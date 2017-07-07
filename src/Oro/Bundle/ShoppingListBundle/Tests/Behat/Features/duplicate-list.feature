@@ -1,4 +1,4 @@
-@fixture-DuplicateList.yml
+@fixture-OroShoppingListBundle:DuplicateList.yml
 Feature: Duplicate Lists
   In order to create multiple similar orders
   As a Customer User
