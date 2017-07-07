@@ -26,6 +26,7 @@ class OroProductExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('expression_services.yml');
         $loader->load('processors.api.yml');
+        $loader->load('system_configuration_services.yml');
         $loader->load('related_items.yml');
 
         $container->prependExtensionConfig($this->getAlias(), $config);
