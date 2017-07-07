@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Provider\EnabledMethodsShippingPriceProviderDecorator;
 use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
@@ -21,9 +21,9 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit_Framewor
     protected $shippingPriceProvider;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $shippingMethodProvider;
 
     /**
      * @var EnabledMethodsShippingPriceProviderDecorator
@@ -33,10 +33,10 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit_Framewor
     protected function setUp()
     {
         $this->shippingPriceProvider = $this->createMock(ShippingPriceProviderInterface::class);
-        $this->registry = $this->createMock(ShippingMethodRegistry::class);
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->decorator = new EnabledMethodsShippingPriceProviderDecorator(
             $this->shippingPriceProvider,
-            $this->registry
+            $this->shippingMethodProvider
         );
     }
 
@@ -65,7 +65,7 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit_Framewor
             ->with($context)
             ->willReturn($methodViewCollection);
 
-        $this->registry->expects($this->any())
+        $this->shippingMethodProvider->expects($this->any())
             ->method('getShippingMethod')
             ->will($this->returnCallback(function ($methodId) use ($methods) {
                 return array_key_exists($methodId, $methods) ? $methods[$methodId] : null;

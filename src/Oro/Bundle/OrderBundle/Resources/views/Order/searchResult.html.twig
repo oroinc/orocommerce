@@ -13,6 +13,8 @@
 {% set entityType = 'oro.order.entity_label'|trans %}
 
 {% set entityInfo = [
+    {'title': 'oro.order.customer.label'|trans, 'value': entity.customer ? entity.customer : 'N/A'|trans},
+    {'title': 'oro.order.customer_user.label'|trans, 'value': entity.customerUser ? entity.customerUser.fullName : 'N/A'|trans},
     {'title': 'oro.ui.created_at'|trans, 'value': entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A'|trans},
     {'title': 'oro.ui.updated_at'|trans, 'value': entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A'|trans},
 ] %}

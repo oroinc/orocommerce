@@ -214,6 +214,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      * @param ProductUnitHolderInterface $productUnitHolder
      * @param Product $product
      * @param array $choices
+     *
      * @return bool
      */
     protected function isProductUnitRemoved(

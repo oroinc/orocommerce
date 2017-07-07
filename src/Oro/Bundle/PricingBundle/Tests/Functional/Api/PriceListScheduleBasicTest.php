@@ -19,14 +19,14 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
             ]
         );
 
-        $this->assertResponseContains('price_list_schedules_get.yml', $response);
+        $this->assertResponseContains('price_list_schedule/price_list_schedules_get.yml', $response);
     }
 
     public function testGetList()
     {
         $response = $this->cget(['entity' => 'pricelistschedules']);
 
-        $this->assertResponseContains('price_list_schedules_get_list.yml', $response);
+        $this->assertResponseContains('price_list_schedule/price_list_schedules_get_list.yml', $response);
     }
 
     public function testGetListByPriceListFilter()
@@ -39,7 +39,7 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
 
         $response = $this->cget(['entity' => 'pricelistschedules'], $parameters);
 
-        $this->assertResponseContains('price_list_schedules_get_list_by_pl_filter.yml', $response);
+        $this->assertResponseContains('price_list_schedule/price_list_schedules_get_list_by_pl_filter.yml', $response);
     }
 
     public function testGetSubResourcePriceList()
@@ -48,7 +48,7 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
             ['entity' => 'pricelistschedules', 'id' => '@schedule.1->id', 'association' => 'priceList']
         );
 
-        $this->assertResponseContains('price_list_schedules_get_sub_resources_pl.yml', $response);
+        $this->assertResponseContains('price_list_schedule/price_list_schedules_get_sub_resources_pl.yml', $response);
     }
 
     public function testGetRelationships()
@@ -67,34 +67,10 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
     {
         $response = $this->post(
             ['entity' => 'pricelistschedules'],
-            'price_list_schedules_create.yml'
+            'price_list_schedule/price_list_schedules_create.yml'
         );
 
-        $this->assertResponseContains('../requests/price_list_schedules_create.yml', $response);
-    }
-
-    public function testCreateSchedulesIntersect()
-    {
-        $response = $this->post(
-            ['entity' => 'pricelistschedules'],
-            'price_list_schedules_create.yml'
-        );
-
-        $this->assertResponseContains('../requests/price_list_schedules_create.yml', $response);
-
-        $routeParameters = self::processTemplateData(['entity' => 'pricelistschedules']);
-        $parameters = $this->getRequestData('price_list_schedules_create.yml');
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'Price list schedule segments should not intersect',
-            $response->getContent()
-        );
+        $this->assertResponseContains('../requests/price_list_schedule/price_list_schedules_create.yml', $response);
     }
 
     public function testUpdate()
@@ -103,7 +79,7 @@ class PriceListScheduleBasicTest extends AbstractPriceListScheduleTest
 
         $this->patch(
             ['entity' => 'pricelistschedules', 'id' => $schedule->getId()],
-            'price_list_schedules_update.yml'
+            'price_list_schedule/price_list_schedules_update.yml'
         );
 
         self::assertEquals(new \DateTime('2017-04-12T14:11:39Z'), $schedule->getActiveAt());

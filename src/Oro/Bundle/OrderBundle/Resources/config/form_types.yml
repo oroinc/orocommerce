@@ -77,7 +77,7 @@ services:
     oro_order.form.type.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType'
         arguments:
-            - '@?oro_shipping.shipping_method.registry'
+            - '@?oro_shipping.tracking_aware_shipping_methods_provider'
         tags:
             - { name: form.type }
 

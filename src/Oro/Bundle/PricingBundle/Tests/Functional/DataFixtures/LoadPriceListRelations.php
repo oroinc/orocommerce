@@ -21,6 +21,21 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
     const PRICE_LIST_TO_WEBSITE_3 = 'price_list_3_US';
     const PRICE_LIST_TO_WEBSITE_4 = 'price_list_3_Canada';
 
+    const PRICE_LIST_TO_CUSTOMER_GROUP_1 = 'price_list_6_US_customer_group1';
+    const PRICE_LIST_TO_CUSTOMER_GROUP_2 = 'price_list_1_US_customer_group1';
+    const PRICE_LIST_TO_CUSTOMER_GROUP_3 = 'price_list_5_US_customer_group1';
+    const PRICE_LIST_TO_CUSTOMER_GROUP_4 = 'price_list_4_US_customer_group2';
+    const PRICE_LIST_TO_CUSTOMER_GROUP_5 = 'price_list_5_Canada_customer_group3';
+
+    const PRICE_LIST_TO_CUSTOMER_US_1 = 'price_list_to_customer_US_1';
+    const PRICE_LIST_TO_CUSTOMER_US_2 = 'price_list_to_customer_US_2';
+    const PRICE_LIST_TO_CUSTOMER_US_3 = 'price_list_to_customer_US_3';
+    const PRICE_LIST_TO_CUSTOMER_US_4 = 'price_list_to_customer_US_4';
+    const PRICE_LIST_TO_CUSTOMER_US_5 = 'price_list_to_customer_US_5';
+    const PRICE_LIST_TO_CUSTOMER_US_6 = 'price_list_to_customer_US_6';
+    const PRICE_LIST_TO_CUSTOMER_CANADA_1 = 'price_list_to_customer_canada_1';
+    const PRICE_LIST_TO_CUSTOMER_CANADA_2 = 'price_list_to_customer_canada_2';
+
     /**
      * @var array
      */
@@ -49,11 +64,13 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             'priceListsToCustomers' => [
                 'customer.level_1_1' => [ // No group
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_US_1,
                         'priceList' => 'price_list_1',
                         'sort_order' => 300,
                         'mergeAllowed' => true,
                     ],
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_US_2,
                         'priceList' => 'price_list_2',
                         'sort_order' => 100,
                         'mergeAllowed' => false,
@@ -61,16 +78,19 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 ],
                 'customer.level_1.3' => [// Assigned to group1
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_US_3,
                         'priceList' => 'price_list_6',
                         'sort_order' => 100,
                         'mergeAllowed' => false,
                     ],
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_US_4,
                         'priceList' => 'price_list_4',
                         'sort_order' => 50,
                         'mergeAllowed' => true,
                     ],
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_US_5,
                         'priceList' => 'price_list_2',
                         'sort_order' => 80,
                         'mergeAllowed' => true,
@@ -78,6 +98,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 ],
                 'customer.level_1.2' => [ // Assigned to group2
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_US_6,
                         'priceList' => 'price_list_2',
                         'sort_order' => 100,
                         'mergeAllowed' => true,
@@ -87,16 +108,19 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             'priceListsToCustomerGroups' => [
                 'customer_group.group1' => [
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_GROUP_1,
                         'priceList' => 'price_list_6',
                         'sort_order' => 500,
                         'mergeAllowed' => false,
                     ],
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_GROUP_2,
                         'priceList' => 'price_list_1',
                         'sort_order' => 100,
                         'mergeAllowed' => true,
                     ],
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_GROUP_3,
                         'priceList' => 'price_list_5',
                         'sort_order' => 50,
                         'mergeAllowed' => false,
@@ -104,6 +128,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 ],
                 'customer_group.group2' => [
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_GROUP_4,
                         'priceList' => 'price_list_4',
                         'sort_order' => 100,
                         'mergeAllowed' => true,
@@ -123,6 +148,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             'priceListsToCustomers' => [
                 'customer.level_1_1' => [ // No group
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_CANADA_1,
                         'priceList' => 'price_list_1',
                         'sort_order' => 100,
                         'mergeAllowed' => true,
@@ -130,6 +156,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 ],
                 'customer.level_1.1.1' => [
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_CANADA_2,
                         'priceList' => 'price_list_5',
                         'sort_order' => 100,
                         'mergeAllowed' => true,
@@ -139,6 +166,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             'priceListsToCustomerGroups' => [
                 'customer_group.group3' => [
                     [
+                        'reference' => self::PRICE_LIST_TO_CUSTOMER_GROUP_5,
                         'priceList' => 'price_list_5',
                         'sort_order' => 100,
                         'mergeAllowed' => true,
@@ -186,6 +214,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     $this->fillRelationData($priceListToCustomer, $website, $priceListData);
 
                     $manager->persist($priceListToCustomer);
+                    $this->setReference($priceListData['reference'], $priceListToCustomer);
                 }
             }
 
@@ -198,6 +227,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     $this->fillRelationData($priceListToCustomerGroup, $website, $priceListData);
 
                     $manager->persist($priceListToCustomerGroup);
+                    $this->setReference($priceListData['reference'], $priceListToCustomerGroup);
                 }
             }
         }

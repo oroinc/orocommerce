@@ -8,11 +8,11 @@ layout:
         - '@setOption':
             id: top_selling_products
             optionName: items
-            optionValue: '=data["top_selling_items"].getAll()'
+            optionValue: '=data["top_selling_items"].getProducts()'
         - '@setOption':
             id: top_selling_products
             optionName: items_data.stickers
-            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["featured_products"].getAll())'
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["featured_products"].getProducts())'
         - '@setOption':
             id: top_selling_products
             optionName: label

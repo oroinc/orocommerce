@@ -1,4 +1,4 @@
-@fixture-OrderBackofficeDefaultFixture.yml
+@fixture-OroOrderBundle:OrderBackofficeDefaultFixture.yml
 Feature: Order Backoffice Default
 
   Scenario: See Order without Customer User by frontend administrator.

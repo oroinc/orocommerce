@@ -3,7 +3,7 @@ api:
         Oro\Bundle\OrderBundle\Entity\Order:
             form_event_subscriber:
                 - oro_order.form.type.event_listener.subtotals_subscriber
-                - oro_order.api.form_listener.default_website
+                - oro_website.form_subscriber.default_website
             actions:
                 create:
                     fields:

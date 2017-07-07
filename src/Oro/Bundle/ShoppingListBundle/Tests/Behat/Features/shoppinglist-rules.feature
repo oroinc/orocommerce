@@ -1,6 +1,6 @@
 @ticket-BB-6372
 @automatically-ticket-tagged
-@fixture-ShoppingListRule.yml
+@fixture-OroShoppingListBundle:ShoppingListRule.yml
 Feature: Shopping Lists
   Scenario: "Shopping List > Request A Quote" #1
     Given I login as AmandaRCole@example.org buyer

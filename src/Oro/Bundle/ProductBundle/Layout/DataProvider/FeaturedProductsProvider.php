@@ -2,24 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Cache\ChainCache;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Provider\ProductsProviderInterface;
+use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Psr\Log\LoggerInterface;
 
-class FeaturedProductsProvider
+class FeaturedProductsProvider implements ProductsProviderInterface
 {
     const FEATURED_PRODUCTS_CACHE_KEY = 'oro_product.layout.data_provider.featured_products_featured_products';
-
-    /**
-     * @var ChainCache
-     */
-    private $cache;
 
     /**
      * @var SegmentManager
@@ -37,51 +30,32 @@ class FeaturedProductsProvider
     private $configManager;
 
     /**
-     * @var LoggerInterface
+     * @var ProductSegmentProviderInterface
      */
-    private $logger;
+    private $productSegmentProvider;
 
     /**
-     * @param SegmentManager  $segmentManager
-     * @param ProductManager  $productManager
-     * @param ConfigManager   $configManager
-     * @param LoggerInterface $logger
-     * @param Cache           $cache
+     * @param SegmentManager                  $segmentManager
+     * @param ProductSegmentProviderInterface $productSegmentProvider
+     * @param ProductManager                  $productManager
+     * @param ConfigManager                   $configManager
      */
     public function __construct(
         SegmentManager $segmentManager,
+        ProductSegmentProviderInterface $productSegmentProvider,
         ProductManager $productManager,
-        ConfigManager $configManager,
-        LoggerInterface $logger,
-        Cache $cache
+        ConfigManager $configManager
     ) {
         $this->segmentManager = $segmentManager;
+        $this->productSegmentProvider = $productSegmentProvider;
         $this->productManager = $productManager;
         $this->configManager = $configManager;
-        $this->logger = $logger;
-        $this->cache = $cache;
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
-    public function getAll()
-    {
-        $items = [];
-        if ($this->cache->contains(static::FEATURED_PRODUCTS_CACHE_KEY)) {
-            $items = $this->cache->fetch(static::FEATURED_PRODUCTS_CACHE_KEY);
-        } else {
-            $items = $this->fetchProducts();
-            $this->cache->save(static::FEATURED_PRODUCTS_CACHE_KEY, $items);
-        }
-
-        return $items;
-    }
-
-    /**
-     * @return array|Product[]
-     */
-    private function fetchProducts()
+    public function getProducts()
     {
         $segment = $this->getSegment();
         if ($segment) {
@@ -102,22 +76,11 @@ class FeaturedProductsProvider
         $segmentId = $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID));
         if ($segmentId) {
-            $segment = $this->segmentManager->findById($segmentId);
-            if ($segment && $segment->getEntity() !== Product::class) {
-                $this->logger->error(
-                    sprintf('Expected "%s", but "%s" is given.', Product::class, $segment->getEntity()),
-                    [
-                        'id' => $segment->getId(),
-                        'name' => $segment->getName(),
-                        'entity' => $segment->getEntity(),
-                        'type' => $segment->getType()->getName(),
-                    ]
-                );
+            $segment = $this->productSegmentProvider->getProductSegmentById($segmentId);
 
-                return null;
+            if ($segment) {
+                return $segment;
             }
-
-            return $segment;
         }
 
         return null;

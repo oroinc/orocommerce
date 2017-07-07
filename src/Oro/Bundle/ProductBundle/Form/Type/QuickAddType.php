@@ -9,7 +9,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\ProductBundle\Model\ProductRow;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 
 class QuickAddType extends AbstractType
 {
@@ -18,6 +19,17 @@ class QuickAddType extends AbstractType
     const PRODUCTS_FIELD_NAME = 'products';
     const COMPONENT_FIELD_NAME = 'component';
     const ADDITIONAL_FIELD_NAME = 'additional';
+
+    /** @var ProductsGrouperFactory */
+    private $productsGrouperFactory;
+
+    /**
+     * @param ProductsGrouperFactory $productsGrouperFactory
+     */
+    public function __construct(ProductsGrouperFactory $productsGrouperFactory)
+    {
+        $this->productsGrouperFactory = $productsGrouperFactory;
+    }
 
     /**
      * {@inheritdoc}
@@ -93,25 +105,20 @@ class QuickAddType extends AbstractType
         if (!array_key_exists('products', $data)) {
             return;
         }
-        $productBySkus = [];
-        /** @var ProductRow $productRow */
-        foreach ($data['products'] as $productRow) {
-            if (empty($productRow['productSku']) || !isset($productRow['productQuantity'])) {
-                // keep empty row so same amount of rows are rendered as default setup
-                $productBySkus[] = $productRow;
-                continue;
-            }
 
-            if (!isset($productBySkus[$productRow['productSku']])) {
-                $productBySkus[$productRow['productSku']] = $productRow;
-                continue;
-            }
-
-            $productBySkus[$productRow['productSku']]['productQuantity'] += $productRow['productQuantity'];
-            // add an empty row instead of removed duplicate product
-            $productBySkus[] = ['productSku' => '', 'productQuantity' => ''];
+        // add an empty rows instead of removed duplicate products
+        $numberOfRows = count($data['products']);
+        $data['products'] = $this->productsGrouperFactory
+            ->createProductsGrouper(ProductsGrouperFactory::ARRAY_PRODUCTS)
+            ->process($data['products']);
+        for ($i = count($data['products']); $i < $numberOfRows; $i++) {
+            $data['products'][] = [
+                ProductDataStorage::PRODUCT_DISPLAY_NAME => '',
+                ProductDataStorage::PRODUCT_SKU_KEY => '',
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => '',
+            ];
         }
-        $data['products'] = array_values($productBySkus);
+
         $event->setData($data);
     }
 }

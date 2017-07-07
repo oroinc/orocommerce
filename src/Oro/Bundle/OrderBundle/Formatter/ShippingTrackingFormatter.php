@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Formatter;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface;
 
 class ShippingTrackingFormatter
 {
@@ -12,16 +12,16 @@ class ShippingTrackingFormatter
     protected $shippingTrackingMethods;
 
     /**
-     * @var null|ShippingMethodRegistry
+     * @var null|TrackingAwareShippingMethodsProviderInterface
      */
-    protected $shippingMethodRegistry;
+    protected $trackingAwareShippingMethodsProvider;
 
     /**
-     * @param ShippingMethodRegistry|null $shippingMethodRegistry
+     * @param TrackingAwareShippingMethodsProviderInterface|null $trackingAwareShippingMethodsProvider
      */
-    public function __construct($shippingMethodRegistry = null)
+    public function __construct($trackingAwareShippingMethodsProvider = null)
     {
-        $this->shippingMethodRegistry = $shippingMethodRegistry;
+        $this->trackingAwareShippingMethodsProvider = $trackingAwareShippingMethodsProvider;
     }
 
     /**
@@ -34,8 +34,10 @@ class ShippingTrackingFormatter
         }
 
         $this->shippingTrackingMethods = [];
-        if ($this->shippingMethodRegistry !== null) {
-            $this->shippingTrackingMethods = $this->shippingMethodRegistry->getTrackingAwareShippingMethods();
+        if ($this->trackingAwareShippingMethodsProvider !== null) {
+            $this->shippingTrackingMethods = $this
+                ->trackingAwareShippingMethodsProvider
+                ->getTrackingAwareShippingMethods();
         }
         return $this->shippingTrackingMethods;
     }
