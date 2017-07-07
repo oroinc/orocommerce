@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\Form\FormView;
 use Oro\Bundle\SEOBundle\EventListener\CategoryFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
 {
@@ -13,7 +16,7 @@ class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new CategoryFormViewListener($this->requestStack, $this->translator, $this->doctrineHelper);
+        $this->listener = new CategoryFormViewListener($this->translator);
     }
 
     protected function tearDown()
@@ -26,8 +29,8 @@ class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
     public function testOnCategoryEdit()
     {
         $env = $this->getEnvironmentForEdit();
-        $event = $this->getEventForEdit($env);
 
+        $event = new BeforeListRenderEvent($env, new ScrollData(), new \stdClass(), new FormView());
         $this->listener->onCategoryEdit($event);
     }
 }

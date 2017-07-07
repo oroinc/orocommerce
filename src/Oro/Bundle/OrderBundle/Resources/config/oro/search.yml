@@ -12,3 +12,27 @@ search:
                 name:                   identifier
                 target_type:            text
                 target_fields:          [identifier]
+            -
+                name:                   customer
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           name
+                        target_type:    text
+                        target_fields:  [name]
+            -
+                name:                   customerUser
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           email
+                        target_type:    text
+                        target_fields:  [email]
+                    -
+                        name:           firstName
+                        target_type:    text
+                        target_fields:  [firstName]
+                    -
+                        name:           lastName
+                        target_type:    text
+                        target_fields:  [lastName]

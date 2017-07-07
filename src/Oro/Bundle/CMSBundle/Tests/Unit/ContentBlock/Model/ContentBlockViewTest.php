@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 
-class ContentBlockViewViewTest extends \PHPUnit_Framework_TestCase
+class ContentBlockViewTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {

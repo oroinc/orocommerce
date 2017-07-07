@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
@@ -19,7 +19,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends \PHPUnit_Framework_TestCase
+class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -29,9 +29,9 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
     protected $shippingRulesProvider;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $shippingMethodProvider;
 
     /**
      * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
@@ -76,8 +76,8 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
             ])
         ];
 
-        $this->registry = $this->createMock(ShippingMethodRegistry::class);
-        $this->registry->expects($this->any())
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $this->shippingMethodProvider->expects($this->any())
             ->method('getShippingMethod')
             ->will($this->returnCallback(function ($methodId) use ($methods) {
                 return array_key_exists($methodId, $methods) ? $methods[$methodId] : null;
@@ -86,11 +86,11 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
         $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
             ->disableOriginalConstructor()->getMock();
 
-        $viewFactory = new ShippingMethodViewFactory($this->registry);
+        $viewFactory = new ShippingMethodViewFactory($this->shippingMethodProvider);
 
         $this->shippingPriceProvider = new ShippingPriceProvider(
             $this->shippingRulesProvider,
-            $this->registry,
+            $this->shippingMethodProvider,
             $this->priceCache,
             $viewFactory
         );

@@ -14,7 +14,7 @@ oro:
 
         attribute_family:
             used_in_product_variant_field.message: "Attributes %names% used as configurable attributes in products: %products%"
-            empty_configurable_attributes.message: "Can't save product. Product family \"%attributeFamily%\" should contain at least one configurable attribute."
+            empty_configurable_attributes.message: "Configurable product requires at least one filterable attribute of the Select or Boolean type to enable product variants. The provided product family does not fit for configurable products."
 
         product_variant_field:
             unique_variants_combination_simple_product.message: "The values of additional fields provided cannot be saved because they will violate unique constraint of variant fields in these configurable products: %products%"
@@ -52,3 +52,7 @@ oro:
             blank_filters_or_included: "Should be specified filters or added some products manually."
             blank_condition_item: "Conditions in filters should not be blank."
             blank_condition_group: "Conditions groups in filters should not be blank."
+
+"Related Products functionality is disabled.": "Related Products functionality is disabled."
+"It is not possible to create relations from product to itself.": "It is not possible to create relations from product to itself."
+"It is not possible to add more related products, because of the limit of relations.": "It is not possible to add more related products, because of the limit of relations."

@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Symfony\Component\Form\FormInterface;
 
-class PossibleShippingMethodEventListenerTest extends \PHPUnit_Framework_TestCase
+class PossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject

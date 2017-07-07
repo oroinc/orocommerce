@@ -1,2 +1,4 @@
 imports:
     - { resource: 'workflows/b2b_quote_backoffice_default.yml' }
+    - { resource: 'workflows/b2b_quote_backoffice_approvals.yml' }
+    - { workflow: b2b_quote_backoffice_default, as: b2b_quote_backoffice_approvals, replace: [defaults.active] }

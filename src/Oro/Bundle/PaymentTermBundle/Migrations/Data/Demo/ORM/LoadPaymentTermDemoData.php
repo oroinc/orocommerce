@@ -12,7 +12,7 @@ class LoadPaymentTermDemoData extends AbstractFixture
     /**
      * @var array
      */
-    static public $paymentTermsLabels = [
+    public static $paymentTermsLabels = [
         'net 10',
         'net 30',
         'net 60',

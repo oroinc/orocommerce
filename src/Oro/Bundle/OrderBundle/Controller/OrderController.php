@@ -163,7 +163,6 @@ class OrderController extends AbstractOrderController
             $this->get('translator')->trans('oro.order.controller.order.saved.message'),
             null,
             function (Order $order, FormInterface $form, Request $request) {
-
                 $submittedData = $request->get($form->getName());
                 $event = new OrderEvent($form, $form->getData(), $submittedData);
                 $this->get('event_dispatcher')->dispatch(OrderEvent::NAME, $event);

@@ -72,7 +72,7 @@ class FormViewListener
                 'shippingOptions' => $shippingOptions
             ]
         );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options');
+        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options', 600);
     }
 
     /**

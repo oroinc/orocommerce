@@ -46,7 +46,7 @@ abstract class AbstractAddressManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetEntityByIdentifierFailed($identifier, $expectedId, array $exception = [])
     {
         if ($exception) {
-            list ($exception, $message) = $exception;
+            list($exception, $message) = $exception;
             $this->expectException($exception);
             $this->expectExceptionMessage($message);
         }

@@ -32,6 +32,9 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         /** @var Country $germany */
         $germany = $repository->findOneBy(['name' => 'Germany']);
         $this->referenceRepository->set('germany', $germany);
+        /** @var Country $us */
+        $us = $repository->findOneBy(['name' => 'United States']);
+        $this->referenceRepository->set('united_states', $us);
 
         /** @var RegionRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroAddressBundle:Region');
