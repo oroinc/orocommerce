@@ -5,5 +5,5 @@ data:
     relationships:
         customer:
             data:
-                id: '<toString(@customer.level_1.2->id)>'
+                id: '<toString(@customer.level_1.1->id)>'
                 type: 'customers'
