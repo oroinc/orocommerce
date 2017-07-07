@@ -8,6 +8,14 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
 
+    Shopping List Dropdown:
+      selector:
+        type: 'xpath'
+        locator: '//div[contains(@class, "mass-action-controls")]//a[contains(@class, "add-to-shopping-list-button")]/following-sibling::a/span[@class="caret"]/..'
+
+    Create New Shopping List:
+      selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
+
   suites:
     OroShoppingListBundle:
       contexts:

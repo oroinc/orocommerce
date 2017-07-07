@@ -5,9 +5,12 @@
 @import './components/buttons-inline-group';
 @import './components/filter-controls';
 @import './components/grid';
-@import './components/quick-order';
 @import './components/embedded-products/embedded-products';
 @import './components/embedded-products/embedded-product';
+@import './components/quick-order/quick-order';
+@import './components/quick-order-add/quick-order-add';
+@import './components/quick-order-copy-paste/quick-order-copy-paste';
+@import './components/quick-order-import/quick-order-import';
 @import './components/product-view-layout';
 @import './components/line-item-form';
 @import './components/product-view-quantity';

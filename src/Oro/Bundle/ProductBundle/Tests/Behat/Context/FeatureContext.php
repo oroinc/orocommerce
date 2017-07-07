@@ -86,26 +86,32 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When I add product :productSku with quantity :productQuantity to quick order form
-     *
-     * @param string $productSku
-     * @param int    $productQuantity
+     * @Given /^"(?P<sku>.*)" product should has "(?P<price>.+)" value in price field$/
      */
-    public function addProductToQuickAddForm($productSku, $productQuantity)
+    public function productShouldHasValueInPriceField($sku, $price)
     {
-        $quickAddForm = $this->createElement('QuickAddForm');
-        $firstSkuField = $quickAddForm->find('css', 'input[name="oro_product_quick_add[products][0][productSku]"]');
+        $priceField = $this->createElement('Quick Add Price Field', $this->findProductRow($sku));
 
-        $firstSkuField->focus();
-        $firstSkuField->setValue($productSku);
-        $firstSkuField->blur();
+        static::assertEquals($price, trim($priceField->getValue()));
+    }
 
-        $firstQuantityField = $quickAddForm->find(
-            'css',
-            'input[name="oro_product_quick_add[products][0][productQuantity]"]'
-        );
+    /**
+     * @param string $sku
+     *
+     * @return NodeElement|null
+     */
+    private function findProductRow($sku)
+    {
+        /** @var NodeElement[] $productRows */
+        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('QuickAddForm'));
 
-        $firstQuantityField->setValue($productQuantity);
+        foreach ($productRows as $skuField) {
+            if ($skuField->getValue() === $sku) {
+                return $skuField->getParent()->getParent();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -440,7 +446,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @Then /^I should see (?P<counterValue>\d+) for "(?P<counterType>[\w\s]+)" counter$/
      *
      * @param string $counterType
-     * @param int $counterValue
+     * @param int    $counterValue
      */
     public function iShouldSeeCounterValue($counterType, $counterValue)
     {

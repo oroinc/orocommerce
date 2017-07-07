@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Behat\Context;
 
+use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
@@ -107,5 +109,53 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         /** @var CheckoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
         $checkoutStep->assertTitle($title);
+    }
+
+    /**
+     * @Given /^"(?P<step>[\w\s]+)" checkout step "(?P<element>[\w\s]+)" contains products$/
+     */
+    public function checkoutStepContainsProducts($step, $element, TableNode $table)
+    {
+        $this->assertTitle($step);
+
+        $requestAQuote = $this->createElement($element);
+
+        self::assertNotNull($requestAQuote);
+
+        foreach ($table->getRows() as $row) {
+            $productFound = false;
+            foreach ($requestAQuote->getElements($element.'ProductLine') as $productLine) {
+                if ($this->matchProductLine($productLine, $row, $element)) {
+                    $productFound = true;
+                    break;
+                }
+            }
+
+            self::assertTrue($productFound, sprintf(
+                'Product %s, QTY: %s %s has not been found',
+                ...$row
+            ));
+        }
+    }
+
+    /**
+     * @param Element $productLine
+     * @param array   $row
+     * @param string  $elementName
+     * @return bool
+     */
+    private function matchProductLine(Element $productLine, array $row, $elementName)
+    {
+        list($name, $quantity, $unit) = $row;
+
+        try {
+            self::assertContains($name, $productLine->getElement($elementName.'ProductLineName')->getText());
+            self::assertContains($quantity, $productLine->getElement($elementName.'ProductLineQuantity')->getText());
+            self::assertContains($unit, $productLine->getElement($elementName.'ProductLineUnit')->getText());
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+        return true;
     }
 }
