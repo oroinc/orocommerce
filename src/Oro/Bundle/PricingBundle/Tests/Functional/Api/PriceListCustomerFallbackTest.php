@@ -93,9 +93,10 @@ class PriceListCustomerFallbackTest extends RestJsonApiTestCase
             ->findOneBy([
                 'website' => $this->getDefaultWebsite(),
                 'customer' => $this->getReference('customer.level_1.2'),
+                'fallback' => 0
             ]);
 
-        static::assertSame(0, $relation->getFallback());
+        static::assertNotNull($relation);
 
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
@@ -233,12 +234,12 @@ class PriceListCustomerFallbackTest extends RestJsonApiTestCase
     /**
      * @return PriceListCustomerFallback
      */
-    private function getFirstRelation()
+    protected function getFirstRelation()
     {
         return $this->getReference(LoadPriceListFallbackSettings::WEBSITE_CUSTOMER_FALLBACK_1);
     }
 
-    private function assertFirstRelationMessageSent()
+    protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
@@ -254,7 +255,7 @@ class PriceListCustomerFallbackTest extends RestJsonApiTestCase
     /**
      * @return Website
      */
-    private function getDefaultWebsite(): Website
+    protected function getDefaultWebsite(): Website
     {
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();
     }
