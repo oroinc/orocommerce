@@ -6,8 +6,6 @@ data:
             sku: product-2
             status: enabled
             variantFields: {  }
-            createdAt: '@product-2->createdAt->format("Y-m-d\TH:i:s\Z")'
-            updatedAt: '@product-2->updatedAt->format("Y-m-d\TH:i:s\Z")'
             productType: simple
         relationships:
             owner:
@@ -47,8 +45,6 @@ data:
             sku: product-3
             status: enabled
             variantFields: {  }
-            createdAt: '@product-3->createdAt->format("Y-m-d\TH:i:s\Z")'
-            updatedAt: '@product-3->updatedAt->format("Y-m-d\TH:i:s\Z")'
             productType: simple
         relationships:
             owner:
