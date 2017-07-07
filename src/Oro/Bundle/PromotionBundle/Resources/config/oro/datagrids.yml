@@ -88,3 +88,44 @@ datagrids:
         extends: products-select-grid-base
         options:
             export: true
+
+    promotion-order-applied-discount-grid:
+        acl_resource: oro_promotion_view
+        source:
+            type: orm
+            query:
+                select:
+                    - SUM(discount.amount) AS discountAmount
+                    - discount.promotionName AS name
+                    - discount.currency AS currency
+                from:
+                    - { table: OroPromotionBundle:AppliedDiscount, alias: discount }
+                where:
+                    and:
+                        - discount.order = :orderId
+                groupBy: discount.promotionName, discount.currency
+            bind_parameters:
+                - orderId
+        columns:
+            name:
+                label: oro.applied_discount.name
+            discountAmount:
+                label: oro.applied_discount.amount
+                type: twig
+                frontend_type: html
+                template: OroPromotionBundle:AppliedDiscount/Datagrid:amount.html.twig
+        sorters:
+            columns:
+                name:
+                    data_name: discount.promotionName
+                discountAmount:
+                    data_name: discountAmount
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: discount.promotionName
+                discountAmount:
+                    type: number-range
+                    data_name: discountAmount
+                    filter_by_having: true

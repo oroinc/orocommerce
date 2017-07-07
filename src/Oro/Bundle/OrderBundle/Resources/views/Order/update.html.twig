@@ -44,7 +44,6 @@
 } %}
 
 {% block content_data %}
-    {% placeholder order_update_additional_info with {entity: entity} %}
     {% set id = 'order-edit' %}
 
     {% set subtotals %}
@@ -261,6 +260,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
         'class': 'active',
+        'priority': 900,
         'subblocks': [{
             'data': [subtotals]
         }]

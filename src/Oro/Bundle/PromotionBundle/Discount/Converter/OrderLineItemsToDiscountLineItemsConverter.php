@@ -13,10 +13,14 @@ class OrderLineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDisc
     {
         $discountLineItems = [];
 
-        /** @var OrderLineItem[] $orderLineItems */
+        /** @var OrderLineItem[] $lineItems */
         foreach ($lineItems as $lineItem) {
             $discountLineItem = $this->createDiscountLineItem($lineItem);
             if (!$discountLineItem) {
+                continue;
+            }
+
+            if (!$lineItem->getPrice()) {
                 continue;
             }
 
