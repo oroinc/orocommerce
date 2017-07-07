@@ -15,3 +15,20 @@ oro_behat_extension:
 
     Create New Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
+
+  suites:
+    OroShoppingListBundle:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroShoppingListBundle::FeatureContext
+      paths:
+        - '@OroShoppingListBundle/Tests/Behat/Features'

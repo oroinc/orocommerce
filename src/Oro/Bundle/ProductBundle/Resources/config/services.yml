@@ -615,12 +615,21 @@ services:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:
             - '@oro_segment.segment_manager'
+            - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
-            - '@oro_config.user'
-            - '@logger'
+            - '@oro_config.manager'
             - '@oro.cache.memory_cache_chain'
         tags:
             - { name: layout.data_provider, alias: featured_products }
+
+    oro_product.layout.data_provider.featured_products.cache_decorator:
+        parent: oro_product.doctrine.abstract_cached_provider_decorator
+        decorates: oro_product.layout.data_provider.featured_products
+        decoration_priority: 10
+        arguments:
+            - '@oro_product.layout.data_provider.featured_products.cache_decorator.inner'
+            - '@oro.cache.memory_cache_chain'
+            - 'oro_product.layout.data_provider.featured_products'
 
     oro_product.event_listener.product_image_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
@@ -1074,3 +1083,36 @@ services:
             - "@oro_config.manager"
         tags:
             - { name: layout.data_provider, alias: oro_product_stickers }
+
+    oro_product.layout.data_provider.new_arrivals:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider'
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@oro_product.provider.segment'
+            - '@oro_product.product.manager'
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: new_arrivals }
+
+    oro_product.layout.data_provider.new_arrivals.cache_decorator:
+        parent: oro_product.doctrine.abstract_cached_provider_decorator
+        decorates: oro_product.layout.data_provider.new_arrivals
+        decoration_priority: 10
+        arguments:
+            - '@oro_product.layout.data_provider.new_arrivals.cache_decorator.inner'
+            - '@oro.cache.memory_cache_chain'
+            - 'oro_product.layout.data_provider.new_arrivals'
+
+    oro_product.provider.segment:
+        parent: oro_product.provider.segment.logging_errors
+
+    oro_product.provider.segment.logging_errors:
+        class: 'Oro\Bundle\ProductBundle\Provider\Segment\LoggingErrors\ProductSegmentWithLoggingErrorsProvider'
+        public: fasle
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@logger'
+
+    oro_product.doctrine.abstract_cached_provider_decorator:
+        class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'
+        abstract: true
