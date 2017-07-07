@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/quick_add_copy_paste.html.twig'
+            themes: 'quick_add_copy_paste.html.twig'
         - '@setFormTheme':
-            themes: 'OroProductBundle:layouts:default/oro_product_frontend_quick_add/form.html.twig'
+            themes: 'form.html.twig'
         - '@addTree':
             items:
                 quick_add_copy_paste_form:
@@ -28,7 +28,7 @@ layout:
                         type: button
                         action: submit
                         text: oro.product.frontend.quick_add.continue.label
-                        style: 'btn--action'
+                        style: 'btn--primary btn--disabled'
                 quick_add_copy_paste_title:
                     blockType: text
                     options:
@@ -40,8 +40,8 @@ layout:
             tree:
                 quick_add_container:
                     quick_add_copy_paste_form:
-                        quick_add_copy_paste_form_start: ~
                         quick_add_copy_paste_title: ~
+                        quick_add_copy_paste_form_start: ~
                         quick_add_copy_paste_description: ~
                         quick_add_copy_paste_form_fields: ~
                         quick_add_copy_paste_form_buttons:

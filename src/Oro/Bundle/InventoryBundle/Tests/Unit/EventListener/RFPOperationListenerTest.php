@@ -43,7 +43,7 @@ class RFPOperationListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnCopyPasteRFPFormSubmitCheckReturnsTrueEvent()
     {
         $collection = new QuickAddRowCollection();
-        $row = new QuickAddRow(1, 'testSku', 2);
+        $row = new QuickAddRow(1, 'testSku', 2, 'item');
         $row->setProduct(new Product());
         $collection->add($row);
         $this->collectionProvider->expects($this->once())
@@ -69,7 +69,7 @@ class RFPOperationListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnQuickAddImportRFPFormSubmitCheckTrueEvent()
     {
         $collection = new QuickAddRowCollection();
-        $row = new QuickAddRow(1, 'testSku', 2);
+        $row = new QuickAddRow(1, 'testSku', 2, 'item');
         $row->setProduct(new Product());
         $collection->add($row);
         $this->collectionProvider->expects($this->once())

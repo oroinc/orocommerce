@@ -65,8 +65,7 @@ class ProductRepository extends EntityRepository
 
         if (count($productIds) > 0) {
             $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('p', ':product_ids'))
-                ->setParameter('product_ids', $productIds);
+                ->where($productsQueryBuilder->expr()->in('p.id', $productIds));
         }
 
         return $productsQueryBuilder;

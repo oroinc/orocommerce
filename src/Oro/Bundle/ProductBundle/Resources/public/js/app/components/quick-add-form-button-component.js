@@ -10,9 +10,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {
-            submitWithErrors: false
-        },
+        options: {},
 
         /**
          * @property {jQuery}
@@ -33,10 +31,6 @@ define(function(require) {
             this.$button = this.options._sourceElement;
             this.$form = this.$button.closest('form');
 
-            if (this.formHasErrors() && !this.options.submitWithErrors) {
-                this.$button.addClass('disabled');
-            }
-
             this.$button.on('click', _.bind(this.submit, this));
         },
 
@@ -47,7 +41,7 @@ define(function(require) {
             e.preventDefault();
             e.stopPropagation();
 
-            if (this.formHasErrors() && !this.options.submitWithErrors) {
+            if (this.formHasErrors()) {
                 return;
             }
 
@@ -63,7 +57,8 @@ define(function(require) {
         },
 
         formHasErrors: function() {
-            return this.$form.closest('.validation-info').find('.import-errors').length;
+            return !this.$form.validate().valid() ||
+                this.$form.find('.product-autocomplete-error .validation-failed:visible').length;
         }
     });
 

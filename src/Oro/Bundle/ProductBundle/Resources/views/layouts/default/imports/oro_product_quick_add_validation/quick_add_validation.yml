@@ -5,42 +5,68 @@ layout:
         - '@addTree':
             items:
                 __quick_add_validation:
+                    blockType: quick_add_validation_container
+                    options:
+                        collection: '=data["collection"]'
+                __quick_add_validation_items_table_container:
                     blockType: container
+                    options:
+                        attr:
+                            'class': 'quick_add_validation_items__container'
+                __quick_add_validation_invalid_items_warning:
+                    blockType: invalid_items_warning
+                    options:
+                        collection: '=data["collection"]'
                 __quick_add_validation_items_table:
                     blockType: container
-                __quick_add_validation_items_table_title:
-                    blockType: text
                     options:
-                        text: 'oro.product.frontend.quick_add.import_validation.number_of_items'
+                        attr:
+                            'class': 'quick_add_validation_items'
+                __quick_add_validation_items_table_header:
+                    blockType: container
+                __quick_add_validation_valid_items_additional_fields_header:
+                    blockType: container
                 __quick_add_validation_items_table_body:
                     blockType: container
-                __quick_add_validation_total_items_count:
-                    blockType: import_validation_items_count_text
-                    options:
-                        text: 'oro.product.frontend.quick_add.import_validation.total_items'
-                        collection: '=data["collection"]'
-                __quick_add_validation_valid_items_count:
-                    blockType: import_validation_items_count_text
-                    options:
-                        text: 'oro.product.frontend.quick_add.import_validation.valid_items'
-                        collection: '=data["collection"]'
-                __quick_add_validation_invalid_items_count:
-                    blockType: import_validation_items_count_text
-                    options:
-                        text: 'oro.product.frontend.quick_add.import_validation.invalid_items'
-                        collection: '=data["collection"]'
-                __quick_add_validation_invalid_items:
-                    blockType: import_validation_items
+                __quick_add_validation_valid_items:
+                    blockType: quick_add_validation_container
                     options:
                         collection: '=data["collection"]'
+                __quick_add_validation_valid_items_additional_fields:
+                    blockType: container
+                __quick_add_validation_additional_fields:
+                    blockType: container
+                __quick_add_validation_buttons:
+                    blockType: container
+                __quick_add_import_form_cancel:
+                    blockType: button
+                    options:
+                        type: button
+                        action: reset
+                        text: 'oro.product.frontend.quick_add.cancel.label'
+                        style: ''
+                __quick_add_import_form_submit:
+                    blockType: button
+                    options:
+                        type: button
+                        action: submit
+                        text: 'oro.product.frontend.quick_add.add_to_form.label'
+                        attr:
+                            class: 'btn btn--info'
             tree:
                 __root:
                     __quick_add_validation:
-                        __quick_add_validation_items_table:
-                            __quick_add_validation_items_table_title: ~
-                            __quick_add_validation_items_table_body:
-                                __quick_add_validation_total_items_count: ~
-                                __quick_add_validation_valid_items_count: ~
-                                __quick_add_validation_invalid_items_count: ~
-                        __quick_add_validation_invalid_items: ~
+                        __quick_add_validation_items_table_container:
+                            __quick_add_validation_invalid_items_warning: ~
+                            __quick_add_validation_items_table:
+                                __quick_add_validation_items_table_header:
+                                    __quick_add_validation_valid_items_additional_fields_header: ~
+                                __quick_add_validation_items_table_body:
+                                    __quick_add_validation_valid_items:
+                                        __quick_add_validation_valid_items_additional_fields: ~
+                        __quick_add_validation_additional_fields: ~
+                    __quick_add_validation_buttons:
+                        __quick_add_import_form_cancel: ~
+                        __quick_add_import_form_submit: ~
+
     conditions: 'context["import_step"]=="result"'

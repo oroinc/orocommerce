@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Model;
 
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-
 interface ProductUnitHolderInterface
 {
     /**
