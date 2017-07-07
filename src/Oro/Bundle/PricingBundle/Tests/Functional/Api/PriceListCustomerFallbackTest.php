@@ -141,35 +141,17 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
     {
         $relation = $this->getFirstRelation();
 
-        $response = $this->getSubresource([
-            'entity' => $this->getApiEntityName(),
-            'id' => $relation->getId(),
-            'association' => 'customer'
-        ]);
-
-        $result = json_decode($response->getContent(), true);
-
-        self::assertEquals($relation->getCustomer()->getId(), $result['data']['id']);
+        $this->assertGetSubResourceForFirstRelation('customer', $relation->getCustomer()->getId());
     }
 
     public function testGetRelationships()
     {
         $relation = $this->getFirstRelation();
 
-        $response = $this->getRelationship([
-            'entity' => $this->getApiEntityName(),
-            'id' => $relation->getId(),
-            'association' => 'customer',
-        ]);
-
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => $this->getEntityType(Customer::class),
-                    'id' => (string) $relation->getCustomer()->getId()
-                ]
-            ],
-            $response
+        $this->assertGetRelationshipForFirstRelation(
+            'customer',
+            Customer::class,
+            $relation->getCustomer()->getId()
         );
     }
 
