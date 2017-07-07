@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHandler;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler;
 
 class BooleanVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
@@ -9,12 +10,23 @@ class BooleanVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var BooleanVariantFieldValueHandler */
     private $handler;
 
+    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $translator;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->handler = new BooleanVariantFieldValueHandler();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnMap([
+                ['oro.product.variant_fields.no.label', [], null, null, 'No'],
+                ['oro.product.variant_fields.yes.label', [], null, null, 'Yes'],
+            ]);
+
+        $this->handler = new BooleanVariantFieldValueHandler($this->translator);
     }
 
     /**
@@ -37,12 +49,22 @@ class BooleanVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getScalarValueProvider
-     * @param $value
-     * @param $expected
+     * @param mixed $value
+     * @param bool $expected
      */
     public function testGetScalarValue($value, $expected)
     {
         $this->assertEquals($expected, $this->handler->getScalarValue($value));
+    }
+
+    /**
+     * @dataProvider getHumanReadableValueProvider
+     * @param mixed $value
+     * @param bool $expected
+     */
+    public function testGetHumanReadableValue($value, $expected)
+    {
+        $this->assertEquals($expected, $this->handler->getHumanReadableValue('any_value', $value));
     }
 
     /**
@@ -58,6 +80,23 @@ class BooleanVariantFieldValueHandlerTest extends \PHPUnit_Framework_TestCase
             'return true' => [
                 'value' => 1,
                 'expected' => true
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getHumanReadableValueProvider()
+    {
+        return [
+            'return human readable false' => [
+                'value' => 0,
+                'expected' => 'No'
+            ],
+            'return human readable true' => [
+                'value' => 1,
+                'expected' => 'Yes'
             ]
         ];
     }

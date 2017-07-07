@@ -78,4 +78,35 @@ class ProductRepository extends WebsiteSearchRepository
 
         return $searchQuery;
     }
+
+    /**
+     * @param string $search
+     * @param int $firstResult
+     * @param int $maxResults
+     * @return \Oro\Bundle\SearchBundle\Query\Result\Item[]
+     */
+    public function findBySkuOrName($search, $firstResult = 0, $maxResults = null)
+    {
+        $query = $this->createQuery();
+
+        $query->addSelect('integer.product_id');
+
+        $query->setFrom('oro_product_WEBSITE_ID')
+            ->addSelect('sku')
+            ->addSelect('name_LOCALIZATION_ID as name')
+            ->getCriteria()
+            ->andWhere(
+                Criteria::expr()->orX(
+                    Criteria::expr()->in('sku_uppercase', [strtoupper($search)]),
+                    Criteria::expr()->contains('name_LOCALIZATION_ID', $search)
+                )
+            )
+            ->setFirstResult($firstResult);
+
+        if ($maxResults !== null) {
+            $query->setMaxResults($maxResults);
+        }
+
+        return $query->getResult()->getElements();
+    }
 }

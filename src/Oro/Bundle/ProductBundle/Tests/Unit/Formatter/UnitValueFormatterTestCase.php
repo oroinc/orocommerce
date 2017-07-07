@@ -63,6 +63,24 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit_Framework_TestCase
         $this->formatter->formatCode(42, 'item');
     }
 
+    public function testFormatFractionCodeShort()
+    {
+        $this->translator->expects($this->once())
+            ->method('transChoice')
+            ->with(static::TRANSLATION_PREFIX . '.item.value.short_fraction', 0.5);
+
+        $this->formatter->formatCode(0.5, 'item', true);
+    }
+
+    public function testFormatFractionGreaterThanOneCodeShort()
+    {
+        $this->translator->expects($this->once())
+            ->method('transChoice')
+            ->with(static::TRANSLATION_PREFIX . '.item.value.short_fraction_gt_1', 1.5);
+
+        $this->formatter->formatCode(1.5, 'item', true);
+    }
+
     public function testFormatWithInvalidValue()
     {
         $this->translator->expects($this->once())

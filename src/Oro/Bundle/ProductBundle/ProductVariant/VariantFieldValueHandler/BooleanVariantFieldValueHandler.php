@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerInterface;
 
 class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandlerInterface
@@ -9,19 +10,45 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
     const TYPE = 'boolean';
 
     /**
-     * {@inheritdoc}
+     * @var TranslatorInterface
      */
-    public function getPossibleValues($variantFieldName)
+    protected $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
     {
-        return [0 => 'No', 1 => 'Yes'];
+        $this->translator = $translator;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getScalarValue($variantValue)
+    public function getPossibleValues($fieldName)
     {
-        return (bool) $variantValue;
+        return [
+            0 => $this->translator->trans('oro.product.variant_fields.no.label'),
+            1 => $this->translator->trans('oro.product.variant_fields.yes.label'),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScalarValue($value)
+    {
+        return (bool)$value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getHumanReadableValue($fieldName, $value)
+    {
+        $values = $this->getPossibleValues($fieldName);
+
+        return $values[$value] ?? 'N/A';
     }
 
     /**
