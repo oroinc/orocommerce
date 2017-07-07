@@ -1,5 +1,9 @@
 @fixture-OroCheckoutBundle:CheckoutDefaultFixture.yml
-Feature: Checkout Default
+
+Feature: Started checkouts should be on Open Orders Grid
+  In order to see started checkouts on frontend store
+  As a Buyer
+  I need to have an ability to see started checkouts in Open Orders Grid on front store
 
   Scenario: See Open Orders with child Customer by frontend administrator.
     Given I signed in as NancyJSallee@example.org on the store frontend
