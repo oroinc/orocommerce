@@ -69,7 +69,7 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
             if ($unitPrecision->getUnit()->getCode() === $unitRelationCode) {
                 $this->addError(
                     $this->buildPointer($pointer, $idPointer),
-                    sprintf("Unit precision '%s' already exists for this product", $unitRelationCode)
+                    sprintf('Unit precision "%s" already exists for this product', $unitRelationCode)
                 );
             }
         }
@@ -90,9 +90,11 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
         $unitRelationCode = $data[JsonApi::RELATIONSHIPS][parent::ATTR_UNIT][JsonApi::DATA][JsonApi::ID];
 
         if ($productUnitPrecision->getUnit()->getCode() !== $unitRelationCode) {
+            $unitPointer = $this->buildPointer(JsonApi::RELATIONSHIPS, parent::ATTR_UNIT);
+            $idPointer = $this->buildPointer($unitPointer, JsonApi::ID);
             $this->addError(
-                $this->buildPointer($pointer, JsonApi::RELATIONSHIPS.'/'.parent::ATTR_UNIT.'/'.JsonApi::ID),
-                sprintf("Unit precision '%s' already exists for this product", $unitRelationCode)
+                $this->buildPointer($pointer, $idPointer),
+                sprintf('Unit precision "%s" already exists for this product', $unitRelationCode)
             );
         }
 

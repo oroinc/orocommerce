@@ -83,15 +83,17 @@ class ProcessUnitPrecisions implements ProcessorInterface
                 $this->validateRequiredFields($data, $keyPointer);
                 if (array_key_exists(JsonApi::RELATIONSHIPS, $data)) {
                     $unitRelation = $data[JsonApi::RELATIONSHIPS][self::ATTR_UNIT][JsonApi::DATA];
+                    $unitPointer = $this->buildPointer(JsonApi::RELATIONSHIPS, self::ATTR_UNIT);
+                    $dataPointer = $this->buildPointer($unitPointer, JsonApi::DATA);
                     $relationPointer = $this->buildPointer(
                         $keyPointer,
-                        JsonApi::RELATIONSHIPS.'/'.self::ATTR_UNIT.'/'.JsonApi::DATA
+                        $dataPointer
                     );
                     $this->validateProductUnitExists($unitRelation, $relationPointer);
                     if (in_array($unitRelation[JsonApi::ID], $existentCodes)) {
                         $this->addError(
                             $this->buildPointer($relationPointer, JsonApi::ID),
-                            sprintf("Unit precision '%s' already exists", $unitRelation[JsonApi::ID])
+                            sprintf('Unit precision "%s" already exists', $unitRelation[JsonApi::ID])
                         );
                     }
                     $existentCodes[] = $unitRelation[JsonApi::ID];
@@ -123,7 +125,7 @@ class ProcessUnitPrecisions implements ProcessorInterface
         if (!array_key_exists(JsonApi::ATTRIBUTES, $unitPrecision)) {
             $this->addError(
                 $this->buildPointer($pointer, JsonApi::ATTRIBUTES),
-                sprintf("The '%s' property is required", JsonApi::ATTRIBUTES)
+                sprintf('The "%s" property is required', JsonApi::ATTRIBUTES)
             );
 
             return;
@@ -134,7 +136,7 @@ class ProcessUnitPrecisions implements ProcessorInterface
             $propertyPointer = $this->buildPointer(JsonApi::ATTRIBUTES, $property);
             $this->addError(
                 $this->buildPointer($pointer, $propertyPointer),
-                sprintf("The '%s' property is required", $property)
+                sprintf('The "%s" property is required', $property)
             );
         }
     }
@@ -155,7 +157,7 @@ class ProcessUnitPrecisions implements ProcessorInterface
         if (!in_array($unitRelation[JsonApi::ID], $this->validProductUnits)) {
             $this->addError(
                 $this->buildPointer($pointer, JsonApi::ID),
-                sprintf("Invalid value '%s' for product unit", $unitRelation[JsonApi::ID])
+                sprintf('Invalid value "%s" for product unit', $unitRelation[JsonApi::ID])
             );
         }
     }
