@@ -16,6 +16,17 @@ oro_behat_extension:
     Create New Shopping List:
       selector: 'a.add-to-shopping-list-button[title="Create New Shopping List"]'
 
+    FrontendLineItemForm:
+      selector: 'form[id^="oro_product_frontend_line_item"]'
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
+    ShoppingListWidget:
+      selector: '.shopping-list-widget'
+
   suites:
     OroShoppingListBundle:
       contexts:
@@ -30,5 +41,7 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroShoppingListBundle::FeatureContext
+        - OroSalesBundle::FeatureContext
+        - OroNavigationBundle::FeatureContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'

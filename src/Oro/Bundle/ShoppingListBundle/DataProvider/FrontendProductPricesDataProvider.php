@@ -9,7 +9,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FrontendProductPricesDataProvider
@@ -18,11 +17,6 @@ class FrontendProductPricesDataProvider
      * @var ProductPriceProvider
      */
     protected $productPriceProvider;
-
-    /**
-     * @var TokenAccessorInterface
-     */
-    protected $tokenAccessor;
 
     /**
      * @var UserCurrencyManager
@@ -36,18 +30,15 @@ class FrontendProductPricesDataProvider
 
     /**
      * @param ProductPriceProvider $productPriceProvider
-     * @param TokenAccessorInterface $tokenAccessor
      * @param UserCurrencyManager $userCurrencyManager
      * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         ProductPriceProvider $productPriceProvider,
-        TokenAccessorInterface $tokenAccessor,
         UserCurrencyManager $userCurrencyManager,
         PriceListRequestHandler $priceListRequestHandler
     ) {
         $this->productPriceProvider = $productPriceProvider;
-        $this->tokenAccessor = $tokenAccessor;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->priceListRequestHandler = $priceListRequestHandler;
     }
@@ -58,12 +49,6 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsMatchedPrice(array $lineItems)
     {
-        /** @var CustomerUser $customerUser */
-        $customerUser = $this->tokenAccessor->getUser();
-        if (!$customerUser) {
-            return null;
-        }
-
         $productsPriceCriteria = $this->getProductsPricesCriteria($lineItems);
 
         $prices = $this->productPriceProvider->getMatchedPrices(
@@ -87,12 +72,6 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsAllPrices(array $lineItems)
     {
-        /** @var CustomerUser $customerUser */
-        $customerUser = $this->tokenAccessor->getUser();
-        if (!$customerUser) {
-            return null;
-        }
-
         $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
             $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
             array_map(function (LineItem $lineItem) {

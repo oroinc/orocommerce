@@ -516,6 +516,8 @@ workflows:
                     '@and':
                         - '@not_empty': $init_context
                         - '@equal': [true, $.result.isAllowed]
+                        - '@feature_enabled':
+                            feature: 'shopping_list_create'
 
             start_from_shoppinglist_definition:
                 preactions:
