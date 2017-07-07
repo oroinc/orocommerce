@@ -10,18 +10,6 @@ use Oro\Bundle\ProductBundle\Processor\Shared\ProcessUnitPrecisions;
 class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
 {
     /**
-     * @param $unitPrecision
-     * @param $pointer
-     */
-    protected function validateRequiredFields($unitPrecision, $pointer)
-    {
-        if (isset($unitPrecision[JsonApi::ID])) {
-            $this->mandatoryFields = [];
-        }
-        parent::validateRequiredFields($unitPrecision, $pointer);
-    }
-
-    /**
      * @param array $includedData
      * @param string $pointer
      * @return bool
@@ -43,7 +31,7 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
             $keyPointer = $this->buildPointer($pointer, $key);
             if (array_key_exists(JsonApi::META, $data)
                 && array_key_exists('update', $data[JsonApi::META])
-                && $data[JsonApi::META]['update'] === true
+                && true === $data[JsonApi::META]['update']
             ) {
                 $this->checkProductUnitPrecisionValidForUpdate($data, $productUnitPrecisions, $keyPointer);
                 continue;
@@ -55,6 +43,18 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
     }
 
     /**
+     * @param array $unitPrecision
+     * @param string $pointer
+     */
+    protected function validateRequiredFields($unitPrecision, $pointer)
+    {
+        if (isset($unitPrecision[JsonApi::ID])) {
+            $this->mandatoryFields = [];
+        }
+        parent::validateRequiredFields($unitPrecision, $pointer);
+    }
+
+    /**
      * @param array $data
      * @param ProcessUnitPrecisions[] $productUnitPrecisions
      * @param string $pointer
@@ -62,27 +62,28 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
     protected function checkProductUnitAlreadyExistsOnProduct($data, $productUnitPrecisions, $pointer)
     {
         $unitRelationCode = $data[JsonApi::RELATIONSHIPS][parent::ATTR_UNIT][JsonApi::DATA][JsonApi::ID];
+        $unitPointer = $this->buildPointer(JsonApi::RELATIONSHIPS, parent::ATTR_UNIT);
+        $idPointer = $this->buildPointer($unitPointer, JsonApi::ID);
         /** @var ProductUnitPrecision $unitPrecision */
         foreach ($productUnitPrecisions as $unitPrecision) {
             if ($unitPrecision->getUnit()->getCode() === $unitRelationCode) {
                 $this->addError(
-                    $this->buildPointer($pointer, JsonApi::RELATIONSHIPS.'/'.parent::ATTR_UNIT.'/'.JsonApi::ID),
-                    sprintf('Unit precision \'%s\' already exists for this product', $unitRelationCode)
+                    $this->buildPointer($pointer, $idPointer),
+                    sprintf("Unit precision '%s' already exists for this product", $unitRelationCode)
                 );
             }
         }
     }
     /**
      * @param array $data
-     * @param ProductUnitPrecision[]$productUnitPrecisions
+     * @param ProductUnitPrecision[] $productUnitPrecisions
      * @param string $pointer
      * @return bool
      */
     protected function checkProductUnitPrecisionValidForUpdate($data, $productUnitPrecisions, $pointer)
     {
         /** @var ProductUnitPrecision $productUnitPrecision */
-        $productUnitPrecision = isset($productUnitPrecisions[$data[JsonApi::ID]]) ?
-            $productUnitPrecisions[$data[JsonApi::ID]] : null;
+        $productUnitPrecision = $productUnitPrecisions[$data[JsonApi::ID]] ?? null;
         if (!$productUnitPrecision instanceof $productUnitPrecision) {
             return false;
         }
@@ -91,14 +92,14 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
         if ($productUnitPrecision->getUnit()->getCode() !== $unitRelationCode) {
             $this->addError(
                 $this->buildPointer($pointer, JsonApi::RELATIONSHIPS.'/'.parent::ATTR_UNIT.'/'.JsonApi::ID),
-                sprintf('Unit precision \'%s\' already exists for this product', $unitRelationCode)
+                sprintf("Unit precision '%s' already exists for this product", $unitRelationCode)
             );
         }
 
         return true;
     }
     /**
-     * @param $productUnitPrecisions
+     * @param array $productUnitPrecisions
      * @return array
      */
     protected function formatProductUnitPrecisions($productUnitPrecisions)
