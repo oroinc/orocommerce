@@ -1,18 +1,4 @@
 oro_behat_extension:
-  suites:
-    OroShoppingListBundle:
-      contexts:
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
-        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
-        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
-        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\SalesBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
-      paths:
-        - '@OroShoppingListBundle/Tests/Behat/Features'
   elements:
     ShoppingList:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
@@ -41,5 +27,19 @@ oro_behat_extension:
     ShoppingListWidget:
       selector: '.shopping-list-widget'
 
-    FrontendSearchButton:
-      selector: '.search-widget__submit'
+  suites:
+    OroShoppingListBundle:
+      contexts:
+        - OroApplicationBundle::CommerceMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroProductBundle::FeatureContext
+        - OroRedirectBundle::SlugPrototypesContext
+        - OroSecurityBundle::ACLContext
+        - OroSEOBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroWebCatalogBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroShoppingListBundle::FeatureContext
+      paths:
+        - '@OroShoppingListBundle/Tests/Behat/Features'

@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@setOption':
+            id: new_arrival_products
+            optionName: use_slider
+            optionValue: '=data["system_config_provider"].getValue("oro_product.new_arrivals_use_slider_on_mobile")'
+
+    conditions: 'context["is_mobile"]'

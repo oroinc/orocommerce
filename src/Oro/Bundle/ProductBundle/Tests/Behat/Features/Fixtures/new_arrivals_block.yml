@@ -1,0 +1,183 @@
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+  price:
+    value: '1'
+    currency: 'USD'
+   
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  company_A:
+    name: 'Company A'
+    organization: '@organization'
+    owner: '@admin'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  amanda:
+    email: 'AmandaRCole@example.org'
+    username: 'AmandaRCole@example.org'
+    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    firstName: 'Amanda'
+    lastName: 'Cole'
+    middleName: 'Middle Co'
+    namePrefix: 'Amanda Pre'
+    nameSuffix: 'Cole Suff'
+    enabled: '1'
+    confirmed: '1'
+    customer: '@company_A'
+    organization: '@organization'
+    role: ['@front_admin', '@buyer']
+    owner: '@admin'
+    website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+  pricelistShipping:
+    name: 'pricelist_shipping'
+    default: true
+    setCurrencies: [['USD']]
+    active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+  priceListToCustomer:
+    customer: '@company_A'
+    pricelist: '@pricelistShipping'
+    website: '@website1'
+    sortOrder: 200
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@item'
+    precision: '1'
+  precision2:
+    unit: '@item'
+    precision: '1'
+  precision3:
+    unit: '@item'
+    precision: '1'
+  precision4:
+    unit: '@item'
+    precision: '1'
+  precision5:
+    unit: '@item'
+    precision: '1'
+  precision6:
+    unit: '@item'
+    precision: '1'
+  precision7:
+    unit: '@item'
+    precision: '1'
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue1:
+    string: 'Product1'
+  locValue2:
+    string: 'Product2'
+  locValue3:
+    string: 'Product3'
+  locValue4:
+    string: 'Product4'
+  locValue5:
+    string: 'Product5'
+  locValue6:
+    string: 'Product6'
+  locValue7:
+    string: 'Product7'
+  localNewCategory:
+    string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'SKU1'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue1']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+  product2:
+    sku: 'SKU2'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision2'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue2']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+  product3:
+    sku: 'SKU3'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision3'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue3']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+  product4:
+    sku: 'SKU4'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision4'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue4']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    newArrival: true
+  product5:
+    sku: 'SKU5'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision5'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue5']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    featured: true
+    newArrival: true
+  product6:
+    sku: 'SKU6'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision6'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue6']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    featured: true
+    newArrival: true
+  product7:
+    sku: 'SKU7'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision7'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue7']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    featured: true
+    newArrival: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+  customerUserSetting:
+    customerUser: '@amanda'
+    __construct: ['@website1']
+    currency: 'USD'

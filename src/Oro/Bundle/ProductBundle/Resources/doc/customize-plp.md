@@ -48,7 +48,7 @@ layout:
         - '@setOption':
             id: featured_products
             optionName: items
-            optionValue: '=data["featured_products"].getAll()'
+            optionValue: '=data["featured_products"].getProducts()'
 
         - '@setOption':
             id: featured_products
