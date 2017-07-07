@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Layout\DataProvider;
 
-use Doctrine\Common\Cache\ChainCache;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -10,50 +9,52 @@ use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider;
+use Oro\Bundle\ProductBundle\Provider\Segment\ProductSegmentProviderInterface;
 use Oro\Bundle\SegmentBundle\Entity\Manager\SegmentManager;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Oro\Bundle\SegmentBundle\Entity\SegmentType;
-use Psr\Log\LoggerInterface;
 
 class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ChainCache|\PHPUnit_Framework_MockObject_MockObject
+     * @var FeaturedProductsProvider
      */
-    protected $cache;
-
-    /** @var FeaturedProductsProvider */
     private $provider;
 
-    /** @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var SegmentManager|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $segmentManager;
 
-    /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject */
-    private $productManager;
-
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-    private $configManager;
-
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
-    private $logger;
+    /**
+     * @var ProductSegmentProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productSegmentProvider;
 
     /**
-     * {@inheritdoc}
+     * @var ProductManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $productManager;
+
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
+    /**
+     * {@inheritDoc}
      */
     protected function setUp()
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);
+        $this->productSegmentProvider = $this->createMock(ProductSegmentProviderInterface::class);
         $this->productManager = $this->createMock(ProductManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->cache = $this->createMock(ChainCache::class);
 
         $this->provider = new FeaturedProductsProvider(
             $this->segmentManager,
+            $this->productSegmentProvider,
             $this->productManager,
-            $this->configManager,
-            $this->logger,
-            $this->cache
+            $this->configManager
         );
     }
 
@@ -70,9 +71,9 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
 
         $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
 
-        $this->segmentManager
+        $this->productSegmentProvider
             ->expects($this->once())
-            ->method('findById')
+            ->method('getProductSegmentById')
             ->with(1)
             ->willReturn($segment);
 
@@ -98,7 +99,7 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($qb, [])
             ->willReturn($restrictionQB);
 
-        $this->assertEquals(['result'], $this->provider->getAll());
+        $this->assertEquals(['result'], $this->provider->getProducts());
     }
 
     public function testGetAllWithoutConfig()
@@ -109,15 +110,15 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID))
             ->willReturn(null);
 
-        $this->segmentManager
+        $this->productSegmentProvider
             ->expects($this->never())
-            ->method('findById');
+            ->method('getProductSegmentById');
 
         $this->segmentManager
             ->expects($this->never())
             ->method('getEntityQueryBuilder');
 
-        $this->assertEquals([], $this->provider->getAll());
+        $this->assertEquals([], $this->provider->getProducts());
     }
 
     public function testGetCollectionWithoutSegment()
@@ -128,9 +129,9 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID))
             ->willReturn(1);
 
-        $this->segmentManager
+        $this->productSegmentProvider
             ->expects($this->once())
-            ->method('findById')
+            ->method('getProductSegmentById')
             ->with(1)
             ->willReturn(null);
 
@@ -138,7 +139,7 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('getEntityQueryBuilder');
 
-        $this->assertEquals([], $this->provider->getAll());
+        $this->assertEquals([], $this->provider->getProducts());
     }
 
     public function testGetAllWithoutQueryBuilder()
@@ -152,9 +153,9 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
         $segment = new Segment();
         $segment->setEntity(Product::class);
 
-        $this->segmentManager
+        $this->productSegmentProvider
             ->expects($this->once())
-            ->method('findById')
+            ->method('getProductSegmentById')
             ->with(1)
             ->willReturn($segment);
 
@@ -168,49 +169,6 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('restrictQueryBuilder');
 
-        $this->assertEquals([], $this->provider->getAll());
-    }
-
-    public function testGetAllWithWrongEntity()
-    {
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::FEATURED_PRODUCTS_SEGMENT_ID))
-            ->willReturn(1);
-
-        $segmentType = new SegmentType(SegmentType::TYPE_DYNAMIC);
-        $segment = new Segment();
-        $segment->setEntity(\stdClass::class);
-        $segment->setType($segmentType);
-
-        $this->segmentManager
-            ->expects($this->once())
-            ->method('findById')
-            ->with(1)
-            ->willReturn($segment);
-
-        $this->segmentManager
-            ->expects($this->never())
-            ->method('getEntityQueryBuilder');
-
-        $this->productManager
-            ->expects($this->never())
-            ->method('restrictQueryBuilder');
-
-        $this->logger
-            ->expects($this->once())
-            ->method('error')
-            ->with(
-                sprintf('Expected "%s", but "%s" is given.', Product::class, $segment->getEntity()),
-                [
-                    'id' => null,
-                    'name' => null,
-                    'entity' => $segment->getEntity(),
-                    'type' => SegmentType::TYPE_DYNAMIC,
-                ]
-            );
-
-        $this->assertEquals([], $this->provider->getAll());
+        $this->assertEquals([], $this->provider->getProducts());
     }
 }

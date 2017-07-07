@@ -14,33 +14,26 @@ use Oro\Bundle\SegmentBundle\Migrations\Data\ORM\LoadSegmentTypes;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadFeaturedProductsSegmentData extends AbstractFixture implements
+class LoadNewArrivalProductsSegmentData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
     /**
      * @internal
      */
-    const SEGMENT_RECORDS_LIMIT = 10;
-
-    /**
-     * @internal
-     */
-    const FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.featured_products.name';
+    const NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.new_arrival.name';
 
     /**
      * @var string
      */
-    private $featuredProductsSegmentName;
+    private $newArrivalsSegmentName;
 
     /**
      * {@inheritDoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->featuredProductsSegmentName = $container->getParameter(
-            self::FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME
-        );
+        $this->newArrivalsSegmentName = $container->getParameter(self::NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME);
     }
 
     /**
@@ -59,7 +52,7 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $segmentName = $this->featuredProductsSegmentName;
+        $segmentName = $this->newArrivalsSegmentName;
 
         if ($this->isSegmentAlreadyExists($manager, $segmentName)) {
             return;
@@ -69,7 +62,6 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
         $segment->setName($segmentName);
         $segment->setEntity(Product::class);
         $segment->setType($this->getSegmentType($manager, SegmentType::TYPE_DYNAMIC));
-        $segment->setRecordsLimit(self::SEGMENT_RECORDS_LIMIT);
 
         $organization = $this->getOrganization($manager);
         $segment->setOrganization($organization);
@@ -96,7 +88,7 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @param string $name
+     * @param string        $name
      *
      * @return SegmentType
      */
@@ -114,7 +106,7 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
      */
     private function getOrganization(ObjectManager $manager)
     {
-        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     /**
@@ -125,29 +117,29 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
         return [
             'columns' => [
                 [
-                    'name'    => 'id',
-                    'label'   => 'Id',
-                    'sorting' => '',
-                    'func'    => null,
+                    'name' => 'id',
+                    'label' => 'Id',
+                    'sorting' => 'DESC',
+                    'func' => null,
                 ],
                 [
-                    'name'    => 'updatedAt',
-                    'label'   => 'Updated At',
+                    'name' => 'updatedAt',
+                    'label' => 'Updated At',
                     'sorting' => 'DESC',
-                    'func'    => null,
+                    'func' => null,
                 ],
             ],
             'filters' => [
                 [
-                    'columnName' => 'featured',
+                    'columnName' => 'newArrival',
                     'criterion' => [
                         'filter' => 'boolean',
                         'data' => [
-                            'value' => 1
-                        ]
-                    ]
-                ]
-            ]
+                            'value' => 1,
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }

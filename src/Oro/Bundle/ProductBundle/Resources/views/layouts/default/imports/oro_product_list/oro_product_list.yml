@@ -17,10 +17,10 @@ layout:
                     slidesToShow: 4
                     arrows: true
                     responsive:
-                        - {breakpoint: 1100, settings: {arrows: false}}
-                        - {breakpoint: 993, settings: {slidesToShow: 3, arrows: false}}
-                        - {breakpoint: 641, settings: {slidesToShow: 2, arrows: false}}
-                        - {breakpoint: 415, settings: {slidesToShow: 1, arrows: false}}
+                        - {breakpoint: 1100, settings: {arrows: true}}
+                        - {breakpoint: 993, settings: {slidesToShow: 3, arrows: true}}
+                        - {breakpoint: 641, settings: {slidesToShow: 2, arrows: true}}
+                        - {breakpoint: 415, settings: {slidesToShow: 1, arrows: true}}
                 visible: '=items'
         - '@setOption':
             id: __product
