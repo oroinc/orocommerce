@@ -44,7 +44,7 @@ oro:
         descriptions:
             label: Description
             description: The description of the product (it is a list of localized entities to hold the localized text for each localization)
-        short_descriptions.label:
+        short_descriptions:
             label: Short Description
             description: The short description of the product (it is a list of localized entities to hold the localized text for each localization)
         removed: '{title} - removed'
