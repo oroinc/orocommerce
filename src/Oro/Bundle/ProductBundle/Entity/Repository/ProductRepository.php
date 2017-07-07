@@ -22,7 +22,7 @@ class ProductRepository extends EntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('product');
 
-        $queryBuilder->andWhere('UPPER(product.sku) = :sku')
+        $queryBuilder->andWhere('product.skuUppercase = :sku')
             ->setParameter('sku', strtoupper($sku));
 
         return $queryBuilder->getQuery()->getOneOrNullResult();
@@ -65,8 +65,7 @@ class ProductRepository extends EntityRepository
 
         if (count($productIds) > 0) {
             $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('p', ':product_ids'))
-                ->setParameter('product_ids', $productIds);
+                ->where($productsQueryBuilder->expr()->in('p.id', $productIds));
         }
 
         return $productsQueryBuilder;
@@ -88,7 +87,7 @@ class ProductRepository extends EntityRepository
             $upperCaseSkus = array_map("strtoupper", $productSkus);
 
             $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('UPPER(p.sku)', ':product_skus'))
+                ->where($productsQueryBuilder->expr()->in('p.skuUppercase', ':product_skus'))
                 ->setParameter('product_skus', $upperCaseSkus);
         }
 
@@ -172,7 +171,7 @@ class ProductRepository extends EntityRepository
         $upperCaseSkus = array_map("strtoupper", $skus);
 
         $qb = $this->getProductWithNamesQueryBuilder();
-        $qb->where($qb->expr()->in('UPPER(product.sku)', ':product_skus'))
+        $qb->where($qb->expr()->in('product.skuUppercase', ':product_skus'))
             ->setParameter('product_skus', $upperCaseSkus);
 
         return $qb;
@@ -201,7 +200,7 @@ class ProductRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('product');
         $queryBuilder
             ->select('product.sku')
-            ->where($queryBuilder->expr()->in('UPPER(product.sku)', ':product_skus'))
+            ->where($queryBuilder->expr()->in('product.skuUppercase', ':product_skus'))
             ->setParameter('product_skus', $upperCaseSkus);
         return $queryBuilder;
     }
@@ -260,7 +259,7 @@ class ProductRepository extends EntityRepository
         return $qb
             ->select('IDENTITY(productPrecision.unit)')
             ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
-            ->where($qb->expr()->eq('UPPER(product.sku)', ':sku'))
+            ->where($qb->expr()->eq('product.skuUppercase', ':sku'))
             ->setParameter('sku', strtoupper($sku))
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);

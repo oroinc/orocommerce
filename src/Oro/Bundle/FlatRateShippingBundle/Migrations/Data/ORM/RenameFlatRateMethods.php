@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRenamingEventDispatcherInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -25,9 +25,9 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
     protected $dispatcher;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
-    protected $methodIdentifierGenerator;
+    protected $integrationIdentifierGenerator;
 
     /**
      * @var ChannelRepository
@@ -44,7 +44,8 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->methodIdentifierGenerator = $container->get('oro_flat_rate_shipping.method.identifier_generator.method');
+        $this->integrationIdentifierGenerator = $container
+            ->get('oro_flat_rate_shipping.method.identifier_generator.method');
         $this->repository = $container->get('oro_entity.doctrine_helper')->getEntityRepository(Channel::class);
         $this->dispatcher = $container->get('oro_shipping.method.event.dispatcher.method_renaming');
         $this->installed = $container->hasParameter('installed') && $container->getParameter('installed');
@@ -80,7 +81,7 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
     {
         $this->dispatcher->dispatch(
             $this->generatePreviousVersionOfFlatRateIdentifier($channel),
-            $this->methodIdentifierGenerator->generateIdentifier($channel)
+            $this->integrationIdentifierGenerator->generateIdentifier($channel)
         );
     }
 

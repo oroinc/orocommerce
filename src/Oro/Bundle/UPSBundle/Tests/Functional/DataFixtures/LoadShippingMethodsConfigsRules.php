@@ -68,7 +68,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
             $this->setDestinations($entity, $manager, $data);
 
             /** @var array $shippingMethods */
-            $shippingMethods = $this->container->get('oro_shipping.shipping_method.registry')->getShippingMethods();
+            $shippingMethods = $this->container->get('oro_shipping.shipping_method_provider')->getShippingMethods();
             $this->setShippingMethods($entity, $manager, $shippingMethods);
 
             $manager->persist($entity);

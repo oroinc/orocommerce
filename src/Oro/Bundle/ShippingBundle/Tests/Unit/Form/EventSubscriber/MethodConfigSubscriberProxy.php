@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigSubscriber;
 use Symfony\Component\Form\FormFactoryInterface;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class MethodConfigSubscriberProxy extends MethodConfigSubscriber implements
     ConfigSubscriberProxyInterface
@@ -16,9 +16,9 @@ class MethodConfigSubscriberProxy extends MethodConfigSubscriber implements
     protected $factory;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     public function __construct()
     {
@@ -36,9 +36,9 @@ class MethodConfigSubscriberProxy extends MethodConfigSubscriber implements
     /**
      * {@inheritDoc}
      */
-    public function setMethodRegistry(ShippingMethodRegistry $methodRegistry)
+    public function setMethodRegistry(ShippingMethodProviderInterface $shippingMethodProvider)
     {
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
         return $this;
     }
 }

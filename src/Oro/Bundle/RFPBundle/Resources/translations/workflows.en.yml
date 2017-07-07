@@ -1,7 +1,7 @@
 oro:
     workflow:
         b2b_rfq_backoffice_default:
-            label: 'RFQ Backoffice'
+            label: 'RFQ Management Flow'
             step:
                 open:
                     label: 'Open'
@@ -59,7 +59,7 @@ oro:
                     warning_message: ''
 
         b2b_rfq_frontoffice_default:
-            label: 'RFQ Frontoffice'
+            label: 'RFQ Submission Flow'
             step:
                 submitted:
                     label: 'Submitted'

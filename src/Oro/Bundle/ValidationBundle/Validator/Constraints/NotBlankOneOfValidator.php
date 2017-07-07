@@ -44,7 +44,9 @@ class NotBlankOneOfValidator extends ConstraintValidator
         $fields = array_keys($fieldGroup);
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($fields as $field) {
-            if (null !== $accessor->getValue($value, $field)) {
+            $fieldValue = $accessor->getValue($value, $field);
+
+            if (true === $fieldValue || !empty($fieldValue) || '0' == $fieldValue) {
                 return;
             }
         }

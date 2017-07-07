@@ -1,4 +1,4 @@
-@fixture-HighlightingNewProducts.yml
+@fixture-OroProductBundle:HighlightingNewProducts.yml
 Feature: Brands
   In order to add sort products by brands
   As an Administrator

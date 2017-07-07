@@ -49,7 +49,7 @@ class RequestController extends Controller
      * @AclAncestor("oro_rfp_frontend_request_view")
      * @Route("/", name="oro_rfp_frontend_request_index")
      * @Layout(vars={"entity_class"})
-     * @return array
+     * @return array|RedirectResponse
      */
     public function indexAction()
     {

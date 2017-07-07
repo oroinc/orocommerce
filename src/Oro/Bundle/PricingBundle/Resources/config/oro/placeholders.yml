@@ -3,7 +3,11 @@ placeholders:
         product_index_sidebar:
             items:
                 product_sidebar_price_list_selector: ~
-
+        oro_product_quick_add_additional_fields:
+            items:
+                quick_add_subtotal: ~
     items:
         product_sidebar_price_list_selector:
             action: OroPricingBundle:Product:sidebar
+        quick_add_subtotal:
+            template: OroPricingBundle:Product:subtotal.html.twig

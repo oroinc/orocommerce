@@ -20,10 +20,10 @@ oro_product_frontend_product:
     options:
         frontend: true
 
-oro_product_frontend_ajax:
-    resource:     "@OroProductBundle/Controller/Frontend/AjaxProductController.php"
-    type:         annotation
-    prefix:       /product
+oro_product_frontend_product_ajax:
+    resource: "@OroProductBundle/Controller/Frontend/AjaxProductController.php"
+    type: annotation
+    prefix: /product
     options:
         frontend: true
 

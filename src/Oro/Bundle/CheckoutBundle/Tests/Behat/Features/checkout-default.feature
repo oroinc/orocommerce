@@ -1,4 +1,4 @@
-@fixture-CheckoutDefaultFixture.yml
+@fixture-OroCheckoutBundle:CheckoutDefaultFixture.yml
 Feature: Checkout Default
 
   Scenario: See Open Orders with child Customer by frontend administrator.

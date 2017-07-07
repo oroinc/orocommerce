@@ -4,16 +4,16 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 
 class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $shippingMethodRegistryMock;
+    private $shippingMethodProviderMock;
 
     /**
      * @var ShippingMethodViewFactory
@@ -22,12 +22,12 @@ class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->shippingMethodRegistryMock = $this
-            ->getMockBuilder(ShippingMethodRegistry::class)
+        $this->shippingMethodProviderMock = $this
+            ->getMockBuilder(ShippingMethodProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingMethodViewFactory = new ShippingMethodViewFactory($this->shippingMethodRegistryMock);
+        $this->shippingMethodViewFactory = new ShippingMethodViewFactory($this->shippingMethodProviderMock);
     }
 
     public function testCreateMethodView()
@@ -92,7 +92,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getSortOrder')
             ->willReturn($sortOrder);
 
-        $this->shippingMethodRegistryMock
+        $this->shippingMethodProviderMock
             ->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
@@ -114,7 +114,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $methodId = 'someMethodId';
 
-        $this->shippingMethodRegistryMock
+        $this->shippingMethodProviderMock
             ->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
@@ -152,7 +152,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getType')
             ->willReturn($methodTypeMock);
 
-        $this->shippingMethodRegistryMock
+        $this->shippingMethodProviderMock
             ->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
@@ -180,7 +180,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
         $methodTypeId = 'someMethodTypeId';
         $price = Price::create(5, 'USD');
 
-        $this->shippingMethodRegistryMock
+        $this->shippingMethodProviderMock
             ->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
@@ -208,7 +208,7 @@ class ShippingMethodViewFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getType')
             ->willReturn(null);
 
-        $this->shippingMethodRegistryMock
+        $this->shippingMethodProviderMock
             ->expects($this->once())
             ->method('getShippingMethod')
             ->with($methodId)
