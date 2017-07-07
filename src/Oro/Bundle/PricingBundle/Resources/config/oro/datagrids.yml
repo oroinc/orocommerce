@@ -9,7 +9,7 @@ datagrids:
             query:
                 select:
                     - priceList.id
-                    - priceList.name as priceListName
+                    - priceList.name
                     - priceList.default
                     - priceList.createdAt
                     - priceList.updatedAt
@@ -27,7 +27,6 @@ datagrids:
         columns:
             name:
                 label:         oro.pricing.pricelist.name.label
-                data_name:     priceListName
             default:
                 label:         oro.pricing.pricelist.default.label
                 frontend_type: boolean
@@ -47,7 +46,7 @@ datagrids:
         sorters:
             columns:
                 name:
-                    data_name: priceListName
+                    data_name: priceList.name
                 createdAt:
                     data_name: priceList.createdAt
                 updatedAt:
@@ -62,7 +61,7 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: priceListName
+                    data_name: priceList.name
                 createdAt:
                     type:      datetime
                     data_name: priceList.createdAt
