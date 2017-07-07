@@ -13,4 +13,9 @@ class ProductRow
      * @var float
      */
     public $productQuantity;
+
+    /**
+     * @var string
+     */
+    public $productUnit;
 }

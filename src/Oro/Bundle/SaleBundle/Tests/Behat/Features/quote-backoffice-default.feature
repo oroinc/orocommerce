@@ -1,12 +1,23 @@
 @ticket-BB-7802
 @automatically-ticket-tagged
-@fixture-QuoteBackofficeDefaultFixture.yml
-Feature: Quote Backoffice Default
+@fixture-OroSaleBundle:QuoteBackofficeDefaultFixture.yml
+Feature: Quote Backoffice Default Workflow
+  In order to edit quote internal statuses
+  As an Administrator
+  I want to have ability to change Quote internal status by Workflow transitions
+
+  Scenario: Workflow is on exclusive Active group with Quote Backoffice workflow
+    Given I login as administrator
+    And go to System/Workflows
+    And I click "Activate" on row "Quote Management Flow" in grid
+    And I press "Activate"
+    Then I should see "Workflow activated" flash message
 
   Scenario: Draft -> Edit, Quote #11. Internal status: Draft, customer status: N/A
     Given I login as administrator
-    And go to Sales/Quotes
+    When go to Sales/Quotes
     And click view PO11 in grid
+    And I click "Start Quote Management Flow"
     Then I should see Quote with:
       | Quote # | 11 |
       | PO Number | PO11 |
@@ -27,7 +38,7 @@ Feature: Quote Backoffice Default
     And click "Quotes"
     Then there is no "PO11" in grid
 
-  Scenario: Drfat -> Clone, Quote #11. Redirect to new Quote, internal status: Draft, customer status: N/A
+  Scenario: Draft -> Clone, Quote #11. Redirect to new Quote, internal status: Draft, customer status: N/A
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO11 in grid
@@ -52,6 +63,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO12 in grid
+    And I click "Start Quote Management Flow"
     Then I should see Quote with:
       | Quote # | 12 |
       | PO Number | PO12 |
@@ -94,6 +106,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO13 in grid
+    And I click "Start Quote Management Flow"
     Then I should see Quote with:
       | Quote # | 13 |
       | PO Number | PO13 |
@@ -118,6 +131,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO14 in grid
+    And I click "Start Quote Management Flow"
     And click "Send to Customer"
     And click "Send"
     Then I should see Quote with:
@@ -143,6 +157,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO15 in grid
+    And I click "Start Quote Management Flow"
     And click "Send to Customer"
     And click "Send"
     Then I should see Quote with:
@@ -169,6 +184,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO16 in grid
+    And I click "Start Quote Management Flow"
     And click "Send to Customer"
     And click "Send"
     Then I should see Quote with:
@@ -192,6 +208,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO17 in grid
+    And I click "Start Quote Management Flow"
     And click "Send to Customer"
     And click "Send"
     Then I should see Quote with:
@@ -235,6 +252,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO18 in grid
+    And I click "Start Quote Management Flow"
     And click "Send to Customer"
     And click "Send"
     Then I should see Quote with:
@@ -283,6 +301,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view PO19 in grid
+    And I click "Start Quote Management Flow"
     And click "Send to Customer"
     And click "Send"
     Then I should see Quote with:
@@ -375,6 +394,7 @@ Feature: Quote Backoffice Default
     Given I login as administrator
     And go to Sales/Quotes
     And click view POWithoutCustomerUser in grid
+    And I click "Start Quote Management Flow"
     And click "Send to Customer"
     And fill form with:
       | To | admin@example.com |

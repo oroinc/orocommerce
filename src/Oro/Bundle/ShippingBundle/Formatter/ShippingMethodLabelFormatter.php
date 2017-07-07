@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Formatter;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class ShippingMethodLabelFormatter
 {
@@ -10,16 +10,16 @@ class ShippingMethodLabelFormatter
     const DELIMITER = ', ';
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $shippingMethodRegistry;
+    protected $shippingMethodProvider;
 
     /**
-     * @param ShippingMethodRegistry $shippingMethodRegistry
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(ShippingMethodRegistry $shippingMethodRegistry)
+    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
-        $this->shippingMethodRegistry = $shippingMethodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
 
@@ -29,7 +29,7 @@ class ShippingMethodLabelFormatter
      */
     public function formatShippingMethodLabel($shippingMethodName)
     {
-        $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
+        $shippingMethod = $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
 
         if (!$shippingMethod || !$shippingMethod->isGrouped()) {
             return '';
@@ -45,7 +45,7 @@ class ShippingMethodLabelFormatter
      */
     public function formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName)
     {
-        $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
+        $shippingMethod = $this->shippingMethodProvider->getShippingMethod($shippingMethodName);
 
         if (!$shippingMethod) {
             return '';

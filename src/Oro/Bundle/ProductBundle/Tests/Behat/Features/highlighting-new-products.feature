@@ -1,4 +1,4 @@
-@fixture-HighlightingNewProducts.yml
+@fixture-OroProductBundle:HighlightingNewProducts.yml
 Feature: Highlighting new products
   In order to highlight selected new products
   As an Administrator

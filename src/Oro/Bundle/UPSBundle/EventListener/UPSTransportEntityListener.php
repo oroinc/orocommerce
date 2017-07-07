@@ -4,8 +4,8 @@ namespace Oro\Bundle\UPSBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\PersistentCollection;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeRemovalEventDispatcherInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
@@ -13,9 +13,9 @@ use Oro\Bundle\UPSBundle\Provider\ChannelType;
 class UPSTransportEntityListener
 {
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
+     * @var IntegrationIdentifierGeneratorInterface
      */
-    private $methodIdentifierGenerator;
+    private $integrationIdentifierGenerator;
 
     /**
      * @var UPSMethodTypeIdentifierGeneratorInterface
@@ -28,16 +28,16 @@ class UPSTransportEntityListener
     private $typeRemovalEventDispatcher;
 
     /**
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
+     * @param IntegrationIdentifierGeneratorInterface   $integrationIdentifierGenerator
      * @param UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator
      * @param MethodTypeRemovalEventDispatcherInterface $typeRemovalEventDispatcher
      */
     public function __construct(
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
+        IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator,
         UPSMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
         MethodTypeRemovalEventDispatcherInterface $typeRemovalEventDispatcher
     ) {
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
+        $this->integrationIdentifierGenerator = $integrationIdentifierGenerator;
         $this->typeIdentifierGenerator = $typeIdentifierGenerator;
         $this->typeRemovalEventDispatcher = $typeRemovalEventDispatcher;
     }
@@ -59,7 +59,7 @@ class UPSTransportEntityListener
 
             if (null !== $channel) {
                 foreach ($deletedServices as $deletedService) {
-                    $methodId = $this->methodIdentifierGenerator->generateIdentifier($channel);
+                    $methodId = $this->integrationIdentifierGenerator->generateIdentifier($channel);
                     $typeId = $this->typeIdentifierGenerator->generateIdentifier($channel, $deletedService);
                     $this->typeRemovalEventDispatcher->dispatch($methodId, $typeId);
                 }

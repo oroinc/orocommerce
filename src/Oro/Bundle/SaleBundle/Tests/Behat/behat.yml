@@ -7,8 +7,11 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroActivityListBundle::ActivityContext
         - OroApplicationBundle::CommerceMainContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroSecurityBundle::ACLContext
         - OroSaleBundle::FeatureContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
@@ -32,3 +35,9 @@ oro_behat_extension:
               locator: 'input[name="oro_sale_quote[quoteProducts][0][product]"]'
               element: Select2Entity
           LineItemPrice: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
+
+    Sales Representative Info:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '#sales-contact-info'
+        type: css

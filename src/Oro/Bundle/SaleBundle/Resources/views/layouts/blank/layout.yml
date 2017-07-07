@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@addTree':
+            items:
+                contact_info:
+                    blockType: sale_representative_info
+                    options:
+                        blockView: '=data["oro_sale_contact_info_widget_provider"].getContactInfoBlock()'
+            tree:
+                page_footer_side:
+                    contact_info: ~
