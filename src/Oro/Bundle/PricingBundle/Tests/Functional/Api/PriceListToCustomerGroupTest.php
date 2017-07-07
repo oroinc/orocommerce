@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api;
 
-use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -13,21 +12,15 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group CommunityEdition
  *
  * @dbIsolationPerTest
  */
-class PriceListToCustomerGroupTest extends RestJsonApiTestCase
+class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
 {
     use MessageQueueTrait;
-
-    /**
-     * @internal
-     */
-    const ENTITY = 'pricelisttocustomergroups';
 
     /**
      * {@inheritDoc}
@@ -41,73 +34,32 @@ class PriceListToCustomerGroupTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testGetList()
-    {
-        $parameters = [
-            'filter' => [
-                'id' => [
-                    '@price_list_6_US_customer_group1->id',
-                    '@price_list_1_US_customer_group1->id',
-                ],
-            ],
-            'sort' => 'id',
-        ];
-
-        $response = $this->cget(['entity' => self::ENTITY], $parameters);
-
-        $this->assertResponseContains('price_list_to_customer_group/get_list.yml', $response);
-    }
-
-    public function testCreateDuplicate()
-    {
-        $routeParameters = self::processTemplateData(['entity' => self::ENTITY]);
-        $parameters = $this->getRequestData('price_list_to_customer_group/create.yml');
-
-        $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
-
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'unique entity constraint',
-            $response->getContent()
-        );
-    }
-
     public function testCreate()
     {
         $this->cleanScheduledRelationMessages();
 
         $this->post(
-            ['entity' => self::ENTITY],
-            'price_list_to_customer_group/create.yml'
+            ['entity' => $this->getApiEntityName()],
+            $this->getAliceFilesFolderName() . '/create.yml'
         );
 
         $relation = $this->getEntityManager()
             ->getRepository(PriceListToCustomerGroup::class)
             ->findOneBy([
-                'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_6),
-                'website' => $this->getDefaultWebsite(),
-                'customerGroup' => $this->getReference('customer_group.group1'),
+                'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
+                'website' => $this->getWebsiteForCreateAction(),
+                'customerGroup' => $this->getReference('customer_group.group3'),
             ]);
 
-        static::assertSame(21, $relation->getSortOrder());
+        static::assertSame(11, $relation->getSortOrder());
         static::assertTrue($relation->isMergeAllowed());
 
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getDefaultWebsite()->getId(),
+                PriceListRelationTrigger::WEBSITE => $this->getWebsiteForCreateAction()->getId(),
                 PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group3')->getId(),
                 PriceListRelationTrigger::FORCE => false,
             ]
         );
@@ -121,7 +73,7 @@ class PriceListToCustomerGroupTest extends RestJsonApiTestCase
         $relationId2 = $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_GROUP_5)->getId();
 
         $this->cdelete(
-            ['entity' => self::ENTITY],
+            ['entity' => $this->getApiEntityName()],
             [
                 'filter' => [
                     'id' => [$relationId1, $relationId2]
@@ -137,15 +89,7 @@ class PriceListToCustomerGroupTest extends RestJsonApiTestCase
             $this->getEntityManager()->find(PriceListToCustomerGroup::class, $relationId2)
         );
 
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
+        $this->assertFirstRelationMessageSent();
 
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
@@ -158,18 +102,6 @@ class PriceListToCustomerGroupTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGet()
-    {
-        $relationId = $this->getFirstRelation()->getId();
-
-        $response = $this->get([
-            'entity' => self::ENTITY,
-            'id' => $relationId,
-        ]);
-
-        $this->assertResponseContains('price_list_to_customer_group/get.yml', $response);
-    }
-
     public function testUpdate()
     {
         $this->cleanScheduledRelationMessages();
@@ -177,119 +109,69 @@ class PriceListToCustomerGroupTest extends RestJsonApiTestCase
         $relationId = $this->getFirstRelation()->getId();
 
         $this->patch(
-            ['entity' => self::ENTITY, 'id' => (string) $relationId],
-            'price_list_to_customer_group/update.yml'
+            ['entity' => $this->getApiEntityName(), 'id' => (string) $relationId],
+            $this->getAliceFilesFolderName() . '/update.yml'
         );
 
         $updatedRelation = $this->getEntityManager()
             ->getRepository(PriceListToCustomerGroup::class)
             ->find($relationId);
 
-        static::assertSame(25, $updatedRelation->getSortOrder());
+        static::assertSame(21, $updatedRelation->getSortOrder());
         static::assertTrue($updatedRelation->isMergeAllowed());
-
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
-    }
-
-    public function testDelete()
-    {
-        $this->cleanScheduledRelationMessages();
-
-        $relationId = $this->getFirstRelation()->getId();
-
-        $this->delete([
-            'entity' => self::ENTITY,
-            'id' => $relationId,
-        ]);
-
-        $this->assertNull(
-            $this->getEntityManager()->find(PriceListToCustomerGroup::class, $relationId)
+        static::assertEquals(
+            $this->getReference(LoadPriceLists::PRICE_LIST_2),
+            $updatedRelation->getPriceList()
         );
 
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
+        $this->assertFirstRelationMessageSent();
     }
 
     public function testGetSubResources()
     {
         $relation = $this->getFirstRelation();
 
-        $this->assertGetSubResource($relation->getId(), 'priceList', $relation->getPriceList()->getId());
-        $this->assertGetSubResource($relation->getId(), 'customerGroup', $relation->getCustomerGroup()->getId());
+        $this->assertGetSubResourceForFirstRelation('priceList', $relation->getPriceList()->getId());
+        $this->assertGetSubResourceForFirstRelation('customerGroup', $relation->getCustomerGroup()->getId());
     }
 
     public function testGetRelationships()
     {
         $relation = $this->getFirstRelation();
 
-        $response = $this->getRelationship([
-            'entity' => self::ENTITY,
-            'id' => $relation->getId(),
-            'association' => 'priceList',
-        ]);
-
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => $this->getEntityType(PriceList::class),
-                    'id' => (string) $relation->getPriceList()->getId()
-                ]
-            ],
-            $response
+        $this->assertGetRelationshipForFirstRelation(
+            'priceList',
+            PriceList::class,
+            $relation->getPriceList()->getId()
         );
 
-        $response = $this->getRelationship([
-            'entity' => self::ENTITY,
-            'id' => $relation->getId(),
-            'association' => 'customerGroup',
-        ]);
-
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => $this->getEntityType(CustomerGroup::class),
-                    'id' => (string) $relation->getCustomerGroup()->getId()
-                ]
-            ],
-            $response
+        $this->assertGetRelationshipForFirstRelation(
+            'customerGroup',
+            CustomerGroup::class,
+            $relation->getCustomerGroup()->getId()
         );
     }
 
     /**
-     * @param int    $entityId
-     * @param string $associationName
-     * @param string $associationId
+     * {@inheritDoc}
      */
-    private function assertGetSubResource($entityId, $associationName, $associationId)
+    protected function getApiEntityName(): string
     {
-        $response = $this->getSubresource(
-            ['entity' => self::ENTITY, 'id' => $entityId, 'association' => $associationName]
-        );
-
-        $result = json_decode($response->getContent(), true);
-
-        self::assertEquals($associationId, $result['data']['id']);
+        return 'pricelisttocustomergroups';
     }
 
     /**
-     * @return PriceListToCustomerGroup
+     * {@inheritDoc}
      */
-    private function getFirstRelation(): PriceListToCustomerGroup
+    protected function getAliceFilesFolderName(): string
+    {
+        return 'price_list_to_customer_group';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getFirstRelation()
     {
         return $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_GROUP_1);
     }
@@ -297,8 +179,24 @@ class PriceListToCustomerGroupTest extends RestJsonApiTestCase
     /**
      * @return Website
      */
-    private function getDefaultWebsite(): Website
+    protected function getWebsiteForCreateAction(): Website
     {
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function assertFirstRelationMessageSent()
+    {
+        static::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
     }
 }
