@@ -1,0 +1,20 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'quick_add_import_directions.html.twig'
+        - '@setOption':
+            id: widget_content
+            optionName: 'attr.data-page-component-module'
+            optionValue: 'orofrontend/js/app/components/widget-form-component'
+        - '@addTree':
+            items:
+                quick_add_import_help:
+                    blockType: quick_add_form_directions
+                    options:
+                        method: '=context["method"]'
+            tree:
+                widget_content:
+                    quick_add_import_help: ~
+
+    conditions: 'context["import_step"]=="form"'
+

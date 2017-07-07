@@ -1,4 +1,4 @@
-@fixture-category-title-check-at-search.yml
+@fixture-OroCatalogBundle:category-title-check-at-search.yml
 Feature: Invalid category title at search results
   Scenario: Search
     Given I login as administrator

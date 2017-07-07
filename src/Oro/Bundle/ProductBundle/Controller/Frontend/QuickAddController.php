@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
+use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class QuickAddController extends Controller
 {
@@ -32,7 +33,7 @@ class QuickAddController extends Controller
 
     /**
      * @Route("/import/", name="oro_product_frontend_quick_add_import")
-     * @Layout(vars={"import_step"})
+     * @Layout(vars={"import_step", "method"})
      *
      * @param Request $request
      * @return array|Response
@@ -42,7 +43,8 @@ class QuickAddController extends Controller
         $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processImport();
 
         return [
-            'import_step' => $collection === null ? 'form' : 'result',
+            'import_step' => $this->getImportStep($collection),
+            'method' => $request->getMethod(),
             'data' => [
                 'collection' => $collection,
                 'backToUrl' => $request->getUri(),
@@ -59,6 +61,7 @@ class QuickAddController extends Controller
     public function copyPasteAction()
     {
         $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processCopyPaste();
+
         return [
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
@@ -89,5 +92,18 @@ class QuickAddController extends Controller
         return new JsonResponse([
             'redirectUrl' => $response->getTargetUrl()
         ]);
+    }
+
+    /**
+     * @param QuickAddRowCollection|null $collection
+     * @return string
+     */
+    private function getImportStep(QuickAddRowCollection $collection = null)
+    {
+        if ($collection !== null && !$collection->isEmpty() && $collection->hasValidRows()) {
+            return 'result';
+        }
+
+        return 'form';
     }
 }

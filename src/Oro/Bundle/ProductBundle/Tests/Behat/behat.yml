@@ -111,6 +111,81 @@ oro_behat_extension:
 
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU1:
+            type: 'css'
+            locator: 'input[name="oro_product_quick_add[products][0][productDisplayName]"]'
+          SKU2:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][1][productDisplayName]']"
+          SKU3:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][2][productDisplayName]']"
+          SKU4:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][3][productDisplayName]']"
+          QTY1:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
+          QTY2:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][1][productQuantity]']"
+          QTY3:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][2][productQuantity]']"
+          QTY4:
+            type: 'css'
+            locator: "input[name='oro_product_quick_add[products][3][productQuantity]']"
+          UNIT1:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][0][productUnit]"]'
+            element: Select2Entity
+          UNIT2:
+            type: 'css'
+            locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
+            element: Select2Entity
+
+    Quick Add Price Field:
+      selector:
+        type: 'xpath'
+        locator: '//input[@data-name="field__product-subtotal"]'
+
+    Quick Add Sku Field:
+      selector:
+        type: 'xpath'
+        locator: '//input[@data-name="field__product-sku"]'
+
+    Quick Add Form Validation:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add']/span[@class='validation-failed']/span"
+
+    Quick Add Copy Paste Form:
+      selector: "form[name='oro_product_quick_add_copy_paste']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Paste your order:
+            type: 'css'
+            locator: "textarea[name='oro_product_quick_add_copy_paste[copyPaste]']"
+            element: Textarea
+
+    Quick Add Copy Paste Validation:
+      selector:
+        type: 'xpath'
+        locator: "//form[@name='oro_product_quick_add_copy_paste']//span[@class='validation-failed']/span/span"
+
+    Clear All:
+      selector: ".quick-order-add__clear-button"
+
+    Quick Order Import File Field:
+      selector: "input[name='oro_product_quick_add_import_from_file[file]']"
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Add More Rows:
+      selector: ".add-list-item"
 
     CreateOrderButton:
       selector: "a[title='Create Order']"
@@ -315,6 +390,21 @@ oro_behat_extension:
           Show On Product View Default: 'product_promotions[oro_product___product_promotion_show_on_product_view][use_parent_scope_value]'
           Show On Product View: 'product_promotions[oro_product___product_promotion_show_on_product_view][value]'
 
+    RequestAQuoteProducts:
+      selector: '.page-content .request-form [data-role="product-container"]'
+
+    RequestAQuoteProductLine:
+      selector: '[data-role="line-item"]'
+
+    RequestAQuoteProductLineName:
+      selector: '.request-form-product__item--link .request-form-link'
+
+    RequestAQuoteProductLineQuantity:
+      selector: '.request-form-product__item--quantity .request-form-quantity__total'
+
+    RequestAQuoteProductLineUnit:
+      selector: '.request-form-product__item--quantity .request-form-quantity__units'
+
     MassActionLimit:
       selector: 'input[id*="mass_action_limitation_value"]'
 
@@ -339,10 +429,6 @@ oro_behat_extension:
   suites:
     # Revert by OPI-52
     OroProductBundle:
-      contexts: []
-      paths:
-        - /dev/null
-    OroProductBundleProductCollection:
       contexts:
         - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
@@ -357,20 +443,6 @@ oro_behat_extension:
         - OroUserBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
-    OroProductBundleProduct:
-      contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroSecurityBundle::ACLContext
-        - OroSEOBundle::FeatureContext
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroUserBundle::FeatureContext
-      paths:
         - '@OroProductBundle/Tests/Behat/Features/product'
     OroProductBundleRelatedItems:
       contexts:
@@ -389,6 +461,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::QuickOrderFormContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSecurityBundle::ACLContext
         - OroSEOBundle::FeatureContext
@@ -396,5 +469,9 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
+        - OroCheckoutBundle::FeatureContext
+        - OroAuthorizeNetBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroShippingBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
