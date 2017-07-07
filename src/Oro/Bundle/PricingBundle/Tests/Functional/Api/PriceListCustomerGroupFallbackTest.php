@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Api;
 
-use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
@@ -11,21 +10,15 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallback
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @group CommunityEdition
  *
  * @dbIsolationPerTest
  */
-class PriceListCustomerGroupFallbackTest extends RestJsonApiTestCase
+class PriceListCustomerGroupFallbackTest extends AbstractApiPriceListRelationTest
 {
     use MessageQueueTrait;
-
-    /**
-     * @internal
-     */
-    const ENTITY = 'pricelistcustomergroupfallbacks';
 
     /**
      * {@inheritDoc}
@@ -38,71 +31,31 @@ class PriceListCustomerGroupFallbackTest extends RestJsonApiTestCase
         ]);
     }
 
-    public function testGetList()
-    {
-        $parameters = [
-            'filter' => [
-                'id' => [
-                        '@US_customer_group1_price_list_fallback->id',
-                        '@Canada_customer_group2_price_list_fallback->id',
-                    ],
-            ],
-            'sort' => 'id',
-        ];
-
-        $response = $this->cget(['entity' => self::ENTITY], $parameters);
-
-        $this->assertResponseContains('price_list_customer_group_fallback/get_list.yml', $response);
-    }
-
-    public function testCreateDuplicate()
-    {
-        $routeParameters = self::processTemplateData(['entity' => self::ENTITY]);
-        $parameters = $this->getRequestData('price_list_customer_group_fallback/create.yml');
-
-        $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
-
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', $routeParameters),
-            $parameters
-        );
-
-        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
-        static::assertContains(
-            'unique entity constraint',
-            $response->getContent()
-        );
-    }
-
     public function testCreate()
     {
         $this->cleanScheduledRelationMessages();
 
         $this->post(
-            ['entity' => self::ENTITY],
-            'price_list_customer_group_fallback/create.yml'
+            ['entity' => $this->getApiEntityName()],
+            $this->getAliceFilesFolderName() . '/create.yml'
         );
 
         $relation = $this->getEntityManager()
             ->getRepository(PriceListCustomerGroupFallback::class)
             ->findOneBy([
-                'website' => $this->getDefaultWebsite(),
-                'customerGroup' => $this->getReference('customer_group.group1'),
+                'website' => $this->getWebsiteForCreateAction(),
+                'customerGroup' => $this->getReference('customer_group.group3'),
+                'fallback' => 1,
             ]);
 
-        static::assertSame(1, $relation->getFallback());
+        static::assertNotNull($relation);
 
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                PriceListRelationTrigger::WEBSITE => $this->getDefaultWebsite()->getId(),
+                PriceListRelationTrigger::WEBSITE => $this->getWebsiteForCreateAction()->getId(),
                 PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group3')->getId(),
                 PriceListRelationTrigger::FORCE => false,
             ]
         );
@@ -116,7 +69,7 @@ class PriceListCustomerGroupFallbackTest extends RestJsonApiTestCase
         $relationId2 = $this->getReference(LoadPriceListFallbackSettings::WEBSITE_CUSTOMER_GROUP_FALLBACK_4)->getId();
 
         $this->cdelete(
-            ['entity' => self::ENTITY],
+            ['entity' => $this->getApiEntityName()],
             [
                 'filter' => [
                     'id' => [$relationId1, $relationId2]
@@ -131,15 +84,8 @@ class PriceListCustomerGroupFallbackTest extends RestJsonApiTestCase
             $this->getEntityManager()->find(PriceListCustomerGroupFallback::class, $relationId2)
         );
 
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
+        $this->assertFirstRelationMessageSent();
+
         static::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
@@ -151,18 +97,6 @@ class PriceListCustomerGroupFallbackTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGet()
-    {
-        $relationId = $this->getFirstRelation()->getId();
-
-        $response = $this->get([
-            'entity' => self::ENTITY,
-            'id' => $relationId,
-        ]);
-
-        $this->assertResponseContains('price_list_customer_group_fallback/get.yml', $response);
-    }
-
     public function testUpdate()
     {
         $this->cleanScheduledRelationMessages();
@@ -170,8 +104,8 @@ class PriceListCustomerGroupFallbackTest extends RestJsonApiTestCase
         $relationId = $this->getFirstRelation()->getId();
 
         $this->patch(
-            ['entity' => self::ENTITY, 'id' => (string) $relationId],
-            'price_list_customer_group_fallback/update.yml'
+            ['entity' => $this->getApiEntityName(), 'id' => (string) $relationId],
+            $this->getAliceFilesFolderName() . '/update.yml'
         );
 
         $updatedRelation = $this->getEntityManager()
@@ -180,92 +114,72 @@ class PriceListCustomerGroupFallbackTest extends RestJsonApiTestCase
 
         static::assertSame(1, $updatedRelation->getFallback());
 
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
-    }
-
-    public function testDelete()
-    {
-        $this->cleanScheduledRelationMessages();
-
-        $relationId = $this->getFirstRelation()->getId();
-
-        $this->delete([
-            'entity' => self::ENTITY,
-            'id' => $relationId,
-        ]);
-
-        $this->assertNull(
-            $this->getEntityManager()->find(PriceListCustomerGroupFallback::class, $relationId)
-        );
-
-        static::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
-                PriceListRelationTrigger::FORCE => false,
-            ]
-        );
+        $this->assertFirstRelationMessageSent();
     }
 
     public function testGetSubResources()
     {
         $relation = $this->getFirstRelation();
 
-        $response = $this->getSubresource([
-            'entity' => self::ENTITY,
-            'id' => $relation->getId(),
-            'association' => 'customerGroup'
-        ]);
-
-        $result = json_decode($response->getContent(), true);
-
-        self::assertEquals($relation->getCustomerGroup()->getId(), $result['data']['id']);
+        $this->assertGetSubResourceForFirstRelation('customerGroup', $relation->getCustomerGroup()->getId());
     }
 
     public function testGetRelationships()
     {
         $relation = $this->getFirstRelation();
 
-        $response = $this->getRelationship([
-            'entity' => self::ENTITY,
-            'id' => $relation->getId(),
-            'association' => 'customerGroup',
-        ]);
-
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    'type' => $this->getEntityType(CustomerGroup::class),
-                    'id' => (string) $relation->getCustomerGroup()->getId()
-                ]
-            ],
-            $response
+        $this->assertGetRelationshipForFirstRelation(
+            'customerGroup',
+            CustomerGroup::class,
+            $relation->getCustomerGroup()->getId()
         );
-    }
-
-    /**
-     * @return PriceListCustomerGroupFallback
-     */
-    private function getFirstRelation(): PriceListCustomerGroupFallback
-    {
-        return $this->getReference(LoadPriceListFallbackSettings::WEBSITE_CUSTOMER_GROUP_FALLBACK_1);
     }
 
     /**
      * @return Website
      */
-    private function getDefaultWebsite(): Website
+    protected function getWebsiteForCreateAction(): Website
     {
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getApiEntityName(): string
+    {
+        return 'pricelistcustomergroupfallbacks';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getAliceFilesFolderName(): string
+    {
+        return 'price_list_customer_group_fallback';
+    }
+
+    /**
+     * @return PriceListCustomerGroupFallback
+     */
+    protected function getFirstRelation()
+    {
+        return $this->getReference(LoadPriceListFallbackSettings::WEBSITE_CUSTOMER_GROUP_FALLBACK_1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function assertFirstRelationMessageSent()
+    {
+        static::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference('customer_group.group1')->getId(),
+                PriceListRelationTrigger::FORCE => false,
+            ]
+        );
     }
 }
