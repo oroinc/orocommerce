@@ -27,7 +27,9 @@ $product-view-primary-page-title-line-height-tablet: 1.2 !default;
 
 $product-view-primary-wrapper-display-tablet: flex !default;
 $product-view-primary-wrapper-flex-direction-tablet: column-reverse !default;
-$product-view-primary-wrapper-margin-top-tablet: -15px !default;
+$product-view-primary-wrapper-margin-top-tablet: null !default;
 
 $product-view-default-theme-product-price-display-desktop: none !default;
 $product-view-default-theme-product-prices-display-tablet: none !default;
+
+$product-view-primary-wrapper-margin-top-mobile-landscape: 10px !default;
