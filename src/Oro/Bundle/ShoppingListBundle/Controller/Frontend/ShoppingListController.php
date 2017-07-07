@@ -83,8 +83,6 @@ class ShoppingListController extends Controller
 
         $defaultResponse = [
             'savedId' => null,
-            'shoppingListCreateEnabled' => $this->get('oro_featuretoggle.checker.feature_checker')
-                ->isFeatureEnabled('shopping_list_create', 'updated'),
             'shoppingList' => $shoppingList,
             'createOnly' => $request->get('createOnly')
         ];
