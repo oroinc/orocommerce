@@ -113,6 +113,9 @@ define(function(require) {
         },
 
         _onCollectionChange: function() {
+            if (arguments.length > 0 && arguments[0].shoppingListCreateEnabled !== undefined) {
+                this.options.shoppingListCreateEnabled = arguments[0].shoppingListCreateEnabled;
+            }
             this._setEditLineItem();
 
             var buttons = this._collectAllButtons();
@@ -167,7 +170,8 @@ define(function(require) {
             }
 
             if (buttons.length === 1) {
-                buttons = _.first(buttons).find(this.options.buttonsSelector);
+                var decoreClass = this.dropdownWidget.options.decoreClass || '';
+                buttons = _.first(buttons).find(this.options.buttonsSelector).addClass(decoreClass);
             }
 
             return buttons;
@@ -332,7 +336,7 @@ define(function(require) {
             }
             var dialog = new ShoppingListCreateWidget({});
             dialog.on('formSave', _.bind(function(response) {
-                urlOptions.shoppingListId = response;
+                urlOptions.shoppingListId = response.savedId;
                 this._addProductToShoppingList(url, urlOptions, formData);
             }, this));
             dialog.render();

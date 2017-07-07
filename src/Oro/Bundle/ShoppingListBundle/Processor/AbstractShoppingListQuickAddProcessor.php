@@ -62,26 +62,31 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
         $productSkus = ArrayUtil::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
 
-        $productSkuQuantities = [];
+        $productUnitsWithQuantities = [];
         foreach ($data as $product) {
             $productQuantity = $product['productQuantity'];
-            $upperSku = strtoupper($product['productSku']);
-            if (array_key_exists($upperSku, $productSkuQuantities)) {
-                $productQuantity += $productSkuQuantities[$upperSku];
-            }
-            $productSkuQuantities[$upperSku] = $productQuantity;
-        }
 
-        $productIdsQuantities = [];
-        foreach ($productIds as $productSku => $productId) {
-            $productIdsQuantities[$productId] = $productSkuQuantities[strtoupper($productSku)];
+            if (!isset($product['productUnit'])) {
+                continue;
+            }
+
+            $productUnit = $product['productUnit'];
+
+            $upperSku = strtoupper($product['productSku']);
+            if (array_key_exists($upperSku, $productUnitsWithQuantities)) {
+                if (isset($productUnitsWithQuantities[$upperSku][$productUnit])) {
+                    $productQuantity += $productUnitsWithQuantities[$upperSku][$productUnit];
+                }
+            }
+
+            $productUnitsWithQuantities[$upperSku][$productUnit] = $productQuantity;
         }
 
         try {
             $entitiesCount = $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
                 array_values($productIds),
-                $productIdsQuantities
+                $productUnitsWithQuantities
             );
 
             return $entitiesCount;

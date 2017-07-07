@@ -30,7 +30,7 @@ define(function(require) {
             var ownerId = e.val;
             $.ajax({
                 method: 'PUT',
-                url: routing.generate('oro_api_set_shoppinglist_owner', {
+                url: routing.generate('oro_api_set_shopping_list_owner', {
                     id: this.shoppingListId
                 }),
                 data: {

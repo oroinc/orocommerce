@@ -23,8 +23,12 @@ class Configuration implements ConfigurationInterface
             [
                 'frontend_open_orders_separate_page' => [
                     'type' => 'boolean',
-                    'value' => false
-                ]
+                    'value' => false,
+                ],
+                'guest_checkout' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
             ]
         );
 

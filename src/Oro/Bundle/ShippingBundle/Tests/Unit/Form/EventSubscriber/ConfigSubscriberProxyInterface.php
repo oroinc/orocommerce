@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -17,9 +17,9 @@ interface ConfigSubscriberProxyInterface extends EventSubscriberInterface
 
 
     /**
-     * @param ShippingMethodRegistry $methodRegistry
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      *
      * @return ConfigSubscriberProxyInterface
      */
-    public function setMethodRegistry(ShippingMethodRegistry $methodRegistry);
+    public function setMethodRegistry(ShippingMethodProviderInterface $shippingMethodProvider);
 }

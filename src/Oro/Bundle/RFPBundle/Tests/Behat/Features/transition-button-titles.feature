@@ -1,4 +1,4 @@
-@fixture-RFQWorkflows.yml
+@fixture-OroRFPBundle:RFQWorkflows.yml
 @skip #due to BAP-14674
 Feature: Transition button titles for Frontend
 

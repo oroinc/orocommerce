@@ -175,7 +175,7 @@
   }
 }
 
-@include breakpoint('mobile-landskape') {
+@include breakpoint('mobile-landscape') {
   .matrix-order-widget {
     &__form__col {
       .form-field-quantity {

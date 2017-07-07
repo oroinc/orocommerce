@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodIconProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 
@@ -16,9 +16,9 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
     const ICON = 'bundles/icon-uri.png';
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $shippingMethodRegistry;
+    private $shippingMethodProvider;
 
     /**
      * @var ShippingMethodIconProvider
@@ -30,8 +30,8 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->shippingMethodRegistry = $this->createMock(ShippingMethodRegistry::class);
-        $this->provider = new ShippingMethodIconProvider($this->shippingMethodRegistry);
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
+        $this->provider = new ShippingMethodIconProvider($this->shippingMethodProvider);
 
         $this->setUpLoggerMock($this->provider);
     }
@@ -58,7 +58,7 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIconIfNoShippingMethod()
     {
-        $this->shippingMethodRegistry
+        $this->shippingMethodProvider
             ->method('hasShippingMethod')
             ->with(self::SHIPPING_METHOD)
             ->willReturn(false);
@@ -72,20 +72,20 @@ class ShippingMethodIconProviderTest extends \PHPUnit_Framework_TestCase
      * @param string                                   $identifier
      * @param \PHPUnit_Framework_MockObject_MockObject $shippingMethod
      *
-     * @return ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private function configureShippingMethodRegistry($identifier, $shippingMethod)
     {
-        $this->shippingMethodRegistry
+        $this->shippingMethodProvider
             ->method('hasShippingMethod')
             ->with($identifier)
             ->willReturn(true);
 
-        $this->shippingMethodRegistry
+        $this->shippingMethodProvider
             ->method('getShippingMethod')
             ->with($identifier)
             ->willReturn($shippingMethod);
 
-        return $this->shippingMethodRegistry;
+        return $this->shippingMethodProvider;
     }
 }

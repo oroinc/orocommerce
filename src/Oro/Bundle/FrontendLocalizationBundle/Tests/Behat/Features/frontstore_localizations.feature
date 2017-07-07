@@ -1,5 +1,5 @@
 @ticket-BAP-14671
-@fixture-frontstore-customer.yml
+@fixture-OroFrontendLocalizationBundle:frontstore-customer.yml
 Feature: FrontStore language switcher
   In order to manage available localizations for language switcher
   As Administrator

@@ -26,7 +26,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
- * @dbIsolationPerTest
  */
 class ShoppingListControllerTest extends WebTestCase
 {
@@ -63,7 +62,9 @@ class ShoppingListControllerTest extends WebTestCase
         $user = $this->getReference(LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC);
         $this->simulateAuthentication(
             LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
-            LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC
+            LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
+            'customer_identity',
+            CustomerUser::class
         );
 
         /** @var ShoppingList $currentShoppingList */
@@ -92,7 +93,12 @@ class ShoppingListControllerTest extends WebTestCase
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
-        $this->simulateAuthentication(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW);
+        $this->simulateAuthentication(
+            BaseLoadCustomerData::AUTH_USER,
+            BaseLoadCustomerData::AUTH_PW,
+            'customer_identity',
+            CustomerUser::class
+        );
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
@@ -143,7 +149,12 @@ class ShoppingListControllerTest extends WebTestCase
         // assert selected shopping list
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
-        $this->simulateAuthentication(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW);
+        $this->simulateAuthentication(
+            BaseLoadCustomerData::AUTH_USER,
+            BaseLoadCustomerData::AUTH_PW,
+            'customer_identity',
+            CustomerUser::class
+        );
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
@@ -166,9 +177,18 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testQuickAdd()
     {
+        $this->markTestSkipped(
+            'Waiting for new quick order page to be finished'
+        );
+
         $shoppingListManager = $this->getContainer()
             ->get('oro_shopping_list.shopping_list.manager');
-        $this->simulateAuthentication(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW);
+        $this->simulateAuthentication(
+            BaseLoadCustomerData::AUTH_USER,
+            BaseLoadCustomerData::AUTH_PW,
+            'customer_identity',
+            CustomerUser::class
+        );
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -176,7 +196,8 @@ class ShoppingListControllerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_3);
         $products = [[
             'productSku' => $product->getSku(),
-            'productQuantity' => 15
+            'productQuantity' => 15,
+            'productUnit' => 'kg'
         ]];
 
         /** @var ShoppingList $currentShoppingList */
@@ -200,7 +221,9 @@ class ShoppingListControllerTest extends WebTestCase
      */
     public function testACL($route, $resource, $user, $status, $expectedCreateOrderButtonVisible)
     {
-        $this->simulateAuthentication($user, $user);
+        if ($user) {
+            $this->simulateAuthentication($user, $user, 'customer_identity', CustomerUser::class);
+        }
 
         /* @var $resource ShoppingList */
         $resource = $this->getReference($resource);
@@ -272,7 +295,7 @@ class ShoppingListControllerTest extends WebTestCase
                 'route' => 'oro_shopping_list_frontend_create',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => '',
-                'status' => 401,
+                'status' => 404,
                 'expectedCreateOrderButtonVisible' => false
             ],
             'CREATE (user with create: LOCAL)' => [
@@ -301,7 +324,6 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testViewListForGuest()
     {
-        $this->loginUser('');
         $crawler = $this->client->request('GET', $this->getUrl('oro_shopping_list_frontend_view'));
         $response = $this->client->getResponse();
 
@@ -381,35 +403,9 @@ class ShoppingListControllerTest extends WebTestCase
         }
     }
 
-    /**
-     * @param string $email
-     * @param string $credentials
-     */
-    private function simulateAuthentication($email, $credentials)
+    protected function tearDown()
     {
-        if ($email) {
-            /** @var CustomerUser $user */
-            $user = $this->getContainer()->get('doctrine')
-                ->getRepository(CustomerUser::class)
-                ->findOneBy(['email' => $email]);
-            $session = $this->client->getContainer()->get('session');
-            $firewallContext = 'customer_identity';
-            /** @var Organization $organization */
-            $organization = $user->getOrganization();
-            $token = new UsernamePasswordOrganizationToken(
-                $user,
-                $credentials,
-                $firewallContext,
-                $organization,
-                $user->getRoles()
-            );
-            $session->set('_security_'.$firewallContext, serialize($token));
-            $session->save();
-
-            $cookie = new Cookie($session->getName(), $session->getId());
-            $this->client->getCookieJar()->set($cookie);
-        } else {
-            $this->loginUser($email);
-        }
+        $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
+        $this->configManager->flush();
     }
 }

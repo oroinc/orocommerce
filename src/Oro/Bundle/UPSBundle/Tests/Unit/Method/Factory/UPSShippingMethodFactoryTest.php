@@ -4,9 +4,9 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\Factory;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
@@ -40,9 +40,9 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
     private $shippingPriceCache;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $methodIdentifierGenerator;
+    private $integrationIdentifierGenerator;
 
     /**
      * @var UPSShippingMethodTypeFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -68,7 +68,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $this->priceRequestFactory = $this->createMock(PriceRequestFactory::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->shippingPriceCache = $this->createMock(ShippingPriceCache::class);
-        $this->methodIdentifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
+        $this->integrationIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->methodTypeFactory = $this->createMock(UPSShippingMethodTypeFactoryInterface::class);
         $this->integrationIconProvider = $this->createMock(IntegrationIconProviderInterface::class);
 
@@ -78,7 +78,7 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
             $this->localizationHelper,
             $this->integrationIconProvider,
             $this->shippingPriceCache,
-            $this->methodIdentifierGenerator,
+            $this->integrationIdentifierGenerator,
             $this->methodTypeFactory
         );
     }
@@ -136,7 +136,8 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getApplicableShippingServices')
             ->willReturn($serviceCollection);
 
-        $this->methodIdentifierGenerator->expects($this->once())
+        $this->integrationIdentifierGenerator
+            ->expects($this->once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn($identifier);

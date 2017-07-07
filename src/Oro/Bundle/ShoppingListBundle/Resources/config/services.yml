@@ -69,6 +69,7 @@ services:
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
+            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
 
     oro_shopping_list.service.message_generator:
         class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'
@@ -322,11 +323,9 @@ services:
             - '@oro_shopping_list.shopping_list_provider.cache'
 
     oro_shopping_list.voter.guest_shopping_list_voter:
-        class: 'Oro\Bundle\ShoppingListBundle\Voter\GuestShoppingListVoter'
-        arguments:
-            - '@oro_featuretoggle.voter.config_voter'
-            - '@security.token_storage'
-        lazy: true
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_shopping_list'] ]
         tags:
             - { name: oro_featuretogle.voter }
 
@@ -369,3 +368,18 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_shopping_list.manager.shopping_list_limit'
             - '@oro_shopping_list.shopping_list.manager'
+
+    oro_shopping_list.customer_visitor.authorization_checker:
+        class: Oro\Bundle\ShoppingListBundle\Security\CustomerVisitorAuthorizationChecker
+        arguments:
+            - '@security.authorization_checker'
+            - '@security.token_storage'
+
+    oro_shopping_list.pricing.subtotal_processor.handler.request_handler:
+        class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@event_dispatcher'
+            - '@oro_shopping_list.customer_visitor.authorization_checker'
+            - '@oro_entity.routing_helper'
+            - '@doctrine'
