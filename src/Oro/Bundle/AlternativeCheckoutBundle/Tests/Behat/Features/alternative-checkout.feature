@@ -1,7 +1,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-AlternativeCheckout.yml
-@fixture-OroCheckoutBundle:InventoryLevel.yml
+@fixture-OroWarehouseBundle:Checkout.yml
 Feature: Alternative Checkout workflow threshold
   In order to create order on front store
   As a buyer
@@ -24,8 +24,9 @@ Feature: Alternative Checkout workflow threshold
   Scenario: Create order with Alternative Checkout with threshold
     Given I proceed as the User
     And There is EUR currency in the system configuration
-    And AmandaRCole@example.org customer user has Buyer role
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And I enable the existing warehouses
+    And MarleneSBradley@example.org customer user has Buyer role
+    And I signed in as MarleneSBradley@example.org on the store frontend
     When I open page with shopping list List Threshold
     And I press "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
@@ -40,10 +41,10 @@ Feature: Alternative Checkout workflow threshold
     When I signed in as NancyJSallee@example.org on the store frontend
     And click "Account"
     And click "Order History"
-    And click "Check Out" on row "Amanda Cole" in grid
+    And click "Check Out" on row "List Threshold" in grid
     And click "Approve Order"
     And I proceed as the User
-    And  reload the page
+    And reload the page
     Then I should see "Approved at"
     And click "Submit Order"
     And I see the "Thank You" page with "Thank You For Your Purchase!" title
