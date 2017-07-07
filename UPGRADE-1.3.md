@@ -83,7 +83,8 @@ ProductBundle
     - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
 - Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
-    
+- Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
+- `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
     
 PaymentBundle
 -------------
@@ -99,6 +100,9 @@ ShippingBundle
  - `\Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodSelectType` - use `showIcon` option instead of `result_template_twig` and `selection_template_twig`
  - `OroShippingBundle:Form:type/result.html.twig` and `OroShippingBundle:Form:type/selection.html.twig` - removed
  - previously deprecated interface `\Oro\Bundle\ShippingBundle\Identifier\IntegrationMethodIdentifierGeneratorInterface` is removed along with its implementations and usages. Use `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` instead.
+ - previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
+ - previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
+
 
 PayPalBundle
 --------------
@@ -177,6 +181,10 @@ ShippingBundle
     - Interface `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface` was changed (the implementations were changed as well):
         - `$price` is removed from `createBuilder()` method signature
 - Class `Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider` which never used was removed.
+- Added interface `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface` and class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider` which implement this interface.
+- Class `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry` was renamed to `Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider`
+    - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
+- Service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
         
 PricingBundle
 --------------
@@ -243,3 +251,4 @@ UPSBundle
 FlatRateShippingBundle
 ----------------------
 - Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
+- previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.

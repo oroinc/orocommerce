@@ -30,8 +30,7 @@ operations:
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         order: 10
         button_options:
-            icon: fa-file-text
-            class: 'btn--action'
+            icon: fa-tag
             template: OroActionBundle:Operation:ajax-button.html.twig
             data:
                 component_name: oro_rfp_quick_add_processor

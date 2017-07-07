@@ -9,5 +9,5 @@
 {% endblock %}
 
 {% block _hero_promo_widget %}
-    {{ contentBlock.content|raw }}
+    {{ contentBlock.content|oro_html_tag_trim(['script','style', 'link']) }}
 {% endblock %}

@@ -1,0 +1,32 @@
+// @theme: default;
+
+.quick-order-add {
+  &__subtotal {
+    width: $quick-order-add-subtotal-width;
+  }
+
+  &__subtotal,
+  &__subtotal-input {
+    text-align: center;
+
+    &.input {
+      opacity: 1;
+    }
+  }
+
+  .product-tier-prices {
+    display: none;
+
+    position: absolute;
+    left: auto;
+    bottom: 0;
+    right: 7px;
+
+    .popover-trigger {
+      padding: 16px 8px;
+
+      border: none;
+      background: none;
+    }
+  }
+}

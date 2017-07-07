@@ -231,7 +231,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
      *
      * @return QueryBuilder
      */
-    protected function getFindByPriceListIdAndProductIdsQueryBuilder(
+    public function getFindByPriceListIdAndProductIdsQueryBuilder(
         $priceListId,
         array $productIds,
         $getTierPrices = true,

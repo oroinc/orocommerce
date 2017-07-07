@@ -1,4 +1,4 @@
-@fixture-product_collections_individual_products.yml
+@fixture-OroProductBundle:product_collections_individual_products.yml
 Feature:
   In order to be able to add, to the Product Collection, bunch of products that is available in adding popup grid
   As and Administrator
@@ -109,4 +109,4 @@ Feature:
     Then I should see "This value should be of type integer"
     And I fill in "Mass Action Limit" with "some string"
     And I click "Save settings"
-    Then Mass Action Limit field should has 500 value
+    Then I should see "This value should not be blank."

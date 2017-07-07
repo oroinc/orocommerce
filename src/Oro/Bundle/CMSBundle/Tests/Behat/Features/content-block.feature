@@ -1,4 +1,4 @@
-@fixture-CustomerUserFixture.yml
+@fixture-OroCMSBundle:CustomerUserFixture.yml
 Feature: Content Block
   In order to modify some predefined marketing content on the store frontend
   As an Administrator

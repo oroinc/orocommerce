@@ -5,12 +5,29 @@
     {% set attr = {
         id: 'import-validation',
         'data-page-component-module': 'oroproduct/js/app/components/quick-add-import-validation-component',
-        'data-page-component-options': widgetOptions|json_encode,
-        'class': 'validation-info'
+        'data-page-component-options': widgetOptions|merge({
+            'titleTemplate': '<%- title %><span class="quick-order-add-widget-subtitle"> <%- subtitle %></span>',
+            'validItemsCount': collection.validRows|length
+        })|json_encode,
+        'class': 'validation-info hidden-form'
     }|merge(attr) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block __oro_product_quick_add_validation__quick_add_validation_items_table_container_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_product_quick_add_validation__quick_add_validation_invalid_items_warning_widget %}
+    {% if collection.invalidRows|length %}
+        <p class="notification--error">
+            {{ 'oro.feature.quick_add_import_help_widget.invalid_records'|trans }}
+        </p>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_quick_add_validation__quick_add_validation_items_table_widget %}
@@ -22,13 +39,19 @@
     </table>
 {% endblock %}
 
-{% block __oro_product_quick_add_validation__quick_add_validation_items_table_title_widget %}
+{% block __oro_product_quick_add_validation__quick_add_validation_items_table_header_widget %}
     <thead>
         <tr>
-            <th></th>
-            <th><div class="pull-right">{{ block_widget(block) }}</div></th>
+            <th>{{ 'oro.product.item_number.label'|trans }}</th>
+            <th class="text-center">{{ 'oro.product.quantity.label'|trans }}</th>
+            <th>{{ 'oro.product.unit.label'|trans }}</th>
+            {{ block_widget(block) }}
         </tr>
     </thead>
+{% endblock %}
+
+{% block __oro_product_quick_add_validation__quick_add_validation_valid_items_additional_fields_header_widget %}
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block __oro_product_quick_add_validation__quick_add_validation_items_table_body_widget %}
@@ -37,62 +60,40 @@
     </tbody>
 {% endblock %}
 
-{% block __oro_product_quick_add_validation__quick_add_validation_total_items_count_widget %}
-    <tr {{ block('block_attributes') }}>
-        <td>{{ block_widget(block) }}</td>
-        <td><div class="pull-right">{{ collection.count }}</div></td>
-    </tr>
-{% endblock %}
-
-{% block __oro_product_quick_add_validation__quick_add_validation_valid_items_count_widget %}
-    <tr {{ block('block_attributes') }}>
-        <td>{{ block_widget(block) }}</td>
-        <td><div class="pull-right">{{ collection.validRows|length }}</div></td>
-    </tr>
-{% endblock %}
-
-{% block __oro_product_quick_add_validation__quick_add_validation_invalid_items_count_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' error'
-    }) %}
-    <tr {{ block('block_attributes') }}>
-        <td>
-            {% if collection.invalidRows|length %}
-                <a href="javascript: void(0)" class="error-toggle">{{ block_widget(block) }}</a>
-            {% else %}
-                {{ block_widget(block) }}
-            {% endif %}
-        </td>
-        <td><div class="pull-right">{{ collection.invalidRows|length }}</div></td>
-    </tr>
-{% endblock %}
-
-{% block __oro_product_quick_add_validation__quick_add_validation_invalid_items_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' import-errors'
-    }) %}
-    {% if collection.invalidRows|length %}
-        <div {{ block('block_attributes') }}>
-            <ol>
-                {% for invalidRow in collection.invalidRows %}
-                    {% if invalidRow.isComplete and invalidRow.product is empty %}
-                        <li>
-                            {{ 'oro.product.frontend.quick_add.import_validation.validator.not_found'
-                            |trans({'%sku%' : invalidRow.sku}) }}
-                        </li>
-                    {% elseif false == invalidRow.hasErrors %}
-                        <li>
-                            {{ 'oro.product.frontend.quick_add.import_validation.validator.invalid_format'
-                            |trans({'%index%' : invalidRow.index}) }}
-                        </li>
-                    {% endif %}
-                    {% if invalidRow.hasErrors %}
-                        {% for error in invalidRow.getErrors %}
-                            <li>{{ error.message }}</li>
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </ol>
-        </div>
+{% block __oro_product_quick_add_validation__quick_add_validation_valid_items_widget %}
+    {% if collection.validRows|length %}
+        {% for validRow in collection.validRows %}
+        <tr>
+            <td>{{ validRow.sku }} - {{ validRow.product.name }}</td>
+            <td class="text-center">{{ validRow.quantity }}</td>
+            <td>{{ validRow.unit }}</td>
+            {% do block|merge_context({'validRow': validRow}) %}
+            {{ block('container_widget') }}
+            <td class="hidden">{{ validRow.sku }}</td>
+        </tr>
+        {% endfor %}
     {% endif %}
+{% endblock %}
+
+{% block __oro_product_quick_add_validation__quick_add_validation_valid_items_additional_fields_widget %}
+    {% do block|merge_context({'additionalFields': validRow.additionalFields}) %}
+    {{ block('container_widget') }}
+{% endblock %}
+
+{% block __oro_product_quick_add_validation__quick_add_validation_additional_fields_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ ' quick-order-import-validation__additional_fields'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quick_add_validation_buttons_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " widget-actions"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}

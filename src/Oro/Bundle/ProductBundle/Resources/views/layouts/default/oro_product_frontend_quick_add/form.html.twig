@@ -3,38 +3,54 @@
     {% set disabled = form.parent.vars.disabled %}
     {% set allow_delete = form.parent.vars.allow_delete %}
 
-    <div data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
-        <fieldset class="{{ class_prefix }}__form__row fields-row">
-            <div class="clearfix">
-                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
-                    {{ form_widget(form.productSku, {attr: {
-                        placeholder: "oro.product.sku.placeholder",
-                        'data-dropdown-classes':{
-                            holder: 'select2-drop oro-select2__dropdown',
-                            menu: 'select2-results',
-                            item: 'select2-result',
-                            link: 'select2-result-label'
-                        }|json_encode
-                    }}) }}
-                </div>
-                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
-                    {{ form_widget(form.productQuantity, {attr: {placeholder: "oro.product.quantity.placeholder"}}) }}
-                </div>
-                {% if allow_delete %}
-                    <span class="{{ class_prefix }}__form__item-remove removeRow"><i class="fa-close"></i></span>
-                {% endif %}
+    <div data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'oroproduct/js/app/views/quick-add-item-view',
+             changeQuantity: true
+         }|json_encode }}"
+         data-content="{{ name }}"
+         data-validation-optional-group
+         data-role="row"
+         class="quick-order-add__row fields-row"
+         {{ block('widget_container_attributes') }}
+    >
+        <div class="quick-order-add__row-content">
+            <div class="quick-order-add__col quick-order-add__product">
+                <label class="quick-order-add__label">{{ 'oro.product.item_number.label'|trans }}</label>
+                {{ form_widget(form.productDisplayName, {attr: {
+                    placeholder: "oro.product.sku.placeholder",
+                    'data-dropdown-classes':{
+                        holder: 'select2-drop oro-select2__dropdown',
+                        menu: 'select2-results',
+                        item: 'select2-result',
+                        link: 'select2-result-label'
+                    }|json_encode
+                }}) }}
+                {{ form_widget(form.productSku) }}
             </div>
-            <div class="fields-row-error">{# Dinamic content #}</div>
-            <div class="fields-row-error-autocomplite">
-                {{ form_errors(form.productQuantity) }}
-                <div class="product-autocomplete-error" style="display: none;">
-                    <span class="validation-failed">SKU not found</span>
-                </div>
-                <div class="product-autocomplete-name validation-passed" style="display: none">
-                    <i class="fa-check-square"></i><span></span>
-                </div>
+            <div class="quick-order-add__col quick-order-add__quantity">
+                <label class="quick-order-add__label">{{ 'oro.product.quantity.label'|trans }}</label>
+                {{ form_widget(form.productQuantity, {attr: {
+                    class: ' quick-order-add__quantity-input',
+                    placeholder: "oro.product.quantity.placeholder"
+                }}) }}
             </div>
-        </fieldset>
+            <div class="quick-order-add__col quick-order-add__unit">
+                <label class="quick-order-add__label">{{ 'oro.product.unit.label'|trans }}</label>
+                {{ form_widget(form.productUnit, {attr: {placeholder: "oro.product.unit.placeholder"}}) }}
+            </div>
+            {% placeholder oro_product_quick_add_additional_fields %}
+            {% if allow_delete %}
+                <span class="quick-order-add__remove-row removeRow" data-role="row-remove"><i class="fa-close"></i></span>
+            {% endif %}
+        </div>
+        <div class="quick-order-add__error fields-row-error">{# Dinamic content #}</div>
+        <div class="quick-order-add__error-autocomplete">
+            {{ form_errors(form.productQuantity) }}
+            <div class="product-autocomplete-error" style="display: none;" data-role="autocomplete-error">
+                <span class="validation-failed">{{ 'oro.product.sku.not_found'|trans }}</span>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -43,62 +59,56 @@
         {% if prototype is defined %}
             {% set prototype_html = form_widget(form.vars.prototype) %}
         {% endif %}
-        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~  'grid-container' }) %}
+        {% set attr = attr|merge({
+            'class': (attr.class is defined ? attr.class ~ ' ' : '') ~  'quick-order-add__grid grid-container',
+            'data-validation': false
+        }) %}
         {% set id = id ~ '_collection' %}
         {% set prototype_name = form.vars.prototype_name %}
         <div {{ block('widget_container_attributes') }}>
-            <div class="grid">
-                <fieldset class="{{ class_prefix }}__form__row {{ class_prefix }}__form__row__head">
-                    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_item">
-                        <label>{{ 'oro.product.item_number.label'|trans }}</label>
-                    </div>
-                    <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_qty">
-                        <label>{{ 'oro.product.quantity.label'|trans }}</label>
-                    </div>
-                </fieldset>
-
-                <div class="js-item-collection" data-last-index="{{ form.children|length }}" data-row-count-add="{{ form.vars.row_count_add }}"
-                     data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
-                    {% if form.children|length %}
-                        {% for child in form.children %}
-                            {{ form_widget(child) }}
-                        {% endfor %}
-                    {% elseif show_form_when_empty and prototype_html is defined %}
-                        {% for i in 0..(form.vars.row_count_initial - 1) %}
-                            {{ prototype_html|replace({(prototype_name): i})|raw }}
-                        {% endfor %}
-                    {% endif %}
-                </div>
+            {% set data_last_index = form.children ? form.children|length : form.vars.row_count_initial %}
+            <div class="quick-order-add__body js-item-collection"
+                 data-last-index="{{ data_last_index }}"
+                 data-row-count-add="{{ form.vars.row_count_add }}"
+                 data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %}
+                 data-prototype="{{ prototype_html|escape }}"{% endif %}
+            >
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ form_widget(child) }}
+                    {% endfor %}
+                {% elseif show_form_when_empty and prototype_html is defined %}
+                    {% for i in 0..(form.vars.row_count_initial - 1) %}
+                        {{ prototype_html|replace({(prototype_name): i})|raw }}
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
 
         {% if allow_add %}
-            <fieldset class="{{ class_prefix }}__form__row">
-                <div class="{{ class_prefix }}__form__col {{ class_prefix }}__form__col_full">
-                    <a href="#" class="add-more-rows-btn add-list-item" data-container=".js-item-collection"
-                       href="javascript: void(0);">
-                        <i class="fa-plus-circle fs18 blue"></i>
-                        <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
-                    </a>
-                </div>
-            </fieldset>
+            <a href="#" class="btn btn--primary btn--full add-list-item"
+               data-container=".js-item-collection"
+            >
+                <i class="fa-plus-circle"></i>
+                <span>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</span>
+            </a>
         {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block oro_product_quick_add_import_from_file_widget %}
+    {% spaceless %}
+        <div class="quick-order-import__content">
+            {{ form_widget(form.file) }}
+        </div>
     {% endspaceless %}
 {% endblock %}
 
 {% block oro_product_quick_add_copy_paste_widget %}
     {% spaceless %}
-        <div {{ block('widget_container_attributes') }}>
-            <fieldset class="{{ class_prefix }}__form__row fields-row">
-                <div class="{{ class_prefix }}__form__col form__col_x12">
-                    {% set copyPasteAttr = form.copyPaste.vars.attr|merge({'class': (form.copyPaste.vars.attr.class is defined ? form.copyPaste.vars.attr.class ~ ' ' : '') ~ 'form-field-copyPaste' }) %}
-                    {{ form_widget(form.copyPaste, {'attr': copyPasteAttr}) }}
-                    <div class="fields-row-error">
-                        {{ form_errors(form.copyPaste) }}
-                    </div>
-                </div>
-            </fieldset>
-            {{ form_rest(form) }}
-        </div>
+        {{ form_widget(form.copyPaste, {attr: {
+            class: ' quick-order-copy-paste__textarea',
+            placeholder: "oro.product.frontend.quick_add.copy_paste.placeholder"
+        }}) }}
     {% endspaceless %}
 {% endblock %}

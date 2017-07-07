@@ -1,6 +1,6 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-AlternativeCheckout.yml
+@fixture-OroAlternativeCheckoutBundle:AlternativeCheckout.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 Feature: Alternative Checkout workflow threshold
   In order to create order on front store
