@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Manager;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -20,22 +22,30 @@ use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 
 class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $container;
+
     /** @var AppliedDiscountManager */
     protected $appliedDiscountManager;
 
     /** @var PromotionExecutor|\PHPUnit_Framework_MockObject_MockObject */
     protected $promotionExecutor;
 
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $doctrineHelper;
+
     protected function setUp()
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);
-        $container = $this->createMock(ContainerInterface::class);
-        $container->expects($this->any())
+        $this->container = $this->createMock(ContainerInterface::class);
+        $this->container->expects($this->any())
             ->method('get')
             ->with('oro_promotion.promotion_executor')
             ->willReturn($this->promotionExecutor);
 
-        $this->appliedDiscountManager = new AppliedDiscountManager($container);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $this->appliedDiscountManager = new AppliedDiscountManager($this->container, $this->doctrineHelper);
     }
 
     public function testGetAppliedDiscounts()
@@ -71,6 +81,16 @@ class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->promotionExecutor->expects($this->once())->method('execute')->with($order)->willReturn($discountContext);
 
+        $em = $this->createMock(EntityManager::class);
+
+        $em->expects($this->exactly(2))
+            ->method('persist');
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
+            ->with(AppliedDiscount::class)
+            ->willReturn($em);
+
         $expected = [
             (new AppliedDiscount())
                 ->setOrder($order)
@@ -91,6 +111,6 @@ class AppliedDiscountManagerTest extends \PHPUnit_Framework_TestCase
                 ->setLineItem($orderLineItem),
         ];
 
-        $this->assertEquals($expected, $this->appliedDiscountManager->createAppliedDiscounts($order));
+        $this->assertEquals($expected, $this->appliedDiscountManager->saveAppliedDiscounts($order));
     }
 }

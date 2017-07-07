@@ -370,14 +370,24 @@ services:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
         public: false
         arguments:
-             - '@oro_promotion.discount_manager'
+             - '@oro_promotion.applied_discount_manager'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preRemove }
 
-    oro_promotion.discount_manager:
+    oro_promotion.event_listener.order_line_item:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemEntityListener
+        public: false
+        arguments:
+             - '@oro_promotion.applied_discount_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preRemove }
+
+    oro_promotion.applied_discount_manager:
         class: Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager
         arguments:
             - '@service_container'
+            - '@oro_entity.doctrine_helper'
 
     oro_promotion.event_listener.order_view_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderViewListener
@@ -391,7 +401,6 @@ services:
         class: Oro\Bundle\PromotionBundle\Form\Listener\OrderFormListener
         arguments:
             - '@request_stack'
-            - '@doctrine'
-            - '@oro_promotion.discount_manager'
+            - '@oro_promotion.applied_discount_manager'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: beforeFlush }

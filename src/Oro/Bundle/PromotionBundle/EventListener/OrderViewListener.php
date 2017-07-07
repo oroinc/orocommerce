@@ -29,7 +29,7 @@ class OrderViewListener
         /** @var Order $order */
         $order = $event->getEntity();
         $template = $event->getEnvironment()->render(
-            'OroPromotionBundle:Order:discounts_view.html.twig',
+            'OroPromotionBundle:Order:discounts_promotions.html.twig',
             ['entity' => $order]
         );
         $this->addPromotionsBlock($event, $template, -75);

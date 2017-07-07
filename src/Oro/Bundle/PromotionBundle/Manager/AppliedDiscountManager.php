@@ -2,7 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Manager;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
@@ -11,44 +15,75 @@ use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
 
 class AppliedDiscountManager
 {
-    /** @var ContainerInterface */
+    /**
+     * @var ContainerInterface
+     */
     protected $container;
 
     /**
-     * @param ContainerInterface $container
+     * @var DoctrineHelper
      */
-    public function __construct(ContainerInterface $container)
+    protected $doctrineHelper;
+
+    /**
+     * @param ContainerInterface $container
+     * @param DoctrineHelper $doctrineHelper
+     */
+    public function __construct(ContainerInterface $container, DoctrineHelper $doctrineHelper)
     {
         $this->container = $container;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
      * @param Order $order
      * @return AppliedDiscount[]
      */
-    public function createAppliedDiscounts(Order $order)
+    public function saveAppliedDiscounts(Order $order)
     {
         $discountContext = $this->getPromotionExecutor()->execute($order);
 
-        $appliedDiscounts = [];
-        foreach ($discountContext->getSubtotalDiscountsInformation() as $subtotalDiscountInfo) {
-            $appliedDiscounts[] = $this->createAppliedDiscount($order, $subtotalDiscountInfo);
-        }
-        foreach ($discountContext->getShippingDiscountsInformation() as $shippingDiscountInfo) {
-            $appliedDiscounts[] = $this->createAppliedDiscount($order, $shippingDiscountInfo);
-        }
-        foreach ($discountContext->getLineItems() as $discountLineItem) {
-            foreach ($discountLineItem->getDiscountsInformation() as $discountInfo) {
-                $appliedDiscount = $this->createAppliedDiscount($order, $discountInfo);
-                $lineItem = $discountLineItem->getSourceLineItem();
-                if ($lineItem instanceof OrderLineItem) {
-                    $appliedDiscount->setLineItem($lineItem);
-                }
-                $appliedDiscounts[] = $appliedDiscount;
-            }
+        $appliedDiscounts = array_merge(
+            $this->createSubtotalDiscounts($order, $discountContext),
+            $this->createShippingDiscounts($order, $discountContext),
+            $this->createLineItemDiscounts($order, $discountContext)
+        );
+
+        $manager = $this->getAppliedDiscountManager();
+
+        foreach ($appliedDiscounts as $appliedDiscount) {
+            $manager->persist($appliedDiscount);
         }
 
         return $appliedDiscounts;
+    }
+
+    /**
+     * Remove applied discounts by order line item
+     *
+     * @param OrderLineItem $orderLineItem
+     */
+    public function removeAppliedDiscountByOrderLineItem(OrderLineItem $orderLineItem)
+    {
+        $appliedDiscounts = $this->getAppliedDiscountRepository()->findByLineItem($orderLineItem);
+
+        foreach ($appliedDiscounts as $appliedDiscount) {
+            $this->removeAppliendDiscount($appliedDiscount);
+        }
+    }
+
+    /**
+     * Remove applied discounts by order
+     *
+     * @param Order $order
+     */
+    public function removeAppliedDiscountByOrder(Order $order)
+    {
+        $appliedDiscounts = $this->getAppliedDiscountRepository()->findBy(['order' => $order]);
+
+        foreach ($appliedDiscounts as $appliedDiscount) {
+            $this->removeAppliendDiscount($appliedDiscount);
+        }
     }
 
     /**
@@ -86,5 +121,101 @@ class AppliedDiscountManager
     {
         // Using DI container instead of concrete service due to circular reference
         return $this->container->get('oro_promotion.promotion_executor');
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getAppliedDiscountManager()
+    {
+        return $this->doctrineHelper->getEntityManagerForClass(AppliedDiscount::class);
+    }
+
+    /**
+     * @return AppliedDiscountRepository
+     */
+    protected function getAppliedDiscountRepository()
+    {
+        return $this->doctrineHelper->getEntityRepositoryForClass(AppliedDiscount::class);
+    }
+
+    /**
+     * @param AppliedDiscount $appliedDiscount
+     * @param bool $flush
+     * @return bool
+     */
+    protected function removeAppliendDiscount(AppliedDiscount $appliedDiscount, $flush = false)
+    {
+        $em = $this->getAppliedDiscountManager();
+
+        if (!$em->contains($appliedDiscount)) {
+            return false;
+        }
+
+        $em->remove($appliedDiscount);
+
+        if ($flush) {
+            $em->flush($appliedDiscount);
+        }
+
+        return true;
+    }
+
+    /**
+     * @param Order $order
+     * @param DiscountContext $discountContext
+     * @return AppliedDiscount[]
+     */
+    protected function createSubtotalDiscounts(Order $order, DiscountContext $discountContext)
+    {
+        $subtotalDiscounts = [];
+
+        foreach ($discountContext->getSubtotalDiscountsInformation() as $subtotalDiscountInfo) {
+            $subtotalDiscounts[] = $this->createAppliedDiscount($order, $subtotalDiscountInfo);
+        }
+
+        return $subtotalDiscounts;
+    }
+
+    /**
+     * @param Order $order
+     * @param DiscountContext $discountContext
+     * @return AppliedDiscount[]
+     */
+    protected function createShippingDiscounts(Order $order, DiscountContext $discountContext)
+    {
+        $shippingDiscounts = [];
+
+        foreach ($discountContext->getShippingDiscountsInformation() as $shippingDiscountInfo) {
+            $shippingDiscount = $this->createAppliedDiscount($order, $shippingDiscountInfo);
+            $shippingDiscounts[] = $shippingDiscount;
+        }
+
+        return $shippingDiscounts;
+    }
+
+    /**
+     * @param Order $order
+     * @param DiscountContext $discountContext
+     * @return AppliedDiscount[]
+     */
+    protected function createLineItemDiscounts(Order $order, DiscountContext $discountContext)
+    {
+        $lineItemDiscounts = [];
+
+        foreach ($discountContext->getLineItems() as $discountLineItem) {
+            foreach ($discountLineItem->getDiscountsInformation() as $discountInfo) {
+                $appliedDiscount = $this->createAppliedDiscount($order, $discountInfo);
+
+                $lineItem = $discountLineItem->getSourceLineItem();
+                if ($lineItem instanceof OrderLineItem) {
+                    $appliedDiscount->setLineItem($lineItem);
+                }
+
+                $lineItemDiscounts[] = $appliedDiscount;
+            }
+        }
+
+        return $lineItemDiscounts;
     }
 }

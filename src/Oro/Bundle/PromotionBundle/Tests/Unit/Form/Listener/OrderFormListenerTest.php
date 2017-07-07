@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Listener;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
-use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
 use Oro\Bundle\PromotionBundle\Form\Listener\OrderFormListener;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 use Oro\Bundle\UIBundle\Route\Router;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class OrderFormListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,11 +21,6 @@ class OrderFormListenerTest extends \PHPUnit_Framework_TestCase
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
      */
     private $requestStack;
-
-    /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $registry;
 
     /**
      * @var AppliedDiscountManager|\PHPUnit_Framework_MockObject_MockObject
@@ -43,11 +35,9 @@ class OrderFormListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->requestStack = $this->createMock(RequestStack::class);
-        $this->registry = $this->createMock(RegistryInterface::class);
         $this->appliedDiscountManager = $this->createMock(AppliedDiscountManager::class);
         $this->listener = new OrderFormListener(
             $this->requestStack,
-            $this->registry,
             $this->appliedDiscountManager
         );
     }
@@ -82,11 +72,9 @@ class OrderFormListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new Request([
                 Router::ACTION_PARAMETER => OrderFormListener::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION,
             ]));
-        $this->registry->expects($this->once())
-            ->method('getEntityManagerForClass')
-            ->willReturn($this->createMock(EntityManagerInterface::class));
+
         $this->appliedDiscountManager->expects($this->never())
-            ->method('createAppliedDiscounts');
+            ->method('saveAppliedDiscounts');
 
         $this->listener->beforeFlush($event);
     }
@@ -101,28 +89,16 @@ class OrderFormListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new Request([
                 Router::ACTION_PARAMETER => 'save_and_close',
             ]));
-        $repository = $this->createMock(AppliedDiscountRepository::class);
-        $repository->expects($this->once())
-            ->method('deleteByOrder')
-            ->with($order);
-        $entityManager = $this->createMock(EntityManagerInterface::class);
-        $entityManager->expects($this->once())->method('clear')->with(AppliedDiscount::class);
-        $entityManager->expects($this->once())
-            ->method('getRepository')
-            ->with(AppliedDiscount::class)
-            ->willReturn($repository);
-        $this->registry->expects($this->once())
-            ->method('getEntityManagerForClass')
-            ->with(AppliedDiscount::class)
-            ->willReturn($entityManager);
+
         $appliedDiscount = new AppliedDiscount();
         $this->appliedDiscountManager->expects($this->once())
-            ->method('createAppliedDiscounts')
+            ->method('saveAppliedDiscounts')
             ->with($order)
             ->willReturn([$appliedDiscount]);
-        $entityManager->expects($this->once())
-            ->method('persist')
-            ->with($appliedDiscount);
+
+        $this->appliedDiscountManager->expects($this->once())
+            ->method('removeAppliedDiscountByOrder')
+            ->with($order);
 
         $this->listener->beforeFlush($event);
     }
