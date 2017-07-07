@@ -69,6 +69,7 @@ services:
         calls:
             - [setProductClass, ['%oro_product.entity.product.class%']]
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
+            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
 
     oro_shopping_list.service.message_generator:
         class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'

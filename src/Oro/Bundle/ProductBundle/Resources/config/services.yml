@@ -6,7 +6,6 @@ parameters:
     oro_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
     oro_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
-
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
@@ -160,6 +159,23 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_product_by_sku_validator }
 
+    oro_product.validator.quick_add_row_collection:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollectionValidator'
+        arguments:
+            - "@validator"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_quick_add_row_collection_validator }
+
+    oro_product.validator.quantity_unit_precision:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecisionValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_quantity_unit_precision }
+
+    oro_product.validator.product_unit_exists:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExistsValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_product_unit_exists }
+
     oro_product.validator.product_image:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
         public: true
@@ -220,6 +236,9 @@ services:
             - "@oro_product.component_processor.registry"
             - "@router"
             - "@translator"
+            - "@validator"
+            - "@oro_product.helper.product_grouper.factory"
+            - "@event_dispatcher"
 
     oro_product.event_listener.related_items_product_edit_listener:
         class: Oro\Bundle\ProductBundle\EventListener\RelatedItemsProductEditListener
@@ -484,10 +503,21 @@ services:
         arguments:
             - '%oro_product.entity.product.class%'
 
+    oro_product.repository.product_unit:
+        class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_product.entity.product_unit.class%'
+
     oro_product.repository.product_image:
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_product.entity.product_image.class%'
+
+    oro_product.model.builder.quick_add_row_input_parser:
+        class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowInputParser'
+        arguments:
+            - "@doctrine"
 
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
@@ -495,7 +525,8 @@ services:
         arguments:
             - "@oro_product.repository.product"
             - "@oro_product.product.manager"
-            - '@event_dispatcher'
+            - "@event_dispatcher"
+            - "@oro_product.model.builder.quick_add_row_input_parser"
 
     oro_product.datagrid_theme_helper:
         class: 'Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper'
@@ -584,12 +615,21 @@ services:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:
             - '@oro_segment.segment_manager'
+            - '@oro_product.provider.segment'
             - '@oro_product.product.manager'
-            - '@oro_config.user'
-            - '@logger'
+            - '@oro_config.manager'
             - '@oro.cache.memory_cache_chain'
         tags:
             - { name: layout.data_provider, alias: featured_products }
+
+    oro_product.layout.data_provider.featured_products.cache_decorator:
+        parent: oro_product.doctrine.abstract_cached_provider_decorator
+        decorates: oro_product.layout.data_provider.featured_products
+        decoration_priority: 10
+        arguments:
+            - '@oro_product.layout.data_provider.featured_products.cache_decorator.inner'
+            - '@oro.cache.memory_cache_chain'
+            - 'oro_product.layout.data_provider.featured_products'
 
     oro_product.event_listener.product_image_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
@@ -963,6 +1003,10 @@ services:
         arguments:
             - "@request_stack"
 
+    oro_product.helper.product_grouper.factory:
+        class: Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory
+        public: false
+
     oro_product.datagrid.event_listener.search_content_variant_filtering:
         class: Oro\Bundle\ProductBundle\DataGrid\EventListener\SearchContentVariantFilteringEventListener
         arguments:
@@ -1039,3 +1083,36 @@ services:
             - "@oro_config.manager"
         tags:
             - { name: layout.data_provider, alias: oro_product_stickers }
+
+    oro_product.layout.data_provider.new_arrivals:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\NewArrivalsProvider'
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@oro_product.provider.segment'
+            - '@oro_product.product.manager'
+            - '@oro_config.manager'
+        tags:
+            - { name: layout.data_provider, alias: new_arrivals }
+
+    oro_product.layout.data_provider.new_arrivals.cache_decorator:
+        parent: oro_product.doctrine.abstract_cached_provider_decorator
+        decorates: oro_product.layout.data_provider.new_arrivals
+        decoration_priority: 10
+        arguments:
+            - '@oro_product.layout.data_provider.new_arrivals.cache_decorator.inner'
+            - '@oro.cache.memory_cache_chain'
+            - 'oro_product.layout.data_provider.new_arrivals'
+
+    oro_product.provider.segment:
+        parent: oro_product.provider.segment.logging_errors
+
+    oro_product.provider.segment.logging_errors:
+        class: 'Oro\Bundle\ProductBundle\Provider\Segment\LoggingErrors\ProductSegmentWithLoggingErrorsProvider'
+        public: fasle
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@logger'
+
+    oro_product.doctrine.abstract_cached_provider_decorator:
+        class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'
+        abstract: true

@@ -29,7 +29,7 @@ class ProductUnitPrecisionRepository extends EntityRepository
     public function getProductUnitPrecisionsByProductId($productId)
     {
         $queryBuilder = $this->createQueryBuilder('pup');
-        $queryBuilder->select('pup','pu')
+        $queryBuilder->select('pup', 'pu')
             ->innerJoin('pup.product', 'p')
             ->innerJoin('pup.unit', 'pu')
             ->where('p.id = :productId')

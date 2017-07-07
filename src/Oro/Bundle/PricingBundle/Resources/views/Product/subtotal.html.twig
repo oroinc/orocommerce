@@ -1,0 +1,24 @@
+{% block _quick_add_subtotal_widget %}
+    {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
+    <div class="quick-order-add__col quick-order-add__subtotal"
+         data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ {
+             view: 'oropricing/js/app/views/quick-add-item-price-view',
+             elements: {
+                 pricesHint: '[data-name="prices-hint"]',
+                 pricesHintContent: '[data-name="prices-hint-content"]',
+             }
+         }|json_encode }}"
+    >
+        <label class="quick-order-add__label">{{ 'oro.product.price.label'|trans }}</label>
+        <script type="text/template" data-name="prices-hint-content">
+            {{ block('product_price_hint_content_js_widget') }}
+        </script>
+        <script type="text/template" data-name="prices-hint">
+            {{ block('product_price_hint_js_widget') }}
+        </script>
+
+        <input type="text" class="input input--full quick-order-add__subtotal-input"
+               data-name="field__product-subtotal" disabled>
+    </div>
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -19,16 +20,34 @@ class ProductRowType extends AbstractProductAwareType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $productSkuOptions = [
-            'required' => false,
-            'label' => 'oro.product.sku.label',
-        ];
+        $productSkuOptions = [];
         if ($options['validation_required']) {
             $productSkuOptions['constraints'][] = new ProductBySku();
         }
 
         $builder
-            ->add(ProductDataStorage::PRODUCT_SKU_KEY, ProductAutocompleteType::NAME, $productSkuOptions)
+            ->add(
+                ProductDataStorage::PRODUCT_DISPLAY_NAME,
+                ProductAutocompleteType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'oro.product.sku.label',
+                    'mapped' => false
+                ]
+            )
+            ->add(
+                ProductDataStorage::PRODUCT_SKU_KEY,
+                HiddenType::class,
+                $productSkuOptions
+            )
+            ->add(
+                ProductDataStorage::PRODUCT_UNIT_KEY,
+                ProductUnitsType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'oro.product.unit.label'
+                ]
+            )
             ->add(
                 ProductDataStorage::PRODUCT_QUANTITY_KEY,
                 'number',
@@ -76,6 +95,7 @@ class ProductRowType extends AbstractProductAwareType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['product'] = $this->getProductFromFormOrView($form, $view);
+        $view->vars['name'] = '__name__';
     }
 
     /**

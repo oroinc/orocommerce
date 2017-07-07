@@ -1,5 +1,5 @@
 @ticket-BB-10111
-@fixture-ProductDuplicateFixture.yml
+@fixture-OroProductBundle:ProductDuplicateFixture.yml
 Feature: Duplicate product
   In order to manage products
   As administrator

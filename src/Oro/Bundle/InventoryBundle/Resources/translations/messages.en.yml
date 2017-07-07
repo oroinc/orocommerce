@@ -108,7 +108,7 @@ oro:
             description: The value that defines the limit of the inventory after which this product can not be ordered
         decrement_quantity:
             description: Option that defines the strategy used for decrementing inventory for ordered products
-        backorder:
+        backOrder:
             description: Defines if it is allowed to order products even if the inventory treshold limit is reached
         maximum_quantity_to_order:
             description: The maximum quantity that the user must order for this product

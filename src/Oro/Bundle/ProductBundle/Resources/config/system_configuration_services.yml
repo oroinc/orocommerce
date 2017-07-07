@@ -1,0 +1,22 @@
+parameters:
+    oro_product.segment.new_arrival.name: 'New Arrivals'
+    oro_product.segment.featured_products.name: 'Featured Products'
+
+services:
+    oro_product.provider.default_value.new_arrivals:
+        parent: oro_config.provider.value.entity_id
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '%oro_segment.segment.entity.class%'
+            -
+                'entity': '%oro_product.entity.product.class%'
+                'name': '%oro_product.segment.new_arrival.name%'
+
+    oro_product.provider.default_value.featured_products:
+        parent: oro_config.provider.value.entity_id
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '%oro_segment.segment.entity.class%'
+            -
+                'entity': '%oro_product.entity.product.class%'
+                'name': '%oro_product.segment.featured_products.name%'

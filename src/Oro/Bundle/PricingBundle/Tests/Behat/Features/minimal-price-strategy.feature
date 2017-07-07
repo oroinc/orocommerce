@@ -1,6 +1,6 @@
 @ticket-BB-8594
 @automatically-ticket-tagged
-@fixture-ProductPrices.yml
+@fixture-OroPricingBundle:ProductPrices.yml
 Feature: Minimum Price Selection Strategies
   Scenario: Create two session
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session

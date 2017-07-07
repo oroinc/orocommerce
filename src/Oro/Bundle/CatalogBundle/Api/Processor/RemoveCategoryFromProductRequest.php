@@ -80,7 +80,8 @@ class RemoveCategoryFromProductRequest implements ProcessorInterface
         // Remember the category, as we should only save it when other form validations passed
         $context->set(self::CATEGORY, $category);
 
-        // Remove category information form the request to avoid form validation error on missing relation from product to category
+        // Remove category information form the request to avoid form validation error on missing relation from product
+        // to category
         unset($relationships[self::CATEGORY]);
         $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS] = $relationships;
         $context->setRequestData($requestData);

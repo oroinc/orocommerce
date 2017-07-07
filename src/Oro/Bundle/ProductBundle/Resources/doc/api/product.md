@@ -13,7 +13,7 @@
 ### create
 
 Create a new Product record.
-The created record is returned in the response. [See product create](#post--admin-api-products)
+The created record is returned in the response.
 
 ##### 1. Static options for product attributes
 
@@ -76,6 +76,20 @@ the primary unit precision
 - when sending the "primaryUnitPrecision" you need to specify the unit code, but it is mandatory that
 this unit code is found between the items of the **"unitPrecisions"**
 
+##### 4. Specify Category
+
+The Category is not directly handled by the Product, but you can specify it when creating or updating
+a Product entity, in the **"data"** section. Example:
+
+      "category": {
+        "data": {
+          "type": "categories",
+          "id": "4"
+        }
+      }
+
+You can see the existing categories using its API [here](#get--admin-api-categories)
+
 {@request:json_api}
 
 Example:
@@ -88,7 +102,7 @@ Example:
   {
     "type": "products",
     "attributes": {
-      "sku": "test-api-3",
+      "sku": "test-api-1",
       "status": "enabled",
       "variantFields": [],
       "productType": "simple",
@@ -209,6 +223,12 @@ Example:
           "type": "entityfieldfallbackvalues",
           "id": "6abcd"
         }
+      },
+      "category": {
+        "data": {
+          "type": "categories",
+          "id": "4"
+        }
       }
     }
   },
@@ -314,6 +334,7 @@ Example:
     }
   ]
 }
+
 ```
 {@/request}
 
@@ -343,6 +364,110 @@ with the newly provided one
 
 ##### 2. Updating "localizedfallbackvalues" (localized fields) and "entityfieldfallbackvalues" (options with fallbacks) types
 
+**Important** - When you want to update existing related entities, it can only be done by using the
+"included" section, the same way it is used in the create section. What is important to mention is:
+
+* you must use the real ID of the related entity that you want to update, example:
+
+> - "data" section
+
+        "manageInventory": {
+          "data": {
+            "type": "entityfieldfallbackvalues",
+            "id": "466"
+          }
+        }
+
+> - "included" section
+
+        {
+          "meta":{
+             "update": true
+          },
+          "type": "localizedfallbackvalues",
+          "id": "807",
+          "attributes": {
+            "fallback": null,
+            "string": "Test product - updated",
+            "text": null
+          }
+        }
+
+* use the update flag to specify it is an update on an existing entity, otherwise it will attempt
+the creation of a new entity of that type
+
+          "meta":{
+             "update": true
+          }
+
+**Important** when wanting to update the current entity by modifying a relation, which is actually
+a'to-many' relationship with another entity, you must specify all of the entities from that list.
+If you don't do that, the system will set on that relation the input that has been received. So for
+example if I have the "names" relation which holds a collection of "localizedfallbackvalues" type,
+with 8 entities, and I specify only 2 of these entities in the input, then in the database I will
+have only those 2 saved and all the other (6 entities) will be removed. Example for updating the
+"names" relation with modifying the text for a specific localization:
+
+> - in the "data" section:
+
+      "names": {
+        "data": [
+          {
+            "type": "localizedfallbackvalues",
+            "id": "807"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "810"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "814"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "812"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "813"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "811"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "808"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "815"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "816"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "817"
+          }
+        ]
+
+> - in the "included" section:
+
+    {
+      "meta":{
+         "update": true
+      },
+      "type": "localizedfallbackvalues",
+      "id": "807",
+      "attributes": {
+        "fallback": null,
+        "string": "Test product - updated",
+        "text": null
+      }
+    }
 
 {@request:json_api}
 Example:
@@ -354,9 +479,9 @@ Example:
   "data":
   {
     "type": "products",
-    "id": "68",
+    "id": "67",
     "attributes": {
-      "sku": "test-api-31",
+      "sku": "test-api-3",
       "status": "enabled",
       "variantFields": [],
       "productType": "simple",
@@ -391,11 +516,93 @@ Example:
       "inventory_status": {
         "data": {
           "type": "prodinventorystatuses",
-          "id": "out_of_stock"
+          "id": "in_stock"
         }
+      },
+      "manageInventory": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "466"
+        }
+      },
+      "category": {
+        "data": {
+          "type": "categories",
+          "id": "4"
+        }
+      },
+      "names": {
+        "data": [
+          {
+            "type": "localizedfallbackvalues",
+            "id": "807"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "810"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "814"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "812"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "813"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "811"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "808"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "815"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "816"
+          },
+          {
+            "type": "localizedfallbackvalues",
+            "id": "817"
+          }
+        ]
       }
     }
-  }
+  },
+  "included":[
+    {
+      "meta":{
+         "update": true
+      },
+      "type": "entityfieldfallbackvalues",
+      "id": "466",
+      "attributes": {
+        "fallback": null,
+        "scalarValue": "0",
+        "arrayValue": null
+      }
+    },
+    {
+      "meta":{
+         "update": true
+      },
+      "type": "localizedfallbackvalues",
+      "id": "807",
+      "attributes": {
+        "fallback": null,
+        "string": "Test product - updated",
+        "text": null
+      }
+    }
+  ]
 }
 
 
@@ -420,7 +627,95 @@ Example:
 
 **Required field**
 
+### names
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
 ### decrementQuantity
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### inventoryThreshold
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### inventory_status
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### manageInventory
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### backOrder
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### status
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### featured
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### newArrival
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### productType
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### attributeFamily
+
+#### create
+
+{@inheritdoc}
+
+**Required field**
+
+### attributeFamily
 
 #### create
 

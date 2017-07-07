@@ -8,16 +8,15 @@ use Behat\Mink\Element\NodeElement;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
-
 use Doctrine\Common\Persistence\ObjectRepository;
+use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
-use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
@@ -26,6 +25,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -86,26 +86,32 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When I add product :productSku with quantity :productQuantity to quick order form
-     *
-     * @param string $productSku
-     * @param int    $productQuantity
+     * @Given /^"(?P<sku>.*)" product should has "(?P<price>.+)" value in price field$/
      */
-    public function addProductToQuickAddForm($productSku, $productQuantity)
+    public function productShouldHasValueInPriceField($sku, $price)
     {
-        $quickAddForm = $this->createElement('QuickAddForm');
-        $firstSkuField = $quickAddForm->find('css', 'input[name="oro_product_quick_add[products][0][productSku]"]');
+        $priceField = $this->createElement('Quick Add Price Field', $this->findProductRow($sku));
 
-        $firstSkuField->focus();
-        $firstSkuField->setValue($productSku);
-        $firstSkuField->blur();
+        static::assertEquals($price, trim($priceField->getValue()));
+    }
 
-        $firstQuantityField = $quickAddForm->find(
-            'css',
-            'input[name="oro_product_quick_add[products][0][productQuantity]"]'
-        );
+    /**
+     * @param string $sku
+     *
+     * @return NodeElement|null
+     */
+    private function findProductRow($sku)
+    {
+        /** @var NodeElement[] $productRows */
+        $productRows = $this->findAllElements('Quick Add Sku Field', $this->createElement('QuickAddForm'));
 
-        $firstQuantityField->setValue($productQuantity);
+        foreach ($productRows as $skuField) {
+            if ($skuField->getValue() === $sku) {
+                return $skuField->getParent()->getParent();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -440,7 +446,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @Then /^I should see (?P<counterValue>\d+) for "(?P<counterType>[\w\s]+)" counter$/
      *
      * @param string $counterType
-     * @param int $counterValue
+     * @param int    $counterValue
      */
     public function iShouldSeeCounterValue($counterType, $counterValue)
     {
@@ -669,5 +675,91 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         self::assertNotNull($productItem);
         $element = $this->createElement($elementName, $productItem);
         $element->click();
+    }
+
+    /**
+     * Assert that embedded block contains specified products.
+     * Example: Then should see the following products in the "New Arrivals Block":
+     *            | SKU  |
+     *            | SKU1 |
+     *            | SKU2 |
+     *
+     * @Then /^(?:|I )should see the following products in the "(?P<blockName>[^"]+)":$/
+     */
+    public function iShouldSeeFollowingProductsInEmbeddedBlock(TableNode $table, $blockName)
+    {
+        $block = $this->createElement($blockName);
+        self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
+
+        foreach ($table as $row) {
+            $productItem = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
+            self::assertTrue($productItem->isIsset(), sprintf('Product "%s" was not found', $row['SKU']));
+        }
+    }
+
+    /**
+     * Assert that embedded block does not contain specified products.
+     * Example: Then should see the following products in the "New Arrivals Block":
+     *            | SKU  |
+     *            | SKU1 |
+     *            | SKU2 |
+     *
+     * @Then /^(?:|I )should not see the following products in the "(?P<blockName>[^"]+)":$/
+     */
+    public function iShouldNotSeeFollowingProductsInEmbeddedBlock(TableNode $table, $blockName)
+    {
+        $block = $this->createElement($blockName);
+        self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
+
+        foreach ($table as $row) {
+            $productItem = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
+            self::assertFalse($productItem->isIsset(), sprintf('Product "%s" should not be present', $row['SKU']));
+        }
+    }
+
+    /**
+     * Assert that embedded block contains specified products with specified sticker.
+     * Example: Then should see "New Arrival Sticker" for the following products in the "Featured Products Block":
+     *            | SKU  |
+     *            | SKU1 |
+     *            | SKU2 |
+     *
+     * @Then /^(?:|I )should see "(?P<sticker>[^"]+)" for the following products in the "(?P<blockName>[^"]+)":$/
+     */
+    public function iShouldSeeStickerForFollowingProductsInEmbeddedBlock(TableNode $table, $sticker, $blockName)
+    {
+        $block = $this->createElement($blockName);
+        self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
+
+        foreach ($table as $row) {
+            $embeddedProduct = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
+            self::assertTrue($embeddedProduct->isIsset(), sprintf('Product "%s" is not present', $row['SKU']));
+
+            $stickerElement = $this->createElement($sticker, $embeddedProduct);
+            self::assertTrue($stickerElement->isIsset());
+        }
+    }
+
+    /**
+     * Assert that embedded block contains specified products without specified sticker.
+     * Example: Then should not see "New Arrival Sticker" for the following products in the "Featured Products Block":
+     *            | SKU  |
+     *            | SKU1 |
+     *            | SKU2 |
+     *
+     * @Then /^(?:|I )should not see "(?P<sticker>[^"]+)" for the following products in the "(?P<blockName>[^"]+)":$/
+     */
+    public function iShouldNotSeeStickerForFollowingProductsInEmbeddedBlock(TableNode $table, $sticker, $blockName)
+    {
+        $block = $this->createElement($blockName);
+        self::assertTrue($block->isValid(), sprintf('Embedded block "%s" was not found', $blockName));
+
+        foreach ($table as $row) {
+            $embeddedProduct = $this->findElementContains('EmbeddedProduct', $row['SKU'], $block);
+            self::assertTrue($embeddedProduct->isIsset(), sprintf('Product "%s" is not present', $row['SKU']));
+
+            $stickerElement = $this->createElement($sticker, $embeddedProduct);
+            self::assertFalse($stickerElement->isIsset());
+        }
     }
 }
