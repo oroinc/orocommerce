@@ -126,14 +126,14 @@ Feature: Validate unique variant field values when changing simple products
     And I click Edit T_shirt in grid
     And set Attribute Groups with:
       | Label         | Visible | Attributes |
-      | T-shirt group | true    | [SKU, Name, Is Featured, New Arrival, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Color, Size] |
+      | T-shirt group | true    | [SKU, Name, Is Featured, New Arrival, Brand, Description, Short Description, Images, Inventory Status, Meta title, Meta description, Meta keywords, Product prices, Color, Size] |
     And I save form
     Then I should see "Successfully updated" flash message
 
   Scenario: Prepare configurable products
     And I go to Products / Products
     And I click Edit gtsh_l in grid
-    And I fill form with:
+    And I fill "ProductForm" with:
       | Color | Green |
       | Size  | L     |
     And I save form
@@ -141,7 +141,7 @@ Feature: Validate unique variant field values when changing simple products
 
     And I go to Products / Products
     And I click Edit rtsh_m in grid
-    And I fill form with:
+    And I fill "ProductForm" with:
       | Color | Red     |
       | Size  | M       |
     And I save form
@@ -153,7 +153,6 @@ Feature: Validate unique variant field values when changing simple products
     And I should see "No records found"
     And I fill "ProductForm" with:
       | Configurable Attributes | [Color, Size] |
-    And I should not see "No records found"
     And I check gtsh_l and rtsh_m in grid
     And I save form
     Then I should see "Product has been saved" flash message
@@ -216,13 +215,13 @@ Feature: Validate unique variant field values when changing simple products
     Then I should see "Attribute was successfully saved" flash message
     And I go to Products / Products
     And I click Edit gtsh_l in grid
-    And I fill form with:
+    And I fill "ProductForm" with:
       | Color | Green |
     And I save form
     Then I should see "Product has been saved" flash message
     And I go to Products / Products
     And I click Edit rtsh_m in grid
-    And I fill form with:
+    And I fill "ProductForm" with:
       | Color | Red |
     And I save form
     Then I should see "Product has been saved" flash message

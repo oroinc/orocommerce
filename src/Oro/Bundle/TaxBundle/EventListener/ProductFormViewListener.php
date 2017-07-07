@@ -24,7 +24,7 @@ class ProductFormViewListener extends AbstractFormViewListener
             'OroTaxBundle:Product:tax_code_view.html.twig',
             ['entity' => $entity]
         );
-        $event->getScrollData()->addSubBlockData(0, 0, $template);
+        $event->getScrollData()->addSubBlockData('general', 0, $template);
     }
 
     /**

@@ -9,3 +9,4 @@ api:
                     exclude: true
                 updatedAt:
                     exclude: true
+        Oro\Bundle\ProductBundle\Entity\Brand: ~

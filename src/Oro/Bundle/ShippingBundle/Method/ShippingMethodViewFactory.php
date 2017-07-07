@@ -7,16 +7,16 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 class ShippingMethodViewFactory
 {
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    private $registry;
+    private $shippingMethodProvider;
 
     /**
-     * @param ShippingMethodRegistry $registry
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(ShippingMethodRegistry $registry)
+    public function __construct(ShippingMethodProviderInterface $shippingMethodProvider)
     {
-        $this->registry = $registry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -62,7 +62,7 @@ class ShippingMethodViewFactory
      */
     public function createMethodViewByShippingMethod($shippingMethodId)
     {
-        $method = $this->registry->getShippingMethod($shippingMethodId);
+        $method = $this->shippingMethodProvider->getShippingMethod($shippingMethodId);
 
         if (!$method) {
             return null;
@@ -85,7 +85,7 @@ class ShippingMethodViewFactory
      */
     public function createMethodTypeViewByShippingMethodAndPrice($shippingMethodId, $shippingMethodTypeId, Price $price)
     {
-        $method = $this->registry->getShippingMethod($shippingMethodId);
+        $method = $this->shippingMethodProvider->getShippingMethod($shippingMethodId);
 
         if (!$method) {
             return null;

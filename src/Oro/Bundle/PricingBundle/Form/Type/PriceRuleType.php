@@ -6,6 +6,8 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,14 +34,15 @@ class PriceRuleType extends AbstractType
         $builder
             ->add(
                 self::RULE,
-                'textarea',
+                PriceRuleEditorType::class,
                 [
+                    'numericOnly' => true,
                     'label' => 'oro.pricing.pricerule.calculate_as.label'
                 ]
             )
             ->add(
                 self::RULE_CONDITION,
-                'textarea',
+                PriceRuleEditorType::class,
                 [
                     'label' => 'oro.pricing.pricerule.rule_condition.label',
                     'required' => false
@@ -62,29 +65,30 @@ class PriceRuleType extends AbstractType
             )
             ->add(
                 self::QUANTITY,
-                'text',
+                TextType::class,
                 [
                     'label' => 'oro.pricing.pricerule.quantity.label'
                 ]
             )
             ->add(
                 self::PRIORITY,
-                'integer',
+                IntegerType::class,
                 [
                     'label' => 'oro.pricing.pricerule.priority.label'
                 ]
             )
             ->add(
                 self::QUANTITY_EXPRESSION,
-                'text',
+                PriceRuleEditorTextType::class,
                 [
                     'label' => 'oro.pricing.pricerule.quantity_expression.label',
-                    'attr' => ['placeholder' => 'oro.pricing.pricerule.quantity.label']
+                    'attr' => ['placeholder' => 'oro.pricing.pricerule.quantity.label'],
+                    'numericOnly' => true
                 ]
             )
             ->add(
                 self::CURRENCY_EXPRESSION,
-                'text',
+                RuleEditorCurrencyExpressionType::class,
                 [
                     'label' => 'oro.pricing.pricerule.currency_expression.label',
                     'attr' => ['placeholder' => 'oro.pricing.pricerule.currency.label']
@@ -92,7 +96,7 @@ class PriceRuleType extends AbstractType
             )
             ->add(
                 self::PRODUCT_UNIT_EXPRESSION,
-                'text',
+                RuleEditorUnitExpressionType::class,
                 [
                     'label' => 'oro.pricing.pricerule.product_unit_expression.label',
                     'attr' => ['placeholder' => 'oro.pricing.pricerule.product_unit.label']

@@ -4,15 +4,15 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingMethodRegistry;
+    protected $shippingMethodProvider;
 
     /**
      * @var ShippingMethodInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -26,16 +26,13 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->shippingMethodRegistry = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
         $this->shippingMethod = $this
             ->getMockBuilder('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface')
             ->disableOriginalConstructor()
             ->getMock();
         $this->formatter = new ShippingMethodLabelFormatter(
-            $this->shippingMethodRegistry
+            $this->shippingMethodProvider
         );
     }
 
@@ -46,7 +43,7 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function shippingMethodLabelMock($shippingMethod, $methodLabel, $isGrouped)
     {
-        $this->shippingMethodRegistry
+        $this->shippingMethodProvider
             ->expects($this->any())
             ->method('getShippingMethod')
             ->with($shippingMethod)
@@ -68,7 +65,7 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function shippingMethodTypeLabelMock($shippingMethod, $shippingType, $shippingTypeLabel)
     {
-        $this->shippingMethodRegistry
+        $this->shippingMethodProvider
             ->expects($this->any())
             ->method('getShippingMethod')
             ->with($shippingMethod)
@@ -185,7 +182,7 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
             ->method('getType')
             ->willReturn($methodType);
 
-        $this->shippingMethodRegistry->expects(static::any())
+        $this->shippingMethodProvider->expects(static::any())
             ->method('getShippingMethod')
             ->willReturn($this->shippingMethod);
 
@@ -214,7 +211,7 @@ class ShippingMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
             ->method('getType')
             ->willReturn($methodType);
 
-        $this->shippingMethodRegistry->expects(static::any())
+        $this->shippingMethodProvider->expects(static::any())
             ->method('getShippingMethod')
             ->willReturn($this->shippingMethod);
 

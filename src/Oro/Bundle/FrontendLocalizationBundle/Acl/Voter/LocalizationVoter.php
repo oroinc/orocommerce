@@ -14,7 +14,7 @@ class LocalizationVoter extends AbstractEntityVoter
     ];
 
     /** @var array */
-    static protected $usedLocalizationIds;
+    protected static $usedLocalizationIds;
 
     /**
      * {@inheritdoc}

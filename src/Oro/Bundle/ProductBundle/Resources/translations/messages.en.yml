@@ -5,6 +5,7 @@ oro:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
+        sku_uppercase.label: SKU
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
@@ -31,7 +32,11 @@ oro:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
         parent_variant_links.label: Parent Product Variant Links
+        quick_edit.label: Quick edit
         images.label: Images
+        is_related.label: Is Related
+        related_to_products.label: Related Products
+        related_by_products.label: Products that are related to this Product
         anything.label: Any Text
         featured_products.label: Featured Products
         featured:
@@ -105,7 +110,9 @@ oro:
             entity_plural_label: Product Units
             entity_description: Represents product units information
             code.label: Code
-            default_precision.label: Default Precision
+            default_precision:
+                label: 'Default Precision'
+                description: 'Default Precision for the product unit'
             form.choose: Choose Unit...
             removed: '{title} - removed'
 
@@ -171,6 +178,8 @@ oro:
                 update.label: '[Product Attribute] Edit attribute'
                 view.label: '[Product Attribute] View attributes'
                 remove.label: '[Product Attribute] Remove attribute'
+            related_products:
+                edit.label: '[Related Products] Edit related products'
 
         rounding:
             type:
@@ -189,9 +198,15 @@ oro:
             inventory: Inventory
             images: Images
             design: Design
+            relatedItems: Related Items
 
         widgets:
             product_information: Product Information
+            select_related_products:
+              title: Select related products for {{ sku }} - {{ name }}
+              label: Select related products
+              limit_has_been_reached: Limit of related products has been reached
+            select_products: Select products
 
         controller:
             product.saved.message: Product has been saved
@@ -209,6 +224,8 @@ oro:
                 backend_inventory_statuses_visibility.title: 'Management Console'
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
+                related_items.title: 'Related Items'
+                related_products.title: 'Related Products'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
                 product_images.title: 'Product Images'
@@ -220,6 +237,13 @@ oro:
                 new_product_icons.title: New Product Icons
                 product_promotions.title: Promotions
             fields:
+                enable_related_products.label: 'Enable Related Products'
+                related_products_bidirectional:
+                    label: 'Assign in Both Directions'
+                    tooltip: 'If this option is enabled, the current product will automatically be added as a related product to all of its related products.'
+                max_number_of_related_products:
+                    label: 'Maximum Number of Assigned Items'
+                    tooltip: 'You may use this option to set the limit on the number of related products that the catalog managers can link.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
@@ -351,6 +375,55 @@ oro:
             new_arrival: 'New Arrival'
             top_selling: 'Top Selling'
 
+        brand:
+            owner:
+                label: Owner
+            label:                Brand
+            entity_label:         Brand
+            entity_plural_label:  Brands
+
+            descriptions:
+                label:    Description
+            id:
+                label:    Id
+            meta_titles:
+                label:    Meta title
+            meta_descriptions:
+                label:    Meta description
+            meta_keywords:
+                label:    Meta keyword
+            names:
+                label:    Name
+            short_descriptions:
+                label:    Short description
+            slug_prototypes:
+                label:    Slug prototype
+            slugs:
+                label:    Slug
+            organization:
+                label:    Organization
+            owner:
+                label:    Owner
+            status:
+                label:    Status
+                disabled: Disabled
+                enabled:  Enabled
+
+            menu:
+                entity_plural_label:  Product Brands
+                description:          Product Brands
+
+            form:
+                choose: Choose brand
+                update:
+                    sections:
+                        general:    'General'
+                        seo:        'SEO'
+                    messages:
+                        saved:      'Brand has been saved'
+                        notBlank:   'This field cannot be blank'
+
+
     product_unit.each:
         label:
             full: each
@@ -359,7 +432,11 @@ oro:
             short_plural: ea
         value:
             full: '{0} none|{1} %count% each|]1,Inf] %count% each'
+            full_fraction: '%count% each'
+            full_fraction_gt_1: '%count% each'
             short: '{0} none|{1} %count% ea|]1,Inf] %count% ea'
+            short_fraction: '%count% ea'
+            short_fraction_gt_1: '%count% ea'
 
     product_unit.hour:
         label:
@@ -369,7 +446,11 @@ oro:
             short_plural: hrs
         value:
             full: '{0} none|{1} %count% hour|]1,Inf] %count% hours'
+            full_fraction: '%count% hour'
+            full_fraction_gt_1: '%count% hours'
             short: '{0} none|{1} %count% hr|]1,Inf] %count% hrs'
+            short_fraction: '%count% hr'
+            short_fraction_gt_1: '%count% hrs'
 
     product_unit.item:
         label:
@@ -379,7 +460,11 @@ oro:
             short_plural: items
         value:
             full: '{0} none|{1} %count% item|]1,Inf] %count% items'
+            full_fraction: '%count% item'
+            full_fraction_gt_1: '%count% items'
             short: '{0} none|{1} %count% item|]1,Inf] %count% items'
+            short_fraction: '%count% item'
+            short_fraction_gt_1: '%count% items'
 
     product_unit.kg:
         label:
@@ -389,7 +474,11 @@ oro:
             short_plural: kgs
         value:
             full: '{0} %count% kilogram|{1} %count% kilogram|]1,Inf] %count% kilograms'
+            full_fraction: '%count% kilogram'
+            full_fraction_gt_1: '%count% kilograms'
             short: '{0}%count% kg|{1} %count% kg|]1,Inf] %count% kg'
+            short_fraction: '%count% kg'
+            short_fraction_gt_1: '%count% kg'
 
     product_unit.piece:
         label:
@@ -399,7 +488,11 @@ oro:
             short_plural: pcs
         value:
             full: '{0} none|{1} %count% piece|]1,Inf] %count% pieces'
+            full_fraction: '%count% piece'
+            full_fraction_gt_1: '%count% pieces'
             short: '{0} none|{1} %count% pc|]1,Inf] %count% pcs'
+            short_fraction: '%count% pc'
+            short_fraction_gt_1: '%count% pcs'
 
     product_unit.set:
         label:
@@ -409,7 +502,11 @@ oro:
             short_plural: sets
         value:
             full: '{0} none|{1} %count% set|]1,Inf] %count% sets'
+            full_fraction: '%count% set'
+            full_fraction_gt_1: '%count% sets'
             short: '{0} none|{1} %count% set|]1,Inf] %count% sets'
+            short_fraction: '%count% set'
+            short_fraction_gt_1: '%count% sets'
 
     product_unit.liter:
         label:
@@ -419,7 +516,11 @@ oro:
             short_plural: liters
         value:
             full: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
+            full_fraction: '%count% liter'
+            full_fraction_gt_1: '%count% liters'
             short: '{0} none|{1} %count% liter|]1,Inf] %count% liters'
+            short_fraction: '%count% liter'
+            short_fraction_gt_1: '%count% liters'
 
     product_unit.milliliter:
         label:
@@ -429,7 +530,11 @@ oro:
             short_plural: milliliters
         value:
             full: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
+            full_fraction: '%count% milliliter'
+            full_fraction_gt_1: '%count% milliliters'
             short: '{0} none|{1} %count% milliliter|]1,Inf] %count% milliliters'
+            short_fraction: '%count% milliliter'
+            short_fraction_gt_1: '%count% milliliters'
 
     product_unit.box:
         label:
@@ -439,7 +544,11 @@ oro:
             short_plural: boxes
         value:
             full: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
+            full_fraction: '%count% box'
+            full_fraction_gt_1: '%count% boxes'
             short: '{0} none|{1} %count% box|]1,Inf] %count% boxes'
+            short_fraction: '%count% box'
+            short_fraction_gt_1: '%count% boxes'
 
     product_unit.bottle:
         label:
@@ -449,7 +558,11 @@ oro:
             short_plural: bottles
         value:
             full: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+            full_fraction: '%count% bottle'
+            full_fraction_gt_1: '%count% bottles'
             short: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+            short_fraction: '%count% bottle'
+            short_fraction_gt_1: '%count% bottles'
 
     webcatalog:
         contentvariant:
@@ -460,3 +573,4 @@ oro:
         quick_order_form:
             label: Quick Order Form
             description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
+
