@@ -30,14 +30,6 @@ class ShippingDiscount extends AbstractDiscount
     /**
      * {@inheritdoc}
      */
-    public function __toString(): string
-    {
-        return 'Shipping Discount ' . parent::__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function apply(DiscountContext $discountContext)
     {
         // TODO: Implement apply() method.

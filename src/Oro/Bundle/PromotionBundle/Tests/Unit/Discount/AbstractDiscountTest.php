@@ -55,29 +55,6 @@ class AbstractDiscountTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($options[AbstractDiscount::DISCOUNT_VALUE], $this->discount->getDiscountValue());
     }
 
-    public function testToStringAmount()
-    {
-        $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
-            AbstractDiscount::DISCOUNT_VALUE => 42.5,
-            AbstractDiscount::DISCOUNT_CURRENCY => 'USD'
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('42.5 USD', $this->discount->__toString());
-    }
-
-    public function testToStringPercent()
-    {
-        $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.5
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('50%', $this->discount->__toString());
-    }
-
     public function testSetGetMatchingProducts()
     {
         $products = [$this->createMock(Product::class)];

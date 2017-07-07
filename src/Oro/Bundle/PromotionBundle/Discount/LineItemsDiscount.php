@@ -30,14 +30,6 @@ class LineItemsDiscount extends ShippingAwareDiscount implements DiscountProduct
     /**
      * {@inheritdoc}
      */
-    public function __toString(): string
-    {
-        return 'Line Items Discount ' . parent::__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function configure(array $options): array
     {
         $resolvedOptions = parent::configure($options);

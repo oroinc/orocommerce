@@ -42,14 +42,6 @@ class BuyXGetYDiscount extends AbstractDiscount implements DiscountProductUnitCo
     /**
      * {@inheritdoc}
      */
-    public function __toString(): string
-    {
-        return sprintf('Buy %s Get %s Discount ', $this->buyX, $this->getY) . parent::__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function configure(array $options): array
     {
         $resolvedOptions = parent::configure($options);

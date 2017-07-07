@@ -29,11 +29,6 @@ interface DiscountInterface
     public function setMatchingProducts(array $products);
 
     /**
-     * @return string
-     */
-    public function __toString(): string;
-
-    /**
      * Get type of discount: TYPE_AMOUNT or TYPE_PERCENT
      *
      * @return string

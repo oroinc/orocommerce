@@ -104,18 +104,6 @@ abstract class AbstractDiscount implements DiscountInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function __toString(): string
-    {
-        if ($this->getDiscountType() === self::TYPE_PERCENT) {
-            return ($this->getDiscountValue() * 100) . '%';
-        }
-
-        return $this->getDiscountValue() . ' ' . $this->getDiscountCurrency();
-    }
-
-    /**
      * @return OptionsResolver
      */
     protected function getOptionsResolver(): OptionsResolver

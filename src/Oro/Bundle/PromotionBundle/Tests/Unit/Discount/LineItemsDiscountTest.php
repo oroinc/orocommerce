@@ -32,31 +32,6 @@ class LineItemsDiscountTest extends \PHPUnit_Framework_TestCase
         $this->discount = new LineItemsDiscount($this->shippingDiscount);
     }
 
-    public function testToStringFixedAmount()
-    {
-        $options = [
-            DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE => 'item',
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
-            AbstractDiscount::DISCOUNT_VALUE => 9.99,
-            AbstractDiscount::DISCOUNT_CURRENCY => 'USD'
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('Line Items Discount 9.99 USD', $this->discount->__toString());
-    }
-
-    public function testToStringPercent()
-    {
-        $options = [
-            DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE => 'item',
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.5,
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('Line Items Discount 50%', $this->discount->__toString());
-    }
-
     public function testApplyWithoutShippingDiscount()
     {
         $product1 = $this->getEntity(Product::class, ['id' => 1, 'sku' => 'PROD_1']);
