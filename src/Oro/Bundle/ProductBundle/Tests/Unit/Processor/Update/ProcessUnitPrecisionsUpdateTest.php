@@ -10,6 +10,7 @@ use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormContextStub;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository;
@@ -30,7 +31,7 @@ class ProcessUnitPrecisionsUpdateTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ProcessUnitPrecisionsUpdateStub
      */
-    protected $processUnitPrecisionsCreate;
+    protected $processUnitPrecisionsUpdate;
 
     /**
      * @inheritdoc
@@ -47,111 +48,77 @@ class ProcessUnitPrecisionsUpdateTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->context = new UpdateContextStub($configProvider, $metadataProvider);
-        $this->processUnitPrecisionsCreate = new ProcessUnitPrecisionsUpdateStub($this->doctrineHelper);
+        $this->processUnitPrecisionsUpdate = new ProcessUnitPrecisionsUpdateStub($this->doctrineHelper);
     }
 
-    public function testHandleUnitPrecisions()
+    /**
+     *
+     * @param $requestData
+     * @param $isValid
+     */
+    public function testValidateUnitPrecisions()
     {
-        $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
-        $this->context->set(JsonApi::ID, 1);
-        $this->processUnitPrecisionsCreate->setContext($this->context);
-
-        $productUnitPrecisionRepo = $this->getMockBuilder(ProductUnitPrecisionRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitPrecisionRepo->expects($this->once())
-            ->method('getProductUnitPrecisionsByProductId')
-            ->willReturn(ProcessUnitPrecisionsTestHelper::getProducUnitPrecisions(['each', 'item']));
-
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->exactly(2))
-            ->method('persist');
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(ProductUnitPrecision::class)
-            ->willReturn($productUnitPrecisionRepo);
-        $this->doctrineHelper->expects($this->exactly(2))
-            ->method('getEntityManagerForClass')
-            ->with(ProductUnitPrecision::class)
-            ->willReturn($em);
-
-        $result = $this->processUnitPrecisionsCreate->handleUnitPrecisions($requestData);
-
-        $relationships = $result[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $unitPrecisions = $relationships[ProcessUnitPrecisions::UNIT_PRECISIONS];
-        $primaryUnitPrecision = $relationships[ProcessUnitPrecisions::PRIMARY_UNIT_PRECISION];
-
-        foreach ($unitPrecisions[JsonApi::DATA] as $unitPrecision) {
-            $this->assertArrayHasKey(JsonApi::ID, $unitPrecision);
-            $this->assertArrayHasKey(JsonApi::TYPE, $unitPrecision);
-        }
-
-        $this->assertArrayNotHasKey(ProcessUnitPrecisions::ATTR_UNIT_CODE, $primaryUnitPrecision[JsonApi::DATA]);
-        $this->assertArrayHasKey(JsonApi::ID, $primaryUnitPrecision[JsonApi::DATA]);
-        $this->assertArrayHasKey(JsonApi::TYPE, $primaryUnitPrecision[JsonApi::DATA]);
-        $this->assertTrue($this->context->has('addedUnits'));
-        $this->assertCount(0, $this->context->get('addedUnits'));
-    }
-
-    public function testHandleUnitPrecisionsCreateNewPrecision()
-    {
+        $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
+        $productUnitPrecisions = $this->getProductUnitPrecisions(['item', 'set', 'each']);
         $requestData = ProcessUnitPrecisionsTestHelper::createUpdateRequestData();
-        $this->context->set(JsonApi::ID, 1);
-        $this->processUnitPrecisionsCreate->setContext($this->context);
-
-        $productUnitPrecisionRepo = $this->getMockBuilder(ProductUnitPrecisionRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitPrecisionRepo->expects($this->once())
-            ->method('getProductUnitPrecisionsByProductId')
-            ->willReturn(ProcessUnitPrecisionsTestHelper::getProducUnitPrecisions(['each', 'item']));
-
-        $productUnit = $this->createMock(ProductUnit::class);
         $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $productUnitRepo->expects($this->once())
-            ->method('find')
-            ->willReturn($productUnit);
-
-        $em = $this->getMockBuilder(EntityManager::class)
+            ->method('getAllUnitCodes')
+            ->willReturn($unitCodes);
+        $productUnitPrecisionRepo = $this->getMockBuilder(ProductUnitPrecisionRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->exactly(3))
-            ->method('persist');
-        $em->expects($this->once())
-            ->method('flush');
-
+        $productUnitPrecisionRepo->expects($this->once())
+            ->method('getProductUnitPrecisionsByProductId')
+            ->willReturn($productUnitPrecisions);
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityRepositoryForClass')
-            ->withConsecutive(
-                [ProductUnitPrecision::class],
-                [ProductUnit::class]
-            )
-            ->willReturnOnConsecutiveCalls($productUnitPrecisionRepo, $productUnitRepo);
-        $this->doctrineHelper->expects($this->exactly(3))
-            ->method('getEntityManagerForClass')
-            ->with(ProductUnitPrecision::class)
-            ->willReturn($em);
+            ->withConsecutive([ProductUnit::class], [ProductUnitPrecision::class])
+            ->willReturnOnConsecutiveCalls($productUnitRepo, $productUnitPrecisionRepo);
+        $pointer = '/' . JsonApi::INCLUDED;
+        $this->processUnitPrecisionsUpdate->setContext($this->context);
+        $result = $this->processUnitPrecisionsUpdate->validateUnitPrecisions(
+            $requestData[JsonApi::INCLUDED],
+            $pointer
+        );
 
-        $result = $this->processUnitPrecisionsCreate->handleUnitPrecisions($requestData);
+        $this->assertEquals(true, $result);
+    }
 
-        $relationships = $result[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $unitPrecisions = $relationships[ProcessUnitPrecisions::UNIT_PRECISIONS];
-        $primaryUnitPrecision = $relationships[ProcessUnitPrecisions::PRIMARY_UNIT_PRECISION];
-
-        foreach ($unitPrecisions[JsonApi::DATA] as $unitPrecision) {
-            $this->assertArrayHasKey(JsonApi::ID, $unitPrecision);
-            $this->assertArrayHasKey(JsonApi::TYPE, $unitPrecision);
+    /**
+     * @param array $codes
+     * @return array
+     */
+    private function getProductUnitPrecisions($codes)
+    {
+        $productUnitPrecisions = [];
+        $i = 0;
+        foreach ($codes as $unitCode) {
+            $productUnitPrecisions[] = $this->createProductUnitPrecision(++$i, $unitCode);
         }
 
-        $this->assertArrayNotHasKey(ProcessUnitPrecisions::ATTR_UNIT_CODE, $primaryUnitPrecision[JsonApi::DATA]);
-        $this->assertArrayHasKey(JsonApi::ID, $primaryUnitPrecision[JsonApi::DATA]);
-        $this->assertArrayHasKey(JsonApi::TYPE, $primaryUnitPrecision[JsonApi::DATA]);
-        $this->assertTrue($this->context->has('addedUnits'));
-        $this->assertCount(1, $this->context->get('addedUnits'));
+        return $productUnitPrecisions;
+    }
+
+    /**
+     * @param int $id
+     * @param string $code
+     * @return ProductUnitPrecisionStub
+     */
+    private function createProductUnitPrecision($id, $code)
+    {
+        $productUnitPrecision = new ProductUnitPrecisionStub();
+        $productUnit = new ProductUnit();
+        $product = new Product();
+        $productUnit->setCode($code);
+        $productUnitPrecision->setId($id);
+        $productUnitPrecision->setUnit($productUnit);
+        $productUnitPrecision->setProduct($product);
+        $productUnitPrecision->setConversionRate(3);
+        $productUnitPrecision->setSell(true);
+
+        return $productUnitPrecision;
     }
 }

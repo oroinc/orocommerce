@@ -19,37 +19,86 @@ class ProcessUnitPrecisionsTestHelper
                     "sku" => "test-api",
                     "status" => "enabled",
                     "variantFields" => [],
-                    "createdAt" => "2017-06-13T07:12:06Z",
-                    "updatedAt" => "2017-06-13T07:12:31Z",
                     "productType" => "simple",
                     "featured" => true
                 ],
                 "relationships" => [
                     "primaryUnitPrecision" => [
-                        "unit_code" => "each",
+                        "data" => [
+                            "type" => "productunitprecisions",
+                            "id" => "primary-unit-id"
+                        ],
                     ],
                     "unitPrecisions" => [
                         "data" => [
                             0 => [
                                 "type" => "productunitprecisions",
-                                "unit_code" => "each",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
+                                "id" => "unit-precision-1"
                             ],
                             1 => [
                                 "type" => "productunitprecisions",
-                                "unit_code" => "item",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
+                                "id" => "unit-precision-2"
                             ]
                         ]
                     ]
                 ]
+            ],
+            "included" => [
+                0 => [
+                    "type" => "productunitprecisions",
+                    "id" => "primary-unit-id",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "2",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "item"
+                            ]
+                        ]
+                    ]
+                ],
+                1 => [
+                    "type" => "productunitprecisions",
+                    "id" => "unit-precision-1",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "2",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "set"
+                            ]
+                        ]
+                    ]
+                ],
+                2 => [
+                    "type" => "productunitprecisions",
+                    "id" => "unit-precision-2",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "2",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "each"
+                            ]
+                        ]
+                    ]
+                ],
             ]
         ];
     }
+
     /**
      * @return array
      */
@@ -87,7 +136,7 @@ class ProcessUnitPrecisionsTestHelper
      */
     public static function setPrimaryUnitCode(array $requestData, $unitCode)
     {
-        $requestData['data']['relationships']['primaryUnitPrecision']['unit_code'] = $unitCode;
+        $requestData['included'][0]['relationships']['unit']['data']['id'] = $unitCode;
 
         return $requestData;
     }
@@ -99,7 +148,7 @@ class ProcessUnitPrecisionsTestHelper
      */
     public static function setWrongUnitCode(array $requestData, $unitCode)
     {
-        $requestData['data']['relationships']['unitPrecisions']['data'][0]['unit_code'] = $unitCode;
+        $requestData['included'][0]['relationships']['unit']['data']['id'] = $unitCode;
 
         return $requestData;
     }
@@ -116,78 +165,82 @@ class ProcessUnitPrecisionsTestHelper
                     "sku" => "test-api",
                     "status" => "enabled",
                     "variantFields" => [],
-                    "createdAt" => "2017-06-13T07:12:06Z",
-                    "updatedAt" => "2017-06-13T07:12:31Z",
                     "productType" => "simple",
                     "featured" => true
                 ],
                 "relationships" => [
                     "primaryUnitPrecision" => [
-                        "unit_code" => "each",
+                        "data" => [
+                            "type" => "productunitprecisions",
+                            "id" => "primary-unit-id"
+                        ],
                     ],
                     "unitPrecisions" => [
                         "data" => [
                             0 => [
                                 "type" => "productunitprecisions",
-                                "unit_code" => "each",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
+                                "id" => "unit-precision-1"
                             ],
                             1 => [
                                 "type" => "productunitprecisions",
-                                "unit_code" => "each",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
+                                "id" => "unit-precision-2"
                             ]
                         ]
                     ]
                 ]
-            ]
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public static function createRequestDataWrongPrimaryUnit()
-    {
-        return [
-            "data" => [
-                "type" => "products",
-                "attributes" => [
-                    "sku" => "test-api",
-                    "status" => "enabled",
-                    "variantFields" => [],
-                    "createdAt" => "2017-06-13T07:12:06Z",
-                    "updatedAt" => "2017-06-13T07:12:31Z",
-                    "productType" => "simple",
-                    "featured" => true
+            ],
+            "included" => [
+                0 => [
+                    "type" => "productunitprecisions",
+                    "id" => "primary-unit-id",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "2",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "item"
+                            ]
+                        ]
+                    ]
                 ],
-                "relationships" => [
-                    "primaryUnitPrecision" => [
-                        "unit_code" => "item",
+                1 => [
+                    "type" => "productunitprecisions",
+                    "id" => "unit-precision-1",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "2",
+                        "sell" => "1"
                     ],
-                    "unitPrecisions" => [
-                        "data" => [
-                            0 => [
-                                "type" => "productunitprecisions",
-                                "unit_code" => "each",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
-                            ],
-                            1 => [
-                                "type" => "productunitprecisions",
-                                "unit_code" => "set",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "each"
                             ]
                         ]
                     ]
-                ]
+                ],
+                2 => [
+                    "type" => "productunitprecisions",
+                    "id" => "unit-precision-2",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "2",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "each"
+                            ]
+                        ]
+                    ]
+                ],
             ]
         ];
     }
@@ -204,41 +257,91 @@ class ProcessUnitPrecisionsTestHelper
                     "sku" => "test-api",
                     "status" => "enabled",
                     "variantFields" => [],
-                    "createdAt" => "2017-06-13T07:12:06Z",
-                    "updatedAt" => "2017-06-13T07:12:31Z",
                     "productType" => "simple",
                     "featured" => true
                 ],
                 "relationships" => [
                     "primaryUnitPrecision" => [
-                        "unit_code" => "each",
+                        "data" => [
+                            "type" => "productunitprecisions",
+                            "id" => "1"
+                        ],
                     ],
                     "unitPrecisions" => [
                         "data" => [
                             0 => [
                                 "type" => "productunitprecisions",
-                                "unit_code" => "each",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
+                                "id" => "2"
                             ],
                             1 => [
                                 "type" => "productunitprecisions",
-                                "unit_code" => "item",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
-                            ],
-                            2 => [
-                                "type" => "productunitprecisions",
-                                "unit_code" => "set",
-                                "unit_precision" => "0",
-                                "conversion_rate" => "2",
-                                "sell" => "1"
+                                "id" => "3"
                             ]
                         ]
                     ]
                 ]
+            ],
+            "included" => [
+                0 => [
+                    "meta" => [
+                        "update" => true,
+                    ],
+                    "type" => "productunitprecisions",
+                    "id" => "1",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "3",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "item"
+                            ]
+                        ]
+                    ]
+                ],
+                1 => [
+                    "meta" => [
+                        "update" => true,
+                    ],
+                    "type" => "productunitprecisions",
+                    "id" => "2",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "4",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "set"
+                            ]
+                        ]
+                    ]
+                ],
+                2 => [
+                    "meta" => [
+                        "update" => true,
+                    ],
+                    "type" => "productunitprecisions",
+                    "id" => "3",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "2",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => "each"
+                            ]
+                        ]
+                    ]
+                ],
             ]
         ];
     }

@@ -63,30 +63,14 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
             ->willReturn($productUnitRepo);
 
         $this->processUnitPrecisions->process($this->context);
-        $relationships = $this->context->getRequestData()['relationships'];
 
-        $this->assertArrayHasKey(
-            JsonApi::ID,
-            $relationships[ProcessUnitPrecisions::PRIMARY_UNIT_PRECISION][JsonApi::DATA]
-        );
-        $this->assertArrayHasKey(
-            JsonApi::TYPE,
-            $relationships[ProcessUnitPrecisions::PRIMARY_UNIT_PRECISION][JsonApi::DATA]
-        );
-        $this->assertArrayHasKey(
-            JsonApi::ID,
-            $relationships[ProcessUnitPrecisions::UNIT_PRECISIONS][JsonApi::DATA][0]
-        );
-        $this->assertArrayHasKey(
-            JsonApi::ID,
-            $relationships[ProcessUnitPrecisions::UNIT_PRECISIONS][JsonApi::DATA][1]
-        );
+        $this->assertFalse($this->context->hasErrors());
     }
 
-    public function testProcessNoUnitPrecisions()
+    public function testProcessNoIncludedData()
     {
         $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
-        unset($requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS][ProcessUnitPrecisions::UNIT_PRECISIONS]);
+        unset($requestData[JsonApi::INCLUDED]);
         $this->context->setRequestData($requestData);
         $this->processUnitPrecisions->process($this->context);
         $this->assertSame($requestData, $this->context->getRequestData());
@@ -111,41 +95,10 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepositoryForClass')
             ->with(ProductUnit::class)
             ->willReturn($productUnitRepo);
-        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $pointer = '/' . JsonApi::DATA . '/' . JsonApi::RELATIONSHIPS;
+        $pointer = '/' . JsonApi::INCLUDED;
         $this->processUnitPrecisions->setContext($this->context);
         $result = $this->processUnitPrecisions->validateUnitPrecisions(
-            $relationships[ProcessUnitPrecisions::UNIT_PRECISIONS],
-            $pointer
-        );
-
-        $this->assertEquals($isValid, $result);
-    }
-
-    /**
-     * @dataProvider getPrimaryUnitPrecisionProvider
-     *
-     * @param $requestData
-     * @param $isValid
-     */
-    public function testValidatePrimaryUnitPrecision($requestData, $isValid)
-    {
-        $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
-        $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $productUnitRepo->expects($this->once())
-            ->method('getAllUnitCodes')
-            ->willReturn($unitCodes);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(ProductUnit::class)
-            ->willReturn($productUnitRepo);
-        $relationships = $requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS];
-        $pointer = '/' . JsonApi::DATA . '/' . JsonApi::RELATIONSHIPS;
-        $this->processUnitPrecisions->setContext($this->context);
-        $result = $this->processUnitPrecisions->validatePrimaryUnitPrecision(
-            $relationships,
+            $requestData[JsonApi::INCLUDED],
             $pointer
         );
 
@@ -173,30 +126,6 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
                 'requestData' => ProcessUnitPrecisionsTestHelper::createRequestDataSameUnitCodes(),
                 'isValid' => false,
             ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getPrimaryUnitPrecisionProvider()
-    {
-        $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
-        $wrongUnit = ProcessUnitPrecisionsTestHelper::setPrimaryUnitCode($requestData, 'test_item');
-
-        return [
-            'valid_primary_unit' => [
-                'requestData' => $requestData,
-                'isValid' => true,
-            ],
-            'wrong_primary_unit' => [
-                'requestData' => $wrongUnit,
-                'isValid' => false,
-            ],
-            'primary_unit_not_present_in_list' => [
-                'requestData' => ProcessUnitPrecisionsTestHelper::createRequestDataWrongPrimaryUnit(),
-                'isValid' => false,
-            ]
         ];
     }
 }

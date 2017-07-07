@@ -84,7 +84,7 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
     {
         /** @var ProductUnitPrecision $productUnitPrecision */
         $productUnitPrecision = $productUnitPrecisions[$data[JsonApi::ID]] ?? null;
-        if (!$productUnitPrecision instanceof $productUnitPrecision) {
+        if (!$productUnitPrecision instanceof ProductUnitPrecision) {
             return false;
         }
         $unitRelationCode = $data[JsonApi::RELATIONSHIPS][parent::ATTR_UNIT][JsonApi::DATA][JsonApi::ID];
