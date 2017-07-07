@@ -12,14 +12,14 @@ class OrderEntityListener
     /**
      * @var AppliedDiscountManager
      */
-    protected $discountManager;
+    protected $appliedDiscountManager;
 
     /**
      * @param AppliedDiscountManager $appliedDiscountManager
      */
     public function __construct(AppliedDiscountManager $appliedDiscountManager)
     {
-        $this->discountManager = $appliedDiscountManager;
+        $this->appliedDiscountManager = $appliedDiscountManager;
     }
 
     /**
@@ -28,8 +28,14 @@ class OrderEntityListener
      */
     public function prePersist(Order $order, LifecycleEventArgs $args)
     {
-        foreach ($this->discountManager->createAppliedDiscounts($order) as $appliedDiscount) {
-            $args->getEntityManager()->persist($appliedDiscount);
-        }
+        $this->appliedDiscountManager->saveAppliedDiscounts($order);
+    }
+
+    /**
+     * @param Order $order
+     */
+    public function preRemove(Order $order)
+    {
+        $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
     }
 }

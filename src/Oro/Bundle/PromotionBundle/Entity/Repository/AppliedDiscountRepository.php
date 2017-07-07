@@ -4,21 +4,25 @@ namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class AppliedDiscountRepository extends EntityRepository
 {
     /**
      * @param Order $order
-     * @return mixed
+     * @return array
      */
-    public function deleteByOrder(Order $order)
+    public function findByOrder(Order $order)
     {
-        $qb = $this->createQueryBuilder('ad');
+        return $this->findBy(['order' => $order]);
+    }
 
-        return $qb
-            ->delete()
-            ->where($qb->expr()->eq('ad.order', ':order'))
-            ->setParameter('order', $order)
-            ->getQuery()->execute();
+    /**
+     * @param OrderLineItem $orderLineItem
+     * @return array
+     */
+    public function findByLineItem(OrderLineItem $orderLineItem)
+    {
+        return $this->findBy(['lineItem' => $orderLineItem]);
     }
 }
