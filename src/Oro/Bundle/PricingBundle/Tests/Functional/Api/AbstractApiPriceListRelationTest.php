@@ -28,14 +28,23 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
     abstract protected function getFirstRelation();
 
     /**
+     * @return void
+     */
+    abstract protected function assertFirstRelationMessageSent();
+
+    /**
+     * @param string $entityId
      * @param string $associationName
      * @param string $associationId
      */
-    protected function assertGetSubResource(string $associationName, string $associationId)
-    {
+    protected function assertGetSubResource(
+        string $entityId,
+        string $associationName,
+        string $associationId
+    ) {
         $response = $this->getSubresource([
             'entity' => $this->getApiEntityName(),
-            'id' => $this->getFirstRelation()->getId(),
+            'id' => $entityId,
             'association' => $associationName
         ]);
 
@@ -46,17 +55,46 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
 
     /**
      * @param string $associationName
+     * @param string $associationId
+     */
+    protected function assertGetSubResourceForFirstRelation(string $associationName, string $associationId)
+    {
+        $this->assertGetSubResource($this->getFirstRelation()->getId(), $associationName, $associationId);
+    }
+
+    /**
+     * @param string $associationName
+     * @param string $associationClassName
+     * @param string $associationId
+     */
+    protected function assertGetRelationshipForFirstRelation(
+        string $associationName,
+        string $associationClassName,
+        string $associationId
+    ) {
+        $this->assertGetRelationship(
+            $this->getFirstRelation()->getId(),
+            $associationName,
+            $associationClassName,
+            $associationId
+        );
+    }
+
+    /**
+     * @param $entityId
+     * @param string $associationName
      * @param string $associationClassName
      * @param string $associationId
      */
     protected function assertGetRelationship(
+        string $entityId,
         string $associationName,
         string $associationClassName,
         string $associationId
     ) {
         $response = $this->getRelationship([
             'entity' => $this->getApiEntityName(),
-            'id' => $this->getFirstRelation()->getId(),
+            'id' => $entityId,
             'association' => $associationName
         ]);
 
@@ -111,5 +149,26 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
             'unique entity constraint',
             $response->getContent()
         );
+    }
+
+    public function testDelete()
+    {
+        $this->cleanScheduledRelationMessages();
+
+        $relationId = $this->getFirstRelation()->getId();
+
+        $this->delete([
+            'entity' => $this->getApiEntityName(),
+            'id' => $relationId,
+        ]);
+
+        $this->assertNull(
+            $this->getEntityManager()->find(
+                $this->getEntityClass($this->getApiEntityName()),
+                $relationId
+            )
+        );
+
+        $this->assertFirstRelationMessageSent();
     }
 }
