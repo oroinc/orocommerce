@@ -14,6 +14,8 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
 {
     const TYPE = 'discount';
     const NAME = 'oro_promotion.subtotal_discount';
+    const ORDER_DISCOUNT_SUBTOTAL = 'order_discount_subtotal';
+    const SHIPPING_DISCOUNT_SUBTOTAL = 'shipping_discount_subtotal';
 
     /**
      * @var PromotionExecutor
@@ -64,18 +66,21 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $discountContext = $this->promotionExecutor->execute($entity);
         $currency = $this->getBaseCurrency($entity);
 
-        $orderSubtotal = $this->createSubtotal(
+        $orderDiscountSubtotal = $this->createSubtotal(
             $discountContext->getTotalLineItemsDiscount() + $discountContext->getSubtotalDiscountTotal(),
             $currency,
             $this->translator->trans('oro.promotion.discount.subtotal.order.label')
         );
-        $shippingSubtotal = $this->createSubtotal(
+        $shippingDiscountSubtotal = $this->createSubtotal(
             $discountContext->getShippingDiscountTotal(),
             $currency,
             $this->translator->trans('oro.promotion.discount.subtotal.shipping.label')
         );
 
-        return [$orderSubtotal, $shippingSubtotal];
+        return [
+            self::ORDER_DISCOUNT_SUBTOTAL => $orderDiscountSubtotal,
+            self::SHIPPING_DISCOUNT_SUBTOTAL => $shippingDiscountSubtotal
+        ];
     }
 
     /**

@@ -22,35 +22,6 @@ class BuyXGetYDiscountTest extends \PHPUnit_Framework_TestCase
         $this->discount = new BuyXGetYDiscount();
     }
 
-    public function testToStringAmount()
-    {
-        $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
-            AbstractDiscount::DISCOUNT_VALUE => 100.2,
-            AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
-            DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE => 'unit',
-            BuyXGetYDiscount::BUY_X => 3,
-            BuyXGetYDiscount::GET_Y => 2,
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('Buy 3 Get 2 Discount 100.2 USD', $this->discount->__toString());
-    }
-
-    public function testToStringPercent()
-    {
-        $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.2,
-            DiscountProductUnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE => 'unit',
-            BuyXGetYDiscount::BUY_X => 3,
-            BuyXGetYDiscount::GET_Y => 2,
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('Buy 3 Get 2 Discount 20%', $this->discount->__toString());
-    }
-
     public function testApply()
     {
         $matchingProduct = new Product();

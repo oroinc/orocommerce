@@ -119,8 +119,10 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
 
         $expected = [
-            $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 15.0, 'EUR'),
-            $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 8.0, 'EUR')
+            SubtotalProvider::ORDER_DISCOUNT_SUBTOTAL =>
+                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 15.0, 'EUR'),
+            SubtotalProvider::SHIPPING_DISCOUNT_SUBTOTAL =>
+                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 8.0, 'EUR')
         ];
         $this->assertEquals($expected, $this->provider->getSubtotal($entity));
     }

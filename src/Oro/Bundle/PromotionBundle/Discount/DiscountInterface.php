@@ -22,17 +22,12 @@ interface DiscountInterface
     /**
      * @return array|Product[]
      */
-    public function getMatchingProducts(): array;
+    public function getMatchingProducts();
 
     /**
      * @param array|Product[] $products
      */
     public function setMatchingProducts(array $products);
-
-    /**
-     * @return string
-     */
-    public function __toString(): string;
 
     /**
      * Get type of discount: TYPE_AMOUNT or TYPE_PERCENT

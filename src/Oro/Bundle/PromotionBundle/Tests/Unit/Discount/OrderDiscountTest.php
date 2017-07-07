@@ -28,29 +28,6 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
         $this->discount = new OrderDiscount($this->shippingDiscount);
     }
 
-    public function testToStringAmount()
-    {
-        $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
-            AbstractDiscount::DISCOUNT_VALUE => 100.2,
-            AbstractDiscount::DISCOUNT_CURRENCY => 'EUR'
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('Order Discount 100.2 EUR', $this->discount->__toString());
-    }
-
-    public function testToStringPercent()
-    {
-        $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.2
-        ];
-
-        $this->discount->configure($options);
-        $this->assertEquals('Order Discount 20%', $this->discount->__toString());
-    }
-
     public function testApplyWithoutShippingDiscount()
     {
         /** @var DiscountContext|\PHPUnit_Framework_MockObject_MockObject $discountContext */

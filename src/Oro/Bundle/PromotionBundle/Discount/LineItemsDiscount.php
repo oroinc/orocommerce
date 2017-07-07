@@ -30,14 +30,6 @@ class LineItemsDiscount extends ShippingAwareDiscount implements DiscountProduct
     /**
      * {@inheritdoc}
      */
-    public function __toString(): string
-    {
-        return 'Line Items Discount ' . parent::__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function configure(array $options): array
     {
         $resolvedOptions = parent::configure($options);
@@ -58,7 +50,7 @@ class LineItemsDiscount extends ShippingAwareDiscount implements DiscountProduct
 
         foreach ($discountContext->getLineItems() as $discountLineItem) {
             foreach ($this->getMatchingProducts() as $discountMatchingProduct) {
-                if ($discountLineItem->getProduct() === $discountMatchingProduct
+                if ($discountLineItem->getProduct()->getId() === $discountMatchingProduct->getId()
                     && $discountLineItem->getProductUnitCode() === $this->discountProductUnitCode
                 ) {
                     $discountLineItem->addDiscount($this);

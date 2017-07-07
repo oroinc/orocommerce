@@ -10,6 +10,7 @@ class LoadSegmentData extends AbstractLoadSegmentData
 {
     const PRODUCT_STATIC_SEGMENT = 'product_static_segment';
     const PRODUCT_DYNAMIC_SEGMENT = 'product_dynamic_segment';
+    const PRODUCT_DYNAMIC_EMPTY_SEGMENT = 'product_dynamic_empty_segment';
 
     /**
      * @var array
@@ -59,8 +60,44 @@ class LoadSegmentData extends AbstractLoadSegmentData
                             'criterion' => [
                                 'filter' => 'number',
                                 'data' => [
-                                    'value' => 10,
+                                    'value' => 0,
                                     'type' => 2
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        self::PRODUCT_DYNAMIC_EMPTY_SEGMENT => [
+            'name' => 'Product Dynamic Empty Segment',
+            'description' => 'Product Dynamic Empty Segment Description',
+            'entity' => Product::class,
+            'type' => SegmentType::TYPE_DYNAMIC,
+            'definition' => [
+                'columns' => [
+                    [
+                        'func' => null,
+                        'label' => 'id',
+                        'name' => 'id',
+                        'sorting' => null
+                    ],
+                    [
+                        'func' => null,
+                        'label' => 'sku',
+                        'name' => 'sku',
+                        'sorting' => null
+                    ]
+                ],
+                'filters' => [
+                    [
+                        [
+                            'columnName' => 'id',
+                            'criterion' => [
+                                'filter' => 'number',
+                                'data' => [
+                                    'value' => 0,
+                                    'type' => 3
                                 ]
                             ]
                         ]
@@ -70,6 +107,9 @@ class LoadSegmentData extends AbstractLoadSegmentData
         ]
     ];
 
+    /**
+     * @return array
+     */
     protected function getSegmentsData(): array
     {
         return self::$segments;

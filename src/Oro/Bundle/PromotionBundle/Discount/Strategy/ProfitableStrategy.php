@@ -24,11 +24,13 @@ class ProfitableStrategy extends AbstractStrategy
         $maxDiscount = null;
 
         foreach ($discounts as $discount) {
-            $calculateContext = clone $discountContext;
+            $calculateContext = unserialize(serialize($discountContext));
             $this->calculateDiscount($discount, $calculateContext);
 
-            if ($calculateContext->getTotalDiscountAmount() > $maxDiscountAmount) {
+            $totalDiscountAmount = $calculateContext->getTotalDiscountAmount();
+            if ($totalDiscountAmount > $maxDiscountAmount) {
                 $maxDiscount = $discount;
+                $maxDiscountAmount = $totalDiscountAmount;
             }
         }
 
