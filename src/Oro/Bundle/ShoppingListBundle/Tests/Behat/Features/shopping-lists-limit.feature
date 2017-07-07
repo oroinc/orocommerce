@@ -1,5 +1,5 @@
 @ticket-BB-10050-limit
-@fixture-ProductFixture.yml
+@fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Shopping list limit
   As Administrator I have a possibility to restrict limit of shopping lists for customer in configuration
 
@@ -16,7 +16,7 @@ Feature: Shopping list limit
     And type "Prod1" in "search"
     And click "Search Button"
     And type "PSKU1" in "search"
-    And I click "FrontendSearchButton"
+    And I click "Search Button"
     And I click "Product1"
     And I should see "Add to Shoppin..."
     And I click "Add to Shoppin..."
