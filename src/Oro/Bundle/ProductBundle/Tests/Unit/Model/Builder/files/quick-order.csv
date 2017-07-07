@@ -1,7 +1,7 @@
-Item Number,Quantity
-HSSUC, 1
-HSTUC, 2.55
-HCCM, 3,
+Item Number,Quantity, Unit
+HSSUC, 1, kg
+HSTUC, 2.55, liter
+HCCM, 3, unit
 SKU1,10.0112
 SKU2,asd
 SKU3,

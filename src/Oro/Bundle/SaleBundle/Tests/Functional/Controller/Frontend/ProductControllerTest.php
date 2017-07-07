@@ -51,7 +51,7 @@ class ProductControllerTest extends WebTestCase
     public function viewDataProvider()
     {
         return [
-            'unit without prices'       => ['product' => LoadProductData::PRODUCT_2, 'contains' => 'Request A Quote'],
+            'unit without prices'       => ['product' => LoadProductData::PRODUCT_2, 'contains' => 'Get Quote'],
             'unit with empty price'     => ['product' => LoadProductData::PRODUCT_6, 'contains' => '$200.50'],
             'unit with not empty price' => ['product' => LoadProductData::PRODUCT_7, 'contains' => '$0.00']
         ];

@@ -113,10 +113,9 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_frontend_patch_entity_data',
+                                route: 'oro_api_patch_shopping_list',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
-                                    className: oro_class_name(shoppingList, true),
                                     id: shoppingList.id
                                 }
                             }
@@ -272,13 +271,7 @@
 {% block _shopping_list_line_items_list_item_configurable_products_widget %}
     {% if parent.configurableProducts[lineItem.product.id] is defined %}
         {% for field in parent.configurableProducts[lineItem.product.id] %}
-            <div>{{ field.label|trans }}:
-                {% if field.type == 'boolean' %}
-                    {{ field.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
-                {% else %}
-                    {{ field.value }}
-                {% endif %}
-            </div>
+            <div>{{ field.label|trans }}: {{ field.value }}</div>
         {% endfor %}
     {% endif %}
 {% endblock %}
@@ -475,7 +468,7 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_frontend_patch_entity_data',
+                                route: 'oro_api_shopping_list_frontend_patch_line_item',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
                                     className: oro_class_name(lineItem, true),

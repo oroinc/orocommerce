@@ -5,7 +5,6 @@ namespace Oro\Bundle\PayPalBundle\Form\Type;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
-use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -18,7 +17,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
-
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -45,9 +43,9 @@ class PayPalSettingsType extends AbstractType
     protected $encoder;
 
     /**
-     * @var CardTypesDataProviderInterface
+     * @var CreditCardTypesDataProviderInterface
      */
-    private $cardTypesDataProvider;
+    private $creditCardTypesDataProvider;
 
     /**
      * @var PaymentActionsDataProviderInterface
@@ -55,20 +53,20 @@ class PayPalSettingsType extends AbstractType
     private $paymentActionsDataProvider;
 
     /**
-     * @param TranslatorInterface                 $translator
-     * @param SymmetricCrypterInterface           $encoder
-     * @param CardTypesDataProviderInterface      $cardTypesDataProvider
-     * @param PaymentActionsDataProviderInterface $paymentActionsDataProvider
+     * @param TranslatorInterface                  $translator
+     * @param SymmetricCrypterInterface            $encoder
+     * @param CreditCardTypesDataProviderInterface $creditCardTypesDataProvider
+     * @param PaymentActionsDataProviderInterface  $paymentActionsDataProvider
      */
     public function __construct(
         TranslatorInterface $translator,
         SymmetricCrypterInterface $encoder,
-        CardTypesDataProviderInterface $cardTypesDataProvider,
+        CreditCardTypesDataProviderInterface $creditCardTypesDataProvider,
         PaymentActionsDataProviderInterface $paymentActionsDataProvider
     ) {
         $this->translator = $translator;
         $this->encoder = $encoder;
-        $this->cardTypesDataProvider = $cardTypesDataProvider;
+        $this->creditCardTypesDataProvider = $creditCardTypesDataProvider;
         $this->paymentActionsDataProvider = $paymentActionsDataProvider;
     }
 
@@ -131,7 +129,7 @@ class PayPalSettingsType extends AbstractType
                 'required' => true,
             ])
             ->add('allowedCreditCardTypes', ChoiceType::class, [
-                'choices' => $this->cardTypesDataProvider->getCardTypes(),
+                'choices' => $this->creditCardTypesDataProvider->getCardTypes(),
                 'choices_as_values' => true,
                 'choice_label' => function ($cardType) {
                     return $this->translator->trans(
@@ -208,13 +206,10 @@ class PayPalSettingsType extends AbstractType
      */
     public function preSetData(FormEvent $event)
     {
-        // TODO: remove this condition when CardTypesDataProviderInterface is removed in v1.3.
-        if ($this->cardTypesDataProvider instanceof CreditCardTypesDataProviderInterface) {
-            /** @var PayPalSettings|null $data */
-            $data = $event->getData();
-            if ($data && !$data->getAllowedCreditCardTypes()) {
-                $data->setAllowedCreditCardTypes($this->cardTypesDataProvider->getDefaultCardTypes());
-            }
+        /** @var PayPalSettings|null $data */
+        $data = $event->getData();
+        if ($data && !$data->getAllowedCreditCardTypes()) {
+            $data->setAllowedCreditCardTypes($this->creditCardTypesDataProvider->getDefaultCardTypes());
         }
     }
 

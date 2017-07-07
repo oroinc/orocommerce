@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\Exception\LogicException;
@@ -31,16 +31,16 @@ class OrderShippingTrackingType extends AbstractType
     protected $choices;
 
     /**
-     * @var ShippingMethodRegistry|null
+     * @var TrackingAwareShippingMethodsProviderInterface|null
      */
-    protected $shippingMethodRegistry;
+    protected $trackingAwareShippingMethodsProvider;
 
     /**
-     * @param ShippingMethodRegistry $shippingMethodRegistry
+     * @param TrackingAwareShippingMethodsProviderInterface $trackingAwareShippingMethodsProvider
      */
-    public function __construct($shippingMethodRegistry = null)
+    public function __construct($trackingAwareShippingMethodsProvider = null)
     {
-        $this->shippingMethodRegistry = $shippingMethodRegistry;
+        $this->trackingAwareShippingMethodsProvider = $trackingAwareShippingMethodsProvider;
     }
 
     /**
@@ -53,8 +53,8 @@ class OrderShippingTrackingType extends AbstractType
         }
 
         $this->choices = [];
-        if ($this->shippingMethodRegistry !== null) {
-            $methods = $this->shippingMethodRegistry->getTrackingAwareShippingMethods();
+        if ($this->trackingAwareShippingMethodsProvider !== null) {
+            $methods = $this->trackingAwareShippingMethodsProvider->getTrackingAwareShippingMethods();
 
             /** @var ShippingMethodInterface $method */
             foreach ($methods as $method) {

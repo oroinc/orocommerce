@@ -130,6 +130,7 @@ oro:
         validation:
             unit:
                 required: Unit is required
+                invalid: 'Unit {{ unit }} is invalid for this product'
             quantity:
                 required: Quantity is required
                 greaterThanZero: Quantity should be greater than 0
@@ -137,8 +138,17 @@ oro:
             quick_add:
                 import_from_file:
                     title: Import From File
+                validation:
+                    quantity_min: 'Quantity should be greater than 0.'
+                    quantity_max: 'Quantity should be less than {{ limit }}.'
                 import_validation:
                     title: Import Validation
+                    subtitle: '{0} none|{1} {{ count }} item|]1,Inf[ {{ count }} items'
+                form:
+                    unit:
+                        default: '--'
+                copy_paste:
+                    error: 'Some of the products SKUs or units you have provided were not found. Correct them and try again.'
         product_collection:
             filter_query:
                 continue: Continue

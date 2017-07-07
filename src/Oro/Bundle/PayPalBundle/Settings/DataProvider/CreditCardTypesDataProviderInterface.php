@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Settings\DataProvider;
 
-interface CreditCardTypesDataProviderInterface extends CardTypesDataProviderInterface
+interface CreditCardTypesDataProviderInterface
 {
     /**
      * @return string[]

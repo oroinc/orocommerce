@@ -33,6 +33,10 @@ class RFPFrontendActionsTest extends WebTestCase
 
     public function testQuickAdd()
     {
+        $this->markTestSkipped(
+            'Waiting for new quick order page to be finished'
+        );
+
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 

@@ -1,10 +1,98 @@
 system_configuration:
+    groups:
+        sale_contact_info:
+            title: oro.sale.system_configuration.groups.sale_contact_info.title
+            icon:  'fa-id-card-o'
+        customer_visible_contact_info:
+            title: oro.sale.system_configuration.groups.customer_visible_contact_info.title
     fields:
         oro_sale.backend_product_visibility:
             data_type: array
             type: oro_product_inventory_status_select
             options:
                 label: oro.sale.system_configuration.fields.backend_product_visibility.title
+
+        oro_sale.contact_info_source_display:
+            data_type: string
+            type: oro_sale_contact_info_customer_option
+            priority: 40
+            options:
+                label: oro.sale.system_configuration.fields.contact_info_source_display.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                attr:
+                    'data-dependee-id': 'contact_info_source_display'
+
+        oro_sale.contact_details:
+            data_type: string
+            type: textarea
+            priority: 30
+            options:
+                required: false
+                label:  oro.sale.system_configuration.fields.contact_details.label
+                resettable: false
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'contact_info_source_display'
+                    'data-show-if': 'pre_configured'
+
+        oro_sale.allow_user_configuration:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: oro.sale.system_configuration.fields.allow_user_configuration.label
+                tooltip: oro.sale.form.tooltip.allow_user_configuration
+                attr:
+                    'data-dependee-id': 'allow_user_configuration'
+
+        oro_sale.available_user_options:
+            data_type: array
+            type: oro_sale_contact_info_user_available_option
+            priority: 10
+            options:
+                label: oro.sale.system_configuration.fields.available_user_options.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'allow_user_configuration'
+                    'data-show-if': 'checked'
+
+        oro_sale.contact_info_user_option:
+            data_type: string
+            type: oro_sale_contact_info_user_option
+            priority: 50
+            options:
+                label: oro.sale.system_configuration.fields.contact_info_user_option.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                attr:
+                    'data-dependee-id': 'oro_sale.contact_info_user_option'
+        oro_sale.contact_info_manual_text:
+            data_type: string
+            type: oro_sale_contact_info_manual_text
+            priority: 30
+            options:
+                required: false
+                label: oro.sale.system_configuration.fields.contact_info_manual_text.label
+                resettable: false
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'oro_sale.contact_info_user_option'
+                    'data-show-if': 'enter_manually'
+        oro_sale.guest_contact_info_text:
+            data_type: string
+            type: textarea
+            priority: 0
+            options:
+                required: false
+                resettable: false
+                label: oro.sale.system_configuration.fields.guest_contact_info_text.label
+                tooltip: oro.sale.form.tooltip.guest_contact_info_text
 
     tree:
         system_configuration:
@@ -17,4 +105,25 @@ system_configuration:
                                     backend_inventory_statuses_visibility:
                                         children:
                                             - oro_sale.backend_product_visibility
-
+                    sales:
+                        children:
+                            sale_contact_info:
+                                children:
+                                    customer_visible_contact_info:
+                                        children:
+                                            - oro_sale.contact_info_source_display
+                                            - oro_sale.contact_details
+                                            - oro_sale.allow_user_configuration
+                                            - oro_sale.available_user_options
+                                            - oro_sale.guest_contact_info_text
+        user_configuration:
+            commerce:
+                children:
+                    sales:
+                        children:
+                            sale_contact_info:
+                                children:
+                                    customer_visible_contact_info:
+                                        children:
+                                            - oro_sale.contact_info_user_option
+                                            - oro_sale.contact_info_manual_text

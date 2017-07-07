@@ -36,6 +36,9 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="customerUser",
+ *              "frontend_owner_column_name"="customer_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
