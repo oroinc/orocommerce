@@ -5,6 +5,8 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -87,7 +89,7 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
         }
 
         $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
-        $scope = $this->getScopeRepository()->findMostSuitable($scopeCriteria);
+        $scope = $this->getSlugRepository()->findMostSuitableUsedScope($scopeCriteria);
 
         $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
         if (!$resolvedNode) {
@@ -130,6 +132,7 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
     }
 
     /**
+     * @deprecated Since 1.2, will be removed in 1.3. Use getSlugRepository instead.
      * @return ObjectRepository|ScopeRepository
      */
     protected function getScopeRepository()
@@ -137,5 +140,15 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
         return $this->registry
             ->getManagerForClass(Scope::class)
             ->getRepository(Scope::class);
+    }
+
+    /**
+     * @return ObjectRepository|SlugRepository
+     */
+    protected function getSlugRepository()
+    {
+        return $this->registry
+            ->getManagerForClass(Slug::class)
+            ->getRepository(Slug::class);
     }
 }
