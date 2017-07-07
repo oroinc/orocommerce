@@ -1,4 +1,4 @@
-@fixture-product_collections_individual_products.yml
+@fixture-OroProductBundle:product_collections_individual_products.yml
 Feature:
   In order to simplify product collection creation together with filters using
   As an Administrator

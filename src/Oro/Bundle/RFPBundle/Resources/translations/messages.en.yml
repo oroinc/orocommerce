@@ -134,7 +134,7 @@ oro:
             delete: 'Delete'
             restore: 'Restore'
             create_quote: 'Create Quote'
-            add_to_rfp: 'Request A Quote'
+            add_to_rfp: 'Get Quote'
             create_rfp: 'Submit'
             edit: 'Edit'
             resubmit: 'Resubmit'

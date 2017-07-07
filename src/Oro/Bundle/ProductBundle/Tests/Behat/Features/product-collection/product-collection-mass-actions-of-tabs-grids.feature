@@ -1,4 +1,4 @@
-@fixture-product_collections_individual_products.yml
+@fixture-OroProductBundle:product_collections_individual_products.yml
 Feature:
   In order to be able to process several product at once, at Product Collection's All Added, Excluded and Manually Added tabs
   As and Administrator

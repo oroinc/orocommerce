@@ -63,10 +63,7 @@ class RFPOperationListener
     {
         /** @var QuickAddRow $row */
         foreach ($collection->getInvalidRows() as $row) {
-            if (!$row->isComplete()
-                || null === $row->getProduct()
-                || !$this->isRFPAllowedErrors($row->getErrors())
-            ) {
+            if (!$this->isRFPAllowedErrors($row->getErrors())) {
                 return false;
             }
         }

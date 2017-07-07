@@ -11,7 +11,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = 'oro_product';
+    const ROOT_NODE = OroProductExtension::ALIAS;
     const RELATED_PRODUCTS_ENABLED = 'related_products_enabled';
     const RELATED_PRODUCTS_BIDIRECTIONAL = 'related_products_bidirectional';
     const MAX_NUMBER_OF_RELATED_PRODUCTS = 'max_number_of_related_products';
@@ -30,6 +30,10 @@ class Configuration implements ConfigurationInterface
     const DEFAULT_CRON_SCHEDULE = '0 * * * *';
     const PRODUCT_PROMOTION_SHOW_ON_VIEW = 'product_promotion_show_on_product_view';
     const PRODUCT_COLLECTION_MASS_ACTION_LIMITATION = 'product_collections_mass_action_limitation';
+    const NEW_ARRIVALS_PRODUCT_SEGMENT_ID = 'new_arrivals_products_segment_id';
+    const NEW_ARRIVALS_MAX_ITEMS = 'new_arrivals_max_items';
+    const NEW_ARRIVALS_MIN_ITEMS = 'new_arrivals_min_items';
+    const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
 
     /**
      * {@inheritDoc}
@@ -62,14 +66,21 @@ class Configuration implements ConfigurationInterface
                 self::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
                 self::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
                 self::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center'],
-                self::FEATURED_PRODUCTS_SEGMENT_ID => ['value' => null],
+                self::FEATURED_PRODUCTS_SEGMENT_ID => [
+                    'value' => '@oro_product.provider.default_value.featured_products'
+                ],
                 self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 self::DIRECT_URL_PREFIX => ['value' => ''],
                 self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
                 self::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
                 self::BRAND_DIRECT_URL_PREFIX => ['value' => ''],
-                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
                 self::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
+                self::NEW_ARRIVALS_PRODUCT_SEGMENT_ID => [
+                    'value' => '@oro_product.provider.default_value.new_arrivals'
+                ],
+                self::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
+                self::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
+                self::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
             ]
         );
 
@@ -83,6 +94,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($key)
     {
-        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [OroProductExtension::ALIAS, $key]);
+        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [self::ROOT_NODE, $key]);
     }
 }

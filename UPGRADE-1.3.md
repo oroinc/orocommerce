@@ -84,7 +84,7 @@ ProductBundle
 - Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
 - Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
-    
+- `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
     
 PaymentBundle
 -------------

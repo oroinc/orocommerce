@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 
 class QuickAddRowCollection extends ArrayCollection
 {
+    use QuickAddFieldTrait;
     /**
      * @var EventDispatcherInterface
      */
@@ -39,7 +40,7 @@ class QuickAddRowCollection extends ArrayCollection
     }
 
     /**
-     * @return $this|QuickAddRow[]
+     * @return QuickAddRowCollection|QuickAddRow[]
      */
     public function getValidRows()
     {
@@ -49,7 +50,7 @@ class QuickAddRowCollection extends ArrayCollection
     }
 
     /**
-     * @return $this|QuickAddRow[]
+     * @return QuickAddRowCollection|QuickAddRow[]
      */
     public function getInvalidRows()
     {
@@ -59,15 +60,11 @@ class QuickAddRowCollection extends ArrayCollection
     }
 
     /**
-     * @return $this|QuickAddRow[]
+     * @return bool
      */
-    public function getValidSkuRows()
+    public function hasValidRows()
     {
-        return $this->filter(
-            function (QuickAddRow $row) {
-                return $row->getProduct();
-            }
-        );
+        return count($this->getValidRows()) > 0;
     }
 
     /**
@@ -89,7 +86,7 @@ class QuickAddRowCollection extends ArrayCollection
 
     /**
      * @param Product[] $products
-     * @return $this
+     * @return QuickAddRowCollection
      */
     public function mapProducts(array $products)
     {
@@ -122,18 +119,8 @@ class QuickAddRowCollection extends ArrayCollection
         return $products;
     }
 
-    public function validate()
+    public function validateEventDispatcher()
     {
-        /** @var QuickAddRow $row */
-        foreach ($this->getIterator() as $row) {
-            if ($row->isComplete() &&
-                $row->getProduct() &&
-                is_numeric($row->getQuantity()) &&
-                $row->getQuantity() > 0
-            ) {
-                $row->setValid(true);
-            }
-        }
         if ($this->eventDispatcher instanceof EventDispatcherInterface) {
             $event = new QuickAddRowCollectionValidateEvent($this);
             $this->eventDispatcher->dispatch($event::NAME, $event);
@@ -149,10 +136,12 @@ class QuickAddRowCollection extends ArrayCollection
     {
         $data = [QuickAddType::PRODUCTS_FIELD_NAME => []];
 
-        foreach ($this->getValidSkuRows() as $row) {
+        foreach ($this->getValidRows() as $row) {
             $productRow = new ProductRow();
             $productRow->productSku = $row->getSku();
             $productRow->productQuantity = $row->getQuantity();
+            $productRow->productUnit = $row->getUnit();
+
             $data[QuickAddType::PRODUCTS_FIELD_NAME][] = $productRow;
         }
 
