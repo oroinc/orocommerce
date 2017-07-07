@@ -111,7 +111,7 @@ class AbstractAddressManager
             }
         }
 
-        return new TypedOrderAddressCollection($entity->getCustomerUser(), $type, $addresses);
+        return new TypedOrderAddressCollection($customerUser, $type, $addresses);
     }
 
     /**

@@ -37,7 +37,7 @@ define(function(require) {
          */
         serializeForm: function() {
             var formName = this.$form.attr('name');
-            return this.$form.find('[name^='+ formName +']').serialize();
+            return this.$form.find('[name^=' + formName + ']').serialize();
         },
 
         /**
@@ -50,8 +50,8 @@ define(function(require) {
 
             var $target = $(e.target);
 
-            for (var i in this.options.ignoreTargets) {
-                var selector  = this.options.ignoreTargets[i];
+            for (var i = 0; i < this.options.ignoreTargets.length; i++) {
+                var selector = this.options.ignoreTargets[i];
                 if ($target.closest(selector).length) {
                     return;
                 }
@@ -64,7 +64,7 @@ define(function(require) {
 
             this.lastSavedData = ajaxData.data;
             $.ajax(ajaxData)
-                .done(_.bind(this.afterSaveState, this, $target))
+                .done(_.bind(this.afterSaveState, this, $target));
         },
 
         /**

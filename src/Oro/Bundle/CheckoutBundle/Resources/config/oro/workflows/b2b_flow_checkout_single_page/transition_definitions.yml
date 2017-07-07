@@ -229,6 +229,9 @@ workflows:
                                 results:
                                     result.responseData: $.responseData
 
+                            - '@extendable':
+                                events: [extendable_action.finish_checkout]
+
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -264,6 +267,9 @@ workflows:
                                         additionalData: $additional_data
                                 results:
                                     result.responseData: $.responseData
+
+                            - '@extendable':
+                                events: [extendable_action.finish_checkout]
 
                             - '@assign_value':
                                 - $.result.successPayment

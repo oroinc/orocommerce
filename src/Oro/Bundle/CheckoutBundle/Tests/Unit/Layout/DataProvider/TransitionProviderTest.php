@@ -74,37 +74,6 @@ class TransitionProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->provider->getContinueTransition($workflowItem));
     }
 
-    public function testGetContinueTransitionWithHiddenItems()
-    {
-        $workflowItem = new WorkflowItem();
-        $step = new WorkflowStep();
-        $workflowItem->setCurrentStep($step);
-
-        $transitionWithoutForm = $this->createTransition('transition1');
-
-        $hiddenTransition = $this->createTransition('transition2')
-            ->setFrontendOptions(['is_checkout_continue' => true])
-            ->setHidden(true);
-
-        $continueTransition = $this->createTransition('transition3')
-            ->setFrontendOptions(['is_checkout_continue' => true])
-            ->setFormType('transition_type');
-
-        $transitions = new ArrayCollection([$transitionWithoutForm, $hiddenTransition, $continueTransition]);
-
-        $this->workflowManager->expects($this->any())
-            ->method('isTransitionAvailable')
-            ->willReturn(true);
-
-        $this->workflowManager->expects($this->once())
-            ->method('getTransitionsByWorkflowItem')
-            ->with($workflowItem)
-            ->will($this->returnValue($transitions));
-
-        $expected = new TransitionData($hiddenTransition, true, new ArrayCollection());
-        $this->assertEquals($expected, $this->provider->getContinueTransition($workflowItem, 'transition2'));
-    }
-
     public function testGetContinueTransitionWithCache()
     {
         $workflowItem = new WorkflowItem();

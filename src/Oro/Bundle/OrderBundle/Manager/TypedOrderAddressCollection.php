@@ -28,7 +28,7 @@ class TypedOrderAddressCollection
      * @param string $type
      * @param array $addresses
      */
-    public function __construct(CustomerUser $customerUser, $type, array $addresses)
+    public function __construct(CustomerUser $customerUser = null, $type, array $addresses = [])
     {
         $this->customerUser = $customerUser;
         $this->type = $type;
@@ -65,7 +65,7 @@ class TypedOrderAddressCollection
 
     protected function ensureDefaultAddress()
     {
-        if (!$this->addresses || $this->defaultAddress) {
+        if (!$this->addresses || $this->defaultAddress || null === $this->customerUser) {
             return;
         }
 

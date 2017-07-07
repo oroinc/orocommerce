@@ -466,6 +466,9 @@ workflows:
                         results:
                             result.responseData: $.responseData
 
+                    - '@extendable':
+                        events: [extendable_action.finish_checkout]
+
                     - '@redirect':
                         conditions:
                             '@and':

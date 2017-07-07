@@ -211,9 +211,6 @@ action_groups:
                 paymentMethod: $.checkout.paymentMethod
                 transactionOptions: $.paymentTransactionOptions
 
-            - '@extendable':
-                events: [extendable_action.finish_checkout]
-
             - '@flash_message':
                 conditions:
                     '@and':

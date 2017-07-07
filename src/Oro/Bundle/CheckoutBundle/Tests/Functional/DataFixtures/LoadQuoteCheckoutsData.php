@@ -22,12 +22,12 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
             self::CHECKOUT_1 => [
                 'customerUser' => LoadCustomerUserData::EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
-                'checkout' => ['payment_method' => self::PAYMENT_METHOD]
+                'checkout' => ['payment_method' => self::PAYMENT_METHOD, 'currency' => 'USD']
             ],
             self::CHECKOUT_2 => [
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
-                'checkout' => ['payment_method' => self::PAYMENT_METHOD]
+                'checkout' => ['payment_method' => self::PAYMENT_METHOD, 'currency' => 'USD']
             ]
         ];
     }
