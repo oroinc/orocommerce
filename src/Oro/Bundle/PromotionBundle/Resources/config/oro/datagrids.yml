@@ -108,9 +108,9 @@ datagrids:
                 - orderId
         columns:
             name:
-                label: oro.applied_discount.name
+                label: oro.order.promotions.applied_discount.name
             discountAmount:
-                label: oro.applied_discount.amount
+                label: oro.order.promotions.applied_discount.amount
                 type: twig
                 frontend_type: html
                 template: OroPromotionBundle:AppliedDiscount/Datagrid:amount.html.twig

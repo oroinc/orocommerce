@@ -47,7 +47,7 @@ class AppliedDiscountSubtotalProvider implements SubtotalProviderInterface
     public function getSubtotal($entity)
     {
         $label = $this->translator->trans('oro.promotion.discount.subtotal.order.label');
-        $amount = $this->discountsProvider->getOrderDiscountAmount($entity->getId());
+        $amount = $this->discountsProvider->getDiscountsAmountByOrder($entity);
 
         $subtotal = new Subtotal();
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);

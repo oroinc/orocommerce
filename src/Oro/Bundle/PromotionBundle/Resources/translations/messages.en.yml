@@ -175,7 +175,27 @@ oro:
                 discount.label: 'Row Discount:'
     order:
         promotions:
+            applied_discount:
+                name: Name
+                amount: Amount
             nav_button:
                 information_notice: Promotion discounts will be recalculated after order saving
                 important: Important
                 save_without_discounts_recalculation: Save Without Discounts Recalculation
+
+        view:
+            order_line_item:
+                row_total_discount_amount.label: Row Total (Discount Amount)
+                row_total_after_discount.label: Row Total (After Discount)
+                row_total_after_discount_including_tax.label: Row Total (After Discount Including Tax)
+                row_total_after_discount_excluding_tax.label: Row Total (After Discount Excluding Tax)
+
+        edit:
+            order_line_item:
+                applied_discounts.label: Applied Discounts
+                row_total: Row Total
+                short:
+                    discount_amount.label: Disc. Amount
+                    row_total_after_discount.label: After Disc.
+                    includingTax.label: After Disc. Incl. Tax
+                    excludingTax.label:  After Disc. Excl. Tax

@@ -3,17 +3,22 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityRepository;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
 use Oro\Bundle\PromotionBundle\Provider\OrdersAppliedDiscountsProvider;
 
 class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var Cache|\PHPUnit_Framework_MockObject_MockObject */
     protected $cache;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AppliedDiscountRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
 
     /** @var OrdersAppliedDiscountsProvider */
@@ -22,7 +27,7 @@ class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->cache = $this->createMock(Cache::class);
-        $this->repository = $this->createMock(EntityRepository::class);
+        $this->repository = $this->createMock(AppliedDiscountRepository::class);
 
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
@@ -35,32 +40,36 @@ class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOrderDiscountsFromCache()
     {
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => 123]);
         $discounts = [new AppliedDiscount(), new AppliedDiscount()];
 
         $this->cache->expects($this->once())->method('contains')->willReturn(true);
         $this->cache->expects($this->once())->method('fetch')->willReturn($discounts);
 
-        $this->assertSame($discounts, $this->provider->getOrderDiscounts(123));
+        $this->assertSame($discounts, $this->provider->getDiscountsByOrder($order));
     }
 
     public function testGetGetOrdersDiscounts()
     {
-        $orderId = 123;
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => 123]);
         $discounts = [new AppliedDiscount(), new AppliedDiscount()];
 
         $this->cache->expects($this->once())->method('contains')->willReturn(false);
         $this->repository->expects($this->once())
-            ->method('findBy')
-            ->with(['order' => $orderId])
+            ->method('findByOrder')
+            ->with($order)
             ->willReturn($discounts);
         $this->cache->expects($this->once())->method('save');
 
-        $this->assertSame($discounts, $this->provider->getOrderDiscounts($orderId));
+        $this->assertSame($discounts, $this->provider->getDiscountsByOrder($order));
     }
 
     public function testGetOrderDiscountAmount()
     {
-        $orderId = 123;
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => 123]);
 
         $expectedAmount = 3.3;
         $discounts = [
@@ -71,10 +80,52 @@ class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
         $this->cache->expects($this->once())->method('contains')->willReturn(false);
 
         $this->repository->expects($this->once())
-            ->method('findBy')
-            ->with(['order' => $orderId])
+            ->method('findByOrder')
+            ->with($order)
             ->willReturn($discounts);
 
-        $this->assertSame($expectedAmount, $this->provider->getOrderDiscountAmount($orderId));
+        $this->assertSame($expectedAmount, $this->provider->getDiscountsAmountByOrder($order));
+    }
+
+    public function testGetAppliedDiscountsForLineItem()
+    {
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => 123]);
+
+        /** @var OrderLineItem $orderLineItem1 */
+        $orderLineItem1 = $this->getEntity(OrderLineItem::class, ['id' => 1]);
+        $order->addLineItem($orderLineItem1);
+        $orderLineItem1->setOrder($order);
+
+        /** @var OrderLineItem $orderLineItem2 */
+        $orderLineItem2 = $this->getEntity(OrderLineItem::class, ['id' => 2]);
+        $order->addLineItem($orderLineItem2);
+        $orderLineItem2->setOrder($order);
+
+
+        $appliedDiscount1 = new AppliedDiscount();
+        $appliedDiscount1->setLineItem($orderLineItem1);
+        $appliedDiscount1->setAmount(3.4);
+
+        $appliedDiscount2 = new AppliedDiscount();
+        $appliedDiscount2->setLineItem($orderLineItem1);
+        $appliedDiscount2->setAmount(1.4);
+
+        $appliedDiscount3 = new AppliedDiscount();
+        $appliedDiscount3->setLineItem($orderLineItem2);
+        $appliedDiscount3->setAmount(1000.00);
+
+        $this->cache->expects($this->once())->method('contains')->willReturn(false);
+
+        $this->repository->expects($this->once())
+            ->method('findByOrder')
+            ->with($order)
+            ->willReturn([
+                $appliedDiscount1,
+                $appliedDiscount2,
+                $appliedDiscount3,
+            ]);
+
+        $this->assertEquals(4.8, $this->provider->getDiscountsAmountByLineItem($orderLineItem1));
     }
 }

@@ -39,16 +39,15 @@ class AppliedDiscountSubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubtotal()
     {
-        $orderId = 123;
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => 123]);
+        $order->setCurrency('USD');
+
         $this->translator->expects($this->once())->method('trans')->willReturn('test label');
         $this->discountProvider->expects($this->once())
-            ->method('getOrderDiscountAmount')
-            ->with($orderId)
+            ->method('getDiscountsAmountByOrder')
+            ->with($order)
             ->willReturn(45.67);
-
-        $order = new Order();
-        $order->setCurrency('USD');
-        $this->setValue($order, 'id', $orderId);
 
         $expectedSubtotal = new Subtotal();
         $expectedSubtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);

@@ -1,0 +1,38 @@
+{% set appliedDiscounts = form.vars.applied_discounts|default({}) %}
+
+{% set appliedDiscountsAmount = appliedDiscounts.discountAmount|default(0.0) %}
+{% set currency = appliedDiscountsAmount.currency|default('') %}
+{% set taxes = appliedDiscounts.taxes|default({}) %}
+
+{% set rowTotalAfterDiscountIncludingTax = 0.0 %}
+{% if taxes is defined and taxes.row is defined and taxes.row.includingTax is defined %}
+    {% set rowTotalAfterDiscountIncludingTax = taxes.row.includingTax - appliedDiscountsAmount %}
+{% endif %}
+
+{% set rowTotalAfterDiscountExcludingTax = 0.0 %}
+{% if taxes is defined and taxes.row is defined and taxes.row.excludingTax is defined %}
+    {% set rowTotalAfterDiscountExcludingTax = taxes.row.excludingTax - appliedDiscountsAmount %}
+{% endif %}
+
+<div>
+    <span data-value-container>
+        <table class="grid table table-condensed table-bordered applied_discounts-result-grid">
+            <thead>
+                <tr>
+                    <th class="renderable">&nbsp;</th>
+                    <th class="renderable">{{ 'oro.order.edit.order_line_item.short.includingTax.label'|trans }}</th>
+                    <th class="renderable">{{ 'oro.order.edit.order_line_item.short.excludingTax.label'|trans }}</th>
+                    <th class="renderable">{{ 'oro.order.edit.order_line_item.short.discount_amount.label'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="renderable">{{ 'oro.order.edit.order_line_item.row_total'|trans }}</td>
+                    <td class="renderable">{{ rowTotalAfterDiscountIncludingTax|oro_format_currency({currency: currency}) }}</td>
+                    <td class="renderable">{{ rowTotalAfterDiscountExcludingTax|oro_format_currency({currency: currency}) }}</td>
+                    <td class="renderable">{{ appliedDiscountsAmount|oro_format_currency({currency: currency}) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </span>
+</div>

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
@@ -79,7 +80,7 @@ class AppliedDiscountManager
      */
     public function removeAppliedDiscountByOrder(Order $order)
     {
-        $appliedDiscounts = $this->getAppliedDiscountRepository()->findBy(['order' => $order]);
+        $appliedDiscounts = $this->getAppliedDiscountRepository()->findByOrder($order);
 
         foreach ($appliedDiscounts as $appliedDiscount) {
             $this->removeAppliendDiscount($appliedDiscount);
@@ -132,7 +133,7 @@ class AppliedDiscountManager
     }
 
     /**
-     * @return AppliedDiscountRepository
+     * @return AppliedDiscountRepository|EntityRepository
      */
     protected function getAppliedDiscountRepository()
     {
