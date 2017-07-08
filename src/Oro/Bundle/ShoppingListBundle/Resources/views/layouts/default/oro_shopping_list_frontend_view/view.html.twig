@@ -523,7 +523,7 @@
 {% endblock %}
 
 {% block _shopping_list_button_container_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " order-builder-clear-btn fs0"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " buttons-equal order-builder-clear-btn fs0"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

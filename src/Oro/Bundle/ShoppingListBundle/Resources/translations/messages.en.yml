@@ -50,6 +50,7 @@ oro:
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
             failed_mesage: "You can't add these products to shopping list"
             add_to_multiple: add item to multiple lists
+            copied: " (copied %copyDate%)"
 
         menu:
             sales_tab.label: Sales
@@ -124,6 +125,11 @@ oro:
 
         privilege:
             category.shopping.label: 'Shopping'
+        permission:
+            duplicate_shopping_list.label: Duplicate
+        duplicate:
+            success.message: 'Shopping list "%shoppinglist%" has been duplicated'
+            list.label: Duplicate List
 
     customer:
         customervisitor:
