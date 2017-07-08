@@ -173,7 +173,9 @@
 {% endblock %}
 
 {% block _web_catalog_menu_main_menu_sub_block_simple %}
-    <div class="main-menu__sublist-container" data-header-row-toggle>
+    <div class="main-menu__sublist-container"
+         data-header-row-toggle
+         data-scroll="true">
         <div class="main-menu-columns main-menu-columns--single">
             <div class="main-menu-column">
                 <ul class="main-menu-column__inner">
@@ -186,7 +188,9 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_head %}
-    <div class="main-menu__sublist-container" data-header-row-toggle>
+    <div class="main-menu__sublist-container"
+         data-header-row-toggle
+         data-scroll="true">
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
@@ -206,7 +210,9 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_mega %}
-    <div class="main-menu__sublist-container" data-header-row-toggle>
+    <div class="main-menu__sublist-container"
+         data-header-row-toggle
+         data-scroll="true">
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
