@@ -88,7 +88,7 @@ Feature: Duplicate Lists
       |Duplicate List|
     And click "Duplicate List"
     Then should see 'Shopping list "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" has been duplicated' flash message
-    And should see "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,… (copied"
+    And should see "Donec quam felis, ultricies nec,… (copied"
     And should see following grid:
       |SKU |Product |Quantity|Unit|
       |SKU1|Product1|10      |item|
