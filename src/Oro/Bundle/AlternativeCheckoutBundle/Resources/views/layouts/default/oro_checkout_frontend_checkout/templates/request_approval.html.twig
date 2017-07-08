@@ -1,16 +1,16 @@
 {% block _checkout_form_fields_widget -%}
-    <div class="notification notification--alert">
-        {% set frontendMessage = transitionData.transition.frontendOptions.message %}
-        <span class="notification__text">{{ frontendMessage.content|trans(frontendMessage.message_parameters|default({}), 'workflows')|raw }}</span>
-    </div>
-
-    <fieldset class="grid__row grid__row--offset-none">
-        <div class="grid__column grid__column--offset-y grid__column--6 mmb5-md mmb5-sm">
-            {{ form_row(form.request_approval_notes, {'attr': {'class': 'input input--full input--size-m', 'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+    <div class="checkout__approval-wrapper">
+        <div class="notification notification--alert">
+            {% set frontendMessage = transitionData.transition.frontendOptions.message %}
+            <span class="notification__text">{{ frontendMessage.content|trans(frontendMessage.message_parameters|default({}), 'workflows')|raw }}</span>
         </div>
-    </fieldset>
 
-    {{ form_row(form.state_token) }}
+        <fieldset class="grid__row grid__row--offset-none">
+            {{ form_row(form.request_approval_notes, {'attr': {'class': 'input input--full input--size-m', 'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+        </fieldset>
 
-    {{ block_widget(block) }}
+        {{ form_row(form.state_token) }}
+
+        {{ block_widget(block) }}
+    </div>
 {%- endblock %}

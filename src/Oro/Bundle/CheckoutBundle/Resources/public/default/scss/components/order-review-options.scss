@@ -1,12 +1,16 @@
 .order-review-options {
     margin-top: 5px;
 
+    &__wrapper {
+        margin-left: 10px;
+    }
+
     .toggle-block__content {
-        margin-top: 10px;
+        margin: 5px 0 10px 0;
     }
 
     .grid__column {
-        padding-left: 20px;
+        padding: 0;
         margin-bottom: 5px;
     }
 }
