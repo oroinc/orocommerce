@@ -1,22 +1,4 @@
 oro_behat_extension:
-  suites:
-    OroShoppingListBundle:
-      contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FormContext
-        - OroProductBundle::FeatureContext
-        - OroSalesBundle::FeatureContext
-        - OroRedirectBundle::SlugPrototypesContext
-        - OroCustomerBundle::ACLContext
-        - OroSEOBundle::FeatureContext
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroWebCatalogBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroShoppingListBundle::FeatureContext
-        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
-      paths:
-        - '@OroShoppingListBundle/Tests/Behat/Features'
   elements:
     ShoppingList:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
@@ -65,7 +47,6 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
         - OroRedirectBundle::SlugPrototypesContext
-        - OroSecurityBundle::ACLContext
         - OroSEOBundle::FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroWebCatalogBundle::FeatureContext
@@ -73,5 +54,7 @@ oro_behat_extension:
         - OroShoppingListBundle::FeatureContext
         - OroSalesBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
+        - OroCustomerBundle::ACLContext
+        - OroShoppingListBundle::ShoppingListContext
       paths:
         - '@OroShoppingListBundle/Tests/Behat/Features'
