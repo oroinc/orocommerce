@@ -1,4 +1,4 @@
-@fixture-product_collection_edit.yml
+@fixture-OroProductBundle:product_collection_edit.yml
 Feature:
   In order to add more than one product by some criteria into the content nodes
   As an Administrator

@@ -2,18 +2,21 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+use Oro\Bundle\ProductBundle\Model\QuickAddRow;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
@@ -60,9 +63,14 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $productRepository;
+    protected $validator;
+
+    /**
+     * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $eventDispatcher;
 
     protected function setUp()
     {
@@ -93,28 +101,20 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->validator = $this->createMock(ValidatorInterface::class);
+
+        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
+
         $this->handler = new QuickAddHandler(
             $this->productFormProvider,
             $this->quickAddRowCollectionBuilder,
             $this->componentRegistry,
             $this->router,
-            $this->translator
+            $this->translator,
+            $this->validator,
+            new ProductsGrouperFactory(),
+            $this->eventDispatcher
         );
-    }
-
-    /**
-     * @return ProductRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getProductRepository()
-    {
-        if (!$this->productRepository) {
-            $this->productRepository = $this
-                ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
-        }
-
-        return $this->productRepository;
     }
 
     public function testProcessGetRequest()
@@ -239,12 +239,20 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $request->request->set(QuickAddType::NAME, [QuickAddType::COMPONENT_FIELD_NAME => self::COMPONENT_NAME]);
 
         $productRows = [
-            $this->createProductRow('111', 123),
-            $this->createProductRow('222', 234)
+            $this->createProductRow('111', 123, 'kg'),
+            $this->createProductRow('222', 234, 'liter')
         ];
         $products = [
-            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
-            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
+            [
+                ProductDataStorage::PRODUCT_SKU_KEY => '111',
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => 123,
+                ProductDataStorage::PRODUCT_UNIT_KEY => 'kg'
+            ],
+            [
+                ProductDataStorage::PRODUCT_SKU_KEY => '222',
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => 234,
+                ProductDataStorage::PRODUCT_UNIT_KEY => 'liter'
+            ]
         ];
 
         $productsForm = $this->createMock('Symfony\Component\Form\FormInterface');
@@ -309,12 +317,21 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $response = new RedirectResponse('/processor-redirect');
 
         $productRows = [
-            $this->createProductRow('111', 123),
-            $this->createProductRow('222', 234)
+            $this->createProductRow('111', 123, 'kg'),
+            $this->createProductRow('222', 234, 'liter')
         ];
+
         $products = [
-            [ProductDataStorage::PRODUCT_SKU_KEY => '111', ProductDataStorage::PRODUCT_QUANTITY_KEY => 123],
-            [ProductDataStorage::PRODUCT_SKU_KEY => '222', ProductDataStorage::PRODUCT_QUANTITY_KEY => 234]
+            [
+                ProductDataStorage::PRODUCT_SKU_KEY => '111',
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => 123,
+                ProductDataStorage::PRODUCT_UNIT_KEY => 'kg'
+            ],
+            [
+                ProductDataStorage::PRODUCT_SKU_KEY => '222',
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => 234,
+                ProductDataStorage::PRODUCT_UNIT_KEY => 'liter'
+            ]
         ];
 
         $productsForm = $this->createMock('Symfony\Component\Form\FormInterface');
@@ -402,6 +419,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($file);
 
         $collection = new QuickAddRowCollection();
+        $collection->add(new QuickAddRow('idx', 'psku1', 1));
         $this->quickAddRowCollectionBuilder->expects($this->once())
             ->method('buildFromFile')
             ->with($file)
@@ -540,13 +558,15 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $sku
      * @param string $qty
+     * @param string $unit
      * @return ProductRow
      */
-    protected function createProductRow($sku, $qty)
+    protected function createProductRow($sku, $qty, $unit)
     {
         $row = new ProductRow();
         $row->productSku = $sku;
         $row->productQuantity = $qty;
+        $row->productUnit = $unit;
 
         return $row;
     }

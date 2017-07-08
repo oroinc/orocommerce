@@ -1,0 +1,14 @@
+// @theme: custom;
+
+@include breakpoint('tablet') {
+    .search-widget {
+        margin: 0;
+        padding: $offset-y;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+
+        &__submit {
+            right: $offset-x;
+        }
+    }
+}

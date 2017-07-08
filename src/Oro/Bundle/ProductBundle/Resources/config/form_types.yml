@@ -87,6 +87,7 @@ services:
 
     oro_product.form.type.quick_add:
         class: 'Oro\Bundle\ProductBundle\Form\Type\QuickAddType'
+        arguments: ['@oro_product.helper.product_grouper.factory']
         tags:
             - { name: form.type, alias: 'oro_product_quick_add' }
 

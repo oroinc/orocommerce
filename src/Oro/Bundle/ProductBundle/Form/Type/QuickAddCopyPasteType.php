@@ -11,8 +11,13 @@ class QuickAddCopyPasteType extends AbstractType
 {
     const NAME = 'oro_product_quick_add_copy_paste';
     const COPY_PASTE_FIELD_NAME = 'copyPaste';
-    const FORMAT_REGEX
-        = '/^([^\s]+[\t\,\ ]\s*?[0-9]+\.?[0-9]*(\n|\r\n))*([^\s]+[\t\,\ ]\s*?[0-9]+\.?[0-9]*)(\n|\r\n)*$/';
+
+    /**
+     * The regex for matching lines, separated by space, comma or semicolon
+     * that contains: item sku, quantity, unit name
+     */
+    const FORMAT_REGEX =
+        '/^(?:\n|[-_a-zA-Z0-9]{1,255}[\t\,\; ]\d{1,234}(?:\.?\d{1,20})?(?:[\t\,\; ][a-zA-Z]{1,255})?(\n|\b))+$/';
 
     /**
      * {@inheritdoc}
@@ -24,7 +29,6 @@ class QuickAddCopyPasteType extends AbstractType
             'textarea',
             [
                 'constraints' => [
-                    new NotBlank(),
                     new Regex([
                         'pattern' => self::FORMAT_REGEX,
                         'message' => 'oro.product.frontend.quick_add.invalid_format'

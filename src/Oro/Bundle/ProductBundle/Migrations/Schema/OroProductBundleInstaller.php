@@ -88,7 +88,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_14';
+        return 'v1_15';
     }
 
     /**
@@ -151,6 +151,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('sku', 'string', ['length' => 255]);
+        $table->addColumn('sku_uppercase', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
@@ -164,6 +165,7 @@ class OroProductBundleInstaller implements
         $table->addIndex(['created_at'], 'idx_oro_product_created_at', []);
         $table->addIndex(['updated_at'], 'idx_oro_product_updated_at', []);
         $table->addIndex(['sku'], 'idx_oro_product_sku', []);
+        $table->addIndex(['sku_uppercase'], 'idx_oro_product_sku_uppercase', []);
         $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_oro_product_primary_unit_precision_id');
     }
 

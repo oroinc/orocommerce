@@ -1,6 +1,6 @@
 @ticket-BB-7811
 @automatically-ticket-tagged
-@fixture-Pricelists.yml
+@fixture-OroPricingBundle:Pricelists.yml
 Feature: Price lists must be sortable in system configuration
 
   Scenario: Changing Price List Priorities

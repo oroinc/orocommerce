@@ -51,7 +51,7 @@
              data-page-component-module="oroui/js/app/components/jquery-widget-component"
              data-page-component-options="{{ {
                  widgetModule: 'oroui/js/widget/collapse-widget',
-                 open: false
+                 open: form.rule.expression.vars.value is not empty
              }|json_encode() }}"
         >
             <div class="control-group">

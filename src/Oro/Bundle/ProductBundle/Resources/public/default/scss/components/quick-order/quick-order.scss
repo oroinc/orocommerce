@@ -1,0 +1,10 @@
+// @theme: default;
+
+.quick-order {
+  padding: $quick-order-padding;
+  border-radius: $quick-order-border-radius;
+
+  background: $quick-order-background;
+
+  @include clearfix();
+}

@@ -1,4 +1,4 @@
-@fixture-ProductPrices.yml
+@fixture-OroPricingBundle:ProductPrices.yml
 Feature: Visibility of product prices in different cases
   Scenario: Empty product prices for non authorized user
     Given I am on "/product"

@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - '@setOption':
+            id: checkout_sidebar
+            optionName: attr.class
+            optionValue: checkout-sidebar--inner-invader
+        - '@move':
+            id: checkout_sidebar
+            parentId: page_content
+            siblingId: checkout_container
+            prepend: true

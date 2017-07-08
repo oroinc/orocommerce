@@ -81,16 +81,16 @@ class FrontendProductPricesProvider
     public function getByProducts($products)
     {
         $this->setProductsPrices($products);
-        $productsUnits = [];
+        $productPrices = [];
 
         foreach ($products as $product) {
             $productId = $product->getId();
             if ($this->productPrices[$productId]) {
-                $productsUnits[$productId] = $this->productPrices[$productId];
+                $productPrices[$productId] = $this->productPrices[$productId];
             }
         }
 
-        return $productsUnits;
+        return $productPrices;
     }
 
     /**

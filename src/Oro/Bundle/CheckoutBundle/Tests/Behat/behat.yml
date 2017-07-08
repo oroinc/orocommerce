@@ -81,3 +81,18 @@ oro_behat_extension:
     CheckoutStepLineItemProductSku:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div:contains("Item #:") > span'
+
+    Order Summary Products Grid:
+      selector: '.checkout-order-summary__table'
+
+    Order Summary Products GridProductLine:
+      selector: '.checkout-order-summary__table-inner tr[data-scrollable-content-body]'
+
+    Order Summary Products GridProductLineName:
+      selector: '.checkout-order-summary__product a'
+
+    Order Summary Products GridProductLineQuantity:
+      selector: '.checkout-order-summary__qty'
+
+    Order Summary Products GridProductLineUnit:
+      selector: '.checkout-order-summary__qty'

@@ -50,6 +50,7 @@ CheckoutBundle
     - changed signature of `__construct` method:
         - dependency on `CheckoutLineItemsManager` and `MapperInterface` were replaced with `CheckoutToOrderConverter`
 - Added class `Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter` responsible for creation of an `Order` based on the `Checkout`
+- Layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
 
 WebsiteSearchBundle
 -------------------
@@ -94,7 +95,9 @@ ProductBundle
     - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
 - Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
-
+- Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
+- `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
+    
 PaymentBundle
 -------------
 - Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
@@ -124,7 +127,7 @@ PayPalBundle
 
 SEOBundle
 -------------
-- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added. 
+- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added.
 MetaTitle is displayed as default view page title.
 - Class `Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener`
     - changed signature of `__construct` method:
@@ -193,7 +196,7 @@ ShippingBundle
 - Class `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry` was renamed to `Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider`
     - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
 - Service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
-        
+
 PricingBundle
 --------------
 - Form type `Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType` was removed, use `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType` instead

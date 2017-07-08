@@ -926,6 +926,35 @@ services:
             - '@oro_product.formatter.product_unit_label'
             - '@oro_product.formatter.product_unit_value'
 
+    oro_pricing.provider.quick_add_collection_price_provider:
+        class: 'Oro\Bundle\PricingBundle\Provider\QuickAddCollectionPriceProvider'
+        arguments:
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.rounding.price_rounding_service'
+        public: false
+
+    oro_pricing.event_listener.quick_add_rows_collection_ready:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CalculatePriceForCollectionListener'
+        arguments:
+            - '@oro_pricing.provider.quick_add_collection_price_provider'
+            - '@oro_pricing.model.price_list_request_handler'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.quick_add_rows_collection_ready, method: onQuickAddRowsCollectionReady }
+
+
+    oro_pricing.form.autocomplete.product_with_prices.search_handler:
+        class: Oro\Bundle\PricingBundle\Autocomplete\ProductWithPricesSearchHandler
+        arguments:
+            - "%oro_product.entity.product.class%"
+            - "@oro_product.website_search.repository.product"
+            - "@oro_pricing.model.price_list_request_handler"
+            - "@doctrine"
+            - '@oro_pricing.formatter.product_price_formatter'
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_with_prices, acl_resource: oro_product_frontend_view }
+
     oro_pricing.event_listener.website_search_index:
         class: 'Oro\Bundle\PricingBundle\EventListener\WebsiteSearchProductPriceIndexerListener'
         arguments:
