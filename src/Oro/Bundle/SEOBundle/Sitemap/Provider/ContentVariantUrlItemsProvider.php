@@ -5,9 +5,9 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
@@ -87,7 +87,7 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
         }
 
         $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
-        $scope = $this->getScopeRepository()->findMostSuitable($scopeCriteria);
+        $scope = $this->getSlugRepository()->findMostSuitableUsedScope($scopeCriteria);
 
         $resolvedNode = $this->contentNodeTreeResolver->getResolvedContentNode($rootNode, $scope);
         if (!$resolvedNode) {
@@ -130,12 +130,12 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
     }
 
     /**
-     * @return ObjectRepository|ScopeRepository
+     * @return ObjectRepository|SlugRepository
      */
-    protected function getScopeRepository()
+    protected function getSlugRepository()
     {
         return $this->registry
-            ->getManagerForClass(Scope::class)
-            ->getRepository(Scope::class);
+            ->getManagerForClass(Slug::class)
+            ->getRepository(Slug::class);
     }
 }

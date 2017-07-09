@@ -56,8 +56,9 @@ class ScopeRequestListener
             return;
         }
 
-        $scope = $this->scopeManager->findMostSuitable('web_content');
-        if ($scope && $this->slugRepository->isScopeAttachedToSlug($scope)) {
+        $criteria = $this->scopeManager->getCriteria('web_content');
+        $scope = $this->slugRepository->findMostSuitableUsedScope($criteria);
+        if ($scope) {
             $request->attributes->set('_web_content_scope', $scope);
         }
     }

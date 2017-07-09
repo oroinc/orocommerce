@@ -146,7 +146,8 @@ MetaTitle is displayed as default view page title.
 - Service `oro_seo.event_listener.content_node_form_view`
     - dependency on `@request_stack` was removed
     - dependency on `@oro_entity.doctrine_helper` was removed
-
+- Class `Oro\Bundle\SEOBundle\Sitemap\Provider\ContentVariantUrlItemsProvider`
+    - previously deprecated method `getScopeRepository` was removed
 
 PaymentBundle
 -------------
