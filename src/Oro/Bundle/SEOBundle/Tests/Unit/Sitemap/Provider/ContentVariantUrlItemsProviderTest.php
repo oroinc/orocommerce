@@ -7,8 +7,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
@@ -178,25 +179,25 @@ class ContentVariantUrlItemsProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($scopeCriteria);
 
         $scope = $this->createMock(Scope::class);
-        $scopeRepo = $this->createMock(ScopeRepository::class);
-        $scopeRepo->expects($this->once())
-            ->method('findMostSuitable')
+        $slugRepo = $this->createMock(SlugRepository::class);
+        $slugRepo->expects($this->once())
+            ->method('findMostSuitableUsedScope')
             ->with($scopeCriteria)
             ->willReturn($scope);
-        $scopeEm = $this->createMock(EntityManagerInterface::class);
-        $scopeEm->expects($this->once())
+        $slugEm = $this->createMock(EntityManagerInterface::class);
+        $slugEm->expects($this->once())
             ->method('getRepository')
-            ->willReturn($scopeRepo);
+            ->willReturn($slugRepo);
 
         $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
             ->withConsecutive(
                 [ContentNode::class],
-                [Scope::class]
+                [Slug::class]
             )
             ->willReturn(
                 $contentNodeEm,
-                $scopeEm
+                $slugEm
             );
         $this->contentNodeTreeResolver->expects($this->once())
             ->method('getResolvedContentNode')
@@ -241,25 +242,25 @@ class ContentVariantUrlItemsProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($contentNodeRepo);
 
         $scope = $this->createMock(Scope::class);
-        $scopeRepo = $this->createMock(ScopeRepository::class);
-        $scopeRepo->expects($this->once())
-            ->method('findMostSuitable')
+        $slugRepo = $this->createMock(SlugRepository::class);
+        $slugRepo->expects($this->once())
+            ->method('findMostSuitableUsedScope')
             ->with($scopeCriteria)
             ->willReturn($scope);
-        $scopeEm = $this->createMock(EntityManagerInterface::class);
-        $scopeEm->expects($this->once())
+        $slugEm = $this->createMock(EntityManagerInterface::class);
+        $slugEm->expects($this->once())
             ->method('getRepository')
-            ->willReturn($scopeRepo);
+            ->willReturn($slugRepo);
 
         $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
             ->withConsecutive(
                 [ContentNode::class],
-                [Scope::class]
+                [Slug::class]
             )
             ->willReturn(
                 $contentNodeEm,
-                $scopeEm
+                $slugEm
             );
 
         $variant = new ResolvedContentVariant();

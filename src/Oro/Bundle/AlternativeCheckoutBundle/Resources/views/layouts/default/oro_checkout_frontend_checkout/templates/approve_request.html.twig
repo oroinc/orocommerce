@@ -1,21 +1,25 @@
 {% block _checkout_form_fields_widget -%}
-    {% if workflowItem.data.get('allowed') and workflowItem.data.get('allow_request_date') %}
-        <div class="notification--notice">
-            <span class="notification__text">{{ 'oro.alternativecheckout.messages.approved_at'|trans }} {{ workflowItem.data.get('allow_request_date')|oro_format_datetime }}</span>
-        </div>
-    {% else %}
-        <div class="notification--alert">
-            <span class="notification__text">{{ 'oro.alternativecheckout.messages.waiting_for_approve'|trans }}</span>
-        </div>
-    {% endif %}
-    {% if workflowItem.data.get('request_approval_notes') %}
-        <label>{{ 'oro.alternativecheckout.requestApprovalNotes.label'|trans }}:</label>
-        <span>{{ workflowItem.data.get('request_approval_notes')|nl2br|raw }}</span>
-    {% endif %}
+    <div div class="checkout__approval-wrapper">
+        {% if workflowItem.data.get('allowed') and workflowItem.data.get('allow_request_date') %}
+            <div class="notification--notice">
+                <span class="notification__text">{{ 'oro.alternativecheckout.messages.approved_at'|trans }} {{ workflowItem.data.get('allow_request_date')|oro_format_datetime }}</span>
+            </div>
+        {% else %}
+            <div class="notification--alert">
+                <span class="notification__text">{{ 'oro.alternativecheckout.messages.waiting_for_approve'|trans }}</span>
+            </div>
+        {% endif %}
+        {% if workflowItem.data.get('request_approval_notes') %}
+            <div class="checkout__approval-note">
+                <label>{{ 'oro.alternativecheckout.requestApprovalNotes.label'|trans }}:</label>
+                <span>{{ workflowItem.data.get('request_approval_notes')|nl2br|raw }}</span>
+            </div>
+        {% endif %}
 
-    {% if form.state_token is defined %}
-        {{ form_row(form.state_token) }}
-    {% endif %}
+        {% if form.state_token is defined %}
+            {{ form_row(form.state_token) }}
+        {% endif %}
 
-    {{ block_widget(block) }}
+        {{ block_widget(block) }}
+    </div>
 {%- endblock %}

@@ -298,6 +298,14 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
+
+    oro_shopping_list.action.duplicate_title:
+        class: 'Oro\Bundle\ShoppingListBundle\Action\AddStringSuffixAction'
+        arguments:
+            - '@oro_action.expression.context_accessor'
+        tags:
+            - { name: oro_action.action, alias: add_string_suffix }
+
     oro_shopping_list.event_listener.system_config:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\SystemConfigListener'
         arguments:

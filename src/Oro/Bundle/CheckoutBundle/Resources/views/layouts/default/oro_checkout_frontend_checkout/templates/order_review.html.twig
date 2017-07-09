@@ -1,5 +1,5 @@
 {% block _checkout_form_fields_widget -%}
-    <div class="collapse-view"
+    <div class="collapse-view order-review-options__wrapper"
          data-page-component-module="oroui/js/app/components/jquery-widget-component"
          data-page-component-options="{{ {
              widgetModule: 'oroui/js/widget/collapse-widget',
@@ -41,7 +41,7 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addPoNumber"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y grid__column--6 toggle-block">
+                <div class="grid__column grid__column--offset-y grid__column--12 toggle-block">
                     <label for="addPoNumber" class="custom-checkbox toggle-block__trigger {% if checkout.poNumber is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber" {% if checkout.poNumber is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -55,7 +55,7 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addNote"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--offset-y grid__column--6 toggle-block">
+                <div class="grid__column grid__column--offset-y grid__column--12 toggle-block">
                     <label for="addNote" class="custom-checkbox toggle-block__trigger {% if checkout.customerNotes is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addNote" id="addNote" {% if checkout.customerNotes is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>

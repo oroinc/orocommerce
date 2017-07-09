@@ -24,7 +24,7 @@
   &__head {
     position: relative;
 
-    padding: 0 0 0 50px;
+    padding: 0 0 0 45px;
 
     @media (max-width: $screen-md) {
       padding: 0 50px 0 40px;
@@ -42,11 +42,51 @@
   }
 
   &__body {
-    padding: 10px 0 0 40px;
+    padding: 10px 0 0 35px;
+
+    .checkout-order-summary__content {
+      padding: 0 10px 10px 10px;
+
+      @media (max-width: $screen-md) {
+          padding: 5px;
+      }
+
+      .oro-grid-table__edit {
+        padding-top: 5px;
+      }
+
+      .checkout__form__back {
+        padding: 0;
+      }
+    }
+
+    .order-checkout-widget__container {
+      padding: 0 $offset-y;
+    }
+
+    .checkout__submit-btn {
+      padding: 10px 45px;
+    }
 
     @media (max-width: $screen-md) {
       padding: 10px 0 0;
     }
+  }
+
+  &__approval-wrapper {
+    margin: 0 10px;
+
+    @media (max-width: $screen-md) {
+      margin: 10px;
+    }
+
+    .checkout-order-summary__content {
+      padding: 0;
+    }
+  }
+
+  &__approval-note {
+    margin: 5px 0 5px 0;
   }
 
   &__title {
@@ -200,7 +240,7 @@
 
     @media (max-width: $screen-md) {
       width: 100%;
-      padding: 15px 30px;
+      padding: 0 30px 15px 30px;
     }
   }
 }
