@@ -100,7 +100,6 @@
                      selectors: {
                          address: '#' ~ form.billing_address.customerAddress.vars.id,
                          region: '#' ~ form.billing_address.region.vars.id,
-                         shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
                          fieldsContainer: '#checkout-address-fields-container'
                      }
                  }|json_encode }}">
@@ -109,16 +108,6 @@
 
                 {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, compact) }}
             </div>
-        {% endif %}
-
-        {% set hideShipping = false %}
-        {% if billingAddress %}
-            {% set typedAddress = billingAddress.customerAddress %}
-            {% if typedAddress is empty %}
-                {% set typedAddress  = billingAddress.customerUserAddress %}
-            {% endif %}
-
-            {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}
         {% endif %}
     </div>
 {%- endblock %}

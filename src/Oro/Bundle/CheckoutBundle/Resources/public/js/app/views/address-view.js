@@ -47,7 +47,7 @@ define(function(require) {
 
         _handleShipToBillingAddressCheckbox: function(e) {
             var isOneOption = this.$addressSelector[0].length === 1;
-            var disabled = Boolean(this.$shipToBillingCheckbox.attr('checked'));
+            var disabled = this.needCheckAddressTypes ? this.$shipToBillingCheckbox.prop('checked') : false;
             if (!disabled && this._isFormVisible()) {
                 this._showForm();
             } else {
