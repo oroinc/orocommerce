@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\Validator\Constraint;
@@ -43,7 +42,7 @@ class UniqueEntityValidator extends ConstraintValidator
      */
     public function validate($entity, Constraint $constraint)
     {
-        if (!$entity instanceof BaseProductPrice) {
+        if (!$entity instanceof ProductPrice) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Value must be instance of "%s", "%s" given',
@@ -63,7 +62,7 @@ class UniqueEntityValidator extends ConstraintValidator
         $this->getCriteria($em, $entity, $criteria, $fields);
         $priceList = $entity->getPriceList();
         $result = $em
-            ->getRepository(BaseProductPrice::class)
+            ->getRepository(ProductPrice::class)
             ->findByPriceList(
                 $this->shardManager,
                 $priceList,

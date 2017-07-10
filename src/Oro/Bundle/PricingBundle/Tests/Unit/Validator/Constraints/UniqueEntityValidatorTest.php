@@ -9,7 +9,6 @@ use Doctrine\Common\Reflection\StaticReflectionParser;
 use Doctrine\Common\Reflection\StaticReflectionProperty;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -109,7 +108,7 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $em->expects(self::once())->method('getRepository')
-            ->with($this->equalTo(BaseProductPrice::class))
+            ->with($this->equalTo(ProductPrice::class))
             ->will($this->returnValue($repo));
         $repo->expects(self::once())
             ->method('findByPriceList')
