@@ -62,8 +62,14 @@ class LoadProductNewAttributesData extends AbstractFixture implements
                 ->findOneBy(['code' => $groupData['groupCode']]);
             foreach ($groupData['attributes'] as $attribute) {
                 $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $attribute);
+                $fieldId = $fieldConfigModel->getId();
+                $attributeRelation = $manager->getRepository(AttributeGroupRelation::class)
+                    ->findOneBy(['entityConfigFieldId' => $fieldId, 'attributeGroup' => $attributeGroup]);
+                if ($attributeRelation instanceof AttributeGroupRelation) {
+                    continue;
+                }
                 $attributeGroupRelation = new AttributeGroupRelation();
-                $attributeGroupRelation->setEntityConfigFieldId($fieldConfigModel->getId());
+                $attributeGroupRelation->setEntityConfigFieldId($fieldId);
                 $attributeGroup->addAttributeRelation($attributeGroupRelation);
                 $manager->persist($attributeGroupRelation);
             }
