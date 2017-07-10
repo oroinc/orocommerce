@@ -3,7 +3,12 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @fixture-OroCheckoutBundle:InventoryLevel.yml
 @fixture-OroCheckoutBundle:CheckoutWorkflow.yml
-Feature: Checkout workflow
+
+Feature: JS validation on "Default" Checkout workflow
+  In order to create order on front store
+  As a buyer
+  I want to start "Default" checkout and see validation errors
+
   Scenario: Check js validation error
     Given There is EUR currency in the system configuration
     And AmandaRCole@example.org customer user has Buyer role
