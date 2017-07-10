@@ -19,6 +19,13 @@ oro_behat_extension:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
+    SelectBillingAddress:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
+    SelectShippingAddress:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+
     CheckoutStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'div[data-role="checkout-content"]'

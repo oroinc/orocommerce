@@ -219,7 +219,7 @@ action_groups:
                             - $.responseData[purchaseSuccessful]
                         - '@not_empty': $.responseData[message]
                 message: $.responseData[message]
-                type: 'error'
+                type: 'warning'
 
     b2b_flow_checkout_finish_checkout:
         parameters:
