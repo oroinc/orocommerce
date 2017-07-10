@@ -7,7 +7,7 @@
     @include clearfix();
 
     &__container-wrapper {
-        margin-bottom: ($offset-y-m*2);
+        margin-bottom: $offset-y-m;
 
         @include clearfix();
     }

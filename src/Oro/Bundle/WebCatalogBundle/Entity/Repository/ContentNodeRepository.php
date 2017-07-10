@@ -29,6 +29,10 @@ class ContentNodeRepository extends NestedTreeRepository
      */
     public function getRootNodeByWebCatalog(WebCatalog $webCatalog)
     {
+        // Root node fetches without children because
+        // in Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface implementations
+        // they will be fetched from cache
+
         $qb = $this->getRootNodesQueryBuilder();
         $qb->andWhere(
             $qb->expr()->eq('node.webCatalog', ':webCatalog')

@@ -17,6 +17,7 @@ define(function(require) {
             buttonTemplate: '',
             createNewButtonTemplate: '',
             removeButtonTemplate: '',
+            shoppingListCreateEnabled: true,
             buttonsSelector: '.add-to-shopping-list-button',
             quantityField: '[data-name="field__quantity"]',
             messages: {
@@ -112,12 +113,16 @@ define(function(require) {
         },
 
         _onCollectionChange: function() {
+            if (arguments.length > 0 && arguments[0].shoppingListCreateEnabled !== undefined) {
+                this.options.shoppingListCreateEnabled = arguments[0].shoppingListCreateEnabled;
+            }
             this._setEditLineItem();
 
             var buttons = this._collectAllButtons();
 
-            this.findAllButtons().remove();
-            this.dropdownWidget.element.prepend(buttons);
+            var $container = this.dropdownWidget.element.find('.btn-group:first');
+            $container.empty();
+            $container.html(buttons);
             this.dropdownWidget._renderButtons();
         },
 
@@ -158,9 +163,16 @@ define(function(require) {
                 buttons.push($button);
             });
 
-            var $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
-            $createNewButton = this.updateLabel($createNewButton, null);
-            buttons.push($createNewButton);
+            if (this.options.shoppingListCreateEnabled) {
+                var $createNewButton = $(this.options.createNewButtonTemplate({id: null, label: ''}));
+                $createNewButton = this.updateLabel($createNewButton, null);
+                buttons.push($createNewButton);
+            }
+
+            if (buttons.length === 1) {
+                var decoreClass = this.dropdownWidget.options.decoreClass || '';
+                buttons = _.first(buttons).find(this.options.buttonsSelector).addClass(decoreClass);
+            }
 
             return buttons;
         },
@@ -177,7 +189,7 @@ define(function(require) {
         },
 
         findDropdownButtons: function(filter) {
-            var $el = this.dropdownWidget.dropdown || this.dropdownWidget.element;
+            var $el = this.dropdownWidget.element || this.dropdownWidget.dropdown;
             var $buttons = $el.find(this.options.buttonsSelector);
             if (filter) {
                 $buttons = $buttons.filter(filter);
@@ -324,7 +336,7 @@ define(function(require) {
             }
             var dialog = new ShoppingListCreateWidget({});
             dialog.on('formSave', _.bind(function(response) {
-                urlOptions.shoppingListId = response;
+                urlOptions.shoppingListId = response.savedId;
                 this._addProductToShoppingList(url, urlOptions, formData);
             }, this));
             dialog.render();
@@ -335,6 +347,7 @@ define(function(require) {
                 return;
             }
             var self = this;
+
             mediator.execute('showLoading');
             $.ajax({
                 type: 'POST',

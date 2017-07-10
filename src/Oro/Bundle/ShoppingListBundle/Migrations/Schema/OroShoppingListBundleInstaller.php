@@ -30,7 +30,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -49,6 +49,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
         $this->addOroShoppingListTotalForeignKeys($schema);
 
         $this->addShoppingListCheckoutSource($schema);
+        $this->addShoppingListCustomerVisitor($schema);
     }
 
     /**
@@ -257,5 +258,38 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
                 ]
             );
         }
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addShoppingListCustomerVisitor(Schema $schema)
+    {
+        $table = $schema->getTable('oro_customer_visitor');
+        $targetTable = $schema->getTable('oro_shopping_list');
+
+        // Column names are used to show a title of target entity
+        $targetTitleColumnNames = $targetTable->getPrimaryKeyColumns();
+        // Column names are used to show detailed info about target entity
+        $targetDetailedColumnNames = $targetTable->getPrimaryKeyColumns();
+        // Column names are used to show target entity in a grid
+        $targetGridColumnNames = $targetTable->getPrimaryKeyColumns();
+
+        $this->extendExtension->addManyToManyRelation(
+            $schema,
+            $table,
+            'shoppingLists',
+            $targetTable,
+            $targetTitleColumnNames,
+            $targetDetailedColumnNames,
+            $targetGridColumnNames,
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'cascade' => ['all'],
+                ]
+            ]
+        );
     }
 }

@@ -43,7 +43,7 @@ define(function(require) {
 
             $.ajax({
                 method: 'PUT',
-                url: routing.generate('oro_api_set_shoppinglist_current', {
+                url: routing.generate('oro_api_set_shopping_list_current', {
                     id: shoppingListId
                 }),
                 success: function() {

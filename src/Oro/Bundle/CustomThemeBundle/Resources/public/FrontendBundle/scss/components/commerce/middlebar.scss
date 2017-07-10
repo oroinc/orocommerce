@@ -1,0 +1,9 @@
+// @theme: custom;
+
+@include breakpoint('tablet') {
+    .middlebar {
+        &__center + &__left {
+        margin-left: auto;
+        }
+    }
+}

@@ -51,6 +51,8 @@ system_configuration:
             icon: 'fa-certificate'
         new_product_icons:
             title: oro.product.system_configuration.groups.new_product_icons.title
+        new_arrivals:
+            title: oro.product.system_configuration.groups.new_arrivals.title
 
     fields:
         oro_product.related_products_enabled:
@@ -276,6 +278,7 @@ system_configuration:
                     - GreaterThan:
                         value: 0
                     - Type: integer
+                    - NotBlank: ~
 
         oro_product.product_promotion_show_on_product_view:
             data_type: boolean
@@ -290,6 +293,47 @@ system_configuration:
                 choices:
                     false: oro.product.system_configuration.fields.show_on_product_view.type.no.label
                     true: oro.product.system_configuration.fields.show_on_product_view.type.yes.label
+
+        oro_product.new_arrivals_products_segment_id:
+            data_type: string
+            type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType'
+            priority: 100
+            options:
+                label: oro.product.system_configuration.fields.new_arrivals_products_segment.label
+                tooltip: oro.product.system_configuration.fields.new_arrivals_products_segment.tooltip
+                entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+
+        oro_product.new_arrivals_max_items:
+            data_type: integer
+            type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            priority: 30
+            options:
+                label: oro.product.system_configuration.fields.new_arrivals_max_items.label
+                tooltip: oro.product.system_configuration.fields.new_arrivals_max_items.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 0
+
+        oro_product.new_arrivals_min_items:
+            data_type: integer
+            type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.new_arrivals_min_items.label
+                tooltip: oro.product.system_configuration.fields.new_arrivals_min_items.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 0
+
+        oro_product.new_arrivals_use_slider_on_mobile:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.new_arrivals_use_slider_on_mobile.label
+                tooltip: oro.product.system_configuration.fields.new_arrivals_use_slider_on_mobile.tooltip
 
     tree:
         system_configuration:
@@ -356,6 +400,12 @@ system_configuration:
                                     new_product_icons:
                                         children:
                                             - oro_product.product_promotion_show_on_product_view
+                                    new_arrivals:
+                                        children:
+                                            - oro_product.new_arrivals_products_segment_id
+                                            - oro_product.new_arrivals_max_items
+                                            - oro_product.new_arrivals_min_items
+                                            - oro_product.new_arrivals_use_slider_on_mobile
                             product_collections:
                                 priority: 0
                                 children:

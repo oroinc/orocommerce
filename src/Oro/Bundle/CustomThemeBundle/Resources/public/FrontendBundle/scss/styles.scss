@@ -1,0 +1,10 @@
+// @theme: custom;
+
+/*=== START COMPONENTS===*/
+@import './components/header';
+@import './components/notification-messages';
+@import './components/search-widget';
+/*=== END COMPONENTS===*/
+
+/* Commerce theme */
+@import './components/commerce/commerce';

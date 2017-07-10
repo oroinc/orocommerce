@@ -2,3 +2,17 @@ features:
     rfp_frontend:
         operations:
             - 'oro_shoppinglist_frontend_request_quote'
+    shopping_list_create:
+        label: oro.shoppinglist.system_configuration.fields.shopping_list_create.label
+        description: oro.shoppinglist.system_configuration.fields.shopping_list_create.tooltip
+        strategy: affirmative
+        routes:
+            - 'oro_shopping_list_frontend_create'
+    guest_shopping_list:
+        label: oro.shoppinglist.system_configuration.fields.availability_for_guests.label
+        description: oro.shoppinglist.system_configuration.fields.availability_for_guests.tooltip
+        toggle: oro_shopping_list.availability_for_guests
+        strategy: affirmative
+        routes:
+            - 'oro_shopping_list_frontend_view'
+            - 'oro_shopping_list_frontend_create'

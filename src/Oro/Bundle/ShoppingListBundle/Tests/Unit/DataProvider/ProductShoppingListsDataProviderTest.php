@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\DataProvider;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -10,9 +11,12 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $shoppingListManager;
 
@@ -92,9 +96,9 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         /** @var  ShoppingList $activeShoppingList */
         $activeShoppingList = $this->createShoppingList(1, 'ShoppingList 1', true);
         /** @var  ShoppingList $activeShoppingListSecond */
-        $activeShoppingListSecond = $this->createShoppingList(1, 'ShoppingList 1', true);
+        $activeShoppingListSecond = $this->createShoppingList(1, 'ShoppingList 2', true);
         /** @var  ShoppingList $otherShoppingList */
-        $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 2', false);
+        $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 3', false);
         return [
             'no_product_no_shopping_list' => [
                 'product' => null,
@@ -106,7 +110,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             ],
             'no_prices' => [
                 'product' => new Product(),
-                'shoppingList' => new ShoppingList(),
+                'shoppingList' => $otherShoppingList,
                 'lineItems' => []
             ],
             'single_shopping_list' => [
@@ -139,7 +143,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     [
                         'id' => 1,
-                        'label' => 'ShoppingList 1',
+                        'label' => 'ShoppingList 2',
                         'is_current' => true,
                         'line_items' => [
                             ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
@@ -148,7 +152,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     [
                         'id' => 2,
-                        'label' => 'ShoppingList 2',
+                        'label' => 'ShoppingList 3',
                         'is_current' => false,
                         'line_items' => [
                             ['id' => 3, 'unit' => 'code3', 'quantity' => 30],
@@ -195,17 +199,34 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
      * @param int $id
      * @param string $label
      * @param boolean $isCurrent
-     * @return ShoppingList|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShoppingList
      */
     protected function createShoppingList($id, $label, $isCurrent)
     {
-        $shoppingList = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $shoppingList->expects($this->any())->method('getId')->willReturn($id);
-        $shoppingList->expects($this->any())->method('getLabel')->willReturn($label);
-        $shoppingList->expects($this->any())->method('isCurrent')->willReturn($isCurrent);
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => $id, 'customerUser' => new CustomerUser()]);
+
+        $shoppingList
+            ->setLabel($label)
+            ->setCurrent($isCurrent);
+
 
         return $shoppingList;
+    }
+
+    public function testGetProductUnitsQuantityWithoutCustomerInShoppingList()
+    {
+        $shoppingList = new ShoppingList();
+
+        $this->shoppingListManager
+            ->expects($this->any())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
+
+        $this->lineItemRepository->expects($this->never())
+            ->method('getProductItemsWithShoppingListNames');
+
+
+        $this->assertEquals(null, $this->provider->getProductUnitsQuantity(new Product()));
     }
 }
