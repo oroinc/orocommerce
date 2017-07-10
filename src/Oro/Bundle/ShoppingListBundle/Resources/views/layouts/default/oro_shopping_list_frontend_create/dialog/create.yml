@@ -8,6 +8,10 @@ layout:
             optionValue: '=data["savedId"]'
         - '@setOption':
             id: widget_content
+            optionName: shoppingListCreateEnabled
+            optionValue: '=data["feature"].isFeatureEnabled("shopping_list_create", "updated")'
+        - '@setOption':
+            id: widget_content
             optionName: shoppingList
             optionValue: '=data["shoppingList"]'
         - '@addTree':

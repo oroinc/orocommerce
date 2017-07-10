@@ -1,4 +1,6 @@
 layout:
+    imports:
+        - 'oro_payment_method_order_submit'
     actions:
         - '@setBlockTheme':
             themes:
@@ -19,6 +21,14 @@ layout:
             id: checkout_button_continue
         - '@remove':
             id: checkout_button_back
+        - '@add':
+            id: payment_additional_data
+            parentId: checkout_information
+            blockType: payment_additional_data
+            options:
+                block_name: '=data["oro_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
+                options:
+                    payment_method: '=data["checkout"].getPaymentMethod()'
         - '@addTree':
             items:
                 checkout_button_continue_right:
