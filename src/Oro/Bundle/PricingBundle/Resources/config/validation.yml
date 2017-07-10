@@ -135,6 +135,8 @@ Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website]
     properties:
+        sortOrder:
+            - NotBlank: ~
         priceList:
             - NotBlank: ~
         website:
@@ -145,6 +147,8 @@ Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: website
     properties:
+        fallback:
+            - NotBlank: ~
         website:
             - NotBlank: ~
 
@@ -152,6 +156,8 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website, customerGroup]
     properties:
+        sortOrder:
+            - NotBlank: ~
         priceList:
             - NotBlank: ~
         website:
@@ -165,6 +171,8 @@ Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [website, customerGroup]
     properties:
+        fallback:
+            - NotBlank: ~
         website:
             - NotBlank: ~
         customerGroup:
@@ -174,6 +182,8 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [priceList, website, customer]
     properties:
+        sortOrder:
+            - NotBlank: ~
         priceList:
             - NotBlank: ~
         website:
@@ -187,6 +197,8 @@ Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [website, customer]
     properties:
+        fallback:
+            - NotBlank: ~
         website:
             - NotBlank: ~
         customer:
