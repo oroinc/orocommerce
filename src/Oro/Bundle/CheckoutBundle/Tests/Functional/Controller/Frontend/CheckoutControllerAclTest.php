@@ -6,13 +6,13 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutACLData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @group=segfault
  */
-class CheckoutControllerAclTest extends WebTestCase
+class CheckoutControllerAclTest extends FrontendWebTestCase
 {
     protected function setUp()
     {
@@ -20,6 +20,7 @@ class CheckoutControllerAclTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
                 LoadOrdersACLData::class,
