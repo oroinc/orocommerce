@@ -1,40 +1,31 @@
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
-        <div class="pull-right"
-                data-localization-menu-container>
-            <div class="dropdown localization-switcher"
-                 data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
-                 data-page-component-options="{{ {
-                     'selectedLocalization': selected_localization.titles|localized_value,
-                     'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
-                 }|json_encode }}">
-                <button type="button" class="localization-switcher__toggle" data-toggle="dropdown">
-                    {{ selected_localization.titles|localized_value }}
-                    <span class="oro-toolbar__icon">
-                        <i class="fa-angle-down"></i>
-                    </span>
-                </button>
+        <div class="oro-toolbar oro-localization-switcher">
+            <div class="oro-toolbar__content" data-toggle="dropdown">
+                {{ selected_localization.titles|localized_value }}
+                <span class="oro-toolbar__icon">
+                    <i class="fa-angle-down"></i>
+                </span>
+            </div>
 
-                <div class="dropdown-menu dropdown-menu-right"
-                     data-options="{&quot;align&quot;: &quot;right&quot;}"
+            <div class="oro-toolbar__dropdown">
+                <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
+                     data-page-component-options="{{ {
+                        'selectedLocalization': selected_localization.titles|localized_value,
+                        'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
+                     }|json_encode }}"
+                     data-localization-menu-container
                 >
-                    <ul class="primary-menu primary-menu--vertical">
+                    <ul class="oro-toolbar__list">
                         {% for localization in localizations %}
-                            {% set itemCurrentClass = '' %}
-                            {% set linkCurrentClass = '' %}
-                            {% if selected_localization.id == localization.id %}
-                                {% set itemCurrentClass = 'primary-menu__item--current' %}
-                                {% set linkCurrentClass = 'primary-menu__link--current' %}
-                            {% endif %}
-
-                            <li class="primary-menu__item {{ itemCurrentClass }}">
+                            <li class="oro-toolbar__list-item">
                                 {% set title = localization.titles|localized_value %}
                                 {% if selected_localization.id == localization.id %}
-                                    <span class="primary-menu__link {{ linkCurrentClass }}">
-                                        {{ title }}
-                                    </span>
+                                    <span class="oro-toolbar__link oro-toolbar__link--active">
+                                    {{ title }}
+                                </span>
                                 {% else %}
-                                    <a class="primary-menu__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
+                                    <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
                                         {{ title }}
                                     </a>
                                 {% endif %}
@@ -57,11 +48,11 @@
                 },
                 component: 'oroui/js/app/components/view-component',
                 view: 'orofrontend/blank/js/app/views/fullscreen-popup-view',
-                popupIcon: 'fa-globe fa--gray',
+                popupIcon: 'fa-globe fa--gray fa--x-large',
                 popupLabel: 'oro.frontendlocalization.select.label'|trans,
                 contentElement: '[data-localization-menu-container]',
                 contentAttributes: {
-                    'class': 'fullscreen-mode localization-switcher__fullscreen'
+                    'class': 'oro-toolbar fullscreen-mode'
                 }
             }|json_encode() }}"
         >

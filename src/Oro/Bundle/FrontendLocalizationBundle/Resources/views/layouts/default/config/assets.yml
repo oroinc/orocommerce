@@ -1,4 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/orofrontendlocalization/default/scss/variables/localization-switcher-config.scss'
-        - 'bundles/orofrontendlocalization/default/scss/styles.scss'
