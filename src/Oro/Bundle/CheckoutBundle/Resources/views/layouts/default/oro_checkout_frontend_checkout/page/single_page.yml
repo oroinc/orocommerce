@@ -39,6 +39,7 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['shipping-methods:refresh']
+                        restoreFormState: true
 
                 shipping_methods_hidden:
                     blockType: checkout_form_fields
@@ -67,6 +68,7 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['payment-methods:refresh']
+                        restoreFormState: true
 
                 payment_methods_hidden:
                     blockType: checkout_form_fields
