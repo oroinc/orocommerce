@@ -15,11 +15,32 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            countrySelector: 'select[name$="[transport][country]"]',
-            shippingServicesSelector: 'select[name$="[transport][applicableShippingServices][]"]',
-            container: '.control-group',
-            route: 'oro_ups_country_shipping_services'
+            countrySelector: null,
+            shippingServicesSelector: null,
+            // Needed to hide shipping service selector on empty country
+            shippingServicesClosestParentSelector: null,
+            shippingServiceByCountryRoute: null
         },
+
+        /**
+         * @property {jquery} country
+         */
+        country: null,
+
+        /**
+         * @property {jquery} shippingServices
+         */
+        shippingServices: null,
+
+        /**
+         * @property {string} shippingServicesClosestParentSelector
+         */
+        shippingServicesHolder: null,
+
+        /**
+         * @property {string} shippingServiceByCountryRoute
+         */
+        shippingServiceByCountryRoute: null,
 
         /**
          * @inheritDoc
@@ -28,45 +49,54 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
             this.$elem = options._sourceElement;
 
-            this.loadingMaskView = new LoadingMaskView({container: this.$elem});
-            this.$elem.find(this.options.countrySelector)
-                .on('change', _.bind(this.onCountryChange, this))
-                .trigger('change');
+            this.country = $(options.countrySelector);
+
+            this.shippingServices = $(options.shippingServicesSelector);
+            this.shippingServicesHolder = this.shippingServices.closest(options.shippingServicesClosestParentSelector);
+
+            this.shippingServiceByCountryRoute = options.shippingServiceByCountryRoute;
+
+            this.loadingMaskView = new LoadingMaskView({container: this.shippingServicesHolder});
+
+            this.$elem.find(this.country).on('change', _.bind(this.onCountryChange, this));
+
+            this.hideShippingServiceIfCountryNotSelected();
         },
 
         onCountryChange: function() {
-            var country = this.$elem.find(this.options.countrySelector).val();
-            var selected = this.$elem.find(this.options.shippingServicesSelector).val();
+            var country = this.country.val();
             var self = this;
 
-            if (country !== '') {
+            this.hideShippingServiceIfCountryNotSelected();
+
+            if (country) {
                 $.ajax({
-                    url: routing.generate(this.options.route, {'code': country}),
+                    url: routing.generate(this.shippingServiceByCountryRoute, {'code': country}),
                     type: 'GET',
                     beforeSend: function() {
+                        self.shippingServicesHolder.show();
                         self.loadingMaskView.show();
                     },
                     success: function(json) {
-                        $(self.options.shippingServicesSelector)
-                            .closest(self.options.container)
-                            .show();
-                        $(self.options.shippingServicesSelector)
+                        self.shippingServices
                             .find('option')
                             .remove();
                         $(json).each(function(index, data) {
-                            $(self.options.shippingServicesSelector)
-                                .append('<option value="' + data.id + '">' + data.description + '</option>')
-                                .val(selected);
+                            self.shippingServices
+                                .append('<option value="' + data.id + '">' + data.description + '</option>');
                         });
                     },
                     complete: function() {
                         self.loadingMaskView.hide();
                     }
                 });
-            } else {
-                $(self.options.shippingServicesSelector)
-                    .closest(self.options.container)
-                    .hide();
+            }
+        },
+
+        hideShippingServiceIfCountryNotSelected: function () {
+            var country = this.country.val();
+            if (!country) {
+                this.shippingServicesHolder.hide();
             }
         },
 
@@ -76,7 +106,7 @@ define(function(require) {
             }
 
             this.$elem.off();
-            this.$elem.find(this.options.countrySelector).off();
+            this.$elem.find(this.country).off();
 
             UPSTransportSettingsComponent.__super__.dispose.call(this);
         }
