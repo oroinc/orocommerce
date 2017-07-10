@@ -19,6 +19,10 @@ class CheckoutDiscountContextConverter implements DiscountContextConverterInterf
      */
     private $orderDiscountContextConverter;
 
+    /**
+     * @param CheckoutToOrderConverter $checkoutToOrderConverter
+     * @param DiscountContextConverterInterface $orderDiscountContextConverter
+     */
     public function __construct(
         CheckoutToOrderConverter $checkoutToOrderConverter,
         DiscountContextConverterInterface $orderDiscountContextConverter

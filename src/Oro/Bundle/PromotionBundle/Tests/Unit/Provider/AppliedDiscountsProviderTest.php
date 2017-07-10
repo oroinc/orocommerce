@@ -9,9 +9,9 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
-use Oro\Bundle\PromotionBundle\Provider\OrdersAppliedDiscountsProvider;
+use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 
-class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
+class AppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -21,7 +21,7 @@ class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
     /** @var AppliedDiscountRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
 
-    /** @var OrdersAppliedDiscountsProvider */
+    /** @var AppliedDiscountsProvider */
     protected $provider;
 
     public function setUp()
@@ -35,7 +35,7 @@ class OrdersAppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
             ->with(AppliedDiscount::class)
             ->willReturn($this->repository);
 
-        $this->provider = new OrdersAppliedDiscountsProvider($this->cache, $doctrineHelper);
+        $this->provider = new AppliedDiscountsProvider($this->cache, $doctrineHelper);
     }
 
     public function testGetOrderDiscountsFromCache()

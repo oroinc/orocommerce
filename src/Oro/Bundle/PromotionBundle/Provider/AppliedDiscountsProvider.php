@@ -13,7 +13,7 @@ use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
  * Provides data about AppliedDiscounts for given Orders (and OrderLineItems) (saved previously in DB)
  * Used on Order view pages
  */
-class OrdersAppliedDiscountsProvider
+class AppliedDiscountsProvider
 {
     const CACHE_PREFIX = 'oro_promotion.provider.applied_discounts_provider:';
 

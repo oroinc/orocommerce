@@ -38,9 +38,10 @@ class AppliedDiscountManager
 
     /**
      * @param Order $order
+     * @param bool $flush
      * @return AppliedDiscount[]
      */
-    public function saveAppliedDiscounts(Order $order)
+    public function saveAppliedDiscounts(Order $order, $flush = false)
     {
         $discountContext = $this->getPromotionExecutor()->execute($order);
 
@@ -56,6 +57,10 @@ class AppliedDiscountManager
             $manager->persist($appliedDiscount);
         }
 
+        if ($flush) {
+            $manager->flush($appliedDiscounts);
+        }
+
         return $appliedDiscounts;
     }
 
@@ -63,13 +68,18 @@ class AppliedDiscountManager
      * Remove applied discounts by order line item
      *
      * @param OrderLineItem $orderLineItem
+     * @param bool $flush
      */
-    public function removeAppliedDiscountByOrderLineItem(OrderLineItem $orderLineItem)
+    public function removeAppliedDiscountByOrderLineItem(OrderLineItem $orderLineItem, $flush = false)
     {
         $appliedDiscounts = $this->getAppliedDiscountRepository()->findByLineItem($orderLineItem);
 
         foreach ($appliedDiscounts as $appliedDiscount) {
             $this->removeAppliendDiscount($appliedDiscount);
+        }
+
+        if ($flush) {
+            $this->getAppliedDiscountManager()->flush($appliedDiscounts);
         }
     }
 
@@ -77,13 +87,18 @@ class AppliedDiscountManager
      * Remove applied discounts by order
      *
      * @param Order $order
+     * @param bool $flush
      */
-    public function removeAppliedDiscountByOrder(Order $order)
+    public function removeAppliedDiscountByOrder(Order $order, $flush = false)
     {
         $appliedDiscounts = $this->getAppliedDiscountRepository()->findByOrder($order);
 
         foreach ($appliedDiscounts as $appliedDiscount) {
             $this->removeAppliendDiscount($appliedDiscount);
+        }
+
+        if ($flush) {
+            $this->getAppliedDiscountManager()->flush($appliedDiscounts);
         }
     }
 

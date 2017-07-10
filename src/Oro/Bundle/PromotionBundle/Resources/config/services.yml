@@ -299,7 +299,7 @@ services:
             - '@oro_segment.segment_manager'
 
     oro_promotion.provider.applied_discounts_provider:
-        class: Oro\Bundle\PromotionBundle\Provider\OrdersAppliedDiscountsProvider
+        class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider
         public: false
         arguments:
             - '@oro.cache.memory_cache_chain'
@@ -311,6 +311,7 @@ services:
         arguments:
             - '@oro_pricing.user_currency_manager'
             - '@oro_promotion.promotion_executor'
+            - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_currency.rounding.price_rounding_service'
             - '@translator'
         tags:
@@ -366,13 +367,6 @@ services:
     oro_promotion.placeholder.order_additional_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter
 
-    oro_promotion.provider.applied_discount_subtotal:
-        class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountSubtotalProvider
-        public: false
-        arguments: ['@oro_promotion.provider.applied_discounts_provider', '@translator']
-        tags:
-            - { name: oro_pricing.subtotal_provider, priority: 0 }
-
     oro_promotion.event_listener.order:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
         public: false
@@ -404,14 +398,6 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
 
-    oro_promotion.form.listener.order_form_listener:
-        class: Oro\Bundle\PromotionBundle\Form\Listener\OrderFormListener
-        arguments:
-            - '@request_stack'
-            - '@oro_promotion.applied_discount_manager'
-        tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: beforeFlush }
-
     oro_promotion.event_listener.grid.order_line_item:
         class: 'Oro\Bundle\PromotionBundle\EventListener\OrderLineItemGridListener'
         arguments:
@@ -429,4 +415,12 @@ services:
             - '@oro_order.form.section.provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
-            - { name: form.type_extension, alias: oro_order_line_item }
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType' }
+
+    oro_promotion.form.extension.order:
+        class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension'
+        arguments:
+            - '@request_stack'
+            - '@oro_promotion.applied_discount_manager'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
