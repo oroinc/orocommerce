@@ -1,0 +1,53 @@
+include:
+    - shopping_list.yml
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision_configurable:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locValueConfigurable:
+        string: 'Product Configurable'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product_configurable:
+        sku: 'SKU_CONFIGURABLE'
+        type: 'configurable'
+        primaryUnitPrecision: '@precision_configurable'
+        addName: ['@locValueConfigurable']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist_configurable:
+        label: 'List 2 with configurable product'
+        customerUser: '@amanda'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist_configurable','USD']
+        shoppingList: '@shoppinglist_configurable'
+        currency: 'USD'
+        subtotalValue: '10'
+        valid: true
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    configurableLineitem:
+        product: '@product2'
+        parentProduct: '@product_configurable'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist_configurable'
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+    productVariant1:
+        parentProduct: '@product_configurable'
+        product: '@product2'
+        visible: true
+

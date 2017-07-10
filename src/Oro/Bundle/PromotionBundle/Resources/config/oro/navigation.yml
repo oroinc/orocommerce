@@ -1,0 +1,24 @@
+navigation:
+    menu_config:
+        items:
+            promotions:
+                label:      oro.promotion.entity_plural_label
+                uri:        '#'
+                position:   23
+            promotion_list:
+                label:      oro.promotion.entity_plural_label
+                route:      oro_promotion_index
+                extras:
+                    routes: ['/^oro_promotion/']
+
+        tree:
+            application_menu:
+                children:
+                    marketing_tab:
+                        children:
+                            promotions:
+                                children:
+                                    promotion_list: ~
+
+    titles:
+        oro_product_index: ~

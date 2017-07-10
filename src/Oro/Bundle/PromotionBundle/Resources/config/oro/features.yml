@@ -1,0 +1,12 @@
+features:
+    promotion:
+        label: oro.promotion.feature.label
+        description: oro.promotion.feature.description
+        toggle: oro_promotion.feature_enabled
+        routes:
+            - 'oro_promotion_index'
+            - 'oro_promotion_view'
+            - 'oro_promotion_create'
+            - 'oro_promotion_update'
+        api_resources:
+            - 'Oro\Bundle\PromotionBundle\Entity\Promotion'
