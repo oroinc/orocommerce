@@ -1,7 +1,7 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-line_items_promotions.yml
-@fixture-shopping_list.yml
+@fixture-OroPromotionBundle:line_items_promotions.yml
+@fixture-OroPromotionBundle:shopping_list.yml
 Feature: Several promotions in Shopping List
   In order to find out applied discounts in shopping list
   As a site user
