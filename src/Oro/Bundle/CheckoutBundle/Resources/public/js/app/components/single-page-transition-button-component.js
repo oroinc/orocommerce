@@ -9,7 +9,6 @@ define(function(require) {
     var SinglePageTransitionButtonComponent = TransitionButtonComponent.extend({
         defaults: _.extend({}, TransitionButtonComponent.prototype.defaults, {
             saveStateUrl: null,
-            initialEvents: [],
             targetEvents: {},
             ignoreTargets: {},
             changeTimeout: 1500
@@ -24,10 +23,6 @@ define(function(require) {
             SinglePageTransitionButtonComponent.__super__.initialize.call(this, options);
 
             if (this.options.saveStateUrl || false) {
-                $.each(this.options.initialEvents, function(index, eventName) {
-                    mediator.trigger(eventName);
-                });
-
                 this.$form.on('change', _.debounce($.proxy(this.onFormChange, this), this.options.changeTimeout));
             }
         },

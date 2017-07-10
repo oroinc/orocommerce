@@ -1,19 +1,11 @@
 {% block payment_additional_data_widget %}
-    {% set views = options.views|default({}) %}
-    {% set view = views[options.payment_method]|default({}) %}
     {{ block(block_name) }}
 {% endblock %}
 
 {% block _payment_methods_widget %}
     {% set currentPaymentMethod = currentPaymentMethod|default(views|keys|first) %}
 
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oropayment/js/app/views/payment-methods-view',
-        },
-        'data-payment-method-forms': '',
-    }) %}
+    {% set attr = layout_attr_defaults(attr, {'data-payment-method-forms': ''}) %}
 
     <div class="{{ class_prefix }}__form" data-content="payment_method_form" data-page-component-module="oropayment/js/app/components/payment-method-selector-component">
         <div class="grid__row grid__row--offset-none">

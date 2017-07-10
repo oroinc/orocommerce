@@ -13,19 +13,35 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            this.defaults.selectors.shippingForm = '[data-content="shipping_method_form"]';
-            this.defaults.selectors.shippingMethodTypeSelector = '[name$="shippingMethodType"]';
-            this.defaults.selectors.checkoutRequire = '[data-role="checkout-require"]';
-            this.defaults.selectors.shippingMethod = '[name$="[shipping_method]"]';
-            this.defaults.selectors.shippingMethodType = '[name$="[shipping_method_type]"]';
+            this.defaults = $.extend(
+                true,
+                {},
+                this.defaults,
+                {
+                    selectors: {
+                        shippingForm: '[data-content="shipping_method_form"]',
+                        shippingMethodTypeSelector: '[name$="shippingMethodType"]',
+                        shippingMethodTypeSelectorAbsolute: '[data-content="shipping_method_form"]' +
+                            ' [name$="shippingMethodType"]',
+                        checkoutRequire: '[data-role="checkout-require"]',
+                        shippingMethod: '[name$="[shipping_method]"]',
+                        shippingMethodType: '[name$="[shipping_method_type]"]'
+                    }
+                }
+            );
 
             ShippingTransitionButtonComponent.__super__.initialize.call(this, options);
 
-            mediator.on('checkout:shipping-method:rendered', this.onShippingMethodRendered, this);
+            this.onShippingMethodRendered();
         },
 
         onShippingMethodRendered: function() {
-            this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
+            this.getContent().on(
+                'change',
+                this.options.selectors.shippingMethodTypeSelectorAbsolute,
+                $.proxy(this.onShippingMethodTypeChange, this)
+            );
+
             this.initShippingMethod();
         },
 
@@ -58,7 +74,7 @@ define(function(require) {
                 return;
             }
 
-            this.getShippingMethodTypeSelector().off('change', $.proxy(this.onShippingMethodTypeChange, this));
+            this.getContent().off('change', this.options.selectors.shippingMethodTypeSelectorAbsolute);
 
             ShippingTransitionButtonComponent.__super__.dispose.call(this);
         },

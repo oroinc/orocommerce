@@ -13,18 +13,32 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            this.defaults.selectors.paymentForm = '[data-content="payment_method_form"]';
-            this.defaults.selectors.paymentMethodSelector = '[name="paymentMethod"]';
-            this.defaults.selectors.paymentMethod = '[name$="[payment_method]"]';
+            this.defaults = $.extend(
+                true,
+                {},
+                this.defaults,
+                {
+                    selectors: {
+                        paymentForm: '[data-content="payment_method_form"]',
+                        paymentMethodSelectorAbsolute: '[data-content="payment_method_form"] [name="paymentMethod"]',
+                        paymentMethodSelector: '[name="paymentMethod"]',
+                        paymentMethod: '[name$="[payment_method]"]'
+                    }
+                }
+            );
 
             PaymentTransitionButtonComponent.__super__.initialize.call(this, options);
 
-            mediator.on('checkout:payment-method:rendered', this.onPaymentMethodRendered, this);
+            this.onPaymentMethodRendered();
         },
 
         onPaymentMethodRendered: function() {
+            this.getContent().on(
+                'change',
+                this.options.selectors.paymentMethodSelectorAbsolute,
+                $.proxy(this.onPaymentMethodChange, this)
+            );
             this.initPaymentMethod();
-            this.getPaymentMethodSelector().on('change', $.proxy(this.onPaymentMethodChange, this));
         },
 
         initPaymentMethod: function() {
@@ -93,7 +107,7 @@ define(function(require) {
                 return;
             }
 
-            this.getPaymentMethodSelector().off('change', $.proxy(this.onPaymentMethodChange, this));
+            this.getContent().off('change', this.options.selectors.paymentMethodSelectorAbsolute);
 
             PaymentTransitionButtonComponent.__super__.dispose.call(this);
         },
