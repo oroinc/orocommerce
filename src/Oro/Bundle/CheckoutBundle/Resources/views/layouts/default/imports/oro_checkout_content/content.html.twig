@@ -95,7 +95,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_table_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-order-summary__content"
+    '~class': " checkout-order-summary__content"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -104,20 +104,20 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_items_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'orofrontend/js/app/views/scrollable-table'
-        },
-        '~class': " checkout-order-summary__grid"
+    'data-page-component-module': 'oroui/js/app/components/view-component',
+    '~data-page-component-options': {
+    view: 'orofrontend/js/app/views/scrollable-table'
+    },
+    '~class': " checkout-order-summary__grid"
     }) %}
 
     <table {{ block('block_attributes') }}>
         <thead class="checkout-order-summary__grid-head">
-            <tr data-scrollable-content-head>
-                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.item'|trans }}</th>
-                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
-                <th class="checkout-order-summary__grid-th" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
-            </tr>
+        <tr data-scrollable-content-head>
+            <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.item'|trans }}</th>
+            <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
+            <th class="checkout-order-summary__grid-th" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
+        </tr>
         </thead>
         <tbody>
         <tr>
@@ -139,12 +139,12 @@
                             {% endif %}
 
                             {% do block|merge_context({
-                                lineItem: lineItem,
-                                mainProduct: mainProduct,
-                                lineItemInfo: lineItemInfo,
-                                productSku: productSku,
-                                parent: block.vars,
-                                loop: loop
+                            lineItem: lineItem,
+                            mainProduct: mainProduct,
+                            lineItemInfo: lineItemInfo,
+                            productSku: productSku,
+                            parent: block.vars,
+                            loop: loop
                             }) %}
                             {{ block('container_widget') }}
                         {% endfor %}
@@ -184,7 +184,7 @@
 {% block __oro_checkout_content__checkout_order_summary_line_item_name_widget %}
     <h3 class="product-item__title product-item__title_in-cart">
         {% if mainProduct is not null %}
-            <a href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.defaultName }}</a>
+            <a href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.names|localized_value }}</a>
         {% else %}
             {{ lineItem.freeFormProduct }}
         {% endif %}
@@ -279,7 +279,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_totals_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " order-checkout-widget__container-wrapper checkout-total-container"
+    '~class': " order-checkout-widget__container-wrapper checkout-total-container"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
