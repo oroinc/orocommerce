@@ -39,26 +39,28 @@
 {% endblock %}
 
 {% block _localization_switcher_trigger_widget %}
-    <div class="header-row__container hidden-on-desktop">
-        <button class="header-row__trigger hidden-on-desktop"
-            data-page-component-module="oroui/js/app/components/viewport-component"
-            data-page-component-options="{{ {
-                viewport: {
-                    maxScreenType: 'tablet',
-                },
-                component: 'oroui/js/app/components/view-component',
-                view: 'orofrontend/blank/js/app/views/fullscreen-popup-view',
-                popupIcon: 'fa-globe fa--gray fa--x-large',
-                popupLabel: 'oro.frontendlocalization.select.label'|trans,
-                contentElement: '[data-localization-menu-container]',
-                contentAttributes: {
-                    'class': 'oro-toolbar fullscreen-mode'
-                }
-            }|json_encode() }}"
-        >
-            <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large">
-                <span class="fa-globe fa--dark-gray fa--no-offset"></span>
-            </span>
-        </button>
-    </div>
+    {% if localizations|length > 1 %}
+        <div class="header-row__container hidden-on-desktop">
+            <button class="header-row__trigger hidden-on-desktop"
+                data-page-component-module="oroui/js/app/components/viewport-component"
+                data-page-component-options="{{ {
+                    viewport: {
+                        maxScreenType: 'tablet',
+                    },
+                    component: 'oroui/js/app/components/view-component',
+                    view: 'orofrontend/blank/js/app/views/fullscreen-popup-view',
+                    popupIcon: 'fa-globe fa--gray fa--x-large',
+                    popupLabel: 'oro.frontendlocalization.select.label'|trans,
+                    contentElement: '[data-localization-menu-container]',
+                    contentAttributes: {
+                        'class': 'oro-toolbar fullscreen-mode'
+                    }
+                }|json_encode() }}"
+            >
+                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large">
+                    <span class="fa-globe fa--dark-gray fa--no-offset"></span>
+                </span>
+            </button>
+        </div>
+    {% endif %}
 {% endblock %}
