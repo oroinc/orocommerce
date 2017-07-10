@@ -15,7 +15,11 @@ abstract class AbstractLineItemController extends Controller
      */
     protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey)
     {
-        $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+        if ($this->get('oro_shopping_list.manager.shopping_list_limit')->isOnlyOneEnabled()) {
+            $link = $this->get('router')->generate('oro_shopping_list_frontend_view');
+        } else {
+            $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+        }
 
         $translator = $this->get('translator');
         $label = htmlspecialchars($shoppingList->getLabel());

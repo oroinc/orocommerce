@@ -19,42 +19,41 @@ Feature: HTML field type as product attribute
     And press "Continue"
     When I save and close form
     Then I should see "Field saved" flash message
-  #BAP-15004
-#    And I click update schema
-#    And I should see Schema updated flash message
-#
-#  Scenario: Create product attribute with HTML type
-#    And I go to Products/ Product Attributes
-#    And press "Create Attribute"
-#    And fill form with:
-#      | Field Name | html_video  |
-#      | Type       | HTML        |
-#    And press "Continue"
-#    And fill form with:
-#      | Label      | HTML video |
-#    When I save and close form
-#    Then I should see "Attribute was successfully saved" flash message
-#
-#  Scenario: Add to default product family new attribute
-#    Given I go to Products/ Product Families
-#    And I click Edit Default in grid
-#    And set Attribute Groups with:
-#      | Label | Visible | Attributes   |
-#      | HTML  | true    | [HTML video] |
-#    When I save and close form
-#    Then I should see "Successfully updated" flash message
-#
-#  Scenario: Edit product to fill new attribute value
-#    Given I go to Products/ Products
-#    And click edit "PSKU1" in grid
-#    And I fill form with:
-#      | HTML video   | <p id='html_escaped'>HTML Content <script>alert('malicious script')</script>here!</p> |
-#    When I save and close form
-#    Then I should see "Product has been saved" flash message
-#     And I should see "<p id='html_escaped'>HTML Content <script>alert('malicious script')</script>here!</p>"
-#     And I click logout in user menu
-#
-#  Scenario: Open product view page on Front Store to see created attribute
-#    When I open product with sku "PSKU1" on the store frontend
-#    Then I should see "HTML Content here!"
-#    And I should not see tag "script" inside "html_escaped" element
+    And I click update schema
+    And I should see Schema updated flash message
+
+  Scenario: Create product attribute with HTML type
+    And I go to Products/ Product Attributes
+    And press "Create Attribute"
+    And fill form with:
+      | Field Name | html_video  |
+      | Type       | HTML        |
+    And press "Continue"
+    And fill form with:
+      | Label      | HTML video |
+    When I save and close form
+    Then I should see "Attribute was successfully saved" flash message
+
+  Scenario: Add to default product family new attribute
+    Given I go to Products/ Product Families
+    And I click Edit Default in grid
+    And set Attribute Groups with:
+      | Label | Visible | Attributes   |
+      | HTML  | true    | [HTML video] |
+    When I save and close form
+    Then I should see "Successfully updated" flash message
+
+  Scenario: Edit product to fill new attribute value
+    Given I go to Products/ Products
+    And click edit "PSKU1" in grid
+    And I fill form with:
+      | HTML video   | <p id='html_escaped'>HTML Content <script>alert('malicious script')</script>here!</p> |
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+     And I should see "<p id='html_escaped'>HTML Content <script>alert('malicious script')</script>here!</p>"
+     And I click logout in user menu
+
+  Scenario: Open product view page on Front Store to see created attribute
+    When I open product with sku "PSKU1" on the store frontend
+    Then I should see "HTML Content here!"
+    And I should not see tag "script" inside "html_escaped" element

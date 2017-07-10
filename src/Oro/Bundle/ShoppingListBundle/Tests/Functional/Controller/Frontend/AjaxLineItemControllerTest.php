@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -28,6 +29,13 @@ class AjaxLineItemControllerTest extends WebTestCase
                 LoadShoppingLists::class,
                 LoadCombinedProductPrices::class,
             ]
+        );
+
+        $this->simulateAuthentication(
+            LoadCustomerUserData::AUTH_USER,
+            LoadCustomerUserData::AUTH_PW,
+            'customer_identity',
+            CustomerUser::class
         );
     }
 

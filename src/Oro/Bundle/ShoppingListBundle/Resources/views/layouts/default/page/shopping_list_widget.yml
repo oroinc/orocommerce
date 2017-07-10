@@ -6,6 +6,8 @@ layout:
             items:
                 header_row_shopping_trigger:
                     blockType: container
+                    options:
+                        visible: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'
                 header_row_shopping_toggle:
                      blockType: container
                 main_menu_shopping_lists_wrapper:
@@ -27,6 +29,9 @@ layout:
                     blockType: shopping_list_dropdown_item
                 main_menu_shopping_lists_dropdown_create:
                     blockType: shopping_list_dropdown_create
+                    options:
+                        visible: '=data["feature"].isFeatureEnabled("shopping_list_create")'
+
             tree:
                 header_row_shopping:
                     header_row_shopping_trigger:
@@ -38,4 +43,7 @@ layout:
                                 main_menu_shopping_lists_dropdown_item: ~
                         main_menu_shopping_lists_dropdown_create: ~
 
-    conditions: 'context["is_logged_in"]'
+        - '@setOption':
+            id: header_row_shopping
+            optionName: visible
+            optionValue: '=data["feature"].isFeatureEnabled("guest_shopping_list") || context["is_logged_in"]'

@@ -1,4 +1,11 @@
 acls:
+    oro_shopping_list_frontend_view:
+        type: entity
+        class: OroShoppingListBundle:ShoppingList
+        permission: VIEW
+        category: "shopping"
+        group_name: "commerce"
+
     oro_shopping_list_frontend_update:
         type: entity
         class: OroShoppingListBundle:ShoppingList
