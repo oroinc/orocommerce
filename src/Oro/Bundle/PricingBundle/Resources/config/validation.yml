@@ -175,7 +175,7 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields:  [ product, priceList, unit, currency, value ]
+            fields:  [ product, priceList, unit, currency, quantity ]
     properties:
         product:
             - NotBlank: ~
