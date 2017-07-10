@@ -1,0 +1,4 @@
+parent: default
+label: Custom theme
+description: Custom theme description.
+groups: [ commerce ]

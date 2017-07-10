@@ -100,4 +100,23 @@ class ShoppingListRepository extends EntityRepository
             ->leftJoin('images.image', 'imageFile')
             ->leftJoin('product.unitPrecisions', 'unitPrecisions');
     }
+
+    /**
+     * @param int $customerId
+     * @param int $organizationId
+     * @return integer
+     */
+    public function countUserShoppingLists($customerId, $organizationId)
+    {
+        $results = $this->createQueryBuilder('shopping_list')
+            ->select('COUNT(shopping_list)')
+            ->where('shopping_list.customerUser=:customerUser')
+            ->andWhere('shopping_list.organization=:organization')
+            ->setParameter('customerUser', $customerId)
+            ->setParameter('organization', $organizationId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (integer) $results;
+    }
 }

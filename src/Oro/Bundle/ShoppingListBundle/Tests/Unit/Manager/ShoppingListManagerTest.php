@@ -7,6 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -23,11 +28,9 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
+ * @Todo: Must be refactored in scope of - #BB-10192
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
@@ -67,9 +70,14 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected $registry = [];
 
     /**
-     * @var  AclHelper
+     * @var AclHelper
      */
     protected $aclHelper;
+
+    /**
+     * @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $securityToken;
 
     /**
      * @var Cache
@@ -394,8 +402,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected function getTokenStorage(CustomerUser $customerUser)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
-        $securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $securityToken->expects($this->any())
+        $this->securityToken = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $this->securityToken->expects($this->any())
             ->method('getUser')
             ->willReturn($customerUser);
 
@@ -404,7 +412,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $tokenStorage->expects($this->any())
             ->method('getToken')
-            ->willReturn($securityToken);
+            ->willReturn($this->securityToken);
 
         return $tokenStorage;
     }
