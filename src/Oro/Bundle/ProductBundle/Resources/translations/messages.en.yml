@@ -23,9 +23,6 @@ oro:
         inventory_status:
             label: Inventory Status
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
-        status:
-            label: Status
-            description: The enabled or disabled status of the product
         type:
             label: Type
             description: Defines the type of product, "simple" / "configurable"
@@ -109,6 +106,8 @@ oro:
         status:
             enabled: Enabled
             disabled: Disabled
+            label: Status
+            description: The enabled or disabled status of the product
 
         variant_fields:
             yes.label: Yes
