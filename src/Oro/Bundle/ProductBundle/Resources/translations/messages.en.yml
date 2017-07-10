@@ -29,6 +29,9 @@ oro:
         type:
             label: Type
             description: Defines the type of product, "simple" / "configurable"
+            simple: Simple
+            configurable: Configurable
+            please_select_option: Please select option
         owner.label: Owner
         organization.label: Organization
         primary_unit_precision:
@@ -98,11 +101,6 @@ oro:
                 hint:
                     add_to_included: Manually add products to All Added values
                     add_to_excluded: Manually remove products from All Added values
-
-        type:
-            simple: Simple
-            configurable: Configurable
-            please_select_option: Please select option
         attribute_family:
             label: Product Family
             description: The product attribute family, which defines the configurable attributes that can be used o a configurable product.
