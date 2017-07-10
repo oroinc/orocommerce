@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadBaseCustomerUserData;
@@ -29,6 +30,13 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
                 LoadShippingMethodsConfigsRulesWithConfigs::class,
             ]
         );
+
+        $this->simulateAuthentication(
+            LoadBaseCustomerUserData::AUTH_USER,
+            LoadBaseCustomerUserData::AUTH_PW,
+            'customer_identity',
+            CustomerUser::class
+        );
     }
 
     public function testCreateOrder()
@@ -50,6 +58,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     {
         // start checkout from first user
         $this->authUser(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD);
+
         $firstData = $this->startCheckout($this->getReference(LoadShoppingLists::SHOPPING_LIST_7));
         // continue checkout from first user
         $secondData = $this->startCheckout($this->getReference(LoadShoppingLists::SHOPPING_LIST_7));
@@ -70,6 +79,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     protected function authUser($username, $password)
     {
         $this->initClient([], $this->generateBasicAuthHeader($username, $password));
+        $this->simulateAuthentication($username, $password, 'customer_identity', CustomerUser::class);
     }
 
     /**

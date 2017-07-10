@@ -116,4 +116,13 @@ class ShoppingListRepositoryTest extends WebTestCase
             $customerUser->getRoles()
         );
     }
+
+    public function testCountUserShoppingLists()
+    {
+        $user = $this->getCustomerUser();
+
+        $count = $this->getRepository()->countUserShoppingLists($user->getId(), $user->getOrganization()->getId());
+
+        $this->assertEquals(6, $count);
+    }
 }
