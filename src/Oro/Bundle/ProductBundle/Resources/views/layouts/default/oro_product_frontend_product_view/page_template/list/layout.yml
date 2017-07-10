@@ -14,4 +14,16 @@ layout:
             parentId: line_item_form
             siblingId: line_item_form_end
             prepend: true
+        - '@move':
+            id: related_products
+            parentId: product_view_content_container
+        - '@setOption':
+            id: related_products
+            optionName: use_slider
+            optionValue: false
+        - '@setOption':
+            id: related_product_image_holder
+            optionName: product_image_size
+            optionValue: 'product_extra_large'
+
     conditions: '!context["is_mobile"]'

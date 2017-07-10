@@ -80,5 +80,11 @@
                 padding: $list-theme-product-view-quantity-value-input-inner-offset-desktop;
             }
         }
+
+        .featured-products {
+            & .embedded-list__item {
+                width: 50%;
+            }
+        }
     }
 }
