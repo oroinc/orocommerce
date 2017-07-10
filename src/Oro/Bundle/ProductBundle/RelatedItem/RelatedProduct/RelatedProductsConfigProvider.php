@@ -54,4 +54,13 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MAX_ITEMS));
     }
+
+    /**
+     * @return bool
+     */
+    public function isAddButtonVisible()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_SHOW_ADD_BUTTON));
+    }
 }

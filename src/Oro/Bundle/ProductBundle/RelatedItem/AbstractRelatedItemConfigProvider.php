@@ -43,4 +43,9 @@ abstract class AbstractRelatedItemConfigProvider
      * @return int
      */
     abstract public function getMaximumItems();
+
+    /**
+     * @return bool
+     */
+    abstract public function isAddButtonVisible();
 }

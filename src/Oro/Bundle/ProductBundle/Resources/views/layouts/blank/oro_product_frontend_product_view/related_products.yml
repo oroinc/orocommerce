@@ -29,6 +29,10 @@ layout:
             id: related_product_line_item_form_end
             optionName: instance_name
             optionValue: related_products
+        - '@setOption':
+            id: related_product_line_item_form
+            optionName: visible
+            optionValue: '=data["oro_product_related_products"].isAddButtonVisible()'
         - '@add':
             id: related_products_container
             parentId: product_view_additional_container

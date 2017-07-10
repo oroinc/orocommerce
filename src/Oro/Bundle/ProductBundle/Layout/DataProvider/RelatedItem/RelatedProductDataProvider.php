@@ -64,6 +64,14 @@ class RelatedProductDataProvider
     }
 
     /**
+     * @return bool
+     */
+    public function isAddButtonVisible()
+    {
+        return $this->configProvider->isAddButtonVisible();
+    }
+
+    /**
      * @param Product[] $products
      * @return bool
      */
