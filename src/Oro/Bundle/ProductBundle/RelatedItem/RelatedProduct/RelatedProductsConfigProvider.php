@@ -43,7 +43,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     public function getMinimumItems()
     {
         return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MIN_ITEMS_COUNT));
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MIN_ITEMS));
     }
 
     /**
@@ -52,6 +52,6 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     public function getMaximumItems()
     {
         return $this->configManager
-            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MAX_ITEMS_COUNT));
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MAX_ITEMS));
     }
 }
