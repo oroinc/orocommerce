@@ -43,6 +43,7 @@ oro:
         related_by_products.label: Products that are related to this Product
         anything.label: Any Text
         featured_products.label: Featured Products
+        new_arrivals.label: New Arrivals
         featured:
             label: Is Featured
             yes: Yes
@@ -240,6 +241,7 @@ oro:
                 quick_order_form.title: Quick Order Form
                 new_product_icons.title: New Product Icons
                 product_promotions.title: Promotions
+                new_arrivals.title: New Arrivals
             fields:
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
@@ -299,6 +301,21 @@ oro:
                     type:
                         yes.label: Yes
                         no.label: No
+                new_arrivals_products_segment:
+                    label: Product Segment
+                    tooltip: |
+                        Selected segment will be used as "New Arrivals" block data source.
+                        To modify existing or create new segment go to "Reports & Segments > Manage Segments" section.
+                        Only segments with type "Product" are listed here.
+                new_arrivals_max_items:
+                    label: Maximum Items
+                    tooltip: Show not more than the specified number of items (additionaly limits the list of items retrieved from the selected segment after filtering out the products that are not visible to the current user).
+                new_arrivals_min_items:
+                    label: Minimum Items
+                    tooltip: Hide the "News Arrivals" block completely if the number of items is less than the specified value.
+                new_arrivals_use_slider_on_mobile:
+                    label: Use Slider On Mobile
+                    tooltip: When slider is enabled, the "New Arrivals" block will occupy less screen space, while showing larger product images.
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

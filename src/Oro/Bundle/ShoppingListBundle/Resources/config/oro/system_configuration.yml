@@ -1,10 +1,45 @@
 system_configuration:
+    groups:
+        guest_shopping_list:
+            title: oro.shoppinglist.system_configuration.groups.guest_shopping_list.label
+            icon: 'fa-users'
+        guest_shopping_list_user_section:
+            title: oro.shoppinglist.system_configuration.groups.guest_shopping_list_owner.title
+        guest_shopping_list.enable:
+            title: oro.shoppinglist.system_configuration.groups.guest_shopping_list.label
+        shopping_list:
+            title: oro.shoppinglist.system_configuration.groups.shopping_list.title
+            icon: 'fa-cogs'
+        shopping_list_limit_section:
+            title: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
     fields:
         oro_shopping_list.backend_product_visibility:
             data_type: array
             type: oro_product_inventory_status_select
             options:
                 label: oro.shoppinglist.system_configuration.fields.backend_product_visibility.title
+        oro_shopping_list.availability_for_guests:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.shoppinglist.system_configuration.fields.availability_for_guests.label
+                tooltip: oro.shoppinglist.system_configuration.fields.availability_for_guests.tooltip
+        oro_shopping_list.shopping_list_limit:
+            data_type: integer
+            type: integer
+            options:
+                label: oro.shoppinglist.system_configuration.groups.shopping_list_limit.title
+                tooltip: oro.shoppinglist.system_configuration.fields.shopping_list_limit.tooltip
+
+        oro_shopping_list.default_guest_shopping_list_owner:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            priority: 110
+            options:
+                label: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.title
+                tooltip: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.tooltip
+                required: true
 
     tree:
         system_configuration:
@@ -17,3 +52,18 @@ system_configuration:
                                     backend_inventory_statuses_visibility:
                                         children:
                                             - oro_shopping_list.backend_product_visibility
+                    sales:
+                        children:
+                            shopping_list:
+                                children:
+                                    shopping_list_limit_section:
+                                        children:
+                                            - oro_shopping_list.shopping_list_limit
+                                    guest_shopping_list.enable:
+                                        children:
+                                            - oro_shopping_list.availability_for_guests
+                                    guest_shopping_list_user_section:
+                                        children:
+                                            - oro_shopping_list.default_guest_shopping_list_owner
+
+
