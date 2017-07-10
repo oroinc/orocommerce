@@ -43,10 +43,9 @@ Feature: Default RFQ Workflows
     When I click "Resubmit"
     And I should see "Your Request For Quote has been successfully resubmitted." flash message
     Then I should see RFQ status is "Cancelled"
-#    todo: Uncomment or delete next lines after resolve BB-10394
-#    Then I follow "Request For Quote"
-#    And I should see RFQ status is "Submitted"
-#    And I remember Request id as "Submitted request Id"
+    Then I follow "Request For Quote"
+    And I should see RFQ status is "Submitted"
+    And I remember Request id as "Submitted request Id"
     Then I continue as the Manager
     When I go to Sales/Requests For Quote
     And I click view 0110 in grid

@@ -39,6 +39,7 @@ CheckoutBundle
 --------------
 - Class `Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter`
     - method `getSecurityFacade` was replaced with `getAuthorizationChecker`
+- Layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
 
 WebsiteSearchBundle
 -------------------
@@ -84,7 +85,7 @@ ProductBundle
 - Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
 - Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
-- `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
+    - `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
     
 PaymentBundle
 -------------
@@ -116,7 +117,7 @@ PayPalBundle
 
 SEOBundle
 -------------
-- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added. 
+- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added.
 MetaTitle is displayed as default view page title.
 - Class `Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener`
     - changed signature of `__construct` method:
@@ -135,7 +136,8 @@ MetaTitle is displayed as default view page title.
 - Service `oro_seo.event_listener.content_node_form_view`
     - dependency on `@request_stack` was removed
     - dependency on `@oro_entity.doctrine_helper` was removed
-
+- Class `Oro\Bundle\SEOBundle\Sitemap\Provider\ContentVariantUrlItemsProvider`
+    - previously deprecated method `getScopeRepository` was removed
 
 PaymentBundle
 -------------
@@ -185,7 +187,7 @@ ShippingBundle
 - Class `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry` was renamed to `Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider`
     - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
 - Service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
-        
+
 PricingBundle
 --------------
 - Service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`

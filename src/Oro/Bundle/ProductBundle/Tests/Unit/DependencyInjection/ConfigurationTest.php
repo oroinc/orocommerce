@@ -26,6 +26,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         static::assertEquals('oro_product.'.$key, $configKey);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessConfiguration()
     {
         $configuration = new Configuration();
@@ -98,7 +101,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'featured_products_segment_id' => [
-                    'value' => null,
+                    'value' => '@oro_product.provider.default_value.featured_products',
                     'scope' => 'app'
                 ],
                 'product_collections_indexation_cron_schedule' => [
@@ -112,7 +115,23 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'product_collections_mass_action_limitation' => [
                     'value' => 500,
                     'scope' => 'app'
-                ]
+                ],
+                'new_arrivals_products_segment_id' => [
+                    'value' => '@oro_product.provider.default_value.new_arrivals',
+                    'scope' => 'app',
+                ],
+                'new_arrivals_max_items' => [
+                    'value' => 4,
+                    'scope' => 'app',
+                ],
+                'new_arrivals_min_items' => [
+                    'value' => 3,
+                    'scope' => 'app',
+                ],
+                'new_arrivals_use_slider_on_mobile' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
             ]
         ];
 

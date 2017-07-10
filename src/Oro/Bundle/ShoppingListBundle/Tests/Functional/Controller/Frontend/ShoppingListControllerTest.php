@@ -26,6 +26,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @dbIsolationPerTest
  */
 class ShoppingListControllerTest extends WebTestCase
 {
@@ -249,6 +250,13 @@ class ShoppingListControllerTest extends WebTestCase
     public function ACLProvider()
     {
         return [
+            'CREATE anon' => [
+                'route' => 'oro_shopping_list_frontend_create',
+                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
+                'user' => '',
+                'status' => 404,
+                'expectedCreateOrderButtonVisible' => false
+            ],
             'VIEW (anonymous user)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
@@ -289,13 +297,6 @@ class ShoppingListControllerTest extends WebTestCase
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 'status' => 200,
-                'expectedCreateOrderButtonVisible' => false
-            ],
-            'CREATE anon' => [
-                'route' => 'oro_shopping_list_frontend_create',
-                'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
-                'user' => '',
-                'status' => 404,
                 'expectedCreateOrderButtonVisible' => false
             ],
             'CREATE (user with create: LOCAL)' => [

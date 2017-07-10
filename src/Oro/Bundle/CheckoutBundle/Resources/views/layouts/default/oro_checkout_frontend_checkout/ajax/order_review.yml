@@ -1,6 +1,6 @@
 layout:
     imports:
-        - 'oro_payment_method_order_review'
+        - 'oro_payment_method_order_submit'
     actions:
         - '@setBlockTheme':
             themes:
