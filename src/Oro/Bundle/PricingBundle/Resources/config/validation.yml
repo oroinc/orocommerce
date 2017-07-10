@@ -169,3 +169,23 @@ Oro\Bundle\ProductBundle\Entity\Product:
     properties:
         unitPrecisions:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity:
+            fields:  [ product, priceList, unit, currency, value ]
+    properties:
+        product:
+            - NotBlank: ~
+        productSku:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        price:
+            - NotBlank: ~
+            - Valid: ~
+        unit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'

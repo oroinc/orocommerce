@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator;
 
-class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
+class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductPriceCurrency
@@ -99,7 +99,8 @@ class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given
+     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\BaseProductPrice",
+     * "stdClass" given
      */
     public function testNotExpectedValueException()
     {
