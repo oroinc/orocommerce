@@ -13,4 +13,10 @@ class ShoppingListLineItem extends Element implements LineItemInterface
     {
         return $this->getElement('ShoppingListLineItemProductSku')->getText();
     }
+
+    public function delete()
+    {
+        $deleteButton = $this->find('css', 'i.fa-trash-o');
+        $deleteButton->click();
+    }
 }

@@ -103,6 +103,26 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * @Then /^(?:|I )click delete line item "(?P<productSKU>[^"]+)"$/
+     *
+     * @param string $productSKU
+     */
+    public function clickDeleteLineItem($productSKU)
+    {
+        /** @var PromotionShoppingList $shoppingList */
+        $shoppingList = $this->createElement('PromotionShoppingList');
+
+        /** @var PromotionShoppingListLineItem[] $lineItems */
+        $lineItems = $shoppingList->getLineItems();
+
+        foreach ($lineItems as $lineItem) {
+            if ($lineItem->getProductSKU() == $productSKU) {
+                $lineItem->delete();
+            }
+        }
+    }
+
+    /**
      * @param LineItemsAwareInterface $element
      * @param $table
      */
