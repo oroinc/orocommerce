@@ -127,8 +127,8 @@ class RemoveCategoryFromProductRequest implements ProcessorInterface
         }
 
         /** @var Category $category */
-        $category = $this->doctrineHelper->getEntityRepository(Category::class)->findOneById(
-            $categoryInfo['id']
+        $category = $this->doctrineHelper->getEntityRepository(Category::class)->findOneBy(
+            ['id' => $categoryInfo['id']]
         );
 
         if (!$category) {

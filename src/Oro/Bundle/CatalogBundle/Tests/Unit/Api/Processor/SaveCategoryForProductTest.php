@@ -42,13 +42,13 @@ class SaveCategoryForProductTest extends \PHPUnit_Framework_TestCase
         $this->repo = $this->getMockBuilder(CategoryRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->repo);
         $this->em = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->willReturn($this->em);
         $this->saveCategoryForProduct = new SaveCategoryForProduct($this->doctrineHelper);
