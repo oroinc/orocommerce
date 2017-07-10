@@ -57,6 +57,18 @@ api:
                     exclude: true
                 quantity:
                     exclude: true
+                # start: this is added in order to properly handle "price" object that is created out of currency and value
+                value:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                currency:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                # end
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
             actions:
                 create:
