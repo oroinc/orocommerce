@@ -155,30 +155,20 @@ Example:
         }
       },
       "primaryUnitPrecision":{
-        "unit_code": "set"
+        "data": {
+            "type": "productunitprecisions",
+            "id": "product-unit-precision-id-3"
+        }
       },
       "unitPrecisions": {
         "data": [
           {
             "type": "productunitprecisions",
-            "unit_code": "set",
-            "unit_precision": "0",
-            "conversion_rate": "2",
-            "sell": "1"
+            "id": "product-unit-precision-id-1"
           },
           {
             "type": "productunitprecisions",
-            "unit_code": "each",
-            "unit_precision": "0",
-            "conversion_rate": "2",
-            "sell": "1"
-          },
-          {
-            "type": "productunitprecisions",
-            "unit_code": "item",
-            "unit_precision": "0",
-            "conversion_rate": "2",
-            "sell": "1"
+            "id": "product-unit-precision-id-2"
           }
         ]
       },
@@ -331,7 +321,59 @@ Example:
           "data": null
         }
       }
+    },
+    {
+      "type": "productunitprecisions",
+      "id": "product-unit-precision-id-1",
+      "attributes": {
+          "precision": "0",
+          "conversionRate": "5",
+          "sell": "1"
+      },
+      "relationships": {
+        "unit": {
+          "data": {
+            "type": "productunits",
+            "id": "each"
+          }
+        }
+      }
+    },
+    {
+      "type": "productunitprecisions",
+      "id": "product-unit-precision-id-2",
+      "attributes": {
+          "precision": "0",
+          "conversionRate": "10",
+          "sell": "1"
+      },
+      "relationships": {
+        "unit": {
+          "data": {
+            "type": "productunits",
+            "id": "item"
+          }
+        }
+      }
+    },
+    {
+      "type": "productunitprecisions",
+      "id": "product-unit-precision-id-3",
+      "attributes": {
+          "precision": "0",
+          "conversionRate": "2",
+          "sell": "1"
+      },
+      "relationships": {
+        "unit": {
+          "data": {
+            "type": "productunits",
+            "id": "set"
+          }
+        }
+      }
     }
+
   ]
 }
 
@@ -360,6 +402,15 @@ list of unit precisions on the Product main entity, then it will be created and 
 - if in the **"primaryUnitPrecision"** we send a new "unit_code", other then what it is found on
 the current product primary unit precision, then the current primary unit precision will be replaced
 with the newly provided one
+
+**Important** - when updating product unit precisions you need to pay attention to:
+
+- specify all unit precisions for the product (including primary), even though you want to update the attributes for
+only one of them
+
+- in the "included" section specify the product unit that you want to update but don't forget to use the same id as it has in the
+database (id which you use in the "data" section on the field) and specify the "update" field in the "meta" subsection
+of the "included" section (see example below)
 
 
 ##### 2. Updating "localizedfallbackvalues" (localized fields) and "entityfieldfallbackvalues" (options with fallbacks) types
@@ -574,6 +625,24 @@ Example:
             "id": "817"
           }
         ]
+      },
+      "primaryUnitPrecision":{
+        "data": {
+            "type": "productunitprecisions",
+            "id": "453"
+        }
+      },
+      "unitPrecisions": {
+        "data": [
+          {
+            "type": "productunitprecisions",
+            "id": "454"
+          },
+          {
+            "type": "productunitprecisions",
+            "id": "455"
+          }
+        ]
       }
     }
   },
@@ -600,6 +669,23 @@ Example:
         "fallback": null,
         "string": "Test product - updated",
         "text": null
+      }
+    },
+    {
+      "type": "productunitprecisions",
+      "id": "453",
+      "attributes": {
+          "precision": "7",
+          "conversionRate": "5",
+          "sell": "0"
+      },
+      "relationships": {
+        "unit": {
+          "data": {
+            "type": "productunits",
+            "id": "set"
+          }
+        }
       }
     }
   ]
