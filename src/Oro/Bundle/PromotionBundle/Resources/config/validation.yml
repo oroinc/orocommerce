@@ -1,0 +1,24 @@
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    properties:
+        rule:
+            - Valid: ~
+        useCoupons:
+            - NotBlank: ~
+        schedules:
+            - Valid: ~
+        scopes:
+            - Valid: ~
+        productsSegment:
+            - Valid: ~
+        labels:
+            - Valid: ~
+        descriptions:
+            - Valid: ~
+
+Oro\Bundle\PromotionBundle\Entity\PromotionSchedule:
+    constraints:
+        - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
+            chain:
+                activeAt: 'Active At'
+                deactivateAt: 'Deactivate At'

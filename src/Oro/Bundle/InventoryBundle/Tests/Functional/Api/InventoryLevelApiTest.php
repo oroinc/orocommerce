@@ -34,6 +34,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     public function testGetList(array $parameters, $expectedDataFileName)
     {
         $response = $this->cget(['entity' => 'inventorylevels'], $parameters);
+
         $this->assertResponseContains($expectedDataFileName, $response);
     }
 
@@ -47,7 +48,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                 'parameters' => [
                     'include' => 'product,productUnitPrecision',
                     'filter' => [
-                        'product.sku' => ['@product-1->sku'],
+                        'product' => ['@product-1->id'],
                     ]
                 ],
                 'expectedDataFileName' => 'filter_by_product.yml',
@@ -56,31 +57,11 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                 'parameters' => [
                     'include' => 'product,productUnitPrecision',
                     'filter' => [
-                        'product.sku' => ['@product-1->sku', '@product-2->sku'],
+                        'product' => ['@product-1->id', '@product-2->id'],
                     ]
                 ],
                 'expectedDataFileName' => 'filter_by_products.yml',
-            ],
-            'filter by Products and Unit' => [
-                'parameters' => [
-                    'include' => 'product,productUnitPrecision',
-                    'filter' => [
-                        'product.sku' => ['@product-1->sku', '@product-2->sku'],
-                        'productUnitPrecision.unit.code' => ['@product_unit.bottle->code'],
-                    ]
-                ],
-                'expectedDataFileName' => 'filter_by_products_and_unit.yml',
-            ],
-            'filter by Products and Units' => [
-                'parameters' => [
-                    'include' => 'product,productUnitPrecision',
-                    'filter' => [
-                        'product.sku' => ['@product-1->sku', '@product-2->sku'],
-                        'productUnitPrecision.unit.code' => ['@product_unit.bottle->code', '@product_unit.liter->code'],
-                    ]
-                ],
-                'expectedDataFileName' => 'filter_by_products and_units.yml',
-            ],
+            ]
         ];
     }
 
@@ -90,14 +71,13 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $inventoryLevel = $this->getReference('inventory_level.product_unit_precision.product-1.liter');
 
         $response = $this->patch(
-            ['entity' => 'inventorylevels', 'id' => $inventoryLevel->getProduct()->getSku()],
+            ['entity' => 'inventorylevels', 'id' => (string) $inventoryLevel->getId()],
             [
                 'data' => [
                     'type' => 'inventorylevels',
-                    'id' => $inventoryLevel->getProduct()->getSku(),
+                    'id' => (string) $inventoryLevel->getId(),
                     'attributes' => [
-                        'quantity' => 17,
-                        'unit' => $inventoryLevel->getProductUnitPrecision()->getProductUnitCode(),
+                        'quantity' => 17
                     ],
                 ]
             ]
@@ -105,68 +85,6 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
         $result = $this->jsonToArray($response->getContent());
         $this->assertUpdatedInventoryLevel($result, $inventoryLevel->getId(), 17);
-    }
-
-    public function testUpdateEntityWithDefaultUnit()
-    {
-        $response = $this->patch(
-            ['entity' => 'inventorylevels', 'id' => 'product-1'],
-            [
-                'data' => [
-                    'type' => 'inventorylevels',
-                    'id' => 'product-1',
-                    'attributes' => [
-                        'quantity' => 1,
-                    ],
-                ]
-            ]
-        );
-
-        $result = $this->jsonToArray($response->getContent());
-        $this->assertUpdatedInventoryLevel($result, $result['data']['id'], 1);
-    }
-
-    public function testCreateEntity()
-    {
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', ['entity' => 'inventorylevels']),
-            [
-                'data' => [
-                    'type' => 'inventorylevels',
-                    'attributes' => ['quantity' => 100],
-                    'relationships' => [
-                        'product' => [
-                            'data' => [
-                                'type' => $this->getEntityType(Product::class),
-                                'id' => 'product-3',
-                            ],
-                        ],
-                        'unit' => [
-                            'data' => [
-                                'type' => $this->getEntityType(ProductUnitPrecision::class),
-                                'id' => 'liter',
-                            ],
-                        ],
-                    ]
-                ]
-            ]
-        );
-
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
-    }
-
-    public function testDeleteEntity()
-    {
-        /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $this->getReference('inventory_level.product_unit_precision.product-1.bottle');
-
-        $response = $this->request(
-            'DELETE',
-            $this->getUrl('oro_rest_api_delete', ['entity' => 'inventorylevels', 'id' => $inventoryLevel->getId()])
-        );
-
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
     }
 
     /**

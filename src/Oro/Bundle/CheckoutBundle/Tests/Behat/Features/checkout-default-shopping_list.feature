@@ -28,8 +28,7 @@ Feature: Default Checkout From Shopping List
 
   Scenario: Checking Order History grid with Open Orders
     Given I open Order History page on the store frontend
-    Then there is no records in "OpenOrdersGrid"
-
-    When I reset "Completed" filter on grid "OpenOrdersGrid"
+    When there is no records in "OpenOrdersGrid"
+    And I reset "Completed" filter on grid "OpenOrdersGrid"
     And I click View Order on List 1 in grid "OpenOrdersGrid"
     Then I should be on Order Frontend View page

@@ -1,0 +1,4 @@
+{% set discountAmount = record.getValue('discountAmount') %}
+{% set currency = record.getValue('currency') %}
+
+{{ discountAmount|oro_format_currency({currency: currency}) }}

@@ -91,7 +91,7 @@ services:
             - { name: layout.block_type, alias: checkout_summary_totals }
 
     oro_checkout.layout.block_type.checkout_order_summary_line_items:
-        parent: oro_layout.block_type.abstract_configurable
+        parent: oro_layout.block_type.abstract_configurable_container
         calls:
             -
                 - setOptionsConfig

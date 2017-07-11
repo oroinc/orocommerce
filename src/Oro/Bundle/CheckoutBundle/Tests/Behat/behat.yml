@@ -15,6 +15,7 @@ oro_behat_extension:
         - OroCheckoutBundle::FeatureContext
         - OroSaleBundle::FeatureContext
         - OroOrderBundle::OrderContext
+        - OroCustomerBundle::ACLContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -76,6 +77,18 @@ oro_behat_extension:
     PastOrdersGrid:
       selector: 'div[data-page-component-name="frontend-orders-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    OrderLineItemsGrid:
+      selector: 'div[data-page-component-name="order-line-items-grid-frontend"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    CheckoutStepLineItem:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStepLineItem
+      selector: 'table[data-scrollable-inner-content] tr'
+
+    CheckoutStepLineItemProductSku:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div:contains("Item #:") > span'
 
     Order Summary Products Grid:
       selector: '.checkout-order-summary__table'

@@ -1,0 +1,4 @@
+oro_promotion:
+    resource:     "@OroPromotionBundle/Controller/PromotionController.php"
+    type:         annotation
+    prefix:       /promotion
