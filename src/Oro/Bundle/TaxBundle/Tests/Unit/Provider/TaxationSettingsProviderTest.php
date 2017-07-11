@@ -452,12 +452,13 @@ class TaxationSettingsProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsEnabled()
     {
         $this->configManager
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('get')
             ->with('oro_tax.tax_enable')
             ->willReturn(true);
 
         $this->assertTrue($this->provider->isEnabled());
+        $this->assertFalse($this->provider->isDisabled());
     }
 
     public function testGetShippingTaxCodes()

@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
-class CheckoutRepositoryTest extends WebTestCase
+class CheckoutRepositoryTest extends FrontendWebTestCase
 {
     /**
      * @var CheckoutRepository
@@ -25,7 +25,7 @@ class CheckoutRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
+        $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
                 LoadQuoteCheckoutsData::class,

@@ -178,6 +178,12 @@ class OrderTypeTest extends TypeTestCase
         $total = new Subtotal();
         $total->setAmount(0);
         $total->setCurrency('USD');
+
+        $this->totalsProvider
+            ->expects($this->once())
+            ->method('enableRecalculation')
+            ->willReturnSelf();
+
         $this->totalsProvider
             ->expects($this->once())
             ->method('getTotal')

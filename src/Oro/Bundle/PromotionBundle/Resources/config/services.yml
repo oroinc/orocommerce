@@ -1,0 +1,426 @@
+parameters:
+    oro_promotion.entity.promotion.class: Oro\Bundle\PromotionBundle\Entity\Promotion
+
+services:
+    oro_promotion.security.acl.voter.promotion_matched_product_segment:
+        class: Oro\Bundle\PromotionBundle\Acl\Voter\PromotionMatchedProductSegmentVoter
+        public: false
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, ['%oro_segment.segment.entity.class%']]
+        tags:
+            - { name: security.voter, priority: 500 }
+
+    oro_promotion.rule_filtration.service:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService
+        extends: oro_rule.rule_filtration.service
+
+    oro_promotion.rule_filtration.enabled_decorator:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 0
+        arguments:
+            - '@oro_promotion.rule_filtration.enabled_decorator.inner'
+
+    oro_promotion.rule_filtration.scope_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 50
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.scope_decorator.inner'
+            - '@oro_scope.scope_manager'
+
+    oro_promotion.rule_filtration.expression_language_decorator:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 100
+        arguments:
+            - '@oro_rule.expression_language'
+            - '@oro_promotion.rule_filtration.expression_language_decorator.inner'
+            - '@logger'
+
+    oro_promotion.rule_filtration.currency_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\CurrencyFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 150
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.currency_decorator.inner'
+
+    oro_promotion.rule_filtration.schedule_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\ScheduleFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 200
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.schedule_decorator.inner'
+            - '@oro_cron.checker.schedule_interval_checker'
+
+#    TODO: uncomment after BB-9489
+#    oro_promotion.rule_filtration.coupon_decorator:
+#        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
+#        decorates: oro_promotion.rule_filtration.service
+#        decoration_priority: 250
+#        public: false
+#        arguments:
+#            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+
+    oro_promotion.rule_filtration.matching_items:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 300
+        arguments:
+            - '@oro_promotion.rule_filtration.matching_items.inner'
+            - '@oro_promotion.provider.matching_products_provider'
+
+    oro_promotion.rule_filtration.stop_processing_decorator:
+        class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 350
+        arguments:
+            - '@oro_promotion.rule_filtration.stop_processing_decorator.inner'
+
+    oro_promotion.promotion_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_promotion.rule_filtration.service'
+            - '@oro_promotion.promotion.context_data_converter_registry'
+
+    oro_promotion.discount_factory:
+        class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
+        public: false
+        arguments:
+            - '@service_container'
+        calls:
+            - ['addType', ['order', 'oro_promotion.discount.order_discount']]
+            - ['addType', ['line_item', 'oro_promotion.discount.line_item_discount']]
+            - ['addType', ['buy_x_get_y', 'oro_promotion.discount.buy_x_get_y_discount']]
+
+    oro_promotion.discount.context_converter.registry:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
+        public: false
+
+    oro_promotion.discount.shopping_list_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\ShoppingListDiscountContextConverter
+        public: false
+        arguments:
+           - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
+           - '@oro_pricing.user_currency_manager'
+           - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        tags:
+            - { name: 'oro_promotion.discount_context_converter' }
+
+    oro_promotion.discount.order_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderDiscountContextConverter
+        public: false
+        arguments:
+            - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+        tags:
+            - { name: 'oro_promotion.discount_context_converter' }
+
+    oro_promotion.discount.checkout_context_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\CheckoutDiscountContextConverter
+        public: false
+        arguments:
+            - '@oro_checkout.data_provider.converter.checkout_to_order'
+            - '@oro_promotion.discount.order_context_converter'
+        tags:
+            - { name: 'oro_promotion.discount_context_converter' }
+
+    oro_promotion.discount.line_items_to_discount_line_items_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter
+        public: false
+        arguments:
+             - '@oro_shopping_list.data_provider.frontend_product_prices'
+
+    oro_promotion.discount.order_line_items_to_discount_line_items_converter:
+        class: Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter
+        public: false
+
+    oro_promotion.promotion.context_data_converter_registry:
+        class: Oro\Bundle\PromotionBundle\Context\ContextDataConverterRegistry
+        public: false
+
+    oro_promotion.promotion.shopping_list_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
+        public: false
+        arguments:
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_scope.scope_manager'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+        tags:
+            - { name: 'oro_promotion.promotion_context_converter' }
+
+    oro_promotion.promotion.order_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter
+        public: false
+        arguments:
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_scope.scope_manager'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+        tags:
+            - { name: 'oro_promotion.promotion_context_converter' }
+
+    oro_promotion.promotion.checkout_context_data_converter:
+        class: Oro\Bundle\PromotionBundle\Context\CheckoutContextDataConverter
+        public: false
+        arguments:
+            - '@oro_checkout.data_provider.converter.checkout_to_order'
+            - '@oro_promotion.promotion.order_context_data_converter'
+        tags:
+            - { name: 'oro_promotion.promotion_context_converter' }
+
+    oro_promotion.discount.strategy_registry:
+        class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyRegistry
+        public: false
+
+    oro_promotion.discount.strategy_provider:
+        class: Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider
+        public: false
+        arguments:
+            - '@oro_promotion.discount.strategy_registry'
+            - '@oro_config.manager'
+
+    oro_promotion.discount.strategy.apply_all_strategy:
+        class: Oro\Bundle\PromotionBundle\Discount\Strategy\ApplyAllStrategy
+        public: false
+        tags:
+            - { name: oro_promotion.discount_strategy, alias: apply_all }
+
+    oro_promotion.discount.strategy.profitable_strategy:
+        class: Oro\Bundle\PromotionBundle\Discount\Strategy\ProfitableStrategy
+        public: false
+        tags:
+            - { name: oro_promotion.discount_strategy, alias: profitable }
+
+    oro_promotion.form.type.promotion_select:
+        class: Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType
+        tags:
+            - { name: form.type, alias: oro_promotion_select }
+
+    oro_promotion.form.type.order_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountOptionsType
+        tags:
+            - { name: form.type, alias: oro_promotion_order_discount_options }
+
+    oro_promotion.form.type.line_item_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType
+        tags:
+            - { name: form.type, alias: oro_promotion_line_item_discount_options }
+
+    oro_promotion.form.type.buy_x_get_y_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\BuyXGetYDiscountOptionsType
+        tags:
+            - { name: form.type, alias: oro_promotion_buy_x_get_y_discount_options }
+
+    oro_promotion.form.type.discount_free_shipping:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType
+        tags:
+            - { name: form.type, alias: oro_promotion_discount_free_shipping_choice }
+
+    oro_promotion.form.type.discount_strategy_select:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountStrategySelectType
+        arguments:
+            - '@oro_promotion.discount.strategy_registry'
+        tags:
+            - { name: form.type, alias: oro_discount_strategy_select }
+
+    oro_promotion.form.autocomplete.promotion.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_promotion.entity.promotion.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_promotion, acl_resource: oro_promotion_view }
+
+    oro_promotion.discount.shipping_discount:
+        class: Oro\Bundle\PromotionBundle\Discount\ShippingDiscount
+        shared: false
+
+    oro_promotion.discount.order_discount:
+        class: Oro\Bundle\PromotionBundle\Discount\OrderDiscount
+        shared: false
+        arguments:
+            - '@oro_promotion.discount.shipping_discount'
+
+    oro_promotion.discount.line_item_discount:
+        class: Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount
+        shared: false
+        arguments:
+            - '@oro_promotion.discount.shipping_discount'
+
+    oro_promotion.discount.buy_x_get_y_discount:
+        class: Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount
+        shared: false
+
+    oro_promotion.discount_type_to_form_type_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider
+        calls:
+            - ['setDefaultFormType', ['oro_promotion_order_discount_options']]
+            - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
+            - ['addFormType', ['line_item', 'oro_promotion_line_item_discount_options']]
+            - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
+
+    oro_promotion.layout.discount_information_data_provider:
+        class: Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider
+        arguments:
+            - '@oro_promotion.promotion_executor'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: layout.data_provider, alias: oro_promotion_discounts_information }
+
+    oro_promotion.promotion_executor:
+        class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
+        arguments:
+            - '@oro_promotion.promotion_provider'
+            - '@oro_promotion.discount.context_converter.registry'
+            - '@oro_promotion.discount_factory'
+            - '@oro_promotion.discount.strategy_provider'
+            - '@oro_promotion.provider.matching_products_provider'
+
+    oro_promotion.provider.matching_products_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
+        public: false
+        arguments:
+            - '@oro_segment.segment_manager'
+
+    oro_promotion.provider.applied_discounts_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider
+        public: false
+        arguments:
+            - '@oro.cache.memory_cache_chain'
+            - '@oro_entity.doctrine_helper'
+
+    oro_promotion.provider.subtotal_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
+        public: false
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_promotion.promotion_executor'
+            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@oro_currency.rounding.price_rounding_service'
+            - '@translator'
+        tags:
+            - { name: oro_pricing.subtotal_provider, priority: 0 }
+
+    oro_promotion.event_listener.payment_discount_surcharge:
+        class: Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener
+        arguments:
+            - '@oro_promotion.provider.subtotal_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
+
+    oro_promotion.form.type.promotion:
+        class: Oro\Bundle\PromotionBundle\Form\Type\PromotionType
+        tags:
+            - { name: form.type, alias: oro_promotion }
+
+    oro_promotion.customer_scope_criteria_provider.link:
+        public: false
+        tags:
+            - { name: oro_service_link, service: oro_customer.customer_scope_criteria_provider }
+            - { name: oro_scope.provider, scopeType: promotion, priority: 20 }
+
+    oro_promotion.customer_group_scope_criteria_provider.link:
+        public: false
+        tags:
+            - { name: oro_service_link, service: oro_customer.customer_group_scope_criteria_provider }
+            - { name: oro_scope.provider, scopeType: promotion, priority: 30 }
+
+    oro_promotion.form.type.discount_options:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType
+        arguments:
+            - '@oro_promotion.discount_type_to_form_type_provider'
+        tags:
+            - { name: form.type, alias: oro_promotion_discount_options }
+
+    oro_promotion.form.type.discounts:
+        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountConfigurationType
+        arguments:
+            - '@oro_promotion.discount_type_to_form_type_provider'
+        tags:
+            - { name: form.type, alias: oro_promotion_discount_configuration }
+
+    oro_promotion.repository.promotion:
+        class: Oro\Bundle\PromotionBundle\Entity\Repository\PromotionRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_promotion.entity.promotion.class%'
+
+    oro_promotion.placeholder.discount_information_placeholder_filter:
+        class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
+
+    oro_promotion.placeholder.order_additional_placeholder_filter:
+        class: Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter
+
+    oro_promotion.event_listener.order:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
+        public: false
+        arguments:
+             - '@oro_promotion.applied_discount_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: preRemove }
+
+    oro_promotion.event_listener.order_line_item:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemEntityListener
+        public: false
+        arguments:
+             - '@oro_promotion.applied_discount_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order_line_item.class%', event: preRemove }
+
+    oro_promotion.applied_discount_manager:
+        class: Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager
+        arguments:
+            - '@service_container'
+            - '@oro_entity.doctrine_helper'
+
+    oro_promotion.event_listener.order_view_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderViewListener
+        arguments:
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
+
+    oro_promotion.event_listener.grid.order_line_item:
+        class: 'Oro\Bundle\PromotionBundle\EventListener\OrderLineItemGridListener'
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid-frontend, method: onBuildBefore }
+
+    oro_promotion.form.extension.order_line_item:
+        class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderLineItemTypeExtension'
+        arguments:
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_tax.manager.tax_manager'
+            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@oro_order.form.section.provider'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType' }
+
+    oro_promotion.form.extension.order:
+        class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension'
+        arguments:
+            - '@request_stack'
+            - '@oro_promotion.applied_discount_manager'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }

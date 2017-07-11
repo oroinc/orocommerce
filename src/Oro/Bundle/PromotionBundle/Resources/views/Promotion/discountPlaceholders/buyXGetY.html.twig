@@ -1,0 +1,14 @@
+{% extends 'OroPromotionBundle:Promotion/discountPlaceholders:baseDiscountPlaceholder.html.twig' %}
+
+{% block content %}
+    {% set options = entity.discountConfiguration.options %}
+    {% set data = [
+        UI.renderProperty('oro.discount_options.buy_x_get_y_type.buy_x.label'|trans, options['buy_x']),
+        UI.renderProperty('oro.discount_options.buy_x_get_y_type.get_y.label'|trans, options['get_y']),
+        UI.renderProperty('oro.discount_options.buy_x_get_y_type.product_unit.label'|trans, options['discount_product_unit_code']),
+        UI.renderProperty('oro.discount_options.buy_x_get_y_type.apply_to.label'|trans, ('oro.discount_options.buy_x_get_y_type.apply_to.choices.' ~ options['discount_apply_to'])|trans),
+        UI.renderProperty('oro.discount_options.buy_x_get_y_type.limit_times.label'|trans, options['discount_limit'])
+    ] %}
+
+    {{ parent() }}
+{% endblock %}
