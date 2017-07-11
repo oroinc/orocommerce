@@ -154,7 +154,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
         public: false
         arguments:
-            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.context.criteria_data_provider'
             - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
             - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
@@ -166,13 +166,19 @@ services:
         class: Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter
         public: false
         arguments:
-            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.context.criteria_data_provider'
             - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
-            - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
+
+    oro_promotion.context.criteria_data_provider:
+        class: Oro\Bundle\PromotionBundle\Context\CriteriaDataProvider
+        public: false
+        arguments:
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_website.manager'
 
     oro_promotion.promotion.checkout_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\CheckoutContextDataConverter
