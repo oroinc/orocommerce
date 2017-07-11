@@ -77,6 +77,9 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
 - Class `Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy`
     - method `setSecurityFacade` was replaced with `setTokenAccessor`
+- Class `Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery` was removed
+- Class `Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId` was removed
+- Class `Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId` was removed
 - Adding Brand functionality to ProductBundle
     - New class `Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController` was added
     - New class `Oro\Bundle\ProductBundle\Controller\BrandController` was added
@@ -95,7 +98,9 @@ ProductBundle
     - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
 - Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
+
 - Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
+
 - `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
     
 PaymentBundle
@@ -268,3 +273,11 @@ FlatRateShippingBundle
 ----------------------
 - Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
 - previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
+
+InventoryBundle
+--------------
+- Class `Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleInventoryLevelQuery` was removed
+- Class `Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData` was removed
+- Previously deprecated class `Oro\Bundle\InventoryBundle\Api\Processor\JsonApi\FixProductUnitPrecisionUnitCodeFilter` was now removed
+- Inventory API has changed. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/InventoryBundle/doc/api/inventory-level.md) for more information.
+
