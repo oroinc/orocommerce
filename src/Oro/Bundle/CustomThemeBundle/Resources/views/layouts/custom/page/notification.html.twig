@@ -1,0 +1,9 @@
+{% block _notification_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-sticky': {
+            'toggleClass': 'notification-flash-container--fixed',
+            'placeholderId': 'sticky-element-notification'
+        }
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}

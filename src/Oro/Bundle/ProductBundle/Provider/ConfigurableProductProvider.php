@@ -6,6 +6,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry;
+use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 
 class ConfigurableProductProvider
 {
@@ -20,6 +22,11 @@ class ConfigurableProductProvider
     protected $productVariantAvailabilityProvider;
 
     /**
+     * @var ProductVariantFieldValueHandlerRegistry
+     */
+    protected $fieldValueHandlerRegistry;
+
+    /**
      * @var PropertyAccessor
      */
     private $propertyAccessor;
@@ -28,15 +35,18 @@ class ConfigurableProductProvider
      * @param CustomFieldProvider $customFieldProvider
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param PropertyAccessor $propertyAccessor
+     * @param ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
      */
     public function __construct(
         CustomFieldProvider $customFieldProvider,
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessor $propertyAccessor,
+        ProductVariantFieldValueHandlerRegistry $fieldValueHandlerRegistry
     ) {
         $this->customFieldProvider = $customFieldProvider;
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->propertyAccessor = $propertyAccessor;
+        $this->fieldValueHandlerRegistry = $fieldValueHandlerRegistry;
     }
 
     /**
@@ -53,6 +63,7 @@ class ConfigurableProductProvider
         foreach ($lineItems as $key => $value) {
             $variantFieldNames += $this->getLineItemProduct($value);
         }
+
         return $variantFieldNames;
     }
 
@@ -77,6 +88,7 @@ class ConfigurableProductProvider
                 $customFields
             );
         }
+
         return $variantFieldNames;
     }
 
@@ -89,15 +101,16 @@ class ConfigurableProductProvider
     private function getVariantFields(Product $product, $variantFields, $customFields)
     {
         $fields = [];
-        foreach ($variantFields as $key => $value) {
-            $fieldValue = $this->propertyAccessor->getValue($product, $value);
+        foreach ($variantFields as $key => $fieldName) {
+            $fieldValue = $this->propertyAccessor->getValue($product, $fieldName);
             if ($fieldValue === null) {
                 continue;
             }
-            $fields[$value] = $this->prepareFieldByType(
-                $customFields[$value]['type'],
+            $fields[$fieldName] = $this->prepareFieldByType(
+                $customFields[$fieldName]['type'],
+                $fieldName,
                 $fieldValue,
-                $customFields[$value]['label']
+                $customFields[$fieldName]['label']
             );
         }
 
@@ -105,34 +118,22 @@ class ConfigurableProductProvider
     }
 
     /**
-     * @param $type
-     * @param $fieldValue
-     * @param $label
-     * @return string
+     * @param string $type
+     * @param string $fieldName
+     * @param mixed $fieldValue
+     * @param string $label
+     * @return array
      */
-    private function prepareFieldByType($type, $fieldValue, $label)
+    private function prepareFieldByType($type, $fieldName, $fieldValue, $label)
     {
-        switch ($type) {
-            case 'enum':
-                return [
-                    'value' => $fieldValue->getId(),
-                    'label' => $label,
-                    'type' => 'enum'
-                ];
-            case 'boolean':
-                return [
-                    'value' => $fieldValue,
-                    'label' => $label,
-                    'type' => 'boolean'
-                ];
-            default:
-                throw new \LogicException(
-                    sprintf(
-                        'Incorrect type. Expected "%s", but "%s" given',
-                        implode('" or "', ['boolean', 'enum']),
-                        $type
-                    )
-                );
-        }
+        $handler = $this->fieldValueHandlerRegistry->getVariantFieldValueHandler($type);
+
+        $value = $handler->getHumanReadableValue($fieldName, $fieldValue);
+
+        return [
+            'value' => $value,
+            'label' => $label,
+            'type' => $type,
+        ];
     }
 }

@@ -1,0 +1,34 @@
+system_configuration:
+    groups:
+        promotion:
+            title: oro.promotion.system_configuration.groups.promotion.title
+            icon: 'fa-bullhorn'
+        promotion_general:
+            title: oro.promotion.system_configuration.groups.promotion_general.title
+
+    fields:
+        oro_promotion.feature_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.promotion.system_configuration.fields.feature_enabled.label
+
+        oro_promotion.discount_strategy:
+            data_type: string
+            type: oro_discount_strategy_select
+            options:
+                label: oro.promotion.system_configuration.fields.discount_strategy.label
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    sales:
+                        children:
+                            promotion:
+                                priority: 200
+                                children:
+                                    promotion_general:
+                                        children:
+                                            - oro_promotion.feature_enabled
+                                            - oro_promotion.discount_strategy

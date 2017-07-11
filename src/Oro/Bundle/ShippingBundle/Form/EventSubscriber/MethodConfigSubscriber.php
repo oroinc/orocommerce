@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Form\EventSubscriber;
 
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -19,18 +19,18 @@ class MethodConfigSubscriber implements EventSubscriberInterface
     protected $factory;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
-     * @param FormFactoryInterface $factory
-     * @param ShippingMethodRegistry $methodRegistry
+     * @param FormFactoryInterface            $factory
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
      */
-    public function __construct(FormFactoryInterface $factory, ShippingMethodRegistry $methodRegistry)
+    public function __construct(FormFactoryInterface $factory, ShippingMethodProviderInterface $shippingMethodProvider)
     {
         $this->factory = $factory;
-        $this->methodRegistry = $methodRegistry;
+        $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
     /**
@@ -79,7 +79,7 @@ class MethodConfigSubscriber implements EventSubscriberInterface
      */
     protected function recreateDynamicChildren(FormInterface $form, $method)
     {
-        $shippingMethod = $this->methodRegistry->getShippingMethod($method);
+        $shippingMethod = $this->shippingMethodProvider->getShippingMethod($method);
         $oldOptions = $form->get('typeConfigs')->getConfig()->getOptions();
         $form->add('typeConfigs', ShippingMethodTypeConfigCollectionType::class, array_merge($oldOptions, [
             'is_grouped' => $shippingMethod->isGrouped(),

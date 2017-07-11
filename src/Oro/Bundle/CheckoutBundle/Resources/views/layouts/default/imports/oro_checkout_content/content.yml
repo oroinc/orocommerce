@@ -42,6 +42,32 @@ layout:
                         lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
                         workflowItem: '=data["workflowItem"]'
                         configurableProducts: '=data["oro_product_configurable_products"].getProducts(data["checkout"].getLineItems())'
+
+                __checkout_order_summary_line_item_row:
+                    blockType: container
+                __checkout_order_summary_line_item_info_column:
+                    blockType: container
+                __checkout_order_summary_line_item_name:
+                    blockType: block
+                __checkout_order_summary_line_item_sku:
+                    blockType: block
+                __checkout_order_summary_line_item_configurable_products:
+                    blockType: block
+                __checkout_order_summary_line_item_quantity_column:
+                    blockType: container
+                __checkout_order_summary_line_item_quantity:
+                    blockType: block
+                __checkout_order_summary_line_item_price_column:
+                    blockType: container
+                __checkout_order_summary_line_item_price_per_item:
+                    blockType: block
+                __checkout_order_summary_line_item_price_row_total:
+                    blockType: block
+                __checkout_order_summary_line_item_edit:
+                    blockType: block
+                __checkout_order_summary_line_item_errors:
+                    blockType: block
+
                 __checkout_order_summary_totals:
                     blockType: price_totals
                     options:
@@ -77,5 +103,16 @@ layout:
                                     __checkout_button_back: ~
                         __checkout_order_summary:
                             __checkout_order_summary_table:
-                                __checkout_order_summary_line_items: ~
+                                __checkout_order_summary_line_items:
+                                    __checkout_order_summary_line_item_row:
+                                        __checkout_order_summary_line_item_info_column:
+                                            __checkout_order_summary_line_item_name: ~
+                                            __checkout_order_summary_line_item_sku: ~
+                                            __checkout_order_summary_line_item_configurable_products: ~
+                                        __checkout_order_summary_line_item_quantity_column:
+                                            __checkout_order_summary_line_item_quantity: ~
+                                        __checkout_order_summary_line_item_price_column:
+                                            __checkout_order_summary_line_item_price_per_item: ~
+                                            __checkout_order_summary_line_item_price_row_total: ~
+                                    __checkout_order_summary_line_item_errors: ~
                                 __checkout_order_summary_totals: ~

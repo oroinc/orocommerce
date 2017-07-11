@@ -102,7 +102,13 @@ Oro\Bundle\ProductBundle\Model\ProductRow:
         productSku:
             - NotBlank: ~
         productQuantity:
-            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Range:
+                min: 0
+                max: 999999999
+                minMessage: oro.product.frontend.quick_add.validation.quantity_min
+                maxMessage: oro.product.frontend.quick_add.validation.quantity_max
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                message: oro.product.frontend.quick_add.validation.quantity_min
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
 Oro\Bundle\ProductBundle\Model\ProductLineItem:
@@ -125,3 +131,36 @@ Oro\Bundle\ProductBundle\Model\ProductLineItem:
 Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
     constraints:
         - Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantField: ~
+
+Oro\Bundle\ProductBundle\Model\QuickAddRowCollection:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection: ~
+
+Oro\Bundle\ProductBundle\Model\QuickAddRow:
+    group_sequence:
+        - QuickAddRow
+        - ProductUnit
+        - QuantityUnitPrecision
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
+            groups: [ProductUnit]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
+            groups: [QuantityUnitPrecision]
+    properties:
+        sku:
+            - NotBlank:
+                message: oro.product.frontend.quick_add.validation.not_found
+        product:
+            - NotNull:
+                message: oro.product.frontend.quick_add.validation.product_not_found
+        quantity:
+            - NotBlank: ~
+            - Range:
+                min: 0
+                max: 999999999
+                minMessage: oro.product.frontend.quick_add.validation.quantity_min
+                maxMessage: oro.product.frontend.quick_add.validation.quantity_max
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                message: oro.product.frontend.quick_add.validation.quantity_min
+        unit:
+            - NotBlank: ~

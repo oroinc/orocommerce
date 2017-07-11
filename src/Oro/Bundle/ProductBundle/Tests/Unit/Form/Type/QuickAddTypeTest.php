@@ -15,8 +15,11 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductRowType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitsType;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class QuickAddTypeTest extends FormIntegrationTestCase
 {
@@ -28,7 +31,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new QuickAddType();
+        $this->formType = new QuickAddType(new ProductsGrouperFactory());
 
         parent::setUp();
     }
@@ -38,12 +41,17 @@ class QuickAddTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $unitsProviderMock = $this->getMockBuilder(ProductUnitsProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension([
                 ProductRowCollectionType::NAME => new ProductRowCollectionType(),
                 ProductRowType::NAME => new ProductRowType(),
                 CollectionType::NAME => new CollectionType(),
                 ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
+                ProductUnitsType::NAME => new ProductUnitsType($unitsProviderMock)
             ], []),
             new ValidatorExtension(Validation::createValidator())
         ];

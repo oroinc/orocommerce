@@ -2,59 +2,216 @@ define(function(require) {
     'use strict';
 
     var QuickAddCopyPasteFormComponent;
+    var QuickAddImportFormComponent = require('oroproduct/js/app/components/quick-add-import-form-component');
+    var ProductHelper = require('oroproduct/js/app/product-helper');
+    var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
-    var QuickAddImportWidget = require('oro/quick-add-import-widget');
-    var BaseComponent = require('oroui/js/app/components/base/component');
 
-    QuickAddCopyPasteFormComponent = BaseComponent.extend({
+    QuickAddCopyPasteFormComponent = QuickAddImportFormComponent.extend({
+        /**
+         * {@inheritDoc}
+         */
+        field: 'textarea',
+
+        /**
+         * @property {Array}
+         */
+        parsedItems: [],
+
+        /**
+         * @property {Array}
+         */
+        fieldItemsLines: [],
+
+        /**
+         * {@inheritDoc}
+         */
+        fieldEvent: 'change blur keyup',
+
+        /**
+         * {@inheritDoc}
+         */
+        isAdoptedFormSubmit: false,
+
+        validator: null,
+
         /**
          * {@inheritDoc}
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
-            var $form = this.options._sourceElement;
-            var $field = $form.find('textarea');
+            QuickAddCopyPasteFormComponent.__super__.initialize.apply(this, arguments);
 
-            $form.on('submit', function(e) {
-                e.preventDefault();
+            this.validator = this.$form.validate();
+            delete this.validator.settings.onkeyup; //validate only on change/blur/submit
 
-                var form = $(e.target);
+            mediator.on('quick-add-form-item:item-valid', this.onAutocompleteSuccess, this);
+            mediator.on('quick-add-form-item:unit-invalid', this.onUnitError, this);
+            mediator.on('autocomplete:productNotFound', this.onAutocompleteError, this);
+            mediator.on('quick-add-copy-paste-form:update-product', this.onProductUpdate, this);
+        },
 
-                form.validate();
+        _handleFieldEvent: function(e) {
+            if (e.type === 'keyup') {
+                this._toggleSubmitButton();
+            } else {
+                var val = $(e.target).val();
+                $(e.target).val(ProductHelper.trimAllWhiteSpace(val));
+            }
+        },
 
-                if (!form.valid()) {
-                    return false;
+        _toggleSubmitButton: function() {
+            this.$form.validate();
+            var disabled = !this.$form.valid() || $(this.field, this.$form).val() === '';
+            $('button:submit', this.$form)
+                .toggleClass('btn--primary btn--disabled', disabled)
+                .toggleClass('btn--info', !disabled);
+        },
+
+        _onSubmit: function(e) {
+            e.preventDefault();
+
+            var form = $(e.target);
+
+            form.validate();
+
+            if (!form.valid()) {
+                return false;
+            }
+
+            this._prepareFieldItems(form);
+            mediator.trigger('quick-add-copy-paste-form:submit', this.parseInput($(this.field, form).val()));
+        },
+
+        _prepareFieldItems: function(form) {
+            this.fieldItemsLines = _.map($(this.field, form).val().trim().split('\n'), function(itemLine) {
+                return {processed: false, line: itemLine};
+            });
+        },
+
+        parseInput: function(inputValue) {
+            this.parsedItems = [];
+
+            _.each(inputValue.split('\n'), function(valueRow, index) {
+                var values = valueRow.split(/[;, \t]+/);
+                var product = {
+                    sku: values[0] ? values[0].trim().toUpperCase() : undefined,
+                    quantity: values[1] ? parseFloat(values[1].trim()) : undefined,
+                    unit: values[2] ? values[2].trim() : undefined,
+                    index: index
+                };
+
+                var skuUnitMatcher = _.matcher({sku: product.sku, unit: product.unit});
+                var existingProductIndex = _.findIndex(this.parsedItems, skuUnitMatcher);
+
+                if (existingProductIndex === -1) {
+                    this.addParsedItem(product);
+                    return;
                 }
 
-                var widget = new QuickAddImportWidget({
-                    'dialogOptions': {
-                        'title': __('oro.product.frontend.quick_add.import_validation.title'),
-                        'modal': true,
-                        'resizable': false,
-                        'width': 820,
-                        'autoResize': true,
-                        'dialogClass': 'ui-dialog-no-scroll'
-                    }
-                });
+                var existingProduct = _.find(this.parsedItems, skuUnitMatcher);
+                this.updateParsedItem(existingProduct, existingProductIndex, product);
+            }, this);
 
-                widget.stateEnabled = false;
-                widget.incrementalPosition = false;
-                widget.firstRun = false;
-                widget.loadContent(form.serialize(), form.attr('method'), form.attr('action'));
+            return this.parsedItems;
+        },
+
+        addParsedItem: function(data) {
+            this.parsedItems.push({
+                sku: data.sku,
+                quantity: data.quantity,
+                unit: data.unit,
+                index: [data.index]
             });
+        },
 
-            var validator = $form.validate();
-            delete validator.settings.onkeyup;//validate only on change/blur/submit
+        updateParsedItem: function(existingProduct, existingProductIndex, data) {
+            existingProduct.index.push(data.index);
 
-            $field.on('change blur', function() {
-                var val = $field.val();
-                val = val.replace(/(\n|\r\n|^)\s+/g, '$1')//trim white space in each line start
-                    .replace(/\s+(\n|\r\n|$)/g, '$1');//trim white space in each line end
-                $field.val(val);
-            });
+            this.parsedItems[existingProductIndex] = {
+                sku: data.sku,
+                quantity: existingProduct.quantity + data.quantity,
+                unit: data.unit,
+                index: existingProduct.index
+            };
+        },
 
+        /**
+         * @param {object} data
+         */
+        onAutocompleteSuccess: function(data) {
+            this._updateField(_.matcher({sku: data.item.sku}));
+        },
+
+        /**
+         * @param {object} data
+         */
+        onProductUpdate: function(data) {
+            this._updateField(_.matcher({sku: data.sku}));
+        },
+
+        _updateField: function(skuMatcher) {
+            var form = this.$form;
+            var newInputValueLines = [];
+            var itemIndex = _.findIndex(this.parsedItems, skuMatcher);
+
+            if (itemIndex === -1) {
+                return;
+            }
+
+            _.each(this.fieldItemsLines, function(itemLine, i) {
+                if (itemLine.processed === true) {
+                    return;
+                }
+
+                if (this.parsedItems[itemIndex].index.indexOf(i) !== -1) {
+                    this.fieldItemsLines[i].processed = true;
+                    return;
+                }
+
+                newInputValueLines.push(itemLine.line);
+            }, this);
+
+            this.parsedItems.splice(itemIndex, 1);
+            $(this.field, form).val(newInputValueLines.join('\n')).trigger('keyup');
+        },
+
+        /**
+         * @param {object} data
+         * @param {boolean} forceRemove
+         */
+        onAutocompleteError: function(data, forceRemove) {
+            if (forceRemove || _.findIndex(this.parsedItems, _.matcher({sku: data.$el.val()})) !== -1) {
+                data.$el.closest('[data-role="row"]').find('[data-role="row-remove"]').click();
+                var addMoreRowsButton = $('.add-list-item');
+                addMoreRowsButton.data('row-add-only-one', true);
+                addMoreRowsButton.click();
+            }
+            this._showErrorMessage();
+        },
+
+        onUnitError: function(data) {
+            this.onAutocompleteError(data, true);
+        },
+
+        _showErrorMessage: function() {
+            var _errorField = $(this.field, this.$form).attr('name');
+            var _customError = [];
+            _customError[_errorField]  = __('oro.product.frontend.quick_add.copy_paste.error');
+
+            if ($(this.field, this.$form).val().length > 0) {
+                this.validator.showErrors(_customError);
+            }
+        },
+
+        dispose: function() {
+            if (!this.disposed) {
+                return;
+            }
+
+            delete this.validator;
+            QuickAddCopyPasteFormComponent.__super__.dispose.call(this);
         }
     });
 

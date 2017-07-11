@@ -41,7 +41,9 @@
             <% } %>
         </div>
     </div>
-    <i class="shopping-lists__edit"></i>
+    {% if not is_one_shopping_list_enabled() %}
+        <i class="shopping-lists__edit"></i>
+    {% endif %}
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_widget %}
@@ -51,6 +53,7 @@
             {{ block_widget(block) }}
         {% endspaceless %}
     {% endset %}
+    {% if not is_one_shopping_list_enabled() %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/widget-component',
         '~data-page-component-options': {
@@ -70,6 +73,7 @@
         },
         '~class': ' shopping-lists__area-trigger'
     }) %}
+    {% endif %}
     <a {{ block('block_attributes') }}></a>
 {% endblock %}
 
@@ -149,9 +153,6 @@
                                                                 route: 'oro_api_shopping_list_frontend_delete_line_item',
                                                                 routeParams: {
                                                                     id: '<%= lineItem.id %>'
-                                                                },
-                                                                triggerData: {
-                                                                    lineItemId: '<%= lineItem.id %>'
                                                                 },
                                                                 confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                                                 sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans

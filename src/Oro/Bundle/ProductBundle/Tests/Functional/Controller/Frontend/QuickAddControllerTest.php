@@ -6,23 +6,16 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-abstract class QuickAddControllerTest extends WebTestCase
+class QuickAddControllerTest extends WebTestCase
 {
-    const VALIDATION_TOTAL_ROWS      = 'Total number of records';
-    const VALIDATION_VALID_ROWS      = 'Valid items';
-    const VALIDATION_ERROR_ROWS      = 'Records with errors';
-    const VALIDATION_ERRORS          = 'Errors';
-    const VALIDATION_RESULT_SELECTOR = 'div.validation-info table tbody tr';
-    const VALIDATION_ERRORS_SELECTOR = 'div.import-errors ol li';
-    const VALIDATION_ERROR_NOT_FOUND = 'Item number %s not found.';
-    const VALIDATION_ERROR_MALFORMED = 'Row #%d has invalid format.';
+    const VALIDATION_RESULT_SELECTOR        = 'div.validation-info table tbody tr';
+    const VALIDATION_ERRORS_SELECTOR        = 'div.import-errors ol li';
 
     protected function setUp()
     {
@@ -41,100 +34,6 @@ abstract class QuickAddControllerTest extends WebTestCase
     }
 
     /**
-     * @param string $processorName
-     * @param string $routerName
-     * @param array  $routerParams
-     * @param string $expectedMessage
-     *
-     * @dataProvider validationResultProvider
-     */
-    public function testCopyPasteAction($processorName, $routerName, array $routerParams, $expectedMessage)
-    {
-        $example = [
-            "10, 5",
-            ucfirst(LoadProductData::PRODUCT_1) . ", 1",
-            ucwords(LoadProductData::PRODUCT_2) . ",     2",
-            strtoupper(LoadProductData::PRODUCT_3) . "\t3",
-            "not-existing-product\t  4",
-        ];
-
-        $expectedValidationResult = [
-            self::VALIDATION_TOTAL_ROWS => 5,
-            self::VALIDATION_VALID_ROWS => 3,
-            self::VALIDATION_ERROR_ROWS => 2,
-            self::VALIDATION_ERRORS     => [
-                sprintf(self::VALIDATION_ERROR_NOT_FOUND, '10'),
-                sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'not-existing-product'),
-            ]
-        ];
-
-        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(htmlentities('Paste your order'), $crawler->html());
-
-        $form = $crawler->selectButton('Verify Order')->form();
-        $this->updateFormActionToDialog($form);
-        $form['oro_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
-
-        $crawler = $this->client->submit($form);
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
-
-        //test result form actions (create rfp, create order, add to shopping list)
-        $resultForm = $crawler->selectButton('Cancel')->form();
-        $this->updateFormActionToDialog($resultForm);
-        $resultForm['oro_product_quick_add[component]'] = $processorName;
-        $this->client->submit($resultForm);
-        $response  = $this->client->getResponse();
-        $result    = static::getJsonResponseContent($response, 200);
-        $targetUrl = $result['redirectUrl'];
-
-        $expectedTargetUrl = $this->getUrl($routerName, $routerParams);
-        $this->assertEquals($expectedTargetUrl, $targetUrl);
-
-        $this->client->request('GET', $targetUrl);
-        $response = $this->client->getResponse();
-
-        $this->assertHtmlResponseStatusCodeEquals($response, 200);
-
-        if ($expectedMessage) {
-            $this->assertContains($expectedMessage, $this->client->getResponse()->getContent());
-        }
-    }
-
-    public function testVisibilityCopyPasteAction()
-    {
-        $example = [
-            LoadProductData::PRODUCT_1 . ", 1",
-            LoadProductData::PRODUCT_2 . ",     2",
-            LoadProductData::PRODUCT_3 . "\t3",
-            LoadProductData::PRODUCT_4 . "\t1" //Hidden product
-        ];
-
-        $expectedValidationResult = [
-            self::VALIDATION_TOTAL_ROWS => 4,
-            self::VALIDATION_VALID_ROWS => 3,
-            self::VALIDATION_ERROR_ROWS => 1,
-            self::VALIDATION_ERRORS     => [
-                sprintf(self::VALIDATION_ERROR_NOT_FOUND, LoadProductData::PRODUCT_4),
-            ]
-        ];
-
-        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(htmlentities('Paste your order'), $crawler->html());
-
-        $form = $crawler->selectButton('Verify Order')->form();
-        $this->updateFormActionToDialog($form);
-        $form['oro_product_quick_add_copy_paste[copyPaste]'] = implode(PHP_EOL, $example);
-        $crawler = $this->client->submit($form);
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
-    }
-
-    /**
      * @param string      $file
      * @param null|array  $expectedValidationResult
      * @param null|string $formErrorMessage
@@ -143,22 +42,15 @@ abstract class QuickAddControllerTest extends WebTestCase
      */
     public function testImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
     {
-        $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
         $this->assertContains('Import Excel .CSV File', $response->getContent());
 
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                'oro_product_frontend_quick_add_import',
-                ['_widgetContainer' => 'dialog']
-            )
-        );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
+        $form = $crawler->filter('form[name="oro_product_quick_add_import_from_file"] input[type="submit"]')->form();
 
-        $form = $crawler->selectButton('Upload')->form();
         $this->updateFormActionToDialog($form);
 
         if (file_exists($file)) {
@@ -179,11 +71,6 @@ abstract class QuickAddControllerTest extends WebTestCase
     /**
      * @return array
      */
-    abstract public function validationResultProvider();
-
-    /**
-     * @return array
-     */
     public function importFromFileProvider()
     {
         $dir         = __DIR__ . '/files/';
@@ -194,14 +81,8 @@ abstract class QuickAddControllerTest extends WebTestCase
         $emptyCSV    = $dir . 'quick-order-empty.csv';
 
         $expectedValidationResult = [
-            self::VALIDATION_TOTAL_ROWS => 6,
-            self::VALIDATION_VALID_ROWS => 3,
-            self::VALIDATION_ERROR_ROWS => 3,
-            self::VALIDATION_ERRORS     => [
-                sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'SKU1'),
-                sprintf(self::VALIDATION_ERROR_MALFORMED, 6),
-                sprintf(self::VALIDATION_ERROR_MALFORMED, 7)
-            ]
+            'product-1 - product-1.names.default' => 1,
+            'product-3 - product-3.names.default' => 3
         ];
 
         return [
@@ -220,18 +101,21 @@ abstract class QuickAddControllerTest extends WebTestCase
             'empty CSV'    => [
                 'file'                     => $emptyCSV,
                 'expectedValidationResult' => null,
-                'formErrorMessage'         => 'An empty file is not allowed.'
+                'formErrorMessage'         =>
+                    'We have not been able to identify any product references in the uploaded file'
             ],
             'invalid DOC'  => [
                 'file'                     => $invalidDOC,
                 'expectedValidationResult' => null,
-                'formErrorMessage'         => 'This file type is not allowed'
+                'formErrorMessage'         =>
+                    'We have not been able to identify any product references in the uploaded file'
             ],
             'without file' => [
                 'file'                     => null,
                 'expectedValidationResult' => null,
-                'formErrorMessage'         => 'This value should not be blank'
-            ]
+                'formErrorMessage'         =>
+                    'We have not been able to identify any product references in the uploaded file'
+            ],
         ];
     }
 

@@ -4,42 +4,69 @@ acls:
         label: oro.sale.security.permission.address_shipping_customer_use_any
         type: action
         group_name: "commerce"
+        category: "quotes"
 
     oro_quote_address_shipping_customer_use_any_backend:
         label: oro.sale.security.permission.address_shipping_customer_use_any
         type: action
+        category: "quotes"
 
     # Use the default shipping address from the customer user's address book
     oro_quote_address_shipping_customer_user_use_default:
         label: oro.sale.security.permission.address_shipping_customer_user_use_default
         type: action
         group_name: "commerce"
+        category: "quotes"
 
     oro_quote_address_shipping_customer_user_use_default_backend:
         label: oro.sale.security.permission.address_shipping_customer_user_use_default
         type: action
+        category: "quotes"
 
     # Use any shipping address from the customer user's address book
     oro_quote_address_shipping_customer_user_use_any:
         label: oro.sale.security.permission.address_shipping_customer_user_use_any
         type: action
         group_name: "commerce"
+        category: "quotes"
 
     oro_quote_address_shipping_customer_user_use_any_backend:
         label: oro.sale.security.permission.address_shipping_customer_user_use_any
         type: action
+        category: "quotes"
 
     # Enter the shipping address manually
     oro_quote_address_shipping_allow_manual:
         label: oro.sale.security.permission.address_shipping_allow_manual
         type: action
         group_name: "commerce"
+        category: "quotes"
 
     oro_quote_address_shipping_allow_manual_backend:
         label: oro.sale.security.permission.address_shipping_allow_manual
         type: action
+        category: "quotes"
 
     # Can override payment term
     oro_quote_payment_term_customer_can_override:
         label: oro.sale.security.permission.payment_term_customer_can_override
         type: action
+        category: "quotes"
+
+    # Override quote prices
+    oro_quote_prices_override:
+        label: oro.sale.security.permission.quote_prices_override
+        type: action
+        category: "quotes"
+
+    # Review and approve quotes
+    oro_quote_review_and_approve:
+        label: oro.sale.security.permission.quote_review_and_approve
+        type: action
+        category: "quotes"
+
+    # Add free-form items
+    oro_quote_add_free_form_items:
+        label: oro.sale.security.permission.add_free_form_items
+        type: action
+        category: "quotes"

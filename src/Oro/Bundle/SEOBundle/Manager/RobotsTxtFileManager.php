@@ -10,6 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class RobotsTxtFileManager
 {
     const ROBOTS_TXT_FILENAME = 'robots.txt';
+    const AUTO_GENERATED_MARK = '# auto-generated';
 
     /**
      * @var LoggerInterface

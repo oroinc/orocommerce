@@ -1,5 +1,5 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
-@fixture-ShippingMethodsConfigsRule.yml
+@fixture-OroShippingBundle:ShippingMethodsConfigsRule.yml
 Feature: Applying shipping rules
   In order to decrease shipping cost for buyers
   As administrator

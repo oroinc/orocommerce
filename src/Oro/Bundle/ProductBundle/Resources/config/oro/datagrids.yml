@@ -806,14 +806,14 @@ datagrids:
                 rowAction:     true
 
     brand-grid:
-        extended_entity_name: 'Oro\Bundle\ProductBundle\Entity\Brand'
+        extended_entity_name: %oro_product.entity.brand.class%
         source:
             type: orm
             query:
                 select:
                     - brand.id
                 from:
-                    - { table: 'Oro\Bundle\ProductBundle\Entity\Brand', alias: brand }
+                    - { table: %oro_product.entity.brand.class%, alias: brand }
         columns:
             brandName:
                 label: oro.product.brand.names.label

@@ -12,7 +12,8 @@ class OroValidationExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroValidationExtension());
 
         $expectedDefinitions = [
-            'oro_validation.validator_constraints.not_blank_one_of'
+            'oro_validation.validator_constraints.not_blank_one_of',
+            'oro_validation.validator_constraints.blank_one_of',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

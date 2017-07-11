@@ -47,7 +47,7 @@ class ProductUnitsType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Form\Handler;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,17 +12,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+use Oro\Bundle\ProductBundle\Exception\EmptyCollectionException;
 use Oro\Bundle\ProductBundle\Model\ProductRow;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
+use Oro\Bundle\ProductBundle\Helper\ProductGrouper\ProductsGrouperFactory;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 use Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\ProductBundle\Event\QuickAddRowsCollectionReadyEvent;
 
 class QuickAddHandler
 {
@@ -40,7 +45,9 @@ class QuickAddHandler
      */
     protected $componentRegistry;
 
-    /** @var UrlGeneratorInterface */
+    /**
+     * @var UrlGeneratorInterface
+     */
     protected $router;
 
     /**
@@ -49,24 +56,43 @@ class QuickAddHandler
     protected $translator;
 
     /**
+     * @var ValidatorInterface
+     */
+    protected $validator;
+
+    /**
+     * @var ProductsGrouperFactory
+     */
+    protected $productGrouperFactory;
+
+    /**
      * @param ProductFormProvider $productFormProvider
      * @param QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder
      * @param ComponentProcessorRegistry $componentRegistry
      * @param UrlGeneratorInterface $router
      * @param TranslatorInterface $translator
+     * @param ValidatorInterface $validator
+     * @param ProductsGrouperFactory $productGrouperFactory
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         ProductFormProvider $productFormProvider,
         QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder,
         ComponentProcessorRegistry $componentRegistry,
         UrlGeneratorInterface $router,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ValidatorInterface $validator,
+        ProductsGrouperFactory $productGrouperFactory,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->productFormProvider = $productFormProvider;
         $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
         $this->componentRegistry = $componentRegistry;
         $this->router = $router;
         $this->translator = $translator;
+        $this->validator = $validator;
+        $this->productGrouperFactory = $productGrouperFactory;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -100,7 +126,8 @@ class QuickAddHandler
                 function (ProductRow $productRow) {
                     return [
                         ProductDataStorage::PRODUCT_SKU_KEY => $productRow->productSku,
-                        ProductDataStorage::PRODUCT_QUANTITY_KEY => $productRow->productQuantity
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => $productRow->productQuantity,
+                        ProductDataStorage::PRODUCT_UNIT_KEY => $productRow->productUnit
                     ];
                 },
                 $products
@@ -111,6 +138,7 @@ class QuickAddHandler
                 null,
                 true
             );
+
             $response = $processor->process(
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
@@ -142,7 +170,16 @@ class QuickAddHandler
             $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
             try {
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
-                $this->productFormProvider->getQuickAddForm($collection->getFormData());
+                $this->validateCollection($collection);
+                $collection = $this->productGrouperFactory
+                    ->createProductsGrouper(ProductsGrouperFactory::QUICK_ADD_ROW)
+                    ->process($collection);
+                $this->eventDispatcher->dispatch(
+                    QuickAddRowsCollectionReadyEvent::NAME,
+                    new QuickAddRowsCollectionReadyEvent($collection)
+                );
+                $data = $collection->getFormData();
+                $this->productFormProvider->getQuickAddForm($data);
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
                     $this->translator->trans(
@@ -169,6 +206,7 @@ class QuickAddHandler
         if ($form->isValid()) {
             $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
             $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
+            $this->validateCollection($collection);
             $this->productFormProvider->getQuickAddForm($collection->getFormData());
         }
 
@@ -226,5 +264,16 @@ class QuickAddHandler
         }
 
         return $options;
+    }
+
+    /**
+     * @param QuickAddRowCollection $collection
+     * @throws EmptyCollectionException
+     * @internal param bool $allowEmpty
+     */
+    protected function validateCollection(QuickAddRowCollection $collection)
+    {
+        $this->validator->validate($collection);
+        $collection->validateEventDispatcher();
     }
 }

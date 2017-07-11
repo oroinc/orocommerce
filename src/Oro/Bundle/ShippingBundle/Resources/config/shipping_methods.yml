@@ -1,12 +1,12 @@
 services:
-    oro_shipping.shipping_method.registry:
-        class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
+    oro_shipping.shipping_method_provider:
+        class: 'Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider'
         public: false
 
     oro_shipping.formatter.shipping_method_label:
         class: 'Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter'
         arguments:
-            - "@oro_shipping.shipping_method.registry"
+            - "@oro_shipping.shipping_method_provider"
 
     oro_shipping.translator.shipping_method_label:
         class: 'Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator'
@@ -23,3 +23,8 @@ services:
             - '@oro_shipping.checker.shipping_method_enabled'
         tags:
             - { name: twig.extension }
+
+    oro_shipping.tracking_aware_shipping_methods_provider:
+        class: 'Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider'
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
