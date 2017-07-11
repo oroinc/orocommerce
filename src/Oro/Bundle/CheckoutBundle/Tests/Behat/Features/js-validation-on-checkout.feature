@@ -1,8 +1,8 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
-@fixture-Checkout.yml
-@fixture-InventoryLevel.yml
-@fixture-CheckoutWorkflow.yml
+@fixture-OroCheckoutBundle:Checkout.yml
+@fixture-OroCheckoutBundle:InventoryLevel.yml
+@fixture-OroCheckoutBundle:CheckoutWorkflow.yml
 Feature: Checkout workflow
   Scenario: Check js validation error
     Given There is EUR currency in the system configuration

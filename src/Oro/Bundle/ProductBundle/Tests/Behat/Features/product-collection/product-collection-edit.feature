@@ -1,4 +1,4 @@
-@fixture-product_collection_edit.yml
+@fixture-OroProductBundle:product_collection_edit.yml
 Feature:
   In order to edit content node
   As an Administrator
@@ -22,7 +22,7 @@ Feature:
       | SKU   | NAME      |
       | PSKU2 | Product 2 |
       | PSKU1 | Product 1 |
-    Then I fill in "Segment Name" with "Some Custom Segment Name"
+    And type "Some Custom Segment Name" in "Segment Name"
 
   Scenario: Edited Product Collection can be saved
     When I save form
@@ -62,7 +62,7 @@ Feature:
     Then Page meta keywords equals "AnotherCollectionMetaKeyword"
     And Page meta description equals "AnotherCollectionMetaDescription"
     And Page meta title equals "AnotherCollectionMetaTitle"
-    When I fill in "search" with "AnotherCollectionMetaKeyword"
+    When type "AnotherCollectionMetaKeyword" in "search"
     And I press "Search Button"
     Then I should see "PSKU1"
 
@@ -80,6 +80,6 @@ Feature:
   Scenario: Products are not searchable by Content Node meta information for deleted Product Collection
     Given I proceed as the Buyer
     And I am on homepage
-    When I fill in "search" with "AnotherCollectionMetaKeyword"
+    When type "AnotherCollectionMetaKeyword" in "search"
     And I press "Search Button"
     Then I should not see "PSKU1"

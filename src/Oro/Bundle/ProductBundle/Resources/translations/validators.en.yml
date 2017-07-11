@@ -14,7 +14,7 @@ oro:
 
         attribute_family:
             used_in_product_variant_field.message: "Attributes %names% used as configurable attributes in products: %products%"
-            empty_configurable_attributes.message: "Can't save product. Product family \"%attributeFamily%\" should contain at least one configurable attribute."
+            empty_configurable_attributes.message: "Configurable product requires at least one filterable attribute of the Select or Boolean type to enable product variants. The provided product family does not fit for configurable products."
 
         product_variant_field:
             unique_variants_combination_simple_product.message: "The values of additional fields provided cannot be saved because they will violate unique constraint of variant fields in these configurable products: %products%"
@@ -42,6 +42,13 @@ oro:
             quick_add:
                 invalid_file_type: This file type is not allowed
                 invalid_format: Invalid format
+                validation:
+                    not_found: 'Item number {{ value }} not found.'
+                    product_not_found: 'Item number {{ sku }} not found.'
+                    invalid_precision: 'Invalid precision for unit ''{{ unit }}''.'
+                    invalid_unit: 'Unit ''{{ unit }}'' doesn''t exist for product {{ sku }}.'
+                    quantity_min: 'Quantity should be greater than 0.'
+                    quantity_max: 'Quantity should be less than {{ limit }}.'
 
         product_image:
             not_blank: 'The file cannot be blank'

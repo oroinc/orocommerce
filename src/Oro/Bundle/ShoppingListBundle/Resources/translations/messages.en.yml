@@ -50,6 +50,7 @@ oro:
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
             failed_mesage: "You can't add these products to shopping list"
             add_to_multiple: add item to multiple lists
+            copied: " (copied %copyDate%)"
 
         menu:
             sales_tab.label: Sales
@@ -124,6 +125,11 @@ oro:
 
         privilege:
             category.shopping.label: 'Shopping'
+        permission:
+            duplicate_shopping_list.label: Duplicate
+        duplicate:
+            success.message: 'Shopping list "%shoppinglist%" has been duplicated'
+            list.label: Duplicate List
 
     customer:
         customervisitor:
@@ -169,7 +175,6 @@ oro:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
-                must_be_logged: 'Please log in before you start the checkout.'
             btn:
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'

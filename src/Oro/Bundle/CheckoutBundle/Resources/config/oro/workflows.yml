@@ -69,6 +69,8 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            visitor_email:
+                type: string
         steps:
             enter_billing_address:
                 order: 10
@@ -132,8 +134,7 @@ workflows:
                 is_unavailable_hidden: true
                 transition_definition: start_from_quickorderform_definition
                 frontend_options:
-                    icon: fa-briefcase
-                    class: 'btn--action'
+                    icon: fa-clipboard
                     data:
                         component_name: oro_shopping_list_to_checkout_quick_add_processor
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
@@ -182,6 +183,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        visitor_email:
+                            form_type: oro_customer_visitor_email_address
             continue_to_shipping_method:
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
@@ -467,6 +470,26 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                 actions:
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $visitor_email
+                        actions:
+                            - '@call_method':
+                                parameters:
+                                    object: $checkout.customerUser
+                                    method: setEmail
+                                    method_parameters:
+                                        - $visitor_email
+                            - '@assign_value': [$checkout.customerUser.namePrefix, $billing_address.namePrefix]
+                            - '@assign_value': [$checkout.customerUser.firstName, $billing_address.firstName]
+                            - '@assign_value': [$checkout.customerUser.middleName, $billing_address.middleName]
+                            - '@assign_value': [$checkout.customerUser.lastName, $billing_address.lastName]
+                            - '@assign_value': [$checkout.customerUser.nameSuffix, $billing_address.nameSuffix]
+                            - '@call_method':
+                                parameters:
+                                    object: $checkout.customerUser
+                                    method: fillCustomer
+                    - '@assign_value': [$shipping_method, null]
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@assign_value': [$shipping_method, null]
                     - '@call_method':

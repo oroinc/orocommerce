@@ -222,7 +222,7 @@ action_groups:
                 entity_class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
                 group_name: 'b2b_checkout_flow'
 
-            - '@get_active_user': $.currentUser
+            - '@get_or_create_active_user': $.currentUser
 
             - '@call_service_method':
                 attribute: $.checkout
@@ -256,6 +256,10 @@ action_groups:
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
+                    - '@call_service_method':
+                        service: oro_checkout.action.default_checkout_owner_setter
+                        method: setDefaultOwner
+                        method_parameters: [$.checkout]
 
                     - '@start_workflow':
                         attribute: $.workflowItem

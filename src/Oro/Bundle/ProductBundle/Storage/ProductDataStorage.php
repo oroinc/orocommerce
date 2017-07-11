@@ -12,7 +12,9 @@ class ProductDataStorage extends AbstractSessionDataStorage
     const ADDITIONAL_DATA_KEY = 'additional_data';
 
     const PRODUCT_SKU_KEY = 'productSku';
+    const PRODUCT_DISPLAY_NAME = 'productDisplayName';
     const PRODUCT_QUANTITY_KEY = 'productQuantity';
+    const PRODUCT_UNIT_KEY = 'productUnit';
 
     /** {@inheritdoc} */
     protected function getKey()

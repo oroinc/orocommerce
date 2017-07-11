@@ -7,10 +7,11 @@
 
     {% set pageComponentOptions = {
         savedId: savedId|default(null),
+        shoppingListCreateEnabled: shoppingListCreateEnabled,
         message: 'oro.shoppinglist.flash.success'|trans({'%shoppinglist%': shoppingListLink|trim|default(null)})
     } %}
     {% set attr = {
-        'data-page-component-module': 'orofrontend/js/app/components/widget-form-component',
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shopping-list-create-component',
     }|merge(attr)|merge({
         'data-page-component-options': pageComponentOptions|merge(attr['data-page-component-options']|default({})),
     }) %}

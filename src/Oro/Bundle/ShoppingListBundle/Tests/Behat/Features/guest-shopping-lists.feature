@@ -1,5 +1,5 @@
 @ticket-BB-10050
-@fixture-ProductFixture.yml
+@fixture-OroShoppingListBundle:ProductFixture.yml
 Feature: Guest Shopping Lists
   In order to allow unregistered customers to select goods they want to purchase
   As a Sales rep
@@ -10,14 +10,14 @@ Feature: Guest Shopping Lists
     And I go to System/Configuration
     And I click "Commerce" on configuration sidebar
     And I click "Sales" on configuration sidebar
-    And I click "Guest Shopping List" on configuration sidebar
+    And I click "Shopping List" on configuration sidebar
     Then the "Enable guest shopping list" checkbox should be checked
 
   Scenario: Create Shopping List as unauthorized user from product view page
     And I visit store frontend as guest
     And I should see "Shopping list"
     And type "PSKU1" in "search"
-    And I click "FrontendSearchButton"
+    And I click "Search Button"
     And I should see "Product1"
     And I should see "Add to Shopping list"
     And I click "Product1"
@@ -39,7 +39,7 @@ Feature: Guest Shopping Lists
   Scenario: Add more products to shopping list from list page (search)
     And I visit store frontend as guest
     Given I type "CONTROL1" in "search"
-    And I click "FrontendSearchButton"
+    And I click "Search Button"
     And I should see "Control Product"
     When I click "Add to Shopping list"
     Then I should see "Product has been added to" flash message
@@ -58,7 +58,7 @@ Feature: Guest Shopping Lists
     And I go to System/Configuration
     And I click "Commerce" on configuration sidebar
     And I click "Sales" on configuration sidebar
-    And I click "Guest Shopping List" on configuration sidebar
+    And I click "Shopping List" on configuration sidebar
     And uncheck Use Default for "Enable guest shopping list" field
     And I uncheck "Enable guest shopping list"
     And I save setting
@@ -69,6 +69,6 @@ Feature: Guest Shopping Lists
     And I visit store frontend as guest
     And I should not see "Shopping list"
     And type "SKU003" in "search"
-    And I click "FrontendSearchButton"
+    And I click "Search Button"
     And I should see "Product3"
     Then I should not see "Add to Shopping list"

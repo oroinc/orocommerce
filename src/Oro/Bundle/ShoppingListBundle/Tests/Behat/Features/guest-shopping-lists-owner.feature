@@ -1,6 +1,6 @@
 @ticket-BB-10050-owner
-@fixture-ProductFixture.yml
-@fixture-UserFixture.yml
+@fixture-OroShoppingListBundle:ProductFixture.yml
+@fixture-OroShoppingListBundle:UserFixture.yml
 Feature: Guest shopping lists owner
  As administrator I should have a possibility to change default guest shopping list owner in configuration
 
@@ -9,7 +9,7 @@ Feature: Guest shopping lists owner
     And I go to System/Configuration
     And I click "Commerce" on configuration sidebar
     And I click "Sales" on configuration sidebar
-    And I click "Guest Shopping List" on configuration sidebar
+    And I click "Shopping List" on configuration sidebar
     And uncheck Use Default for "Default Guest Shopping List Owner" field
     And I fill in "Select2Entity" with "Admin User - newadmin@example.com (newadmin)"
     And I should see "Admin User"
@@ -20,7 +20,7 @@ Feature: Guest shopping lists owner
     Given I visit store frontend as guest
     And I should see "Shopping list"
     And type "PSKU1" in "search"
-    And I click "FrontendSearchButton"
+    And I click "Search Button"
     And I should see "Product1"
     And I should see "Add to Shopping list"
     And I click "Product1"

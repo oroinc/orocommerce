@@ -8,6 +8,8 @@ system_configuration:
         checkout:
             title: oro.checkout.system_configuration.groups.checkout.title
             icon: fa-credit-card
+        guest_checkout:
+            title: oro.checkout.system_configuration.groups.guest_checkout.title
         guest_checkout_owner_section:
             title: oro.checkout.system_configuration.groups.guest_checkout_owner.title
 
@@ -21,7 +23,15 @@ system_configuration:
                 choices:
                      - No
                      - Yes
-
+        oro_checkout.guest_checkout:
+            data_type: boolean
+            type: choice
+            priority: 10
+            options:
+                label: oro.checkout.system_configuration.fields.guest_checkout.title
+                choices:
+                    - No
+                    - Yes
         oro_checkout.default_guest_checkout_owner:
             ui_only: true
             data_type: string
@@ -38,17 +48,18 @@ system_configuration:
         system_configuration:
             commerce:
                 children:
-                    orders:
+                    sales:
                         children:
+                            checkout:
+                                children:
+                                    guest_checkout:
+                                        children:
+                                            - oro_checkout.guest_checkout
+                                    guest_checkout_owner_section:
+                                        children:
+                                            - oro_checkout.default_guest_checkout_owner
                             orders_history:
                                 children:
                                     orders_history_open_orders:
                                         children:
                                             - oro_checkout.frontend_open_orders_separate_page
-                    sales:
-                        children:
-                            checkout:
-                                children:
-                                    guest_checkout_owner_section:
-                                        children:
-                                            - oro_checkout.default_guest_checkout_owner

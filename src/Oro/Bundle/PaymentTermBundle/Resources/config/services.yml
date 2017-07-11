@@ -80,7 +80,7 @@ services:
             - { name: kernel.event_listener, event: oro.entity_extend_event.before_value_render, method: beforeValueRender }
 
     oro_payment_term.config.integration_method_identifier_generator:
-        class: 'Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator'
+        parent: oro_integration.generator.prefixed_identifier_generator
         public: true
         arguments:
             - '%oro_payment_term.type%'

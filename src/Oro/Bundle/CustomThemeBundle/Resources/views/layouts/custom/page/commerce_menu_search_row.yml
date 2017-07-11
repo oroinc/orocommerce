@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@remove':
+            id: search_row_main_container

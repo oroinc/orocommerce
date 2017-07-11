@@ -77,6 +77,8 @@ oro:
                     label: 'Billing address'
                 shipping_address:
                     label: 'Shipping address'
+                visitor_email:
+                    label: 'Email'
             transition:
                 __start__:
                     label: 'Create Order'

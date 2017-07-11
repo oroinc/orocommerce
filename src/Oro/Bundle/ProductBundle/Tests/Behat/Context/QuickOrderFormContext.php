@@ -1,0 +1,149 @@
+<?php
+
+namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
+
+use Behat\Gherkin\Node\TableNode;
+use Behat\Symfony2Extension\Context\KernelAwareContext;
+use Behat\Symfony2Extension\Context\KernelDictionary;
+
+use Oro\Bundle\TestFrameworkBundle\Behat\Client\FileDownloader;
+use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+
+class QuickOrderFormContext extends OroFeatureContext implements KernelAwareContext, OroPageObjectAware
+{
+    use PageObjectDictionary, KernelDictionary;
+
+    /** @var string */
+    private $template;
+
+    /** @var string */
+    private $importedFile;
+
+    /**
+     * @Given /^I download "([^"]*)"$/
+     */
+    public function iDownload($template)
+    {
+        $link = $this->getSession()->getPage()->findLink($template);
+
+        self::assertNotNull($link);
+        if (!$link->hasAttribute('href')) {
+            throw new \InvalidArgumentException(sprintf(
+                'Could not download template "%s"',
+                $template
+            ));
+        }
+
+        $url = $this->locatePath($link->getAttribute('href'));
+
+        $this->template = tempnam(sys_get_temp_dir(), 'quick_order_template_') . '.csv';
+
+        self::assertTrue((new FileDownloader())->download($url, $this->template, $this->getSession()));
+    }
+
+    /**
+     * @Given /^I fill quick order template with data:$/
+     */
+    public function iFillQuickOrderTemplateWithData(TableNode $table)
+    {
+        $this->importedFile = tempnam(sys_get_temp_dir(), 'quick_order_import_') . '.csv';
+        $fp = fopen($this->importedFile, 'w');
+        $csv = array_map('str_getcsv', file($this->template));
+        $headers = array_shift($csv);
+        fputcsv($fp, $headers);
+
+        foreach ($table as $row) {
+            $values = [];
+            foreach ($headers as $header) {
+                $value = '';
+                foreach ($row as $rowHeader => $rowValue) {
+                    if (preg_match(sprintf('/^%s$/i', $rowHeader), $header)) {
+                        $value = $rowValue;
+                    }
+                }
+
+                $values[] = $value;
+            }
+            fputcsv($fp, $values);
+        }
+
+        fclose($fp);
+    }
+
+    /**
+     * @When /^I import file for quick order$/
+     */
+    public function iImportFileForQuickOrder()
+    {
+        $this->createElement('Quick Order Import File Field')->attachFile($this->importedFile);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @Given /^I wait for products to load$/
+     */
+    public function iWaitForProductsToLoad()
+    {
+        $this->waitForAjax(200);
+    }
+
+    /**
+     * @When /^I import unsupported file for quick order$/
+     */
+    public function iImportUnsupportedFileForQuickOrder()
+    {
+        $notSupportedFile = tempnam(sys_get_temp_dir(), 'quick_order_import_') . '.csv';
+        $fp = fopen($notSupportedFile, 'w');
+        fclose($fp);
+
+        $this->createElement('Quick Order Import File Field')->attachFile($notSupportedFile);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @Given /^Request a Quote contains products$/
+     */
+    public function requestAQuoteContainsProducts(TableNode $table)
+    {
+        $requestAQuote = $this->createElement('RequestAQuoteProducts');
+
+        foreach ($table->getRows() as $row) {
+            $productFound = false;
+            foreach ($requestAQuote->getElements('RequestAQuoteProductLine') as $productLine) {
+                if ($this->matchProductLine($productLine, $row)) {
+                    $productFound = true;
+                    break;
+                }
+            }
+
+            self::assertTrue($productFound, sprintf(
+                'Product %s, QTY: %s %s has not been found',
+                ...$row
+            ));
+        }
+    }
+
+    /**
+     * @param Element $productLine
+     * @param array   $row
+     *
+     * @return bool
+     */
+    private function matchProductLine(Element $productLine, array $row)
+    {
+        list($name, $quantity, $unit) = $row;
+
+        try {
+            self::assertEquals($name, $productLine->getElement('RequestAQuoteProductLineName')->getText());
+            self::assertEquals($quantity, $productLine->getElement('RequestAQuoteProductLineQuantity')->getText());
+            self::assertEquals($unit, $productLine->getElement('RequestAQuoteProductLineUnit')->getText());
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+        return true;
+    }
+}

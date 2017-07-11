@@ -469,6 +469,18 @@ services:
         public: false
         arguments: ['@oro_checkout.provider.payment_method_provider']
 
+    oro_checkout.voter.guest_checkout:
+        parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_checkout'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_checkout.action.default_checkout_owner_setter:
+        class: Oro\Bundle\CheckoutBundle\Action\DefaultCheckoutOwnerSetter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
     oro_checkout.event_listener.system_config:
         class: Oro\Bundle\CheckoutBundle\EventListener\SystemConfigListener
         arguments:

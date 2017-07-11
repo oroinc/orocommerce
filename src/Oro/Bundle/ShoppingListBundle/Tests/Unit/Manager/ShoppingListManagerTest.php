@@ -123,25 +123,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Oro\Bundle\OrganizationBundle\Entity\Organization', $shoppingList->getOrganization());
     }
 
-    // TODO uncomment after BB-10040
-//    public function testCreateAsCustomerVisitor()
-//    {
-//        $existingShoppingList = new ShoppingList();
-//
-//        $anonymous = new CustomerVisitorStub();
-//        $anonymous->addShoppingList($existingShoppingList);
-//
-//        $this->securityToken
-//            ->expects($this->once())
-//            ->method('getVisitor')
-//            ->willReturn($anonymous);
-//
-//        $this->manager->create();
-//
-//        $this->assertSame($existingShoppingList, $anonymous->getShoppingLists()->first());
-//        $this->assertInstanceOf(ShoppingList::class, $anonymous->getShoppingLists()->last());
-//    }
-
     public function testCreateCurrent()
     {
         $this->manager->setCurrent(
