@@ -80,6 +80,8 @@ Feature: Duplicate Lists
     Then I should not see following buttons:
       |Duplicate List|
 
+  @skip
+  # todo: uncomment after resolve BB-10693
   Scenario: Backend - user with permissions
     Given user have "Organization" permissions for "Duplicate" "Shopping List" entity
     And I proceed as the User

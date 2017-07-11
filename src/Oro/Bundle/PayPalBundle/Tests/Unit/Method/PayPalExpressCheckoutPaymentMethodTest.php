@@ -34,6 +34,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
     const ENTITY_CLASS = 'EntityClass';
     const ENTITY_ID = 15689;
     const SHIPPING_COST = 1;
+    const DISCOUNT_AMOUNT = 5.5;
 
     /** @var Gateway|\PHPUnit_Framework_MockObject_MockObject */
     protected $gateway;
@@ -248,6 +249,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
         $surcharge = new Surcharge();
         $surcharge->setShippingAmount(self::SHIPPING_COST);
+        $surcharge->setDiscountAmount(self::DISCOUNT_AMOUNT);
 
         $this->surchargeProvider->expects($this->once())
             ->method('getSurcharges')
@@ -334,6 +336,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
         $surcharge = new Surcharge();
         $surcharge->setShippingAmount(self::SHIPPING_COST);
+        $surcharge->setDiscountAmount(self::DISCOUNT_AMOUNT);
         $this->surchargeProvider->expects($this->once())
             ->method('getSurcharges')
             ->willReturn($surcharge);
@@ -443,6 +446,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
         $surcharge = new Surcharge();
         $surcharge->setShippingAmount(self::SHIPPING_COST);
+        $surcharge->setDiscountAmount(self::DISCOUNT_AMOUNT);
         $this->surchargeProvider->expects($this->once())
             ->method('getSurcharges')
             ->with($entity)
@@ -784,7 +788,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
         return [
             'FREIGHTAMT' => self::SHIPPING_COST,
             'HANDLINGAMT' => 0,
-            'DISCOUNT' => 0,
+            'DISCOUNT' => -self::DISCOUNT_AMOUNT,
             'INSURANCEAMT' => 0,
         ];
     }

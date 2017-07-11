@@ -240,8 +240,8 @@
     {{ form_row(form.productPageProduct) }}
 {% endblock %}
 
-{% block oro_product_collection_variant_widget %}
-    {% set scope = 'scope_' ~ form.vars.name %}
+{% block oro_product_collection_segment_type_widget %}
+    {% set scope = 'scope_' ~ scopeValue %}
     {% set gridWidgetAlias = 'product-collection-products-grid-' ~ scope %}
     {% set controlsBlockAlias = 'product-collection-grid-control-' ~ scope %}
 
@@ -275,7 +275,7 @@
     {% set includedProductsElementId = '#' ~ form.includedProducts.vars.id %}
     {% set productCollectionApplyQueryComponentOptions = {
         'selectors': {
-            'conditionBuilder': '#' ~ form.productCollectionSegment.vars.id ~ '-condition-builder',
+            'conditionBuilder': '#' ~ form.vars.id ~ '-condition-builder',
             'reset': '.filter-reset',
             'apply': '.filter-apply',
             'included': includedProductsElementId,
@@ -296,13 +296,15 @@
         {% set productCollectionSegmentOptions = {'attr': {placeholder: 'oro.product.content_variant.product_collection.segment_name_placeholder'| trans}} %}
     {% endif %}
 
-    {{ form_row(form.productCollectionSegment.name, productCollectionSegmentOptions) }}
+    {% if addNameField %}
+        {{ form_row(form.name, productCollectionSegmentOptions) }}
+    {% endif %}
 
-    <div id="{{ form.vars.id }}" data-role="grid-sidebar-component-container">
+    <div data-role="grid-sidebar-component-container" class="product-collection-segment">
         {# --Apply Query component start-- #}
         <div
-             data-page-component-module="oroproduct/js/app/components/product-collection-apply-query-component"
-             data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}"
+                data-page-component-module="oroproduct/js/app/components/product-collection-apply-query-component"
+                data-page-component-options="{{ productCollectionApplyQueryComponentOptions|json_encode }}"
         >
             {# --Grid sidebar component start-- #}
             <div class="{{ controlsBlockAlias }} control-group fields-row"
@@ -365,16 +367,16 @@
                                     </div>
                                 </div>
                                 <div data-collapse-container class="filter">
-                                    {{ form_row(form.productCollectionSegment) }}
-                                        {# --Apply Query button start--#}
-                                        <div class="clearfix">
-                                            <div class="pull-right">
-                                                <a class="btn btn-primary filter-apply">
-                                                    {{ 'oro.product.content_variant.ui.apply_query'|trans }}
-                                                </a>
-                                            </div>
+                                    {{ block('oro_segment_filter_builder_row') }}
+                                    {# --Apply Query button start--#}
+                                    <div class="clearfix">
+                                        <div class="pull-right">
+                                            <a class="btn btn-primary filter-apply">
+                                                {{ 'oro.product.content_variant.ui.apply_query'|trans }}
+                                            </a>
                                         </div>
-                                        {# --Apply Query button end-- #}
+                                    </div>
+                                    {# --Apply Query button end-- #}
                                 </div>
                                 {{ oro_widget_render({
                                     'widgetType': 'block',
@@ -461,6 +463,10 @@
         </div>
         {# --Apply Query component end-- #}
     </div>
+{% endblock %}
+
+{% block oro_product_collection_variant_widget %}
+    {{ form_widget(form.productCollectionSegment) }}
 {% endblock %}
 
 {% block oro_product_custom_variant_fields_collection_widget %}

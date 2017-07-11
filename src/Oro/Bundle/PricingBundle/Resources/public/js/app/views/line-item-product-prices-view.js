@@ -46,8 +46,6 @@ define(function(require) {
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
                 this.setTierPrices(tierPrices, false);
             }, this));
-
-            this.updateTierPrices();
         },
 
         updateTierPrices: function() {

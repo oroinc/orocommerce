@@ -22,8 +22,7 @@ Feature: After creating new product attribute products grid get 500 error
       |Enabled                   |Yes          |
     When save and close form
     Then I should see "Attribute was successfully saved" flash message
-    #BAP-15004
-#    And I click update schema
-#    When go to Products/ Products
-#    And I click "NewCategory"
-#    Then I should see "PSKU1"
+    And I click update schema
+    When go to Products/ Products
+    And I click "NewCategory"
+    Then I should see "PSKU1"
