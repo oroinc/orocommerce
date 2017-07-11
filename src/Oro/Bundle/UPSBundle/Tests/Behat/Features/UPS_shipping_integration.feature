@@ -24,7 +24,6 @@ Feature: UPS shipping integration
       |UPS Expedited   |
       |UPS Express     |
     When I fill "Integration Form" with:
-      | Type   | UPS           |
       | Country| United Kingdom|
     Then should see the following options for "Shipping Service" select:
       |UPS Access Point             |
@@ -44,7 +43,6 @@ Feature: UPS shipping integration
       |UPS Next Day Air Saver       |
       |UPS Worldwide Expedited      |
     When I fill "Integration Form" with:
-      | Type                    | UPS                       |
       | Name                    | UPS                       |
       | Label                   | UPS                       |
       | Test Mode               | true                      |
