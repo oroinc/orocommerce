@@ -488,7 +488,7 @@ workflows:
                             - '@call_method':
                                 parameters:
                                     object: $checkout.customerUser
-                                    method: updateCustomer
+                                    method: fillCustomer
                     - '@assign_value': [$shipping_method, null]
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@assign_value': [$shipping_method, null]
