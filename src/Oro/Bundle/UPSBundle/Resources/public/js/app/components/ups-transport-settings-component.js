@@ -93,7 +93,7 @@ define(function(require) {
             }
         },
 
-        hideShippingServiceIfCountryNotSelected: function () {
+        hideShippingServiceIfCountryNotSelected: function() {
             var country = this.country.val();
             if (!country) {
                 this.shippingServicesHolder.hide();
