@@ -27,7 +27,8 @@ class LoadRelatedProductData extends AbstractFixture implements DependentFixture
      */
     protected static $relatedProducts = [
         'product-3' => ['product-1', 'product-2'],
-        'product-4' => ['product-3']
+        'product-4' => ['product-3', 'product-5'],
+        'product-5' => ['product-4']
     ];
 
     /**

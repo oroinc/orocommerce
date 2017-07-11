@@ -47,5 +47,10 @@ abstract class AbstractRelatedItemConfigProvider
     /**
      * @return bool
      */
+    abstract public function isSliderEnabledOnMobile();
+
+    /**
+     * @return bool
+     */
     abstract public function isAddButtonVisible();
 }

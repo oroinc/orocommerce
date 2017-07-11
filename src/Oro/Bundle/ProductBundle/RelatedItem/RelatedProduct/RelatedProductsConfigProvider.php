@@ -58,6 +58,15 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     /**
      * @return bool
      */
+    public function isSliderEnabledOnMobile()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE));
+    }
+
+    /**
+     * @return bool
+     */
     public function isAddButtonVisible()
     {
         return $this->configManager
