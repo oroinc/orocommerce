@@ -61,6 +61,11 @@
         float: $product-view-additional-state;
         width: $product-view-additional-width;
     }
+
+    &__related-products {
+        float: $product-view-related-products-state;
+        width: $product-view-related-products-width;
+    }
 }
 
 @include breakpoint('tablet') {

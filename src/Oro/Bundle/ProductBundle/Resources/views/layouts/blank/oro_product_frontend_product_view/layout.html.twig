@@ -119,6 +119,16 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _product_view_related_products_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__related_products'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
 {# Product view Layout START #}
 
 {% block _product_view_attribute_group_general_attribute_localized_fallback_names_widget %}

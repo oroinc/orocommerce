@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_product_list
-            root: related_products_container
+            root: product_view_related_products_container
             namespace: related
     actions:
         - '@setOption':
@@ -33,7 +33,3 @@ layout:
             id: related_product_line_item_form
             optionName: visible
             optionValue: '=data["oro_product_related_products"].isAddButtonVisible()'
-        - '@add':
-            id: related_products_container
-            parentId: product_view_additional_container
-            blockType: container
