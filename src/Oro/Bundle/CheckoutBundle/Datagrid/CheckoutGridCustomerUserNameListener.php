@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class CheckoutGridCustomerUserNameListener
 {
@@ -32,6 +33,7 @@ class CheckoutGridCustomerUserNameListener
         if (isset($columns['customerUserName']) && !$this->hasPermissionToViewAllPastCheckouts()) {
             $config->offsetUnsetByPath('[columns][customerUserName]');
             $config->offsetUnsetByPath('[sorters][columns][customerUserName]');
+            $config->offsetUnsetByPath('[filters][columns][customerUserName]');
         }
     }
 
@@ -40,6 +42,6 @@ class CheckoutGridCustomerUserNameListener
      */
     private function hasPermissionToViewAllPastCheckouts()
     {
-        return $this->customerUserProvider->isGrantedViewLocal('Oro\Bundle\CheckoutBundle\Entity\Checkout');
+        return $this->customerUserProvider->isGrantedViewCustomerUser(Checkout::class);
     }
 }

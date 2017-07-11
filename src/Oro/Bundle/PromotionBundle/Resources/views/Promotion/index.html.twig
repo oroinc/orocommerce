@@ -1,0 +1,15 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set pageTitle = 'oro.promotion.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_promotion_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('oro_promotion_create'),
+                'entity_label': 'oro.promotion.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

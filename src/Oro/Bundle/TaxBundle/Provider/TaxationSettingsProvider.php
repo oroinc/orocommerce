@@ -67,6 +67,14 @@ class TaxationSettingsProvider
     }
 
     /**
+     * @return bool
+     */
+    public function isDisabled()
+    {
+        return !$this->isEnabled();
+    }
+
+    /**
      * @return string
      */
     public function getStartCalculationWith()

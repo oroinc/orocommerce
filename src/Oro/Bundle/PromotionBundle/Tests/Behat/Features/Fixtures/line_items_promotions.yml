@@ -1,0 +1,105 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    lineItemDiscountPromotion10percentSKU2Label:
+        string: 'Line Item Discount Promotion'
+    lineItemDiscountPromotion10percentSKU2Desc:
+        string: 'Line Item Discount Promotion Description'
+    lineItemDiscountPromotion50percentSKU2Label:
+        string: 'Order Discount Promotion'
+    lineItemDiscountPromotion50percentSKU2Desc:
+        string: 'Order Discount Promotion Description'
+    lineItemDiscountPromotion30percentSKU1Label:
+        string: 'Order Discount Promotion'
+    lineItemDiscountPromotion30percentSKU1Desc:
+        string: 'Order Discount Promotion Description'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    firstLineItemDiscountPromotionSegmentSKU2:
+        name: 'Promotion Matching Products #1'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+    secondLineItemDiscountPromotionSegmentSKU2:
+        name: 'Promotion Matching Products #2'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+    thirdLineItemDiscountPromotionSegmentSKU1:
+        name: 'Promotion Matching Products #3'
+        type: 'dynamic'
+        entity: 'Oro\Bundle\ProductBundle\Entity\Product'
+        definition: '{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"SKU1","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}'
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    lineItemDiscountPromotionDiscountConfiguration10percent:
+        type: 'line_item'
+        options:
+            discount_type: 'percent'
+            discount_product_unit_code: 'item'
+            discount_value: 0.1
+            apply_to: 'line_items_total'
+    lineItemDiscountPromotionDiscountConfiguration50percent:
+         type: 'line_item'
+         options:
+             discount_type: 'percent'
+             discount_product_unit_code: 'item'
+             discount_value: 0.5
+             apply_to: 'line_items_total'
+    lineItemDiscountPromotionDiscountConfiguration30percent:
+         type: 'line_item'
+         options:
+             discount_type: 'percent'
+             discount_product_unit_code: 'item'
+             discount_value: 0.3
+             apply_to: 'line_items_total'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    lineItemDiscountPromotionRule1:
+        enabled: true
+        sortOrder: 1
+        name: 'lineItemDiscountPromotionRule1'
+        stopProcessing: false
+    lineItemDiscountPromotionStopProcessingRule:
+        enabled: true
+        sortOrder: 2
+        name: 'lineItemDiscountPromotionStopProcessingRule'
+        stopProcessing: true
+    lineItemDiscountPromotionRule2:
+        enabled: true
+        sortOrder: 3
+        name: 'lineItemDiscountPromotionRule2'
+        stopProcessing: true
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    lineItemDiscountPromotion10percentSKU2:
+        addLabel: ['@lineItemDiscountPromotion10percentSKU2Label']
+        addDescription: ['@lineItemDiscountPromotion10percentSKU2Desc']
+        addScope: [1]
+        productsSegment: '@firstLineItemDiscountPromotionSegmentSKU2'
+        rule: '@lineItemDiscountPromotionRule1'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration10percent'
+        organization: '@organization'
+        owner: '@admin'
+    lineItemDiscountPromotion50percentSKU2:
+        addLabel: ['@lineItemDiscountPromotion50percentSKU2Label']
+        addDescription: ['@lineItemDiscountPromotion50percentSKU2Desc']
+        addScope: [1]
+        productsSegment: '@secondLineItemDiscountPromotionSegmentSKU2'
+        rule: '@lineItemDiscountPromotionRule2'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration50percent'
+        organization: '@organization'
+        owner: '@admin'
+    lineItemDiscountPromotion30percentSKU1:
+        addLabel: ['@lineItemDiscountPromotion30percentSKU1Label']
+        addDescription: ['@lineItemDiscountPromotion30percentSKU1Desc']
+        addScope: [1]
+        productsSegment: '@thirdLineItemDiscountPromotionSegmentSKU1'
+        rule: '@lineItemDiscountPromotionStopProcessingRule'
+        discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration30percent'
+        organization: '@organization'
+        owner: '@admin'
