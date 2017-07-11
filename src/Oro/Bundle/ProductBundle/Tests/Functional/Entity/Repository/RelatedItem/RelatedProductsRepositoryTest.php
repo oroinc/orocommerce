@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RelatedProductsRepositoryTest extends WebTestCase
@@ -22,7 +23,7 @@ class RelatedProductsRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
-            LoadProductData::class
+            LoadRelatedProductData::class
         ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
