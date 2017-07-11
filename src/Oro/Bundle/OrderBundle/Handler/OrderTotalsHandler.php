@@ -8,11 +8,15 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 
+/**
+ * @deprecated Use Oro\Bundle\OrderBundle\Total\TotalHelper instead
+ */
 class OrderTotalsHandler
 {
     /**
      * @param TotalProcessorProvider $totalProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
+     * @param RateConverterInterface $rateConverter
      */
     public function __construct(
         TotalProcessorProvider $totalProvider,

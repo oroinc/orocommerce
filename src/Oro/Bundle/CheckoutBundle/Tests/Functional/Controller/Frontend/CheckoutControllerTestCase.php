@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
@@ -113,7 +114,10 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             ->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
         $user->setCustomer($this->getReference('customer.level_1'));
-        $token = new UsernamePasswordToken($user, false, 'key', $user->getRoles());
+        $organization = $this->registry
+            ->getRepository(Organization::class)
+            ->getFirst();
+        $token = new UsernamePasswordOrganizationToken($user, false, 'key', $organization, $user->getRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $data = $this->getCheckoutData($shoppingList);
         $action = $this->client->getContainer()->get('oro_action.action.run_action_group');

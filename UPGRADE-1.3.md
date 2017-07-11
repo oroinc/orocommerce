@@ -35,10 +35,21 @@ CatalogBundle
 - Class `Oro\Bundle\CatalogBundle\EventListenerFormViewListener`
     - changed signature of `__construct` method. Dependency on `RequestStack` was removed.
 
+CronBundle
+-------------
+- New collection form type for schedule intervals was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType`
+- New form type for schedule interval was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType`
+- New constraint was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection`
+- New validator was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator`
+
 CheckoutBundle
 --------------
 - Class `Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter`
     - method `getSecurityFacade` was replaced with `getAuthorizationChecker`
+- Class `Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider`
+    - changed signature of `__construct` method:
+        - dependency on `CheckoutLineItemsManager` and `MapperInterface` were replaced with `CheckoutToOrderConverter`
+- Added class `Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter` responsible for creation of an `Order` based on the `Checkout`
 - Layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
 
 WebsiteSearchBundle
@@ -89,8 +100,9 @@ ProductBundle
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
 
 - Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
-    - `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
 
+- `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
+    
 PaymentBundle
 -------------
 - Previously deprecated interface `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` is removed now.
@@ -107,7 +119,6 @@ ShippingBundle
  - previously deprecated interface `\Oro\Bundle\ShippingBundle\Identifier\IntegrationMethodIdentifierGeneratorInterface` is removed along with its implementations and usages. Use `Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface` instead.
  - previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
  - previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
-
 
 PayPalBundle
 --------------
@@ -194,6 +205,10 @@ ShippingBundle
 
 PricingBundle
 --------------
+- Form type `Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType` was removed, use `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType` instead
+- Constraint `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection` instead
+- Validator `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator` instead
+- js `oropricing/js/app/views/price-list-schedule-view` view was removed, use `orocron/js/app/views/schedule-intervals-view` instead
 - Service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`
     - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
     - method `postRemove` has additional argument `ProductUnitPrecision $precision`.

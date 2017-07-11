@@ -3,13 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CronBundle\Entity\ScheduleIntervalInterface;
+use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
+use Oro\Bundle\CronBundle\Entity\ScheduleIntervalTrait;
 
 /**
  * @ORM\Table(name="oro_price_list_schedule")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListScheduleRepository")
  */
-class PriceListSchedule
+class PriceListSchedule implements ScheduleIntervalInterface
 {
+    use ScheduleIntervalTrait;
+
     /**
      * @var int
      *
@@ -66,6 +71,14 @@ class PriceListSchedule
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getScheduleIntervalsHolder()
+    {
+        return $this->getPriceList();
+    }
+
+    /**
      * @param PriceList $priceList
      * @return $this
      */
@@ -73,44 +86,6 @@ class PriceListSchedule
     {
         $this->priceList = $priceList;
         $this->priceList->setContainSchedule(true);
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getActiveAt()
-    {
-        return $this->activeAt;
-    }
-
-    /**
-     * @param \DateTime|null $activeAt
-     * @return $this
-     */
-    public function setActiveAt(\DateTime $activeAt = null)
-    {
-        $this->activeAt = $activeAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime|null
-     */
-    public function getDeactivateAt()
-    {
-        return $this->deactivateAt;
-    }
-
-    /**
-     * @param \DateTime|null $deactivateAt
-     * @return $this
-     */
-    public function setDeactivateAt(\DateTime $deactivateAt = null)
-    {
-        $this->deactivateAt = $deactivateAt;
 
         return $this;
     }
