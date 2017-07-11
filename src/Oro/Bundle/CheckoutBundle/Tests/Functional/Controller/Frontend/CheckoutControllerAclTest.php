@@ -6,13 +6,13 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutACLData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @group=segfault
  */
-class CheckoutControllerAclTest extends WebTestCase
+class CheckoutControllerAclTest extends FrontendWebTestCase
 {
     protected function setUp()
     {
@@ -20,6 +20,7 @@ class CheckoutControllerAclTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
                 LoadOrdersACLData::class,
@@ -53,7 +54,10 @@ class CheckoutControllerAclTest extends WebTestCase
         $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-checkouts-grid',
-            ]
+            ],
+            [],
+            true,
+            'oro_frontend_datagrid_index'
         );
 
         self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
@@ -82,7 +86,7 @@ class CheckoutControllerAclTest extends WebTestCase
             'NOT AUTHORISED' => [
                 'user' => '',
                 'indexResponseStatus' => 401,
-                'gridResponseStatus' => 403,
+                'gridResponseStatus' => 401,
                 'data' => [],
             ],
             'BASIC: own orders' => [

@@ -95,7 +95,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_table_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-order-summary__content"
+    '~class': " checkout-order-summary__content"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -104,20 +104,20 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_items_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'orofrontend/js/app/views/scrollable-table'
-        },
-        '~class': " checkout-order-summary__grid"
+    'data-page-component-module': 'oroui/js/app/components/view-component',
+    '~data-page-component-options': {
+    view: 'orofrontend/js/app/views/scrollable-table'
+    },
+    '~class': " checkout-order-summary__grid"
     }) %}
 
     <table {{ block('block_attributes') }}>
         <thead class="checkout-order-summary__grid-head">
-            <tr data-scrollable-content-head>
-                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.item'|trans }}</th>
-                <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
-                <th class="checkout-order-summary__grid-th" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
-            </tr>
+        <tr data-scrollable-content-head>
+            <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.item'|trans }}</th>
+            <th class="checkout-order-summary__grid-th">{{ 'oro.checkout.order_summary.quantity'|trans }}</th>
+            <th class="checkout-order-summary__grid-th" data-scrollable-item-has-offset>{{ 'oro.checkout.order_summary.price'|trans }}</th>
+        </tr>
         </thead>
         <tbody>
         <tr>
@@ -137,74 +137,16 @@
                                 {% endif %}
                                 {% set productSku = mainProduct.sku %}
                             {% endif %}
-                            <tr data-scrollable-content-body>
-                                <td class="checkout-order-summary__table-col checkout-order-summary__product">
-                                    <h3 class="product-item__title product-item__title_in-cart">
-                                        {% if mainProduct is not null %}
-                                            <a href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.defaultName }}</a>
-                                        {% else %}
-                                            {{ lineItem.freeFormProduct }}
-                                        {% endif %}
-                                    </h3>
-                                    <div>{{ 'oro.checkout.order_summary.item'|trans }} #: <span
-                                                class="red">{{ productSku }}</span></div>
-                                    {% if mainProduct is not null and configurableProducts[lineItem.product.id] is defined %}
-                                        {% for product in configurableProducts[lineItem.product.id] %}
-                                            <div>{{ product.label|trans }}:
-                                                {% if product.type == 'boolean' %}
-                                                    {{ product.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
-                                                {% else %}
-                                                    {{ product.value }}
-                                                {% endif %}
-                                            </div>
-                                        {% endfor %}
-                                    {% endif %}
-                                </td>
-                                {% set quantity = lineItem.quantity %}
-                                <td class="checkout-order-summary__table-col checkout-order-summary__qty">
-                                    {% if oro_is_unit_code_visible(lineItem.productUnit.code) %}
-                                        {{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}
-                                    {% else %}
-                                        {{ quantity }}
-                                    {% endif %}
-                                </td>
-                                <td class="checkout-order-summary__table-col checkout-order-summary__price">
-                                    <div class="checkout-order-summary__price-inner">
-                                        <table class="checkout-order-summary__price-table">
-                                            <tbody>
-                                            <tr>
-                                                <td class="checkout-order-summary__price-line">{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
-                                                <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="checkout-order-summary__price-line">
-                                                    <span>{{ 'oro.checkout.order_summary.total_price'|trans }}</span>
-                                                </td>
-                                                <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>
-                                                    <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% set errorPath = 'product.' ~ lineItem.productSku %}
-                            {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
-                                {% for error in lineItemErrors[errorPath] %}
-                                    <script>
-                                        require(['oroui/js/messenger'], function(messenger) {
-                                            messenger.notificationFlashMessage('error', '{{ error.message }}', {
-                                                style: 'validation',
-                                                container: $('#product-error-{{ lineItem.productSku }}')
-                                            })
-                                        });
-                                    </script>
-                                    <tr>
-                                        <td id="product-error-{{ lineItem.productSku }}" colspan="3"></td>
-                                    </tr>
-                                {% endfor %}
-                            {% endif %}
+
+                            {% do block|merge_context({
+                            lineItem: lineItem,
+                            mainProduct: mainProduct,
+                            lineItemInfo: lineItemInfo,
+                            productSku: productSku,
+                            parent: block.vars,
+                            loop: loop
+                            }) %}
+                            {{ block('container_widget') }}
                         {% endfor %}
                         </tbody>
                     </table>
@@ -227,9 +169,117 @@
     </table>
 {% endblock %}
 
+{% block __oro_checkout_content__checkout_order_summary_line_item_row_widget %}
+    <tr data-scrollable-content-body>
+        {{ block('container_widget') }}
+    </tr>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_info_column_widget %}
+    <td class="checkout-order-summary__table-col checkout-order-summary__product">
+        {{ block('container_widget') }}
+    </td>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_name_widget %}
+    <h3 class="product-item__title product-item__title_in-cart">
+        {% if mainProduct is not null %}
+            <a href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.names|localized_value }}</a>
+        {% else %}
+            {{ lineItem.freeFormProduct }}
+        {% endif %}
+    </h3>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_sku_widget %}
+    <div>{{ 'oro.checkout.order_summary.item'|trans }} #: <span class="red">{{ productSku }}</span></div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_configurable_products_widget %}
+    {% if mainProduct is not null and parent.configurableProducts[lineItem.product.id] is defined %}
+        {% for product in parent.configurableProducts[lineItem.product.id] %}
+            <div>{{ product.label|trans }}:
+                {% if product.type == 'boolean' %}
+                    {{ product.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
+                {% else %}
+                    {{ product.value }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_quantity_column_widget %}
+    <td class="checkout-order-summary__table-col checkout-order-summary__qty">
+        {{ block('container_widget') }}
+    </td>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_quantity_widget %}
+    {% set quantity = lineItem.quantity %}
+    {% if oro_is_unit_code_visible(lineItem.productUnit.code) %}
+        {{ quantity ? quantity|oro_format_short_product_unit_value(lineItem.productUnit) : 'N/A'|trans }}
+    {% else %}
+        {{ quantity }}
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_price_column_widget %}
+    <td class="checkout-order-summary__table-col checkout-order-summary__price">
+        <div class="checkout-order-summary__price-inner">
+            {{ block('container_widget') }}
+        </div>
+    </td>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_price_per_item_widget %}
+    <table class="checkout-order-summary__price-table">
+        <tbody>
+        <tr>
+            <td class="checkout-order-summary__price-line">{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
+            <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_price_row_total_widget %}
+    <table class="checkout-order-summary__price-table">
+        <tbody>
+        <tr>
+            <td class="checkout-order-summary__price-line">
+                <span>{{ 'oro.checkout.order_summary.total_price'|trans }}</span>
+            </td>
+            <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>
+                <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_line_item_errors_widget %}
+    {% set errorPath = 'product.' ~ lineItem.productSku %}
+    {% if parent.lineItemErrors is iterable and parent.lineItemErrors[errorPath] is defined and parent.lineItemErrors[errorPath] is iterable %}
+        {% for error in parent.lineItemErrors[errorPath] %}
+            <script>
+                require(['oroui/js/messenger'], function(messenger) {
+                    messenger.notificationFlashMessage('error', '{{ error.message }}', {
+                        style: 'validation',
+                        container: $('#product-error-{{ lineItem.productSku }}')
+                    })
+                });
+            </script>
+            <tr>
+                <td id="product-error-{{ lineItem.productSku }}" colspan="3"></td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
 {% block __oro_checkout_content__checkout_order_summary_totals_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " order-checkout-widget__container-wrapper checkout-total-container"
+    '~class': " order-checkout-widget__container-wrapper checkout-total-container"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}

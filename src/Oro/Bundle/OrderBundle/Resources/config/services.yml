@@ -96,6 +96,7 @@ services:
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
+        deprecated: The "%service_id%" service is deprecated since v1.3. Use oro_order.order.total.total_helper instead
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'

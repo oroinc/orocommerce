@@ -893,6 +893,22 @@ class Product extends ExtendProduct implements
     }
 
     /**
+     * @param array|LocalizedFallbackValue[] $names
+     *
+     * @return $this
+     */
+    public function setNames(array $names = [])
+    {
+        $this->names->clear();
+
+        foreach ($names as $name) {
+            $this->addName($name);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getNames()
