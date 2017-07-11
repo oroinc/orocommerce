@@ -6,21 +6,19 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Oro\Bundle\UIBundle\Route\Router;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
+use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
 
 class OrderTypeExtension extends AbstractTypeExtension
 {
     const ON_SUBMIT_LISTENER_PRIORITY = 10;
-    const SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION = 'save_without_discounts_recalculation';
 
     /**
-     * @var RequestStack
+     * @var DiscountRecalculationProvider
      */
-    private $requestStack;
+    private $discountRecalculationProvider;
 
     /**
      * @var AppliedDiscountManager
@@ -28,14 +26,14 @@ class OrderTypeExtension extends AbstractTypeExtension
     private $appliedDiscountManager;
 
     /**
-     * @param RequestStack $requestStack
+     * @param DiscountRecalculationProvider $discountRecalculationProvider
      * @param AppliedDiscountManager $appliedDiscountManager
      */
     public function __construct(
-        RequestStack $requestStack,
+        DiscountRecalculationProvider $discountRecalculationProvider,
         AppliedDiscountManager $appliedDiscountManager
     ) {
-        $this->requestStack = $requestStack;
+        $this->discountRecalculationProvider = $discountRecalculationProvider;
         $this->appliedDiscountManager = $appliedDiscountManager;
     }
 
@@ -58,15 +56,10 @@ class OrderTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request &&
-            $request->get(Router::ACTION_PARAMETER) === self::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION
-        ) {
-            return;
+        if ($this->discountRecalculationProvider->isRecalculationRequired()) {
+            $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
+            $this->appliedDiscountManager->saveAppliedDiscounts($order);
         }
-
-        $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
-        $this->appliedDiscountManager->saveAppliedDiscounts($order);
     }
 
     /**

@@ -232,6 +232,8 @@ PricingBundle
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteProcessor` to update price rule lexemes while deleting single price rule
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesPriceRuleProcessor` to update price rule lexemes while saving price rule
 - Added `Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber` for adding currently created schedule to price list
+- Interface `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface`
+    - new method added `supportsCachedSubtotal`
 
 ValidationBundle
 --------------
