@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\LoadEntityConfigStateMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DataStorageExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DataStorageExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -46,7 +45,7 @@ class OroPricingBundle implements
     /**
      * @param QueryBag $queries
      */
-    private function updateExtendEntity(QueryBag $queries)
+    private function updateExtendEntity()
     {
         $configManager = $this->container->get('oro_entity_config.config_manager');
         $provider = $configManager->getProvider('extend');
@@ -55,11 +54,5 @@ class OroPricingBundle implements
         $entityConfig->set('state', ExtendScope::STATE_ACTIVE);
 
         $configManager->persist($entityConfig);
-        $configManager->flush();
-        $configManager->clear();
-
-        $queries->addQuery(
-            new LoadEntityConfigStateMigrationQuery($this->dataStorageExtension)
-        );
     }
 }
