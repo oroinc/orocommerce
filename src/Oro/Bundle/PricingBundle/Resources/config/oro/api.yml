@@ -52,6 +52,7 @@ api:
                     actions:
                         update_relationship: false
         Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_product_price.md'
             fields:
                 productSku:
                     exclude: true
