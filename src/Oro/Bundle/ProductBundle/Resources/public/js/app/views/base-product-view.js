@@ -58,9 +58,6 @@ define(function(require) {
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
-            if (options.productModel && this.modelAttr.id === options.productModel.id) {
-                this.model = options.productModel;
-            }
             if (!this.model) {
                 this.model = (_.isObject(this.collection) && this.collection.get(this.rowId)) ?
                                 this.collection.get(this.rowId) : new BaseModel();
