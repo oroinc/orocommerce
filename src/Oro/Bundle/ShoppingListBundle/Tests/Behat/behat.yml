@@ -8,6 +8,39 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
 
+    ShoppingListEdit:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.shopping-lists__area-trigger'
+
+    ShoppingListAdd:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.add-to-shopping-list-button'
+
+    ShoppingListForm:
+      selector: '.shopping-lists-popup__item'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          List: "list"
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
+    ItemAdd:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-role="add-form-accept"]'
+
+    ItemEdit:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-role="edit"]'
+
+    ItemEditUnit:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.shopping-lists-modify .select2-choice'
+
+    ItemDisabled:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '#select2-drop .select2-disabled .select2-result-label:contains("set")'
+
     Edit Shopping List Label:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="start-editing"]'
