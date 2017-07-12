@@ -4,6 +4,7 @@ define(function(require) {
     var BaseProductView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
+    var QuantityHelper = require('orofrontend/js/app/quantity-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
@@ -20,6 +21,8 @@ define(function(require) {
 
         elementsEvents: {
             'quantity': ['input', 'onQuantityChange'],
+            'quantity onFocus': ['focus', 'onFocus'],
+            'quantity onBlur': ['blur', 'onBlur'],
             'unit': ['change', 'onUnitChange']
         },
 
@@ -94,13 +97,13 @@ define(function(require) {
         },
 
         onQuantityChange: function(e) {
-            this.filterQuantityField(e);
+            this.forbidQuantityField(e);
             this.setModelValueFromElement(e, 'quantity', 'quantity');
         },
 
         onUnitChange: function(e) {
             var $quantityField = this.getElement('quantity');
-            $quantityField.val(this.predefinedValueByPrecision($quantityField.val(), e.target.value));
+            QuantityHelper.predefinedValueByPrecision($quantityField.get(0), this._getUnitPrecision(e.target.value));
         },
 
         changeUnitLabel: function() {
@@ -149,35 +152,32 @@ define(function(require) {
             this.getElement('lineItem').addClass('disabled');
         },
 
-        filterQuantityField: function(event) {
+        onFocus: function(e) {
+            e.target.setAttribute('type', 'text');
+        },
+
+        onBlur: function(e) {
+            e.target.setAttribute('type', 'number');
+        },
+
+        forbidQuantityField: function(event) {
+            var start = event.target.selectionStart;
+
+            QuantityHelper.trim(event.target);
+
             if (event.target.value === this.model.get('quantity')) {
+                event.target.selectionStart = start - 1;
+                event.target.selectionEnd = start - 1;
                 return;
             }
 
-            var $input = $(event.target);
-
-            $input.val(this.predefinedValueByPrecision($input.val(), this.model.get('unit')));
+            QuantityHelper.predefinedValueByPrecision(event.target, this._getUnitPrecision());
+            event.target.selectionStart = start;
+            event.target.selectionEnd = start;
         },
 
-        predefinedValueByPrecision: function(value, unit) {
-            var newValue;
-            var parts = value.split(/(\.)/gi).slice(0, 3);
-            var precision = this.model.get('product_units')[unit] || 0;
-
-            if (precision === 0) {
-                newValue = parts[0];
-            } else if (precision > 0) {
-
-                if (parts[2]) {
-                    parts[2] = parts[2].slice(0, precision);
-                }
-                newValue = parts.join('');
-
-            } else {
-                newValue = value;
-            }
-
-            return newValue;
+        _getUnitPrecision: function(unit) {
+            return this.model.get('product_units')[unit || this.model.get('unit')];
         },
 
         dispose: function() {
