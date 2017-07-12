@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'discount_information.html.twig'
+        - '@setOption':
+            id: 'shopping_list_line_items_list'
+            optionName: 'lineItemDiscounts'
+            optionValue: '=data["oro_promotion_discounts_information"].getDiscountLineItemDiscounts(data["entity"])'
+        - '@add':
+            id: 'promotion_line_items_list_discount_info'
+            parentId: 'shopping_list_line_items_list_price'
+            blockType: block

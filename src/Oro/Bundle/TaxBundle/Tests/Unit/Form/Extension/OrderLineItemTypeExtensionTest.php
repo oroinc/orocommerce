@@ -79,21 +79,6 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(OrderLineItemType::NAME, $this->extension->getExtendedType());
     }
 
-    public function testBuildForm()
-    {
-        $this->taxationSettingsProvider->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn(true);
-
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->never())->method($this->anything());
-
-        $this->totalProvider->expects($this->once())->method('enableRecalculation');
-
-        $this->extension->buildForm($builder, []);
-    }
-
     public function testFinishViewDisabledProvider()
     {
         $this->taxationSettingsProvider->expects($this->once())
@@ -176,17 +161,5 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $this->extension->buildView($view, $form, []);
-    }
-
-    public function testOnBuildFormWithDisabledTaxes()
-    {
-        $this->taxationSettingsProvider->expects($this->once())
-            ->method('isEnabled')
-            ->willReturn(false);
-
-        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->never())->method('add');
-
-        $this->extension->buildForm($builder, []);
     }
 }

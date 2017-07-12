@@ -5,18 +5,20 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var routing = require('routing');
+    var mediator = require('oroui/js/mediator');
+    var ProductHelper = require('oroproduct/js/app/product-helper');
     var AutocompleteComponent = require('oro/autocomplete-component');
 
     ProductAutocompleteComponent = AutocompleteComponent.extend({
         /**
-         * {Object}
+         * @property {Object}
          */
-        defer: null,
+        product: {},
 
         /**
-         * {String}
+         * @property {String}
          */
-        itemFromAutocomplete: null,
+        previousValue: '',
 
         /**
          * {@inheritDoc}
@@ -24,111 +26,129 @@ define(function(require) {
         initialize: function(options) {
             var thisOptions = {
                 product: {},
-                productBySkuRoute: 'oro_product_frontend_ajax_names_by_skus',
+                productBySkuRoute: 'oro_frontend_autocomplete_search',
                 selectors: {
-                    row: '.quick-order__form__row',
-                    name: '.product-autocomplete-name',
-                    error: '.product-autocomplete-error',
-                    success: '.product-autocomplete-success'
+                    row: '[data-role="row"]',
+                    sku: '[data-name="field__product-sku"]',
+                    error: '[data-role="autocomplete-error"]'
                 },
                 errorClass: 'error'
             };
-            this.options = $.extend(true, thisOptions, this.options);
+            this.options = $.extend(true, thisOptions, options);
 
             ProductAutocompleteComponent.__super__.initialize.apply(this, arguments);
 
             this.$row = this.$el.closest(this.options.selectors.row);
-            this.$name = this.$row.find(this.options.selectors.name);
+            this.$sku = this.$row.find(this.options.selectors.sku);
             this.$error = this.$row.find(this.options.selectors.error);
-            this.$success = this.$row.find(this.options.selectors.success);
 
             this.product = $.extend(true, {
                 sku: null,
-                name: null
+                name: null,
+                displayName: null
             }, this.options.product);
+
             this.updateProduct();
 
             this.$el.on('blur', _.bind(this.onBlur, this));
-            this.$el.on('change', _.bind(this.onChange, this));
         },
 
-        onBlur: function(event) {
-            var $autoComplete = $(event.relatedTarget).parents('.typeahead:first');
+        onBlur: function(e) {
+            var val = ProductHelper.trimWhiteSpace(e.target.value);
+            var hasChanged = val !== this.previousValue;
+            var $autoComplete = $(e.relatedTarget).parents('ul.select2-results');
 
-            // if relatedTarget is typeahead item, there is no need to validate it
-            // otherwise updater will be executed
-            if (!$autoComplete.length) {
-                var val = this.$el.val();
-                if (!val || this.itemFromAutocomplete) {
-                    return false;
-                }
+            if (hasChanged && !$autoComplete.length) {
+                this.previousValue = val;
+                this.resetProduct();
                 this.validateProduct(val);
             }
         },
 
-        onChange: function(event) {
-            if (!event.originalEvent) {
-                return false;
-            }
-            this.resetProduct();
-        },
-
-        /**
-         * {@inheritDoc}
-         */
         updater: function(item) {
-            this.itemFromAutocomplete = item;
+            var sku = this.resultsMapping[item].sku;
 
-            this.product.sku = this.resultsMapping[item].sku;
-            this.product.name = this.resultsMapping[item]['defaultName.string'];
-            this.updateProduct();
+            this.resetProduct();
+            this.previousValue = item;
+            this.validateProduct(sku);
 
-            return this.resultsMapping[item].sku;
+            return item;
         },
 
         validateProduct: function(val) {
             var self = this;
+            val = val.split(' ')[0];
+
             $.ajax({
                 url: routing.generate(this.options.productBySkuRoute),
-                data: {skus: [val]},
+                method: 'get',
+                data: {
+                    name: 'oro_product_with_prices',
+                    per_page: 1,
+                    query: val
+                },
                 type: 'post',
                 success: function(response) {
-                    val = self.$el.val().toUpperCase();
-                    if (response[val]) {
-                        self.product.sku = val;
-                        self.product.name = response[val].name;
+                    self.resetProduct();
+
+                    val = val.toUpperCase();
+
+                    var item = response.results[0];
+                    if (item && (item.sku === val)) {
+                        self.product.sku = item.sku;
+                        self.product.name = item['defaultName.string'];
+                        self.product.displayName = [self.product.sku, self.product.name].join(' - ');
+
+                        mediator.trigger('autocomplete:productFound', {
+                            item: item,
+                            $el: self.$el
+                        });
+                        self.previousValue = self.product.displayName;
+                    } else {
+                        mediator.trigger('autocomplete:productNotFound', {
+                            item: {sku: val},
+                            $el: self.$el
+                        });
                     }
-                },
-                complete: function() {
                     self.updateProduct();
+                },
+                error: function() {
+                    self.resetProduct();
                 }
             });
         },
 
         resetProduct: function() {
-            this.itemFromAutocomplete = this.product.sku = this.product.name = null;
+            this.product.sku = this.product.name = this.product.displayName = null;
 
-            this.$name.hide().find('span').html('');
-            this.$success.hide();
             this.$error.hide();
             this.$el.removeClass(this.options.errorClass);
         },
 
         updateProduct: function() {
             if (this.product.sku) {
-                this.$el.val(this.product.sku);
-                this.$name.show().find('span').html(this.product.name);
-                this.$success.show();
-            } else if (this.$el.val().length > 0) {
+                this.$el.val(this.product.displayName);
+            } else if (this.$el && this.$el.val().length > 0) {
                 this.$error.show();
-                this.$el.addClass(this.options.errorClass);
+
+                // move setting class to next processor tick so it's correctly set after submitting the form
+                _.defer(_.bind(function() {
+                    this.$el.addClass(this.options.errorClass);
+                }, this));
             }
         },
 
         dispose: function() {
-            delete this.defer;
-            delete this.itemFromAutocomplete;
-            ProductAutocompleteComponent.__super__.dispose.apply(this, arguments);
+            if (this.disposed) {
+                return;
+            }
+
+            delete this.product;
+            delete this.previousValue;
+
+            this.$el.off('blur', this.onBlur);
+
+            ProductAutocompleteComponent.__super__.dispose.call(this);
         }
     });
 

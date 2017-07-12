@@ -20,6 +20,7 @@ define(function(require) {
             this.options.title = _.__('oro.shoppinglist.widget.add_to_new_shopping_list');
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
+            this.options.shoppingListCreateEnabled = true;
 
             options.dialogOptions = {
                 'modal': true,
@@ -46,20 +47,22 @@ define(function(require) {
             return ShoppingListCreateWidget.__super__.dispose.apply(this, arguments);
         },
 
-        onFormSave: function(id) {
+        onFormSave: function(data) {
             var label = this.$el.find('.form-field-label').val();
             if (this.shoppingListCollection.length) {
                 this.shoppingListCollection.each(function(model) {
-                    model.set('is_current', model.get('id') === id, {silent: true});
+                    model.set('is_current', model.get('id') === data.savedId, {silent: true});
                 });
             }
 
             this.shoppingListCollection.add({
-                id: id,
+                id: data.savedId,
                 label: label,
                 is_current: true
             });
-            this.shoppingListCollection.trigger('change');
+            this.shoppingListCollection.trigger('change', {
+                shoppingListCreateEnabled: data.shoppingListCreateEnabled
+            });
         }
     });
 

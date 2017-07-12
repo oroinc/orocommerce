@@ -1,0 +1,96 @@
+oro_behat_extension:
+  suites:
+    OroPromotionBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroConfigBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroPromotionBundle::PromotionContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroCustomerBundle::GridContext
+        - OroConfigBundle::FeatureContext
+        - OroOrderBundle::OrderContext
+      paths:
+        - '@OroPromotionBundle/Tests/Behat/Features'
+
+  pages:
+    Promotion Create:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionCreate
+      route: 'oro_promotion_create'
+    Promotion Edit:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionEdit
+      route: 'oro_promotion_update'
+    Promotion View:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Page\PromotionView
+      route: 'oro_promotion_view'
+
+  elements:
+    Promotion Form:
+      selector: 'form[name="oro_promotion"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Name: 'oro_promotion[rule][name]'
+          Discount Value: 'oro_promotion[discountConfiguration][options][amount_discount_value][value]'
+          Discount Value (%): 'oro_promotion[discountConfiguration][options][percent_discount_value]'
+          Active At (first):
+            type: 'css'
+            locator: '.schedule-intervals [name$="[activeAt]"]:first-child'
+          Deactivate At (first):
+            type: 'css'
+            locator: '.schedule-intervals [name$="[deactivateAt]"]:first-child'
+          Labels: 'oro_promotion[labels][values][default]'
+          Descriptions: 'oro_promotion[descriptions][values][default]'
+          Discount: 'oro_promotion[discountConfiguration][type]'
+          Type: 'oro_promotion[discountConfiguration][options][discount_type]'
+          Currency: 'oro_promotion[discountConfiguration][options][amount_discount_value][currency]'
+
+    PromotionBackendOrder:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder
+      selector: 'div.layout-content'
+
+    PromotionBackendOrderLineItem:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem
+      selector: 'tr'
+
+    PromotionBackendLineItemDiscountTable:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.applied_discounts-result-grid'
+
+    PromotionCheckoutStep:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep
+      selector: 'div[data-role="checkout-content"]'
+
+    PromotionCheckoutStepLineItem:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStepLineItem
+      selector: 'table[data-scrollable-inner-content] > tbody > tr[data-scrollable-content-body]'
+
+    PromotionOrder:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrder
+      selector: '.page-content'
+
+    PromotionOrderLineItem:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderLineItem
+      selector: 'tr.grid-row'
+
+    PromotionShoppingList:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingList
+      selector: '#shopping_list_view_container_content'
+
+    PromotionShoppingListLineItem:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionShoppingListLineItem
+      selector: 'tbody.line_item'
+
+    PromotionOrderForm:
+      class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrderForm
+      selector: "form[name='oro_order_type']"
+      options:
+        mapping:
+          SKU1ProductQuantity: oro_order_type[lineItems][0][quantity]
+          SKU2ProductQuantity: oro_order_type[lineItems][1][quantity]
+
+    OrderPromotionsGrid:
+      selector: 'div[data-page-component-name="promotion-order-applied-discount-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

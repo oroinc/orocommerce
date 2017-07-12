@@ -36,6 +36,7 @@ class QuoteTest extends AbstractTest
             ['updatedAt', $now, false],
             ['shipUntil', $now, false],
             ['expired', true],
+            ['pricesChanged', true, false],
             ['shippingMethodLocked', true],
             ['allowUnlistedShippingMethod', true],
             ['request', new Request()],

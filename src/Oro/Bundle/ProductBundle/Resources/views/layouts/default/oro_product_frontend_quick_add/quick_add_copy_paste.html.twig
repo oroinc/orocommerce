@@ -1,5 +1,4 @@
 {% block _quick_add_copy_paste_form_start_widget %}
-    {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set attr = {
         'data-page-component-module': 'oroproduct/js/app/components/quick-add-copy-paste-form-component',
     }|merge(attr) %}
@@ -8,7 +7,7 @@
 
 {% block _quick_add_copy_paste_form_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ '{{ class_prefix }}__col {{ class_prefix }}__col_one-third'
+        class: attr.class|default('') ~ ' quick-order-copy-paste'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -17,23 +16,26 @@
 
 {% block _quick_add_copy_paste_title_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ '{{ class_prefix }}__form__title'
+        class: attr.class|default('') ~ ' quick-order-copy-paste__title'
     }) %}
-    <h3 {{ block('block_attributes') }}>{{ block_widget(block) }}</h3>
+    <h3 {{ block('block_attributes') }}>
+        <i class="fa-paste"></i>
+        {{ block_widget(block) }}
+    </h3>
 {% endblock %}
 
 {% block _quick_add_copy_paste_description_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ '{{ class_prefix }}__copy-paste-description'
+        class: attr.class|default('') ~ ' quick-order-copy-paste__description'
     }) %}
     <p {{ block('block_attributes') }}>{{ block_widget(block) }}</p>
 {% endblock %}
 
 {% block _quick_add_copy_paste_form_buttons_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ '{{ class_prefix }}__form__row {{ class_prefix }}-buttons'
+        class: attr.class|default('') ~ ' quick-order-copy-paste__buttons'
     }) %}
-    <fieldset {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </fieldset>
+    </div>
 {% endblock %}

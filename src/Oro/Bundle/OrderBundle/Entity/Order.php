@@ -25,6 +25,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
@@ -77,7 +78,8 @@ class Order extends ExtendOrder implements
     CurrencyAwareInterface,
     DiscountAwareInterface,
     SubtotalAwareInterface,
-    MultiCurrencyHolderInterface
+    MultiCurrencyHolderInterface,
+    WebsiteAwareInterface
 {
     use AuditableUserAwareTrait;
     use AuditableFrontendCustomerUserAwareTrait;

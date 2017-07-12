@@ -30,6 +30,7 @@ class TotalHelper
      * @param TotalProcessorProvider $totalProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
      * @param DiscountSubtotalProvider $discountSubtotalProvider
+     * @param RateConverterInterface $rateConverter
      */
     public function __construct(
         TotalProcessorProvider $totalProvider,
@@ -86,7 +87,7 @@ class TotalHelper
      */
     public function fillTotal(Order $order)
     {
-        $total = $this->totalProvider->getTotal($order);
+        $total = $this->totalProvider->enableRecalculation()->getTotal($order);
         $totalObject = MultiCurrency::create($total->getAmount(), $total->getCurrency());
         $baseTotal = $this->rateConverter->getBaseCurrencyAmount($totalObject);
         $totalObject->setBaseCurrencyValue($baseTotal);

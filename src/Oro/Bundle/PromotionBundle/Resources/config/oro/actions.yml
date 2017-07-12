@@ -1,0 +1,147 @@
+operations:
+    oro_segment_edit_inside_promotion:
+        label: oro.promotion.ui.segment_edit_button.label
+        datagrids:
+            - oro_segments-grid
+        button_options:
+            icon: pencil-square-o
+        order: 500
+        acl_resource: oro_promotion_update
+        entities:
+            - Oro\Bundle\SegmentBundle\Entity\Segment
+        preactions:
+            - '@call_service_method':
+                service: oro_promotion.repository.promotion
+                method: findPromotionByProductSegment
+                method_parameters: [$.data]
+                attribute: $.promotion
+        preconditions:
+            '@not_blank': $.promotion
+        actions:
+            - '@redirect':
+                route: oro_promotion_update
+                route_parameters:
+                    id: $.promotion.id
+
+    oro_promotion_duplicate:
+        label: oro.promotion.ui.duplicate.label
+        routes:
+            - oro_promotion_view
+        datagrids:
+            - promotion-grid
+        acl_resource: oro_promotion_create
+        order: 10
+        button_options:
+            icon: fa-files-o
+        actions:
+            - '@run_action_group':
+                results:
+                    promotion_copy_id: $.promotionCopy.id
+                action_group: oro_promotion_duplicate
+                parameters_mapping:
+                    promotion: $.data
+            - '@flash_message':
+                message: oro.promotion.ui.duplicate.success_message
+                type: 'success'
+            - '@redirect':
+                route: oro_promotion_view
+                route_parameters:
+                    id: $.promotion_copy_id
+
+action_groups:
+    oro_promotion_duplicate:
+        parameters:
+            promotion:
+                type: 'Oro\Bundle\PromotionBundle\Entity\Promotion'
+        actions:
+            - '@run_action_group':
+                action_group: oro_promotion_duplicate_fields
+                results:
+                    promotionCopy: $.promotionCopy
+                parameters_mapping:
+                    promotion: $.promotion
+
+            - '@run_action_group':
+                action_group: oro_promotion_set_dates_to_now
+                parameters_mapping:
+                    promotionCopy: $.promotionCopy
+
+            - '@run_action_group':
+                action_group: oro_promotion_set_duplicate_names
+                parameters_mapping:
+                    promotionCopy: $.promotionCopy
+
+            - '@flush_entity':
+                parameters:
+                    entity: $.promotionCopy
+
+    oro_promotion_duplicate_fields:
+        parameters:
+            promotion:
+                type: 'Oro\Bundle\PromotionBundle\Entity\Promotion'
+        actions:
+            - '@duplicate':
+                target: $.promotion
+                attribute: $.promotionCopy
+                settings:
+                    - [[keep], [propertyName, [organization]]]
+                    - [[keep], [propertyName, [owner]]]
+                    - [[setNull], [propertyName, [id]]]
+                    - [[shallowCopy], [propertyName, [rule]]]
+                    - [[keep], [propertyName, [useCoupons]]]
+                    - [[keep], [propertyName, [scopes]]]
+                    - [[shallowCopy], [propertyName, [discountConfiguration]]]
+                    - [[shallowCopy], [propertyName, [productsSegment]]]
+                    - [[collection], [propertyName, [schedules]]]
+                    - [[keep], [property, ["%oro_locale.entity.localized_fallback_value.class%", localization]]]
+                    - [[collection], [propertyName, [labels]]]
+                    - [[collection], [propertyName, [descriptions]]]
+            - '@assign_value': [$.promotionCopy.rule.enabled, false]
+
+    oro_promotion_set_duplicate_names:
+        parameters:
+            promotionCopy:
+                type: 'Oro\Bundle\PromotionBundle\Entity\Promotion'
+        actions:
+            - '@call_service_method':
+                service: oro_locale.formatter.date_time
+                method: format
+                attribute: $.currentDateTime
+                method_parameters:
+                    - 'now'
+            - '@substring':
+                attribute: $.oldRuleName
+                string: $.promotionCopy.rule.name
+                length: 200
+            - '@translate':
+                id: 'oro.promotion.ui.duplicate.new_name'
+                attribute: $.newRuleName
+                params:
+                    dateTime: $.currentDateTime
+                    originalName: $.oldRuleName
+            - '@assign_value': [$.promotionCopy.rule.name, $.newRuleName]
+            - '@substring':
+                attribute: $.oldSegmentName
+                string: $.promotionCopy.productsSegment.name
+                length: 200
+            - '@translate':
+                id: 'oro.promotion.ui.duplicate.new_name'
+                attribute: $.newSegmentName
+                params:
+                    dateTime: $.currentDateTime
+                    originalName: $.oldSegmentName
+            - '@assign_value': [$.promotionCopy.productsSegment.name, $.newSegmentName]
+
+    oro_promotion_set_dates_to_now:
+        parameters:
+            promotionCopy:
+                type: 'Oro\Bundle\PromotionBundle\Entity\Promotion'
+        actions:
+            - '@create_datetime':
+                attribute: $.currentDatetime
+            - '@assign_value': [$.promotionCopy.createdAt, $.currentDatetime]
+            - '@assign_value': [$.promotionCopy.updatedAt, $.currentDatetime]
+            - '@assign_value': [$.promotionCopy.rule.createdAt, $.currentDatetime]
+            - '@assign_value': [$.promotionCopy.rule.updatedAt, $.currentDatetime]
+            - '@assign_value': [$.promotionCopy.productsSegment.createdAt, $.currentDatetime]
+            - '@assign_value': [$.promotionCopy.productsSegment.updatedAt, $.currentDatetime]

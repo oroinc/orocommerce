@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 use Oro\Bundle\ShippingBundle\Method\Handler\RulesShippingMethodDisableHandlerDecorator;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,9 +24,9 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit_Framework_
     protected $repository;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
      * @var RulesShippingMethodDisableHandlerDecorator
@@ -40,12 +40,12 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit_Framework_
     {
         $this->handler = $this->createMock(ShippingMethodDisableHandlerInterface::class);
         $this->repository = $this->createMock(ShippingMethodsConfigsRuleRepository::class);
-        $this->methodRegistry = $this->createMock(ShippingMethodRegistry::class);
+        $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);
 
         $this->decorator = new RulesShippingMethodDisableHandlerDecorator(
             $this->handler,
             $this->repository,
-            $this->methodRegistry
+            $this->shippingMethodProvider
         );
     }
 
@@ -90,7 +90,7 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit_Framework_
             $configMocks[] = $configMock;
         }
 
-        $this->methodRegistry
+        $this->shippingMethodProvider
             ->method('getShippingMethod')
             ->will($this->returnValueMap($registryMapValues));
 

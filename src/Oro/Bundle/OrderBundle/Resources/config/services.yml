@@ -96,6 +96,7 @@ services:
 
     oro_order.handler.order_totals_handler:
         class: 'Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler'
+        deprecated: The "%service_id%" service is deprecated since v1.3. Use oro_order.order.total.total_helper instead
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
@@ -221,7 +222,7 @@ services:
     oro_order.formatter.shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
         arguments:
-            - "@?oro_shipping.shipping_method.registry"
+            - "@?oro_shipping.tracking_aware_shipping_methods_provider"
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
@@ -290,6 +291,15 @@ services:
             - "@oro.cache.memory_cache_chain"
         tags:
             - { name: layout.data_provider, alias: top_selling_items }
+
+    oro_order.layout.provider.top_selling_items.cache_decorator:
+        parent: oro_product.doctrine.abstract_cached_provider_decorator
+        decorates: oro_order.layout.provider.top_selling_items
+        decoration_priority: 10
+        arguments:
+            - '@oro_order.layout.provider.top_selling_items.cache_decorator.inner'
+            - '@oro.cache.memory_cache_chain'
+            - 'oro_order.layout.provider.top_selling_items'
 
     oro_order.event_listener.extract_line_item_options:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'

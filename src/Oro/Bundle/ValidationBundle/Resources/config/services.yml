@@ -5,3 +5,11 @@ services:
             - '@translator'
         tags:
             - { name: validator.constraint_validator, alias: oro_validation.validator_constraints.not_blank_one_of_validator }
+
+    oro_validation.validator_constraints.blank_one_of:
+        class: 'Oro\Bundle\ValidationBundle\Validator\Constraints\BlankOneOfValidator'
+        arguments:
+            - '@translator'
+            - '@property_accessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_validation.validator_constraints.blank_one_of_validator }

@@ -172,19 +172,6 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getEnabledRulesByMethodDataProvider
-     *
-     * @param string[] $expectedRuleReferences
-     */
-    public function testConfigsWithEnabledRuleAndMethod(array $expectedRuleReferences)
-    {
-        $actualRules = $this->repository->getConfigsWithEnabledRuleAndMethod($this->getFlatRateIdentifier());
-        foreach ($expectedRuleReferences as $expectedRuleReference) {
-            static::assertContains($this->getReference($expectedRuleReference), $actualRules);
-        }
-    }
-
-    /**
      * @return array
      */
     public function getEnabledRulesByMethodDataProvider()

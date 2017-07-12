@@ -19,6 +19,7 @@
     {% if entity.id or is_granted('oro_order_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
+    {% set html = html ~ placeholder('order_update_additional_nav_buttons', {entity: entity}) %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
@@ -259,6 +260,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
         'class': 'active',
+        'priority': 900,
         'subblocks': [{
             'data': [subtotals]
         }]
