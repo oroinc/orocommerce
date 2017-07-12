@@ -1,5 +1,5 @@
 @fixture-OroPricingBundle:ProductPrices.yml
-Feature: Import Prices
+Feature: Check CPL after Prices Import
 
   Scenario: Create two session
     Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
