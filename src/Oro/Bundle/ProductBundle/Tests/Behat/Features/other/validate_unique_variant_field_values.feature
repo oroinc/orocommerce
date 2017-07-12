@@ -1,6 +1,7 @@
 @ticket-BB-8130
 @automatically-ticket-tagged
 @fixture-OroProductBundle:Products_validate_unique_variant_field_values.yml
+@regression
 Feature: Validate unique variant field values when changing simple products
 
   #Case 1:

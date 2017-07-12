@@ -4,6 +4,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 @automatically-ticket-tagged
+@regression
 Feature: Quick order form
   In order to provide customers with ability to quickly start an order
   As customer

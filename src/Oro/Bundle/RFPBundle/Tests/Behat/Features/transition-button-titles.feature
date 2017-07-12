@@ -1,5 +1,6 @@
 @fixture-OroRFPBundle:RFQWorkflows.yml
 @skip #due to BAP-14674
+@regression
 Feature: Transition button titles for Frontend
 
   Scenario: Prepare Test Workflow

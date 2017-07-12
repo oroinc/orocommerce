@@ -1,4 +1,5 @@
 @fixture-OroProductBundle:new_arrivals_block.yml
+@regression
 Feature: New Arrivals Block
   In order to promote new arrivals on the store homepage
   As an Administrator
