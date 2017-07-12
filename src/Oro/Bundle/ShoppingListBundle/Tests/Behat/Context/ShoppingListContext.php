@@ -7,6 +7,7 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\SubtotalAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
@@ -45,6 +46,40 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
         $form = $this->createElement('OroForm');
         $form->fill($table);
         $this->getPage()->pressButton('Submit Request');
+    }
+
+    /**
+     * @Then /^(?:|I )see next subtotals for "(?P<elementName>[\w\s]+)":$/
+     *
+     * @param TableNode $expectedSubtotals
+     * @param string $elementName
+     */
+    public function assertSubtotals(TableNode $expectedSubtotals, $elementName)
+    {
+        /** @var SubtotalAwareInterface $element */
+        $element = $this->createElement($elementName);
+
+        if (!$element instanceof SubtotalAwareInterface) {
+            throw new \InvalidArgumentException(
+                sprintf('Element "%s" expected to implement SubtotalsAwareInterface', $elementName)
+            );
+        }
+
+        $rows = $expectedSubtotals->getRows();
+        array_shift($rows);
+
+        foreach ($rows as list($subtotalName, $subtotalAmount)) {
+            static::assertEquals(
+                $subtotalAmount,
+                $element->getSubtotal($subtotalName),
+                sprintf(
+                    'Wrong value for "%s" subtotal. Expected "%s" got "%s"',
+                    $subtotalName,
+                    $subtotalAmount,
+                    $element->getSubtotal($subtotalName)
+                )
+            );
+        }
     }
 
     /**
