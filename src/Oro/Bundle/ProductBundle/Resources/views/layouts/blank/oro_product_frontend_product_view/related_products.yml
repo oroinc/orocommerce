@@ -10,7 +10,7 @@ layout:
             optionName: items
             optionValue: '=data["oro_product_related_products"].getRelatedProducts(data["product"])'
         - '@setOption':
-            id: featured_products
+            id: related_products
             optionName: items_data.stickers
             optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["oro_product_related_products"].getRelatedProducts(data["product"]))'
         - '@setOption':
