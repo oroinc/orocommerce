@@ -272,6 +272,7 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_list_trigger_factory:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
@@ -285,6 +286,7 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_rule_lexeme_trigger_handler:
         class: Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler

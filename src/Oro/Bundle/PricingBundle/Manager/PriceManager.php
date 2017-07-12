@@ -9,6 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
+use Oro\Bundle\PricingBundle\Event\ProductPricesUpdated;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -116,6 +117,9 @@ class PriceManager
         }
         foreach ($pricesToSave as $price) {
             $this->doSave($price);
+        }
+        if ($pricesToRemove || $pricesToSave) {
+            $this->eventDispatcher->dispatch(ProductPricesUpdated::NAME);
         }
     }
 
