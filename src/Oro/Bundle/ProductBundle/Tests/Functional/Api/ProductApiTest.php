@@ -93,25 +93,24 @@ class ProductApiTest extends RestJsonApiTestCase
 
         $response = $this->patch(
             ['entity' => 'products', 'id' => (string)$product->getId()],
-            [
-                'data' => [
-                    'type' => 'products',
-                    'id' => (string)$product->getId(),
-                    'relationships' => [
-                        'inventory_status' => [
-                            'data' => [
-                                'type' => 'prodinventorystatuses',
-                                'id' => 'out_of_stock',
-                            ],
-                        ],
-                    ],
-                ]
-            ]
+            $this->createUpdateRequest($product)
         );
 
         /** @var Product $product */
         $product = $this->getEntityManager()->find(Product::class, $product->getId());
+        $referenceRepository = $this->getReferenceRepository();
+        foreach ($product->getNames() as $name) {
+            $localization = $name->getLocalization() === null ? 'default':$name->getLocalization()->getFormattingCode();
+            $reference = LoadProductData::PRODUCT_1.'.names.'.$localization;
+            if (!$referenceRepository->hasReference($reference)) {
+                $referenceRepository->addReference($reference, $name);
+            }
+        }
         $this->getReferenceRepository()->setReference(LoadProductData::PRODUCT_1, $product);
+        $defaultName = $product->getName(null);
+        $this->assertEquals('Test product changed', $defaultName->getString());
+        $defaultDescription = $product->getDescription(null);
+        $this->assertEquals('<b>Description Bold</b>', $defaultDescription->getText());
 
         $this->assertResponseContains('patch_update_entity.yml', $response);
     }
@@ -455,6 +454,143 @@ class ProductApiTest extends RestJsonApiTestCase
                         ]
                     ]
                 ]
+            ]
+        ];
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    private function createUpdateRequest(Product $product)
+    {
+        $productNameDefault = $this->getReference('product-1.names.default');
+        $productNameEn = $this->getReference('product-1.names.en_US');
+        $productSlugPrototypeDefault = $this->getReference('product-1.slugPrototypes.default');
+        $productSlugPrototypeEn = $this->getReference('product-1.slugPrototypes.en_US');
+        $productDescDefault = $this->getReference('product-1.descriptions.default');
+        $productDescEn = $this->getReference('product-1.descriptions.en_US');
+        $productShortDescDefault = $this->getReference('product-1.shortDescriptions.default');
+        $productShortDescEn = $this->getReference('product-1.shortDescriptions.en_US');
+        $localization = $this->getReference('es');
+
+        return [
+            'data' => [
+                'type' => 'products',
+                'id' => (string)$product->getId(),
+                "attributes" => [
+                    "sku" => "new-sku",
+                    "status" => "disabled",
+                    "variantFields" => [],
+                    "productType" => "simple",
+                    "featured" => true,
+                    "newArrival" => true
+                ],
+                'relationships' => [
+                    "names" => [
+                        "data" => [
+                            0 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productNameDefault->getId()
+                            ],
+                            1 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productNameEn->getId()
+                            ],
+                            2 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => "names-new"
+                            ]
+                        ]
+                    ],
+                    "slugPrototypes" => [
+                        "data" => [
+                            0 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productSlugPrototypeDefault->getId(),
+                            ],
+                            1 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productSlugPrototypeEn->getId(),
+                            ]
+                        ]
+                    ],
+                    "descriptions" => [
+                        "data" => [
+                            0 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productDescDefault->getId(),
+                            ],
+                            1 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productDescEn->getId()
+                            ]
+                        ]
+                    ],
+                    "shortDescriptions" => [
+                        "data" => [
+                            0 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productShortDescDefault->getId()
+                            ],
+                            1 => [
+                                "type" => "localizedfallbackvalues",
+                                "id" => (string)$productShortDescEn->getId()
+                            ]
+                        ]
+                    ],
+                    'inventory_status' => [
+                        'data' => [
+                            'type' => 'prodinventorystatuses',
+                            'id' => 'out_of_stock',
+                        ],
+                    ],
+                ],
+            ],
+            "included" => [
+                0 => [
+                    "meta" => [
+                        "update" => true,
+                    ],
+                    "type" => "localizedfallbackvalues",
+                    "id" => (string)$productDescDefault->getId(),
+                    "attributes" => [
+                        "fallback" => null,
+                        "string" => null,
+                        "text" => "<b>Description Bold</b>"
+                    ],
+                    "relationships" => ["localization" => ["data" => null]]
+                ],
+                1 => [
+                    "meta" => [
+                        "update" => true,
+                    ],
+                    "type" => "localizedfallbackvalues",
+                    "id" => (string)$productNameDefault->getId(),
+                    "attributes" => [
+                        "fallback" => null,
+                        "string" => "Test product changed",
+                        "text" => null
+                    ],
+                    "relationships" => ["localization" => ["data" => null]]
+                ],
+                2 => [
+                    "type" => "localizedfallbackvalues",
+                    "id" => "names-new",
+                    "attributes" => [
+                        "fallback" => null,
+                        "string" => "Product in spanish",
+                        "text" => null
+                    ],
+                    "relationships" => [
+                        "localization" => [
+                            "data" => [
+                                "type" => "localizations",
+                                "id" => (string)$localization->getId()
+                            ]
+                        ]
+                    ]
+                ],
             ]
         ];
     }
