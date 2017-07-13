@@ -4,7 +4,6 @@ define(function(require) {
     var BaseProductView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
-    var QuantityHelper = require('orofrontend/js/app/quantity-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
@@ -20,10 +19,7 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'quantity': ['input', 'onQuantityChange'],
-            'quantity onFocus': ['focus', 'onFocus'],
-            'quantity onBlur': ['blur', 'onBlur'],
-            'unit': ['change', 'onUnitChange']
+            'quantity': ['input', 'onQuantityChange']
         },
 
         modelElements: {
@@ -101,11 +97,6 @@ define(function(require) {
             this.setModelValueFromElement(e, 'quantity', 'quantity');
         },
 
-        onUnitChange: function(e) {
-            var $quantityField = this.getElement('quantity');
-            QuantityHelper.predefinedValueByPrecision($quantityField.get(0), this._getUnitPrecision(e.target.value));
-        },
-
         changeUnitLabel: function() {
             var $unit = this.getElement('unit');
             var unitLabel = this.model.get('unit_label');
@@ -152,26 +143,24 @@ define(function(require) {
             this.getElement('lineItem').addClass('disabled');
         },
 
-        onFocus: function(e) {
-            e.target.setAttribute('type', 'text');
-        },
-
-        onBlur: function(e) {
-            e.target.setAttribute('type', 'number');
-        },
-
         forbidQuantityField: function(event) {
-            var start = event.target.selectionStart;
-
-            QuantityHelper.trim(event.target);
-
             if (event.target.value === this.model.get('quantity')) {
-                event.target.selectionStart = event.target.selectionEnd = start--;
                 return;
             }
 
-            QuantityHelper.predefinedValueByPrecision(event.target, this._getUnitPrecision());
-            event.target.selectionStart = event.target.selectionEnd = start;
+            var regExpString = '^([0-9]*)';
+            var precision = this._getUnitPrecision();
+            if (precision > 0) {
+                regExpString += '(\\.{1})?([0-9]{1,' + precision + '})?';
+            }
+            var regExp = new RegExp(regExpString, 'g');
+            var substitution = event.target.value.replace(regExp, '');
+
+            if (!regExp.test(event.target.value) || substitution.length > 0) {
+                event.target.value = event.target.value.match(regExp).join('');
+                event.preventDefault();
+                return false;
+            }
         },
 
         _getUnitPrecision: function(unit) {
