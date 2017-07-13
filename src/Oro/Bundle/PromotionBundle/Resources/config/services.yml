@@ -320,6 +320,7 @@ services:
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_currency.rounding.price_rounding_service'
             - '@translator'
+            - '@oro_promotion.provider.discount_recalculation_provider'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 
@@ -426,7 +427,13 @@ services:
     oro_promotion.form.extension.order:
         class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension'
         arguments:
-            - '@request_stack'
+            - '@oro_promotion.provider.discount_recalculation_provider'
             - '@oro_promotion.applied_discount_manager'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
+
+    oro_promotion.provider.discount_recalculation_provider:
+        class: 'Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider'
+        public: false
+        arguments:
+            - '@request_stack'

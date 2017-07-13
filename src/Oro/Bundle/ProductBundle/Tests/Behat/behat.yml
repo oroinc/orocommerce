@@ -91,6 +91,8 @@ oro_behat_extension:
             element: Configurable Attributes
           Color: 'oro_product[Color]'
           Size: 'oro_product[Size]'
+          Color Attribute: 'oro_product[color_attribute]'
+          Size Attribute: 'oro_product[size_attribute]'
 
     RelatedProductsConfig:
       selector: 'div#container'
@@ -493,6 +495,7 @@ oro_behat_extension:
         - OroCheckoutBundle::FeatureContext
         - OroAuthorizeNetBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
+        - OroShoppingListBundle::FeatureContext
         - OroShippingBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

@@ -27,7 +27,6 @@ Feature: Quote Backoffice Approvals Workflow
     And I fill "Quote Form" with:
       | PO Number | PO1_edit |
     And I click "Submit"
-    And I click "Save" in modal window
     Then I should see "Quote #1 successfully updated" flash message
     And should see Quote with:
       | Quote #         | 1        |
@@ -123,7 +122,6 @@ Feature: Quote Backoffice Approvals Workflow
     Then I should see Quote with:
       | PO Number       | PO2                  |
       | Internal Status | Submitted for Review |
-
     When I click "Review"
     Then I should see "Quote #2 on review" flash message
     And I should see Quote with:
@@ -473,5 +471,4 @@ Feature: Quote Backoffice Approvals Workflow
     And I fill "Quote Form" with:
       | LineItemPrice | 10 |
     And I click "Submit"
-    And I click "Save" in modal window
     Then I should see "Price overriding allowed by tier price only"
