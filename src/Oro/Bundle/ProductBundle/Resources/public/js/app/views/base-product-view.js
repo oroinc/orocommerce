@@ -19,7 +19,8 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'quantity': ['input', 'onQuantityChange']
+            'quantity': ['input', 'onQuantityChange'],
+            'quantity onKeypressForbid': ['keypress', 'onKeypressForbid']
         },
 
         modelElements: {
@@ -94,7 +95,9 @@ define(function(require) {
         },
 
         onUnitChange: function() {
-            this.getElement('quantity').trigger('input');
+            var $quantity = this.getElement('quantity');
+            $quantity.trigger('input');
+            $quantity.attr('pattern', this._getUnitPrecision() === 0 ? '[0-9]*' : '');
         },
 
         onQuantityChange: function(e) {
@@ -148,6 +151,24 @@ define(function(require) {
             this.getElement('lineItem').addClass('disabled');
         },
 
+        onKeypressForbid: function(event) {
+            var keyCode = event.keyCode;
+            if (keyCode === 46 && this._getUnitPrecision() > 0) {
+                event.target.value = event.target.valueAsNumber.toFixed(this._getUnitPrecision());
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+            }
+
+            if (keyCode > 47 && keyCode < 58) {
+                return true;
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
+            return false;
+        },
+
         forbidQuantityField: function(event) {
             var regExpString = '^([0-9]*)';
             var precision = this._getUnitPrecision();
@@ -164,8 +185,8 @@ define(function(require) {
             }
         },
 
-        _getUnitPrecision: function(unit) {
-            return this.model.get('product_units')[unit || this.model.get('unit')];
+        _getUnitPrecision: function() {
+            return this.model.get('product_units')[this.model.get('unit')];
         },
 
         dispose: function() {
