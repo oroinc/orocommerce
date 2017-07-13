@@ -14,5 +14,29 @@ layout:
             parentId: line_item_form
             siblingId: line_item_form_end
             prepend: true
+        - '@add':
+            id: product_main_container
+            parentId: product_view_container
+            blockType: container
+        - '@add':
+            id: product_aside_container
+            parentId: product_view_container
+            blockType: container
+        - '@move':
+            id: product_view_primary_wrapper
+            parentId: product_main_container
+        - '@move':
+            id: product_view_main_container
+            parentId: product_main_container
+        - '@move':
+            id: product_view_additional_container
+            parentId: product_main_container
+        - '@move':
+            id: product_view_related_products_container
+            parentId: product_aside_container
+        - '@setOption':
+            id: related_products
+            optionName: use_slider
+            optionValue: false
 
     conditions: '!context["is_mobile"]'

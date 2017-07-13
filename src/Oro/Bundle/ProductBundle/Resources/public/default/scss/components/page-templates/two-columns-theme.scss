@@ -35,7 +35,7 @@
 
                 .embedded-list {
                     &__item {
-                        width: (100% / $embedded-related-products-item-count-desktop);
+                        width: (100% / $two-columns-theme-embedded-related-products-item-count-desktop);
                         margin-right: 0;
                     }
                 }
@@ -44,10 +44,10 @@
             // Tiles mode
             .embedded-list {
                 &__item {
-                    width: calc((100% / #{$embedded-related-products-item-count-desktop}) - #{$embedded-related-products-item-gap-desktop});
+                    width: calc((100% / #{$two-columns-theme-embedded-related-products-item-count-desktop}) - #{$two-columns-theme-embedded-related-products-item-gap-desktop});
                     margin-right: 0;
 
-                    &:not(:nth-child(#{$embedded-related-products-item-count-desktop}n)) {
+                    &:not(:nth-child(#{$two-columns-theme-embedded-related-products-item-count-desktop}n)) {
                         margin-right: $embedded-products-item-offset;
                     }
                 }
