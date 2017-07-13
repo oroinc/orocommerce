@@ -68,11 +68,32 @@ define(function(require) {
          */
         afterSaveState: function($target, response) {
             var responseData = response.responseData || {};
-            if (responseData.stateSaved || false) {
+            if (!_.isEmpty(this.options.targetEvents) && (responseData.stateSaved || false)) {
+                var eventCount = 0;
+                var disabled = false;
+
                 $.each(this.options.targetEvents, function(selector, eventNames) {
+                    eventCount += eventNames.length;
+
                     if ($target.closest(selector).length) {
+                        if (!disabled) {
+                            mediator.trigger('checkout:transition-button:disable');
+                            disabled = true;
+                        }
+
                         _.each(eventNames, function(eventName) {
-                            mediator.trigger(eventName);
+                            mediator.trigger(
+                                eventName,
+                                {
+                                    'layoutSubtreeCallback': function() {
+                                        eventCount--;
+
+                                        if (eventCount < 1) {
+                                            mediator.trigger('checkout:transition-button:enable');
+                                        }
+                                    }
+                                }
+                            );
                         });
                     }
                 });

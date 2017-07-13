@@ -12,6 +12,7 @@ define(function(require) {
         defaults: {
             transitionUrl: null,
             enabled: true,
+            enableOnLoad: true,
             hasForm: false,
             selectors: {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
@@ -37,7 +38,15 @@ define(function(require) {
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
             }
-            this.enableTransitionButton();
+
+            if (!this.options.transitionUrl) {
+                return;
+            }
+
+            if (this.options.enableOnLoad) {
+                this.enableTransitionButton();
+            }
+
             mediator.on('checkout:transition-button:enable', this.enableTransitionButton, this);
             mediator.on('checkout:transition-button:disable', this.disableTransitionButton, this);
         },

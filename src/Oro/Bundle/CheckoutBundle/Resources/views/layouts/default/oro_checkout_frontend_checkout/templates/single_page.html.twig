@@ -8,7 +8,13 @@
 {% endblock %}
 
 {% block _checkout_view_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view"}) %}
+    {% set attr = attr|merge({
+        'class': attr.class|default('') ~ " checkout-view",
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'orocheckout/js/app/views/single-page-checkout-view'
+        }
+    }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -245,6 +251,8 @@
         <div class="order-checkout-widget text-right">
             <button type="submit"
                     class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-l checkout__submit-btn"
+                    disabled="disabled"
+                    autocomplete="off"
                     {{ _layout.transitionAttrbiutes(transitionData, checkout) }}
                     {{ _layout.conditionMessages(transitionData) }}
             >

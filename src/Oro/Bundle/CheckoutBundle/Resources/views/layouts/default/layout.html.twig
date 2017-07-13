@@ -67,6 +67,7 @@
             <button type="submit"
                 class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__form__submit"
                 disabled="disabled"
+                autocomplete="off"
                 {{ _self.transitionAttrbiutes(transitionData, checkout) }}
             >
                 {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="fa-angle-right va-m_md"></i>

@@ -86,6 +86,7 @@ workflows:
                                 - 'shipping-methods:refresh'
                         ignoreTargets:
                             - '.checkout-payment-methods .checkout__form__payment-container'
+                        enableOnLoad: false
                 form_options:
                     form_init:
                         - '@tree':
