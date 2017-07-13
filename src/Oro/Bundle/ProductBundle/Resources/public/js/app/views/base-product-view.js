@@ -166,14 +166,12 @@ define(function(require) {
             QuantityHelper.trim(event.target);
 
             if (event.target.value === this.model.get('quantity')) {
-                event.target.selectionStart = start - 1;
-                event.target.selectionEnd = start - 1;
+                event.target.selectionStart = event.target.selectionEnd = start--;
                 return;
             }
 
             QuantityHelper.predefinedValueByPrecision(event.target, this._getUnitPrecision());
-            event.target.selectionStart = start;
-            event.target.selectionEnd = start;
+            event.target.selectionStart = event.target.selectionEnd = start;
         },
 
         _getUnitPrecision: function(unit) {
