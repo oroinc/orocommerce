@@ -1,0 +1,12 @@
+{% set quantity = record.getValue('quantity') %}
+{% set price = record.getValue('value') %}
+{% set currency = record.getValue('currency') %}
+{% set discountAmount = record.getValue('discountAmount') %}
+
+{% set rowTotalAfterDiscount = (price * quantity) - discountAmount %}
+
+{% if rowTotalAfterDiscount < 0 %}
+    {% set rowTotalAfterDiscount = 0.0 %}
+{% endif %}
+
+{{ rowTotalAfterDiscount|oro_format_currency({currency: currency}) }}

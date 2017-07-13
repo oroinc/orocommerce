@@ -168,6 +168,7 @@ Feature: Sales Representative Info
     And click Sales in sidebar menu
     And click on "Contacts"
     When fill "Customer Visible Contact Info Form" with:
+      |Available User Options Default|false         |
       |Available User Options        |Enter Manually|
     And click "Save settings"
     And go to System/ User Management/ Users

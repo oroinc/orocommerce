@@ -18,6 +18,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -55,7 +56,8 @@ class Checkout implements
     DatesAwareInterface,
     ShippingAwareInterface,
     LineItemsNotPricedAwareInterface,
-    PaymentMethodAwareInterface
+    PaymentMethodAwareInterface,
+    WebsiteAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;

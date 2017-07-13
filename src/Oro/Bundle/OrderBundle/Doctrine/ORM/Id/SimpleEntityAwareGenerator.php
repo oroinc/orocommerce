@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Doctrine\ORM\Id;
 
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-
 class SimpleEntityAwareGenerator implements EntityAwareGeneratorInterface
 {
     /**
@@ -13,6 +11,6 @@ class SimpleEntityAwareGenerator implements EntityAwareGeneratorInterface
      */
     public function generate($entity)
     {
-        return UUIDGenerator::v4();
+        return $entity->getId();
     }
 }

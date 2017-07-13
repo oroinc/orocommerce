@@ -118,4 +118,12 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     {
         return $this->taxFactory->supports($entity);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsCachedSubtotal($entity)
+    {
+        return $this->taxFactory->supports($entity);
+    }
 }

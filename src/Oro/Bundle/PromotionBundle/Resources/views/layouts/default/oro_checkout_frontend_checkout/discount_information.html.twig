@@ -1,0 +1,13 @@
+{% block _promotion_checkout_line_items_list_discount_info_widget %}
+    {% set matchedDiscount = parent.lineItemDiscounts.contains(lineItem) ? parent.lineItemDiscounts.get(lineItem) : null %}
+    {% if matchedDiscount is not null and matchedDiscount.total.value > 0 %}
+        <table class="checkout-order-summary__price-table">
+            <tbody>
+            <tr>
+                <td class="checkout-order-summary__price-line">{{ 'oro.frontend.checkout.view.discount.label'|trans }}</td>
+                <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>{{ matchedDiscount.total|oro_format_price }}</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

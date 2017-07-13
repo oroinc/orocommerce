@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
@@ -34,7 +35,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class PriceList extends BasePriceList
+class PriceList extends BasePriceList implements ScheduleIntervalsAwareInterface
 {
     /**
      * @var bool

@@ -46,9 +46,6 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
      */
     protected $shippingOriginProvider;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrineHelper;
-
     /**
      * @var UPSTransportSettingsType
      */
@@ -71,16 +68,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->method('getSettingsEntityFQCN')
             ->willReturn(static::DATA_CLASS);
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
 
         $this->formType = new UPSTransportSettingsType(
             $this->transport,
-            $this->shippingOriginProvider,
-            $this->doctrineHelper
+            $this->shippingOriginProvider
         );
 
         parent::setUp();
@@ -195,7 +187,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
 
         $shippingOrigin = new ShippingOrigin(
             [
-                'country' => 'US',
+                'country' => new Country('US'),
                 'region' => 'test',
                 'region_text' => 'test region text',
                 'postal_code' => 'test postal code',
@@ -209,25 +201,6 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->expects(static::once())
             ->method('getSystemShippingOrigin')
             ->willReturn($shippingOrigin);
-
-        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
-        $repository->expects(static::once())
-            ->method('findOneBy')
-            ->willReturn(new Country('US'));
-
-        $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager->expects(static::once())
-            ->method('getRepository')
-            ->with('OroAddressBundle:Country')
-            ->willReturn($repository);
-
-        $this->doctrineHelper->expects(static::once())
-            ->method('getEntityManagerForClass')
-            ->with('OroAddressBundle:Country')
-            ->willReturn($entityManager);
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 

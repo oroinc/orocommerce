@@ -1,0 +1,13 @@
+{% set result = record.getValue('result') %}
+{% set currency = record.getValue('currency') %}
+{% set discountAmount = record.getValue('discountAmount') %}
+{% set rowTotalAfterDiscountExcludintTax = 0.0 %}
+
+{% if result.row is defined and result.row.excludingTax is defined %}
+    {% set rowTotalAfterDiscountExcludintTax = result.row.excludingTax - discountAmount %}
+    {% if rowTotalAfterDiscountExcludintTax < 0 %}
+        {% set rowTotalAfterDiscountExcludintTax = 0.0 %}
+    {% endif %}
+{% endif %}
+
+{{ rowTotalAfterDiscountExcludintTax|oro_format_currency({currency: currency}) }}
