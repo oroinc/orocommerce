@@ -40,24 +40,32 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     private $translator;
 
     /**
+     * @var DiscountRecalculationProvider
+     */
+    private $discountRecalculationProvider;
+
+    /**
      * @param UserCurrencyManager $currencyManager
      * @param PromotionExecutor $promotionExecutor
      * @param AppliedDiscountsProvider $appliedDiscountsProvider
      * @param RoundingServiceInterface $roundingService
      * @param TranslatorInterface $translator
+     * @param DiscountRecalculationProvider $discountRecalculationProvider
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
         PromotionExecutor $promotionExecutor,
         AppliedDiscountsProvider $appliedDiscountsProvider,
         RoundingServiceInterface $roundingService,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        DiscountRecalculationProvider $discountRecalculationProvider
     ) {
         parent::__construct($currencyManager);
         $this->promotionExecutor = $promotionExecutor;
         $this->appliedDiscountsProvider = $appliedDiscountsProvider;
         $this->rounding = $roundingService;
         $this->translator = $translator;
+        $this->discountRecalculationProvider = $discountRecalculationProvider;
     }
 
     /**
@@ -73,6 +81,10 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     public function getSubtotal($entity)
     {
+        if (!$this->discountRecalculationProvider->isRecalculationRequired()) {
+            return $this->getCachedSubtotal($entity);
+        }
+
         $discountContext = $this->promotionExecutor->execute($entity);
         $currency = $this->getBaseCurrency($entity);
 
@@ -89,7 +101,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
 
         return [
             self::ORDER_DISCOUNT_SUBTOTAL => $orderDiscountSubtotal,
-            self::SHIPPING_DISCOUNT_SUBTOTAL => $shippingDiscountSubtotal
+            self::SHIPPING_DISCOUNT_SUBTOTAL => $shippingDiscountSubtotal,
         ];
     }
 
@@ -99,8 +111,11 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     public function getCachedSubtotal($entity)
     {
-        if (!$entity instanceof Order || !$entity->getId()) {
-            return $this->getSubtotal($entity);
+        if (!$this->supportsCachedSubtotal($entity)) {
+            throw new \RuntimeException(sprintf(
+                'Can not get cached subtotals for entity "%s" because provider doesn\'t support it',
+                get_class($entity)
+            ));
         }
 
         $label = $this->translator->trans('oro.promotion.discount.subtotal.order.label');
@@ -116,6 +131,14 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     public function isSupported($entity)
     {
         return $this->promotionExecutor->supports($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsCachedSubtotal($entity)
+    {
+        return $entity instanceof Order && $entity->getId();
     }
 
     /**

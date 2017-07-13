@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\UPSBundle\Form\Type;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -45,23 +45,13 @@ class UPSTransportSettingsType extends AbstractType
     protected $shippingOriginProvider;
 
     /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
      * @param TransportInterface        $transport
      * @param ShippingOriginProvider    $shippingOriginProvider
-     * @param DoctrineHelper            $doctrineHelper
      */
-    public function __construct(
-        TransportInterface $transport,
-        ShippingOriginProvider $shippingOriginProvider,
-        DoctrineHelper $doctrineHelper
-    ) {
+    public function __construct(TransportInterface $transport, ShippingOriginProvider $shippingOriginProvider)
+    {
         $this->transport = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -169,12 +159,7 @@ class UPSTransportSettingsType extends AbstractType
         $builder->add(
             'applicableShippingServices',
             'entity',
-            [
-                'label' => 'oro.ups.transport.shipping_service.plural_label',
-                'required' => true,
-                'multiple' => true,
-                'class' => 'Oro\Bundle\UPSBundle\Entity\ShippingService',
-            ]
+            $this->getApplicableShippingServicesOptions()
         );
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
     }
@@ -185,35 +170,80 @@ class UPSTransportSettingsType extends AbstractType
      */
     public function onPreSetData(FormEvent $event)
     {
+        $this->setDefaultCountry($event);
+
+        $this->setApplicableShippingServicesChoicesByCountry($event);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    protected function setDefaultCountry(FormEvent $event)
+    {
         /** @var UPSTransport $transport */
         $transport = $event->getData();
 
+        if (!$transport) {
+            return;
+        }
+
         if ($transport && null === $transport->getUpsCountry()) {
-            $countryCode = $this
+            $country = $this
                 ->shippingOriginProvider
                 ->getSystemShippingOrigin()
                 ->getCountry();
 
-            $country = $this->getCountry($countryCode);
             if (null !== $country) {
                 $transport->setUpsCountry($country);
-                $event->setData($transport);
             }
         }
     }
 
     /**
-     * @param string $iso2Code
-     * @throws NotManageableEntityException
-     * @return Country|null
+     * @param FormEvent $event
      */
-    protected function getCountry($iso2Code)
+    protected function setApplicableShippingServicesChoicesByCountry(FormEvent $event)
     {
-        $repo = $this->doctrineHelper
-            ->getEntityManagerForClass('OroAddressBundle:Country')
-            ->getRepository('OroAddressBundle:Country');
+        /** @var UPSTransport $transport */
+        $transport = $event->getData();
+        $form = $event->getForm();
 
-        return $repo->findOneBy(['iso2Code' => $iso2Code]);
+        if (!$transport) {
+            return;
+        }
+
+        $country = $transport->getUpsCountry();
+
+        $additionalOptions = [
+            'choices' => [],
+        ];
+        if ($country) {
+            $additionalOptions = [
+                'query_builder' => function (ShippingServiceRepository $repository) use ($country) {
+                    return $repository->createQueryBuilder('service')
+                        ->where('service.country = :country')
+                        ->setParameter('country', $country);
+                },
+            ];
+        }
+
+        $form->add('applicableShippingServices', 'entity', array_merge(
+            $this->getApplicableShippingServicesOptions(),
+            $additionalOptions
+        ));
+    }
+
+    /**
+     * @return array
+     */
+    protected function getApplicableShippingServicesOptions()
+    {
+        return [
+            'label' => 'oro.ups.transport.shipping_service.plural_label',
+            'required' => true,
+            'multiple' => true,
+            'class' => ShippingService::class,
+        ];
     }
 
     /**
