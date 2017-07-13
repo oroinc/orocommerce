@@ -224,3 +224,55 @@ Feature: Managing promotions
       | Product Unit      | piece       |
       | Apply Discount To | X + Y Total |
       | Limit, times      | N/A         |
+
+  Scenario: Create promotion with Shipping discount, fixed amount, apply to matching items only, flat rate shipping method
+    When I go to Marketing / Promotions / Promotions
+    And I click "Create Promotion"
+    And I fill "Promotion Form" with:
+      | Name       | PR7          |
+      | Sort Order | 10           |
+      | Discount   | Shipping     |
+      | Type       | Fixed Amount |
+      | Shipping Method   | Flat Rate |
+    And I save form
+    Then I should see "Promotion Form" validation errors:
+      | Discount Value | This value should not be blank. |
+    When I fill "Promotion Form" with:
+      | Discount Value    | 30 |
+    And I press "Add" in "Matching Items" section
+    And I check PSKU1 record in "Add Products Popup" grid
+    And I click "Add" in modal window
+    And I save form
+    And I go to Marketing / Promotions / Promotions
+    And I click view PR7 in grid
+    Then I should see promotion with:
+      | Discount          | Shipping     |
+      | Type              | Fixed Amount |
+      | Discount Value    | $30.00       |
+      | Shipping Method   | Flat Rate    |
+
+  Scenario: Create promotion with Shipping discount, percent, apply to shipment, flat rate shipping method
+    When I go to Marketing / Promotions / Promotions
+    And I click "Create Promotion"
+    And I fill "Promotion Form" with:
+      | Name       | PR8      |
+      | Sort Order | 11       |
+      | Discount   | Shipping |
+      | Type       | Percent  |
+      | Shipping Method   | Flat Rate |
+    And I save form
+    Then I should see "Promotion Form" validation errors:
+      | Discount Value (%) | This value should not be blank. |
+    When I fill "Promotion Form" with:
+      | Discount Value (%) | 50 |
+    And I press "Add" in "Matching Items" section
+    And I check PSKU1 record in "Add Products Popup" grid
+    And I click "Add" in modal window
+    And I save form
+    And I go to Marketing / Promotions / Promotions
+    And I click view PR8 in grid
+    Then I should see promotion with:
+      | Discount          | Shipping  |
+      | Type              | Percent   |
+      | Discount Value    | 50%       |
+      | Shipping Method   | Flat Rate |

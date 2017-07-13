@@ -9,11 +9,19 @@ class ShippingDiscount extends AbstractDiscount
     const APPLY_TO_ITEMS = 'items';
     const APPLY_TO_ORDER = 'order';
     const APPLY_TO = 'apply_to';
+    const SHIPPING_OPTIONS = 'shipping_options';
+    const SHIPPING_METHOD = 'shipping_method';
+    const SHIPPING_METHOD_TYPE = 'shipping_method_type';
 
     /**
      * @var string
      */
     protected $applyTo;
+
+    /**
+     * @var string
+     */
+    protected $shippingOptions;
 
     /**
      * {@inheritdoc}
@@ -23,6 +31,7 @@ class ShippingDiscount extends AbstractDiscount
         $resolvedOptions = parent::configure($options);
 
         $this->applyTo = $resolvedOptions[self::APPLY_TO];
+        $this->shippingOptions = $resolvedOptions[self::SHIPPING_OPTIONS];
 
         return $resolvedOptions;
     }
@@ -59,6 +68,8 @@ class ShippingDiscount extends AbstractDiscount
             self::APPLY_TO,
             [ShippingDiscount::APPLY_TO_ITEMS, ShippingDiscount::APPLY_TO_ORDER]
         );
+
+        $resolver->setAllowedTypes(self::SHIPPING_OPTIONS, ['array']);
 
         return $resolver;
     }

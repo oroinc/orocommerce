@@ -244,6 +244,11 @@ services:
         tags:
             - { name: form.type, alias: oro_discount_strategy_select }
 
+    oro_promotion.form.type.shipping_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\ShippingDiscountOptionsType
+        tags:
+            - { name: form.type, alias: oro_promotion_shipping_discount_options }
+
     oro_promotion.form.autocomplete.promotion.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
@@ -280,6 +285,7 @@ services:
             - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
             - ['addFormType', ['line_item', 'oro_promotion_line_item_discount_options']]
             - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
+            - ['addFormType', ['shipping', 'oro_promotion_shipping_discount_options']]
 
     oro_promotion.layout.discount_information_data_provider:
         class: Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider
@@ -437,3 +443,12 @@ services:
         public: false
         arguments:
             - '@request_stack'
+
+    oro_promotion.form.type.shipping_method_types_choice:
+        class: 'Oro\Bundle\PromotionBundle\Form\Type\ShippingMethodTypesChoiceType'
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+            - '@oro_shipping.provider.shipping_method_icon'
+            - '@assets.packages'
+        tags:
+            - { name: form.type, alias: oro_promotion_shipping_methods }
