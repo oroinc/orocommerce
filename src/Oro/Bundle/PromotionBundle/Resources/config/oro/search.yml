@@ -1,0 +1,14 @@
+search:
+    Oro\Bundle\PromotionBundle\Entity\Promotion:
+        alias:                          oro_promotion
+        title_fields:                   [name]
+        route:
+            name:                       oro_promotion_view
+            parameters:
+                id:                     id
+        search_template:                OroPromotionBundle:Promotion:searchResult.html.twig
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]

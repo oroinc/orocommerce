@@ -1,0 +1,4 @@
+assets:
+    css:
+        'oropromotion':
+            - 'bundles/oropromotion/css/style.less'

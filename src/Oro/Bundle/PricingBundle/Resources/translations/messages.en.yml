@@ -165,8 +165,6 @@ oro.pricing:
     pricelist_schedule:
         active.label: Enabled
         activity.label: Status
-        active_at.label: 'Active At'
-        deactivate_at.label: 'Deactivate At'
         was_activated: Was activated on %date%.
         was_deactivated: Was deactivated on %date%.
         will_be_acitivated: Will become active on %date%.
@@ -176,8 +174,6 @@ oro.pricing:
         active: Active
         inactive: Inactive
         disabled: Disabled
-
-    add_schedule: 'Add'
 
     menu:
         price_lists_tab.label: Price lists management
@@ -204,6 +200,7 @@ oro.pricing:
 
     form:
         choose_price_list: Choose a Price List...
+        add_rule.label: Add
 
     grid:
         action:

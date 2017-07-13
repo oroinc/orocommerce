@@ -11,6 +11,13 @@ services:
         arguments:
             - '@property_accessor'
 
+    oro_checkout.data_provider.converter.checkout_to_order:
+        class: Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter
+        public: false
+        arguments:
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.mapper.order_mapper'
+
     oro_checkout.data_provider.manager.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager'
         public: false
@@ -324,9 +331,8 @@ services:
     oro_checkout.provider.checkout_totals:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
         arguments:
-            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_checkout.data_provider.converter.checkout_to_order'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
-            - '@oro_checkout.mapper.order_mapper'
             - '@oro_checkout.shipping_method.provider_main'
 
     oro_checkout.action.default_shipping_method_setter:
