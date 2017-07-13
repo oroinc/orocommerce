@@ -66,7 +66,6 @@ define(function(require) {
             this.quantityFieldName = options.quantityFieldName;
             this.unitFieldName = options.unitFieldName;
             this.triggerData = options.triggerData || null;
-
             this.initElements(options);
 
             this.saveModelState();
@@ -81,6 +80,7 @@ define(function(require) {
             }, this);
 
             this.elements.unit.prop('disabled', false);
+
             if (!this.elements.unit.find(':selected').is(':disabled')) {
                 this.enableQuantity();
             }
@@ -91,6 +91,28 @@ define(function(require) {
             } else {
                 this.initListeners();
             }
+
+            this._bindEvents();
+            this.disableOptions();
+        },
+
+        _bindEvents: function() {
+            this.elements.unit.on('change.' + this.cid, _.bind(function() {
+                mediator.trigger('unitChanged');
+            }, this));
+
+            mediator.on('unitChanged', this.disableOptions, this);
+        },
+
+        disableOptions: function() {
+            this.elements.unit.find('option').prop('disabled', false);
+
+            this.$el.siblings().each(_.bind(function(index, el) {
+                var value = $(el).find('[name="unit"]').val();
+                this.elements.unit
+                    .find('[value="' + value + '"]')
+                    .prop('disabled', true);
+            }, this));
         },
 
         enableAccept: function() {
@@ -259,6 +281,17 @@ define(function(require) {
             _.each(errors, function(value) {
                 mediator.execute('showFlashMessage', 'error', value);
             });
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('unitChanged', this.disableOptions, this);
+            this.elements.unit.off('change.' + this.cid);
+
+            ProductQuantityEditableView.__super__.dispose.call(this);
         }
     });
 
