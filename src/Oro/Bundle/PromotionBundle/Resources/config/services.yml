@@ -78,11 +78,19 @@ services:
             - '@oro_promotion.rule_filtration.matching_items.inner'
             - '@oro_promotion.provider.matching_products_provider'
 
+    oro_promotion.rule_filtration.shipping_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 350
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.shipping_decorator.inner'
+
     oro_promotion.rule_filtration.stop_processing_decorator:
         class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
         public: false
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 350
+        decoration_priority: 400
         arguments:
             - '@oro_promotion.rule_filtration.stop_processing_decorator.inner'
 
@@ -231,11 +239,6 @@ services:
         class: Oro\Bundle\PromotionBundle\Form\Type\BuyXGetYDiscountOptionsType
         tags:
             - { name: form.type, alias: oro_promotion_buy_x_get_y_discount_options }
-
-    oro_promotion.form.type.discount_free_shipping:
-        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType
-        tags:
-            - { name: form.type, alias: oro_promotion_discount_free_shipping_choice }
 
     oro_promotion.form.type.discount_strategy_select:
         class: Oro\Bundle\PromotionBundle\Form\Type\DiscountStrategySelectType
