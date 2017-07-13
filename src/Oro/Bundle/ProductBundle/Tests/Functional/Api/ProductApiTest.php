@@ -135,9 +135,6 @@ class ProductApiTest extends RestJsonApiTestCase
             ->getEntityRepositoryForClass(Localization::class)
             ->findAll();
 
-        foreach ($product->getSlugPrototypes() as $aaa) {
-            $test = $aaa->getString();
-        }
         // + 1 because we also have the default one without localization
         $localizationsNumber = count($localizations) + 1;
         $this->assertCount($localizationsNumber, $product->getNames());
