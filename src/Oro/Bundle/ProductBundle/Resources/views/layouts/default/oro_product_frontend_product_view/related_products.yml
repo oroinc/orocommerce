@@ -37,3 +37,7 @@ layout:
             id: related_product_line_item_form
             optionName: visible
             optionValue: '=data["oro_product_related_products"].isAddButtonVisible()'
+        - '@add':
+            id: product_view_related_products_container
+            parentId: product_view_container
+            blockType: container
