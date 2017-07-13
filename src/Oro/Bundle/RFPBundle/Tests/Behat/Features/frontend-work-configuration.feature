@@ -1,5 +1,6 @@
 @fixture-OroRFPBundle:RFQWorkflows.yml
 @skip #due to BAP-14674
+@regression
 Feature: Frontend workflow configuration
   In order to provide button title different from the transition name
   As an Administrator
