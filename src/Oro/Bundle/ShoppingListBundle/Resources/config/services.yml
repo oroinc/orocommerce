@@ -307,9 +307,10 @@ services:
             - { name: oro_action.action, alias: add_string_suffix }
 
     oro_shopping_list.event_listener.system_config:
-        class: 'Oro\Bundle\ShoppingListBundle\EventListener\SystemConfigListener'
-        arguments:
-            - "@oro_shopping_list.manager.guest_shopping_list_manager"
+        parent: oro_user.event_listener.default_user_system_config
+        calls:
+            - [setAlias, ['oro_shopping_list']]
+            - [setConfigKey, ['default_guest_shopping_list_owner']]
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
             - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_shopping_list.default_guest_shopping_list_owner, method: onSettingsSaveBefore }
@@ -318,20 +319,20 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Entity\EntityListener\ShoppingListEntityListener'
         public: false
         arguments:
-            - '@oro_config.manager'
-            - '@oro_shopping_list.manager.guest_shopping_list_manager'
+            - '@oro_user.provider.default_user'
+            - '@oro_security.token_accessor'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_shopping_list.entity.shopping_list.class%', event: prePersist }
 
-    oro_shopping_list.manager.guest_shopping_list_manager:
-        class: 'Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListManager'
-        public: false
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_shopping_list.shopping_list_provider.cache'
-
     oro_shopping_list.voter.guest_shopping_list_voter:
         parent: oro_customer.voter.anonymous_customer_user
+        calls:
+            - [ setFeatureName, ['guest_shopping_list'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_shopping_list.voter.customer_user_checkout:
+        parent: oro_customer.voter.customer_user
         calls:
             - [ setFeatureName, ['guest_shopping_list'] ]
         tags:

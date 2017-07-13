@@ -26,13 +26,11 @@ system_configuration:
                      - Yes
         oro_checkout.guest_checkout:
             data_type: boolean
-            type: choice
+            type: oro_config_checkbox
             priority: 10
             options:
                 label: oro.checkout.system_configuration.fields.guest_checkout.title
-                choices:
-                    - No
-                    - Yes
+                tooltip: oro.checkout.system_configuration.fields.guest_checkout.tooltip
         oro_checkout.default_guest_checkout_owner:
             ui_only: true
             data_type: string
@@ -42,9 +40,7 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.default_guest_checkout_owner.title
                 tooltip: oro.checkout.system_configuration.fields.default_guest_checkout_owner.tooltip
                 required: true
-                resettable: true
-                constraints:
-                    - NotBlank: ~
+
     tree:
         system_configuration:
             commerce:
