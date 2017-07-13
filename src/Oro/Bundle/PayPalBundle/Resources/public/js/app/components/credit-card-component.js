@@ -211,15 +211,21 @@ define(function(require) {
          * @param {String} elementSelector
          */
         validate: function(elementSelector) {
-            var virtualForm = $('<form>');
-
             var appendElement;
             if (elementSelector) {
-                appendElement = this.$form.find(elementSelector).clone();
+                var element = this.$form.find(elementSelector);
+                var parentForm = element.closest('form');
+
+                if (elementSelector !== this.options.selectors.expirationDate && parentForm.length) {
+                    return this._validateFormField(this.$el, element);
+                }
+
+                appendElement = element.clone();
             } else {
                 appendElement = this.$form.clone();
             }
 
+            var virtualForm = $('<form>');
             virtualForm.append(appendElement);
 
             var self = this;
@@ -228,7 +234,15 @@ define(function(require) {
                 ignore: '', // required to validate all fields in virtual form
                 errorPlacement: function(error, element) {
                     var $el = self.$form.find('#' + $(element).attr('id'));
-                    $.validator.defaults.errorPlacement(error, $el);
+                    var parentWithValidation = $el.parents(self.options.selectors.validation);
+
+                    $el.addClass('error');
+
+                    if (parentWithValidation.length) {
+                        error.appendTo(parentWithValidation.first());
+                    } else {
+                        error.appendTo($el.parent());
+                    }
                 }
             });
 
@@ -241,16 +255,7 @@ define(function(require) {
             // Add validator to form
             $.data(virtualForm, 'validator', validator);
 
-            // Add CC type validation rule
-            var cardNumberField = virtualForm.find(this.options.selectors.cardNumber);
-            var cardNumberValidation = cardNumberField.data('validation');
-            var creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
-
-            if (creditCardTypeValidator && creditCardTypeValidator in cardNumberValidation) {
-                _.extend(cardNumberValidation[creditCardTypeValidator],
-                    {allowedCreditCards: this.options.allowedCreditCards}
-                );
-            }
+            this._addCardTypeValidationRule(virtualForm);
 
             var errors;
 
@@ -264,6 +269,32 @@ define(function(require) {
             errors.parent().find('.error').removeClass('error');
 
             return validator.form();
+        },
+
+        /**
+         * @param {jQuery} form
+         * @param {jQuery} element
+         */
+        _validateFormField: function(form, element) {
+            this._addCardTypeValidationRule(form);
+
+            return element.validate().form();
+        },
+
+        /**
+         * @param {jQuery} form
+         */
+        _addCardTypeValidationRule: function(form) {
+            // Add CC type validation rule
+            var cardNumberField = form.find(this.options.selectors.cardNumber);
+            var cardNumberValidation = cardNumberField.data('validation');
+            var creditCardTypeValidator = cardNumberField.data('credit-card-type-validator');
+
+            if (creditCardTypeValidator && creditCardTypeValidator in cardNumberValidation) {
+                _.extend(cardNumberValidation[creditCardTypeValidator],
+                    {allowedCreditCards: this.options.allowedCreditCards}
+                );
+            }
         },
 
         /**

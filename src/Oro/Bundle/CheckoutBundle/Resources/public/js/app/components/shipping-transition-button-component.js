@@ -32,7 +32,7 @@ define(function(require) {
 
             ShippingTransitionButtonComponent.__super__.initialize.call(this, options);
 
-            this.onShippingMethodRendered();
+            mediator.on('checkout:shipping-method:rendered', this.onShippingMethodRendered, this);
         },
 
         onShippingMethodRendered: function() {

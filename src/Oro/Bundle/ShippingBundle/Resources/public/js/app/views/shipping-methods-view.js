@@ -27,6 +27,7 @@ define(function(require) {
         render: function(options) {
             this.updateShippingMethods(options);
             mediator.trigger('layout:adjustHeight');
+            mediator.trigger('checkout:shipping-method:rendered');
         },
 
         updateShippingMethods: function(options) {
