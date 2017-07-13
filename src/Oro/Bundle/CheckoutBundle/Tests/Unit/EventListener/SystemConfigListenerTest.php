@@ -21,11 +21,6 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var string
-     */
-    protected $ownerClass;
-
-    /**
      * @var SystemConfigListener
      */
     protected $listener;
@@ -33,8 +28,7 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry   = $this->createMock(ManagerRegistry::class);
-        $this->ownerClass = User::class;
-        $this->listener   = new SystemConfigListener($this->registry, $this->ownerClass);
+        $this->listener   = new SystemConfigListener($this->registry);
     }
 
     /**
@@ -56,11 +50,15 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnSettingsSaveBeforeInvalidSettings($settings)
     {
-        $this->registry->expects($this->never())
-            ->method($this->anything());
         $event = $this->getEvent($settings);
-
+        $settingsKey = TreeUtils::getConfigKey(
+            OroCheckoutExtension::ALIAS,
+            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER,
+            ConfigManager::SECTION_VIEW_SEPARATOR
+        );
         $this->listener->onSettingsSaveBefore($event);
+
+        $this->assertFalse(isset($event->getSettings()[$settingsKey]['value']));
     }
 
     /**
@@ -70,7 +68,8 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
     {
         $key = TreeUtils::getConfigKey(
             OroCheckoutExtension::ALIAS,
-            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
+            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER,
+            ConfigManager::SECTION_VIEW_SEPARATOR
         );
 
         return [
@@ -88,17 +87,18 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
         $id      = 1;
         $key     = TreeUtils::getConfigKey(
             OroCheckoutExtension::ALIAS,
-            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
+            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER,
+            ConfigManager::SECTION_VIEW_SEPARATOR
         );
-        $owner   = new $this->ownerClass;
+        $owner   = new User();
         $manager = $this->createMock(ObjectManager::class);
         $manager->expects($this->once())
             ->method('find')
-            ->with($this->ownerClass, $id)
+            ->with(User::class, $id)
             ->will($this->returnValue($owner));
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with($this->ownerClass)
+            ->with(User::class)
             ->will($this->returnValue($manager));
 
         $event = $this->getEvent([$key => ['value' => $id]]);
@@ -108,18 +108,38 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$key => ['value' => $owner]], $event->getSettings());
     }
 
-    public function testOnSettingsSaveBefore()
+    public function testOnSettingsSaveBeforeWithWrongInstance()
     {
-        $id    = 1;
-        $owner = $this->createMock($this->ownerClass);
-        $owner->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue($id));
-        $event = $this->getEvent(['value' => $owner]);
+        $settingsKey = TreeUtils::getConfigKey(
+            OroCheckoutExtension::ALIAS,
+            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER,
+            ConfigManager::SECTION_VIEW_SEPARATOR
+        );
+        $settings = [$settingsKey => ['value' => new \stdClass()]];
+        $event = $this->getEvent($settings);
 
         $this->listener->onSettingsSaveBefore($event);
 
-        $this->assertEquals(['value' => $id], $event->getSettings());
+        $this->assertEquals(new \stdClass(), $event->getSettings()[$settingsKey]['value']);
+    }
+
+    public function testOnSettingsSaveBefore()
+    {
+        $id    = 1;
+        $settingsKey = TreeUtils::getConfigKey(
+            OroCheckoutExtension::ALIAS,
+            Configuration::DEFAULT_GUEST_CHECKOUT_OWNER,
+            ConfigManager::SECTION_VIEW_SEPARATOR
+        );
+        $owner = $this->createMock(User::class);
+        $owner->expects($this->once())
+            ->method('getId')
+            ->will($this->returnValue($id));
+        $event = $this->getEvent([$settingsKey => ['value' => $owner]]);
+
+        $this->listener->onSettingsSaveBefore($event);
+
+        $this->assertEquals([$settingsKey => ['value' => $id]], $event->getSettings());
     }
 
     /**

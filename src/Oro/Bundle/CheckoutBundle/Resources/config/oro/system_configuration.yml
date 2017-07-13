@@ -8,6 +8,7 @@ system_configuration:
         checkout:
             title: oro.checkout.system_configuration.groups.checkout.title
             icon: fa-credit-card
+            page_reload: true
         guest_checkout:
             title: oro.checkout.system_configuration.groups.guest_checkout.title
         guest_checkout_owner_section:
