@@ -172,6 +172,7 @@ class ProductApiTest extends RestJsonApiTestCase
         $milliliterUnit = $this->getReference(LoadProductUnits::MILLILITER);
         $taxCodes = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX.'.'.LoadProductTaxCodes::TAX_3);
         $attributeFamily = $this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1);
+        
         return [
             "data" => [
                 "type" => "products",
