@@ -21,6 +21,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductPriceCPLEntityListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * @var Registry
      */
@@ -100,8 +102,9 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $productPrice = $productPrices[0];
         $productPrice->setPrice(Price::create(1000, 'EUR'));
         $priceManager->persist($productPrice);
+        $this->cleanScheduledMessages();
         $priceManager->flush();
-        $this->assertAttributeCount(1, 'scheduledTriggers', $handler);
+        static::assertMessageSent('oro_pricing.price_lists.cpl.resolve_prices');
     }
 
     public function testOnUpdatePriceToProductRelation()
@@ -184,10 +187,9 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_1));
         $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
+        static::cleanScheduledMessages();
         $priceManager->flush();
-
-        $handler = $this->getContainer()->get('oro_pricing.price_list_trigger_handler');
-        $this->assertAttributeCount(1, 'scheduledTriggers', $handler);
+        static::assertMessageSent('oro_pricing.price_lists.cpl.resolve_prices');
     }
 
     /**
