@@ -41,7 +41,8 @@ define(function(require) {
         modelEvents: {
             'id': ['change', 'onProductChanged'],
             'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
-            'unit_label': ['change', 'changeUnitLabel']
+            'unit_label': ['change', 'changeUnitLabel'],
+            'unit': ['change', 'onUnitChange']
         },
 
         originalProductId: null,
@@ -90,6 +91,10 @@ define(function(require) {
                 }),
                 layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
             });
+        },
+
+        onUnitChange: function() {
+            this.getElement('quantity').trigger('input');
         },
 
         onQuantityChange: function(e) {
@@ -144,10 +149,6 @@ define(function(require) {
         },
 
         forbidQuantityField: function(event) {
-            if (event.target.value === this.model.get('quantity')) {
-                return;
-            }
-
             var regExpString = '^([0-9]*)';
             var precision = this._getUnitPrecision();
             if (precision > 0) {
