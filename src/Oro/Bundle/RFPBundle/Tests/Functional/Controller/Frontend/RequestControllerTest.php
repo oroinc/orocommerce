@@ -542,7 +542,7 @@ class RequestControllerTest extends WebTestCase
     public function ACLProvider()
     {
         return [
-            'VIEW (nanonymous user)' => [
+            'VIEW (anonymous user)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => '',
