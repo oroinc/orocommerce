@@ -1,17 +1,18 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedProducts;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\UpsellProduct;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
+use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\AssignerDatabaseStrategy;
+use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
 class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,7 +21,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     /** @var AssignerDatabaseStrategy */
     protected $assigner;
 
-    /** @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var UpsellProductConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $configProvider;
 
     /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject */
@@ -32,47 +33,39 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $entityManager;
 
-    /** @var RelatedProductRepository|\PHPUnit_Framework_MockObject_MockObject */
-    protected $relatedProductsRepository;
+    /** @var UpsellProductRepository|\PHPUnit_Framework_MockObject_MockObject */
+    protected $upsellProductRepository;
 
     protected function setUp()
     {
-        $this->configProvider = $this->getMockBuilder(RelatedProductsConfigProvider::class)
+        $this->configProvider = $this->getMockBuilder(AbstractRelatedItemConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->relatedProductsRepository = $this->getMockBuilder(RelatedProductRepository::class)
+        $this->upsellProductRepository = $this->getMockBuilder(UpsellProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->unitOfWork = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->entityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->entityManager->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($this->unitOfWork);
-
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->doctrineHelper
             ->expects($this->any())
             ->method('getEntityRepository')
-            ->with(RelatedProduct::class)
-            ->willReturn($this->relatedProductsRepository);
-
+            ->with(UpsellProduct::class)
+            ->willReturn($this->upsellProductRepository);
         $this->doctrineHelper
             ->expects($this->any())
             ->method('getEntityManager')
-            ->with(RelatedProduct::class)
+            ->with(UpsellProduct::class)
             ->willReturn($this->entityManager);
-
         $this->assigner = new AssignerDatabaseStrategy($this->doctrineHelper, $this->configProvider);
     }
 
@@ -80,12 +73,10 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $productFrom = new Product();
         $productTo = new Product();
-
         $this->relationDoesNotExistInDatabase();
         $this->getLimitShouldReturn(1);
-        $this->relatedProductsAreEnabled();
-        $this->newRelationShouldBePersisted($this->createRelatedProduct($productFrom, $productTo));
-
+        $this->upsellProductsAreEnabled();
+        $this->newRelationShouldBePersisted($this->createUpsellProduct($productFrom, $productTo));
         $this->assigner->addRelations($productFrom, [$productTo]);
     }
 
@@ -93,25 +84,21 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $productFrom = new Product();
         $productsTo = [new Product(), new Product()];
-
         $this->relationDoesNotExistInDatabase();
         $this->getLimitShouldReturn(2);
-        $this->relatedProductsAreEnabled();
+        $this->upsellProductsAreEnabled();
         $this->newRelationsShouldBePersisted(2);
-
         $this->assigner->addRelations($productFrom, $productsTo);
     }
 
     public function testProductCannotBeAssignedToItself()
     {
         $productFrom = new Product();
-        $this->relatedProductsAreEnabled();
+        $this->upsellProductsAreEnabled();
         $this->getLimitShouldReturn(1);
         $this->relationDoesNotExistInDatabase();
         $this->newRelationShouldNotBePersisted();
-
         $this->expectException(\InvalidArgumentException::class);
-
         $this->assigner->addRelations($productFrom, [$productFrom]);
     }
 
@@ -119,12 +106,10 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $productFrom = new Product();
         $productTo = new Product();
-
         $this->getLimitShouldReturn(2);
         $this->relationExistsInDatabase();
-        $this->relatedProductsAreEnabled();
+        $this->upsellProductsAreEnabled();
         $this->newRelationShouldNotBePersisted();
-
         $this->assigner->addRelations($productFrom, [$productTo]);
     }
 
@@ -132,12 +117,11 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $productFrom = new Product();
         $productTo = new Product();
-        $relatedProducts = $this->createRelatedProduct($productFrom, $productTo);
+        $upsellProduct = $this->createUpsellProduct($productFrom, $productTo);
         $this->getLimitShouldReturn(2);
-        $this->relatedProductsAreEnabled();
-        $this->findOneByShouldReturnRelation($productFrom, $productTo, $relatedProducts);
-        $this->scheduledRelationShouldBeRemoved($relatedProducts);
-
+        $this->upsellProductsAreEnabled();
+        $this->findOneByShouldReturnRelation($productFrom, $productTo, $upsellProduct);
+        $this->scheduledRelationShouldBeRemoved($upsellProduct);
         $this->assigner->removeRelations($productFrom, [$productTo]);
     }
 
@@ -145,10 +129,8 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $productFrom = new Product();
         $productTo = new Product();
-
-        $this->relatedProductsAreEnabled();
+        $this->upsellProductsAreEnabled();
         $this->findOneByShouldReturnNull($productFrom, $productTo);
-
         $this->assigner->removeRelations($productFrom, [$productTo]);
     }
 
@@ -156,13 +138,10 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $productFrom = new Product();
         $productsTo = [new Product(), new Product()];
-
         $this->getLimitShouldReturn(1);
-        $this->relatedProductsAreEnabled();
+        $this->upsellProductsAreEnabled();
         $this->repositoryShouldReturnCountRelationsForProduct(0);
-
         $this->expectException(\OverflowException::class);
-
         $this->assigner->addRelations($productFrom, $productsTo);
     }
 
@@ -170,25 +149,20 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $productFrom = new Product();
         $productTo = new Product();
-
         $this->getLimitShouldReturn(1);
-        $this->relatedProductsAreEnabled();
+        $this->upsellProductsAreEnabled();
         $this->repositoryShouldReturnCountRelationsForProduct(1);
-
         $this->expectException(\OverflowException::class);
-
         $this->assigner->addRelations($productFrom, [$productTo]);
     }
 
-    public function testRelationCannotBeAssignedIfRelatedProductIsDisable()
+    public function testRelationCannotBeAssignedIfUpsellProductIsDisable()
     {
         $productFrom = new Product();
         $productTo = new Product();
         $this->getLimitShouldReturn(1);
-        $this->relatedProductsAreDisabled();
-
+        $this->upsellProductsAreDisabled();
         $this->expectException(\LogicException::class);
-
         $this->assigner->addRelations($productFrom, [$productTo]);
     }
 
@@ -202,14 +176,14 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
             ->willReturn($limit);
     }
 
-    private function relatedProductsAreEnabled()
+    private function upsellProductsAreEnabled()
     {
         $this->configProvider->expects($this->any())
             ->method('isEnabled')
             ->willReturn(true);
     }
 
-    private function relatedProductsAreDisabled()
+    private function upsellProductsAreDisabled()
     {
         $this->configProvider->expects($this->any())
             ->method('isEnabled')
@@ -217,16 +191,16 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param RelatedProduct $expectedRelatedProduct
-     * @param int            $howManyTimes
+     * @param UpsellProduct $expectedUpsellProduct
+     * @param int           $howManyTimes
      */
-    private function newRelationShouldBePersisted(RelatedProduct $expectedRelatedProduct, $howManyTimes = 1)
+    private function newRelationShouldBePersisted(UpsellProduct $expectedUpsellProduct, $howManyTimes = 1)
     {
         $this->entityManager->expects($this->exactly($howManyTimes))
             ->method('persist')
-            ->with($this->callback(function (RelatedProduct $relatedProducts) use ($expectedRelatedProduct) {
-                return $relatedProducts->getProduct() === $expectedRelatedProduct->getProduct()
-                    && $relatedProducts->getRelatedProduct() === $expectedRelatedProduct->getRelatedProduct();
+            ->with($this->callback(function (UpsellProduct $upsellProduct) use ($expectedUpsellProduct) {
+                return $upsellProduct->getProduct() === $expectedUpsellProduct->getProduct()
+                    && $upsellProduct->getRelatedItem() === $expectedUpsellProduct->getRelatedItem();
             }));
     }
 
@@ -247,52 +221,52 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     /**
      * @param Product $productFrom
      * @param Product $productTo
-     * @return RelatedProduct
+     * @return UpsellProduct
      */
-    private function createRelatedProduct(Product $productFrom, Product $productTo)
+    private function createUpsellProduct(Product $productFrom, Product $productTo)
     {
-        return (new RelatedProduct())->setProduct($productFrom)
-            ->setRelatedProduct($productTo);
+        return (new UpsellProduct())->setProduct($productFrom)
+            ->setRelatedItem($productTo);
     }
 
     private function relationDoesNotExistInDatabase()
     {
-        $this->relatedProductsRepository->expects($this->any())
+        $this->upsellProductRepository->expects($this->any())
             ->method('exists')
             ->willReturn(false);
     }
 
     private function relationExistsInDatabase()
     {
-        $this->relatedProductsRepository->expects($this->any())
+        $this->upsellProductRepository->expects($this->any())
             ->method('exists')
             ->willReturn(true);
     }
 
     /**
-     * @param $relatedProducts
+     * @param $upsellProduct
      */
-    private function scheduledRelationShouldBeRemoved($relatedProducts)
+    private function scheduledRelationShouldBeRemoved($upsellProduct)
     {
         $this->entityManager->expects($this->once())
             ->method('remove')
-            ->with($relatedProducts);
+            ->with($upsellProduct);
     }
 
     /**
-     * @param Product        $productFrom
-     * @param Product        $productTo
-     * @param RelatedProduct $relatedProducts
+     * @param Product       $productFrom
+     * @param Product       $productTo
+     * @param UpsellProduct $upsellProduct
      */
     private function findOneByShouldReturnRelation(
         Product $productFrom,
         Product $productTo,
-        RelatedProduct $relatedProducts = null
+        UpsellProduct $upsellProduct = null
     ) {
-        $this->relatedProductsRepository->expects($this->any())
+        $this->upsellProductRepository->expects($this->any())
             ->method('findOneBy')
             ->with(['product' => $productFrom, 'relatedItem' => $productTo], null)
-            ->willReturn($relatedProducts);
+            ->willReturn($upsellProduct);
     }
 
     /**
@@ -301,7 +275,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
      */
     private function findOneByShouldReturnNull(Product $productFrom, Product $productTo)
     {
-        $this->relatedProductsRepository->expects($this->any())
+        $this->upsellProductRepository->expects($this->any())
             ->method('findOneBy')
             ->with(['product' => $productFrom, 'relatedItem' => $productTo], null)
             ->willReturn(null);
@@ -312,7 +286,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
      */
     private function repositoryShouldReturnCountRelationsForProduct($howMany)
     {
-        $this->relatedProductsRepository->expects($this->any())
+        $this->upsellProductRepository->expects($this->any())
             ->method('countRelationsForProduct')
             ->willReturn($howMany);
     }

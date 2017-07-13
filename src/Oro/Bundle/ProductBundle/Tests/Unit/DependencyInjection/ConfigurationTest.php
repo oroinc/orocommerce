@@ -49,6 +49,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => 25,
                     'scope' => 'app'
                 ],
+                'upsell_products_enabled' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
+                'max_number_of_upsell_products' => [
+                    'value' => 25,
+                    'scope' => 'app'
+                ],
                 'unit_rounding_type' => [
                     'value' => RoundingServiceInterface::ROUND_HALF_UP,
                     'scope' => 'app'

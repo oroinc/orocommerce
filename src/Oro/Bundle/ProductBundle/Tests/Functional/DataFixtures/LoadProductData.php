@@ -19,6 +19,7 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
@@ -86,7 +87,6 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
         $data = Yaml::parse(file_get_contents($filePath));
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
-
         $productsList = [];
 
         foreach ($data as $item) {
@@ -132,8 +132,19 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                     }
                 }
             }
-        }
 
+            if (isset($item['upsell_products'])) {
+                foreach ($item['upsell_products'] as $upsellProduct) {
+                    if (isset($productsList[$upsellProduct])) {
+                        $upsellProduct = new UpsellProduct();
+                        $upsellProduct->setProduct($product)
+                            ->setUpsellProduct($productsList[$upsellProduct]);
+                        $manager->persist($upsellProduct);
+                    }
+                }
+            }
+
+        }
         $manager->flush();
     }
 

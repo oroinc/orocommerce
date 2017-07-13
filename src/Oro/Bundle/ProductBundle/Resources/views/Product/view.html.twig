@@ -176,35 +176,51 @@
         }
     }) %}
 
+    {% set relatedItemsTabsItems = [] %}
     {% set relatedItemsSubblocks = [] %}
 
     {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
+        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{'id': 'products-related-products-view', 'label': 'Related Products'}]) %}
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            dataGrid.renderGrid('products-related-products-view', {'relatedProducts': get_related_products_ids(entity)}),
+            dataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': get_related_products_ids(entity)}),
             placeholder('oro_product_related_items_view', {'entity':  entity})
         ]) %}
     {% endif %}
 
     {% if upsellProductsEnabled %}
+        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{'id': 'products-upsell-products-view', 'label': 'Upsell Products'}]) %}
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            dataGrid.renderGrid('products-upsell-products-view', {'upsellProductIds': get_upsell_products_ids(entity)}),
+            dataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': get_upsell_products_ids(entity)}),
             placeholder('oro_product_upsell_products_view', {'entity':  entity})
         ]) %}
     {% endif %}
 
     {% if relatedItemsSubblocks|length %}
+            {% if relatedItemsTabsItems|length == 1 %}
+                {% set relatedItemsTabs = '' %}
+            {% else %}
+                {% set relatedItemsTabs %}
+                    <div {{ UI.renderPageComponentAttributes({
+                        module: 'oroproduct/js/app/components/related-items-tabs-component',
+                        options: {
+                            'data': relatedItemsTabsItems
+                        }
+                    }) }}></div>
+                {% endset %}
+            {% endif %}
+
         {% set dataBlocks = dataBlocks|merge({
             'relatedItems': {
                 'title': 'oro.product.sections.relatedItems'|trans,
+                'priority': 10,
                 'headerLinkContent': UII.link({
-                        path: path('oro_product_related_items_update', {id: entity.id}),
-                        label: 'oro.product.quick_edit.label'|trans,
-                        iCss: 'fa-edit',
-                        class: 'quick-editable pull-right'
-                    }),
-                'priority': 450,
+                    path: path('oro_product_related_items_update', {id: entity.id}),
+                    label: 'oro.product.quick_edit.label'|trans,
+                    iCss: 'fa-edit',
+                    class: 'quick-editable pull-right'
+                }),
                 'subblocks': [{
-                    'data': relatedItemsSubblocks
+                    'data': [relatedItemsTabs]|merge(relatedItemsSubblocks)
                 }]
             }
         }) %}

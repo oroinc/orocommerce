@@ -40,14 +40,14 @@ class ProductController extends Controller
         $pageTemplate = $this->get('oro_product.provider.page_template_provider')
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
 
-        $relatedProductsEnabled = $this->get('oro_product.related_item.related_product.config_provider')->isEnabled();
-
         return [
             'entity' => $product,
             'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
             'pageTemplate' => $pageTemplate,
-            'upsellProductsEnabled' => true, //@TODO while doing Config Provider
-            'relatedProductsEnabled' => $relatedProductsEnabled,
+            'upsellProductsEnabled' => $this->get('oro_product.related_item.upsell_products.config_provider')
+                ->isEnabled(),
+            'relatedProductsEnabled' => $this->get('oro_product.related_item.related_product.config_provider')
+                ->isEnabled(),
         ];
     }
 

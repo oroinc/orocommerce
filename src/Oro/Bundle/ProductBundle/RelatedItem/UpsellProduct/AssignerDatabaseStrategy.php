@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
+namespace Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct;
 
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractAssignerDatabaseStrategy;
 
 class AssignerDatabaseStrategy extends AbstractAssignerDatabaseStrategy
@@ -12,7 +12,7 @@ class AssignerDatabaseStrategy extends AbstractAssignerDatabaseStrategy
      */
     protected function createNewRelation()
     {
-        return new RelatedProduct();
+        return new UpsellProduct();
     }
 
     /**
@@ -20,7 +20,7 @@ class AssignerDatabaseStrategy extends AbstractAssignerDatabaseStrategy
      */
     protected function getEntityManager()
     {
-        return $this->doctrineHelper->getEntityManager(RelatedProduct::class);
+        return $this->doctrineHelper->getEntityManager(UpsellProduct::class);
     }
 
     /**
@@ -28,6 +28,6 @@ class AssignerDatabaseStrategy extends AbstractAssignerDatabaseStrategy
      */
     protected function getRepository()
     {
-        return $this->doctrineHelper->getEntityRepository(RelatedProduct::class);
+        return $this->doctrineHelper->getEntityRepository(UpsellProduct::class);
     }
 }

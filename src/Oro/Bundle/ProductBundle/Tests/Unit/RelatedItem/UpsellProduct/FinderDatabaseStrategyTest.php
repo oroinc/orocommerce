@@ -1,17 +1,17 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\RelatedProduct;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\RelatedItem\UpsellProduct;
 
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy;
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
+use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy;
 
 class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +28,7 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private $doctrineHelper;
 
     /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsellProductRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     private $repository;
 
@@ -38,34 +38,29 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     private $entityManager;
 
     /**
-     * @var RelatedProductsConfigProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var UpsellProductConfigProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $configProvider;
 
     protected function setUp()
     {
-        $this->repository = $this->getMockBuilder(RelatedProductRepository::class)
+        $this->repository = $this->getMockBuilder(UpsellProductRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->entityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->doctrineHelper
             ->expects($this->any())
             ->method('getEntityRepository')
-            ->with(RelatedProduct::class)
+            ->with(UpsellProduct::class)
             ->willReturn($this->repository);
-
-        $this->configProvider = $this->getMockBuilder(RelatedProductsConfigProvider::class)
+        $this->configProvider = $this->getMockBuilder(AbstractRelatedItemConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->strategy = new FinderDatabaseStrategy(
             $this->doctrineHelper,
             $this->configProvider
@@ -78,12 +73,10 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
-
         $this->relatedProductFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), $this->anything(), $expectedResult);
+        $this->andProductRepositoryShouldFindUpsell($productA, $this->anything(), $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(3);
         $this->andShouldNotBeBidirectional();
-
         $this->assertSame(
             $expectedResult,
             $this->strategy->find($productA)
@@ -93,10 +86,8 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     public function testFindNoRelatedProductsIfFunctionalityIsDisabled()
     {
         $productA = $this->getProduct(['id' => 1]);
-
         $this->doctrineHelperShouldNotBeAskedForRepository();
         $this->relatedProductFunctionalityShouldBeDisabled();
-
         $this->assertCount(0, $this->strategy->find($productA));
     }
 
@@ -106,12 +97,10 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult =[$productB, $productC];
-
         $this->relatedProductFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, $this->anything(), 2, $expectedResult);
+        $this->andProductRepositoryShouldFindUpsell($productA, $this->anything(), 2, $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
-
         $this->assertSame(
             $expectedResult,
             $this->strategy->find($productA)
@@ -124,12 +113,10 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
-
         $this->relatedProductFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, true, $this->anything(), $expectedResult);
+        $this->andProductRepositoryShouldFindUpsell($productA, true, $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldBeBidirectional();
-
         $this->assertSame(
             $expectedResult,
             $this->strategy->find($productA)
@@ -142,31 +129,27 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
-
         $this->relatedProductFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, false, $this->anything(), $expectedResult);
+        $this->andProductRepositoryShouldFindUpsell($productA, false, $this->anything(), $expectedResult);
         $this->andShouldHaveLimit(2);
         $this->andShouldNotBeBidirectional();
-
         $this->assertSame(
             $expectedResult,
             $this->strategy->find($productA)
         );
     }
 
-    public function testFindShouldIgnoredConfigManagerIfArgumentsArePassed()
+    public function testFindShouldIgnoredConfigManagerForBackend()
     {
         $productA = $this->getProduct(['id' => 1]);
         $productB = $this->getProduct(['id' => 2]);
         $productC = $this->getProduct(['id' => 3]);
         $expectedResult = [$productB, $productC];
-
         $this->relatedProductFunctionalityShouldBeEnabled();
-        $this->andProductRepositoryShouldFindRelated($productA, false, null, $expectedResult);
-
+        $this->andProductRepositoryShouldFindUpsell($productA, false, null, $expectedResult);
         $this->assertSame(
             $expectedResult,
-            $this->strategy->find($productA, false, null)
+            $this->strategy->find($productA)
         );
     }
 
@@ -184,17 +167,17 @@ class FinderDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
      * @param null|int|\PHPUnit_Framework_Constraint_IsAnything $limit
      * @param array $related
      */
-    private function andProductRepositoryShouldFindRelated(
+    private function andProductRepositoryShouldFindUpsell(
         Product $product,
         $bidirectional,
         $limit,
-        array $related
+        array $upsell
     ) {
         $this->repository
             ->expects($this->once())
-            ->method('findRelated')
-            ->with($product->getId(), $bidirectional, $limit)
-            ->willReturn($related);
+            ->method('findUpsell')
+            ->with($product->getId(), $limit)
+            ->willReturn($upsell);
     }
 
     private function relatedProductFunctionalityShouldBeEnabled()

@@ -53,6 +53,7 @@ product3:
     shortDescriptions:
         - { reference: product-3.shortDescriptions.default, text: product-3.shortDescriptions.default }
     featured: true
+    upsell_products: [product-1, product-2]
     related_products: [product-1, product-2]
 product4:
     productCode: product-4
@@ -71,6 +72,7 @@ product4:
     shortDescriptions:
         - { reference: product-4.shortDescriptions.default, text: product-4.shortDescriptions.default }
     featured: true,
+    upsell_products: [product-3]
     related_products: [product-3]
 product5:
     productCode: product-5

@@ -17,7 +17,8 @@ class Configuration implements ConfigurationInterface
     const MAX_NUMBER_OF_RELATED_PRODUCTS = 'max_number_of_related_products';
     const MAX_NUMBER_OF_RELATED_PRODUCTS_COUNT = 25;
     const UPSELL_PRODUCTS_ENABLED = 'upsell_products_enabled';
-    const MAX_NUMER_OF_UPSELL_PRODUCTS = 'max_number_of_upsell_products';
+    const MAX_NUMBER_OF_UPSELL_PRODUCTS = 'max_number_of_upsell_products';
+    const MAX_NUMBER_OF_UPSELL_PRODUCTS_COUNT = 25;
     const SINGLE_UNIT_MODE = 'single_unit_mode';
     const SINGLE_UNIT_MODE_SHOW_CODE = 'single_unit_mode_show_code';
     const DEFAULT_UNIT = 'default_unit';
@@ -44,22 +45,24 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root(self::ROOT_NODE);
+        $rootNode = $treeBuilder->root(static::ROOT_NODE);
 
         SettingsBuilder::append(
             $rootNode,
             [
-                self::RELATED_PRODUCTS_ENABLED => ['value' => true],
-                self::RELATED_PRODUCTS_BIDIRECTIONAL => ['value' => false],
-                self::MAX_NUMBER_OF_RELATED_PRODUCTS => [
-                    'value' => self::MAX_NUMBER_OF_RELATED_PRODUCTS_COUNT,
+                static::RELATED_PRODUCTS_ENABLED => ['value' => true],
+                static::RELATED_PRODUCTS_BIDIRECTIONAL => ['value' => false],
+                static::MAX_NUMBER_OF_RELATED_PRODUCTS => [
+                    'value' => static::MAX_NUMBER_OF_RELATED_PRODUCTS_COUNT,
                 ],
-                self::UPSELL_PRODUCTS_ENABLED => ['value' => true],
-                self::MAX_NUMER_OF_UPSELL_PRODUCTS => ['value' => 5],
+                static::UPSELL_PRODUCTS_ENABLED => ['value' => true],
+                static::MAX_NUMBER_OF_UPSELL_PRODUCTS => [
+                    'value' => static::MAX_NUMBER_OF_UPSELL_PRODUCTS_COUNT
+                ],
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
-                self::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
-                self::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],
-                self::DEFAULT_UNIT => ['value' => 'each'],
+                static::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
+                static::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],
+                static::DEFAULT_UNIT => ['value' => 'each'],
                 'default_unit_precision' => ['value' => 0],
                 'general_frontend_product_visibility' => [
                     'value' => [
@@ -67,24 +70,24 @@ class Configuration implements ConfigurationInterface
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
                     ]
                 ],
-                self::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
-                self::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
-                self::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center'],
-                self::FEATURED_PRODUCTS_SEGMENT_ID => [
+                static::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
+                static::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
+                static::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center'],
+                static::FEATURED_PRODUCTS_SEGMENT_ID => [
                     'value' => '@oro_product.provider.default_value.featured_products'
                 ],
-                self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
-                self::DIRECT_URL_PREFIX => ['value' => ''],
-                self::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => self::DEFAULT_CRON_SCHEDULE],
-                self::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
-                self::BRAND_DIRECT_URL_PREFIX => ['value' => ''],
-                self::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
-                self::NEW_ARRIVALS_PRODUCT_SEGMENT_ID => [
+                static::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
+                static::DIRECT_URL_PREFIX => ['value' => ''],
+                static::PRODUCT_COLLECTIONS_INDEXATION_CRON_SCHEDULE => ['value' => static::DEFAULT_CRON_SCHEDULE],
+                static::PRODUCT_PROMOTION_SHOW_ON_VIEW => ['value' => false, 'type' => 'boolean'],
+                static::BRAND_DIRECT_URL_PREFIX => ['value' => ''],
+                static::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION => ['value' => 500],
+                static::NEW_ARRIVALS_PRODUCT_SEGMENT_ID => [
                     'value' => '@oro_product.provider.default_value.new_arrivals'
                 ],
-                self::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
-                self::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
-                self::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
+                static::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
+                static::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
+                static::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
             ]
         );
 
@@ -98,6 +101,6 @@ class Configuration implements ConfigurationInterface
      */
     public static function getConfigKeyByName($key)
     {
-        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [self::ROOT_NODE, $key]);
+        return implode(ConfigManager::SECTION_MODEL_SEPARATOR, [static::ROOT_NODE, $key]);
     }
 }

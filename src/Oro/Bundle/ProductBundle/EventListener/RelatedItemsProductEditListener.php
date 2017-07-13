@@ -107,7 +107,7 @@ class RelatedItemsProductEditListener
             $event->getForm()->remove('removeRelated');
         }
 
-        //TODO - add permission checking in BB_10067
+        //TODO - add permission checking in BB-10067
         $event->getForm()->add(
             'appendUpsell',
             'oro_entity_identifier',

@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct;
+namespace Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct;
 
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
+use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 
@@ -27,15 +27,16 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
      * @param DoctrineHelper                    $doctrineHelper
      * @param AbstractRelatedItemConfigProvider $configProvider
      */
-    public function __construct(DoctrineHelper $doctrineHelper, AbstractRelatedItemConfigProvider $configProvider)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        AbstractRelatedItemConfigProvider $configProvider
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configProvider = $configProvider;
     }
 
     /**
      * {@inheritdoc}
-     * If parameters `bidirectional` and `limit` are not passed - default values from configuration will be used
      */
     public function find(Product $product, $bidirectional = null, $limit = null)
     {
@@ -43,19 +44,18 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
             return [];
         }
 
-        return $this->getRelatedProductsRepository()
-            ->findRelated(
+        return $this->getUpsellProductRepository()
+            ->findUpsell(
                 $product->getId(),
-                $bidirectional === null ? $this->configProvider->isBidirectional() : $bidirectional,
                 $limit === null ? $this->configProvider->getLimit() : $limit
             );
     }
 
     /**
-     * @return RelatedProductRepository|EntityRepository
+     * @return UpsellProductRepository|EntityRepository
      */
-    private function getRelatedProductsRepository()
+    private function getUpsellProductRepository()
     {
-        return $this->doctrineHelper->getEntityRepository(RelatedProduct::class);
+        return $this->doctrineHelper->getEntityRepository(UpsellProduct::class);
     }
 }

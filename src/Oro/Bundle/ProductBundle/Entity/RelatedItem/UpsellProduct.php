@@ -9,21 +9,21 @@ use Oro\Bundle\ProductBundle\RelatedItem\RelatedItemEntityInterface;
 
 /**
  * @ORM\Table(
- *     name="oro_product_related_products",
+ *     name="oro_product_upsell_product",
  *     indexes={
- *          @ORM\Index(name="idx_oro_product_related_products_product_id", columns={"product_id"}),
- *          @ORM\Index(name="idx_oro_product_related_products_related_item_id", columns={"related_item_id"})
+ *         @ORM\Index(name="idx_oro_product_upsell_product_product_id", columns={"product_id"}),
+ *         @ORM\Index(name="idx_oro_product_upsell_product_related_item_id", columns={"related_item_id"}),
  *     },
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="idx_oro_product_related_products_unique",
+ *              name="idx_oro_product_upsell_product_unique",
  *              columns={"product_id", "related_item_id"}
  *          )
  *     }
  * )
- * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository")
- */
-class RelatedProduct implements RelatedItemEntityInterface
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository")
+*/
+class UpsellProduct implements RelatedItemEntityInterface
 {
     /**
      * @ORM\Id
@@ -36,7 +36,7 @@ class RelatedProduct implements RelatedItemEntityInterface
      * @var Product
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
+    */
     protected $product;
 
     /**
@@ -47,7 +47,7 @@ class RelatedProduct implements RelatedItemEntityInterface
     protected $relatedItem;
 
     /**
-     * {@inheritDoc}
+     * @return int
      */
     public function getId()
     {
@@ -55,7 +55,7 @@ class RelatedProduct implements RelatedItemEntityInterface
     }
 
     /**
-     * @return Product
+     * {@inheritDoc}
      */
     public function getProduct()
     {
@@ -68,7 +68,6 @@ class RelatedProduct implements RelatedItemEntityInterface
     public function setProduct(Product $product)
     {
         $this->product = $product;
-
         return $this;
     }
 
@@ -88,24 +87,5 @@ class RelatedProduct implements RelatedItemEntityInterface
         $this->relatedItem = $product;
 
         return $this;
-    }
-
-    /**
-     * @deprecated since 1.6 Use RelatedProduct::getRelatedItem() instead
-     * @return Product
-     */
-    public function getRelatedProduct()
-    {
-        return $this->getRelatedItem();
-    }
-
-    /**
-     * @deprecated since 1.6 Use RelatedProduct::setRelatedProduct() instead
-     * @param Product $relatedProduct
-     * @return $this
-     */
-    public function setRelatedProduct(Product $relatedProduct)
-    {
-        return $this->setRelatedItem($relatedProduct);
     }
 }

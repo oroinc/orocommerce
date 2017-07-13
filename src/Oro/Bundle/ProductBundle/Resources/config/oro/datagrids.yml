@@ -560,10 +560,10 @@ datagrids:
             query:
                 where:
                     and:
-                        - 'product.id IN(:relatedProducts)'
+                        - 'product.id IN(:relatedItemsIds)'
             bind_parameters:
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
 
     products-related-products-view:
@@ -589,11 +589,11 @@ datagrids:
             query:
                 where:
                     or:
-                        - 'product.id IN (:relatedProducts) AND product.id NOT IN (:data_not_in)'
+                        - 'product.id IN (:relatedItemsIds) AND product.id NOT IN (:data_not_in)'
                         - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
             bind_parameters:
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
         actions:
             delete:
@@ -629,11 +629,11 @@ datagrids:
             query:
                 where:
                     or:
-                        - 'product.id IN (:relatedProducts) AND product.id NOT IN (:data_not_in)'
+                        - 'product.id IN (:relatedItemsIds) AND product.id NOT IN (:data_not_in)'
                         - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
             bind_parameters:
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
         actions:
             delete:
@@ -666,7 +666,7 @@ datagrids:
                 select:
                     - >
                       (
-                        CASE WHEN (product.id IN (:relatedProducts) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                        CASE WHEN (product.id IN (:relatedItemsIds) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
                         THEN true ELSE false END
                       ) as isRelated
                 where:
@@ -675,7 +675,7 @@ datagrids:
             bind_parameters:
                 - productId
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
         columns:
             isRelated:
@@ -709,7 +709,7 @@ datagrids:
                 select:
                     - >
                       (
-                        CASE WHEN (product.id IN (:relatedProducts) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                        CASE WHEN (product.id IN (:relatedItemsIds) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
                         THEN true ELSE false END
                       ) as isRelated
                 where:
@@ -718,7 +718,7 @@ datagrids:
             bind_parameters:
                 - productId
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
         columns:
             isRelated:
