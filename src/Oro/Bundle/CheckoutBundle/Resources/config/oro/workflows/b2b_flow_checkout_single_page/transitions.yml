@@ -88,35 +88,6 @@ workflows:
                             - '.checkout-payment-methods .checkout__form__payment-container'
                         enableOnLoad: false
                 form_options:
-                    form_init:
-                        - '@tree':
-                            conditions:
-                                '@empty': $billing_address
-                            actions:
-                                - '@call_service_method':
-                                    attribute: $.result.customerUserAddresses
-                                    service: 'oro_order.manager.order_address'
-                                    method: getGroupedAddresses
-                                    method_parameters: [$checkout, 'billing']
-                                - '@call_service_method':
-                                    attribute: $billing_address
-                                    service: 'oro_order.manager.order_address'
-                                    method: updateFromAbstract
-                                    method_parameters: [$.result.customerUserAddresses.defaultAddress]
-                        - '@tree':
-                            conditions:
-                                '@empty': $shipping_address
-                            actions:
-                                - '@call_service_method':
-                                    attribute: $.result.customerUserAddresses
-                                    service: 'oro_order.manager.order_address'
-                                    method: getGroupedAddresses
-                                    method_parameters: [$checkout, 'shipping']
-                                - '@call_service_method':
-                                    attribute: $shipping_address
-                                    service: 'oro_order.manager.order_address'
-                                    method: updateFromAbstract
-                                    method_parameters: [$.result.customerUserAddresses.defaultAddress]
                     attribute_fields:
                         billing_address:
                             form_type: oro_checkout_address

@@ -62,6 +62,35 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
 
+                    - '@tree':
+                        conditions:
+                            '@empty': $billing_address
+                        actions:
+                            - '@call_service_method':
+                                attribute: $.result.customerUserAddresses
+                                service: 'oro_order.manager.order_address'
+                                method: getGroupedAddresses
+                                method_parameters: [$checkout, 'billing']
+                            - '@call_service_method':
+                                attribute: $billing_address
+                                service: 'oro_order.manager.order_address'
+                                method: updateFromAbstract
+                                method_parameters: [$.result.customerUserAddresses.defaultAddress]
+                    - '@tree':
+                        conditions:
+                            '@empty': $shipping_address
+                        actions:
+                            - '@call_service_method':
+                                attribute: $.result.customerUserAddresses
+                                service: 'oro_order.manager.order_address'
+                                method: getGroupedAddresses
+                                method_parameters: [$checkout, 'shipping']
+                            - '@call_service_method':
+                                attribute: $shipping_address
+                                service: 'oro_order.manager.order_address'
+                                method: updateFromAbstract
+                                method_parameters: [$.result.customerUserAddresses.defaultAddress]
+
                     - '@run_action_group':
                         action_group: oro_update_shipping_price
                         parameters_mapping:
