@@ -49,10 +49,6 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: '#shopping_list_view_container_content > div.cart-table > table'
 
-    Frontend Shopping Lists Dropdown:
-      selector: 'div.shopping-list-widget'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
       selector: 'tbody.line_item'
@@ -81,6 +77,18 @@ oro_behat_extension:
 
     ShoppingListWidget:
       selector: '.shopping-list-widget'
+
+    Shopping Cart:
+      selector:
+        type: xpath
+        locator: '//div[@class="cart-widget__content"]'
+
+    Shopping List Limit Form:
+      selector: 'form[name="shopping_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
 
     Subtotals:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals
