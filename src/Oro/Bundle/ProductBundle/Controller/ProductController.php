@@ -239,28 +239,12 @@ class ProductController extends Controller
                 'form' => $form->createView(),
                 'entity' => $product
             ];
-        } else {
-            $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
-            $form->submit($request->request->get(ProductType::NAME));
         }
 
-        return $this->get('oro_product.service.product_update_handler')->handleUpdate(
-            $product,
-            $this->createForm(ProductType::NAME, $product),
-            function (Product $product) {
-                return [
-                    'route' => 'oro_product_update',
-                    'parameters' => ['id' => $product->getId()]
-                ];
-            },
-            function (Product $product) {
-                return [
-                    'route' => 'oro_product_view',
-                    'parameters' => ['id' => $product->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.product.controller.product.saved.message')
-        );
+        $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
+        $form->submit($request->request->get(ProductType::NAME));
+
+        return $this->update($product);
     }
 
     /**
