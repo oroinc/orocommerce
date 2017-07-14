@@ -331,7 +331,7 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
 
-    oro_shopping_list.voter.customer_user_checkout:
+    oro_shopping_list.voter.customer_user_shopping_list:
         parent: oro_customer.voter.customer_user
         calls:
             - [ setFeatureName, ['guest_shopping_list'] ]

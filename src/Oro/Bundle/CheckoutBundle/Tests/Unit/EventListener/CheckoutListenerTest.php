@@ -55,13 +55,12 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider persistDataProvider
+     * @dataProvider persistNotSetDefaultOwnerDataProvider
      *
      * @param string $token
      * @param Checkout $checkout
-     * @param boolean $setOwner
      */
-    public function testPrePersist($token, Checkout $checkout, $setOwner)
+    public function testPrePersistNotSetDefaultOwner($token, Checkout $checkout)
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -70,46 +69,65 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        if ($setOwner) {
-            $this->defaultUserProvider
-                ->expects($this->once())
-                ->method('getDefaultUser')
-                ->with('oro_checkout', 'default_guest_checkout_owner')
-                ->willReturn($newUser);
-
-            $this->listener->prePersist($checkout);
-            $this->assertSame($newUser, $checkout->getOwner());
-        } else {
-            $this->listener->prePersist($checkout);
-            $this->assertNotSame($newUser, $checkout->getOwner());
-        }
+        $this->listener->prePersist($checkout);
+        $this->assertNotSame($newUser, $checkout->getOwner());
     }
 
     /**
      * @return array
      */
-    public function persistDataProvider()
+    public function persistNotSetDefaultOwnerDataProvider()
+    {
+        return [
+            'without token and without owner' => [
+                'token' => null,
+                'checkout' => new Checkout()
+            ],
+            'unsupported token and without owner' => [
+                'token' => new \stdClass(),
+                'checkout' => new Checkout()
+            ],
+            'with owner' => [
+                'token' => new AnonymousCustomerUserToken(''),
+                'checkout' => (new Checkout())->setOwner(new User())
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider persistSetDefaultOwnerDataProvider
+     *
+     * @param string $token
+     * @param Checkout $checkout
+     */
+    public function testPrePersistSetDefaultOwner($token, Checkout $checkout)
+    {
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $newUser = new User();
+        $newUser->setFirstName('first_name');
+        $this->defaultUserProvider
+            ->expects($this->once())
+            ->method('getDefaultUser')
+            ->with('oro_checkout', 'default_guest_checkout_owner')
+            ->willReturn($newUser);
+
+        $this->listener->prePersist($checkout);
+        $this->assertSame($newUser, $checkout->getOwner());
+    }
+
+    /**
+     * @return array
+     */
+    public function persistSetDefaultOwnerDataProvider()
     {
         return [
             'with token and without owner' => [
                 'token' => new AnonymousCustomerUserToken(''),
-                'checkout' => new Checkout(),
-                'setOwner' => true,
-            ],
-            'without token and without owner' => [
-                'token' => null,
-                'checkout' => new Checkout(),
-                'setOwner' => false,
-            ],
-            'unsupported token and without owner' => [
-                'token' => new \stdClass(),
-                'checkout' => new Checkout(),
-                'setOwner' => false,
-            ],
-            'with owner' => [
-                'token' => new AnonymousCustomerUserToken(''),
-                'checkout' => (new Checkout())->setOwner(new User()),
-                'setOwner' => false,
+                'checkout' => new Checkout()
             ]
         ];
     }

@@ -32,13 +32,12 @@ class ShoppingListEntityListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider persistDataProvider
+     * @dataProvider persistNotSetDefaultOwnerDataProvider
      *
      * @param string $token
      * @param ShoppingList $shoppingList
-     * @param boolean $setOwner
      */
-    public function testPrePersist($token, ShoppingList $shoppingList, $setOwner)
+    public function testPrePersistNotSetDefaultOwner($token, ShoppingList $shoppingList)
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -47,46 +46,69 @@ class ShoppingListEntityListenerTest extends \PHPUnit_Framework_TestCase
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        if ($setOwner) {
-            $this->defaultUserProvider
-                ->expects($this->once())
-                ->method('getDefaultUser')
-                ->with('oro_shopping_list', 'default_guest_shopping_list_owner')
-                ->willReturn($newUser);
-
-            $this->listener->prePersist($shoppingList);
-            $this->assertSame($newUser, $shoppingList->getOwner());
-        } else {
-            $this->listener->prePersist($shoppingList);
-            $this->assertNotSame($newUser, $shoppingList->getOwner());
-        }
+        $this->listener->prePersist($shoppingList);
+        $this->assertNotSame($newUser, $shoppingList->getOwner());
     }
 
     /**
      * @return array
      */
-    public function persistDataProvider()
+    public function persistNotSetDefaultOwnerDataProvider()
     {
         return [
             'with token and without owner' => [
                 'token' => new AnonymousCustomerUserToken(''),
-                'shoppingList' => new ShoppingList(),
-                'setOwner' => true,
+                'shoppingList' => new ShoppingList()
             ],
             'without token and without owner' => [
                 'token' => null,
-                'shoppingList' => new ShoppingList(),
-                'setOwner' => false,
+                'shoppingList' => new ShoppingList()
             ],
             'unsupported token and without owner' => [
                 'token' => new \stdClass(),
-                'shoppingList' => new ShoppingList(),
-                'setOwner' => false,
+                'shoppingList' => new ShoppingList()
             ],
             'with owner' => [
                 'token' => new AnonymousCustomerUserToken(''),
-                'shoppingList' => (new ShoppingList())->setOwner(new User()),
-                'setOwner' => false,
+                'shoppingList' => (new ShoppingList())->setOwner(new User())
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider persistSetDefaultOwnerDataProvider
+     *
+     * @param string $token
+     * @param ShoppingList $shoppingList
+     */
+    public function testPrePersistSetDefaultOwner($token, ShoppingList $shoppingList)
+    {
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $newUser = new User();
+        $newUser->setFirstName('first_name');
+        $this->defaultUserProvider
+            ->expects($this->once())
+            ->method('getDefaultUser')
+            ->with('oro_shopping_list', 'default_guest_shopping_list_owner')
+            ->willReturn($newUser);
+
+        $this->listener->prePersist($shoppingList);
+        $this->assertSame($newUser, $shoppingList->getOwner());
+    }
+
+    /**
+     * @return array
+     */
+    public function persistSetDefaultOwnerDataProvider()
+    {
+        return [
+            'with token and without owner' => [
+                'token' => new AnonymousCustomerUserToken(''),
+                'shoppingList' => new ShoppingList()
             ]
         ];
     }
