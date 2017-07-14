@@ -41,6 +41,7 @@ class RestrictedProductRepository
         $repository = $this->doctrineHelper->getEntityRepository($this->productClass);
 
         $queryBuilder = $repository->getProductsQueryBuilder($productIds);
+        $queryBuilder->orderBy('p.id');
 
         if ($limit) {
             $queryBuilder->setMaxResults($limit);
