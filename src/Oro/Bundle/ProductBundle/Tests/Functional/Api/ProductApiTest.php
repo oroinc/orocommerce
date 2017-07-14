@@ -63,11 +63,11 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
 
         $response = $this->patch(
-            ['entity' => 'products', 'id' => LoadProductData::PRODUCT_1],
+            ['entity' => 'products', 'id' => (string) $product->getId()],
             [
                 'data' => [
                     'type' => 'products',
-                    'id' => LoadProductData::PRODUCT_1,
+                    'id' => (string) $product->getId(),
                     'relationships' => [
                         'inventory_status' => [
                             'data' => [

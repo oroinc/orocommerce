@@ -30,6 +30,7 @@ class TotalHelper
      * @param TotalProcessorProvider $totalProvider
      * @param LineItemSubtotalProvider $lineItemSubtotalProvider
      * @param DiscountSubtotalProvider $discountSubtotalProvider
+     * @param RateConverterInterface $rateConverter
      */
     public function __construct(
         TotalProcessorProvider $totalProvider,

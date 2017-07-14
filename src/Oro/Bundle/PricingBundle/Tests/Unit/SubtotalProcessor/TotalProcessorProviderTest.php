@@ -254,7 +254,41 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
         $subtotalProvider
             ->expects($this->once())
+            ->method('supportsCachedSubtotal')
+            ->willReturn(true);
+
+        $subtotalProvider
+            ->expects($this->once())
             ->method('getCachedSubtotal')
+            ->willReturn($subtotal);
+
+        $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
+    }
+
+    public function testRecalculationIsDisabledAndProviderIsCacheAwareButNotSupported()
+    {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
+        $subtotalProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->setProviderToRegistry($subtotalProvider);
+
+        $subtotal = new Subtotal();
+        $expected = new ArrayCollection([$subtotal]);
+
+        $subtotalProvider
+            ->expects($this->once())
+            ->method('supportsCachedSubtotal')
+            ->willReturn(false);
+
+        $subtotalProvider
+            ->expects($this->never())
+            ->method('getCachedSubtotal');
+
+        $subtotalProvider
+            ->expects($this->once())
+            ->method('getSubtotal')
             ->willReturn($subtotal);
 
         $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));

@@ -2,12 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Extension;
 
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
-use Oro\Bundle\UIBundle\Route\Router;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 
@@ -16,15 +12,16 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 use Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension;
+use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
 
 class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountRecalculationProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $requestStack;
+    protected $discountRecalculationProvider;
 
     /**
      * @var AppliedDiscountManager|\PHPUnit_Framework_MockObject_MockObject
@@ -38,9 +35,12 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->discountRecalculationProvider = $this->createMock(DiscountRecalculationProvider::class);
         $this->appliedDiscountManager = $this->createMock(AppliedDiscountManager::class);
-        $this->orderTypeExtension = new OrderTypeExtension($this->requestStack, $this->appliedDiscountManager);
+        $this->orderTypeExtension = new OrderTypeExtension(
+            $this->discountRecalculationProvider,
+            $this->appliedDiscountManager
+        );
     }
 
     public function testBuildForm()
@@ -55,30 +55,6 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->orderTypeExtension->buildForm($builder, []);
     }
 
-    public function testOnSubmitWithWrongData()
-    {
-        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->createMock(Form::class);
-        $event = new FormEvent($form, null);
-
-        $this->requestStack->expects($this->never())
-            ->method('getCurrentRequest');
-
-        $this->orderTypeExtension->onSubmit($event);
-    }
-
-    public function testOnSubmitWithOrderWithoutId()
-    {
-        /** @var Form|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->createMock(Form::class);
-        $event = new FormEvent($form, new Order());
-
-        $this->requestStack->expects($this->never())
-            ->method('getCurrentRequest');
-
-        $this->orderTypeExtension->onSubmit($event);
-    }
-
     public function testOnSubmitWithoutRecalculation()
     {
         /** @var Form|\PHPUnit_Framework_MockObject_MockObject $form */
@@ -86,11 +62,9 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $order = $this->getEntity(Order::class, ['id' => 777]);
         $event = new FormEvent($form, $order);
 
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn(new Request([
-                Router::ACTION_PARAMETER => OrderTypeExtension::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION,
-            ]));
+        $this->discountRecalculationProvider->expects($this->once())
+            ->method('isRecalculationRequired')
+            ->willReturn(false);
 
         $this->appliedDiscountManager->expects($this->never())
             ->method('saveAppliedDiscounts');
@@ -105,11 +79,9 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $order = $this->getEntity(Order::class, ['id' => 777]);
         $event = new FormEvent($form, $order);
 
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn(new Request([
-                Router::ACTION_PARAMETER => 'save_and_close',
-            ]));
+        $this->discountRecalculationProvider->expects($this->once())
+            ->method('isRecalculationRequired')
+            ->willReturn(true);
 
         $this->appliedDiscountManager->expects($this->once())
             ->method('saveAppliedDiscounts')

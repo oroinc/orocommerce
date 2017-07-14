@@ -83,10 +83,6 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
         $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodIdentifier);
         $event = new RequirePaymentRedirectEvent($paymentMethod);
         $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
-        $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodIdentifier),
-            $event
-        );
 
         return $event->isRedirectRequired();
     }

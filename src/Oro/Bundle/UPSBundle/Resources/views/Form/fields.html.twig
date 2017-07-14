@@ -1,5 +1,12 @@
 {% block oro_ups_transport_settings_widget %}
-    <div data-page-component-module="oroups/js/app/components/ups-transport-settings-component">
+    <div data-page-component-module="oroups/js/app/components/ups-transport-settings-component"
+         data-page-component-options="{{ {
+             'countrySelector': 'select[name="%s"]'|format(form.upsCountry.vars.full_name),
+             'shippingServicesSelector': 'select[name="%s"]'|format(form.applicableShippingServices.vars.full_name),
+             'shippingServicesClosestParentSelector': '.control-group',
+             'shippingServiceByCountryRoute': 'oro_ups_country_shipping_services'
+         }|json_encode }}"
+    >
         {{ form_widget(form) }}
     </div>
 
