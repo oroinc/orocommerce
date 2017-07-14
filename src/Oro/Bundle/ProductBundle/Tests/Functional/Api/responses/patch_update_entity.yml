@@ -55,6 +55,9 @@ data:
                 -
                     type: productunitprecisions
                     id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.box->id)>'
         primaryUnitPrecision:
             data:
                 type: productunitprecisions

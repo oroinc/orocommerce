@@ -9,6 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFam
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrganizations;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
@@ -100,17 +101,28 @@ class ProductApiTest extends RestJsonApiTestCase
         $product = $this->getEntityManager()->find(Product::class, $product->getId());
         $referenceRepository = $this->getReferenceRepository();
         foreach ($product->getNames() as $name) {
-            $localization = $name->getLocalization() === null ? 'default':$name->getLocalization()->getFormattingCode();
+            $localization = $name->getLocalization() === null ?
+                'default'
+                : $name->getLocalization()->getFormattingCode();
             $reference = LoadProductData::PRODUCT_1.'.names.'.$localization;
             if (!$referenceRepository->hasReference($reference)) {
                 $referenceRepository->addReference($reference, $name);
             }
         }
-        $this->getReferenceRepository()->setReference(LoadProductData::PRODUCT_1, $product);
+        $referenceRepository->setReference(LoadProductData::PRODUCT_1, $product);
         $defaultName = $product->getName(null);
         $this->assertEquals('Test product changed', $defaultName->getString());
         $defaultDescription = $product->getDescription(null);
         $this->assertEquals('<b>Description Bold</b>', $defaultDescription->getText());
+        $newUnitPrecision = $product->getUnitPrecision('box');
+        $this->assertInstanceOf(ProductUnitPrecision::class, $newUnitPrecision);
+        $this->assertEquals('15', $newUnitPrecision->getConversionRate());
+        $bottlePrecision = $product->getUnitPrecision('bottle');
+        $this->assertEquals('99', $bottlePrecision->getConversionRate());
+        $referenceRepository->setReference(
+            'product_unit_precision.'.LoadProductData::PRODUCT_1.'.box',
+            $newUnitPrecision
+        );
 
         $this->assertResponseContains('patch_update_entity.yml', $response);
     }
@@ -472,6 +484,10 @@ class ProductApiTest extends RestJsonApiTestCase
         $productDescEn = $this->getReference('product-1.descriptions.en_US');
         $productShortDescDefault = $this->getReference('product-1.shortDescriptions.default');
         $productShortDescEn = $this->getReference('product-1.shortDescriptions.en_US');
+        $productUnitPrecision1 = $this->getReference('product_unit_precision.product-1.bottle');
+        $productUnitPrecision2 = $this->getReference('product_unit_precision.product-1.liter');
+        $productUnitPrecision3 = $this->getReference('product_unit_precision.product-1.milliliter');
+        $newProductUnit = $this->getReference(LoadProductUnits::BOX);
         $localization = $this->getReference('es');
 
         return [
@@ -539,6 +555,26 @@ class ProductApiTest extends RestJsonApiTestCase
                             ]
                         ]
                     ],
+                    "unitPrecisions" => [
+                        "data" => [
+                            0 => [
+                                "type" => "productunitprecisions",
+                                "id" => (string)$productUnitPrecision1->getId()
+                            ],
+                            1 => [
+                                "type" => "productunitprecisions",
+                                "id" => (string)$productUnitPrecision2->getId()
+                            ],
+                            2 => [
+                                "type" => "productunitprecisions",
+                                "id" => (string)$productUnitPrecision3->getId()
+                            ],
+                            3 => [
+                                "type" => "productunitprecisions",
+                                "id" => "new-product-unit-precision"
+                            ],
+                        ]
+                    ],
                     'inventory_status' => [
                         'data' => [
                             'type' => 'prodinventorystatuses',
@@ -575,6 +611,26 @@ class ProductApiTest extends RestJsonApiTestCase
                     "relationships" => ["localization" => ["data" => null]]
                 ],
                 2 => [
+                    "meta" => [
+                        "update" => true,
+                    ],
+                    "type" => "productunitprecisions",
+                    "id" => (string)$productUnitPrecision1->getId(),
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "99",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => $productUnitPrecision1->getUnit()->getCode()
+                            ]
+                        ]
+                    ]
+                ],
+                3 => [
                     "type" => "localizedfallbackvalues",
                     "id" => "names-new",
                     "attributes" => [
@@ -587,6 +643,23 @@ class ProductApiTest extends RestJsonApiTestCase
                             "data" => [
                                 "type" => "localizations",
                                 "id" => (string)$localization->getId()
+                            ]
+                        ]
+                    ]
+                ],
+                4 => [
+                    "type" => "productunitprecisions",
+                    "id" => "new-product-unit-precision",
+                    "attributes" => [
+                        "precision" => "0",
+                        "conversionRate" => "15",
+                        "sell" => "1"
+                    ],
+                    "relationships" => [
+                        "unit" => [
+                            "data" => [
+                                "type" => "productunits",
+                                "id" => $newProductUnit->getCode()
                             ]
                         ]
                     ]
