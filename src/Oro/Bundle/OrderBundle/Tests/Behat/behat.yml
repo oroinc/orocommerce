@@ -1,8 +1,30 @@
 oro_behat_extension:
   elements:
+    BackendOrder:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder
+      selector: 'div.layout-content'
+
+    BackendOrderLineItem:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItem
+      selector: 'tr'
+
+    BackendOrderLineItemsTable:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.order-line-items-table'
+
+    BackendOrderSubtotals:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderSubtotals
+      selector:
+          type: xpath
+          locator: '//div[@data-totals-container]'
+
     Order:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\Order
       selector: '.page-content'
+
+    OrderLineItemProductSku:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'div:contains("Item #:") > span'
 
     OrderTitle:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

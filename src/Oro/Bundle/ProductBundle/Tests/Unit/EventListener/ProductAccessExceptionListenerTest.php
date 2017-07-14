@@ -79,7 +79,7 @@ class ProductAccessExceptionListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->event->expects($this->once())
             ->method('setException')
-            ->with(new NotFoundHttpException($message))
+            ->with(new NotFoundHttpException($message, $exampleException))
             ->willReturn($exampleException);
 
         $request = new Request();
@@ -104,7 +104,7 @@ class ProductAccessExceptionListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->event->expects($this->once())
             ->method('setException')
-            ->with(new NotFoundHttpException($message))
+            ->with(new NotFoundHttpException($message, $exampleException))
             ->willReturn($exampleException);
 
         $request = new Request();

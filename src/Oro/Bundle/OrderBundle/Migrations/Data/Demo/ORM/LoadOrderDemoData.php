@@ -105,7 +105,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 'city' => $row['billingAddressCity'],
                 'region' => $row['billingAddressRegion'],
                 'street' => $row['billingAddressStreet'],
-                'postalCode' => $row['billingAddressPostalCode']
+                'postalCode' => $row['billingAddressPostalCode'],
+                'firstName' => $customerUser->getFirstName(),
+                'lastName' => $customerUser->getLastName(),
             ];
 
             $shippingAddress = [
@@ -114,7 +116,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 'city' => $row['shippingAddressCity'],
                 'region' => $row['shippingAddressRegion'],
                 'street' => $row['shippingAddressStreet'],
-                'postalCode' => $row['shippingAddressPostalCode']
+                'postalCode' => $row['shippingAddressPostalCode'],
+                'firstName' => $customerUser->getFirstName(),
+                'lastName' => $customerUser->getLastName(),
             ];
 
             $total = MultiCurrency::create($row['total'], $row['currency']);
@@ -173,8 +177,10 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             ->setCity($address['city'])
             ->setRegion($this->getRegionByIso2Code($manager, $address['region']))
             ->setStreet($address['street'])
-            ->setPostalCode($address['postalCode']);
-        $orderAddress->setPhone('1234567890');
+            ->setPostalCode($address['postalCode'])
+            ->setFirstName($address['firstName'])
+            ->setLastName($address['lastName'])
+            ->setPhone('1234567890');
 
         $manager->persist($orderAddress);
 

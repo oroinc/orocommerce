@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -29,11 +31,11 @@ class PriceListType extends AbstractType
             ->add('name', TextType::class, ['required' => true, 'label' => 'oro.pricing.pricelist.name.label'])
             ->add(
                 self::SCHEDULES_FIELD,
-                CollectionType::class,
+                ScheduleIntervalsCollectionType::class,
                 [
-                    'type' => PriceListScheduleType::NAME,
-                    'by_reference' => false,
-                    'required' => false,
+                    'options' => [
+                        'data_class' => PriceListSchedule::class
+                    ]
                 ]
             )
             ->add(

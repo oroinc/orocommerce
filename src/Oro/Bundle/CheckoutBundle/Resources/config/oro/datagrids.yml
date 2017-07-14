@@ -118,6 +118,7 @@ datagrids:
                     type: datetime
                     data_name: checkout.updatedAt
                 customerUserName:
+                    label: oro.checkout.ordered_by.label
                     type: string
                     data_name: customerUserName
                 poNumber:

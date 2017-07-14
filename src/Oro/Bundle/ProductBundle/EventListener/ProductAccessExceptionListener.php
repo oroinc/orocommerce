@@ -45,7 +45,7 @@ class ProductAccessExceptionListener
         }
 
         // replace the 403 with 404 here
-        $newException = new NotFoundHttpException($exception->getMessage());
+        $newException = new NotFoundHttpException($exception->getMessage(), $exception);
 
         $event->setException($newException);
     }

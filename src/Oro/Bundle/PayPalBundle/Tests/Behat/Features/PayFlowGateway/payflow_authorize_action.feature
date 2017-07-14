@@ -34,7 +34,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I save and close form
     Then I should see "Payment rule has been saved" flash message
 
-  Scenario: Error from Backend when pay order with PayPal PayFlow Gateway
+  Scenario: User returns to Payment step if he reloads the page on Order Review step
     Given There are products in the system available for order
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 2
@@ -42,6 +42,18 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I fill credit card form with next data:
+      | CreditCardNumber | 5105105105105100 |
+      | Month            | 11               |
+      | Year             | 2027             |
+      | CVV              | 123              |
+    And I click "Continue"
+    And I reload the page
+    Then I should see "Select a Payment Method"
+
+  Scenario: Error from Backend when pay order with PayPal PayFlow Gateway
+    When I open page with shopping list List 2
+    And I press "Create Order"
     And I fill credit card form with next data:
       | CreditCardNumber | 5105105105105100 |
       | Month            | 11               |

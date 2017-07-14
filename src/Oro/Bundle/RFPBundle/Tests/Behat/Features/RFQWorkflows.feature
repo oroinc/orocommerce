@@ -1,5 +1,6 @@
 @fixture-OroRFPBundle:RFQWorkflows.yml
 @ticket-BB-7962
+@regression
 Feature: Default RFQ Workflows
 
   Scenario: Logged in as buyer and manager on different window sessions

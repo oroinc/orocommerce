@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\NameStrategyInterface;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
@@ -68,10 +69,55 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testOnBuildWhenSegmentGridParamsSet()
+    {
+        $dataSource = $this->createMock(OrmDatasource::class);
+
+        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        $dataGrid = $this->createMock(Datagrid::class);
+        $dataGrid
+            ->expects($this->once())
+            ->method('getDatasource')
+            ->willReturn($dataSource);
+
+        $parameters = new ParameterBag([
+            'params' => [
+                'segmentDefinition' => '{}',
+                'includedProducts' => '1,2',
+                'excludedProducts' => '5'
+            ]
+        ]);
+
+        $dataGrid
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn($parameters);
+
+        $this->definitionConverter
+            ->expects($this->once())
+            ->method('hasFilters')
+            ->with([])
+            ->willReturn(false);
+
+        $this->segmentManager
+            ->expects($this->never())
+            ->method($this->anything());
+
+        $event = new BuildAfter($dataGrid);
+
+        $this->listener->onBuildAfter($event);
+    }
+
     public function testOnBuildAfterWithoutRequest()
     {
-        /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->createMock(BuildAfter::class);
+        /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        $dataGrid = $this->createMock(Datagrid::class);
+        $dataGrid
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn(new ParameterBag());
+
+        $event = new BuildAfter($dataGrid);
 
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
@@ -92,6 +138,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
+
+        $dataGrid
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn(new ParameterBag());
 
         $event = new BuildAfter($dataGrid);
 
@@ -118,6 +169,12 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
+
+        $dataGrid
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn(new ParameterBag());
+
         $this->assertGetGridFullNameCalls($dataGrid, 'grid_name', '1');
 
         $event = new BuildAfter($dataGrid);
@@ -169,6 +226,11 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $dataGrid->expects($this->once())
             ->method('getDatasource')
             ->willReturn($dataSource);
+
+        $dataGrid
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn(new ParameterBag());
 
         $this->assertGetGridFullNameCalls($dataGrid, $gridName, $scope);
         $event = new BuildAfter($dataGrid);
@@ -229,8 +291,12 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var Datagrid|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
         $dataGrid = $this->createMock(Datagrid::class);
         $dataGrid->expects($this->once())
-         ->method('getDatasource')
-         ->willReturn($dataSource);
+             ->method('getDatasource')
+             ->willReturn($dataSource);
+        $dataGrid
+            ->expects($this->once())
+            ->method('getParameters')
+            ->willReturn(new ParameterBag());
 
         $this->assertGetGridFullNameCalls($dataGrid, 'grid_name', null);
         $event = new BuildAfter($dataGrid);

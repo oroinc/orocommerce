@@ -11,7 +11,6 @@ class PaymentDiscountSurchargeListener extends AbstractSurchargeListener
      */
     protected function setAmount(Surcharge $model, $amount)
     {
-        // TODO: This listener should work with discounts for checkout in BB-4834
         $model->setDiscountAmount($model->getDiscountAmount() + $amount);
     }
 }

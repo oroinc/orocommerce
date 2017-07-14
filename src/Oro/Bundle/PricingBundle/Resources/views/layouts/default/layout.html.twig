@@ -32,10 +32,6 @@
     {% set options = {
         route: route,
         events: events|default({}),
-        selectors: {
-            subtotalTemplate: '#frontend-subtotals-template',
-            template: '#frontend-totals-template',
-        }|merge(selectors|default({})),
         entityClassName: oro_url_class_name(entityClassName),
         entityId: entityId,
         skipMaskView: skipMaskView,
