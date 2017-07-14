@@ -7,6 +7,7 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         schedules:
             - Valid: ~
         scopes:
+            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
             - Valid: ~
         productsSegment:
             - Valid: ~
