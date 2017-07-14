@@ -5,8 +5,6 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 
 class OrderAddressType extends AbstractOrderAddressType
 {
@@ -52,23 +50,6 @@ class OrderAddressType extends AbstractOrderAddressType
             }
 
             $builder->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        parent::finishView($view, $form, $options);
-
-        foreach ($view->children as $child) {
-            $child->vars['required'] = false;
-            unset(
-                $child->vars['attr']['data-validation'],
-                $child->vars['attr']['data-required'],
-                $child->vars['label_attr']['data-required']
-            );
         }
     }
 

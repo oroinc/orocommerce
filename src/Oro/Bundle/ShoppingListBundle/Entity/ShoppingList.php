@@ -143,6 +143,7 @@ class ShoppingList extends ExtendShoppingList implements
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
+     * @ORM\OrderBy({"id" = "ASC"})
      **/
     protected $lineItems;
 
