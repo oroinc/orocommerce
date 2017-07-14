@@ -924,6 +924,17 @@ services:
         tags:
             - { name: security.voter, priority: 500 }
 
+    oro_product.security.acl.voter.product_status:
+        class: Oro\Bundle\ProductBundle\Acl\Voter\ProductStatusVoter
+        public: false
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, ['%oro_product.entity.product.class%']]
+            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
+        tags:
+            - { name: security.voter, priority: 100 }
+
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         arguments:
