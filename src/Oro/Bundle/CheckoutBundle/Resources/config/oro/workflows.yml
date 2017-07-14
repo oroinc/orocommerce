@@ -1107,7 +1107,11 @@ workflows:
                                 identifier: $.result.typeShippingName
                             - '@tree':
                                 conditions:
-                                    '@equal': [$checkout.shipToBillingAddress, false]
+                                    '@or':
+                                        - '@equal': [$checkout.shipToBillingAddress, false]
+                                        - '@and':
+                                            - '@equal': [$checkout.shipToBillingAddress, true]
+                                            - '@equal': [$checkout.saveBillingAddress, false]
                                 actions:
                                     - '@create_entity':
                                         attribute: $.result.customerShippingAddress
@@ -1138,7 +1142,9 @@ workflows:
                                             - $.result.typeShipping
                             - '@call_method':
                                 conditions:
-                                    '@equal': [$checkout.shipToBillingAddress, true]
+                                    '@and':
+                                        - '@equal': [$checkout.shipToBillingAddress, true]
+                                        - '@equal': [$checkout.saveBillingAddress, true]
                                 parameters:
                                     object: $.result.customerBillingAddress
                                     method: addType
