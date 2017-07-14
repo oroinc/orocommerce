@@ -5,7 +5,7 @@ $embedded-products-slider-arrow-top: 18% !default;
 
 // desktop
 $embedded-products-item-count-desktop: 4 !default;
-$embedded-products-item-image-height-desktop: 307px !default;
+$embedded-products-item-image-height-desktop: 249px !default;
 $embedded-products-slider-arrow-top-desktop: ($embedded-products-item-image-height-desktop / 2) - ($embedded-list-slider-btn-arrow-height / 2) + $embedded-products-item-offset !default;
 $embedded-products-item-gap-desktop: ($embedded-products-item-offset) - ($embedded-products-item-offset / $embedded-products-item-count-desktop) !default;
 
