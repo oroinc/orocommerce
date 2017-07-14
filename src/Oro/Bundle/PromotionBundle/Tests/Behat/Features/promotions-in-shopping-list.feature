@@ -18,8 +18,8 @@ Feature: Promotions in Shopping List
     When I open page with shopping list List 1
     Then I see next line item discounts for shopping list "List 1":
       | SKU              | Discount |
-      | SKU2             | $5.00    |
       | SKU1             |          |
+      | SKU2             | $5.00    |
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
       | Discount | $12.50 |
