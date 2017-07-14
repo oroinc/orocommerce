@@ -12,6 +12,7 @@ oro:
           label: SKU
           placeholder: "Enter Product Name or Item Number"
           not_found: Item Number Cannot Be Found
+          description: The code of the product
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields.label: Configurable Attributes
@@ -19,19 +20,33 @@ oro:
         price.label: Price
         has_variants.label: Has Variants
         variant_fields.label: Variant Fields
-        inventory_status.label: Inventory Status
-        status.label: Status
-        type.label: Type
+        inventory_status:
+            label: Inventory Status
+            description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
+        type:
+            label: Type
+            description: Defines the type of product, "simple" / "configurable"
+            simple: Simple
+            configurable: Configurable
+            please_select_option: Please select option
         owner.label: Owner
         organization.label: Organization
-        primary_unit_precision.label: Unit of Quantity
+        primary_unit_precision:
+            label: Unit of Quantity
+            description: The primary unit of quantity for the product
         primary_unit_precision_id.label: Primary Unit Precision Id
         additional_unit_precisions.label: Additional Units
         unit_precisions.label: Unit Precisions
         image.label: Image
-        names.label: Name
-        descriptions.label: Description
-        short_descriptions.label: Short Description
+        names:
+            label: Name
+            description: The name of the product (it is a list of localized entities to hold the localized text for each localization)
+        descriptions:
+            label: Description
+            description: The description of the product (it is a list of localized entities to hold the localized text for each localization)
+        short_descriptions:
+            label: Short Description
+            description: The short description of the product (it is a list of localized entities to hold the localized text for each localization)
         removed: '{title} - removed'
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
@@ -46,10 +61,12 @@ oro:
         new_arrivals.label: New Arrivals
         featured:
             label: Is Featured
+            description: Specifies if product is featured or not
             yes: Yes
             no: No
         new_arrival:
             label: New Arrival
+            description: Specifies if product is a new arrival
             yes: Yes
             no: No
         time_period.label: Time Period
@@ -59,6 +76,7 @@ oro:
             singular_label:     'Slug'
         slug_prototypes:
             label:              'URL Slug'
+            description:        Specifies the url slugs used for product (it is a list of localized entities to hold the localized text for each localization)
             singular_label:     'Slug Prototype'
 
         content_variant:
@@ -80,17 +98,16 @@ oro:
                 hint:
                     add_to_included: Manually add products to All Added values
                     add_to_excluded: Manually remove products from All Added values
-
-        type:
-            simple: Simple
-            configurable: Configurable
-            please_select_option: Please select option
-        attribute_family.label: Product Family
-        attribute_family.plural_label: Product Families
+        attribute_family:
+            label: Product Family
+            description: The product attribute family, which defines the configurable attributes that can be used o a configurable product.
+            plural_label: Product Families
 
         status:
             enabled: Enabled
             disabled: Disabled
+            label: Status
+            description: The enabled or disabled status of the product
 
         variant_fields:
             yes.label: Yes

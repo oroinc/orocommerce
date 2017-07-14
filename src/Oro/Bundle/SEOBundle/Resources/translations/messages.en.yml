@@ -32,18 +32,42 @@ oro:
                         hourly.label: Hourly (0 * * * *)
 
 
-oro.product.meta_titles.label: Meta title
-oro.product.meta_descriptions.label: Meta description
-oro.product.meta_keywords.label: Meta keywords
+oro.product.meta_titles:
+    label: Meta title
+    description: The meta title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.product.meta_descriptions:
+    label: Meta description
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.product.meta_keywords:
+    label: Meta keywords
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
 
-oro.catalog.category.meta_titles.label: Meta title
-oro.catalog.category.meta_descriptions.label: Meta description
-oro.catalog.category.meta_keywords.label: Meta keywords
+oro.catalog.category.meta_titles:
+    label: Meta title
+    description: The meta title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.catalog.category.meta_descriptions:
+    label: Meta description
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.catalog.category.meta_keywords:
+    label: Meta keywords
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
 
-oro.cms.page.meta_titles.label: Meta title
-oro.cms.page.meta_descriptions.label: Meta description
-oro.cms.page.meta_keywords.label: Meta keywords
+oro.cms.page.meta_titles:
+    label: Meta title
+    description: The meta title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.cms.page.meta_descriptions:
+    label: Meta description
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.cms.page.meta_keywords:
+    label: Meta keywords
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
 
-oro.webcatalog.contentnode.meta_titles.label: Meta title
-oro.webcatalog.contentnode.meta_descriptions.label: Meta description
-oro.webcatalog.contentnode.meta_keywords.label: Meta keywords
+oro.webcatalog.contentnode.meta_titles:
+    label: Meta title
+    description: The meta title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.webcatalog.contentnode.meta_descriptions:
+    label: Meta description
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)
+oro.webcatalog.contentnode.meta_keywords:
+    label: Meta keywords
+    description: The description title used for SEO optimization (it is a list of localized entities to hold the localized text for each localization)

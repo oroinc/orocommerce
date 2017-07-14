@@ -5,8 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Form\Type;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -96,13 +94,12 @@ class CheckoutAddressType extends AbstractOrderAddressType
             }
             $builder
                 ->add('customerAddress', 'choice', $customerAddressOptions)
-                ->add('country', 'oro_frontend_country', ['label' => 'oro.address.country.label'])
-                ->add('region', 'oro_frontend_region', ['required' => false, 'label' => 'oro.address.region.label']);
+                ->add('country', 'oro_frontend_country', ['required' => true, 'label' => 'oro.address.country.label'])
+                ->add('region', 'oro_frontend_region', ['required' => true, 'label' => 'oro.address.region.label']);
 
-            if ($type === AddressType::TYPE_BILLING) {
-                $builder->get('firstName')->setRequired(true);
-                $builder->get('lastName')->setRequired(true);
-            }
+            $builder->get('city')->setRequired(true);
+            $builder->get('postalCode')->setRequired(true);
+            $builder->get('street')->setRequired(true);
         }
     }
 
@@ -164,22 +161,5 @@ class CheckoutAddressType extends AbstractOrderAddressType
         }
 
         return $selectedKey;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        parent::finishView($view, $form, $options);
-
-        foreach ($view->children as $child) {
-            $child->vars['required'] = false;
-            unset(
-                $child->vars['attr']['data-validation'],
-                $child->vars['attr']['data-required'],
-                $child->vars['label_attr']['data-required']
-            );
-        }
     }
 }

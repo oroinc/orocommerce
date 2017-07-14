@@ -1,11 +1,12 @@
 /*global define*/
 define([
+    'tpl!oropricing/templates/product/pricing-filter.html',
     'jquery',
     'underscore',
     'orotranslation/js/translator',
     'oroui/js/tools',
     'oro/filter/number-range-filter'
-], function($, _, __, tools, NumberRangeFilter) {
+], function(unitTemplate, $, _, __, tools, NumberRangeFilter) {
     'use strict';
 
     var ProductPriceFilter;
@@ -21,7 +22,7 @@ define([
         /**
          * @property
          */
-        unitTemplate: _.template($('#product-price-filter-template').html()),
+        unitTemplate: unitTemplate,
 
         /**
          * @property {Array}
@@ -41,6 +42,10 @@ define([
          */
         initialize: function() {
             ProductPriceFilter.__super__.initialize.apply(this, arguments);
+
+            if (typeof this.unitTemplate === 'string') {
+                this.unitTemplate = _.template($(this.unitTemplate).html());
+            }
 
             _.defaults(this.emptyValue, {
                 unit: (_.isEmpty(this.unitChoices) ? '' : _.first(this.unitChoices).value),

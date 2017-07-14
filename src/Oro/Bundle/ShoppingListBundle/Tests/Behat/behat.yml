@@ -8,6 +8,39 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'h1.cart-order-title span'
 
+    ShoppingListEdit:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.shopping-lists__area-trigger'
+
+    ShoppingListAdd:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.add-to-shopping-list-button'
+
+    ShoppingListForm:
+      selector: '.shopping-lists-popup__item'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          List: "list"
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
+    ItemAdd:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-role="add-form-accept"]'
+
+    ItemEdit:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-role="edit"]'
+
+    ItemEditUnit:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.shopping-lists-modify .select2-choice'
+
+    ItemDisabled:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '#select2-drop .select2-disabled .select2-result-label:contains("set")'
+
     Edit Shopping List Label:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-role="start-editing"]'
@@ -15,10 +48,6 @@ oro_behat_extension:
     Shopping List Line Items Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector: '#shopping_list_view_container_content > div.cart-table > table'
-
-    Frontend Shopping Lists Dropdown:
-      selector: 'div.shopping-list-widget'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     ShoppingListLineItem:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem
@@ -48,6 +77,28 @@ oro_behat_extension:
 
     ShoppingListWidget:
       selector: '.shopping-list-widget'
+
+    Shopping Cart:
+      selector:
+        type: xpath
+        locator: '//div[@class="cart-widget__content"]'
+
+    Shopping List Limit Form:
+      selector: 'form[name="shopping_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Shopping List Limit Default: 'shopping_list[oro_shopping_list___shopping_list_limit][use_parent_scope_value]'
+
+    Subtotals:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals
+      selector: '.order-checkout-widget__container'
+
+    In Shopping List:
+      selector: 'a.shopping-lists__area-trigger'
+
+    Add To Shopping List:
+      selector: 'a.add-to-shopping-list-button'
 
   suites:
     OroShoppingListBundle:
