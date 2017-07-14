@@ -22,7 +22,7 @@ Feature: Started checkouts should be on Open Orders Grid
   Scenario: Don't see Open Orders by frontend administrator of another customer.
     Given I signed in as JuanaPBrzezinski@example.net on the store frontend
     When click "Orders"
-    Then I should see "No entity were found to match your search. Try modifying your search criteria..."
+    Then I should see "No entities were found to match your search. Try modifying your search criteria..."
 
   Scenario: See Open Orders with Customer by creator (buyer).
     Given I signed in as AmandaRCole@example.org on the store frontend

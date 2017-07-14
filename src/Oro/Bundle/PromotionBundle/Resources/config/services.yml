@@ -154,7 +154,7 @@ services:
         class: Oro\Bundle\PromotionBundle\Context\ShoppingListContextDataConverter
         public: false
         arguments:
-            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.context.criteria_data_provider'
             - '@oro_promotion.discount.line_items_to_discount_line_items_converter'
             - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
@@ -166,13 +166,19 @@ services:
         class: Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter
         public: false
         arguments:
-            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_promotion.context.criteria_data_provider'
             - '@oro_promotion.discount.order_line_items_to_discount_line_items_converter'
-            - '@oro_pricing.user_currency_manager'
             - '@oro_scope.scope_manager'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
             - { name: 'oro_promotion.promotion_context_converter' }
+
+    oro_promotion.context.criteria_data_provider:
+        class: Oro\Bundle\PromotionBundle\Context\CriteriaDataProvider
+        public: false
+        arguments:
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_website.manager'
 
     oro_promotion.promotion.checkout_context_data_converter:
         class: Oro\Bundle\PromotionBundle\Context\CheckoutContextDataConverter
@@ -314,6 +320,7 @@ services:
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_currency.rounding.price_rounding_service'
             - '@translator'
+            - '@oro_promotion.provider.discount_recalculation_provider'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 
@@ -420,7 +427,13 @@ services:
     oro_promotion.form.extension.order:
         class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension'
         arguments:
-            - '@request_stack'
+            - '@oro_promotion.provider.discount_recalculation_provider'
             - '@oro_promotion.applied_discount_manager'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
+
+    oro_promotion.provider.discount_recalculation_provider:
+        class: 'Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider'
+        public: false
+        arguments:
+            - '@request_stack'

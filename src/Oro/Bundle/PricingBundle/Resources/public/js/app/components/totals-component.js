@@ -2,6 +2,9 @@ define(function(require) {
     'use strict';
 
     var TotalsComponent;
+    var subtotalTemplate = require('text!oropricing/templates/order/subtotals.html');
+    var template =  require('tpl!oropricing/templates/order/totals.html');
+    var noDataTemplate =  require('tpl!oropricing/templates/order/totals-no-data.html');
     var $ = require('jquery');
     var _ = require('underscore');
     var routing = require('routing');
@@ -26,9 +29,9 @@ define(function(require) {
             entityId: 0,
             selectors: {
                 form: '',
-                subtotalTemplate: '#totals-template',
-                template: '#totals-template',
-                noDataTemplate: '#totals-template-no-data',
+                subtotalTemplate: null,
+                template: null,
+                noDataTemplate: null,
                 totals: '[data-totals-container]'
             },
             events: ['update:totals'],
@@ -59,12 +62,17 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        template: null,
+        template: template,
 
         /**
          * @property {Object}
          */
-        noDataTemplate: null,
+        subtotalTemplate: subtotalTemplate,
+
+        /**
+         * @property {Object}
+         */
+        noDataTemplate: noDataTemplate,
 
         /**
          * @property {String}
@@ -99,9 +107,9 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.$form = $(this.options.selectors.form);
             this.$totals = this.$el.find(this.options.selectors.totals);
-            this.subtotalTemplate = $(this.options.selectors.subtotalTemplate).text();
-            this.template = _.template($(this.options.selectors.template).text());
-            this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
+
+            this.resolveTemplates();
+
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.eventName = 'total-target:changing';
 
@@ -110,6 +118,20 @@ define(function(require) {
             var totals = this.setDefaultTemplatesForData(this.options.data);
 
             this.render(totals);
+        },
+
+        resolveTemplates: function() {
+            if (typeof this.options.selectors.template === 'string') {
+                this.template = _.template($(this.options.selectors.template).text());
+            }
+
+            if (typeof this.options.selectors.subtotalTemplate === 'string') {
+                this.subtotalTemplate = $(this.options.selectors.subtotalTemplate).text();
+            }
+
+            if (typeof this.options.selectors.noDataTemplate === 'string') {
+                this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
+            }
         },
 
         setDefaultTemplatesForData: function(totals) {

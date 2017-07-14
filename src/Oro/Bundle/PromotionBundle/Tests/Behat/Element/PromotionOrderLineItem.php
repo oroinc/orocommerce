@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Behat\Element;
 
-use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStepLineItem;
+use Oro\Bundle\OrderBundle\Tests\Behat\Element\OrderLineItem;
 
-class PromotionOrderLineItem extends CheckoutStepLineItem implements DiscountAwareLineItemInterface
+class PromotionOrderLineItem extends OrderLineItem implements DiscountAwareLineItemInterface
 {
     /**
      * {@inheritdoc}

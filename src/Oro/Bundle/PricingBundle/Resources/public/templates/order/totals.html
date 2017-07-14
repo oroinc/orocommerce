@@ -1,0 +1,14 @@
+<div class="control-group">
+    <label class="control-label"><%= item.label %></label>
+    <div class="controls">
+        <label class="control-label"><%= item.formattedAmount %></label>
+    </div>
+    <% if (item.formattedBaseAmount) { %>
+        <div class="total-base-currency-wrapper">
+            <label class="control-label"></label>
+            <div class="controls">
+                <label class="control-label"><%= item.formattedBaseAmount %></label>
+            </div>
+        </div>
+    <% } %>
+</div>

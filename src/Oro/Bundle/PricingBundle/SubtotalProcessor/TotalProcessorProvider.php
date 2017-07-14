@@ -143,7 +143,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
             return $provider->getSubtotal($entity);
         }
 
-        if ($provider instanceof CacheAwareInterface) {
+        if ($provider instanceof CacheAwareInterface && $provider->supportsCachedSubtotal($entity)) {
             return $provider->getCachedSubtotal($entity);
         }
 
