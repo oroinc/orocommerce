@@ -61,6 +61,17 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertResponseContains($expectedDataFileName, $response);
     }
 
+    public function testGet()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $response = $this->get(
+            ['entity' => 'products', 'id' => $product->getId()],
+            []
+        );
+
+        $this->assertResponseContains('get_product_by_id.yml', $response);
+    }
+
     /**
      * @return array
      */

@@ -250,6 +250,10 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         }
     }
 
+    /**
+     * @param array $item
+     * @param Product $product
+     */
     private function addEntityFieldFallbackValue(array $item, Product $product)
     {
         if (!empty($item['manageInventory'])) {
