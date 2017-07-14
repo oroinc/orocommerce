@@ -414,6 +414,13 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
 
+    oro_promotion.event_listener.shipping_methods_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\ShippingMethodsListener
+        arguments:
+            - '@oro_promotion.promotion_executor'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.applicable_methods, method: modifyPrices }
+
     oro_promotion.event_listener.grid.order_line_item:
         class: 'Oro\Bundle\PromotionBundle\EventListener\OrderLineItemGridListener'
         arguments:

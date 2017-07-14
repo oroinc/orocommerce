@@ -29,7 +29,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testReturnRuleOwnersWithoutChangesForNotSupportedContext()
     {
-        $notSupportedRuleOwner = new \StdClass;
+        $notSupportedRuleOwner = new \stdClass();
         $contextWithoutRequiredInformation = [];
         $filteredRuleOwners = [$notSupportedRuleOwner];
 
@@ -46,7 +46,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterRuleOwnersWithNotSupportedClass()
     {
-        $notSupportedRuleOwner = new \StdClass;
+        $notSupportedRuleOwner = new \stdClass();
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',

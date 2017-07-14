@@ -70,9 +70,9 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
     {
         $discountOptions = $promotion->getDiscountConfiguration()->getOptions();
 
-        return $shippingMethod
-               === $discountOptions[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD]
-               && $shippingMethodType
-                  === $discountOptions[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD_TYPE];
+        $optionsMethod = $discountOptions[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD];
+        $optionsType = $discountOptions[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD_TYPE];
+
+        return $shippingMethod === $optionsMethod && $shippingMethodType === $optionsType;
     }
 }
