@@ -1,0 +1,48 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProduct1Name:
+        string: 'Product 1'
+    localProduct2Name:
+        string: 'Product 2'
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'
+    localNewCategory:
+        string: 'New Category'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrevision1:
+        unit: '@item'
+        precision: '1'
+    productUnitPrevision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@productUnitPrevision1'
+        addName: ['@localProduct1Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+    product2:
+        type: 'simple'
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@productUnitPrevision2'
+        addName: ['@localProduct2Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    products:
+        __construct: [['@product1', '@product2']]
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localNewCategory']
+        setParentCategory: [1]
+        setProducts: ['@products']
