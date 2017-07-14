@@ -1,19 +1,15 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShoppingList\Tests\Unit\Entity\EntityListener;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\UnitOfWork;
-
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\EventListener\CheckoutListener;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\ShoppingListBundle\Entity\EntityListener\ShoppingListEntityListener;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
 
-class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
+class ShoppingListEntityListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var DefaultUserProvider|\PHPUnit_Framework_MockObject_MockObject */
     private $defaultUserProvider;
@@ -21,7 +17,7 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
     /** @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $tokenAccessor;
 
-    /** @var CheckoutListener */
+    /** @var ShoppingListEntityListener */
     private $listener;
 
     /**
@@ -32,35 +28,16 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
-        $this->listener = new CheckoutListener($this->defaultUserProvider, $this->tokenAccessor);
-    }
-
-    public function testPostUpdate()
-    {
-        $checkout = new Checkout();
-
-        $uow = $this->createMock(UnitOfWork::class);
-        $uow->expects($this->once())
-            ->method('scheduleExtraUpdate')
-            ->with(
-                $checkout,
-                ['completedData' => [null, $checkout->getCompletedData()]]
-            );
-
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())->method('getUnitOfWork')->willReturn($uow);
-
-        $this->listener->postUpdate($checkout, new LifecycleEventArgs($checkout, $em));
+        $this->listener = new ShoppingListEntityListener($this->defaultUserProvider, $this->tokenAccessor);
     }
 
     /**
      * @dataProvider persistNotSetDefaultOwnerDataProvider
      *
      * @param string $token
-     * @param Checkout $checkout
+     * @param ShoppingList $shoppingList
      */
-    public function testPrePersistNotSetDefaultOwner($token, Checkout $checkout)
+    public function testPrePersistNotSetDefaultOwner($token, ShoppingList $shoppingList)
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -69,8 +46,8 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
 
         $newUser = new User();
         $newUser->setFirstName('first_name');
-        $this->listener->prePersist($checkout);
-        $this->assertNotSame($newUser, $checkout->getOwner());
+        $this->listener->prePersist($shoppingList);
+        $this->assertNotSame($newUser, $shoppingList->getOwner());
     }
 
     /**
@@ -79,17 +56,21 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
     public function persistNotSetDefaultOwnerDataProvider()
     {
         return [
+            'with token and without owner' => [
+                'token' => new AnonymousCustomerUserToken(''),
+                'shoppingList' => new ShoppingList()
+            ],
             'without token and without owner' => [
                 'token' => null,
-                'checkout' => new Checkout()
+                'shoppingList' => new ShoppingList()
             ],
             'unsupported token and without owner' => [
                 'token' => new \stdClass(),
-                'checkout' => new Checkout()
+                'shoppingList' => new ShoppingList()
             ],
             'with owner' => [
                 'token' => new AnonymousCustomerUserToken(''),
-                'checkout' => (new Checkout())->setOwner(new User())
+                'shoppingList' => (new ShoppingList())->setOwner(new User())
             ]
         ];
     }
@@ -98,9 +79,9 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider persistSetDefaultOwnerDataProvider
      *
      * @param string $token
-     * @param Checkout $checkout
+     * @param ShoppingList $shoppingList
      */
-    public function testPrePersistSetDefaultOwner($token, Checkout $checkout)
+    public function testPrePersistSetDefaultOwner($token, ShoppingList $shoppingList)
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -112,11 +93,11 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
         $this->defaultUserProvider
             ->expects($this->once())
             ->method('getDefaultUser')
-            ->with('oro_checkout', 'default_guest_checkout_owner')
+            ->with('oro_shopping_list', 'default_guest_shopping_list_owner')
             ->willReturn($newUser);
 
-        $this->listener->prePersist($checkout);
-        $this->assertSame($newUser, $checkout->getOwner());
+        $this->listener->prePersist($shoppingList);
+        $this->assertSame($newUser, $shoppingList->getOwner());
     }
 
     /**
@@ -127,7 +108,7 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
         return [
             'with token and without owner' => [
                 'token' => new AnonymousCustomerUserToken(''),
-                'checkout' => new Checkout()
+                'shoppingList' => new ShoppingList()
             ]
         ];
     }
