@@ -5,12 +5,10 @@ namespace Oro\Bundle\CatalogBundle\Api\Processor;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\ApiBundle\Model\Error;
-use Oro\Bundle\ApiBundle\Model\ErrorSource;
-use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Request\RequestType;
 use Oro\Bundle\ApiBundle\Request\ValueNormalizer;
+use Oro\Bundle\ApiBundle\Util\ContextErrorUtilTrait;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ApiBundle\Util\ValueNormalizerUtil;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -20,6 +18,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 
 class RemoveCategoryFromProductRequest implements ProcessorInterface
 {
+    use ContextErrorUtilTrait;
+
     const CATEGORY = 'category';
     const CATEGORY_POINTER = [JsonApi::DATA, JsonApi::RELATIONSHIPS, self::CATEGORY];
 
@@ -140,31 +140,5 @@ class RemoveCategoryFromProductRequest implements ProcessorInterface
         }
 
         return $category;
-    }
-
-    /**
-     * @param string $pointer
-     * @param string $message
-     * @param ContextInterface $context
-     */
-    protected function addError($pointer, $message, ContextInterface $context)
-    {
-        $error = Error::createValidationError(Constraint::REQUEST_DATA, $message)
-            ->setSource(ErrorSource::createByPointer($pointer));
-
-        $context->addError($error);
-    }
-
-    /**
-     * @param array $properties
-     * @param string|null $parentPointer
-     * @return string
-     *
-     */
-    protected function buildPointer(array $properties, $parentPointer = null)
-    {
-        array_unshift($properties, $parentPointer);
-
-        return implode('/', $properties);
     }
 }
