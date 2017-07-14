@@ -287,6 +287,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             ['a_1' => ['street' => 'street', 'organization' => static::ORGANIZATION]]
         );
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+            ->willReturn($groupedAddresses);
 
         $this->addressCollection->expects($this->once())
             ->method('toArray')

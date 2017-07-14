@@ -105,7 +105,7 @@ workflows:
 
                 preconditions:
                     '@and':
-                        - '@equal': [$checkout_finished, false]
+                        - '@equal': [$checkout.completed, false]
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@extendable':
                             events: [extendable_condition.checkout]

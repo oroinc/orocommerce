@@ -24,7 +24,7 @@
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
     <div {{ block('block_attributes') }}>
         <h2 class="checkout-view__title">
-            <span class="checkout-view__badge">1</span>{{ 'Shipping information'|trans }}
+            <span class="checkout-view__badge">2</span>{{ 'oro.checkout.shipping_information'|trans }}
         </h2>
         <div class="checkout-view__column-inner">
             {{ block_widget(block) }}
@@ -36,7 +36,7 @@
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
     <div {{ block('block_attributes') }}>
         <h2 class="checkout-view__title">
-            <span class="checkout-view__badge">2</span>{{ 'Billing information'|trans }}
+            <span class="checkout-view__badge">1</span>{{ 'oro.checkout.billing_information'|trans }}
         </h2>
         <div class="checkout-view__column-inner">
             {{ block_widget(block) }}

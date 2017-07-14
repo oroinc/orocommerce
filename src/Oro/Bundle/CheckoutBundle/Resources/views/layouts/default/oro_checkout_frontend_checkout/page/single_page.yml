@@ -104,6 +104,12 @@ layout:
             tree:
                 checkout_form_fields:
                     checkout_view:
+                        checkout_billing_information:
+                            billing_address: ~
+                            payment_methods_wrapper:
+                                payment_methods_hidden: ~
+                                payment_methods: ~
+                                payment_additional_data: ~
                         checkout_shipping_information:
                             shipping_address: ~
                             shipping_methods_wrapper:
@@ -111,12 +117,6 @@ layout:
                                 shipping_methods:
                                     shipping_methods_template:
                                         shipping_methods_template_methods: ~
-                        checkout_billing_information:
-                            billing_address: ~
-                            payment_methods_wrapper:
-                                payment_methods_hidden: ~
-                                payment_methods: ~
-                                payment_additional_data: ~
                         checkout_summary:
                             additional_options: ~
 
