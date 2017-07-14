@@ -100,6 +100,7 @@ class ProductApiTest extends RestJsonApiTestCase
         /** @var Product $product */
         $product = $this->getEntityManager()->find(Product::class, $product->getId());
         $referenceRepository = $this->getReferenceRepository();
+
         foreach ($product->getNames() as $name) {
             $localization = $name->getLocalization() === null ?
                 'default'
@@ -109,20 +110,23 @@ class ProductApiTest extends RestJsonApiTestCase
                 $referenceRepository->addReference($reference, $name);
             }
         }
-        $referenceRepository->setReference(LoadProductData::PRODUCT_1, $product);
+
         $defaultName = $product->getName(null);
-        $this->assertEquals('Test product changed', $defaultName->getString());
         $defaultDescription = $product->getDescription(null);
-        $this->assertEquals('<b>Description Bold</b>', $defaultDescription->getText());
         $newUnitPrecision = $product->getUnitPrecision('box');
+        $bottlePrecision = $product->getUnitPrecision('bottle');
+
+        $this->assertEquals('Test product changed', $defaultName->getString());
+        $this->assertEquals('<b>Description Bold</b>', $defaultDescription->getText());
         $this->assertInstanceOf(ProductUnitPrecision::class, $newUnitPrecision);
         $this->assertEquals('15', $newUnitPrecision->getConversionRate());
-        $bottlePrecision = $product->getUnitPrecision('bottle');
         $this->assertEquals('99', $bottlePrecision->getConversionRate());
+
         $referenceRepository->setReference(
             'product_unit_precision.'.LoadProductData::PRODUCT_1.'.box',
             $newUnitPrecision
         );
+        $referenceRepository->setReference(LoadProductData::PRODUCT_1, $product);
 
         $this->assertResponseContains('patch_update_entity.yml', $response);
     }
