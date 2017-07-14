@@ -188,6 +188,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
    shoppinglist1:
        owner: '@charlie'
        label: 'My Shopping List'
+       organization: '@organization'
        customerUser: '@nancy'
        website: '@website1'
 
