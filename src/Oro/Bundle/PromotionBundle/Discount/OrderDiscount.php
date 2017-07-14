@@ -9,14 +9,6 @@ class OrderDiscount extends ShippingAwareDiscount
     /**
      * {@inheritdoc}
      */
-    public function __toString(): string
-    {
-        return 'Order Discount ' . parent::__toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function apply(DiscountContext $discountContext)
     {
         parent::apply($discountContext);

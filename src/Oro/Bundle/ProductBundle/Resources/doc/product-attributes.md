@@ -102,9 +102,12 @@ The product family is designed to group product attributes for products of simil
    - Name
    - Description
    - Short Description
-* Images	
+   - Is Featured flag
+   - New Arrival flag
+   - Product Brand
+* Images
    - Images
-* Inventory	
+* Inventory
    - Inventory Status
 * Product Prices
    - Product prices

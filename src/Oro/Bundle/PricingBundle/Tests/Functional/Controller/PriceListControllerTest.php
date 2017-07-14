@@ -343,7 +343,6 @@ class PriceListControllerTest extends WebTestCase
 
     public function testUpdateCurrenciesError()
     {
-
         $id = $this->getReference('price_list_1')->getId();
 
         $crawler = $this->client->request(

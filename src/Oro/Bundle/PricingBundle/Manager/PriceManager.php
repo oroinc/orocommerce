@@ -5,10 +5,13 @@ namespace Oro\Bundle\PricingBundle\Manager;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
 use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
+use Oro\Bundle\PricingBundle\Event\ProductPricesUpdated;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -67,15 +70,16 @@ class PriceManager
     {
         $price->updatePrice();
         $class = ClassUtils::getRealClass(get_class($price));
-        /** @var ProductPriceRepository $repository */
+
         $em = $this->shardManager->getEntityManager();
-        $unitOfWork = $em->getUnitOfWork();
         $classMetadata = $em->getClassMetadata(ProductPrice::class);
-        $unitOfWork->computeChangeSet($classMetadata, $price);
-        $changeSet = $unitOfWork->getEntityChangeSet($price);
-        $repository = $em->getRepository($class);
+        $uow = $em->getUnitOfWork();
+        $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
 
         if ($price->getId() === null || !empty($changeSet)) {
+            /** @var ProductPriceRepository $repository */
+            $repository = $em->getRepository($class);
+
             //remove price from old shard
             if (array_key_exists('priceList', $changeSet) && $changeSet['priceList'][0]) {
                 $newPriceList = $price->getPriceList();
@@ -85,9 +89,15 @@ class PriceManager
                 $price->setPriceList($newPriceList);
             }
             $repository->save($this->shardManager, $price);
+
+            if ($price->getId() && !$uow->isInIdentityMap($price)) {
+                $uow->registerManaged($price, ['id' => $price->getId()], $changeSet);
+            }
+
+            $changeSet = $this->getChangeSet($uow, $classMetadata, $price);
+
             $args = new PreUpdateEventArgs($price, $em, $changeSet);
-            $event = new ProductPriceSaveAfterEvent($args);
-            $this->eventDispatcher->dispatch(ProductPriceSaveAfterEvent::NAME, $event);
+            $this->eventDispatcher->dispatch(ProductPriceSaveAfterEvent::NAME, new ProductPriceSaveAfterEvent($args));
         }
     }
 
@@ -97,12 +107,17 @@ class PriceManager
     protected function doRemove(ProductPrice $price)
     {
         $class = ClassUtils::getRealClass(get_class($price));
+
+        $em = $this->shardManager->getEntityManager();
+
         /** @var ProductPriceRepository $repository */
-        $repository = $this->shardManager->getEntityManager()->getRepository($class);
+        $repository = $em->getRepository($class);
         $repository->remove($this->shardManager, $price);
 
         $event = new ProductPriceRemove($price);
         $this->eventDispatcher->dispatch(ProductPriceRemove::NAME, $event);
+
+        $em->detach($price);
     }
 
     public function flush()
@@ -117,6 +132,24 @@ class PriceManager
         foreach ($pricesToSave as $price) {
             $this->doSave($price);
         }
+        if ($pricesToRemove || $pricesToSave) {
+            $this->eventDispatcher->dispatch(ProductPricesUpdated::NAME);
+        }
+    }
+
+    /**
+     * @param UnitOfWork $uow
+     * @param ClassMetadata $classMetadata
+     * @param ProductPrice $price
+     * @return array
+     */
+    private function getChangeSet(UnitOfWork $uow, ClassMetadata $classMetadata, ProductPrice $price)
+    {
+        if ($price->getId()) {
+            $uow->computeChangeSet($classMetadata, $price);
+        }
+
+        return $uow->getEntityChangeSet($price);
     }
 
     /**

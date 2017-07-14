@@ -1,0 +1,9 @@
+workflows:
+    b2b_quote_backoffice_approvals:
+        attributes:
+            comment:
+                type: string
+                options:
+                    virtual: true
+            approved:
+                type: boolean

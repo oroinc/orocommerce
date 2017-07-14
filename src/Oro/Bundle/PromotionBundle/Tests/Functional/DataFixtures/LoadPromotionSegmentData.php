@@ -16,6 +16,9 @@ class LoadPromotionSegmentData extends AbstractFixture implements DependentFixtu
     const EMPTY_PROMOTION_SEGMENT = 'empty_promotion_segment';
     const NOT_EMPTY_PROMOTION_SEGMENT = 'not_empty_promotion_segment';
 
+    /**
+     * @var array
+     */
     private static $segments = [
         self::EMPTY_PROMOTION_SEGMENT => [
             'products' => []
@@ -74,6 +77,7 @@ class LoadPromotionSegmentData extends AbstractFixture implements DependentFixtu
      */
     private function createSnapshot(ObjectManager $manager, $segmentName, array $productReferences)
     {
+        /** @var Segment $segment */
         $segment = $this->getReference($segmentName);
         foreach ($productReferences as $productReference) {
             /** @var Product $product */

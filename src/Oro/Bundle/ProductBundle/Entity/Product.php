@@ -26,6 +26,7 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *      name="oro_product",
  *      indexes={
  *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
+ *          @ORM\Index(name="idx_oro_product_sku_uppercase", columns={"sku_uppercase"}),
  *          @ORM\Index(name="idx_oro_product_created_at", columns={"created_at"}),
  *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"})
  *      }
@@ -156,6 +157,20 @@ class Product extends ExtendProduct implements
      * )
      */
     protected $sku;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sku_uppercase", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $skuUppercase;
 
     /**
      * @var string
@@ -536,6 +551,28 @@ class Product extends ExtendProduct implements
     protected $newArrival = false;
 
     /**
+     * @var Brand
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Brand")
+     * @ORM\JoinColumn(name="brand_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "attribute"={
+     *              "is_attribute"=true,
+     *              "visible"=true
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $brand;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -856,6 +893,22 @@ class Product extends ExtendProduct implements
     }
 
     /**
+     * @param array|LocalizedFallbackValue[] $names
+     *
+     * @return $this
+     */
+    public function setNames(array $names = [])
+    {
+        $this->names->clear();
+
+        foreach ($names as $name) {
+            $this->addName($name);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getNames()
@@ -1112,6 +1165,7 @@ class Product extends ExtendProduct implements
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->skuUppercase = strtoupper($this->sku);
     }
 
     /**
@@ -1122,6 +1176,7 @@ class Product extends ExtendProduct implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->skuUppercase = strtoupper($this->sku);
 
         if (!$this->isConfigurable()) {
             // Clear variantLinks in Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener
@@ -1295,5 +1350,34 @@ class Product extends ExtendProduct implements
         $this->newArrival = (bool)$newArrival;
 
         return $this;
+    }
+
+    /**
+     * @return Brand
+     */
+    public function getBrand()
+    {
+        return $this->brand;
+    }
+
+    /**
+     * @param Brand $brand
+     * @return $this
+     */
+    public function setBrand($brand)
+    {
+        $this->brand = $brand;
+
+        return $this;
+    }
+
+    /**
+     * This field is read-only, updated automatically prior to persisting
+     *
+     * @return string
+     */
+    public function getSkuUppercase()
+    {
+        return $this->skuUppercase;
     }
 }

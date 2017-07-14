@@ -10,6 +10,7 @@ use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 class LoadDiscountConfigurationData extends AbstractFixture
 {
     const DISCOUNT_CONFIGURATION_ORDER_PERCENT = 'discount_configuration_order_percent';
+    const DISCOUNT_CONFIGURATION_ORDER_AMOUNT = 'discount_configuration_order_amount';
 
     /** @var array */
     protected static $configurations = [
@@ -17,7 +18,15 @@ class LoadDiscountConfigurationData extends AbstractFixture
             'type' => 'order',
             'options' => [
                 AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-                AbstractDiscount::DISCOUNT_VALUE => 100,
+                AbstractDiscount::DISCOUNT_VALUE => 0.1,
+            ],
+        ],
+        self::DISCOUNT_CONFIGURATION_ORDER_AMOUNT => [
+            'type' => 'order',
+            'options' => [
+                AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
+                AbstractDiscount::DISCOUNT_VALUE => 10,
+                AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
             ],
         ],
     ];

@@ -103,6 +103,17 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
+     * @param DiscountLineItem $lineItem
+     * @return $this
+     */
+    public function addLineItem(DiscountLineItem $lineItem)
+    {
+        $this->lineItems[] = $lineItem;
+
+        return $this;
+    }
+
+    /**
      * @return array|DiscountInterface[]
      */
     public function getShippingDiscounts(): array
@@ -173,5 +184,54 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     public function getShippingDiscountsInformation(): array
     {
         return $this->shippingDiscountsInformation;
+    }
+
+    /**
+     * @return float
+     */
+    public function getShippingDiscountTotal(): float
+    {
+        $value = 0.0;
+        foreach ($this->shippingDiscountsInformation as $discountInformation) {
+            $value += $discountInformation->getDiscountAmount();
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return float
+     */
+    public function getSubtotalDiscountTotal(): float
+    {
+        $value = 0.0;
+        foreach ($this->subtotalDiscountsInformation as $discountInformation) {
+            $value += $discountInformation->getDiscountAmount();
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalLineItemsDiscount(): float
+    {
+        $value = 0.0;
+        foreach ($this->getLineItems() as $lineItem) {
+            $value += $lineItem->getDiscountTotal();
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalDiscountAmount(): float
+    {
+        return $this->getTotalLineItemsDiscount()
+            + $this->getSubtotalDiscountTotal()
+            + $this->getShippingDiscountTotal();
     }
 }

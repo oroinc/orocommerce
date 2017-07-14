@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -91,7 +92,27 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * Example: And I should see "Sales Representative Info" block with:
+     * |Charlie Sheen       |
+     *
+     * @Then /^I should see "(?P<block>[^"]*)" block with:$/
+     * @param string    $block
+     * @param TableNode $table
+     */
+    public function iShouldSeeOnFrontendRequestPageStatus($block, TableNode $table)
+    {
+        $elements = $this->findAllElements($block);
+        foreach ($elements as $element) {
+            $html = $element->getHtml();
+            foreach ($table->getColumn(0) as $item) {
+                self::assertContains($item, $html);
+            }
+        }
+    }
+
+    /**
      * @param string $qid
+     *
      * @return Quote
      */
     protected function getQuote($qid)
@@ -101,6 +122,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /**
      * @param string $className
+     *
      * @return ObjectRepository
      */
     protected function getRepository($className)

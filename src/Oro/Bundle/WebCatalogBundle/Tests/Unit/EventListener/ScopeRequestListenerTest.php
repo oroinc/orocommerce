@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 use Oro\Bundle\WebCatalogBundle\EventListener\ScopeRequestListener;
 use Symfony\Component\HttpFoundation\Request;
@@ -146,15 +147,17 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
 
         $scope = new StubScope(['id' => 42]);
 
+        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $criteria */
+        $criteria = $this->createMock(ScopeCriteria::class);
         $this->scopeManager->expects($this->once())
-            ->method('findMostSuitable')
+            ->method('getCriteria')
             ->with('web_content')
-            ->willReturn($scope);
+            ->willReturn($criteria);
 
         $this->repository->expects($this->once())
-            ->method('isScopeAttachedToSlug')
-            ->with($scope)
-            ->willReturn(true);
+            ->method('findMostSuitableUsedScope')
+            ->with($criteria)
+            ->willReturn($scope);
 
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')
@@ -181,17 +184,17 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRequest')
             ->willReturn($request);
 
-        $scope = new StubScope(['id' => 42]);
-
+        /** @var ScopeCriteria|\PHPUnit_Framework_MockObject_MockObject $criteria */
+        $criteria = $this->createMock(ScopeCriteria::class);
         $this->scopeManager->expects($this->once())
-            ->method('findMostSuitable')
+            ->method('getCriteria')
             ->with('web_content')
-            ->willReturn($scope);
+            ->willReturn($criteria);
 
         $this->repository->expects($this->once())
-            ->method('isScopeAttachedToSlug')
-            ->with($scope)
-            ->willReturn(false);
+            ->method('findMostSuitableUsedScope')
+            ->with($criteria)
+            ->willReturn(null);
 
         $this->matchedUrlDecisionMaker->expects($this->any())
             ->method('matches')

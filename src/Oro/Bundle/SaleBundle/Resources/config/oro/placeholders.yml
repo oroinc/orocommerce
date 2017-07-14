@@ -1,0 +1,10 @@
+placeholders:
+    placeholders:
+        scripts_before:
+            items:
+                possible_shipping_methods: ~
+
+    items:
+        possible_shipping_methods:
+            template: OroSaleBundle:Js:possible_shipping_methods.js.twig
+            applicable: "@oro_layout.helper->isTemplateRequest()"

@@ -40,8 +40,6 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
                 'names',
                 'descriptions',
                 'shortDescriptions',
-                'featured',
-                'newArrival',
             ],
             'groupVisibility' => true
         ],
@@ -111,6 +109,8 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
 
             $attributeFamily->addAttributeGroup($attributeGroup);
         }
+
+        $this->setReference(static::DEFAULT_FAMILY_CODE, $attributeFamily);
 
         $manager->persist($attributeFamily);
         $manager->flush();

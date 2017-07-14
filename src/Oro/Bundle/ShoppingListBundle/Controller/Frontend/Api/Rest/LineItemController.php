@@ -9,9 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
+use FOS\RestBundle\Controller\Annotations\Patch;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Oro\Bundle\EntityBundle\Exception\FieldUpdateAccessException;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -92,6 +94,45 @@ class LineItemController extends RestController implements ClassResourceInterfac
         }
 
         return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'entity' => $entity]);
+    }
+
+    /**
+     * @param Request $request
+     * @param LineItem $lineItem
+     *
+     * @return Response
+     *
+     * @Patch("lineitem/{id}")
+     * @ApiDoc(
+     *      description="Update line item property",
+     *      resource=true,
+     *      requirements = {
+     *          {"name"="id", "dataType"="integer"},
+     *      }
+     * )
+     */
+    public function patchAction(Request $request, LineItem $lineItem)
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!$this->get('oro_shopping_list.customer_visitor.authorization_checker')->isGranted('EDIT', $lineItem)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        try {
+            list($form, $data) = $this->get('oro_entity.manager.entity_field_manager')->update($lineItem, $data);
+        } catch (FieldUpdateAccessException $e) {
+            throw $this->createAccessDeniedException($e->getMessage(), $e);
+        }
+
+        if ($form->getErrors(true)->count() > 0) {
+            $view = $this->view($form, Codes::HTTP_BAD_REQUEST);
+        } else {
+            $statusCode = !empty($data) ? Codes::HTTP_OK : Codes::HTTP_NO_CONTENT;
+            $view = $this->view($data, $statusCode);
+        }
+
+        return parent::handleView($view);
     }
 
     /**

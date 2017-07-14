@@ -1,6 +1,6 @@
 {% block __oro_product_list__products_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' featured-products',
+        '~class': ' embedded-products',
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'orofrontend/default/js/app/views/footer-align-view',
@@ -18,7 +18,7 @@
 
 {% block __oro_product_list__product_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' featured-product',
+        '~class': ' embedded-product',
     }) %}
 
     {{ block_widget(block, {attr: attr}) }}

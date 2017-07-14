@@ -2,6 +2,9 @@ define(function(require) {
     'use strict';
 
     var ProductPricesEditableView;
+    var pricesHint = require('tpl!oropricing/templates/product/prices-tier-button.html');
+    var pricesHintContent = require('tpl!oropricing/templates/product/prices-tier-table.html');
+    var priceOverridden = require('tpl!oropricing/templates/product/prices-price-overridden.html');
     var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var layout = require('oroui/js/layout');
@@ -10,8 +13,8 @@ define(function(require) {
 
     ProductPricesEditableView = BaseProductPricesView.extend({
         elements: _.extend({}, BaseProductPricesView.prototype.elements, {
-            pricesHint: ['$html', '#product-prices-tier-button-template'],
-            pricesHintContent: ['$html', '#product-prices-tier-table-template'],
+            pricesHint: null,
+            pricesHintContent: null,
             priceOverridden: null,
             priceValue: '[data-name="field__value"]'
         }),
@@ -30,11 +33,14 @@ define(function(require) {
 
         options: {
             matchedPriceEnabled: true,
-            precision: 4
+            precision: 4,
+            editable: true
         },
 
         templates: {
-            priceOverridden: '#product-prices-price-overridden-template'
+            priceOverridden: priceOverridden,
+            pricesHint: pricesHint,
+            pricesHintContent: pricesHintContent
         },
 
         /**
@@ -45,6 +51,13 @@ define(function(require) {
             this.templates = $.extend(true, {}, this.templates, options.templates || {});
 
             ProductPricesEditableView.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        deferredInitialize: function(options) {
+            ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
         },
 
         /**
@@ -88,13 +101,11 @@ define(function(require) {
 
         initPriceOverridden: function() {
             this.priceOverriddenInitialized = true;
-            if (!this.options.matchedPriceEnabled) {
+            if (!this.options.matchedPriceEnabled || !this.options.editable) {
                 return;
             }
-            var $priceOverridden = $(_.template(
-                $(this.templates.priceOverridden).text()
-            )());
-            $priceOverridden = this.getElement('priceOverridden', $priceOverridden);
+
+            var $priceOverridden = this.createElementByTemplate('priceOverridden');
 
             layout.initPopover($priceOverridden);
             $priceOverridden.insertBefore(this.getElement('priceValue'))
@@ -107,10 +118,13 @@ define(function(require) {
 
         initHint: function() {
             this.hintInitialized = true;
-            this.templates.pricesHintContent = _.template(this.getElement('pricesHintContent').text());
 
-            var $pricesHint = $(_.template(this.getElement('pricesHint').text())());
-            this.$elements.pricesHint = $pricesHint;
+            if (typeof this.templates.pricesHintContent !== 'function') {
+                this.templates.pricesHintContent = _.template(this.getElement('pricesHintContent').html());
+            }
+
+            var $pricesHint = this.createElementByTemplate('pricesHint');
+
             this.getElement('priceValue').after($pricesHint);
 
             var clickHandler = _.bind(this.setPriceFromHint, this);
@@ -131,7 +145,7 @@ define(function(require) {
                 model: this.model.attributes,
                 prices: this.prices,
                 matchedPrice: this.findPrice(),
-                clickable: true,
+                clickable: this.options.editable,
                 formatter: NumberFormatter
             }));
         },

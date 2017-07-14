@@ -113,6 +113,10 @@ class TotalHelperTest extends \PHPUnit_Framework_TestCase
         $total->setAmount($totalAmount);
 
         $this->totalProvider->expects($this->any())
+            ->method('enableRecalculation')
+            ->willReturnSelf();
+
+        $this->totalProvider->expects($this->any())
             ->method('getTotal')
             ->willReturn($total);
 

@@ -1,4 +1,4 @@
-@fixture-Products.yml
+@fixture-OroProductBundle:quick_order_product.yml
 Feature: User should have the possibility to change Primary Unit
   In order to Check that the User can change and save Primary Unit of Quantity of product
   As administrator
@@ -20,7 +20,7 @@ Feature: User should have the possibility to change Primary Unit
       | Default Price List | 5              | item          | 10    |
     And save and close form
     And I should see product with:
-      | Unit of Quantity | item |
+      | Unit | item |
 
   Scenario: Validate product price Attribute If I change the Primary Unit of Quantity
     Given I login as administrator

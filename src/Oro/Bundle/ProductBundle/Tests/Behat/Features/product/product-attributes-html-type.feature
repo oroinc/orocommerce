@@ -1,4 +1,4 @@
-@fixture-Products.yml
+@fixture-OroProductBundle:quick_order_product.yml
 Feature: HTML field type as product attribute
   In order to add new product attribute with ability play video
   As Administrator

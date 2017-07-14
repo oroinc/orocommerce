@@ -3,15 +3,15 @@
 namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProviderInterface
 {
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodProviderInterface
      */
-    protected $methodRegistry;
+    protected $shippingMethodProvider;
 
     /**
      * @var TranslatorInterface
@@ -19,12 +19,14 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
     protected $translator;
 
     /**
-     * @param ShippingMethodRegistry $methodRegistry
-     * @param TranslatorInterface    $translator
+     * @param ShippingMethodProviderInterface $shippingMethodProvider
+     * @param TranslatorInterface             $translator
      */
-    public function __construct(ShippingMethodRegistry $methodRegistry, TranslatorInterface $translator)
-    {
-        $this->methodRegistry = $methodRegistry;
+    public function __construct(
+        ShippingMethodProviderInterface $shippingMethodProvider,
+        TranslatorInterface $translator
+    ) {
+        $this->shippingMethodProvider = $shippingMethodProvider;
         $this->translator = $translator;
     }
 
@@ -34,7 +36,7 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
     public function getMethods($translate = false)
     {
         return array_reduce(
-            $this->methodRegistry->getShippingMethods(),
+            $this->shippingMethodProvider->getShippingMethods(),
             function (array $result, ShippingMethodInterface $method) use ($translate) {
                 $label = $method->getLabel();
                 if ($translate) {

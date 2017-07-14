@@ -1,3 +1,4 @@
+@import "oroui/css/less/mixins";
 .subtotals-container {
   .control-label {
     cursor: default;
@@ -82,7 +83,7 @@
   input[type="text"] {
     text-align: right;
     padding-left: 17px;
-    width: 80px;
+    width: 80px !important;
     float: left;
   }
 
@@ -97,6 +98,19 @@
   .fields-row {
     position: relative;
     width: 150px;
+    input[type="text"] {
+      width: 94px;
+      .border-radius(4px 0 0 4px);
+    }
+    .product-tier-prices {
+      padding: 2px 5px 4px 5px;
+      .border-radius(0 4px 4px 0);
+      text-align: center;
+      text-shadow: 0 1px 0 #fff;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      margin-left: -1px;
+    }
   }
 }
 
@@ -212,14 +226,32 @@ td.order-discount-item-remove {
     input[type="radio"] {
       margin-top: -3px;
     }
-
     .radio_button_label {
       margin-left: 5px;
     }
-
     hr {
       margin: 7px;
     }
+  }
+}
+
+.quote_possible_shipping_methods_container {
+  max-width: 420px;
+
+  .table-bordered td:not(:first-child),
+  .table-bordered th:not(:first-child){
+    border-left: 0;
+  }
+  .table-bordered td {
+    color: #777;
+  }
+  label {
+    margin-bottom: 0;
+  }
+  input[type="radio"] {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 

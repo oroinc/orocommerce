@@ -51,7 +51,7 @@
              data-page-component-module="oroui/js/app/components/jquery-widget-component"
              data-page-component-options="{{ {
                  widgetModule: 'oroui/js/widget/collapse-widget',
-                 open: false
+                 open: form.rule.expression.vars.value is not empty
              }|json_encode() }}"
         >
             <div class="control-group">
@@ -75,6 +75,7 @@
         </div>
     {% endset %}
 
+    {# TODO: add 'form_row(form.useCoupons)' to general block after BB-9489 #}
     {% set dataBlocks = [
         {
             'title': 'oro.promotion.blocks.general'|trans,
@@ -86,8 +87,7 @@
                     form_row(form.rule.name),
                     form_row(form.rule.sortOrder),
                     form_row(form.rule.enabled, {'label': 'oro.promotion.rule.enabled.label'}),
-                    form_row(form.rule.stopProcessing),
-                    form_row(form.useCoupons)
+                    form_row(form.rule.stopProcessing)
                 ]
             }]
         },
@@ -124,21 +124,22 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.productsSegment)
-                ]
-            }]
-        },
-        {
-            'title': 'oro.promotion.blocks.store_frontend'|trans,
-            'subblocks': [{
-                'title': '',
-                'data': [
-                    form_row(form.labels),
-                    form_row(form.descriptions)
+                    form_widget(form.productsSegment)
                 ]
             }]
         }
     ] %}
+
+    {#{% set dataBlocks = dataBlocks|merge([{#}
+        {#'title': 'oro.promotion.blocks.store_frontend'|trans,#}
+        {#'subblocks': [{#}
+            {#'title': '',#}
+            {#'data': [#}
+                {#form_row(form.labels),#}
+                {#form_row(form.descriptions)#}
+            {#]#}
+        {#}]#}
+    {#}]) %}#}
 
     {% set data = {
         'formErrors': form_errors(form),

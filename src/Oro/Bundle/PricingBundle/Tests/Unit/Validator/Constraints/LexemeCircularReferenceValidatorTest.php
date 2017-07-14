@@ -418,6 +418,20 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($priceList1, $constraint);
     }
 
+    public function testValidatePriceRuleWithoutPriceListFailed()
+    {
+        $priceRule = $this->getEntity(PriceRule::class);
+
+        $this->parser
+            ->expects(static::never())
+            ->method('parse');
+
+        $constraint = new LexemeCircularReference();
+        $constraint->fields = ['productAssignmentRule'];
+
+        $this->validator->validate($priceRule, $constraint);
+    }
+
     public function testValidatePriceRuleFailed()
     {
         $priceList1 = $this->getEntity(

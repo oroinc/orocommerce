@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Discount\Exception\ConfiguredException;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
+
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -29,14 +32,19 @@ abstract class AbstractDiscount implements DiscountInterface
     protected $discountCurrency;
 
     /**
-     * @var \Traversable
+     * @var array|Product[]
      */
-    protected $matchingProducts;
+    protected $matchingProducts = [];
 
     /**
      * @var bool
      */
     protected $configured = false;
+
+    /**
+     * @var Promotion
+     */
+    protected $promotion;
 
     /**
      * @var array
@@ -46,7 +54,7 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function configure(array $options)
+    public function configure(array $options): array
     {
         if ($this->configured) {
             throw new ConfiguredException();
@@ -58,6 +66,8 @@ abstract class AbstractDiscount implements DiscountInterface
         $this->discountType = $resolvedOptions[self::DISCOUNT_TYPE];
         $this->discountValue = $resolvedOptions[self::DISCOUNT_VALUE];
         $this->discountCurrency = $resolvedOptions[self::DISCOUNT_CURRENCY];
+
+        return $resolvedOptions;
     }
 
     /**
@@ -79,7 +89,7 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function getDiscountCurrency(): string
+    public function getDiscountCurrency()
     {
         return $this->discountCurrency;
     }
@@ -87,7 +97,15 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function setMatchingProducts(\Traversable $products)
+    public function getMatchingProducts()
+    {
+        return $this->matchingProducts;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMatchingProducts(array $products)
     {
         $this->matchingProducts = $products;
     }
@@ -95,13 +113,17 @@ abstract class AbstractDiscount implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function __toString(): string
+    public function getPromotion(): Promotion
     {
-        if ($this->getDiscountType() === self::TYPE_PERCENT) {
-            return ($this->getDiscountValue() * 100) . '%';
-        }
+        return $this->promotion;
+    }
 
-        return $this->getDiscountValue() . ' ' . $this->getDiscountCurrency();
+    /**
+     * {@inheritdoc}
+     */
+    public function setPromotion(Promotion $promotion)
+    {
+        $this->promotion = $promotion;
     }
 
     /**
@@ -117,11 +139,17 @@ abstract class AbstractDiscount implements DiscountInterface
         $resolver->setAllowedValues(self::DISCOUNT_TYPE, [self::TYPE_PERCENT, self::TYPE_AMOUNT]);
 
         $resolver->setDefault(self::DISCOUNT_VALUE, 0.0);
-        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, ['float', 'integer']);
+        $resolver->setAllowedTypes(self::DISCOUNT_VALUE, ['numeric']);
 
         $resolver->setDefault(self::DISCOUNT_CURRENCY, null);
         $resolver->setAllowedTypes(self::DISCOUNT_CURRENCY, ['null', 'string']);
 
+        $resolver->setNormalizer(
+            self::DISCOUNT_VALUE,
+            function (Options $options, $value) {
+                return (float)$value;
+            }
+        );
         $resolver->setNormalizer(
             self::DISCOUNT_CURRENCY,
             function (Options $options, $value) {

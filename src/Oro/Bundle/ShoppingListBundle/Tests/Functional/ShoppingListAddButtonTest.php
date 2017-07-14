@@ -2,18 +2,25 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class ShoppingListAddButtonTest extends WebTestCase
 {
-
     protected function setUp()
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+        );
+
+        $this->simulateAuthentication(
+            LoadCustomerUserData::AUTH_USER,
+            LoadCustomerUserData::AUTH_PW,
+            'customer_identity',
+            CustomerUser::class
         );
     }
 

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 /**
  * Discount services MUST BE registered with shared: false
@@ -14,18 +15,19 @@ interface DiscountInterface
 
     /**
      * @param array $options
+     * @return array
      */
-    public function configure(array $options);
+    public function configure(array $options): array;
 
     /**
-     * @param \Traversable|Product[] $products
+     * @return array|Product[]
      */
-    public function setMatchingProducts(\Traversable $products);
+    public function getMatchingProducts();
 
     /**
-     * @return string
+     * @param array|Product[] $products
      */
-    public function __toString(): string;
+    public function setMatchingProducts(array $products);
 
     /**
      * Get type of discount: TYPE_AMOUNT or TYPE_PERCENT
@@ -42,9 +44,9 @@ interface DiscountInterface
     /**
      * Currency ISO 4217 code
      *
-     * @return string
+     * @return string|null
      */
-    public function getDiscountCurrency(): string;
+    public function getDiscountCurrency();
 
     /**
      * Add information about discount to context
@@ -60,4 +62,18 @@ interface DiscountInterface
      * @return float
      */
     public function calculate($entity): float;
+
+    /**
+     * Get related promotion
+     *
+     * @return Promotion|null
+     */
+    public function getPromotion();
+
+    /**
+     * Set related promotion
+     *
+     * @param Promotion $promotion
+     */
+    public function setPromotion(Promotion $promotion);
 }

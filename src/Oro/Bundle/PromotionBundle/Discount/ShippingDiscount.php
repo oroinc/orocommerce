@@ -18,20 +18,13 @@ class ShippingDiscount extends AbstractDiscount
     /**
      * {@inheritdoc}
      */
-    public function configure(array $options)
+    public function configure(array $options): array
     {
-        parent::configure($options);
+        $resolvedOptions = parent::configure($options);
 
-        $resolvedOptions = $this->getResolvedOptions($options);
         $this->applyTo = $resolvedOptions[self::APPLY_TO];
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function __toString(): string
-    {
-        return 'Shipping Discount ' . parent::__toString();
+        return $resolvedOptions;
     }
 
     /**

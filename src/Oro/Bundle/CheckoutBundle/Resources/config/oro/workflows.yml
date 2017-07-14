@@ -132,8 +132,7 @@ workflows:
                 is_unavailable_hidden: true
                 transition_definition: start_from_quickorderform_definition
                 frontend_options:
-                    icon: fa-briefcase
-                    class: 'btn--action'
+                    icon: fa-clipboard
                     data:
                         component_name: oro_shopping_list_to_checkout_quick_add_processor
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
@@ -365,6 +364,9 @@ workflows:
                     '@and':
                         - '@not_empty': $init_context
                         - '@equal': [true, $.result.isAllowed]
+                        - '@feature_enabled':
+                            feature: 'shopping_list_create'
+
 
             start_from_shoppinglist_definition:
                 preactions:
@@ -402,7 +404,7 @@ workflows:
 
             back_to_billing_address_definition:
                 preconditions:
-                    '@equal': [$checkout_finished, false]
+                    '@equal': [$checkout.completed, false]
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
@@ -446,7 +448,7 @@ workflows:
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@extendable':
                             events: [extendable_condition.checkout]
-                        - '@equal': [$checkout_finished, false]
+                        - '@equal': [$checkout.completed, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -555,7 +557,7 @@ workflows:
                 preconditions:
                     '@and':
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@equal': [$checkout_finished, false]
+                        - '@equal': [$checkout.completed, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -710,7 +712,7 @@ workflows:
                         attribute: $.result.paymentContext
                 preconditions:
                     '@and':
-                        - '@equal': [$checkout_finished, false]
+                        - '@equal': [$checkout.completed, false]
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
@@ -788,7 +790,8 @@ workflows:
             verify_payment_definition:
                 preconditions:
                     '@and':
-                        - '@equal': [$checkout_finished, false]
+                        - '@equal': [$payment_in_progress, false]
+                        - '@equal': [$checkout.completed, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -1185,7 +1188,7 @@ workflows:
 
             recalculate_state_definition:
                 preconditions:
-                    '@equal': [$checkout_finished, false]
+                    '@equal': [$checkout.completed, false]
                 actions:
                     - '@assign_value': [$payment_in_progress, false]
                     - '@run_action_group':
@@ -1203,7 +1206,7 @@ workflows:
 
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
-                    '@equal': [$checkout_finished, false]
+                    '@equal': [$checkout.completed, false]
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@assign_value': [$payment_in_progress, false]

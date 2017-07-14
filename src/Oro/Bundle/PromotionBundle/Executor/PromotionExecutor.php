@@ -6,6 +6,7 @@ use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterf
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
+use Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 
 class PromotionExecutor
@@ -31,21 +32,29 @@ class PromotionExecutor
     private $discountStrategyProvider;
 
     /**
+     * @var MatchingProductsProvider
+     */
+    private $matchingProductsProvider;
+
+    /**
      * @param PromotionProvider $promotionProvider
      * @param DiscountContextConverterInterface $discountContextConverter
      * @param DiscountFactory $discountFactory
      * @param StrategyProvider $discountStrategyProvider
+     * @param MatchingProductsProvider $matchingProductsProvider
      */
     public function __construct(
         PromotionProvider $promotionProvider,
         DiscountContextConverterInterface $discountContextConverter,
         DiscountFactory $discountFactory,
-        StrategyProvider $discountStrategyProvider
+        StrategyProvider $discountStrategyProvider,
+        MatchingProductsProvider $matchingProductsProvider
     ) {
         $this->promotionProvider = $promotionProvider;
         $this->discountContextConverter = $discountContextConverter;
         $this->discountFactory = $discountFactory;
         $this->discountStrategyProvider = $discountStrategyProvider;
+        $this->matchingProductsProvider = $matchingProductsProvider;
     }
 
     /**
@@ -57,7 +66,14 @@ class PromotionExecutor
         $discountContext = $this->discountContextConverter->convert($sourceEntity);
         $discounts = [];
         foreach ($this->promotionProvider->getPromotions($sourceEntity) as $promotion) {
-            $discounts[] = $this->discountFactory->create($promotion->getDiscountConfiguration());
+            $discount = $this->discountFactory->create($promotion->getDiscountConfiguration(), $promotion);
+            $discount->setMatchingProducts(
+                $this->matchingProductsProvider->getMatchingProducts(
+                    $promotion->getProductsSegment(),
+                    $discountContext->getLineItems()
+                )
+            );
+            $discounts[] = $discount;
         }
         if (!$discounts) {
             return $discountContext;
@@ -66,5 +82,14 @@ class PromotionExecutor
         $strategy = $this->discountStrategyProvider->getActiveStrategy();
 
         return $strategy->process($discountContext, $discounts);
+    }
+
+    /**
+     * @param object $sourceEntity
+     * @return bool
+     */
+    public function supports($sourceEntity)
+    {
+        return $this->discountContextConverter->supports($sourceEntity);
     }
 }

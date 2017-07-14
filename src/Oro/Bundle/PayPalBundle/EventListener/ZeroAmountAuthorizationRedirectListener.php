@@ -25,7 +25,10 @@ class ZeroAmountAuthorizationRedirectListener
      */
     public function onRequirePaymentRedirect(RequirePaymentRedirectEvent $event)
     {
-        $config = $this->configProvider->getPaymentConfig($event->getPaymentMethod()->getIdentifier());
-        $event->setRedirectRequired(!$config->isZeroAmountAuthorizationEnabled());
+        $paymentMethodIdentifier = $event->getPaymentMethod()->getIdentifier();
+        if ($this->configProvider->hasPaymentConfig($paymentMethodIdentifier)) {
+            $config = $this->configProvider->getPaymentConfig($paymentMethodIdentifier);
+            $event->setRedirectRequired(!$config->isZeroAmountAuthorizationEnabled());
+        }
     }
 }

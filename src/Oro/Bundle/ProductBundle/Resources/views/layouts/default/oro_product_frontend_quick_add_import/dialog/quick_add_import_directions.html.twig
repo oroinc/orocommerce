@@ -1,0 +1,28 @@
+{% block _quick_add_import_help_widget %}
+    {% if method == 'POST' %}
+        <div class="alert alert-info import-notice notification--error">
+            <strong>{{ 'oro.feature.quick_add_import_help_widget.important'|trans }}</strong>:
+            {{ 'oro.feature.quick_add_import_help_widget.incorrect_message'|trans }}
+        </div>
+    {% endif %}
+
+    <h5>{{ 'oro.feature.quick_add_import_help_widget.import_multiple_products'|trans }}</h5>
+
+    <ol>
+        <li>{{ 'oro.feature.quick_add_import_help_widget.click_here_to_download'|trans }}
+            <a target="_blank" href="{{ asset('bundles/oroproduct/data-templates/quick-add/quick-order.csv') }}">
+                {{ 'oro.feature.quick_add_import_help_widget.templates.csv'|trans }}
+            </a>,
+            <a target="_blank" href="{{ asset('bundles/oroproduct/data-templates/quick-add/quick-order.xlsx') }}">
+                {{ 'oro.feature.quick_add_import_help_widget.templates.xlsx'|trans }}
+            </a>,
+            {{ 'oro.feature.quick_add_import_help_widget.templates_conjunction'|trans }}
+            <a target="_blank" href="{{ asset('bundles/oroproduct/data-templates/quick-add/quick-order.ods') }}">
+                {{ 'oro.feature.quick_add_import_help_widget.templates.ods'|trans }}
+            </a>
+        </li>
+        <li>{{ 'oro.feature.quick_add_import_help_widget.enter_item_numbers.message'|trans }}</li>
+        <li>{{ 'oro.feature.quick_add_import_help_widget.save_the_file.message'|trans }}</li>
+    </ol>
+
+{% endblock %}

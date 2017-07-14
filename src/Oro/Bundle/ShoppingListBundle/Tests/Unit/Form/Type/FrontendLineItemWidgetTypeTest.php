@@ -29,7 +29,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 {
-
     use QuantityTypeTrait;
 
     const DATA_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\LineItem';

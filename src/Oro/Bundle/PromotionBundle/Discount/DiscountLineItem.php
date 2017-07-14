@@ -69,6 +69,11 @@ class DiscountLineItem implements
     protected $discountsInformation = [];
 
     /**
+     * @var object
+     */
+    protected $sourceLineItem;
+
+    /**
      * {@inheritdoc}
      */
     public function getPrice()
@@ -269,5 +274,37 @@ class DiscountLineItem implements
     public function getDiscountsInformation(): array
     {
         return $this->discountsInformation;
+    }
+
+    /**
+     * @return float
+     */
+    public function getDiscountTotal(): float
+    {
+        $value = 0.0;
+        foreach ($this->discountsInformation as $discountInformation) {
+            $value += $discountInformation->getDiscountAmount();
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return object
+     */
+    public function getSourceLineItem()
+    {
+        return $this->sourceLineItem;
+    }
+
+    /**
+     * @param object $sourceLineItem
+     * @return $this
+     */
+    public function setSourceLineItem($sourceLineItem)
+    {
+        $this->sourceLineItem = $sourceLineItem;
+
+        return $this;
     }
 }

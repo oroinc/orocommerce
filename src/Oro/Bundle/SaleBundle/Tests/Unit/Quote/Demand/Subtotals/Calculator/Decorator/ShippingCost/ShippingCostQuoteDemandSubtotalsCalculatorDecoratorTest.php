@@ -13,6 +13,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
+
 // @codingStandardsIgnoreEnd
 
 class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_Framework_TestCase

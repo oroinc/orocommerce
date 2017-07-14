@@ -66,7 +66,6 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-
         return [
             'empty description' => [
                 'defaultData' => null,

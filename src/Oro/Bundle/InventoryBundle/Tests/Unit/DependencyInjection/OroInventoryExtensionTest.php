@@ -14,15 +14,6 @@ class OroInventoryExtensionTest extends ExtensionTestCase
     {
         $this->loadExtension(new OroInventoryExtension());
 
-        $expectedDefinitions = [
-            'oro_inventory.api.processor.product_id.normalize_input',
-            'oro_inventory.api.processor.entity_id.load_data',
-            'oro_inventory.api.processor.update_inventory_level.build_query',
-            'oro_inventory.api.processor.create_inventory_level.normalize_input',
-
-        ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
-
         $expectedExtensionConfigs = ['oro_inventory'];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }

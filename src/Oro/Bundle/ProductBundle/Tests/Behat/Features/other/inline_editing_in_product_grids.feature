@@ -1,4 +1,5 @@
-@fixture-Product_tax_codes_Inline_edit.yml
+@fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
+@regression
 Feature: Inline Editing in Products Grids
   In order to quickly edit product information
   As an Administrator
@@ -114,6 +115,7 @@ Feature: Inline Editing in Products Grids
       | field            | value        |
       | Inventory Status | Out of Stock |
       | Status           | Disabled     |
+      | Status           | Enabled      |
       | Tax Code         | TaxCode2     |
 
   Scenario: Attempting to save empty value

@@ -4,7 +4,6 @@ define(function(require) {
     var TotalsComponent;
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
-    var $ = require('jquery');
     var BaseComponent = require('oropricing/js/app/components/totals-component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
@@ -28,8 +27,9 @@ define(function(require) {
             mediator.on('shipping-cost:updated', this.setTotals, this);
 
             this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
-            this.template = _.template($(this.options.selectors.template).text());
-            this.noDataTemplate = _.template($(this.options.selectors.noDataTemplate).text());
+
+            this.resolveTemplates();
+
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
             this.setTotals(options);

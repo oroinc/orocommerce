@@ -1,21 +1,56 @@
 oro:
     discount:
-        label: 'Discount'
-        choices:
-            order: 'Order'
-            shopping_list_line_item: 'Shopping List Line Item'
+        type:
+            label: Discount
+            choices:
+                order: Order
+                line_item: Line Item
+                buy_x_get_y: Buy X Get Y
+    discount_options:
+        general:
+            type:
+                label: Type
+                tooltip: Based on the type, promotion either enables a discount by some % of the line item price or introduces a fixed discount (e.g. -10USD) off the line item price. Note that when a fixed discount is used, the promotion applies to the order in the selected currency only.
+                choices:
+                    amount: Fixed Amount
+                    percent: Percent
+            value:
+                label: Discount Value
+        line_item_type:
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount To
+                choices:
+                    each_item: Each Item
+                    line_items_total: Line Items Total
+            maximum_qty:
+                label: Maximum Qty Discount is Applied To
+                tooltip: The quantity of products of the same type eligible for a discount in a line item/order. For example, when the limit is set to 10 and a buyer orders 100 items, they will be charged the discounted price for 10 items out of 100, and will pay the full price for the remaining 90 items.
+        buy_x_get_y_type:
+            buy_x.label: Buy X
+            get_y.label: Get Y
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount To
+                choices:
+                    apply_to_each_y: Each Y Item Separately
+                    apply_to_xy_total: X + Y Total
+            limit_times:
+                label: Limit, times
+                tooltip: The quantity of discounted groups (X+Y) of the same type eligible for a discount in a line item/order. For example, when the limit is set to 2 and a buyer orders 3 groups of 3+2 items (15 in total), they will be charged the discounted price for 2 groups out of 3, and will pay the full price for the remaining one group.
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
         entity_description: Represents promotion information
         id.label: ID
-        coupons.label: Coupons
         descriptions.label: Descriptions
         descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration
         labels.label: Labels
         labels.tooltip: This label will be displayed to user
-        name.tooltip: Name tooltip
+        name.tooltip: The promotion name will show in the order details.
         organization.label: Organization
         owner.label: Owner
         products_segment.label: Product Segment
@@ -42,7 +77,13 @@ oro:
         dates.label: Dates
         restrictions.label: Restrictions
         advanced_conditions.label: Advanced Conditions
-        segment_edit_button.label: Edit within Promotion
+
+        ui:
+            segment_edit_button.label: Edit within Promotion
+            duplicate:
+                new_name: 'originalName (duplicated at dateTime)'
+                label: Duplicate
+                success_message: Promotion has been duplicated
 
         blocks:
             general: General
@@ -58,6 +99,12 @@ oro:
                 no: No
                 for_matching_items_only: For Matching Items Only
                 for_shipment_with_matching_items: For Shipment With Matching Items
+            strategy:
+                apply_all.label: Combine All Discounts
+                profitable.label: Best Value Discount Only
+            subtotal:
+                order.label: 'Discount'
+                shipping.label: 'Shipping Discount'
 
         discountconfiguration:
             entity_label: Discount Configuration
@@ -71,11 +118,6 @@ oro:
                 type.label: Type
                 discount_value.label: Discount Value
                 free_shipping.label: Free Shipping
-
-        coupon:
-            entity_label: Coupon
-            entity_plural_label: Coupons
-            id.label: ID
 
         promotionschedule:
             entity_label: Promotion Schedule
@@ -110,17 +152,6 @@ oro:
 
         form:
             choose: 'Choose a Promotion...'
-            basic_discount:
-                discount:
-                    label: 'Discount'
-                type:
-                    label: 'Type'
-                    tooltip: 'Discount type'
-                    choices:
-                        amount: 'Fixed Amount'
-                        percent: 'Percent'
-                value:
-                    label: 'Discount Value'
 
         sections:
             general:
@@ -131,7 +162,40 @@ oro:
             conditions.label: Conditions
             matching_items.label: Matching Items
 
-        discount:
-            strategy:
-                apply_all.label: Apply All
-                profitable.label: Profitable
+    applied_discount:
+        name: Name
+        amount: Amount
+
+    frontend:
+        shoppinglist:
+            view:
+                discount.label: 'Row Discount:'
+        checkout:
+            view:
+                discount.label: 'Row Discount:'
+    order:
+        promotions:
+            applied_discount:
+                name: Name
+                amount: Amount
+            nav_button:
+                information_notice: Promotion discounts will be recalculated after order saving
+                important: Important
+                save_without_discounts_recalculation: Save Without Discounts Recalculation
+
+        view:
+            order_line_item:
+                row_total_discount_amount.label: Row Total (Discount Amount)
+                row_total_after_discount.label: Row Total (After Discount)
+                row_total_after_discount_including_tax.label: Row Total (After Discount Including Tax)
+                row_total_after_discount_excluding_tax.label: Row Total (After Discount Excluding Tax)
+
+        edit:
+            order_line_item:
+                applied_discounts.label: Applied Discounts
+                row_total: Row Total
+                short:
+                    discount_amount.label: Disc. Amount
+                    row_total_after_discount.label: After Disc.
+                    includingTax.label: After Disc. Incl. Tax
+                    excludingTax.label:  After Disc. Excl. Tax

@@ -57,7 +57,7 @@ class DiscountConfigurationType extends AbstractType
                 ChoiceType::class,
                 [
                     'choices' => $options['discount_choices'],
-                    'label' => 'oro.promotion.form.basic_discount.discount.label',
+                    'label' => 'oro.discount.type.label',
                     'required' => false,
                     'placeholder' => false
                 ]
@@ -142,7 +142,7 @@ class DiscountConfigurationType extends AbstractType
         $formTypes = $this->discountFormTypeProvider->getFormTypes();
         $choices = [];
         foreach ($formTypes as $type => $formType) {
-            $choices[$type] = 'oro.discount.choices.' . $type;
+            $choices[$type] = 'oro.discount.type.choices.' . $type;
         }
 
         return $choices;

@@ -2,25 +2,24 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCollectionSegmentType;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\SegmentBundle\Entity\Segment;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 
 class PromotionType extends AbstractType
 {
     const NAME = 'oro_promotion';
+    const SCOPE_TYPE = 'promotion';
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -60,28 +59,18 @@ class PromotionType extends AbstractType
                 ScopeCollectionType::NAME,
                 [
                     'label' => 'oro.promotion.restrictions.label',
-                    'required' => false,
+                    'required' => true,
+                    'constraints' => [new Count(['min' => 1])],
                     'entry_options' => [
-                        'scope_type' => 'promotion'
+                        'scope_type' => self::SCOPE_TYPE
                     ],
                 ]
             )
-            // TODO: remove this temporary solution after BB-10092
             ->add(
                 'productsSegment',
-                EntityType::class,
+                ProductCollectionSegmentType::NAME,
                 [
-                    'label' => false,
-                    'class' => Segment::class,
-                    'query_builder' => function (EntityRepository $repository) {
-                        $qb = $repository
-                            ->createQueryBuilder('s')
-                            ->andWhere('s.entity = :entity')
-                            ->setParameter('entity', Product::class);
-
-                        return $qb;
-                    },
-                    'choice_label' => 'name',
+                    'segment_name_template' => 'Promotion Matching Products %s'
                 ]
             )
             ->add(

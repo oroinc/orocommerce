@@ -22,10 +22,7 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->segmentManager = $this->getMockBuilder(SegmentManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->segmentManager = $this->createMock(SegmentManager::class);
         $this->provider = new MatchingProductsProvider($this->segmentManager);
     }
 
@@ -88,9 +85,7 @@ class MatchingProductsProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function expectsQueryBuilderWithNoRootAlias(Segment $segment)
     {
-        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $queryBuilder = $this->createMock(QueryBuilder::class);
 
         $queryBuilder
             ->expects($this->once())

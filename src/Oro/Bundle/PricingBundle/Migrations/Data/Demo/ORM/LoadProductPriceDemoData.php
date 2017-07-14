@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -11,6 +12,20 @@ use Oro\Bundle\PricingBundle\Manager\PriceManager;
 
 class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return array_merge(
+            parent::getDependencies(),
+            [
+                LoadPriceListToCustomerGroupDemoData::class,
+                LoadPriceListDemoData::class,
+            ]
+        );
+    }
+
     /**
      * {@inheritdoc}
      * @param EntityManager $manager
@@ -29,15 +44,12 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 
         $priceLists = [
             'Default Price List' => [
-                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0,
             ],
             'Wholesale Price List' => [
-                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0.1,
             ],
             'Partner C Custom Price List' => [
-                'currencies' => [$this->getDefaultCurrency()],
                 'discount' => 0.2,
             ],
         ];
@@ -50,7 +62,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
             $productUnit = $this->getProductUnit($manager, $row['unit']);
             foreach ($priceLists as $listName => $listOptions) {
                 $priceList = $this->getPriceList($manager, $listName);
-                foreach ($listOptions['currencies'] as $currency) {
+                foreach ($priceList->getCurrencies() as $currency) {
                     $amount = round(
                         (float)$row['price'] * (1 - (float)$listOptions['discount']),
                         2

@@ -17,7 +17,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Type;
 
 class DiscountOptionsType extends AbstractType
 {
@@ -38,10 +37,10 @@ class DiscountOptionsType extends AbstractType
                 [
                     'choices' => $options['type_choices'],
                     'mapped' => false,
-                    'label' => 'oro.promotion.form.basic_discount.type.label',
+                    'label' => 'oro.discount_options.general.type.label',
                     'required' => true,
                     'placeholder' => false,
-                    'tooltip' => 'oro.promotion.form.basic_discount.type.tooltip',
+                    'tooltip' => 'oro.discount_options.general.type.tooltip',
                 ]
             )
             ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'])
@@ -82,10 +81,8 @@ class DiscountOptionsType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['attr']['data-page-component-module'] = $form->getConfig()->getOption('page_component');
-        $view->vars['attr']['data-page-component-options'] = json_encode(
-            $form->getConfig()->getOption('page_component_options')
-        );
+        $view->vars['attr']['data-page-component-module'] = $options['page_component'];
+        $view->vars['attr']['data-page-component-options'] = json_encode($options['page_component_options']);
     }
 
     /**
@@ -111,7 +108,7 @@ class DiscountOptionsType extends AbstractType
             FormUtils::replaceField(
                 $event->getForm(),
                 self::AMOUNT_DISCOUNT_VALUE_FIELD,
-                ['required' => false, 'attr' => ['class' => 'hide'], 'validation_groups' => ['Default']]
+                ['required' => false, 'attr' => ['class' => 'hide'], 'value_constraints' => []]
             );
             FormUtils::replaceField(
                 $event->getForm(),
@@ -166,7 +163,7 @@ class DiscountOptionsType extends AbstractType
     {
         $choices = [];
         foreach (self::TYPE_FIELD_CHOICES as $type) {
-            $choices[$type] = 'oro.promotion.form.basic_discount.type.choices.' . $type;
+            $choices[$type] = 'oro.discount_options.general.type.choices.' . $type;
         }
 
         return $choices;
@@ -186,10 +183,10 @@ class DiscountOptionsType extends AbstractType
                 [
                     'currency_empty_value' => null,
                     'required' => true,
-                    'label' => 'oro.promotion.form.basic_discount.value.label',
+                    'label' => 'oro.discount_options.general.value.label',
                     'compact' => false,
                     'data_class' => MultiCurrency::class,
-                    'validation_groups' => ['ValueRequired', 'Default'],
+                    'value_constraints' => [new NotBlank()],
                     'attr' => $amountFieldVisible ? [] : ['class' => 'hide'],
                 ]
             )
@@ -198,8 +195,8 @@ class DiscountOptionsType extends AbstractType
                 OroPercentType::class,
                 [
                     'required' => true,
-                    'label' => 'oro.promotion.form.basic_discount.value.label',
-                    'constraints' => [new NotBlank(), new Type(['type' => 'numeric'])],
+                    'label' => 'oro.discount_options.general.value.label',
+                    'constraints' => [new NotBlank()],
                     'attr' => $percentFieldVisible ? [] : ['class' => 'hide'],
                 ]
             );

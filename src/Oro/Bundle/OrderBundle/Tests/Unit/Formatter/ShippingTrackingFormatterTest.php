@@ -4,22 +4,22 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Tests\Unit\Formatter\Stub\ShippingMethodStub;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProviderInterface;
 
 class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodRegistry
+     * @var \PHPUnit_Framework_MockObject_MockObject|TrackingAwareShippingMethodsProviderInterface
      */
-    protected $shippingMethodRegistry;
+    protected $trackingAwareShippingMethodsProvider;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->shippingMethodRegistry = $this
-            ->getMockBuilder(ShippingMethodRegistry::class)
+        $this->trackingAwareShippingMethodsProvider = $this
+            ->getMockBuilder(TrackingAwareShippingMethodsProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -66,9 +66,9 @@ class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
         $trackingAware,
         $expectedResult
     ) {
-        $formatter = new ShippingTrackingFormatter($this->shippingMethodRegistry);
+        $formatter = new ShippingTrackingFormatter($this->trackingAwareShippingMethodsProvider);
 
-        $this->shippingMethodRegistry
+        $this->trackingAwareShippingMethodsProvider
             ->expects(static::any())
             ->method('getTrackingAwareShippingMethods')
             ->willReturn([
@@ -115,9 +115,9 @@ class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
         $trackingAware,
         $expectedResult
     ) {
-        $formatter = new ShippingTrackingFormatter($this->shippingMethodRegistry);
+        $formatter = new ShippingTrackingFormatter($this->trackingAwareShippingMethodsProvider);
 
-        $this->shippingMethodRegistry
+        $this->trackingAwareShippingMethodsProvider
             ->expects(static::any())
             ->method('getTrackingAwareShippingMethods')
             ->willReturn([

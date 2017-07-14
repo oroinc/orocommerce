@@ -1,5 +1,6 @@
-@fixture-product_collections_individual_products.yml
-Feature:
+@fixture-OroProductBundle:product_collections_individual_products.yml
+@regression
+Feature: Product collection mass actions of tabs grids
   In order to be able to process several product at once, at Product Collection's All Added, Excluded and Manually Added tabs
   As and Administrator
   I want to have ability to use mass actions here

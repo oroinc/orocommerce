@@ -45,6 +45,7 @@
         {% placeholder render_discount_information with {entity: entity} %}
     {% endset %}
 
+    {# TODO: add 'UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans)' to general block after BB-9489 #}
     {% set dataBlocks = [
         {
             'title': 'oro.promotion.sections.general.label'|trans,
@@ -57,7 +58,6 @@
                         UI.renderProperty('oro.rule.name.label'|trans, entity.rule.name),
                         UI.renderProperty('oro.rule.sort_order.label'|trans, entity.rule.sortOrder),
                         UI.renderProperty('oro.rule.stop_processing.label'|trans, entity.rule.stopProcessing ? 'oro.promotion.rule.stop_processing.yes'|trans : 'oro.promotion.rule.stop_processing.no'|trans),
-                        UI.renderProperty('oro.promotion.use_coupons.label'|trans, entity.useCoupons ? 'oro.promotion.use_coupons.yes'|trans : 'oro.promotion.use_coupons.no'|trans),
                         UI.renderHtmlProperty('oro.promotion.schedules.label'|trans, schedulesBlock)
                     ]
                 },
@@ -93,7 +93,19 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid(gridName)]
+                    'data' : [
+                        dataGrid.renderGrid(
+                            'promotion-products-collection-grid',
+                            {
+                                '_grid_view': {'_disabled': true},
+                                params: {
+                                    'segmentDefinition': segmentDefinition,
+                                    'includedProducts': includedProducts,
+                                    'excludedProducts': excludedProducts
+                                }
+                            }
+                        )
+                    ]
                 }
             ]
         }

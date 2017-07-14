@@ -18,7 +18,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *          )
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository")
  * @Config(mode="hidden")
  */
 class ProductUnitPrecision implements ProductUnitHolderInterface

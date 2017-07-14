@@ -36,6 +36,9 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="customerUser",
+ *              "frontend_owner_column_name"="customer_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -157,7 +160,7 @@ class LineItem extends ExtendLineItem implements
     protected $notes;
 
     /**
-     * @var CustomerUser
+     * @var CustomerUser|null
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
      * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
@@ -300,7 +303,7 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @return CustomerUser
+     * @return CustomerUser|null
      */
     public function getCustomerUser()
     {
@@ -308,11 +311,11 @@ class LineItem extends ExtendLineItem implements
     }
 
     /**
-     * @param CustomerUser $user
+     * @param CustomerUser|null $user
      *
      * @return $this
      */
-    public function setCustomerUser(CustomerUser $user)
+    public function setCustomerUser(CustomerUser $user = null)
     {
         $this->customerUser = $user;
 

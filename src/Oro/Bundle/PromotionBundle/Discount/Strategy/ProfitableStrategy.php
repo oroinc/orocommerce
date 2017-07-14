@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Discount\Strategy;
 
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
 class ProfitableStrategy extends AbstractStrategy
@@ -25,12 +24,13 @@ class ProfitableStrategy extends AbstractStrategy
         $maxDiscount = null;
 
         foreach ($discounts as $discount) {
-            $calculateContext = clone $discountContext;
+            $calculateContext = unserialize(serialize($discountContext));
             $this->calculateDiscount($discount, $calculateContext);
 
-            $discountAmount = $this->getTotalDiscountAmount($calculateContext);
-            if ($discountAmount > $maxDiscountAmount) {
+            $totalDiscountAmount = $calculateContext->getTotalDiscountAmount();
+            if ($totalDiscountAmount > $maxDiscountAmount) {
                 $maxDiscount = $discount;
+                $maxDiscountAmount = $totalDiscountAmount;
             }
         }
 
@@ -52,35 +52,5 @@ class ProfitableStrategy extends AbstractStrategy
         $this->processLineItemDiscounts($discountContext);
         $this->processTotalDiscounts($discountContext);
         $this->processShippingDiscounts($discountContext);
-    }
-
-    /**
-     * @param DiscountContext $discountContext
-     * @return float
-     */
-    private function getTotalDiscountAmount(DiscountContext $discountContext): float
-    {
-        $value = 0.0;
-        foreach ($discountContext->getLineItems() as $lineItem) {
-            $value += $this->getDiscountInformationSum($lineItem->getDiscountsInformation());
-        }
-        $value += $this->getDiscountInformationSum($discountContext->getSubtotalDiscountsInformation());
-        $value += $this->getDiscountInformationSum($discountContext->getShippingDiscountsInformation());
-
-        return $value;
-    }
-
-    /**
-     * @param array|DiscountInformation[] $discountsInformation
-     * @return float
-     */
-    private function getDiscountInformationSum(array $discountsInformation): float
-    {
-        $value = 0.0;
-        foreach ($discountsInformation as $discountInformation) {
-            $value += $discountInformation->getDiscountAmount();
-        }
-
-        return $value;
     }
 }

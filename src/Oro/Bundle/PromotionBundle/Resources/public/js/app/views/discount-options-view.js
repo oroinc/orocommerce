@@ -5,6 +5,7 @@ define(function(require) {
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
     var DiscountOptionsView;
+    var mediator = require('oroui/js/mediator');
 
     DiscountOptionsView = BaseView.extend({
         /**
@@ -43,6 +44,7 @@ define(function(require) {
                 .trigger('content:remove')
                 .html(this.options.discountFormPrototypes[currentFormName])
                 .trigger('content:changed');
+            mediator.execute('layout:init', this.$formContainer);
         },
 
         /**
