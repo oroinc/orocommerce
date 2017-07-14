@@ -220,8 +220,6 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
-                                    - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Checkout']
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             options:
@@ -257,8 +255,6 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
-                                    - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Checkout']
                         save_shipping_address:
                             options:
                         ship_to_billing_address:
