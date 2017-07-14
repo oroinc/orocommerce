@@ -14,3 +14,5 @@ oro:
             label: Price
             formatted.unit: '{{ formattedUnit }} ({{ formattedPrice }} Each)'
             not_available: 'N/A'
+    totals:
+        no_data: No data

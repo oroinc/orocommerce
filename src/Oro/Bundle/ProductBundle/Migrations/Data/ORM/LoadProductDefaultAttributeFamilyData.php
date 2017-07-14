@@ -110,6 +110,8 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             $attributeFamily->addAttributeGroup($attributeGroup);
         }
 
+        $this->setReference(static::DEFAULT_FAMILY_CODE, $attributeFamily);
+
         $manager->persist($attributeFamily);
         $manager->flush();
 

@@ -232,13 +232,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 
-    oro_order.validator.checkout_address:
-        class: 'Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator'
-        arguments:
-            - '@validator'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_order_address_validator }
-
     oro_order.pricing.price_matcher:
         class: 'Oro\Bundle\OrderBundle\Pricing\PriceMatcher'
         public: false

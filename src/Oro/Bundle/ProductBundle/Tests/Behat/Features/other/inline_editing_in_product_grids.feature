@@ -115,6 +115,7 @@ Feature: Inline Editing in Products Grids
       | field            | value        |
       | Inventory Status | Out of Stock |
       | Status           | Disabled     |
+      | Status           | Enabled      |
       | Tax Code         | TaxCode2     |
 
   Scenario: Attempting to save empty value

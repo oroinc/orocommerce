@@ -20,14 +20,14 @@ services:
         arguments:
             - '@oro_paypal.method.config.provider.payflow_gateway.credit_card'
         tags:
-            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect.payflow_gateway, method: onRequirePaymentRedirect }
+            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect, method: onRequirePaymentRedirect }
 
     oro_paypal.event_listener.paypal_payments_pro_require_payment_redirect:
         class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
         arguments:
             - '@oro_paypal.method.config.provider.payments_pro.credit_card'
         tags:
-            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect.paypal_payments_pro, method: onRequirePaymentRedirect }
+            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect, method: onRequirePaymentRedirect }
 
     oro_paypal.event_listener.modify_line_item_option:
         class: 'Oro\Bundle\PayPalBundle\EventListener\ExtractLineItemPaymentOptionsListener'

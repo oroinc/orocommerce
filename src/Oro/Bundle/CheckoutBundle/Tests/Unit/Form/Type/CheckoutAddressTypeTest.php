@@ -98,6 +98,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
                             ->setCustomerAddress($address)
                             ->setLabel($address->getLabel())
                             ->setCountry($address->getCountry())
+                            ->setOrganization(static::ORGANIZATION)
                             ->setRegion($address->getRegion())
                             ->setCity($address->getCity())
                             ->setPostalCode($address->getPostalCode())
@@ -143,6 +144,7 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $savedCustomerAddress = (new CustomerAddress())
             ->setLabel('Label')
             ->setCountry($country)
+            ->setOrganization(static::ORGANIZATION)
             ->setRegion($region)
             ->setCity('City')
             ->setPostalCode('AL')
@@ -156,7 +158,6 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             'middleName' => 'MiddleName',
             'lastName' => 'LastName',
             'nameSuffix' => 'NameSuffix',
-            'organization' => 'Organization',
             'street' => 'Street',
             'street2' => 'Street2',
             'city' => 'City',
@@ -173,7 +174,8 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
             ->setCity('City')
             ->setRegion($region)
             ->setPostalCode('AL')
-            ->setCountry($country);
+            ->setCountry($country)
+            ->setOrganization(static::ORGANIZATION);
 
         return [
             'custom_address_info_submitted_together_with_chosen_customer_address_for_billing_address' => [
