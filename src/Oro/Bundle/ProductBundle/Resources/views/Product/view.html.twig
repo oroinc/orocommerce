@@ -187,7 +187,7 @@
         ]) %}
     {% endif %}
 
-    {% if upsellProductsEnabled %}
+    {% if upsellProductsEnabled and resource_granted('oro_upsell_products_edit') %}
         {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{'id': 'products-upsell-products-view', 'label': 'Upsell Products'}]) %}
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
             dataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': get_upsell_products_ids(entity)}),

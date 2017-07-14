@@ -22,24 +22,30 @@ class RelatedItemsProductEditListener
     private $translator;
 
     /** @var AbstractRelatedItemConfigProvider */
-    private $configProvider;
+    private $relatedProductsConfigProvider;
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
 
+    /** @var AbstractRelatedItemConfigProvider */
+    private $upsellProductsConfigProvider;
+
     /**
      * @param TranslatorInterface               $translator
-     * @param AbstractRelatedItemConfigProvider $configProvider
+     * @param AbstractRelatedItemConfigProvider $relatedProductsConfigProvider
+     * @param AbstractRelatedItemConfigProvider $upsellProductsConfigProvider
      * @param AuthorizationCheckerInterface     $authorizationChecker
      */
     public function __construct(
         TranslatorInterface $translator,
-        AbstractRelatedItemConfigProvider $configProvider,
+        AbstractRelatedItemConfigProvider $relatedProductsConfigProvider,
+        AbstractRelatedItemConfigProvider $upsellProductsConfigProvider,
         AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->translator = $translator;
-        $this->configProvider = $configProvider;
+        $this->relatedProductsConfigProvider = $relatedProductsConfigProvider;
         $this->authorizationChecker = $authorizationChecker;
+        $this->upsellProductsConfigProvider = $upsellProductsConfigProvider;
     }
 
 
@@ -48,32 +54,19 @@ class RelatedItemsProductEditListener
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        if (!$this->configProvider->isEnabled()
-            || !$this->authorizationChecker->isGranted('oro_related_products_edit')
+        $twigEnv = $event->getEnvironment();
+
+        if ($this->relatedProductsConfigProvider->isEnabled()
+            && $this->authorizationChecker->isGranted('oro_related_products_edit')
         ) {
-            return;
+            $this->addRelatedProductsEditBlock($event, $twigEnv);
         }
 
-        $twigEnv = $event->getEnvironment();
-        
-        $relatedProductsTemplate = $twigEnv->render(
-            '@OroProduct/Product/RelatedItems/relatedItems.html.twig',
-            [
-                'form' => $event->getFormView(),
-                'entity' => $event->getEntity(),
-                'relatedProductsLimit' => $this->configProvider->getLimit()
-            ]
-        );
-        
-        $upsellProductsTemplate = $twigEnv->render(
-            '@OroProduct/Product/RelatedItems/upsellItems.html.twig',
-            [
-                'form' => $event->getFormView(),
-                'entity' => $event->getEntity()
-            ]
-        );
-        $this->addEditPageBlock($event->getScrollData(), $relatedProductsTemplate);
-        $this->addEditPageBlock($event->getScrollData(), $upsellProductsTemplate);
+        if ($this->upsellProductsConfigProvider->isEnabled()
+            && $this->authorizationChecker->isGranted('oro_upsell_products_edit')
+        ) {
+            $this->addUpsellProductsEdidBlock($event, $twigEnv);
+        }
     }
 
     /**
@@ -107,27 +100,31 @@ class RelatedItemsProductEditListener
             $event->getForm()->remove('removeRelated');
         }
 
-        //TODO - add permission checking in BB-10067
-        $event->getForm()->add(
-            'appendUpsell',
-            'oro_entity_identifier',
-            [
-                'class' => Product::class,
-                'required' => false,
-                'mapped' => false,
-                'multiple' => true,
-            ]
-        );
-        $event->getForm()->add(
-            'removeUpsell',
-            'oro_entity_identifier',
-            [
-                'class' => Product::class,
-                'required' => false,
-                'mapped' => false,
-                'multiple' => true,
-            ]
-        );
+        if ($this->authorizationChecker->isGranted('oro_upsell_products_edit')) {
+            $event->getForm()->add(
+                'appendUpsell',
+                'oro_entity_identifier',
+                [
+                    'class' => Product::class,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            );
+            $event->getForm()->add(
+                'removeUpsell',
+                'oro_entity_identifier',
+                [
+                    'class' => Product::class,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            );
+        } else {
+            $event->getForm()->remove('appendUpsell');
+            $event->getForm()->remove('removeUpsell');
+        }
     }
 
     /**
@@ -143,5 +140,38 @@ class RelatedItemsProductEditListener
         );
         $subBlock = $scrollData->addSubBlock(self::RELATED_ITEMS_ID);
         $scrollData->addSubBlockData(self::RELATED_ITEMS_ID, $subBlock, $relatedProductsForm, 'relatedItems');
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param \Twig_Environment $twigEnv
+     */
+    private function addRelatedProductsEditBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    {
+        $relatedProductsTemplate = $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/relatedItems.html.twig',
+            [
+                'form' => $event->getFormView(),
+                'entity' => $event->getEntity(),
+                'relatedProductsLimit' => $this->relatedProductsConfigProvider->getLimit()
+            ]
+        );
+        $this->addEditPageBlock($event->getScrollData(), $relatedProductsTemplate);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param \Twig_Environment $twigEnv
+     */
+    private function addUpsellProductsEdidBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    {
+        $upsellProductsTemplate = $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/upsellItems.html.twig',
+            [
+                'form' => $event->getFormView(),
+                'entity' => $event->getEntity()
+            ]
+        );
+        $this->addEditPageBlock($event->getScrollData(), $upsellProductsTemplate);
     }
 }

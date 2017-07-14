@@ -202,6 +202,8 @@ oro:
                 remove.label: '[Product Attribute] Remove attribute'
             related_products:
                 edit.label: '[Related Products] Edit related products'
+            upsell_products:
+                edit.label: '[Upsell Products] Edit upsell products'
 
         rounding:
             type:

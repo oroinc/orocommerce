@@ -160,13 +160,16 @@ class ProductController extends Controller
      *
      * @Route("/related-items-update/{id}", name="oro_product_related_items_update", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("oro_related_products_edit")
      * @param Product $product
      *
      * @return array|RedirectResponse
      */
     public function updateRelatedItemsAction(Product $product)
     {
+        if (!$this->relatedItemsIsGranted()) {
+            throw $this->createAccessDeniedException();
+        }
+
         if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
             throw $this->createNotFoundException();
         }
@@ -320,5 +323,16 @@ class ProductController extends Controller
             'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : [],
             'gridName' => $gridName,
         ];
+    }
+
+    /**
+     * Checks if at least one "Related Items" functionality is available for the user
+     *
+     * @return bool
+     */
+    private function relatedItemsIsGranted()
+    {
+        return $this->isGranted('oro_related_products_edit')
+            || $this->isGranted('oro_upsell_products_edit');
     }
 }
