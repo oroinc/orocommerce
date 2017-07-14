@@ -9,8 +9,12 @@ use Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepo
 use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedProductDataProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
+use Oro\Bundle\UIBundle\Tests\Unit\Provider\FakeUserAgentProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
@@ -24,6 +28,9 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var FinderStrategyInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $finder;
 
+    /** @var FakeUserAgentProvider */
+    private $userAgentProvider;
+
     /** @var RelatedProductDataProvider */
     private $dataProvider;
 
@@ -36,10 +43,13 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->restrictedRepository = $this->getMockBuilder(RestrictedProductRepository::class)
             ->disableOriginalConstructor()->getMock();
 
+        $this->userAgentProvider = new FakeUserAgentProvider();
+
         $this->dataProvider = new RelatedProductDataProvider(
             $this->finder,
             $this->configProvider,
-            $this->restrictedRepository
+            $this->restrictedRepository,
+            $this->userAgentProvider
         );
     }
 
@@ -133,6 +143,37 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([], $this->dataProvider->getRelatedProducts(new Product()));
     }
 
+    public function testSliderEnabledOnDesktop()
+    {
+        $this->userAgentProvider->isDesktop = true;
+        $this->assertTrue($this->dataProvider->isSliderEnabled());
+    }
+
+    public function testSliderEnabledOnMobileWhenConfigEnabled()
+    {
+        $this->userAgentProvider->isDesktop = false;
+        $this->isSliderEnabledOnMobile(true);
+        $this->assertTrue($this->dataProvider->isSliderEnabled());
+    }
+
+    public function testSliderDisabledOnMobileWhenConfigIsDisabled()
+    {
+        $this->userAgentProvider->isDesktop = false;
+        $this->assertFalse($this->dataProvider->isSliderEnabled());
+    }
+
+    public function testAddButtonIsVisibleWhenConfigIsEnabled()
+    {
+        $this->isAddButtonVisible(true);
+        $this->assertTrue($this->dataProvider->isAddButtonVisible());
+    }
+
+    public function testAddButtonIsNotVisibleWhenConfigIsDisabled()
+    {
+        $this->isAddButtonVisible(false);
+        $this->assertFalse($this->dataProvider->isAddButtonVisible());
+    }
+
     /**
      * @param Product[]|ArrayCollection $relatedProducts
      */
@@ -151,6 +192,20 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->configProvider->expects($this->any())
             ->method('getMinimumItems')
             ->willReturn($count);
+    }
+
+    private function isSliderEnabledOnMobile($isEnabled)
+    {
+        $this->configProvider->expects($this->any())
+            ->method('isSliderEnabledOnMobile')
+            ->willReturn($isEnabled);
+    }
+
+    private function isAddButtonVisible($isVisible)
+    {
+        $this->configProvider->expects($this->any())
+            ->method('isAddButtonVisible')
+            ->willReturn($isVisible);
     }
 
     /**

@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepository;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
-use Oro\Bundle\UIBundle\Provider\UserAgentProvider;
+use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
 
 class RelatedProductDataProvider
 {
@@ -19,20 +19,20 @@ class RelatedProductDataProvider
     /** @var RestrictedProductRepository */
     private $restrictedProductRepository;
 
-    /** @var UserAgentProvider */
+    /** @var UserAgentProviderInterface */
     private $userAgentProvider;
 
     /**
      * @param FinderStrategyInterface           $finderStrategy
      * @param AbstractRelatedItemConfigProvider $configProvider
      * @param RestrictedProductRepository       $restrictedProductRepository
-     * @param UserAgentProvider                 $userAgentProvider
+     * @param UserAgentProviderInterface                 $userAgentProvider
      */
     public function __construct(
         FinderStrategyInterface $finderStrategy,
         AbstractRelatedItemConfigProvider $configProvider,
         RestrictedProductRepository $restrictedProductRepository,
-        UserAgentProvider $userAgentProvider
+        UserAgentProviderInterface $userAgentProvider
     ) {
         $this->finderStrategy = $finderStrategy;
         $this->configProvider = $configProvider;

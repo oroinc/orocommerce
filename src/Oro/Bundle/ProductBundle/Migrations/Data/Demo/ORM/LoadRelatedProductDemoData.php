@@ -52,7 +52,6 @@ class LoadRelatedProductDemoData extends AbstractFixture implements ContainerAwa
         $headers = fgetcsv($handler, 1000, ',');
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-
             $productFrom = $productRepository->findOneBySku($data[0]);
             $productTo = $productRepository->findOneBySku($data[1]);
 
