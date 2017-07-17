@@ -37,13 +37,13 @@ class OroPricingBundle implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->updateExtendEntity($queries);
+        $this->updateExtendEntity();
 
         $queries->addQuery(new OroPriceListStrategyQuery());
     }
 
     /**
-     * @param QueryBag $queries
+     * Update Extended Entity
      */
     private function updateExtendEntity()
     {
