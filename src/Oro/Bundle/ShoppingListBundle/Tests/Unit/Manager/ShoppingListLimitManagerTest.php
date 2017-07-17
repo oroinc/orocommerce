@@ -14,6 +14,9 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
