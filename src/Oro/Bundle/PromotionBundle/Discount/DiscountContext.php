@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 
-class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
+class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface, ShippingAwareInterface
 {
     /**
      * @var DiscountLineItem[]
@@ -40,7 +41,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     /**
      * @var float
      */
-    protected $shippingCost;
+    protected $shippingCost = 0.0;
 
     /**
      * @return float

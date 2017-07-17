@@ -515,34 +515,33 @@ class PromotionExecutorTest extends FrontendWebTestCase
                     'discountAmount' => 9.52,
                 ]
             ],
-// TODO uncomment after merge of BB-10808
-//            'case for fixed amount shipping discount, with profitable strategy, also covers shipping filtering' => [
-//                'enabledPromotions' => [
-//                    'promo_order_10_USD',
-//                    'promo_shipping_10_USD_unsupported_method',
-//                    'promo_shipping_10_USD_flat_rate_method',
-//                ],
-//                'strategy' => 'profitable',
-//                'expected' => [
-//                    'totalLineItemsDiscount' => 0.0,
-//                    'subtotalDiscountTotal' => 0.0,
-//                    'shippingDiscountTotal' => 20.0,
-//                    'discountAmount' => 20.0
-//                ]
-//            ],
-//            'case for percent shipping discount, with apply all strategy' => [
-//                'enabledPromotions' => [
-//                    'promo_order_10_USD',
-//                    'promo_shipping_10_USD_flat_rate_method',
-//                ],
-//                'strategy' => 'apply_all',
-//                'expected' => [
-//                    'totalLineItemsDiscount' => 0.0,
-//                    'subtotalDiscountTotal' => 10.0,
-//                    'shippingDiscountTotal' => 20.0,
-//                    'discountAmount' => 30.0
-//                ]
-//            ],
+            'case for fixed amount shipping discount, with profitable strategy, also covers shipping filtering' => [
+                'enabledPromotions' => [
+                    'promo_order_10_USD',
+                    'promo_shipping_10_USD_unsupported_method',
+                    'promo_shipping_20_USD_flat_rate_method',
+                ],
+                'strategy' => 'profitable',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 0.0,
+                    'shippingDiscountTotal' => 20.0,
+                    'discountAmount' => 20.0
+                ]
+            ],
+            'case for percent shipping discount, with apply all strategy' => [
+                'enabledPromotions' => [
+                    'promo_order_10_USD',
+                    'promo_shipping_20_USD_flat_rate_method',
+                ],
+                'strategy' => 'apply_all',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.0,
+                    'shippingDiscountTotal' => 20.0,
+                    'discountAmount' => 30.0
+                ]
+            ],
         ];
     }
 }

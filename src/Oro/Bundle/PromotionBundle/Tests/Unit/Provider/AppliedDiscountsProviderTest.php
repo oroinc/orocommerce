@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -66,7 +67,7 @@ class AppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($discounts, $this->provider->getDiscountsByOrder($order));
     }
 
-    public function testGetOrderDiscountAmount()
+    public function testGetDiscountsAmountByOrder()
     {
         /** @var Order $order */
         $order = $this->getEntity(Order::class, ['id' => 123]);
@@ -75,6 +76,7 @@ class AppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
         $discounts = [
             (new AppliedDiscount())->setAmount(1.1),
             (new AppliedDiscount())->setAmount(2.2),
+            (new AppliedDiscount())->setType(ShippingDiscount::NAME)->setAmount(2.2),
         ];
 
         $this->cache->expects($this->once())->method('contains')->willReturn(false);
@@ -85,6 +87,29 @@ class AppliedDiscountsProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($discounts);
 
         $this->assertSame($expectedAmount, $this->provider->getDiscountsAmountByOrder($order));
+    }
+
+    public function testGetShippingDiscountsAmountByOrder()
+    {
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, ['id' => 123]);
+
+        $expectedAmount = 4.4;
+        $discounts = [
+            (new AppliedDiscount())->setAmount(1.1),
+            (new AppliedDiscount())->setAmount(2.2),
+            (new AppliedDiscount())->setType(ShippingDiscount::NAME)->setAmount(2.2),
+            (new AppliedDiscount())->setType(ShippingDiscount::NAME)->setAmount(2.2),
+        ];
+
+        $this->cache->expects($this->once())->method('contains')->willReturn(false);
+
+        $this->repository->expects($this->once())
+            ->method('findByOrder')
+            ->with($order)
+            ->willReturn($discounts);
+
+        $this->assertSame($expectedAmount, $this->provider->getShippingDiscountsAmountByOrder($order));
     }
 
     public function testGetAppliedDiscountsForLineItem()

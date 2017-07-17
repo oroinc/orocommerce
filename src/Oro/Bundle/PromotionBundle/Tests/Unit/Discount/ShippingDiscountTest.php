@@ -2,21 +2,46 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
-use Oro\Bundle\PromotionBundle\Discount\OrderDiscount;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
-class OrderDiscountTest extends \PHPUnit_Framework_TestCase
+class ShippingDiscountTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var OrderDiscount
+     * @var ShippingDiscount
      */
     private $discount;
 
     protected function setUp()
     {
-        $this->discount = new OrderDiscount();
+        $this->discount = new ShippingDiscount();
+    }
+
+    /**
+     * @dataProvider invalidOptionsDataProvider
+     * @param array $options
+     */
+    public function testInvalidOptions(array $options)
+    {
+        $this->expectException(InvalidOptionsException::class);
+        $this->discount->configure($options);
+    }
+
+    /**
+     * @return array
+     */
+    public function invalidOptionsDataProvider(): array
+    {
+        return [
+            'invalid SHIPPING_OPTIONS type' => [
+                [
+                    ShippingDiscount::SHIPPING_OPTIONS => 1.0,
+                ],
+            ],
+        ];
     }
 
     public function testApply()
@@ -25,13 +50,13 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
 
         $options = [
             AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.2
+            AbstractDiscount::DISCOUNT_VALUE => 0.2,
         ];
         $this->discount->configure($options);
 
         $this->discount->apply($discountContext);
-        $this->assertCount(1, $discountContext->getSubtotalDiscounts());
-        $this->assertEquals($this->discount, $discountContext->getSubtotalDiscounts()[0]);
+        $this->assertCount(1, $discountContext->getShippingDiscounts());
+        $this->assertEquals($this->discount, $discountContext->getShippingDiscounts()[0]);
     }
 
     public function testCalculateNonSupportedEntity()
@@ -51,19 +76,19 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
      * @dataProvider calculateDataProvider
      *
      * @param array $options
-     * @param float $subtotal
-     * @param float $expected
+     * @param float $shippingCost
+     * @param float $expectedDiscount
      */
-    public function testCalculate(array $options, $subtotal, $expected)
+    public function testCalculate(array $options, $shippingCost, $expectedDiscount)
     {
-        $entity = $this->createMock(SubtotalAwareInterface::class);
+        $entity = $this->createMock(ShippingAwareInterface::class);
         $entity->expects($this->any())
-            ->method('getSubtotal')
-            ->willReturn($subtotal);
+            ->method('getShippingCost')
+            ->willReturn($shippingCost);
 
         $this->discount->configure($options);
 
-        $this->assertSame($expected, $this->discount->calculate($entity));
+        $this->assertSame($expectedDiscount, $this->discount->calculate($entity));
     }
 
     /**
@@ -72,31 +97,31 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
     public function calculateDataProvider(): array
     {
         return [
-            'fixed amount > subtotal' => [
-                [
+            'fixed amount > shipping cost' => [
+                'options' => [
                     AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
                     AbstractDiscount::DISCOUNT_VALUE => 100.2,
                     AbstractDiscount::DISCOUNT_CURRENCY => 'EUR'
                 ],
-                100.0,
-                100.0
+                'shippingCost' => 100.0,
+                'expectedDiscount' => 100.0
             ],
-            'fixed amount < subtotal' => [
-                [
+            'fixed amount < shipping cost' => [
+                'options' => [
                     AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
                     AbstractDiscount::DISCOUNT_VALUE => 100.2,
                     AbstractDiscount::DISCOUNT_CURRENCY => 'EUR'
                 ],
-                200.0,
-                100.2
+                'shippingCost' => 200.0,
+                'expectedDiscount' => 100.2
             ],
             'percent' => [
-                [
+                'options' => [
                     AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
                     AbstractDiscount::DISCOUNT_VALUE => 0.2
                 ],
-                100.0,
-                20.0
+                'shippingCost' => 100.0,
+                'expectedDiscount' => 20.0
             ]
         ];
     }

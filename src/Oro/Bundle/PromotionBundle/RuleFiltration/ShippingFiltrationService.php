@@ -13,8 +13,6 @@ use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
  */
 class ShippingFiltrationService implements RuleFiltrationServiceInterface
 {
-    const SHIPPING_DISCOUNT_TYPE = 'shipping';
-
     /**
      * @var RuleFiltrationServiceInterface
      */
@@ -46,7 +44,7 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
                             return false;
                         }
 
-                        if ($ruleOwner->getDiscountConfiguration()->getType() !== self::SHIPPING_DISCOUNT_TYPE) {
+                        if ($ruleOwner->getDiscountConfiguration()->getType() !== ShippingDiscount::NAME) {
                             return true;
                         }
 

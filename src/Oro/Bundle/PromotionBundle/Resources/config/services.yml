@@ -111,6 +111,7 @@ services:
             - ['addType', ['order', 'oro_promotion.discount.order_discount']]
             - ['addType', ['line_item', 'oro_promotion.discount.line_item_discount']]
             - ['addType', ['buy_x_get_y', 'oro_promotion.discount.buy_x_get_y_discount']]
+            - ['addType', ['shipping', 'oro_promotion.discount.shipping_discount']]
 
     oro_promotion.discount.context_converter.registry:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
@@ -268,14 +269,10 @@ services:
     oro_promotion.discount.order_discount:
         class: Oro\Bundle\PromotionBundle\Discount\OrderDiscount
         shared: false
-        arguments:
-            - '@oro_promotion.discount.shipping_discount'
 
     oro_promotion.discount.line_item_discount:
         class: Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount
         shared: false
-        arguments:
-            - '@oro_promotion.discount.shipping_discount'
 
     oro_promotion.discount.buy_x_get_y_discount:
         class: Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount
