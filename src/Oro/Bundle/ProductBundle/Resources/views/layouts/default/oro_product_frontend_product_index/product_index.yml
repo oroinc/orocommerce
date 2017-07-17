@@ -27,3 +27,8 @@ layout:
             parentId: top_sticky_panel_content
             siblingId: sticky_header_row
             blockType: block
+
+        - '@add':
+            id: product_require_js_config
+            parentId: require_js
+            blockType: block

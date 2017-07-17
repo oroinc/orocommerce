@@ -53,7 +53,6 @@ product3:
     shortDescriptions:
         - { reference: product-3.shortDescriptions.default, text: product-3.shortDescriptions.default }
     featured: true
-    related_products: [product-1, product-2]
 product4:
     productCode: product-4
     inventoryStatus: discontinued
@@ -70,8 +69,7 @@ product4:
         - { reference: product-4.descriptions.default, text: product-4.descriptions.default }
     shortDescriptions:
         - { reference: product-4.shortDescriptions.default, text: product-4.shortDescriptions.default }
-    featured: true,
-    related_products: [product-3]
+    featured: true
 product5:
     productCode: product-5
     inventoryStatus: in_stock
