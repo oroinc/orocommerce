@@ -3,5 +3,5 @@ include:
     - '@OroCheckoutBundle:Shipping.yml'
     - '@OroCheckoutBundle:CheckoutCustomerFixture.yml'
     - '@OroCheckoutBundle:CheckoutProductFixture.yml'
-    - '@OroCheckoutBundle:CheckoutShippingListFixture.yml'
+    - '@OroCheckoutBundle:CheckoutShoppingListFixture.yml'
     - '@OroCheckoutBundle:CheckoutQuoteFixture.yml'

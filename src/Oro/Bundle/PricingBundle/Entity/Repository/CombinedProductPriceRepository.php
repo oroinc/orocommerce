@@ -436,4 +436,20 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
            ->getQuery()
            ->execute();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getPriceListIdsByProduct(Product $product)
+    {
+        $qb = $this->createQueryBuilder('productToPriceList');
+
+        $result = $qb->select('DISTINCT IDENTITY(productToPriceList.priceList) as priceListId')
+            ->where('productToPriceList.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map('current', $result);
+    }
 }

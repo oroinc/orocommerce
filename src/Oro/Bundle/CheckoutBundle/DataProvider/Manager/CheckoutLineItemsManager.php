@@ -36,16 +36,16 @@ class CheckoutLineItemsManager
 
     /**
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
-     * @param UserCurrencyManager $UserCurrencyManager
+     * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
      */
     public function __construct(
         CheckoutLineItemsConverter $checkoutLineItemsConverter,
-        UserCurrencyManager $UserCurrencyManager,
+        UserCurrencyManager $userCurrencyManager,
         ConfigManager $configManager
     ) {
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
-        $this->userCurrencyManager = $UserCurrencyManager;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
     }
 
@@ -60,15 +60,19 @@ class CheckoutLineItemsManager
     /**
      * @param CheckoutInterface $checkout
      * @param bool $disablePriceFilter
+     * @param string $configVisibilityPath
      * @return Collection|OrderLineItem[]
      */
-    public function getData(CheckoutInterface $checkout, $disablePriceFilter = false)
-    {
+    public function getData(
+        CheckoutInterface $checkout,
+        $disablePriceFilter = false,
+        $configVisibilityPath = 'oro_order.frontend_product_visibility'
+    ) {
         $entity = $checkout->getSourceEntity();
         $currency = $this->userCurrencyManager->getUserCurrency();
+        $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($entity)) {
-                $supportedStatuses = $this->getSupportedStatuses();
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
                 if (!$disablePriceFilter) {
                     $lineItems = $lineItems->filter(
@@ -99,12 +103,13 @@ class CheckoutLineItemsManager
     }
 
     /**
+     * @param string $configVisibilityPath
      * @return array
      */
-    protected function getSupportedStatuses()
+    protected function getSupportedStatuses($configVisibilityPath)
     {
         $supportedStatuses = [];
-        foreach ((array)$this->configManager->get('oro_order.frontend_product_visibility') as $status) {
+        foreach ((array)$this->configManager->get($configVisibilityPath) as $status) {
             $supportedStatuses[$status] = true;
         }
 
