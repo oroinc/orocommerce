@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -16,6 +18,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
 {
+    const USER_ID = 777;
+    const ORGANIZATION_ID = 555;
+    const WEBSITE_ID = 888;
+
     use EntityTrait;
 
     /** @var ShoppingListLimitManager */
@@ -123,6 +129,106 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->shoppingListLimitManager->isCreateEnabled());
     }
 
+    public function testIsCreateEnabledForUserNotLimitSet()
+    {
+        $user = $this->createMock(CustomerUser::class);
+
+        $website = new Website();
+        $user->expects($this->once())
+            ->method('getWebsite')
+            ->willReturn($website);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.shopping_list_limit', false, false, $website)
+            ->willReturn(0);
+
+        $this->assertEquals(true, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+    }
+
+    public function testIsCreateEnabledForUserLimitSet()
+    {
+        $user = $this->createMock(CustomerUser::class);
+        $organization = $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]);
+        $user->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
+        $website = new Website();
+        $user->expects($this->once())
+            ->method('getWebsite')
+            ->willReturn($website);
+
+        $user->expects($this->once())
+            ->method('getId')
+            ->willReturn(self::USER_ID);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.shopping_list_limit', false, false, $website)
+            ->willReturn(5);
+
+        $repository = $this->getMockBuilder(ShoppingListRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->once())
+            ->method('countUserShoppingLists')
+            ->with(self::USER_ID, self::ORGANIZATION_ID)
+            ->willReturn(4);
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(ShoppingList::class)
+            ->willReturn($repository);
+
+        $this->assertEquals(true, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+    }
+
+    public function testIsCreateEnabledForUserLimitReached()
+    {
+        $user = $this->createMock(CustomerUser::class);
+        $organization = $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]);
+        $user->expects($this->once())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
+        $website = new Website();
+        $user->expects($this->once())
+            ->method('getWebsite')
+            ->willReturn($website);
+
+        $user->expects($this->once())
+            ->method('getId')
+            ->willReturn(self::USER_ID);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.shopping_list_limit', false, false, $website)
+            ->willReturn(5);
+
+        $repository = $this->getMockBuilder(ShoppingListRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->once())
+            ->method('countUserShoppingLists')
+            ->with(self::USER_ID, self::ORGANIZATION_ID)
+            ->willReturn(5);
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(ShoppingList::class)
+            ->willReturn($repository);
+
+        $this->assertEquals(false, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+    }
+
     public function testIsOnlyOneEnabledNotLoggedUser()
     {
         $this->tokenAccessor
@@ -190,9 +296,9 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
      */
     private function configureCount($count)
     {
-        $organization = $this->getEntity(Organization::class, ['id' => 555]);
+        $organization = $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]);
         /** @var User $user */
-        $user = $this->getEntity(User::class, ['id' => 777]);
+        $user = $this->getEntity(User::class, ['id' => self::USER_ID]);
         $user->setOrganization($organization);
 
         $this->tokenAccessor->expects($this->once())
@@ -205,7 +311,7 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->once())
             ->method('countUserShoppingLists')
-            ->with(777, 555)
+            ->with(self::USER_ID, self::ORGANIZATION_ID)
             ->willReturn($count);
 
         $this->doctrineHelper
