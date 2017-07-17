@@ -93,7 +93,7 @@ define(function(require) {
             ShoppingListCollectionService.shoppingListCollection.done((function(collection) {
                 this.shoppingListCollection = collection;
                 this.listenTo(collection, 'change', this.render);
-                ProductShoppingListsWidget.__super__.initialize.apply(this, arguments);
+                ProductShoppingListsWidget.__super__.initialize.call(this, options);
             }).bind(this));
         },
 

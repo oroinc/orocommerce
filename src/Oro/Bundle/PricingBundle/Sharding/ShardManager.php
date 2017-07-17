@@ -75,10 +75,14 @@ class ShardManager implements \Serializable
      * @param string $className
      * @param array $attributes
      * @return string
-     * @throws \Exception
+     * @throws \Oro\Bundle\PricingBundle\Sharding\EntityNotSupportsShardingException
      */
     public function getShardName($className, array $attributes)
     {
+        if (!array_key_exists($className, $this->getShardMap())) {
+            throw new EntityNotSupportsShardingException('Entity ' . $className . ' wasn\'t registered for sharding');
+        }
+
         $baseTableName = $this->getEntityBaseTable($className);
         $discValue = $this->getDiscriminationValue($className, $attributes);
 
@@ -335,16 +339,14 @@ class ShardManager implements \Serializable
 
     /**
      * @param string $className
-     * @return string mixed
-     * @throws \Exception
+     *
+     * @return string
      */
     public function getEntityBaseTable($className)
     {
-        if (!array_key_exists($className, $this->getShardMap())) {
-            throw new \Exception('Entity ' . $className . ' wasn\'t registered for sharding');
-        }
+        $metadata = $this->getEntityManager()->getClassMetadata($className);
 
-        return $this->getShardMap()[$className];
+        return $metadata->getTableName();
     }
 
     /**

@@ -114,6 +114,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         owner: '@admin'
         setDefaults: ['@shippingType', '@billingType']
         systemOrganization: '@organization'
+        organization: '@organization'
         primary: true
 
 Oro\Bundle\PricingBundle\Entity\PriceList:

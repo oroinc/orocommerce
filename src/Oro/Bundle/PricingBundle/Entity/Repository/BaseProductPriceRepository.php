@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\Sharding\EntityNotSupportsShardingException;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -47,8 +48,12 @@ abstract class BaseProductPriceRepository extends EntityRepository
         foreach ($priceLists as $priceListId) {
             $sql = $qb->getQuery()->getSQL();
             $baseTableName = ' ' . $shardManager->getEntityBaseTable($this->getClassName()) . ' ';
-            $shardName = $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceListId]);
-            $tableName = ' ' . $shardName . ' ';
+            try {
+                $shardName = $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceListId]);
+                $tableName = ' ' . $shardName . ' ';
+            } catch (EntityNotSupportsShardingException $ex) {
+                $tableName = $baseTableName;
+            }
             $sql = str_replace($baseTableName, $tableName, $sql);
             $this->_em->getConnection()->executeQuery($sql, [$priceListId, $unit, $product->getId()]);
         }
@@ -543,19 +548,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
      * @param Product $product
      * @return array|int[]
      */
-    private function getPriceListIdsByProduct(Product $product)
-    {
-        $qb = $this->_em->createQueryBuilder();
-
-        $result = $qb->select('IDENTITY(productToPriceList.priceList) as priceListId')
-            ->from(PriceListToProduct::class, 'productToPriceList')
-            ->where('productToPriceList.product = :product')
-            ->setParameter('product', $product)
-            ->getQuery()
-            ->getScalarResult();
-
-        return array_map('current', $result);
-    }
+    abstract protected function getPriceListIdsByProduct(Product $product);
 
     /**
      * @param ShardManager $shardManager

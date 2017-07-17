@@ -27,6 +27,7 @@ class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtu
             'region' => 'US-IN',
             'street' => '2413 Capitol Avenue',
             'postalCode' => '47981',
+            'organization' => 'test org',
         ]
     ];
 
@@ -85,7 +86,8 @@ class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtu
             ->setCity($address['city'])
             ->setRegion($region)
             ->setStreet($address['street'])
-            ->setPostalCode($address['postalCode']);
+            ->setPostalCode($address['postalCode'])
+            ->setOrganization($address['organization']);
         $manager->persist($orderAddress);
         $this->addReference($name, $orderAddress);
 
