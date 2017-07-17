@@ -12,7 +12,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
+class LoadShoppingListsData extends AbstractFixture implements DependentFixtureInterface
 {
     const PROMOTION_SHOPPING_LIST = 'promo_shopping_list';
 
