@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -19,6 +21,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
 {
+    const USER_ID = 777;
+    const ORGANIZATION_ID = 555;
+    const WEBSITE_ID = 888;
+
     use EntityTrait;
 
     /** @var ShoppingListLimitManager */
@@ -269,9 +275,9 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
      */
     private function configureCount($count)
     {
-        $organization = $this->getEntity(Organization::class, ['id' => 555]);
+        $organization = $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]);
         /** @var User $user */
-        $user = $this->getEntity(User::class, ['id' => 777]);
+        $user = $this->getEntity(User::class, ['id' => self::USER_ID]);
         $user->setOrganization($organization);
 
         $this->tokenAccessor->expects($this->once())
@@ -284,7 +290,7 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->once())
             ->method('countUserShoppingLists')
-            ->with(777, 555)
+            ->with(self::USER_ID, self::ORGANIZATION_ID)
             ->willReturn($count);
 
         $this->doctrineHelper

@@ -121,6 +121,30 @@ Feature: Duplicate Lists
       |SKU1|10      |item|
       |SKU2|11      |item|
 
+  Scenario: Backend - user with permissions does not able to duplicate guest shopping list
+    Given I login as administrator
+    And I login as "Charlie1@example.com" user
+    And go to Sales/ Shopping Lists
+    When I click view "Guest Shopping List" in grid
+    Then I should not see following buttons:
+      |Duplicate List|
+
+  Scenario: Backend - user with permissions does not able to duplicate shopping list for customer user when limit reached
+    Given I login as administrator
+    And I go to System/Configuration
+    And I click "Commerce" on configuration sidebar
+    And I click "Sales" on configuration sidebar
+    And I click "Shopping List" on configuration sidebar
+    And uncheck Use Default for "Shopping List Limit" field
+    And I fill in "Shopping List Limit" with "1"
+    And I save setting
+    And I should see "Configuration saved" flash message
+    And I login as "Charlie1@example.com" user
+    And go to Sales/ Shopping Lists
+    When I click view "Lorem ipsum dolor" in grid
+    Then I should not see following buttons:
+      |Duplicate List|
+
   Scenario: Shopping list title limit
     Given I proceed as the User
     And click "Delete"
