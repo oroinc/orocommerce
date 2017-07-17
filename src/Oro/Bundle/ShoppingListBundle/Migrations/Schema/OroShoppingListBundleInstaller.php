@@ -30,7 +30,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -288,6 +288,29 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
                     'cascade' => ['all'],
+                ]
+            ]
+        );
+
+        // Column names are used to show a title of target entity
+        $tableTitleColumnNames = $table->getPrimaryKeyColumns();
+        // Column names are used to show detailed info about target entity
+        $tableDetailedColumnNames = $table->getPrimaryKeyColumns();
+        // Column names are used to show target entity in a grid
+        $tableGridColumnNames = $table->getPrimaryKeyColumns();
+
+        $this->extendExtension->addManyToManyInverseRelation(
+            $schema,
+            $table,
+            'shoppingLists',
+            $targetTable,
+            'visitors',
+            $tableTitleColumnNames,
+            $tableDetailedColumnNames,
+            $tableGridColumnNames,
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM
                 ]
             ]
         );

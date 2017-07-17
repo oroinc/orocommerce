@@ -168,16 +168,6 @@ class ShoppingList extends ExtendShoppingList implements
     protected $totals;
 
     /**
-     * @var ArrayCollection|ShoppingListTotal[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor",
-     *      mappedBy="shoppingLists"
-     * )
-     **/
-    protected $visitors;
-
-    /**
      * @var Subtotal
      */
     protected $subtotal;
@@ -191,7 +181,6 @@ class ShoppingList extends ExtendShoppingList implements
 
         $this->lineItems = new ArrayCollection();
         $this->totals = new ArrayCollection();
-        $this->visitors = new ArrayCollection();
     }
 
     /**
@@ -431,11 +420,11 @@ class ShoppingList extends ExtendShoppingList implements
      */
     public function getVisitor()
     {
-        if ($this->visitors->isEmpty()) {
+        if ($this->getVisitors()->isEmpty()) {
             return null;
         }
 
-        return $this->visitors->current();
+        return $this->getVisitors()->current();
     }
 
     /**
