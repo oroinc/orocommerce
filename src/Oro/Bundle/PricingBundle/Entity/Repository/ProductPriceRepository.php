@@ -306,4 +306,21 @@ class ProductPriceRepository extends BaseProductPriceRepository
 
         return $this->uuidGenerator;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getPriceListIdsByProduct(Product $product)
+    {
+        $qb = $this->_em->createQueryBuilder();
+
+        $result = $qb->select('IDENTITY(productToPriceList.priceList) as priceListId')
+            ->from(PriceListToProduct::class, 'productToPriceList')
+            ->where('productToPriceList.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map('current', $result);
+    }
 }

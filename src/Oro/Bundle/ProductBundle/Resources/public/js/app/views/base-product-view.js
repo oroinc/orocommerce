@@ -12,8 +12,8 @@ define(function(require) {
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
-            quantity: '[data-name="field__quantity"]',
-            unit: '[data-name="field__unit"]',
+            quantity: '[data-name="field__quantity"]:first',
+            unit: '[data-name="field__unit"]:first',
             lineItem: '[data-role="line-item-form-container"]',
             lineItemFields: ['lineItem', ':input[data-name]']
         },
@@ -58,9 +58,6 @@ define(function(require) {
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
-            if (options.productModel) {
-                this.model = options.productModel;
-            }
             if (!this.model) {
                 this.model = (_.isObject(this.collection) && this.collection.get(this.rowId)) ?
                                 this.collection.get(this.rowId) : new BaseModel();

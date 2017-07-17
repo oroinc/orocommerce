@@ -94,6 +94,12 @@ oro_behat_extension:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals
       selector: '.order-checkout-widget__container'
 
+    In Shopping List:
+      selector: 'a.shopping-lists__area-trigger'
+
+    Add To Shopping List:
+      selector: 'a.add-to-shopping-list-button'
+
   suites:
     OroShoppingListBundle:
       contexts:
