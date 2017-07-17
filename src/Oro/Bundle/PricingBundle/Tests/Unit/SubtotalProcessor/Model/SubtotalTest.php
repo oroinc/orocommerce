@@ -34,10 +34,24 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
                 'amount' => $subtotal->getAmount(),
                 'currency' => $subtotal->getCurrency(),
                 'visible' => $subtotal->isVisible(),
-                'data' => $subtotal->getData()
+                'data' => $subtotal->getData(),
+                'signedAmount' => $subtotal->getSignedAmount(),
             ],
             $subtotal->toArray()
         );
+    }
+
+    public function testGetSignedAmount()
+    {
+        $subtotal = new Subtotal();
+        $this->assertEquals(0.0, $subtotal->getAmount());
+        $subtotal->setAmount(10);
+
+        $this->assertEquals(10, $subtotal->getSignedAmount());
+
+        $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
+
+        $this->assertEquals(-10, $subtotal->getSignedAmount());
     }
 
     public function testGetTotalPrice()

@@ -209,6 +209,7 @@ class Subtotal
             'type' => $this->getType(),
             'label' => $this->getLabel(),
             'amount' => $this->getAmount(),
+            'signedAmount' => $this->getSignedAmount(),
             'currency' => $this->getCurrency(),
             'visible' => $this->isVisible(),
             'data' => $this->getData(),
@@ -221,5 +222,18 @@ class Subtotal
     public function getTotalPrice()
     {
         return (new Price())->setCurrency($this->getCurrency())->setValue($this->getAmount());
+    }
+
+    /**
+     * If operation is subtraction than negative amount is returned, otherwise positive amount is returned.
+     * @return float
+     */
+    public function getSignedAmount()
+    {
+        if ($this->amount && $this->getOperation() === self::OPERATION_SUBTRACTION) {
+            return -$this->amount;
+        }
+
+        return $this->amount;
     }
 }

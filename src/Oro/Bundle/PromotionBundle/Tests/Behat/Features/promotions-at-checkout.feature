@@ -20,8 +20,8 @@ Feature: Promotions at Checkout
       | SKU2 | $5.00    |
       | SKU1 |          |
     And I see next subtotals for "Checkout Step":
-      | Subtotal | Amount |
-      | Discount | $12.50 |
+      | Subtotal | Amount  |
+      | Discount | -$12.50 |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Shipping Information Checkout's step
@@ -31,8 +31,8 @@ Feature: Promotions at Checkout
       | SKU2 | $5.00    |
       | SKU1 |          |
     And I see next subtotals for "Checkout Step":
-      | Subtotal | Amount |
-      | Discount | $12.50 |
+      | Subtotal | Amount  |
+      | Discount | -$12.50 |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Shipping Method Checkout's step
@@ -42,8 +42,8 @@ Feature: Promotions at Checkout
       | SKU2 | $5.00    |
       | SKU1 |          |
     And I see next subtotals for "Checkout Step":
-      | Subtotal | Amount |
-      | Discount | $12.50 |
+      | Subtotal | Amount  |
+      | Discount | -$12.50 |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Payment Checkout's step
@@ -53,8 +53,8 @@ Feature: Promotions at Checkout
       | SKU2 | $5.00    |
       | SKU1 |          |
     And I see next subtotals for "Checkout Step":
-      | Subtotal | Amount |
-      | Discount | $12.50 |
+      | Subtotal | Amount  |
+      | Discount | -$12.50 |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Order Review Checkout's step
@@ -64,8 +64,8 @@ Feature: Promotions at Checkout
       | SKU2 | $5.00    |
       | SKU1 |          |
     And I see next subtotals for "Checkout Step":
-      | Subtotal | Amount |
-      | Discount | $12.50 |
+      | Subtotal | Amount  |
+      | Discount | -$12.50 |
     Then I click "Submit Order"
       And I follow "click here to review"
 
@@ -77,5 +77,5 @@ Feature: Promotions at Checkout
       | SKU2 | $5.00                       |
       | SKU1 | $0.00                       |
     And I see next subtotals for "Order":
-      | Subtotal | Amount |
-      | Discount | $12.50 |
+      | Subtotal | Amount  |
+      | Discount | -$12.50 |

@@ -42,12 +42,12 @@ Feature: Promotions in Order page
       | SKU2 | $5.00              | $5.00              | $5.00    |
     And I click "Order Totals"
     And I see next subtotals for "Backend Order":
-      | Subtotal | Amount |
-      | Subtotal | $20.00 |
-      | Discount | $12.50 |
-      | Shipping | $3.00  |
+      | Subtotal | Amount  |
+      | Subtotal | $20.00  |
+      | Discount | -$12.50 |
+      | Shipping | $3.00   |
 # TODO uncomment after fix of BB-10620
-#      | Total    | $10.50 |
+#      | Total   | $10.50  |
 
   Scenario: Check that applied discounts are shown on frontend order view page
     Given I operate as the Buyer
@@ -62,11 +62,11 @@ Feature: Promotions in Order page
       | Product 2 Item #: SKU2 | $5.00 |
       | Product 1 Item #: SKU1 | $0.00 |
     And I see next subtotals for "Order":
-      | Subtotal | Amount |
-      | Subtotal | $20.00 |
-      | Discount | $12.50 |
-      | Shipping | $3.00  |
-      | Total    | $10.50 |
+      | Subtotal | Amount  |
+      | Subtotal | $20.00  |
+      | Discount | -$12.50 |
+      | Shipping | $3.00   |
+      | Total    | $10.50  |
 
   Scenario: Change product's quantity and check that after saving without discount recalculation discount amount hasn't changed
     Given I operate as the Admin
@@ -82,12 +82,12 @@ Feature: Promotions in Order page
       | Amount  | $7.50 |
     And I click "Order Totals"
     And I see next subtotals for "Backend Order":
-      | Subtotal | Amount |
-      | Subtotal | $20.00 |
-      | Discount | $12.50 |
-      | Shipping | $3.00  |
+      | Subtotal | Amount  |
+      | Subtotal | $20.00  |
+      | Discount | -$12.50 |
+      | Shipping | $3.00   |
 # TODO uncomment after fix of BB-10620
-#      | Total    | $10.50 |
+#      | Total   | $10.50  |
     When I save order without discounts recalculation
     And I click "Edit"
     Then I should see "line Item Discount Promotion" in "Order Promotions Grid" with following data:
@@ -100,12 +100,12 @@ Feature: Promotions in Order page
       | SKU2 | $1.00              | $1.00              | $5.00    |
     And I click "Order Totals"
     And I see next subtotals for "Backend Order":
-      | Subtotal | Amount |
-      | Subtotal | $16.00 |
-      | Discount | $12.50 |
-      | Shipping | $3.00  |
+      | Subtotal | Amount  |
+      | Subtotal | $16.00  |
+      | Discount | -$12.50 |
+      | Shipping | $3.00   |
 # TODO uncomment after fix of BB-10620
-#      | Total    | $6.50 |
+#      | Total   | $6.50   |
 
   Scenario: Check that applied discounts amounts haven't changed on frontend order view page and right total displayed in orders' grid
     Given I operate as the Buyer
@@ -120,11 +120,11 @@ Feature: Promotions in Order page
       | Product 2 Item #: SKU2 | $5.00 |
       | Product 1 Item #: SKU1 | $0.00 |
     And I see next subtotals for "Order":
-      | Subtotal | Amount |
-      | Subtotal | $16.00 |
-      | Discount | $12.50 |
-      | Shipping | $3.00  |
-      | Total    | $6.50  |
+      | Subtotal | Amount  |
+      | Subtotal | $16.00  |
+      | Discount | -$12.50 |
+      | Shipping | $3.00   |
+      | Total    | $6.50   |
 
   Scenario: Change products quantity and check that after form saving discount amount has changed
     Given I operate as the Admin
@@ -141,10 +141,10 @@ Feature: Promotions in Order page
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
       | Subtotal | $16.00 |
-      | Discount | $9.50  |
+      | Discount | -$9.50 |
       | Shipping | $3.00  |
 # TODO uncomment after fix of BB-10620
-#      | Total    | $9.50  |
+#      | Total   | $9.50  |
 
   Scenario: Check that applied discounts amounts have changed on frontend order view page
     Given I operate as the Buyer
@@ -161,6 +161,6 @@ Feature: Promotions in Order page
     And I see next subtotals for "Order":
       | Subtotal | Amount |
       | Subtotal | $16.00 |
-      | Discount | $9.50  |
+      | Discount | -$9.50 |
       | Shipping | $3.00  |
       | Total    | $9.50  |
