@@ -7,6 +7,7 @@ oro_behat_extension:
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - OroDataGridBundle::GridContext
+        - OroCustomerBundle::FrontendGridContext
         - OroFormBundle::FormContext
         - OroActivityListBundle::ActivityContext
         - OroApplicationBundle::CommerceMainContext
@@ -41,3 +42,7 @@ oro_behat_extension:
       selector:
         locator: '#sales-contact-info'
         type: css
+
+    AllQuotes:
+      selector: 'div[data-page-component-name="frontend-quotes-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

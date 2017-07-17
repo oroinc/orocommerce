@@ -33,4 +33,24 @@ abstract class AbstractRelatedItemConfigProvider
      * @return bool
      */
     abstract public function isBidirectional();
+
+    /**
+     * @return int
+     */
+    abstract public function getMinimumItems();
+
+    /**
+     * @return int
+     */
+    abstract public function getMaximumItems();
+
+    /**
+     * @return bool
+     */
+    abstract public function isSliderEnabledOnMobile();
+
+    /**
+     * @return bool
+     */
+    abstract public function isAddButtonVisible();
 }

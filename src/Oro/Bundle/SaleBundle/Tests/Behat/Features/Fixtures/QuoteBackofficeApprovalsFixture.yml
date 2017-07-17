@@ -1,5 +1,5 @@
 include:
-    -  QuoteBackofficeDefaultFixture.yml
+    -  '@OroSaleBundle:QuoteBackofficeDefaultFixture.yml'
 
 Oro\Bundle\UserBundle\Entity\User:
   john:
