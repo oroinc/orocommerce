@@ -147,22 +147,22 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
     }
 
-    public function testIsCreateEnabledForUserLimitSet()
+    /**
+     * @dataProvider isCreateEnabledForUserDataProvider
+     * @param integer $actualShoppingListCount
+     * @param bool    $result
+     */
+    public function testIsCreateEnabledForUser($actualShoppingListCount, $result)
     {
-        $user = $this->createMock(CustomerUser::class);
-        $organization = $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]);
-        $user->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-
         $website = new Website();
-        $user->expects($this->once())
-            ->method('getWebsite')
-            ->willReturn($website);
-
-        $user->expects($this->once())
-            ->method('getId')
-            ->willReturn(self::USER_ID);
+        $user = $this->getEntity(
+            CustomerUser::class,
+            [
+                'id' => self::USER_ID,
+                'organization' => $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]),
+                'website' => $website,
+            ]
+        );
 
         $this->configManager
             ->expects($this->once())
@@ -174,59 +174,35 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository->expects($this->once())
-            ->method('countUserShoppingLists')
-            ->with(self::USER_ID, self::ORGANIZATION_ID)
-            ->willReturn(4);
-
         $this->doctrineHelper
             ->expects($this->once())
             ->method('getEntityRepository')
             ->with(ShoppingList::class)
             ->willReturn($repository);
 
-        $this->assertEquals(true, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+        $repository->expects($this->once())
+            ->method('countUserShoppingLists')
+            ->with(self::USER_ID, self::ORGANIZATION_ID)
+            ->willReturn($actualShoppingListCount);
+
+        $this->assertEquals($result, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
     }
 
-    public function testIsCreateEnabledForUserLimitReached()
+    /**
+     * @return array
+     */
+    public function isCreateEnabledForUserDataProvider()
     {
-        $user = $this->createMock(CustomerUser::class);
-        $organization = $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]);
-        $user->expects($this->once())
-            ->method('getOrganization')
-            ->willReturn($organization);
-
-        $website = new Website();
-        $user->expects($this->once())
-            ->method('getWebsite')
-            ->willReturn($website);
-
-        $user->expects($this->once())
-            ->method('getId')
-            ->willReturn(self::USER_ID);
-
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_shopping_list.shopping_list_limit', false, false, $website)
-            ->willReturn(5);
-
-        $repository = $this->getMockBuilder(ShoppingListRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository->expects($this->once())
-            ->method('countUserShoppingLists')
-            ->with(self::USER_ID, self::ORGANIZATION_ID)
-            ->willReturn(5);
-
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(ShoppingList::class)
-            ->willReturn($repository);
-
-        $this->assertEquals(false, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+        return [
+            'shopping list limit set' => [
+                'actualShoppingListCount' => 4,
+                'result' => true,
+            ],
+            'shopping list limit reached' => [
+                'actualShoppingListCount' => 5,
+                'result' => false,
+            ],
+        ];
     }
 
     public function testIsOnlyOneEnabledNotLoggedUser()
