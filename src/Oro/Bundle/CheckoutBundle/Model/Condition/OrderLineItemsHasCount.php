@@ -14,15 +14,13 @@ class OrderLineItemsHasCount extends AbstractCondition implements ContextAccesso
     use ContextAccessorAwareTrait;
 
     const NAME = 'order_line_item_has_count';
+    const CONFIG_VISIBILITY_PATH_ORDER = 'oro_order.frontend_product_visibility';
+    const CONFIG_VISIBILITY_PATH_RFP = 'oro_rfp.frontend_product_visibility';
 
-    /**
-     * @var
-     */
+    /** @var CheckoutInterface */
     protected $entity;
 
-    /**
-     * @var CheckoutLineItemsManager
-     */
+    /** @var CheckoutLineItemsManager */
     protected $checkoutLineItemsManager;
 
     /**
@@ -41,18 +39,28 @@ class OrderLineItemsHasCount extends AbstractCondition implements ContextAccesso
         $entity = $this->resolveValue($context, $this->entity);
 
         if (!$entity instanceof CheckoutInterface) {
-            throw new Exception\InvalidArgumentException(
-                'Entity must implement Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface'
-            );
+            throw new Exception\InvalidArgumentException(sprintf('Entity must implement %s', CheckoutInterface::class));
         }
-        $lineItems = $this->checkoutLineItemsManager->getData($entity);
-        return count($lineItems) > 0;
+        $lineItems = $this->checkoutLineItemsManager->getData($entity, false, static::CONFIG_VISIBILITY_PATH_ORDER);
+        $result = !$lineItems->isEmpty();
+
+        if (!$result) {
+            $lineItemsForRfp = $this->checkoutLineItemsManager->getData(
+                $entity,
+                false,
+                static::CONFIG_VISIBILITY_PATH_RFP
+            );
+            $message = $lineItemsForRfp->isEmpty()
+                ? 'oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message'
+                : 'oro.checkout.workflow.condition.order_line_item_has_count_allow_rfp.message';
+            $this->setMessage($message);
+        }
+
+        return $result;
     }
 
     /**
-     * Returns the expression name.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
