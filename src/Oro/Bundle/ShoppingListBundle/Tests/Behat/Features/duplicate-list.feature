@@ -76,7 +76,7 @@ Feature: Duplicate Lists
     Then I should see following buttons:
       |Duplicate List|
     When click "Duplicate List"
-    Then should see 'Shopping list "My Shopping List" has been duplicated' flash message
+    Then should see 'The shopping list has been duplicated' flash message
     And should see "My Shopping List (copied"
     And I should see following line items in "Shopping List Line Items Table":
       |SKU |Quantity|Unit|
@@ -105,7 +105,7 @@ Feature: Duplicate Lists
     Then I should see following buttons:
       |Duplicate List|
     And click "Duplicate List"
-    Then should see 'Shopping list "Main Shopping List" has been duplicated' flash message
+    Then should see 'The shopping list has been duplicated' flash message
     And should see "Main Shopping List (copied"
     And should see following grid:
       |SKU |Product |Quantity|Unit|
