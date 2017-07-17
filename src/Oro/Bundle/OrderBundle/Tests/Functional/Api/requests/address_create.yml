@@ -8,7 +8,7 @@ data:
         street2:
         city: 'Rochester'
         postalCode: '14608'
-        organization:
+        organization: 'test organization'
         namePrefix:
         firstName:
         middleName:

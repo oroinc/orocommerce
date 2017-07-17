@@ -85,7 +85,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
-                'message' => null,
+                'message' => 'Approved',
                 'successful' => true,
             ],
             $this->method->execute($transaction->getAction(), $transaction)
@@ -307,6 +307,34 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($sourceTransaction->isActive());
     }
 
+    /**
+     * @dataProvider responseWithErrorDataProvider
+     *
+     * @param string $responseMessage
+     * @param string $expectedMessage
+     */
+    public function testChargeWithError($responseMessage, $expectedMessage)
+    {
+        $this->configureCredentials();
+
+        $transaction = new PaymentTransaction();
+        $transaction
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        $this->gateway->expects($this->once())->method('request')->with('S')->willReturn(
+            new Response(['PNREF' => 'reference', 'RESULT' => '-1', 'RESPMSG' => $responseMessage])
+        );
+
+        $result = $this->method->charge($transaction);
+
+        $this->assertSame($expectedMessage, $result['message']);
+        $this->assertFalse($result['successful']);
+
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+    }
+
     public function testCaptureDoChargeIfSourceAuthorizationIsValidationTransactionClone()
     {
         $this->configureCredentials();
@@ -352,6 +380,62 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($transaction->isSuccessful());
         $this->assertFalse($transaction->isActive());
+    }
+
+    /**
+     * @dataProvider responseWithErrorDataProvider
+     *
+     * @param string $responseMessage
+     * @param string $expectedMessage
+     */
+    public function testCaptureWithError($responseMessage, $expectedMessage)
+    {
+        $this->configureCredentials();
+
+        $sourceTransaction = new PaymentTransaction();
+        $sourceTransaction
+            ->setAction(PaymentMethodInterface::AUTHORIZE)
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        $transaction = new PaymentTransaction();
+        $transaction
+            ->setSourcePaymentTransaction($sourceTransaction)
+            ->setSuccessful(true)
+            ->setActive(true);
+
+        $this->gateway->expects($this->once())->method('request')->with('D')->willReturn(
+            new Response(['PNREF' => 'reference', 'RESULT' => '-1', 'RESPMSG' => $responseMessage])
+        );
+
+        $result = $this->method->capture($transaction);
+
+        $this->assertSame($expectedMessage, $result['message']);
+        $this->assertFalse($result['successful']);
+
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+        $this->assertNotEmpty($transaction->getRequest());
+
+        $this->assertTrue($sourceTransaction->isSuccessful());
+        $this->assertTrue($sourceTransaction->isActive());
+    }
+
+    /**
+     * @return array
+     */
+    public function responseWithErrorDataProvider()
+    {
+        return [
+            'RESPMSG is filled' => [
+                'responseMessage' => 'Error message',
+                'expectedMessage' => 'Error message',
+            ],
+            'RESPMSG is not filled, message is translated from response code' => [
+                'responseMessage' => '',
+                'expectedMessage' => 'Failed to connect to host',
+            ],
+        ];
     }
 
     public function testCapture()

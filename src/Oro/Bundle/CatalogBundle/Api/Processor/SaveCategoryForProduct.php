@@ -46,7 +46,7 @@ class SaveCategoryForProduct implements ProcessorInterface
         }
 
         $category->addProduct($product);
-        $em->flush($currentCategory);
+        $em->flush($category);
         $context->remove(RemoveCategoryFromProductRequest::CATEGORY);
     }
 }
