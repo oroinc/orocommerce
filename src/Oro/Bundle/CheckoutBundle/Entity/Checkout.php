@@ -485,11 +485,12 @@ class Checkout implements
     }
 
     /**
-     * @return CustomerVisitor
+     * @return CustomerVisitor|null
      */
     public function getVisitor()
     {
         $sourceEntity = $this->getSourceEntity();
+
         if ($sourceEntity instanceof ShoppingList) {
             return $sourceEntity->getVisitor();
         }
