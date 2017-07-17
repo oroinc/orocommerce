@@ -700,6 +700,64 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider responseWithErrorDataProvider
+     *
+     * @param string $responseMessage
+     * @param string $expectedMessage
+     */
+    public function testCaptureError($responseMessage, $expectedMessage)
+    {
+        $this->configCredentials();
+
+        $transaction = $this->createTransaction(PaymentMethodInterface::CAPTURE);
+        $sourceTransaction = new PaymentTransaction();
+        $sourceTransaction->setReference('referenceId');
+
+        $transaction->setSourcePaymentTransaction($sourceTransaction);
+
+        $requestOptions = array_merge(
+            $this->getCredentials(),
+            $this->getAdditionalOptions(),
+            $this->getDelayedCaptureOptions()
+        );
+
+        $this->gateway->expects($this->once())
+                      ->method('request')
+                      ->with('D', $requestOptions)
+                      ->willReturn(
+                          new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage])
+                      );
+
+        $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
+
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+        $this->assertTrue($sourceTransaction->isActive());
+
+        $this->assertArrayHasKey('message', $result);
+        $this->assertSame($expectedMessage, $result['message']);
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertFalse($result['successful']);
+    }
+
+    /**
+     * @return array
+     */
+    public function responseWithErrorDataProvider()
+    {
+        return [
+            'RESPMSG is filled' => [
+                'responseMessage' => 'Error message',
+                'expectedMessage' => 'Error message',
+            ],
+            'RESPMSG is not filled, message is translated from response code' => [
+                'responseMessage' => '',
+                'expectedMessage' => 'Failed to connect to host',
+            ],
+        ];
+    }
+
+    /**
      * @return array
      */
     protected function getCredentials()
