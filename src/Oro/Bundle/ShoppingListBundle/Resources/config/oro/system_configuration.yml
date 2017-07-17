@@ -41,7 +41,10 @@ system_configuration:
                 tooltip: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.tooltip
                 required: true
                 configs:
-                    allowClear: true
+                    allowClear: false
+                    placeholder: 'oro.user.form.choose_user'
+                    result_template_twig: 'OroUserBundle:User:Autocomplete/result.html.twig'
+                    selection_template_twig: 'OroUserBundle:User:Autocomplete/selection.html.twig'
                 constraints:
                     - NotBlank: ~
 
