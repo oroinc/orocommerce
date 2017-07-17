@@ -45,6 +45,13 @@ class Subtotal
     protected $visible;
 
     /**
+     * Display order, the less the value the earlier subtotal is displayed
+     *
+     * @var boolean
+     */
+    protected $sortOrder = 0;
+
+    /**
      * Extra data
      *
      * @var array
@@ -179,6 +186,24 @@ class Subtotal
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
+    }
+
+    /**
+     * @param int $order
+     * @return Subtotal
+     */
+    public function setSortOrder($order)
+    {
+        $this->sortOrder = $order;
+
+        return $this;
+    }
 
     /**
      * @return array

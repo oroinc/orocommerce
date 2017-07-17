@@ -133,9 +133,9 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             SubtotalProvider::ORDER_DISCOUNT_SUBTOTAL =>
-                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 15.0, 'EUR'),
+                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 15.0, 'EUR', 100),
             SubtotalProvider::SHIPPING_DISCOUNT_SUBTOTAL =>
-                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 8.0, 'EUR')
+                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 8.0, 'EUR', 300)
         ];
         $this->assertEquals($expected, $this->provider->getSubtotal($entity));
     }
@@ -194,9 +194,9 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             SubtotalProvider::ORDER_DISCOUNT_SUBTOTAL =>
-                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 45.67, 'USD'),
+                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 45.67, 'USD', 100),
             SubtotalProvider::SHIPPING_DISCOUNT_SUBTOTAL =>
-                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 5.0, 'USD')
+                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 5.0, 'USD', 300)
         ];
 
         $this->assertEquals($expected, $this->provider->getCachedSubtotal($order));
@@ -206,9 +206,10 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $label
      * @param float $amount
      * @param string $currency
+     * @param int $order
      * @return Subtotal
      */
-    private function createSubtotal($label, $amount, $currency): Subtotal
+    private function createSubtotal($label, $amount, $currency, $order): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
@@ -216,6 +217,7 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $subtotal->setVisible(true);
         $subtotal->setAmount($amount);
         $subtotal->setCurrency($currency);
+        $subtotal->setSortOrder($order);
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
 
         return $subtotal;

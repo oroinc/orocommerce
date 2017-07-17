@@ -18,6 +18,8 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     const NAME = 'oro_promotion.subtotal_discount';
     const ORDER_DISCOUNT_SUBTOTAL = 'order_discount_subtotal';
     const SHIPPING_DISCOUNT_SUBTOTAL = 'shipping_discount_subtotal';
+    const ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER = 100;
+    const SHIPPING_DISCOUNT_SUBTOTAL_SORT_ORDER = 300;
 
     /**
      * @var PromotionExecutor
@@ -133,9 +135,10 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      * @param float $amount
      * @param string $currency
      * @param string $label
+     * @param int $sortOrder
      * @return Subtotal
      */
-    private function createSubtotal($amount, $currency, $label): Subtotal
+    private function createSubtotal($amount, $currency, $label, $sortOrder): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
@@ -144,6 +147,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $subtotal->setAmount($this->rounding->round($amount));
         $subtotal->setCurrency($currency);
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
+        $subtotal->setSortOrder($sortOrder);
 
         return $subtotal;
     }
@@ -160,12 +164,14 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $orderDiscountSubtotal = $this->createSubtotal(
             $orderAmount,
             $currency,
-            $this->translator->trans('oro.promotion.discount.subtotal.order.label')
+            $this->translator->trans('oro.promotion.discount.subtotal.order.label'),
+            self::ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER
         );
         $shippingDiscountSubtotal = $this->createSubtotal(
             $shippingAmount,
             $currency,
-            $this->translator->trans('oro.promotion.discount.subtotal.shipping.label')
+            $this->translator->trans('oro.promotion.discount.subtotal.shipping.label'),
+            self::SHIPPING_DISCOUNT_SUBTOTAL_SORT_ORDER
         );
 
         return [

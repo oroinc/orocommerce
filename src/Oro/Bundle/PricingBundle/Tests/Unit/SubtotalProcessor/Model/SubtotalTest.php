@@ -21,6 +21,7 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(999.99, $subtotal->setAmount(999.99)->getAmount());
         $this->assertEquals(true, $subtotal->setVisible(true)->isVisible());
         $this->assertEquals(['some value'], $subtotal->setData(['some value'])->getData());
+        $this->assertEquals(987, $subtotal->setSortOrder(987)->getSortOrder());
     }
 
     public function testToArray()
