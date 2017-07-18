@@ -36,4 +36,40 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_BIDIRECTIONAL));
     }
+
+    /**
+     * @return int
+     */
+    public function getMinimumItems()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MIN_ITEMS));
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumItems()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MAX_ITEMS));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSliderEnabledOnMobile()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE));
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAddButtonVisible()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_SHOW_ADD_BUTTON));
+    }
 }
