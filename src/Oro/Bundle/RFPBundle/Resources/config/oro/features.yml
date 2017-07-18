@@ -35,3 +35,15 @@ features:
             - 'oro_rfp_frontend_request_index'
             - 'oro_rfp_frontend_request_create'
             - 'oro_rfp_frontend_request_update'
+
+    guest_rfp:
+        label: oro.rfp.system_configuration.fields.guest_rfp.label
+        description: oro.rfp.system_configuration.fields.guest_rfp.tooltip
+        toggle: oro_rfp.guest_rfp
+        dependencies:
+            - 'rfp_frontend'
+        operations:
+            - 'oro_rfp_frontend_request_create'
+        configuration:
+            - guest_rfp_owner_section
+        strategy: affirmative

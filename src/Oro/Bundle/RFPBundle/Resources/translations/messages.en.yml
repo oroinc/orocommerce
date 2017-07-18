@@ -94,6 +94,8 @@ oro:
                 sales.title: 'Sales'
                 rfq.title: 'Request For Quote'
                 notifications.title: 'Notifications'
+                guest_rfp.title: 'Guest RFQ'
+                guest_rfp_owner.title: 'Guest RFQ Owner Settings'
             fields:
                 feature_enabled.label: 'Enable RFQ'
                 frontend_feature_enabled.label: 'Enable RFQ (Store Front)'
@@ -112,7 +114,12 @@ oro:
                         label: 'Notify the owner of the customer'
                         always_notify_owner: 'Always'
                         if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
-
+                guest_rfp:
+                    title: 'Enable Guest RFQ'
+                    tooltip: 'Enable Guest RFQ'
+                default_guest_rfp_owner:
+                    title: 'Default guest RFQ owner'
+                    tooltip: 'Default guest RFQ owner'
         message:
             requestproductitem.unit.removed: '{title} - removed'
 
