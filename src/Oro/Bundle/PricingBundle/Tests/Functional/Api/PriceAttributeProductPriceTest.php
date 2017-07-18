@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PriceAttributeProductPriceTest extends RestJsonApiTestCase
 {
@@ -178,6 +180,35 @@ class PriceAttributeProductPriceTest extends RestJsonApiTestCase
         static::assertEquals(
             $this->getReference('product_unit.milliliter'),
             $price->getProductUnit()
+        );
+    }
+
+    public function testUpdateToDuplicate()
+    {
+        $priceId = $this->getFirstPrice()->getId();
+
+        $routeParameters = self::processTemplateData([
+            'entity' => $this->getEntityApiName(),
+            'id' => (string)$priceId
+        ]);
+
+        $parameters = $this->getRequestData(
+            $this->getAliceFilesFolderName() . '/update_duplicate.yml'
+        );
+
+        $response = $this->request(
+            'PATCH',
+            $this->getUrl(
+                'oro_rest_api_patch',
+                $routeParameters
+            ),
+            $parameters
+        );
+
+        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
+        static::assertContains(
+            'unique entity constraint',
+            $response->getContent()
         );
     }
 
