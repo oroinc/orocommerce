@@ -9,4 +9,8 @@ api:
                     exclude: true
                 updatedAt:
                     exclude: true
+        Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
+            actions:
+                update:
+                    exclude: true
         Oro\Bundle\ProductBundle\Entity\Brand: ~
