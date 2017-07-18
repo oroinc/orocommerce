@@ -128,7 +128,7 @@ oro:
         permission:
             duplicate_shopping_list.label: Duplicate
         duplicate:
-            success.message: 'Shopping list "%shoppinglist%" has been duplicated'
+            success.message: 'The shopping list has been duplicated'
             list.label: Duplicate List
 
     customer:
