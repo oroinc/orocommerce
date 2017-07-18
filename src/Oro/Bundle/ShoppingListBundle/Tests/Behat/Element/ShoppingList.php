@@ -2,11 +2,22 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Behat\Element;
 
-use Behat\Mink\Element\NodeElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
-class ShoppingList extends Element implements LineItemsAwareInterface
+class ShoppingList extends Element implements LineItemsAwareInterface, SubtotalAwareInterface
 {
+    /**
+     * @param string $subtotalName
+     * @return string
+     */
+    public function getSubtotal($subtotalName)
+    {
+        /** @var Subtotals $subtotals */
+        $subtotals = $this->getElement('Subtotals');
+
+        return $subtotals->getSubtotal($subtotalName);
+    }
+
     /**
      * @param string $title
      */

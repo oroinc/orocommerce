@@ -1,5 +1,5 @@
 include:
-    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
@@ -21,7 +21,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'Shopping List 1'
+        customer: '@customer1'
         customerUser: '@amanda'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:

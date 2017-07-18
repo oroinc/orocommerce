@@ -1,7 +1,10 @@
 // @theme: blank;
 
 .product-gallery {
+    position: relative;
     z-index: z('base');
+
+    width: 380px;
 
     .product-view-media__gallery {
         border: 1px solid get-color('additional', 'light');
@@ -135,8 +138,19 @@
     }
 }
 
+@include breakpoint('tablet') {
+    .product-gallery {
+        float: none;
+
+        width: 100%;
+        max-width: 380px;
+        margin: auto;
+    }
+}
+
 .tab-content {
     .product-gallery {
         float: none;
+        margin-top: 10px;
     }
 }

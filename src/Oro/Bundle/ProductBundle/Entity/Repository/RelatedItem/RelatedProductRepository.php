@@ -49,7 +49,8 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
             ->leftJoin(RelatedProduct::class, 'rp_r', Join::WITH, 'rp_r.relatedItem = p.id')
             ->where('rp_r.product = :id')
             ->setParameter(':id', $id)
-            ->orderBy('p.id');
+            ->orderBy('p.id')
+            ->groupBy('p.id');
 
         if ($limit) {
             $qb->setMaxResults($limit);

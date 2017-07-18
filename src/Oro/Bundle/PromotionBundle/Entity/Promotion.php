@@ -16,6 +16,7 @@ use Oro\Bundle\PromotionBundle\Model\ExtendPromotion;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
@@ -56,6 +57,7 @@ class Promotion extends ExtendPromotion implements
     DatesAwareInterface,
     OrganizationAwareInterface,
     RuleOwnerInterface,
+    ScopeCollectionAwareInterface,
     ScheduleIntervalsAwareInterface
 {
     use DatesAwareTrait;

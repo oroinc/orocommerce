@@ -1,5 +1,6 @@
 Oro\Bundle\UPSBundle\Entity\UPSTransport:
     constraints:
+        - Oro\Bundle\UPSBundle\Validator\Constraints\CountryShippingServicesConstraint: ~
         - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
         upsApiUser:
@@ -21,7 +22,7 @@ Oro\Bundle\UPSBundle\Entity\UPSTransport:
             - Valid: ~
         applicableShippingServices:
             - NotBlank:
-                message: 'oro.ups.transport.shipping_service.blank'
+                message: 'oro.ups.settings.shipping_service.blank.message'
         labels:
             - NotBlank: ~
             - Valid: ~

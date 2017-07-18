@@ -11,7 +11,7 @@ oro_behat_extension:
         - OroShippingBundle::SingleCurrencyContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::CustomerUserContext
-        - OroCustomerBundle::GridContext
+        - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
         - OroSaleBundle::FeatureContext
         - OroOrderBundle::OrderContext

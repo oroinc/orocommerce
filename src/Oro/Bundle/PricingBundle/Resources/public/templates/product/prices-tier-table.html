@@ -1,0 +1,34 @@
+<table class="product-tier-prices-table">
+    <% if (clickable) { %>
+    <tr>
+        <td colspan="2">
+            <%= _.__('oro.pricing.click_to_select') %>
+        </td>
+    </tr>
+    <% } %>
+    <% _.each(prices, function(unitPrices, unit) { %>
+    <tr>
+        <td colspan="2">
+            <b><%= _.__('oro.product.product_unit.' + unit + '.label.full') %></b>
+        </td>
+    </tr>
+    <% _.each(unitPrices, function(price) { %>
+    <tr class="<% if (!_.isEmpty(matchedPrice) && unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
+        <td><div class="text-right"><%= price.quantity %>:</div></td>
+        <td>
+            <div class="text-left">
+                <% if (clickable) { %>
+                <a
+                        href="javascript: void(0);"
+                        data-price="<%= parseFloat(price.price) %>"
+                        data-unit="<%= unit %>"
+                ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                <% } else { %>
+                <%= formatter.formatCurrency(price.price, price.currency) %>
+                <% } %>
+            </div>
+        </td>
+    </tr>
+    <% }) %>
+    <% }) %>
+</table>

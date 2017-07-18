@@ -67,7 +67,7 @@ class ProductExtension extends \Twig_Extension
     public function getRelatedProductsIds(Product $product)
     {
         /** @var FinderStrategyInterface $finderStrategy */
-        $finderStrategy = $this->container->get('oro.product.related_item.related_product.finder_strategy');
+        $finderStrategy = $this->container->get('oro_product.related_item.related_product.finder_strategy');
         /** @var Product[] $related */
         $related = $finderStrategy->find($product, false, false);
         $ids = [];

@@ -42,11 +42,11 @@ Oro\Bundle\RuleBundle\Entity\Rule:
     lineItemDiscountPromotionRule:
         enabled: true
         sortOrder: 1
-        name: 'lineItemDiscountPromotionRule'
+        name: 'line Item Discount Promotion'
     orderDiscountPromotionRule:
         enabled: true
         sortOrder: 1
-        name: 'orderDiscountPromotionRule'
+        name: 'order Discount Promotion'
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     lineItemDiscountPromotion:

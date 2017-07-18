@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\UpsellProductRepository;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadUpsellProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class UpsellProductRepositoryTest extends WebTestCase
@@ -21,7 +22,7 @@ class UpsellProductRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            LoadProductData::class
+            LoadUpsellProductData::class
         ]);
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
             UpsellProduct::class

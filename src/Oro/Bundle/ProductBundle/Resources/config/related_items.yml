@@ -15,11 +15,21 @@ services:
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy
         arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']
 
-    oro.product.related_item.related_product.finder_strategy:
+    oro_product.related_item.related_product.finder_strategy:
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_product.related_item.related_product.config_provider'
+
+    oro_product.related_item.related_product.data_provider:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedProductDataProvider
+        arguments:
+            - '@oro_product.related_item.related_product.finder_strategy'
+            - '@oro_product.related_item.related_product.config_provider'
+            - '@oro_product.restricted_repository.product'
+            - '@oro_ui.user_agent_provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_related_products }
 
     # UPSELL PRODUCTS
     oro_product.related_item.upsell_products.config_provider:

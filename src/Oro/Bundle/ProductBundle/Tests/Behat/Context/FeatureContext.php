@@ -669,12 +669,39 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * @Then /^(?:|I )click "([^"]*)" for "([^"]*)" product$/
      */
-    public function clickElementforSelectedProduct($elementName, $SKU)
+    public function clickElementForSelectedProduct($elementName, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
         self::assertNotNull($productItem);
         $element = $this->createElement($elementName, $productItem);
         $element->click();
+    }
+
+    /**
+     * @Given /^I should see "([^"]*)" in search results$/
+     */
+    public function iShouldSeeInSearchResults($productSku)
+    {
+        $this->oroMainContext
+            ->iShouldSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'ProductFrontendRow');
+    }
+
+    /**
+     * @Then /^I should see "(?P<text>(?:[^"]|\\")*)" in related products$/
+     */
+    public function iShouldSeeInRelatedItems($string)
+    {
+        $this->oroMainContext
+            ->iShouldSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedItems');
+    }
+
+    /**
+     * @Then /^I should not see "(?P<text>(?:[^"]|\\")*)" in related products$/
+     */
+    public function iShouldNotSeeInRelatedItems($string)
+    {
+        $this->oroMainContext
+            ->iShouldNotSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedItems');
     }
 
     /**

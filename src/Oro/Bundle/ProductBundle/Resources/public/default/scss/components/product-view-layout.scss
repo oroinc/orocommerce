@@ -1,4 +1,15 @@
 // @theme: default
+
+.product-view {
+    &__additional, &__related-products {
+        .embedded-product {
+            .product-price {
+                margin: 0;
+            }
+        }
+    }
+}
+
 @include breakpoint('desktop') {
     .product-view__specification {
         &--colored {
