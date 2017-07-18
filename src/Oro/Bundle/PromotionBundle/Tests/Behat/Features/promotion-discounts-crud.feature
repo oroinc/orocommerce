@@ -39,6 +39,10 @@ Feature: Managing promotions
     Then I should see "Promotion Form" validation errors:
       | Discount Value (%) | This value should not be blank. |
     When I fill "Promotion Form" with:
+      | Discount Value (%) | 1000000 |
+    Then I should see "Promotion Form" validation errors:
+      | Discount Value (%) | This value should be 100 or less. |
+    When I fill "Promotion Form" with:
       | Discount Value (%) | 20 |
     And I press "Add" in "Matching Items" section
     And I check PSKU1 record in "Add Products Popup" grid

@@ -182,7 +182,13 @@ class DiscountOptionsTypeTest extends FormIntegrationTestCase
                     AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_AMOUNT,
                     DiscountOptionsType::AMOUNT_DISCOUNT_VALUE_FIELD => ['value' => null, 'currency' => 'USD'],
                 ]
-            ]
+            ],
+            'wrong percent value' => [
+                'submittedData' => [
+                    AbstractDiscount::DISCOUNT_TYPE => DiscountInterface::TYPE_PERCENT,
+                    DiscountOptionsType::PERCENT_DISCOUNT_VALUE_FIELD => 1000000,
+                ]
+            ],
         ];
     }
 
