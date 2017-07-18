@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Provider\DefaultUserProvider;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class CheckoutListener
 {
@@ -19,14 +20,22 @@ class CheckoutListener
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
+    /** @var WebsiteManager */
+    private $websiteManager;
+
     /**
      * @param DefaultUserProvider $defaultUserProvider
      * @param TokenAccessorInterface $tokenAccessor
+     * @param WebsiteManager $websiteManager
      */
-    public function __construct(DefaultUserProvider $defaultUserProvider, TokenAccessorInterface $tokenAccessor)
-    {
+    public function __construct(
+        DefaultUserProvider $defaultUserProvider,
+        TokenAccessorInterface $tokenAccessor,
+        WebsiteManager $websiteManager
+    ) {
         $this->defaultUserProvider = $defaultUserProvider;
         $this->tokenAccessor = $tokenAccessor;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -57,6 +66,11 @@ class CheckoutListener
                 OroCheckoutExtension::ALIAS,
                 Configuration::DEFAULT_GUEST_CHECKOUT_OWNER
             ));
+
+            $website = $this->websiteManager->getCurrentWebsite();
+            if ($website) {
+                $checkout->setOrganization($this->websiteManager->getCurrentWebsite()->getOrganization());
+            }
         }
     }
 }
