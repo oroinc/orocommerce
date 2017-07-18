@@ -125,7 +125,7 @@ class MatrixGridOrderProvider
                 $lineItem = new LineItem();
                 $lineItem->setProduct($column->product);
                 $lineItem->setUnit($collection->unit);
-                $lineItem->setQuantity($column->quantity);
+                $lineItem->setQuantity($column->quantity ?: 0);
 
                 $shoppingList->addLineItem($lineItem);
             }
