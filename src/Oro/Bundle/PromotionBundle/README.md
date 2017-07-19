@@ -15,7 +15,7 @@ This bundle introduces promotions functionality.
 Administrator can setup discount by adding promotions.
 Promotions have basic info (name, sort order, status, etc.), schedule, discount options, conditions (with scope and expression), matching items.
 
-The OroPromotionBundle introduces ability to setup promotions that if matched give discounts during checkout process. This is mainly done by `Oro\Bundle\PromotionBundle\Provider\SubtotalProvider` that add shipping and usual discounts subtotals. It uses `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` in order to find out discount information that stored as `Oro\Bundle\PromotionBundle\Discount\DiscountContext`.
+Matched promotions give discounts during checkout process. This is mainly done by `Oro\Bundle\PromotionBundle\Provider\SubtotalProvider` that add shipping and usual discounts subtotals. It uses `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` in order to find out discount information that stored as `Oro\Bundle\PromotionBundle\Discount\DiscountContext`.
 
 Discounts
 ------------
