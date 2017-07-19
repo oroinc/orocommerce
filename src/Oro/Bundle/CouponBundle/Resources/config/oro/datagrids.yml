@@ -89,7 +89,7 @@ datagrids:
         mass_actions:
             edit:
                 type:            massedit
-                handler:         oro_datagrid.extension.coupon.mass_action.handler.edit
+                handler:         oro_coupon.mass_action.coupon_edit_mass_action_handler
                 acl_resource:    oro_coupon_edit
                 route:           oro_coupon_mass_edit_widget
                 label:           oro.ui.edit

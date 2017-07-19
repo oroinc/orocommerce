@@ -15,6 +15,9 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @todo Replace it by behat test BB-9973
+ */
 class CouponEditMassActionHandlerTest extends WebTestCase
 {
     /**
@@ -30,8 +33,9 @@ class CouponEditMassActionHandlerTest extends WebTestCase
     {
         $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
         $em = $doctrineHelper->getEntityManagerForClass(Coupon::class);
+
         /** @var CouponEditMassActionHandler $handler */
-        $handler = $this->getContainer()->get('oro_datagrid.extension.coupon.mass_action.handler.edit');
+        $handler = $this->getContainer()->get('oro_coupon.mass_action.coupon_edit_mass_action_handler');
 
         $massAction = $this->createMock(MassActionInterface::class);
         $datagrid = $this->createMock(DatagridInterface::class);

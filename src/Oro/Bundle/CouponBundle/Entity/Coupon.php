@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 
@@ -76,6 +77,7 @@ class Coupon implements
      *              "auditable"=true
      *          },
      *          "importexport"={
+     *              "identity"=true,
      *              "order"=10
      *          }
      *      }
@@ -93,7 +95,7 @@ class Coupon implements
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "excluded"=true
+     *              "order"=20
      *          }
      *      }
      *  )
@@ -110,7 +112,7 @@ class Coupon implements
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=20
+     *              "order"=30
      *          }
      *      }
      *  )
@@ -127,12 +129,64 @@ class Coupon implements
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=30
+     *              "order"=40
      *          }
      *      }
      *  )
      */
     protected $usesPerUser = 1;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="created_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
+
+    /**
+     * @var OrganizationInterface
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $organization;
 
     /**
      * @return int
@@ -175,13 +229,13 @@ class Coupon implements
      */
     public function setTotalUses($totalUses)
     {
-        $this->totalUses = $totalUses;
+        $this->totalUses = (int)$totalUses;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUsesPerCoupon()
     {
@@ -189,7 +243,7 @@ class Coupon implements
     }
 
     /**
-     * @param int $usesPerCoupon
+     * @param int|null $usesPerCoupon
      * @return Coupon
      */
     public function setUsesPerCoupon($usesPerCoupon)
@@ -200,7 +254,7 @@ class Coupon implements
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getUsesPerUser()
     {
@@ -208,7 +262,7 @@ class Coupon implements
     }
 
     /**
-     * @param int $usesPerUser
+     * @param int|null $usesPerUser
      * @return Coupon
      */
     public function setUsesPerUser($usesPerUser)
