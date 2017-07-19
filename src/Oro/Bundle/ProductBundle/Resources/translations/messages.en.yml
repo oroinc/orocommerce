@@ -421,6 +421,14 @@ oro:
 
         export:
             inventory_status_only: "Inventory statuses only"
+            button.label: 'Export Products'
+        export_template:
+            button.label: 'Download Products Template'
+        import:
+            button.label: 'Import Products'
+            popup.title: 'Import Products'
+        import_validation:
+            button.label: 'Validate Products File'
 
         variant_field:
             default.tooltip: "Enable the fields to be able to group products by these fields"
