@@ -236,7 +236,6 @@
     <table class="checkout-order-summary__price-table">
         <tbody>
         <tr>
-            <td class="checkout-order-summary__price-line">{{ 'oro.checkout.order_summary.price_per_item'|trans }}:</td>
             <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>{{ lineItem.price is not null ? lineItem.price|oro_format_price : 'N/A'|trans }}</td>
         </tr>
         </tbody>
@@ -247,9 +246,6 @@
     <table class="checkout-order-summary__price-table">
         <tbody>
         <tr>
-            <td class="checkout-order-summary__price-line">
-                <span>{{ 'oro.checkout.order_summary.total_price'|trans }}</span>
-            </td>
             <td class="checkout-order-summary__price-line" data-scrollable-item-has-offset>
                 <span class="fs16 blue">{{ lineItemInfo.total|oro_format_price }}</span>
             </td>

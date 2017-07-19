@@ -97,8 +97,6 @@ oro:
             sku: SKU
             quantity : Quantity
             price : Price
-            price_per_item: Price per item
-            total_price: Row Total
             total_qty: Total QTY
 
         title:

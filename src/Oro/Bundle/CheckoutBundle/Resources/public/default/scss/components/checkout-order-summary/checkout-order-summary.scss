@@ -124,12 +124,6 @@
         vertical-align: bottom;
     }
 
-    &__price-line:first-child {
-        padding-right: 40px;
-
-        text-align: left;
-    }
-
     &__price-table {
         width: 100%;
     }
@@ -146,10 +140,6 @@
 
     &__qty {
         min-width: 100px;
-    }
-
-    &__price {
-        width: 240px;
     }
 
     .scrollable-content {
