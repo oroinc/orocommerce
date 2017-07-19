@@ -451,7 +451,9 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'customer1 user3 (CustomerUser:DEEP)' => [
+            /*
+             * @todo: must be investigated in scope of BB-10751
+             * 'customer1 user3 (CustomerUser:DEEP)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE9,
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,
@@ -482,7 +484,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                     ],
                 ],
-            ],
+            ],*/
             'customer1 user3 (CustomerUser:DEEP) not acceptable' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE12,

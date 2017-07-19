@@ -5,8 +5,6 @@ features:
         toggle: oro_checkout.guest_checkout
         routes:
             - 'oro_checkout_frontend_checkout'
-        workflows:
-            - b2b_flow_checkout
         configuration:
             - guest_checkout_owner_section
         strategy: affirmative
