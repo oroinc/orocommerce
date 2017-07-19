@@ -167,8 +167,10 @@ class Product extends ExtendProduct implements
      *          "importexport"={
      *              "excluded"=true
      *          }
-     *      }
+     *      },
+     *     mode="hidden"
      * )
+     *
      */
     protected $skuUppercase;
 
