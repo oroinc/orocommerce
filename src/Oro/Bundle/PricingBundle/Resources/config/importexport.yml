@@ -89,3 +89,10 @@ services:
         parent: oro_integration.writer.persistent_batch_writer
         arguments:
             - '@oro_pricing.manager.price_manager'
+
+    oro_pricing.importexport.configuration_provider.price_attribute_product_price:
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Configuration\PriceAttributeProductPriceImportExportConfigurationProvider'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_index }
