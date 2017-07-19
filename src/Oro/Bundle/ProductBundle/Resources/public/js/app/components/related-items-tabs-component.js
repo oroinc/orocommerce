@@ -12,16 +12,16 @@ define(function(require) {
          * @param {Array<Object>} options.data collection of tabs build over entities category
          */
         initialize: function(options) {
-            var categories  = options.data;
+            var categories = options.data;
 
             if (categories.length === 0) {
                 //Nothing to show
                 return;
             }
 
-            categories[0]['active'] = true;
-
             this.categories = new BaseCollection(categories);
+            var firstElement = this.categories.first();
+            firstElement.set('active', true);
 
             this.view = new TabCollectionView({
                 el: options._sourceElement,
@@ -30,14 +30,14 @@ define(function(require) {
                 useDropdown: options.useDropdown
             });
 
-            this._hideAllGrids(categories);
-            this._showGrid(categories[0].id);
+            this._hideAllGrids();
+            this._showGrid(firstElement.id);
 
             this.listenTo(this.categories, 'change', this.onTabChange);
         },
 
         onTabChange: function(model) {
-            this._hideAllGrids(model.collection.toArray());
+            this._hideAllGrids();
 
             if (model.hasChanged('active') && model.get('active') === true) {
                 this._showGrid(model.id);
@@ -48,20 +48,25 @@ define(function(require) {
             return $('[data-page-component-name=' + gridName + ']');
         },
 
-        _showGrid: function(grid) {
-            this._getGrid(grid).show();
+        _showGrid: function(gridName) {
+            var $grid = this._getGrid(gridName);
+            var $mCustomScrollContainer = $grid.find('.grid-scrollable-container');
+
+            $grid.show();
+
+            if ($mCustomScrollContainer.length > 0) {
+                $mCustomScrollContainer.mCustomScrollbar('update');
+            }
         },
 
-        _hideGrid: function(grid) {
-            this._getGrid(grid).hide();
+        _hideGrid: function(gridName) {
+            this._getGrid(gridName).hide();
         },
 
-        _hideAllGrids: function(categories) {
-            var self = this;
-
-            $.each(categories, function(index, value) {
-                self._hideGrid(value.id);
-            });
+        _hideAllGrids: function() {
+            this.categories.each(function(category) {
+                this._hideGrid(category.id);
+            }, this);
         }
     });
     return RelatedItemsTabsComponent;
