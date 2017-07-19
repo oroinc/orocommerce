@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
@@ -787,6 +788,27 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
             $stickerElement = $this->createElement($sticker, $embeddedProduct);
             self::assertFalse($stickerElement->isIsset());
+        }
+    }
+
+    /**
+     * Click on button in matrix order window
+     * Example: Given I click "Add to Shopping list" in matrix order window
+     * @When /^(?:|I )click "(?P<button>(?:[^"]|\\")*)" in matrix order window$/
+     */
+    public function pressButtonInModalWindow($button)
+    {
+        $modalWindow = $this->getPage()->findVisible('css', 'div.matrix-order-widget');
+        self::assertNotNull($modalWindow, 'There is no visible matrix order on page at this moment');
+        try {
+            $button = $this->fixStepArgument($button);
+            $modalWindow->pressButton($button);
+        } catch (ElementNotFoundException $e) {
+            if ($modalWindow->hasLink($button)) {
+                $modalWindow->clickLink($button);
+            } else {
+                throw $e;
+            }
         }
     }
 }
