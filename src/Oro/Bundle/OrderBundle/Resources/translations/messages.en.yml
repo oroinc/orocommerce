@@ -221,7 +221,7 @@ oro:
             address:
                 choose: Select an address
                 choose_or_create: Select an existing address or enter a new address below
-                manual: Enter other address
+                manual: New address
                 group_label:
                     customer: Customer Address Book
                     customer_user: Customer User Address Book

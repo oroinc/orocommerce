@@ -261,7 +261,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         /** @var Form $form */
         $form = $this->createElement('Address');
-        $form->fillField('SELECT SHIPPING ADDRESS', 'Enter other address');
+        $form->fillField('SELECT SHIPPING ADDRESS', 'New address');
         $this->waitForAjax();
         /** @var int $row */
         if ($row = array_search('Country', $table->getColumn(0))) {

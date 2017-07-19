@@ -32,7 +32,7 @@ abstract class AbstractAddressACLTest extends WebTestCase
             $filter = sprintf('select[name="%s[%s][customerAddress]"]', $formName, $addressType);
             $customerAddressSelector = $crawler->filter($filter)->html();
 
-            $this->assertContains('Enter other address', $customerAddressSelector);
+            $this->assertContains('New address', $customerAddressSelector);
         }
 
         // Check customer addresses
