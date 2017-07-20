@@ -43,8 +43,8 @@ In order to add new discount, that can be selected in promotion configuration yo
             - ['addType', ['order', 'oro_promotion.discount.order_discount']]
             - ['addType', ['line_item', 'oro_promotion.discount.line_item_discount']]
             - ['addType', ['buy_x_get_y', 'oro_promotion.discount.buy_x_get_y_discount']]
-            - ['addType', ['my_discount', 'app.promotion.discount.my_discount']]
             - ['addType', ['shipping', 'oro_promotion.discount.shipping_discount']]
+            - ['addType', ['my_discount', 'app.promotion.discount.my_discount']]
 ```
 
 **Add discount formType**
