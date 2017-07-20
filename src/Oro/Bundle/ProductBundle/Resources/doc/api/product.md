@@ -801,14 +801,6 @@ Example:
 
 **Required field**
 
-### attributeFamily
-
-#### create
-
-{@inheritdoc}
-
-**Required field**
-
 ### category
 
 #### create
@@ -816,3 +808,11 @@ Example:
 {@inheritdoc}
 
 Specify the category of the product
+
+### taxCode
+
+#### create
+
+asdadas
+
+{@inheritdoc}

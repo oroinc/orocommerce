@@ -173,3 +173,5 @@ oro.tax:
 
     import_export:
         tax_code_doesnt_exist: Unable to find related tax code for customer "%customer_name%".
+
+oro.product.taxcode.description: Tax code
