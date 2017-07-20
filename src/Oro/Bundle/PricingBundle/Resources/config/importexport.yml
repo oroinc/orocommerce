@@ -116,3 +116,25 @@ services:
         parent: oro_importexport.serializer.configurable_entity_normalizer
         tags:
             - { name: oro_importexport.normalizer }
+
+    oro_pricing.importexport.template_fixture.price_attribute_product_price:
+        class: 'Oro\Bundle\PricingBundle\ImportExport\TemplateFixture\PriceAttributeProductPriceFixture'
+        public: false
+        tags:
+             - { name: oro_importexport.template_fixture }
+
+    oro_pricing.importexport.processor.export.price_attribute_product_price:
+        public: false
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_pricing.importexport.data_converter.price_attribute_product_price']]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price }
+
+    oro_pricing.importexport.processor.export_template.price_attribute_product_price:
+        public: false
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_pricing.importexport.data_converter.price_attribute_product_price']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: '%oro_pricing.entity.price_attribute_product_price.class%', alias: oro_pricing_product_price_attribute_price }
