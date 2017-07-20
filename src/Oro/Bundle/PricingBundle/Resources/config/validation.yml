@@ -170,3 +170,25 @@ Oro\Bundle\ProductBundle\Entity\Product:
     properties:
         unitPrecisions:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: [ product, priceList, unit, currency, quantity ]
+    properties:
+        product:
+            - NotBlank: ~
+        productSku:
+            - NotBlank: ~
+        currency:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        price:
+            - NotBlank:
+                groups: [api]
+            - Valid: ~
+        unit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'

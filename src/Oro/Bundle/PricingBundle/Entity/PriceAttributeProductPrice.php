@@ -35,7 +35,8 @@ class PriceAttributeProductPrice extends BaseProductPrice
      * @ConfigField(
      *     defaultValues={
      *         "importexport"={
-     *             "order"=15
+     *             "order"=15,
+     *             "identity"=true
      *         }
      *     }
      * )

@@ -52,6 +52,7 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
             ImportExportConfiguration::FIELD_EXPORT_PROCESSOR_ALIAS => 'oro_pricing_product_price_attribute_price',
             ImportExportConfiguration::FIELD_EXPORT_TEMPLATE_PROCESSOR_ALIAS =>
                 'oro_pricing_product_price_attribute_price',
+            ImportExportConfiguration::FIELD_IMPORT_JOB_NAME => 'price_attribute_product_price_import_from_csv',
             ImportExportConfiguration::FIELD_IMPORT_PROCESSOR_ALIAS =>
                 'oro_pricing_product_price_attribute_price.add_or_replace',
             ImportExportConfiguration::FIELD_IMPORT_BUTTON_LABEL => '1',

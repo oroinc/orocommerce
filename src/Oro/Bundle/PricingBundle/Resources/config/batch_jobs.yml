@@ -34,3 +34,16 @@ connector:
                         processor: oro_importexport.processor.import_delegate
                         writer:    oro_pricing.importexport.writer.product_price
                     parameters: ~
+
+        price_attribute_product_price_import_from_csv:
+            title: "Import Product Price Attributes values from CSV"
+            type: import
+            steps:
+                import:
+                    title:     import
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_importexport.reader.csv
+                        processor: oro_importexport.processor.import_delegate
+                        writer:    oro_pricing.importexport.writer.price_attribute_product_price
+                    parameters: ~
