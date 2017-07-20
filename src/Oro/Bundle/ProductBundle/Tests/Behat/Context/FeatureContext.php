@@ -53,6 +53,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     private $formContext;
 
     /**
+     * @var []
+     */
+    private $rememberedData;
+
+    /**
      * @BeforeScenario
      */
     public function gatherContexts(BeforeScenarioScope $scope)
@@ -789,6 +794,65 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $stickerElement = $this->createElement($sticker, $embeddedProduct);
             self::assertFalse($stickerElement->isIsset());
         }
+    }
+
+    /**
+     * Example: I remember "listed" image resized ID
+     *
+     * @Then /^I remember "(?P<imageType>[^"]*)" image resized ID$/
+     * @param string $imageType
+     */
+    public function iRememberResizedImageId($imageType)
+    {
+        $form = $this->createElement('OroForm');
+        // @codingStandardsIgnoreStart
+        $image = $form->find('xpath', sprintf(
+            '//input[@type="radio"][contains(@name, "images")][contains(@name, "%s")][@checked="checked"]/ancestor::tr/descendant::img',
+            $imageType
+        ));
+        // @codingStandardsIgnoreEnd
+        self::assertNotEmpty($image, sprintf('Image with type "%s" not found on page', $imageType));
+        $imageSrc = $image->getAttribute('src');
+        $matches = [];
+        preg_match('/\/media\/cache\/attachment\/resize\/\d+\/\d+\/\d+\/(.+)\.\w+/', $imageSrc, $matches);
+        self::assertNotEmpty($matches[1], sprintf('Image ID not found for "%s" imahe', $imageType));
+
+        $this->rememberedData[$imageType] = $matches[1];
+    }
+
+    /**
+     * Example: I should see remembered "listing" image in "Top Selling Items" section
+     *
+     * @Then /^I should see remembered "(?P<imageType>[^"]*)" image in "(?P<sectionName>[^"]*)" section$/
+     * @param string $imageType
+     * @param string $sectionName
+     */
+    public function iShouldSeeRememberImageId($imageType, $sectionName)
+    {
+        $section = $this->getSession()->getPage()->find(
+            'xpath',
+            sprintf('//h2[contains(.,"%s")]/..', $sectionName)
+        );
+        self::assertNotEmpty($section, sprintf('Section "%s" not found on page', $sectionName));
+
+        $rememberedImageId = isset($this->rememberedData[$imageType]) ? $this->rememberedData[$imageType] : '';
+        self::assertNotEmpty($rememberedImageId, sprintf(
+            'No remembered image ID for "%s" image type',
+            $imageType
+        ));
+
+        $image = $section->find(
+            'xpath',
+            sprintf(
+                '//a[contains(@class, "view-product")][contains(@style, "background-image")][contains(@style, "%s")]',
+                $rememberedImageId
+            )
+        );
+        self::assertNotEmpty($image, sprintf(
+            'No image with id "%s" found in section "%s"',
+            $rememberedImageId,
+            $sectionName
+        ));
     }
 
     /**
