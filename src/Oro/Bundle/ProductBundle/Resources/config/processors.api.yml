@@ -17,3 +17,11 @@ services:
             - '@oro_api.value_normalizer'
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', requestType: json_api, priority: 89 }
+
+    oro_product.create.add_related_product:
+        class: Oro\Bundle\ProductBundle\Processor\Create\AddRelatedProduct
+        arguments:
+            - '@oro_product.related_item.related_product.assigner_database_strategy'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}

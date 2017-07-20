@@ -136,7 +136,7 @@ class AssignerDatabaseStrategy implements AssignerStrategyInterface
 
         if ($numberOfRelations > $this->configProvider->getLimit()) {
             throw new \OverflowException(
-                'It is not possible to add more related products, because of the limit of relations.'
+                'It is not possible to add more items, because of the limit of relations.'
             );
         }
 
