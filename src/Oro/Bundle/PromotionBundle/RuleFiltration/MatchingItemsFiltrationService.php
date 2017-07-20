@@ -45,33 +45,35 @@ class MatchingItemsFiltrationService implements RuleFiltrationServiceInterface
     {
         $lineItems = $context[ContextDataConverterInterface::LINE_ITEMS] ?? [];
 
-        $filteredOwners = $ruleOwners;
-        if (!empty($lineItems)) {
-            $filteredOwners = array_values(array_filter($ruleOwners, function ($ruleOwner) use ($lineItems) {
-                if (!$ruleOwner instanceof Promotion) {
-                    return false;
-                }
-                $discountOptions = $ruleOwner->getDiscountConfiguration()->getOptions();
-
-                $matchingProducts = $this->matchingProductsProvider
-                    ->getMatchingProducts($ruleOwner->getProductsSegment(), $lineItems);
-
-                if (!$matchingProducts) {
-                    return false;
-                }
-
-                // Skip promotions that are not unit aware
-                if (!array_key_exists(UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE, $discountOptions)) {
-                    return true;
-                }
-
-                return $this->hasMatchedProductUnit(
-                    $lineItems,
-                    $matchingProducts,
-                    $discountOptions[UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE]
-                );
-            }));
+        if (empty($lineItems)) {
+            return [];
         }
+
+        $filteredOwners = array_values(array_filter($ruleOwners, function ($ruleOwner) use ($lineItems) {
+            if (!$ruleOwner instanceof Promotion) {
+                return false;
+            }
+
+            $discountOptions = $ruleOwner->getDiscountConfiguration()->getOptions();
+
+            $matchingProducts = $this->matchingProductsProvider
+                ->getMatchingProducts($ruleOwner->getProductsSegment(), $lineItems);
+
+            if (!$matchingProducts) {
+                return false;
+            }
+
+            // Skip promotions that are not unit aware
+            if (!array_key_exists(UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE, $discountOptions)) {
+                return true;
+            }
+
+            return $this->hasMatchedProductUnit(
+                $lineItems,
+                $matchingProducts,
+                $discountOptions[UnitCodeAwareInterface::DISCOUNT_PRODUCT_UNIT_CODE]
+            );
+        }));
 
         return $this->filtrationService->getFilteredRuleOwners($filteredOwners, $context);
     }
