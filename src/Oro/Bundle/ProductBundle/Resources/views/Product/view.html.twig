@@ -3,6 +3,7 @@
 {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroUIBundle::macros.html.twig' as UII %}
+{% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedProductsDataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
 
@@ -180,17 +181,23 @@
     {% set relatedItemsSubblocks = [] %}
 
     {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
-        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{'id': 'products-related-products-view', 'label': 'Related Products'}]) %}
+        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{
+            'id': 'products-related-products-view',
+            'label': 'oro.product.tabs.relatedProducts'|trans}
+        ]) %}
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            dataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': get_related_products_ids(entity)}),
-            placeholder('oro_product_related_items_view', {'entity':  entity})
+            relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': get_related_products_ids(entity)}),
+            placeholder('oro_product_related_items_view', {'entity':  entity}),
         ]) %}
     {% endif %}
 
     {% if upsellProductsEnabled and resource_granted('oro_upsell_products_edit') %}
-        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{'id': 'products-upsell-products-view', 'label': 'Upsell Products'}]) %}
+        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{
+            'id': 'products-upsell-products-view',
+            'label': 'oro.product.tabs.upsellProducts'|trans
+        }]) %}
         {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
-            dataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': get_upsell_products_ids(entity)}),
+            relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': get_upsell_products_ids(entity)}),
             placeholder('oro_product_upsell_products_view', {'entity':  entity})
         ]) %}
     {% endif %}

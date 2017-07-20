@@ -228,6 +228,10 @@ oro:
             relatedItems: Related Items
             upsellItems: Upsell items
 
+        tabs:
+            relatedProducts: Related Products
+            upsellProducts: Upsell Products
+
         widgets:
             product_information: Product Information
             select_related_products:
@@ -235,6 +239,10 @@ oro:
               label: Select related products
               limit_has_been_reached: Limit of related products has been reached
             select_products: Select products
+            select_upsell_products:
+              title: Select upsell products for {{ sku }} - {{ name }}
+              label: Select upsell products
+              limit_has_been_reached: Limit of upsell products has been reached
 
         controller:
             product.saved.message: Product has been saved

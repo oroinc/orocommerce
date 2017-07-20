@@ -19,7 +19,7 @@ define([
         initialize: function(options) {
             this.grid = options.grid;
 
-            mediator.on('product:save-related-items', this.updateRelatedProductsGrid, this);
+            mediator.on('change:' + this.grid.name, this.updateRelatedProductsGrid, this);
         },
 
         /**

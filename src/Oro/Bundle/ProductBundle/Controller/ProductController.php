@@ -311,6 +311,22 @@ class ProductController extends Controller
     }
 
     /**
+     * @Route(
+     *     "/get-possible-products-for-upsell-products/{id}",
+     *     name="oro_product_possible_products_for_upsell_products",
+     *     requirements={"id"="\d+"}
+     * )
+     * @Template(template="OroProductBundle:Product:selectUpsellProducts.html.twig")
+     *
+     * @param Product $product
+     * @return array
+     */
+    public function getPossibleProductsForUpsellProductsAction(Product $product)
+    {
+        return ['product' => $product];
+    }
+
+    /**
      * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
      * @AclAncestor("oro_product_view")
      * @Template

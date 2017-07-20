@@ -33,4 +33,48 @@ class UpsellProductConfigProvider extends AbstractRelatedItemConfigProvider
     {
         return false;
     }
+
+    /**
+     * {@inheritDoc}
+     * @throws \LogicException
+     */
+    public function getMinimumItems()
+    {
+        throw new \LogicException(
+            'UpsellProductConfigProvider::getMinimumItems() is not supported.'
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws \LogicException
+     */
+    public function getMaximumItems()
+    {
+        throw new \LogicException(
+            'UpsellProductConfigProvider::getMaximumItems() is not supported.'
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws \LogicException
+     */
+    public function isSliderEnabledOnMobile()
+    {
+        throw new \LogicException(
+            'UpsellProductConfigProvider::isSliderEnabledOnMobile() is not supported.'
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws \LogicException
+     */
+    public function isAddButtonVisible()
+    {
+        throw new \LogicException(
+            'UpsellProductConfigProvider::isAddButtonVisible() is not supported.'
+        );
+    }
 }

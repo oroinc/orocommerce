@@ -45,7 +45,7 @@ define(function(require) {
         },
 
         _getGrid: function(gridName) {
-            return $('[data-page-component-name=' + gridName + ']');
+            return $('#' + gridName);
         },
 
         _showGrid: function(gridName) {

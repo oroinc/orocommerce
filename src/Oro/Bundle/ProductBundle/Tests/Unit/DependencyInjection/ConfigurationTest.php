@@ -55,6 +55,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'max_number_of_upsell_products' => [
                     'value' => 25,
+                ],
                 'related_products_max_items' => [
                     'value' => 4,
                     'scope' => 'app'

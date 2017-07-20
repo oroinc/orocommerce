@@ -55,18 +55,34 @@ class RelatedItemsProductEditListener
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $twigEnv = $event->getEnvironment();
+        $tabs = [];
+        $grids = [];
 
         if ($this->relatedProductsConfigProvider->isEnabled()
             && $this->authorizationChecker->isGranted('oro_related_products_edit')
         ) {
-            $this->addRelatedProductsEditBlock($event, $twigEnv);
+            $tabs[] = [
+                'id' => 'related-products-block',
+                'label' => $this->translator->trans('oro.product.tabs.relatedProducts')
+            ];
+            $grids[] = $this->getRelatedProductsEditBlock($event, $twigEnv);
         }
 
         if ($this->upsellProductsConfigProvider->isEnabled()
             && $this->authorizationChecker->isGranted('oro_upsell_products_edit')
         ) {
-            $this->addUpsellProductsEdidBlock($event, $twigEnv);
+            $tabs[] = [
+                'id' => 'upsell-products-block',
+                'label' => $this->translator->trans('oro.product.tabs.upsellProducts')
+            ];
+            $grids[] = $this->getUpsellProductsEdidBlock($event, $twigEnv);
         }
+
+        if (count($tabs) > 1) {
+            $grids = array_merge([$this->renderTabs($twigEnv, $tabs)], $grids);
+        }
+
+        $this->addEditPageBlock($event->getScrollData(), $grids);
     }
 
     /**
@@ -129,49 +145,70 @@ class RelatedItemsProductEditListener
 
     /**
      * @param ScrollData $scrollData
-     * @param string $relatedProductsForm
+     * @param string[] $htmlBlocks
      */
-    private function addEditPageBlock(ScrollData $scrollData, $relatedProductsForm)
+    private function addEditPageBlock(ScrollData $scrollData, array $htmlBlocks)
     {
         $scrollData->addNamedBlock(
             self::RELATED_ITEMS_ID,
             $this->translator->trans('oro.product.sections.relatedItems'),
             self::BLOCK_PRIORITY
         );
+
         $subBlock = $scrollData->addSubBlock(self::RELATED_ITEMS_ID);
-        $scrollData->addSubBlockData(self::RELATED_ITEMS_ID, $subBlock, $relatedProductsForm, 'relatedItems');
+        $scrollData->addSubBlockData(
+            self::RELATED_ITEMS_ID,
+            $subBlock,
+            implode('', $htmlBlocks),
+            'relatedItems'
+        );
     }
 
     /**
      * @param BeforeListRenderEvent $event
      * @param \Twig_Environment $twigEnv
+     * @return string
      */
-    private function addRelatedProductsEditBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    private function getRelatedProductsEditBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
     {
-        $relatedProductsTemplate = $twigEnv->render(
-            '@OroProduct/Product/RelatedItems/relatedItems.html.twig',
+        return $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/relatedProducts.html.twig',
             [
                 'form' => $event->getFormView(),
                 'entity' => $event->getEntity(),
                 'relatedProductsLimit' => $this->relatedProductsConfigProvider->getLimit()
             ]
         );
-        $this->addEditPageBlock($event->getScrollData(), $relatedProductsTemplate);
     }
 
     /**
      * @param BeforeListRenderEvent $event
      * @param \Twig_Environment $twigEnv
+     * @return string
      */
-    private function addUpsellProductsEdidBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    private function getUpsellProductsEdidBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
     {
-        $upsellProductsTemplate = $twigEnv->render(
-            '@OroProduct/Product/RelatedItems/upsellItems.html.twig',
+        return $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/upsellProducts.html.twig',
             [
                 'form' => $event->getFormView(),
                 'entity' => $event->getEntity()
             ]
         );
-        $this->addEditPageBlock($event->getScrollData(), $upsellProductsTemplate);
+    }
+
+    /**
+     * @param \Twig_Environment $twigEnv
+     * @param array $tabs
+     * @return string
+     */
+    private function renderTabs(\Twig_Environment $twigEnv, array $tabs)
+    {
+        return $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/tabs.html.twig',
+            [
+                'relatedItemsTabsItems' => $tabs
+            ]
+        );
     }
 }

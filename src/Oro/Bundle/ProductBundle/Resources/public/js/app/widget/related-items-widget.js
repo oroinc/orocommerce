@@ -39,7 +39,7 @@ define(function(require) {
         },
 
         setSelectedCount: function(grid) {
-            var selectedCount = grid.metadata.options.urlParams.relatedProducts;
+            var selectedCount = grid.metadata.options.urlParams.relatedItems;
             this.selectedCount = selectedCount !== 'undefined' ? selectedCount.length : 0;
         },
 
@@ -71,7 +71,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.trigger('product:save-related-items', this.getAppendedIds(), this.getRemovedIds());
+            mediator.trigger('change:' + this.options.gridName, this.getAppendedIds(), this.getRemovedIds());
             this.remove();
         },
 

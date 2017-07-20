@@ -16,7 +16,7 @@ class UpsellProductRepository extends EntityRepository implements AbstractAssign
      */
     public function exists($productFrom, $productTo)
     {
-        return null !== $this->findOneBy(['product' => $productFrom, 'upsellProduct' => $productTo]);
+        return null !== $this->findOneBy(['product' => $productFrom, 'relatedItem' => $productTo]);
     }
 
     /**
@@ -42,7 +42,7 @@ class UpsellProductRepository extends EntityRepository implements AbstractAssign
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->from('OroProductBundle:Product', 'p')
             ->select('p')
-            ->leftJoin(UpsellProduct::class, 'up_l', Join::WITH, 'up_l.upsellProduct = p.id')
+            ->leftJoin(UpsellProduct::class, 'up_l', Join::WITH, 'up_l.relatedItem = p.id')
             ->where('up_l.product = :id')
             ->setParameter(':id', $id)
             ->orderBy('p.id');
