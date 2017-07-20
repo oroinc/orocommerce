@@ -12,22 +12,23 @@ Description
 ------------
 
 This bundle introduces promotions functionality.
-Administrator can setup discount by adding promotions.
-Promotions have basic info (name, sort order, status, etc.), schedule, discount options, conditions (with scope and expression), matching items.
+Administrator can setup discounts by adding promotions.
+Promotions have basic info: name, sort order, status, schedule, discount options, conditions with scope and expression, matching items, etc.
 
 Matched promotions give discounts during checkout process. This is mainly done by `Oro\Bundle\PromotionBundle\Provider\SubtotalProvider` that add shipping and usual discounts subtotals. It uses `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` in order to find out discount information that stored as `Oro\Bundle\PromotionBundle\Discount\DiscountContext`.
 
 Discounts
 ------------
 
-Each promotion has `Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration` attached to it, with help of this configuration `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` using `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` can create discount that implements `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`. System powered by three types of discounts:
+Each promotion has `Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration` attached to it, with help of this configuration `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` using `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` can create discount that implements `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`. System powered by next types of discounts:
 - `Oro\Bundle\PromotionBundle\Discount\OrderDiscount` that gives discount on the order level
 - `Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount` that gives discount on line-item level
 - `Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount` that gives Buy X Get Y type of discount
 - `Oro\Bundle\PromotionBundle\Discount\ShippingDiscount` that gives shipping discount
 
 **Add discount**
-In order to introduce new discount, that can be selected in promotion configuration you should at first create discount class that implements `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`, you can use `Oro\Bundle\PromotionBundle\Discount\AbstractDiscount` as a base class for it. After that register your discount as `shared: false` service, and add it to the `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` by invokind `addType` method in service definition:
+
+In order to add new discount, that can be selected in promotion configuration you should at first create discount class that implements `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`, you can use `Oro\Bundle\PromotionBundle\Discount\AbstractDiscount` as a base class for it. After that register your discount as `shared: false` service, and add it to the `Oro\Bundle\PromotionBundle\Discount\DiscountFactory` by invoking `addType` method in service definition:
 ```
     app.promotion.discount.my_discount:
         class: AppBundle\Promotion\Discount\OrderDiscount
@@ -45,6 +46,9 @@ In order to introduce new discount, that can be selected in promotion configurat
             - ['addType', ['shipping', 'oro_promotion.discount.shipping_discount']]
             - ['addType', ['my_discount', 'app.promotion.discount.my_discount']]
 ```
+
+**Add discount formType**
+
 Also you need to specify FormType information for your discount. At first create FormType for it, you can use some of already available for reference, for example `Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType`. After that add it to the `Oro\Bundle\PromotionBundle\Provider\DiscountFormTypeProvider` in services:
 ```
     oro_promotion.discount_type_to_form_type_provider:
@@ -54,11 +58,29 @@ Also you need to specify FormType information for your discount. At first create
             - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
             - ['addFormType', ['line_item', 'oro_promotion_line_item_discount_options']]
             - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
-            - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
+            - ['addFormType', ['shipping', 'oro_promotion_shipping_discount_options']]
             - ['addFormType', ['my_discount', 'my_discount_options_form_type_alias']]
 ```
 
-During implementation of new discount you may be will be in need of support some custom source entity based on that information discount will be calculated. In `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor` source entity converted into `Oro\Bundle\PromotionBundle\Discount\DiscountContext` with help of DiscountContextConverter, you can use `Oro\Bundle\PromotionBundle\Discount\Converter\CheckoutDiscountContextConverter` as example.
+**Organize new discount options**
+
+When adding new discount likely will be needed to add new discount options. Discount options actually stored as array inside `Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration::options` and during promotion execution passed to the discounts configure method, for example `Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount::configure`, where options become resolved and you can safely store them and use later for calculations.
+In order to connect formType fields with discount options, they should have the same key, therefore useful to specify this key as discount's constant and use it during form field definition like `Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount::APPLY_TO` used inside `Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType::buildForm`.
+
+
+**Discount Context Converters**
+
+Promotions discounts are calculated base on the context. So each entity to which promotions can be applied must have its own discount context converter.
+
+If you need to support new source entity, you should create class that implements `Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface` and tag it's service with 'oro_promotion.discount_context_converter', in order to be able to convert this entity into context.
+```
+    app.promotion.custom_entity_context_data_converter:
+        class: AppBundle\Promotion\CustomEntityContextDataConverter
+        public: false
+        tags:
+            - { name: 'oro_promotion.discount_context_converter' }
+```
+Discount converter should return `Oro\Bundle\PromotionBundle\Discount\DiscountContext` that is model for store of data needed fo discount calculation. Also please keep in mind that line items in `Oro\Bundle\PromotionBundle\Discount\DiscountContext::lineItems` stored in the some unified format `Oro\Bundle\PromotionBundle\Discount\DiscountLineItem` to that line items of `Oro\Bundle\CheckoutBundle\Entity\Checkout` or `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList` are converted.
 
 Promotions Filtration
 ------------
@@ -72,12 +94,11 @@ During the promotions calculations with help of `Oro\Bundle\PromotionBundle\Prov
 - `Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService` - filters promotions if some of its products match line items' products given in context
 - `Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator` - filters out successors of promotion with `Stop Further Rule Processing` flag set, note that promotions are sorted by `Sort Order`
 
-**Context convertes**
+**Context Data Converters**
 
 Promotions are filtered base on context. So each entity to which promotions can be applied must have its own context converter.
 
-If you will be in need of support some custom source entity, you should create class that implements `Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface` and tag it's service with 'oro_promotion.promotion_context_converter', in order to be able to convert this entity into context.
-
+If you need to support new source entity, you should create class that implements `Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface` and tag it's service with 'oro_promotion.promotion_context_converter', in order to be able to convert this entity into context.
 ```
     app.promotion.custom_entity_context_data_converter:
         class: AppBundle\Promotion\CustomEntityContextDataConverter
@@ -104,6 +125,7 @@ Please keep in mind `decoration_priority` that affects the order in which filter
 
 Discount Strategy
 ------------
+
 The way in that promotions discounts will be aggregated is defined by Discount Strategy. It specified in system config and for getting active strategy used `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider`. There are two discount strategies:
 - profitable - the most profitable shipping discount and the most profitable not shipping discount will be applied
 - apply all - all discounts will be applied
