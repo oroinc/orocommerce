@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
 
@@ -61,7 +62,7 @@ class AppliedDiscountsProvider
     }
 
     /**
-     * Returns sum of all AppliedDiscount amounts for given Order (including line item discounts, etc)
+     * Returns sum of all AppliedDiscount amounts for given Order (including line item discounts, etc) without shipping
      *
      * @param Order $order
      * @return float
@@ -70,6 +71,30 @@ class AppliedDiscountsProvider
     {
         $amount = 0.0;
         foreach ($this->getDiscountsByOrder($order) as $appliedDiscount) {
+            if ($appliedDiscount->getType() === ShippingDiscount::NAME) {
+                continue;
+            }
+
+            $amount += $appliedDiscount->getAmount();
+        }
+
+        return $amount;
+    }
+
+    /**
+     * Returns sum of all shipping AppliedDiscount amounts for given Order
+     *
+     * @param Order $order
+     * @return float
+     */
+    public function getShippingDiscountsAmountByOrder(Order $order): float
+    {
+        $amount = 0.0;
+        foreach ($this->getDiscountsByOrder($order) as $appliedDiscount) {
+            if ($appliedDiscount->getType() !== ShippingDiscount::NAME) {
+                continue;
+            }
+
             $amount += $appliedDiscount->getAmount();
         }
 
