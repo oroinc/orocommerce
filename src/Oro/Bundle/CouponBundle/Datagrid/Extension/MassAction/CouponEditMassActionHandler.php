@@ -5,6 +5,7 @@ namespace Oro\Bundle\CouponBundle\Datagrid\Extension\MassAction;
 use Doctrine\ORM\Query;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Component\Exception\UnexpectedTypeException;
 use Oro\Bundle\CouponBundle\Entity\Coupon;
 use Oro\Bundle\CouponBundle\Form\Type\BaseCouponType;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -56,14 +57,9 @@ class CouponEditMassActionHandler implements MassActionHandlerInterface
         $datasource = $args->getDatagrid()->getDatasource();
 
         if (!$datasource instanceof OrmDatasource) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Expected "%s", "%s" given',
-                    OrmDatasource::class,
-                    get_class($datasource)
-                )
-            );
+            throw new UnexpectedTypeException($datasource, OrmDatasource::class);
         }
+
         $qb = clone $datasource->getQueryBuilder();
         if (!$args->getDatagrid()->getConfig()->isDatasourceSkipAclApply()) {
             $this->aclHelper->apply($qb, 'EDIT');
@@ -86,12 +82,14 @@ class CouponEditMassActionHandler implements MassActionHandlerInterface
                 $iteration++;
                 if ($iteration % self::FLUSH_BATCH_SIZE === 0) {
                     $manager->flush();
+                    $manager->clear();
                 }
             }
         }
 
-        if ($iteration > 0) {
+        if ($iteration % self::FLUSH_BATCH_SIZE > 0) {
             $manager->flush();
+            $manager->clear();
         }
 
         return $this->getEditResponse($iteration);

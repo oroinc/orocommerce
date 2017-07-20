@@ -62,7 +62,7 @@ datagrids:
                 updatedAt:
                     data_name: coupon.updatedAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
                 code:

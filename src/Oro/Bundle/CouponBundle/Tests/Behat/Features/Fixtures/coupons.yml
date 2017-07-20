@@ -1,0 +1,8 @@
+Oro\Bundle\CouponBundle\Entity\Coupon:
+    coupon{1..100}:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: '<current()>'
+        totalUses: 0
+        usesPerUser: '<identity($code + 1)>'
+        usesPerCoupon: '<identity($code + 2)>'

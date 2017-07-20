@@ -5,6 +5,7 @@ namespace Oro\Bundle\CouponBundle\Form\Type;
 use Oro\Bundle\CouponBundle\Entity\Coupon;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,7 +20,7 @@ class BaseCouponType extends AbstractType
     {
         $builder->add(
             'usesPerCoupon',
-            'integer',
+            IntegerType::class,
             [
                 'required' => false,
                 'tooltip' => 'oro.coupon.form.tooltip.uses_per_coupon',
@@ -27,7 +28,7 @@ class BaseCouponType extends AbstractType
             ]
         )->add(
             'usesPerUser',
-            'integer',
+            IntegerType::class,
             [
                 'required' => false,
                 'tooltip' => 'oro.coupon.form.tooltip.uses_per_user',
@@ -46,6 +47,9 @@ class BaseCouponType extends AbstractType
         ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getBlockPrefix()
     {
         return self::NAME;

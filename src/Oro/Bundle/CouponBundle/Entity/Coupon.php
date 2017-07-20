@@ -23,6 +23,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
  * @Config(
  *      routeName="oro_coupon_index",
  *      routeView="oro_coupon_view",
+ *      routeCreate="oro_coupon_create",
  *      routeUpdate="oro_coupon_update",
  *      defaultValues={
  *          "entity"={
