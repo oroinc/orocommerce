@@ -25,6 +25,8 @@ define(function(require) {
             if (this.options.saveStateUrl || false) {
                 this.$form.on('change', _.debounce($.proxy(this.onFormChange, this), this.options.changeTimeout));
             }
+
+            this.createAjaxData();
         },
 
         /**
@@ -33,6 +35,20 @@ define(function(require) {
         serializeForm: function() {
             var formName = this.$form.attr('name');
             return this.$form.find('[name^=' + formName + ']').serialize();
+        },
+
+        /**
+         * @returns {Object|null}
+         */
+        createAjaxData: function() {
+            var ajaxData = this.prepareAjaxData({method: 'POST'}, this.options.saveStateUrl);
+            if (this.lastSavedData === ajaxData.data) {
+                return null;
+            }
+
+            this.lastSavedData = ajaxData.data;
+
+            return ajaxData;
         },
 
         /**
@@ -52,12 +68,11 @@ define(function(require) {
                 }
             }
 
-            var ajaxData = this.prepareAjaxData({method: 'POST'}, this.options.saveStateUrl);
-            if (this.lastSavedData === ajaxData.data) {
+            var ajaxData = this.createAjaxData();
+            if (null === ajaxData) {
                 return;
             }
 
-            this.lastSavedData = ajaxData.data;
             $.ajax(ajaxData)
                 .done(_.bind(this.afterSaveState, this, $target));
         },

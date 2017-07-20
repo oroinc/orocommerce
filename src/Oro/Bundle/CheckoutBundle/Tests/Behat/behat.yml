@@ -54,6 +54,10 @@ oro_behat_extension:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'input[id="addNote"]'
 
+    Checkout Totals:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
+      selector: '.totals-container'
+
     OpenOrdersGrid:
       selector: 'div[data-page-component-name="frontend-checkouts-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

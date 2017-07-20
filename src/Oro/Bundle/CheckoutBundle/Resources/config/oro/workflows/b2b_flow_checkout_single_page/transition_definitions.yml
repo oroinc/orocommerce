@@ -132,6 +132,8 @@ workflows:
                             id: $checkout.id
                             transition: 'save_state'
 
+                    - '@flush_entity': $checkout
+
                 preconditions:
                     '@and':
                         - '@equal': [$checkout.completed, false]

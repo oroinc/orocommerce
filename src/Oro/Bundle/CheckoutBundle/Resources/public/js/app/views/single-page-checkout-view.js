@@ -7,6 +7,7 @@ define(function(require) {
 
     SinglePageCHeckoutView = BaseComponent.extend({
         initialize: function() {
+            mediator.trigger('checkout:shipping-method:rendered')
             mediator.trigger('checkout:transition-button:enable');
         }
     });
