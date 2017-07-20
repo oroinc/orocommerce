@@ -98,6 +98,13 @@ services:
         arguments:
             - '@oro_pricing.manager.price_manager'
 
+    oro_pricing.importexport.configuration_provider.price_attribute_product_price:
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Configuration\PriceAttributeProductPriceImportExportConfigurationProvider'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_product_index }
+
     oro_pricing.importexport.data_converter.price_attribute_product_price:
         class: 'Oro\Bundle\PricingBundle\ImportExport\DataConverter\PriceAttributeProductPriceDataConverter'
         public: false

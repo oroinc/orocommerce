@@ -11,6 +11,16 @@ oro.pricing:
         product.label: Product
         unit.label: Unit
 
+        export:
+            button.label: 'Export Product Attribute Prices'
+        export_template:
+            button.label: 'Download Product Attribute Prices Template'
+        import:
+            button.label: 'Import Product Attribute Prices'
+            popup.title: 'Import Product Attribute Prices'
+        import_validation:
+            button.label: 'Validate Product Attribute Prices File'
+
     priceAttribute:
         unit.label: Unit
         withoutPrice: N/A
