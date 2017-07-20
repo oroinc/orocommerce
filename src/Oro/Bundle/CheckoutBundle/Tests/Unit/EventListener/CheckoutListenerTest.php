@@ -106,8 +106,10 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $token
      * @param Checkout $checkout
+     * @param Website|null $website
+     * @param Organization|null $expectedOrganization
      */
-    public function testPrePersistSetDefaultOwner($token, Checkout $checkout)
+    public function testPrePersistSetDefaultOwner($token, Checkout $checkout, $website, $expectedOrganization)
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -122,12 +124,6 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_checkout', 'default_guest_checkout_owner')
             ->willReturn($newUser);
 
-        $organization = new Organization();
-        $organization->setName('test');
-
-        $website = new Website();
-        $website->setOrganization($organization);
-
         $this->websiteManager
             ->expects($this->once())
             ->method('getCurrentWebsite')
@@ -135,7 +131,7 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->prePersist($checkout);
         $this->assertSame($newUser, $checkout->getOwner());
-        $this->assertEquals('test', $checkout->getOrganization()->getName());
+        $this->assertEquals($expectedOrganization, $checkout->getOrganization());
     }
 
     /**
@@ -143,11 +139,29 @@ class CheckoutListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function persistSetDefaultOwnerDataProvider()
     {
+        $organization = new Organization();
+        $website      = new Website();
+        $website->setOrganization($organization);
+
         return [
-            'with token and without owner' => [
+            'with token, without owner, without current website' => [
                 'token' => new AnonymousCustomerUserToken(''),
-                'checkout' => new Checkout()
-            ]
+                'checkout' => new Checkout(),
+                'website' => null,
+                'expectedOrganization' => null
+            ],
+            'with token, without owner, with website, without organization' => [
+                'token' => new AnonymousCustomerUserToken(''),
+                'checkout' => new Checkout(),
+                'website' => new Website(),
+                'expectedOrganization' => null
+            ],
+            'with token, without owner, with website, with organization' => [
+                'token' => new AnonymousCustomerUserToken(''),
+                'checkout' => new Checkout(),
+                'website' => $website,
+                'expectedOrganization' => $organization
+            ],
         ];
     }
 }

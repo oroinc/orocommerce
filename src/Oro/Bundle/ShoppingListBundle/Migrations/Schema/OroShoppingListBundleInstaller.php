@@ -309,9 +309,11 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
             $tableDetailedColumnNames,
             $tableGridColumnNames,
             [
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM
-                ]
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+                'merge' => ['display' => false],
+                'dataaudit' => ['auditable' => false]
             ]
         );
     }
