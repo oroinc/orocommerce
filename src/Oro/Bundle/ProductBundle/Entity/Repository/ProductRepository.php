@@ -276,18 +276,15 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @return $this
      */
-    public function selectImages(QueryBuilder $queryBuilder)
+    private function filterByImageType(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->addSelect('product_images,product_images_types,product_images_file')
+        $queryBuilder->addSelect('product_images, product_images_types, product_images_file')
             ->join('product.images', 'product_images')
             ->join('product_images.types', 'product_images_types')
             ->join('product_images.image', 'product_images_file')
             ->andWhere($queryBuilder->expr()->eq('product_images_types.type', ':imageType'))
-            ->setParameter('imageType', ProductImageType::TYPE_MAIN);
-
-        return $this;
+            ->setParameter('imageType', ProductImageType::TYPE_LISTING);
     }
 
     /**
@@ -352,7 +349,7 @@ class ProductRepository extends EntityRepository
         $queryBuilder = $this->getProductWithNamesQueryBuilder()
             ->setMaxResults($quantity)
             ->orderBy('product.id', 'ASC');
-        $this->selectImages($queryBuilder);
+        $this->filterByImageType($queryBuilder);
 
         return $queryBuilder;
     }

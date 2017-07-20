@@ -50,6 +50,12 @@ define(function(require) {
                 return;
             }
 
+            if (data.parent === '#') {
+                this.rollback(data);
+                messenger.notificationFlashMessage('warning', _.__('oro.webcatalog.jstree.add_new_root_warning'));
+                return;
+            }
+
             this.moveEventData = {e: e, data: data};
 
             if (this.moveEventData.data.old_parent === this.moveEventData.data.parent) {

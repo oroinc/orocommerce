@@ -524,6 +524,19 @@ class PromotionExecutorTest extends FrontendWebTestCase
                 'strategy' => 'profitable',
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
+                    'subtotalDiscountTotal' => 10.0,
+                    'shippingDiscountTotal' => 20.0,
+                    'discountAmount' => 30.0
+                ]
+            ],
+            'case for fixed amount and percent shipping discount, with profitable strategy' => [
+                'enabledPromotions' => [
+                    'promo_shipping_20_USD_flat_rate_method',
+                    'promo_shipping_20%_flat_rate_method',
+                ],
+                'strategy' => 'profitable',
+                'expected' => [
+                    'totalLineItemsDiscount' => 0.0,
                     'subtotalDiscountTotal' => 0.0,
                     'shippingDiscountTotal' => 20.0,
                     'discountAmount' => 20.0

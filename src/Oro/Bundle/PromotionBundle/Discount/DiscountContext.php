@@ -131,6 +131,21 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
+     * @return array|DiscountInterface[]
+     */
+    public function getLineItemDiscounts()
+    {
+        $discounts = [];
+        foreach ($this->lineItems as $lineItem) {
+            foreach ($lineItem->getDiscounts() as $discount) {
+                $discounts[spl_object_hash($discount)] = $discount;
+            }
+        }
+
+        return array_values($discounts);
+    }
+
+    /**
      * @return float
      */
     public function getShippingCost(): float

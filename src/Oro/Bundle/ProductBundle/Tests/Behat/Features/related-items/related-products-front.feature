@@ -43,7 +43,7 @@ Feature: Showing related products
       | PSKU3 |
       | PSKU4 |
     And I click "Select products"
-    And I click "Save and Close"
+    And I save and close form
     When I proceed as the Buyer
     And type "PSKU1" in "search"
     And click "Search Button"
@@ -109,7 +109,7 @@ Feature: Showing related products
       | PSKU4 |
       | PSKU5 |
     And I click "Select products"
-    And I click "Save and Close"
+    And I save and close form
     When I proceed as the Buyer
     And type "PSKU3" in "search"
     And click "Search Button"
@@ -136,7 +136,7 @@ Feature: Showing related products
       And I select following records in "SelectRelatedProductsGrid" grid:
         | PSKU2 |
       And I click "Select products"
-      And I click "Save and Close"
+      And I save and close form
       When I proceed as the Buyer
       And type "PSKU1" in "search"
       And click "Search Button"

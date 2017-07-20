@@ -702,3 +702,20 @@ promo_shipping_20_USD_flat_rate_method:
                 shipping_method: 'flat-rate'
                 shipping_method_type: 'air'
     scopeCriterias: [{website: null, customerGroup: null, customer: null}]
+
+promo_shipping_20%_flat_rate_method:
+    rule:
+        name: 'promo_shipping_20%_flat_rate_method'
+        sortOrder: 350
+        enabled: false
+        stopFurtherRuleProcessing: false
+    segmentReference: 'product_dynamic_segment'
+    discountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'percent'
+            discount_value: 0.2
+            shipping_options:
+                shipping_method: 'flat-rate'
+                shipping_method_type: 'air'
+    scopeCriterias: [{website: null, customerGroup: null, customer: null}]

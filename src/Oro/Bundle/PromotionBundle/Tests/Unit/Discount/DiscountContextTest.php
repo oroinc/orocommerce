@@ -8,6 +8,9 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class DiscountContextTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
@@ -120,5 +123,27 @@ class DiscountContextTest extends \PHPUnit_Framework_TestCase
         $context->addLineItem($lineItem2);
 
         $this->assertEquals(30.5, $context->getTotalLineItemsDiscount());
+    }
+
+    public function testGetLineItemDiscounts()
+    {
+        $discount1 = $this->createMock(DiscountInterface::class);
+        $discount2 = $this->createMock(DiscountInterface::class);
+        $lineItem1 = new DiscountLineItem();
+        $lineItem1->addDiscount($discount1);
+        $lineItem1->addDiscount($discount2);
+
+        $lineItem2 = new DiscountLineItem();
+        $lineItem2->addDiscount($discount1);
+
+        $lineItem3 = new DiscountLineItem();
+
+        $context = new DiscountContext();
+        $context->setLineItems([$lineItem1, $lineItem2, $lineItem3]);
+
+        $discounts = $context->getLineItemDiscounts();
+        $this->assertCount(2, $discounts);
+        $this->assertContains($discount1, $discounts);
+        $this->assertContains($discount2, $discounts);
     }
 }

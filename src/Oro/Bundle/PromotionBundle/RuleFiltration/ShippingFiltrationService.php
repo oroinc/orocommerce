@@ -34,33 +34,30 @@ class ShippingFiltrationService implements RuleFiltrationServiceInterface
         $shippingMethod = $context[ContextDataConverterInterface::SHIPPING_METHOD] ?? null;
         $shippingMethodType = $context[ContextDataConverterInterface::SHIPPING_METHOD_TYPE] ?? null;
 
-        $filteredOwners = $ruleOwners;
-        if ($shippingMethod && $shippingMethodType) {
-            $filteredOwners = array_values(
-                array_filter(
-                    $ruleOwners,
-                    function ($ruleOwner) use ($shippingMethod, $shippingMethodType) {
-                        if (!$ruleOwner instanceof Promotion) {
-                            return false;
-                        }
-
-                        if ($ruleOwner->getDiscountConfiguration()->getType() !== ShippingDiscount::NAME) {
-                            return true;
-                        }
-
-                        return $this->isShippingOptionsMatched($ruleOwner, $shippingMethod, $shippingMethodType);
+        $filteredOwners = array_values(
+            array_filter(
+                $ruleOwners,
+                function ($ruleOwner) use ($shippingMethod, $shippingMethodType) {
+                    if (!$ruleOwner instanceof Promotion) {
+                        return false;
                     }
-                )
-            );
-        }
+
+                    if ($ruleOwner->getDiscountConfiguration()->getType() !== ShippingDiscount::NAME) {
+                        return true;
+                    }
+
+                    return $this->isShippingOptionsMatched($ruleOwner, $shippingMethod, $shippingMethodType);
+                }
+            )
+        );
 
         return $this->filtrationService->getFilteredRuleOwners($filteredOwners, $context);
     }
 
     /**
      * @param Promotion $promotion
-     * @param string $shippingMethod
-     * @param string $shippingMethodType
+     * @param string $shippingMethod|null
+     * @param string $shippingMethodType|null
      *
      * @return bool
      */

@@ -19,8 +19,12 @@ class LoadProductImageData extends AbstractFixture implements DependentFixtureIn
      * @var array
      */
     protected static $products = [
-        'product-1',
-        'product-2',
+        'product-1' => [
+            'type' => ProductImageType::TYPE_LISTING
+        ],
+        'product-2' => [
+            'type' => ProductImageType::TYPE_MAIN
+        ],
     ];
 
     /**
@@ -36,7 +40,7 @@ class LoadProductImageData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        foreach (static::$products as $productReference) {
+        foreach (static::$products as $productReference => $productData) {
             /** @var Product $product */
             $product = $this->getReference($productReference);
             $image = new File();
@@ -45,8 +49,9 @@ class LoadProductImageData extends AbstractFixture implements DependentFixtureIn
 
             $productImage = new ProductImage();
             $productImage->setImage($image);
-            $productImage->addType(ProductImageType::TYPE_MAIN);
-            $productImage->addType(ProductImageType::TYPE_LISTING);
+
+            $productType = isset($productData['type']) ? $productData['type'] : ProductImageType::TYPE_LISTING;
+            $productImage->addType($productType);
 
             $product->addImage($productImage);
 

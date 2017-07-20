@@ -27,30 +27,13 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $this->shippingFiltrationService = new ShippingFiltrationService($this->filtrationService);
     }
 
-    public function testReturnRuleOwnersWithoutChangesForNotSupportedContext()
+    /**
+     * @dataProvider contextDataProvider
+     * @param array $context
+     */
+    public function testFilterRuleOwnersWithNotSupportedClass(array $context)
     {
         $notSupportedRuleOwner = new \stdClass();
-        $contextWithoutRequiredInformation = [];
-        $filteredRuleOwners = [$notSupportedRuleOwner];
-
-        $this->filtrationService->expects($this->once())
-            ->method('getFilteredRuleOwners')
-            ->with($filteredRuleOwners, $contextWithoutRequiredInformation)
-            ->willReturn([]);
-
-        $this->shippingFiltrationService->getFilteredRuleOwners(
-            $filteredRuleOwners,
-            $contextWithoutRequiredInformation
-        );
-    }
-
-    public function testFilterRuleOwnersWithNotSupportedClass()
-    {
-        $notSupportedRuleOwner = new \stdClass();
-        $context = [
-            ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
-            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
-        ];
 
         $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
@@ -63,7 +46,29 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testFilterShippingPromotionsWithNotMatchedShippingOptions()
+    /**
+     * @return array
+     */
+    public function contextDataProvider()
+    {
+        return [
+            'empty context' => [
+                'context' => [],
+            ],
+            'filled context' => [
+                'context' => [
+                    ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
+                    ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
+                ],
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider contextDataProvider
+     * @param array $context
+     */
+    public function testFilterShippingPromotionsWithNotMatchedShippingOptions(array $context)
     {
         $promotion = new Promotion();
         $discountConfiguration = new DiscountConfiguration();
@@ -75,10 +80,6 @@ class ShippingFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
         $promotion->setDiscountConfiguration($discountConfiguration);
-        $context = [
-            ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
-            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
-        ];
 
         $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
