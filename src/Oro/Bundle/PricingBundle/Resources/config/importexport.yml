@@ -1,4 +1,12 @@
 services:
+    # Normalizer
+    oro_pricing.importexport.normalizer.product_price:
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Normalizer\ProductPriceNormalizer'
+        public: false
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        tags:
+            - { name: oro_importexport.normalizer }
+
     # Converter
     oro_pricing.importexport.data_converter.product_price:
         public: false
@@ -89,3 +97,15 @@ services:
         parent: oro_integration.writer.persistent_batch_writer
         arguments:
             - '@oro_pricing.manager.price_manager'
+
+    oro_pricing.importexport.data_converter.price_attribute_product_price:
+        class: 'Oro\Bundle\PricingBundle\ImportExport\DataConverter\PriceAttributeProductPriceDataConverter'
+        public: false
+        parent: oro_importexport.data_converter.configurable
+
+    oro_pricing.importexport.normalizer.price_attribute_product_price:
+        class: 'Oro\Bundle\PricingBundle\ImportExport\Normalizer\PriceAttributeProductPriceNormalizer'
+        public: false
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        tags:
+            - { name: oro_importexport.normalizer }

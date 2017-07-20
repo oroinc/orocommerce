@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(
@@ -32,6 +32,13 @@ class PriceAttributeProductPrice extends BaseProductPrice
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList", inversedBy="prices")
      * @ORM\JoinColumn(name="price_attribute_pl_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *     defaultValues={
+     *         "importexport"={
+     *             "order"=15
+     *         }
+     *     }
+     * )
      **/
     protected $priceList;
 }
