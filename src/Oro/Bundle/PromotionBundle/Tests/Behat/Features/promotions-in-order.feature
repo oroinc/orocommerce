@@ -60,8 +60,8 @@ Feature: Promotions in Order page
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 1 Item #: SKU1 | $0.00 |
       | Product 2 Item #: SKU2 | $5.00 |
+      | Product 1 Item #: SKU1 | $0.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount  |
       | Subtotal          | $20.00  |
@@ -122,8 +122,8 @@ Feature: Promotions in Order page
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 1 Item #: SKU1 | $0.00 |
       | Product 2 Item #: SKU2 | $5.00 |
+      | Product 1 Item #: SKU1 | $0.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount  |
       | Subtotal          | $16.00  |
@@ -164,8 +164,8 @@ Feature: Promotions in Order page
     When I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 1 Item #: SKU1 | $0.00 |
       | Product 2 Item #: SKU2 | $3.00 |
+      | Product 1 Item #: SKU1 | $0.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount |
       | Subtotal          | $16.00 |
