@@ -21,8 +21,6 @@ layout:
                     blockType: container
                 product_view_aside_container:
                     blockType: container
-                product_view_gallery_container:
-                    blockType: container
                 product_sticker_new:
                     blockType: product_sticker
                     options:
@@ -49,16 +47,6 @@ layout:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
                         group: 'general'
-                product_view_attribute_group_images:
-                    blockType: attribute_group
-                    options:
-                        entity: '=data["product"]'
-                        attribute_family: '=context["attribute_family"]'
-                        group: 'images'
-                product_media_popup:
-                    blockType: product_image
-                    options:
-                        product: '=data["product"]'
                 product_view_main_attributes_container:
                     blockType: container
             tree:
@@ -67,10 +55,7 @@ layout:
                         product_view_primary_wrapper:
                             product_view_primary_container:
                                 product_sticker_new: ~
-                            product_view_aside_container:
-                                product_view_gallery_container:
-                                    product_view_attribute_group_images: ~
-                                product_media_popup: ~
+                            product_view_aside_container: ~
                         product_view_main_container:
                             product_view_content_container:
                                 product_view_specification_container: ~
