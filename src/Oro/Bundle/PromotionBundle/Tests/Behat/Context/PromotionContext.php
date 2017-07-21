@@ -46,6 +46,8 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @BeforeScenario
+     *
+     * @param BeforeScenarioScope $scope
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
@@ -100,6 +102,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for backoffice order:$/
+     * @param TableNode $table
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {
@@ -164,16 +167,16 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $this->waitForAjax();
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Shipping Information - Open Order');
+        $this->oroMainContext->assertPageTitle('Shipping Information - Checkout');
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Shipping Method - Open Order');
+        $this->oroMainContext->assertPageTitle('Shipping Method - Checkout');
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Payment - Open Order');
+        $this->oroMainContext->assertPageTitle('Payment - Checkout');
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Order Review - Open Order');
+        $this->oroMainContext->assertPageTitle('Order Review - Checkout');
         $this->oroMainContext->pressButton('Submit Order');
         $this->waitForAjax();
         $this->oroMainContext->clickLink('click here to review');

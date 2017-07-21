@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -16,10 +14,12 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
@@ -43,7 +43,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     const SHIPPING_ADDRESS_SIGN = 'SELECT SHIPPING ADDRESS';
     const BILLING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
     const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
-    const PAYMENT_METHOD_SIGN = 'Payment - Open Order';
+    const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
     const ORDER_REVIEW_SIGN = 'View Options for this Order';
     const FINISH_SIGN = 'Thank You For Your Purchase!';
     const EDIT_BILLING_SIGN = 'Edit Billing Information';
