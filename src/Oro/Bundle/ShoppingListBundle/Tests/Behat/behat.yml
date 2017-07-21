@@ -49,6 +49,10 @@ oro_behat_extension:
     ShoppingListWidget:
       selector: '.shopping-list-widget'
 
+    Subtotals:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals
+      selector: '.order-checkout-widget__container'
+
   suites:
     OroShoppingListBundle:
       contexts:
