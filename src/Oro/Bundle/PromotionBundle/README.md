@@ -95,7 +95,7 @@ Later strategy will iterate over discounts that added to the `Oro\Bundle\Promoti
         tags:
             - { name: 'oro_promotion.discount_context_converter' }
 ```
-Discount converter should return `Oro\Bundle\PromotionBundle\Discount\DiscountContext`. Also please keep in mind that line items in `Oro\Bundle\PromotionBundle\Discount\DiscountContext::lineItems` stored in the some unified format `Oro\Bundle\PromotionBundle\Discount\DiscountLineItem` to that line items of `Oro\Bundle\CheckoutBundle\Entity\Checkout` or `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList` are converted.
+Discount converter should return `Oro\Bundle\PromotionBundle\Discount\DiscountContext`. Also please keep in mind that line items in `Oro\Bundle\PromotionBundle\Discount\DiscountContext::$lineItems` stored in the some unified format `Oro\Bundle\PromotionBundle\Discount\DiscountLineItem` to that line items of `Oro\Bundle\CheckoutBundle\Entity\Checkout` or `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList` are converted.
 
 Promotions Filtration
 ------------
