@@ -3,9 +3,15 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\EntityBundle\Tests\Functional\DataFixtures\LoadBusinessUnitData;
+use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrganizations;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 class ProductApiTest extends RestJsonApiTestCase
 {
@@ -15,7 +21,15 @@ class ProductApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->loadFixtures([LoadProductUnitPrecisions::class]);
+        $this->loadFixtures([
+            LoadProductUnits::class,
+            LoadProductUnitPrecisions::class,
+            LoadBusinessUnitData::class,
+            LoadOrganizations::class,
+            LoadProductTaxCodes::class,
+            LoadAttributeFamilyData::class,
+            LoadCategoryData::class,
+        ]);
     }
 
     /**
@@ -63,11 +77,11 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
 
         $response = $this->patch(
-            ['entity' => 'products', 'id' => (string) $product->getId()],
+            ['entity' => 'products', 'id' => (string)$product->getId()],
             [
                 'data' => [
                     'type' => 'products',
-                    'id' => (string) $product->getId(),
+                    'id' => (string)$product->getId(),
                     'relationships' => [
                         'inventory_status' => [
                             'data' => [
@@ -85,5 +99,20 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->getReferenceRepository()->setReference(LoadProductData::PRODUCT_1, $product);
 
         $this->assertResponseContains('patch_update_entity.yml', $response);
+    }
+
+    public function testProductPageTemplateValue()
+    {
+        $response = $this->post(
+            ['entity' => $this->getEntityType(Product::class)],
+            __DIR__ . '/requests/create_product.yml'
+        );
+
+        /** @var Product $product */
+        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-1']);
+
+        var_dump($product->getPageTemplate()->getOwnValue()); die;
+        $this->assertTrue(true);
+//        $this->assertResponseContains(__DIR__ . '/responses/create_customer.yml', $response, $customer);
     }
 }

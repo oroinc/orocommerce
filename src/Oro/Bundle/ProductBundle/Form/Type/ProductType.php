@@ -16,13 +16,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\EntityBundle\Validator\Constraints\EntityFieldFallbackValues;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 
@@ -166,7 +166,8 @@ class ProductType extends AbstractType
                     'value_type' => PageTemplateType::class,
                     'value_options' => [
                         'route_name' => self::PAGE_TEMPLATE_ROUTE_NAME
-                    ]
+                    ],
+                    'constraints' => [new EntityFieldFallbackValues()]
                 ]
             )
             ->add('type', HiddenType::class)
