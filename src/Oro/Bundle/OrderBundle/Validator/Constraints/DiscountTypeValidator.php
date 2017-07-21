@@ -32,7 +32,7 @@ class DiscountTypeValidator extends ConstraintValidator
             );
         }
 
-        if (in_array($value->getType(), $this->validTypes)) {
+        if (in_array($value->getType(), $this->validTypes, true)) {
             return;
         }
 

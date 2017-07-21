@@ -7,4 +7,11 @@
   background: $quick-order-background;
 
   @include clearfix();
+
+  .mobile-version & {
+    @include breakpoint('mobile-big') {
+      padding: $quick-order-mobile-padding;
+      width: 100%;
+    }
+  }
 }
