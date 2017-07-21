@@ -38,16 +38,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
             LoadProductData::class,
         ]);
 
-        $this->simulateAuthentication(
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-            'customer_identity',
-            CustomerUser::class
-        );
-
-        $this->product = $this->getContainer()->get('doctrine')
-            ->getRepository(Product::class)
-            ->findOneBy(['sku' => LoadProductData::PRODUCT_1]);
+        $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->shoppingList = $this->getReference(LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL);
     }
 
