@@ -140,6 +140,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                         'type' => 'total',
                         'label' => 'Total',
                         'amount' => 5826.97,
+                        'signedAmount' => 5826.97,
                         'currency' => 'EUR',
                         'visible' => null,
                         'data' => [
@@ -152,6 +153,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                             'type' => 'subtotal',
                             'label' => 'Subtotal',
                             'amount' => 5336.68,
+                            'signedAmount' => 5336.68,
                             'currency' => 'EUR',
                             'visible' => null,
                             'data' => [
@@ -180,6 +182,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                         'type' => 'total',
                         'label' => 'Total',
                         'amount' => 5826.97,
+                        'signedAmount' => 5826.97,
                         'currency' => 'USD',
                         'visible' => null,
                         'data' => null,
@@ -189,6 +192,7 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                             'type' => 'subtotal',
                             'label' => 'Subtotal',
                             'amount' => 5336.68,
+                            'signedAmount' => 5336.68,
                             'currency' => 'USD',
                             'visible' => null,
                             'data' => null,

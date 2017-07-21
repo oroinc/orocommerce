@@ -282,6 +282,7 @@ datagrids:
                 label:         oro.frontend.sale.quote.qid.label
             customerStatusName:
                 label:         oro.frontend.sale.quote.customer_status.label
+                renderable:    false
             poNumber:
                 label:         oro.frontend.sale.quote.po_number.label
             shipUntil:
@@ -334,6 +335,7 @@ datagrids:
                     type:      enum
                     data_name: customerStatusId
                     enum_code: quote_customer_status
+                    enabled: false
                 poNumber:
                     type:      string
                     data_name: quote.poNumber

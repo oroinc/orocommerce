@@ -166,6 +166,7 @@ class DiscountSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(DiscountSubtotalProvider::TYPE, $discountSubtotal->getType());
         $this->assertEquals($description, $discountSubtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $discountSubtotal->getCurrency());
+        $this->assertEquals(50, $discountSubtotal->getSortOrder());
         $this->assertInternalType('float', $discountSubtotal->getAmount());
         $this->assertEquals(150, $discountSubtotal->getAmount());
     }

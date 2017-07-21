@@ -16,7 +16,7 @@ Feature: Several promotions in Shopping List
       | SKU2             | $1.00    |
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
-      | Discount | $4.00  |
+      | Discount | -$4.00 |
     Then I click delete line item "SKU1"
     And I click "Yes, Delete" in modal window
     And I see next line item discounts for shopping list "List 1":
@@ -24,4 +24,4 @@ Feature: Several promotions in Shopping List
       | SKU2             | $5.50    |
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
-      | Discount | $5.50  |
+      | Discount | -$5.50 |

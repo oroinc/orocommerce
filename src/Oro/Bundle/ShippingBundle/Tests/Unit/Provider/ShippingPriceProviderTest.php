@@ -9,6 +9,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
@@ -18,6 +19,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodS
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -37,6 +39,11 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceCache;
+
+    /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $eventDispatcher;
 
     /**
      * @var ShippingPriceProvider
@@ -88,11 +95,14 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $viewFactory = new ShippingMethodViewFactory($this->shippingMethodProvider);
 
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $this->shippingPriceProvider = new ShippingPriceProvider(
             $this->shippingRulesProvider,
             $this->shippingMethodProvider,
             $this->priceCache,
-            $viewFactory
+            $viewFactory,
+            $this->eventDispatcher
         );
     }
 
@@ -106,15 +116,22 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
+        $sourceEntity = new \stdClass();
+
         $context = new ShippingContext([
             ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($shippingLineItems),
-            ShippingContext::FIELD_CURRENCY => 'USD'
+            ShippingContext::FIELD_CURRENCY => 'USD',
+            ShippingContext::FIELD_SOURCE_ENTITY => $sourceEntity
         ]);
 
         $this->shippingRulesProvider->expects($this->once())
             ->method('getAllFilteredShippingMethodsConfigs')
             ->with($context)
             ->willReturn($shippingRules);
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(ApplicableMethodsEvent::NAME);
 
         $this->assertEquals(
             $expectedData,

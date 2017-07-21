@@ -17,7 +17,6 @@ use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount;
-use Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\LineItemDiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
@@ -189,7 +188,6 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductUnitsType::NAME => new ProductUnitsType($productUnitsProvider),
-                    DiscountFreeShippingType::NAME => new DiscountFreeShippingType(),
                     DiscountOptionsType::NAME => new DiscountOptionsType(),
                     MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
                     CurrencySelectionType::NAME => new CurrencySelectionType(

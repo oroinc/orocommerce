@@ -75,7 +75,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
         $noProductsError = $translator
-            ->trans('oro.checkout.order.line_items.line_item_has_no_price.message');
+            ->trans('oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message');
         static::assertContains($noProductsError, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
@@ -98,7 +98,9 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $noProductsError = $translator->trans('oro.checkout.workflow.condition.order_line_item_has_count.message');
+        $noProductsError = $translator->trans(
+            'oro.checkout.workflow.condition.order_line_item_has_count_not_allow_rfp.message'
+        );
         static::assertContains($noProductsError, $crawler->html());
     }
 

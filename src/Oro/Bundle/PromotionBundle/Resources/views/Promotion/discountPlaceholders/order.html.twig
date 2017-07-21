@@ -1,17 +1,5 @@
 {% extends 'OroPromotionBundle:Promotion/discountPlaceholders:baseDiscountPlaceholder.html.twig' %}
 
 {% block content %}
-    {#{% if entity.discountConfiguration.options['shipping_discount'] == 'items' %}#}
-        {#{% set shippingDiscount = 'oro.promotion.discount.free_shipping.for_matching_items_only'|trans %}#}
-    {#{% elseif entity.discountConfiguration.options['shipping_discount'] == 'order' %}#}
-        {#{% set shippingDiscount = 'oro.promotion.discount.free_shipping.for_shipment_with_matching_items'|trans %}#}
-    {#{% else %}#}
-        {#{% set shippingDiscount = 'N/A'|trans %}#}
-    {#{% endif %}#}
-
-    {#{% set data = [#}
-        {#UI.renderProperty('oro.promotion.discountconfiguration.options.free_shipping.label'|trans, shippingDiscount)#}
-    {#] %}#}
-
     {{ parent() }}
 {% endblock %}

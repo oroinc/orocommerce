@@ -43,7 +43,7 @@
                 {% for subtotal in subtotals %}
                 <tr>
                     <td>{{ subtotal.label }}</td>
-                    <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                    <td>{{ subtotal.signedAmount|oro_format_currency({'currency': subtotal.currency}) }}</td>
                 </tr>
                 {% endfor %}
                 <tr>

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -217,7 +218,8 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         $fieldName,
         PriceRuleRelationExpressions $constraint
     ) {
-        if (!$this->isRelationInRule($rule, $node)) {
+        $relationClassName = $this->fieldsProvider->getRealClassName($node->getContainer(), $node->getField());
+        if (is_a($relationClassName, BaseProductPrice::class, true) && !$this->isRelationInRule($rule, $node)) {
             $this->addError(
                 $path,
                 $constraint->messageRelationNotUsedInRule,
@@ -319,7 +321,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 
         $relationNode = null;
         foreach ($nodes as $node) {
-            if ($node instanceof Node\RelationNode && $relationNode || $node instanceof Node\NameNode) {
+            if (($node instanceof Node\RelationNode && $relationNode) || $node instanceof Node\NameNode) {
                 $this->addError(
                     $path,
                     $constraint->messageTooManyRelations,

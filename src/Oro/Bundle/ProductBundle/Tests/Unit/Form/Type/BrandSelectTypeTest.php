@@ -39,9 +39,11 @@ class BrandSelectTypeTest extends \PHPUnit_Framework_TestCase
                     function (array $options) {
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
+                        $this->assertArrayHasKey('create_enabled', $options);
                         $this->assertArrayHasKey('configs', $options);
                         $this->assertEquals('oro_product_brand', $options['autocomplete_alias']);
                         $this->assertEquals('oro_product_brand_create', $options['create_form_route']);
+                        $this->assertEquals(false, $options['create_enabled']);
                         $this->assertEquals(
                             ['placeholder' => 'oro.product.brand.form.choose'],
                             $options['configs']

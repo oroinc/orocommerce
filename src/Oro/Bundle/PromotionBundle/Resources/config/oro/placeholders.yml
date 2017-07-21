@@ -5,6 +5,7 @@ placeholders:
                 order_discount_information: ~
                 line_item_discount_information: ~
                 buy_x_get_y_discount_information: ~
+                shipping_discount_information: ~
         order_edit_section_applied_discounts_after:
             items:
                 order_edit_section_applied_discounts_after_item_with_taxes: ~
@@ -23,6 +24,9 @@ placeholders:
         buy_x_get_y_discount_information:
             applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, buy_x_get_y)"
             template: OroPromotionBundle:Promotion:discountPlaceholders/buyXGetY.html.twig
+        shipping_discount_information:
+            applicable: "@oro_promotion.placeholder.discount_information_placeholder_filter->isApplicable($entity$, shipping)"
+            template: OroPromotionBundle:Promotion:discountPlaceholders/shipping.html.twig
         save_without_discounts_recalculation_button:
             applicable: "@oro_promotion.placeholder.order_additional_placeholder_filter->isApplicable($entity$)"
             template: OroPromotionBundle:Promotion:orderPlaceholders/saveWithoutDiscountsRecalculationButton.html.twig
