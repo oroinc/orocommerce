@@ -1,0 +1,6 @@
+security:
+    firewalls:
+        guest_rfp:
+            pattern:                 ^/customer/rfp
+            context:                 customer_identity
+            anonymous_customer_user: true
