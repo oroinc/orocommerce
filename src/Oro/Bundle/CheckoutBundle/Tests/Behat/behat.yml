@@ -2,20 +2,25 @@ oro_behat_extension:
   suites:
     OroCheckoutBundle:
       contexts:
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
-        - OroFormBundle::FormContext
-        - OroDataGridBundle::GridContext
         - OroApplicationBundle::CommerceMainContext
-        - OroShippingBundle::SingleCurrencyContext
-        - OroShoppingListBundle::ShoppingListContext
+        - OroCheckoutBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroCustomerBundle::ACLContext
         - OroCustomerBundle::CustomerUserContext
+        - OroCustomerBundle::GridContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FeatureContext
+        - OroFormBundle::FormContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
         - OroSaleBundle::FeatureContext
         - OroOrderBundle::OrderContext
-        - OroCustomerBundle::ACLContext
+        - OroProductBundle::FeatureContext
+        - OroSalesBundle::FeatureContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroShippingBundle::SingleCurrencyContext
+        - OroWarehouseBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -82,6 +87,12 @@ oro_behat_extension:
     CheckoutStepLineItemProductSku:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div:contains("Item #:") > span'
+
+    Ship to This Address:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Checkbox
+      selector:
+        type: xpath
+        locator: '//span[contains(., "Ship to this address")]'
 
     Order Summary Products Grid:
       selector: '.checkout-order-summary__table'

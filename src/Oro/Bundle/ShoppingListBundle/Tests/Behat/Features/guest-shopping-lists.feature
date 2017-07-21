@@ -14,7 +14,7 @@ Feature: Guest Shopping Lists
     Then the "Enable guest shopping list" checkbox should be checked
 
   Scenario: Create Shopping List as unauthorized user from product view page
-    And I visit store frontend as guest
+    Given I am on homepage
     And I should see "Shopping list"
     And type "PSKU1" in "search"
     And I click "Search Button"
@@ -37,8 +37,8 @@ Feature: Guest Shopping Lists
     Then I should see "In shopping list"
 
   Scenario: Add more products to shopping list from list page (search)
-    And I visit store frontend as guest
-    Given I type "CONTROL1" in "search"
+    Given I am on homepage
+    And I type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
     When I click "Add to Shopping list"
@@ -66,7 +66,7 @@ Feature: Guest Shopping Lists
     Then the "Enable guest shopping list" checkbox should not be checked
 
   Scenario: Check Shopping List is not available for a guest on frontend
-    And I visit store frontend as guest
+    Given I am on homepage
     And I should not see "Shopping list"
     And type "SKU003" in "search"
     And I click "Search Button"
