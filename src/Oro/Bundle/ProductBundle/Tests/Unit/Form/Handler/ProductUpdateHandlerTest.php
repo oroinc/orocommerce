@@ -602,8 +602,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
     private function getFormThatReturnsNoErrors(
         FormInterface $appendRelatedSubForm,
         FormInterface $removeRelatedSubForm
-    )
-    {
+    ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()

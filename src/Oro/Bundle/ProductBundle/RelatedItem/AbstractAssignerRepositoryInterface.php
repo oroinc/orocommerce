@@ -20,5 +20,4 @@ interface AbstractAssignerRepositoryInterface extends ObjectRepository
      * @return int
      */
     public function countRelationsForProduct($id);
-
 }
