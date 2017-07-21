@@ -4,15 +4,13 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 
-class OrderDiscount extends ShippingAwareDiscount
+class OrderDiscount extends AbstractDiscount
 {
     /**
      * {@inheritdoc}
      */
     public function apply(DiscountContext $discountContext)
     {
-        parent::apply($discountContext);
-
         $discountContext->addSubtotalDiscount($this);
     }
 

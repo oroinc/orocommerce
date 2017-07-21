@@ -19,7 +19,7 @@ layout:
                         visible: '=false'
                         mode: 'text'
                 __product_image_holder:
-                    blockType: container
+                    blockType: product_list_item_image
                 __product_quick_view:
                     blockType: block
                     options:

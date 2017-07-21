@@ -1,11 +1,6 @@
 {% block localization_switcher_widget %}
     {% if localizations|length > 1 %}
-        <div class="oro-toolbar oro-localization-switcher"
-             data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
-             data-page-component-options="{{ {
-                 'selectedLocalization': selected_localization.titles|localized_value,
-                 'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
-             }|json_encode }}">
+        <div class="oro-toolbar oro-localization-switcher">
             <div class="oro-toolbar__content" data-toggle="dropdown">
                 {{ selected_localization.titles|localized_value }}
                 <span class="oro-toolbar__icon">
@@ -14,23 +9,58 @@
             </div>
 
             <div class="oro-toolbar__dropdown">
-                <ul class="oro-toolbar__list">
-                    {% for localization in localizations %}
-                        <li class="oro-toolbar__list-item">
-                            {% set title = localization.titles|localized_value %}
-                            {% if selected_localization.id == localization.id %}
-                                <span class="oro-toolbar__link oro-toolbar__link--active">
+                <div data-page-component-module="orofrontendlocalization/js/app/components/localization-switcher-component"
+                     data-page-component-options="{{ {
+                        'selectedLocalization': selected_localization.titles|localized_value,
+                        'localizationSwitcherRoute': 'oro_frontend_localization_frontend_set_current_localization'
+                     }|json_encode }}"
+                     data-localization-menu-container
+                >
+                    <ul class="oro-toolbar__list">
+                        {% for localization in localizations %}
+                            <li class="oro-toolbar__list-item">
+                                {% set title = localization.titles|localized_value %}
+                                {% if selected_localization.id == localization.id %}
+                                    <span class="oro-toolbar__link oro-toolbar__link--active">
                                     {{ title }}
                                 </span>
-                            {% else %}
-                                <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
-                                    {{ title }}
-                                </a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
+                                {% else %}
+                                    <a class="oro-toolbar__link" href="javascript: void(0);" data-localization="{{ localization.id }}">
+                                        {{ title }}
+                                    </a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _localization_switcher_trigger_widget %}
+    {% if localizations|length > 1 %}
+        <div class="header-row__container hidden-on-desktop">
+            <button class="header-row__trigger hidden-on-desktop"
+                data-page-component-module="oroui/js/app/components/viewport-component"
+                data-page-component-options="{{ {
+                    viewport: {
+                        maxScreenType: 'tablet',
+                    },
+                    component: 'oroui/js/app/components/view-component',
+                    view: 'orofrontend/blank/js/app/views/fullscreen-popup-view',
+                    popupIcon: 'fa-globe fa--gray fa--x-large',
+                    popupLabel: 'oro.frontendlocalization.select.label'|trans,
+                    contentElement: '[data-localization-menu-container]',
+                    contentAttributes: {
+                        'class': 'oro-toolbar fullscreen-mode'
+                    }
+                }|json_encode() }}"
+            >
+                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--x-large">
+                    <span class="fa-globe fa--dark-gray fa--no-offset"></span>
+                </span>
+            </button>
         </div>
     {% endif %}
 {% endblock %}

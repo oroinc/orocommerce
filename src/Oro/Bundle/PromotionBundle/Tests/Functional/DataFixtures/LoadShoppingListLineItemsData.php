@@ -25,7 +25,7 @@ class LoadShoppingListLineItemsData extends AbstractFixture implements Dependent
     protected $lineItems = [
         self::LINE_ITEM_1 => [
             'product' => LoadProductData::PRODUCT_1,
-            'shoppingList' => LoadShoppingLists::PROMOTION_SHOPPING_LIST,
+            'shoppingList' => LoadShoppingListsData::PROMOTION_SHOPPING_LIST,
             'unit' => 'product_unit.liter',
             'quantity' => 5
         ],
@@ -38,7 +38,7 @@ class LoadShoppingListLineItemsData extends AbstractFixture implements Dependent
     {
         return [
             LoadProductUnitPrecisions::class,
-            LoadShoppingLists::class,
+            LoadShoppingListsData::class,
         ];
     }
 

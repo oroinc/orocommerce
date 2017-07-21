@@ -168,8 +168,6 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
-                                    - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Checkout']
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             form_type: oro_save_address
@@ -206,8 +204,6 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
-                                    - Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress:
-                                        validationGroups: ['Checkout']
                         save_shipping_address:
                             form_type: oro_save_address
                             options:
@@ -404,7 +400,7 @@ workflows:
 
             back_to_billing_address_definition:
                 preconditions:
-                    '@equal': [$checkout_finished, false]
+                    '@equal': [$checkout.completed, false]
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
@@ -448,11 +444,8 @@ workflows:
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@extendable':
                             events: [extendable_condition.checkout]
-                        - '@equal': [$checkout_finished, false]
-                        - '@order_line_item_has_count':
-                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                            parameters:
-                                entity: $checkout
+                        - '@equal': [$checkout.completed, false]
+                        - '@order_line_item_has_count': $checkout
                 conditions:
                     '@and':
                         - '@not_empty': $checkout.billingAddress
@@ -557,11 +550,8 @@ workflows:
                 preconditions:
                     '@and':
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@equal': [$checkout_finished, false]
-                        - '@order_line_item_has_count':
-                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                            parameters:
-                                entity: $checkout
+                        - '@equal': [$checkout.completed, false]
+                        - '@order_line_item_has_count': $checkout
                 conditions:
                     '@and':
                         - '@or':
@@ -645,15 +635,16 @@ workflows:
                 preconditions:
                     '@and':
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@order_line_item_has_count':
-                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                            parameters:
-                                entity: $checkout
+                        - '@order_line_item_has_count': $checkout
                         - '@checkout_has_applicable_shipping_methods':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             checkout: $checkout
                 conditions:
                     '@and':
+                        - '@shipping_method_has_enabled_shipping_rules':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                            method_identifier: $checkout.shippingMethod
+                            context: $.result.paymentContext
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -712,15 +703,13 @@ workflows:
                         attribute: $.result.paymentContext
                 preconditions:
                     '@and':
-                        - '@equal': [$checkout_finished, false]
+                        - '@equal': [$checkout.completed, false]
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@order_line_item_has_count':
-                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                            parameters:
-                                entity: $checkout
-                        - '@checkout_has_applicable_shipping_methods':
+                        - '@order_line_item_has_count': $checkout
+                        - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            checkout: $checkout
+                            method_identifier: $checkout.shippingMethod
+                            context: $.result.paymentContext
                         - '@has_applicable_payment_methods':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             context: $.result.paymentContext
@@ -790,11 +779,9 @@ workflows:
             verify_payment_definition:
                 preconditions:
                     '@and':
-                        - '@equal': [$checkout_finished, false]
-                        - '@order_line_item_has_count':
-                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                            parameters:
-                                entity: $checkout
+                        - '@equal': [$payment_in_progress, false]
+                        - '@equal': [$checkout.completed, false]
+                        - '@order_line_item_has_count': $checkout
                         - '@require_payment_redirect':
                             payment_method: $payment_method
                         - '@or':
@@ -867,9 +854,10 @@ workflows:
                     '@and':
                         - '@not_empty': $.result.paymentContext
                         - '@quote_acceptable': [$checkout.sourceEntity, true]
-                        - '@checkout_has_applicable_shipping_methods':
+                        - '@shipping_method_has_enabled_shipping_rules':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
-                            checkout: $checkout
+                            method_identifier: $checkout.shippingMethod
+                            context: $.result.paymentContext
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
@@ -1187,7 +1175,7 @@ workflows:
 
             recalculate_state_definition:
                 preconditions:
-                    '@equal': [$checkout_finished, false]
+                    '@equal': [$checkout.completed, false]
                 actions:
                     - '@assign_value': [$payment_in_progress, false]
                     - '@run_action_group':
@@ -1205,7 +1193,7 @@ workflows:
 
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
-                    '@equal': [$checkout_finished, false]
+                    '@equal': [$checkout.completed, false]
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@assign_value': [$payment_in_progress, false]

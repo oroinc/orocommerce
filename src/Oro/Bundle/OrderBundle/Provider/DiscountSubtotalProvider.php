@@ -20,6 +20,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
 {
     const TYPE = 'discount';
     const NAME = 'oro_order.subtotal_discount_cost';
+    const SUBTOTAL_SORT_ORDER = 50;
 
     /** @var TranslatorInterface */
     protected $translator;
@@ -77,6 +78,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
             $subtotal = new Subtotal();
 
             $subtotal->setType(self::TYPE);
+            $subtotal->setSortOrder(self::SUBTOTAL_SORT_ORDER);
             $description = $discount->getDescription();
             $title = $this->translator->trans('oro.order.subtotals.' . self::TYPE);
             if ($description) {

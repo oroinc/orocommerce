@@ -69,6 +69,7 @@ product3:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+
 product4:
     productCode: product-4
     inventoryStatus: discontinued

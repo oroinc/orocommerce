@@ -97,6 +97,7 @@ Feature: Sales Representative Info
     And I proceed as the Admin
     When fill "Customer Visible Contact Info Form" with:
       |Display                |Pre-Configured|
+      |Contact Details Default|false         |
       |Contact Details        |Name: Test Data <br> Email: Test@test.com|
     And click "Save settings"
     And I proceed as the User
@@ -187,6 +188,7 @@ Feature: Sales Representative Info
     And click Sales in sidebar menu
     And click on "Contacts"
     When fill "Customer Visible Contact Info Form" with:
+      |Guest Contact Default|false             |
       |Guest Contact        |Test guest contact|
     And click "Save settings"
     And I proceed as the User

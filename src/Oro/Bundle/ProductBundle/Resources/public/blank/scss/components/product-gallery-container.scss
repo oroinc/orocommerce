@@ -1,22 +1,22 @@
 // @theme: blank;
 
 .product-gallery-container {
-    position: relative;
+    position: $product-gallery-container-position;
 
-    float: left;
+    float: $product-gallery-container-float;
 
     width: $product-gallery-container-width;
-    margin-bottom: $product-gallery-container-offset;
+    margin-bottom: $product-gallery-container-margin-bottom;
 
     @include clearfix();
 }
 
 @include breakpoint('tablet') {
     .product-gallery-container {
-        float: none;
+        float: $product-gallery-container-tablet-float;
 
-        width: 100%;
-        max-width: $product-gallery-container-width;
+        width: $product-gallery-container-tablet-width;
+        max-width: $product-gallery-container-tablet-max-width;
         margin: $product-gallery-container-tablet-offset;
     }
 }
