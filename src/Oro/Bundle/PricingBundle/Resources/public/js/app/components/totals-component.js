@@ -275,6 +275,7 @@ define(function(require) {
                     currency: localeSettings.defaults.currency,
                     visible: false,
                     template: null,
+                    signedAmount: 0,
                     data: {}
                 }
             );
@@ -283,7 +284,7 @@ define(function(require) {
                 return;
             }
 
-            item.formattedAmount = NumberFormatter.formatCurrency(item.amount, item.currency);
+            item.formattedAmount = NumberFormatter.formatCurrency(item.signedAmount, item.currency);
 
             if (item.data && item.data.baseAmount && item.data.baseCurrency) {
                 item.formattedBaseAmount = NumberFormatter.formatCurrency(

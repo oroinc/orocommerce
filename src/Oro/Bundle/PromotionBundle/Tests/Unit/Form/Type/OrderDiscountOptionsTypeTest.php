@@ -9,7 +9,6 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
-use Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType;
 use Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountOptionsType;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -20,7 +19,7 @@ use Symfony\Component\Validator\Validation;
 class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var DiscountFreeShippingType
+     * @var OrderDiscountOptionsType
      */
     protected $formType;
 
@@ -66,7 +65,6 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    DiscountFreeShippingType::NAME => new DiscountFreeShippingType(),
                     MultiCurrencyType::NAME => new MultiCurrencyType($roundingService, []),
                     CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
                     DiscountOptionsType::NAME => new DiscountOptionsType()

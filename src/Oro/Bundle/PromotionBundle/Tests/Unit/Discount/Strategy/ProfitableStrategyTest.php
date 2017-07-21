@@ -4,9 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Strategy;
 
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\OrderDiscount;
+use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\ProfitableStrategy;
 
 class ProfitableStrategyTest extends \PHPUnit_Framework_TestCase
@@ -16,6 +16,9 @@ class ProfitableStrategyTest extends \PHPUnit_Framework_TestCase
         $discount1 = $this->createOrderDiscount(10);
         $discount2 = $this->createOrderDiscount(20);
 
+        $shippingDiscount1 = $this->createShippingDiscount(15);
+        $shippingDiscount2 = $this->createShippingDiscount(5);
+
         $discountContext = new DiscountContext();
         $discountContext->setLineItems(
             [
@@ -24,10 +27,13 @@ class ProfitableStrategyTest extends \PHPUnit_Framework_TestCase
             ]
         );
         $discountContext->setSubtotal(300);
-        $discountContext->setShippingCost(10);
+        $discountContext->setShippingCost(80);
 
         $strategy = new ProfitableStrategy();
-        $processedContext = $strategy->process($discountContext, [$discount1, $discount2]);
+        $processedContext = $strategy->process(
+            $discountContext,
+            [$discount1, $shippingDiscount2, $discount2, $shippingDiscount1]
+        );
 
         $this->assertInstanceOf(DiscountContext::class, $processedContext);
         $appliedDiscounts = [];
@@ -38,9 +44,14 @@ class ProfitableStrategyTest extends \PHPUnit_Framework_TestCase
         $appliedDiscounts = array_merge($appliedDiscounts, $processedContext->getShippingDiscounts());
 
         $this->assertNotEmpty($appliedDiscounts);
+
         $this->assertContains($discount2, $appliedDiscounts);
         $this->assertNotContains($discount1, $appliedDiscounts);
         $this->assertEquals(280, $processedContext->getSubtotal());
+
+        $this->assertContains($shippingDiscount1, $appliedDiscounts);
+        $this->assertNotContains($shippingDiscount2, $appliedDiscounts);
+        $this->assertEquals(65, $processedContext->getShippingCost());
     }
 
     /**
@@ -49,9 +60,23 @@ class ProfitableStrategyTest extends \PHPUnit_Framework_TestCase
      */
     private function createOrderDiscount($amount): OrderDiscount
     {
-        /** @var DiscountInterface $shippingDiscount */
-        $shippingDiscount = $this->createMock(DiscountInterface::class);
-        $discount = new OrderDiscount($shippingDiscount);
+        $discount = new OrderDiscount();
+        $discount->configure([
+            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
+            AbstractDiscount::DISCOUNT_VALUE => $amount,
+            AbstractDiscount::DISCOUNT_CURRENCY => 'USD',
+        ]);
+
+        return $discount;
+    }
+
+    /**
+     * @param float $amount
+     * @return ShippingDiscount
+     */
+    private function createShippingDiscount($amount): ShippingDiscount
+    {
+        $discount = new ShippingDiscount();
         $discount->configure([
             AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_AMOUNT,
             AbstractDiscount::DISCOUNT_VALUE => $amount,

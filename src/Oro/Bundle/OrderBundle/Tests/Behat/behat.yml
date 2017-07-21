@@ -34,6 +34,22 @@ oro_behat_extension:
       selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
+    Add Discount:
+      selector: '.oro-discount-collection .add-list-item'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Order Form:
+      selector: 'form[name="oro_order_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Discount Value (first):
+            locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__value"]'
+            type: 'css'
+          Discount Type (first):
+            locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__type"]'
+            type: 'css'
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
