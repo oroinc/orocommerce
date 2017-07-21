@@ -3,9 +3,8 @@
 {% set gridName = 'products-upsell-products-edit' %}
 
 {% set relatedGridParams = {
-    'productId': entity.id,
-    'upsellProductIds': get_upsell_products_ids(entity),
-    _parameters : {
+    relatedItemsIds: get_upsell_products_ids(entity),
+    _parameters: {
         data_in: [],
         data_not_in: []
     }

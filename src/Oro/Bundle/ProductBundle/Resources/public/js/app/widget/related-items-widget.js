@@ -39,7 +39,7 @@ define(function(require) {
         },
 
         setSelectedCount: function(grid) {
-            var selectedCount = grid.metadata.options.urlParams.relatedItems;
+            var selectedCount = grid.metadata.options.urlParams.relatedItemsIds;
             this.selectedCount = selectedCount !== 'undefined' ? selectedCount.length : 0;
         },
 
