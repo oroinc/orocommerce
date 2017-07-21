@@ -22,6 +22,10 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'Shopping List 1'
         customerUser: '@amanda'
+    shoppinglist4:
+        label: 'Shopping List 4'
+        customerUser: '@marlene'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:
@@ -31,6 +35,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         customerUser: '@amanda'
         shoppingList: '@shoppinglist1'
         organization: '@organization'
+    lineitem4:
+       product: '@product1'
+       quantity: '10'
+       unit: '@item'
+       customerUser: '@marlene'
+       shoppingList: '@shoppinglist4'
+       organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
     shoppinglisttotal:
@@ -38,4 +49,9 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
         shoppingList: '@shoppinglist1'
         currency: 'USD'
         subtotalValue: '10.1'
+        valid: true
+        __construct: ['@shoppinglist4','USD']
+        shoppingList: '@shoppinglist4'
+        currency: 'USD'
+        subtotalValue: '20.2'
         valid: true
