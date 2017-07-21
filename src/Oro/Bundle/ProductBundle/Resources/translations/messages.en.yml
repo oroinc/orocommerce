@@ -262,6 +262,7 @@ oro:
                 new_product_icons.title: New Product Icons
                 product_promotions.title: Promotions
                 new_arrivals.title: New Arrivals
+                image_gallery.title: 'Image Gallery Options'
             fields:
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
@@ -348,6 +349,9 @@ oro:
                 new_arrivals_use_slider_on_mobile:
                     label: Use Slider On Mobile
                     tooltip: When slider is enabled, the "New Arrivals" block will occupy less screen space, while showing larger product images.
+                popup_gallery_on_product_view:
+                    label: 'Popup Gallery on Product View'
+                    tooltip: 'Inline gallery view may work better for some product templates.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.
