@@ -15,6 +15,8 @@ class UpdateRelatedProductsTable implements
     RenameExtensionAwareInterface,
     OrderedMigrationInterface
 {
+    use MigrationConstraintTrait;
+
     /** @var RenameExtension */
     private $renameExtension;
 
@@ -25,6 +27,8 @@ class UpdateRelatedProductsTable implements
     {
         $table = $schema->getTable('oro_product_related_products');
 
+        $table->removeForeignKey($this->getConstraintName($table, "related_product_id"));
+        $table->removeForeignKey($this->getConstraintName($table, "product_id"));
         $table->dropIndex('idx_oro_product_related_products_related_product_id');
         $table->dropIndex('idx_oro_product_related_products_unique');
 

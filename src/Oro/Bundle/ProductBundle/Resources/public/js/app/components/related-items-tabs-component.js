@@ -5,6 +5,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var BaseCollection = require('oroui/js/app/models/base/collection');
     var TabCollectionView = require('oroui/js/app/views/tab-collection-view');
+    var $ = require('jquery');
 
     RelatedItemsTabsComponent = BaseComponent.extend({
         /**

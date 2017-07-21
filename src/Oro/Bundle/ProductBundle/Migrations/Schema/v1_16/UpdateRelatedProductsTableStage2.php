@@ -27,6 +27,19 @@ class UpdateRelatedProductsTableStage2 implements
 
         $table->addIndex(['related_item_id'], 'idx_oro_product_related_products_related_item_id', []);
         $table->addUniqueIndex(['product_id', 'related_item_id'], 'idx_oro_product_related_items_unique');
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['related_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
