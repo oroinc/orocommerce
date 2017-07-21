@@ -98,6 +98,7 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $shippingAddress = new OrderAddress();
         $website = new Website();
         $shippingMethod = 'some shipping method';
+        $shippingMethodType = 'some shipping method type';
 
         $entity = new Order();
         $entity->setCustomerUser($customerUser);
@@ -106,6 +107,7 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $entity->setEstimatedShippingCostAmount(10.0);
         $entity->setCurrency('USD');
         $entity->setShippingMethod($shippingMethod);
+        $entity->setShippingMethodType($shippingMethodType);
 
         $this->criteriaDataProvider->expects($this->once())
             ->method('getCustomerUser')
@@ -140,6 +142,7 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
             ContextDataConverterInterface::SHIPPING_ADDRESS => $shippingAddress,
             ContextDataConverterInterface::SHIPPING_COST => Price::create(10.0, 'USD'),
             ContextDataConverterInterface::SHIPPING_METHOD => $shippingMethod,
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => $shippingMethodType,
         ], $this->converter->getContextData($entity));
     }
 

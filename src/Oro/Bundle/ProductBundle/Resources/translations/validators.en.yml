@@ -30,6 +30,10 @@ oro:
 
         names.blank: Product Name should not be blank.
 
+        productlineitem:
+            quantity:
+                greaterThanZero: Quantity should be greater than 0
+
         productunit:
             invalid: 'Please enter valid unit of measurement'
             precision.blank: Precision should not be blank.

@@ -9,15 +9,8 @@ placeholders:
             items:
                 oro_product_select_related_products_button: ~
 
-        requirejs_config_extend:
-            items:
-                oro_product_requirejs_config:
-                    order: 100
-
     items:
         quick_add_actions_buttons:
             template: OroActionBundle:Widget:buttons.html.twig
         oro_product_select_related_products_button:
             template: OroProductBundle:Product:selectRelatedProductsButton.html.twig
-        oro_product_requirejs_config:
-            template: OroProductBundle::requirejs.config.js.twig
