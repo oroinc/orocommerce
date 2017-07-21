@@ -1,9 +1,9 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-{% set gridName = 'products-related-items-edit' %}
+{% set gridName = 'products-related-products-edit' %}
 
 {% set relatedGridParams = {
-    relatedProducts: get_related_products_ids(entity),
+    relatedItemsIds: get_related_products_ids(entity),
     _parameters: {
         data_in: [],
         data_not_in: []

@@ -579,163 +579,108 @@ datagrids:
             requireJSModules:
                 - orodatagrid/js/datagrid/listener/action-form-listener
                 - oroproduct/js/app/datagrid/listener/related-product-listener
+        source:
+            query:
+                where:
+                    or:
+                        - 'product.id IN (:relatedItemsIds) AND product.id NOT IN (:data_not_in)'
+                        - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
+            bind_parameters:
+                -
+                  name: relatedItemsIds
+                  default: []
+        actions:
+            delete:
+                type:          frontend
+                label:         oro.grid.action.delete
+                icon:          trash
+                configuration:
+                    triggerAction: excludeRow
+#      @todo implement in scope of BB-10454
+#        mass_actions:
+#            delete:
+#                type: frontend
+#                label: oro.grid.action.delete
+#                icon: trash
+#                configuration:
+#                    triggerAction: excludeRow
+
+    products-related-products-edit:
+        extends: products-related-items-edit
+        options:
             rowSelection:
                 dataField: id
                 columnName: isRelated
                 selectors:
                     included: '#productAppendRelated'
                     excluded: '#productRemoveRelated'
-        source:
-            query:
-                where:
-                    or:
-                        - 'product.id IN (:relatedItemsIds) AND product.id NOT IN (:data_not_in)'
-                        - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
-            bind_parameters:
-                -
-                  name: relatedItemsIds
-                  default: []
-        actions:
-            delete:
-                type:          frontend
-                label:         oro.grid.action.delete
-                icon:          trash
-                configuration:
-                    triggerAction: excludeRow
-#      @todo implement in scope of BB-10454
-#        mass_actions:
-#            delete:
-#                type: frontend
-#                label: oro.grid.action.delete
-#                icon: trash
-#                configuration:
-#                    triggerAction: excludeRow
-
 
     products-upsell-products-edit:
-        acl_resource: oro_product_update
-        extends: products-related-items-base
+        extends: products-related-items-edit
         options:
-            requireJSModules:
-                - orodatagrid/js/datagrid/listener/action-form-listener
-                - oroproduct/js/app/datagrid/listener/related-product-listener
             rowSelection:
                 dataField: id
                 columnName: isRelated
                 selectors:
                     included: '#productAppendUpsell'
                     excluded: '#productRemoveUpsell'
-        source:
-            query:
-                where:
-                    or:
-                        - 'product.id IN (:relatedItemsIds) AND product.id NOT IN (:data_not_in)'
-                        - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
-            bind_parameters:
-                -
-                  name: relatedItemsIds
-                  default: []
-        actions:
-            delete:
-                type:          frontend
-                label:         oro.grid.action.delete
-                icon:          trash
-                configuration:
-                    triggerAction: excludeRow
-#      @todo implement in scope of BB-10454
-#        mass_actions:
-#            delete:
-#                type: frontend
-#                label: oro.grid.action.delete
-#                icon: trash
-#                configuration:
-#                    triggerAction: excludeRow
 
-    products-related-products-select:
+    products-related-items-select:
         extends: products-select-grid-base
         options:
             entityHint: products
+        source:
+            query:
+                select:
+                    - >
+                      (
+                        CASE WHEN (product.id IN (:relatedItemsIds) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ) as isRelated
+                where:
+                    and:
+                        - product.id != :productId
+            bind_parameters:
+                - productId
+                -
+                  name: relatedItemsIds
+                  default: []
+        columns:
+            isRelated:
+                label: oro.product.is_related.label
+                frontend_type: boolean
+                editable: true
+                order: -10
+        filters:
+            columns:
+                isRelated:
+                    data_name: isRelated
+                    type:  boolean
+        sorters:
+            columns:
+                isRelated:
+                    data_name: isRelated
+            default: { isRelated: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC }
+
+    products-related-products-select:
+        extends: products-related-items-select
+        options:
             rowSelection:
                 dataField: id
                 columnName: isRelated
                 selectors:
                     included: '#productAppendRelatedSelect'
                     excluded: '#productRemoveRelatedSelect'
-        source:
-            query:
-                select:
-                    - >
-                      (
-                        CASE WHEN (product.id IN (:relatedItemsIds) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
-                        THEN true ELSE false END
-                      ) as isRelated
-                where:
-                    and:
-                        - product.id != :productId
-            bind_parameters:
-                - productId
-                -
-                  name: relatedItemsIds
-                  default: []
-        columns:
-            isRelated:
-                label: oro.product.is_related.label
-                frontend_type: boolean
-                editable: true
-                order: -10
-        filters:
-            columns:
-                isRelated:
-                    data_name: isRelated
-                    type:  boolean
-        sorters:
-            columns:
-                isRelated:
-                    data_name: isRelated
-            default: { isRelated: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC }
 
     products-upsell-products-select:
-        extends: products-select-grid-base
+        extends: products-related-items-select
         options:
-            entityHint: products
             rowSelection:
                 dataField: id
                 columnName: isRelated
                 selectors:
                     included: '#productAppendUpsellSelect'
                     excluded: '#productRemoveUpselldSelect'
-        source:
-            query:
-                select:
-                    - >
-                      (
-                        CASE WHEN (product.id IN (:relatedItemsIds) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
-                        THEN true ELSE false END
-                      ) as isRelated
-                where:
-                    and:
-                        - product.id != :productId
-            bind_parameters:
-                - productId
-                -
-                  name: relatedItemsIds
-                  default: []
-        columns:
-            isRelated:
-                label: oro.product.is_related.label
-                frontend_type: boolean
-                editable: true
-                order: -10
-        filters:
-            columns:
-                isRelated:
-                    data_name: isRelated
-                    type:  boolean
-        sorters:
-            columns:
-                isRelated:
-                    data_name: isRelated
-            default: { isRelated: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC }
 
     frontend-product-search-grid:
         options:
