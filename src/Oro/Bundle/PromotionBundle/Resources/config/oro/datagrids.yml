@@ -19,6 +19,8 @@ datagrids:
                 join:
                     inner:
                         - { join: promotion.rule, alias: rule}
+        properties:
+            id: ~
         columns:
             name:
                 label: oro.promotion.rule.name.label

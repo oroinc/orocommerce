@@ -45,6 +45,7 @@ oro:
         entity_plural_label: Promotions
         entity_description: Represents promotion information
         id.label: ID
+        coupons.label: Coupons
         descriptions.label: Descriptions
         descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration

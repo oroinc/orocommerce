@@ -12,7 +12,7 @@ services:
         tags:
             - name: oro_importexport.processor
               type: export
-              entity: '%oro_coupon.entity.coupon%'
+              entity: '%oro_coupon.entity.coupon.class%'
               alias: oro_coupon_coupon_export
 
     oro_coupon.importexport.strategy.add_or_replace.coupon:
@@ -29,11 +29,11 @@ services:
         tags:
             - name: oro_importexport.processor
               type: import
-              entity: '%oro_coupon.entity.coupon%'
+              entity: '%oro_coupon.entity.coupon.class%'
               alias: oro_coupon_coupon_import
             - name: oro_importexport.processor
               type: import_validation
-              entity: '%oro_coupon.entity.coupon%'
+              entity: '%oro_coupon.entity.coupon.class%'
               alias: oro_coupon_coupon_import
 
     oro_coupon.importexport.template_fixture.coupon:
@@ -55,5 +55,5 @@ services:
         tags:
             - name: oro_importexport.processor
               type: export_template
-              entity: '%oro_coupon.entity.coupon%'
+              entity: '%oro_coupon.entity.coupon.class%'
               alias: oro_coupon_coupon_export_template

@@ -1,5 +1,5 @@
 parameters:
-    oro_coupon.entity.coupon: Oro\Bundle\CouponBundle\Entity\Coupon
+    oro_coupon.entity.coupon.class: Oro\Bundle\CouponBundle\Entity\Coupon
 
 services:
     oro_coupon.mass_action.coupon_edit_mass_action_handler:
@@ -8,3 +8,4 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_security.acl_helper'
             - '@translator'
+            - '@form.factory'

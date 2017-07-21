@@ -1,6 +1,6 @@
 datagrids:
     coupons-grid:
-        extended_entity_name: Oro\Bundle\CouponBundle\Entity\Coupon
+        extended_entity_name: '%oro_coupon.entity.coupon.class%'
         options:
             entityHint: coupon
             export: true
@@ -25,16 +25,26 @@ datagrids:
                 select:
                     - coupon.id
                     - coupon.code
+                    - rule.name as promotionName
                     - coupon.createdAt
                     - coupon.updatedAt
                     - coupon.totalUses
                     - coupon.usesPerCoupon
                     - coupon.usesPerUser
                 from:
-                    - { table: Oro\Bundle\CouponBundle\Entity\Coupon, alias: coupon }
+                    - { table: '%oro_coupon.entity.coupon.class%', alias: coupon }
+                join:
+                    left:
+                        - { join: coupon.promotion, alias: promotion }
+                        - { join: promotion.rule, alias: rule }
         columns:
             code:
                 label:         oro.coupon.code.label
+            promotionName:
+                label:         oro.coupon.promotion.label
+                frontend_type: html
+                type:          twig
+                template:      OroCouponBundle:Coupon:Datagrid/Column/promotionName.html.twig
             usesPerCoupon:
                 label:         oro.coupon.uses_per_coupon.label
             usesPerUser:
@@ -51,6 +61,8 @@ datagrids:
             columns:
                 code:
                     data_name: coupon.code
+                promotionName:
+                    data_name: rule.name
                 totalUses:
                     data_name: coupon.totalUses
                 usesPerCoupon:
@@ -68,9 +80,9 @@ datagrids:
                 code:
                     type:      string
                     data_name: coupon.code
-                usesPerCoupon:
-                    type:      number
-                    data_name: coupon.usesPerCoupon
+                promotionName:
+                    type:      string
+                    data_name: rule.name
                 usesPerCoupon:
                     type:      number
                     data_name: coupon.usesPerCoupon

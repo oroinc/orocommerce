@@ -6,6 +6,7 @@ use Oro\Bundle\CouponBundle\Entity\Coupon;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class CouponFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
@@ -35,10 +36,12 @@ class CouponFixture extends AbstractTemplateRepository implements TemplateFixtur
     {
         switch ($key) {
             case self::COUPON_CODE:
+                $promotion = new Promotion();
                 $owner = new BusinessUnit();
                 $owner->setName('Main BU');
 
                 $entity->setCode($key)
+                    ->setPromotion($promotion)
                     ->setTotalUses(10)
                     ->setUsesPerCoupon(100)
                     ->setUsesPerUser(3);

@@ -5,11 +5,12 @@ namespace Oro\Bundle\CouponBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 /**
  * @ORM\Table(
@@ -106,7 +107,7 @@ class Coupon implements
     /**
      * @var integer
      *
-     * @ORM\Column(name="uses_per_coupon", type="integer", nullable=true)
+     * @ORM\Column(name="uses_per_coupon", type="integer", nullable=true, options={"default"=1})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -123,7 +124,7 @@ class Coupon implements
     /**
      * @var integer
      *
-     * @ORM\Column(name="uses_per_user", type="integer", nullable=true)
+     * @ORM\Column(name="uses_per_user", type="integer", nullable=true, options={"default"=1})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -136,6 +137,24 @@ class Coupon implements
      *  )
      */
     protected $usesPerUser = 1;
+
+    /**
+     * @var Promotion
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion", inversedBy="coupons")
+     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=50
+     *          }
+     *      }
+     *  )
+     */
+    protected $promotion;
 
     /**
      * @var \DateTime
@@ -269,6 +288,25 @@ class Coupon implements
     public function setUsesPerUser($usesPerUser)
     {
         $this->usesPerUser = $usesPerUser;
+
+        return $this;
+    }
+
+    /**
+     * @return Promotion|null
+     */
+    public function getPromotion()
+    {
+        return $this->promotion;
+    }
+
+    /**
+     * @param Promotion $promotion
+     * @return Coupon
+     */
+    public function setPromotion($promotion)
+    {
+        $this->promotion = $promotion;
 
         return $this;
     }

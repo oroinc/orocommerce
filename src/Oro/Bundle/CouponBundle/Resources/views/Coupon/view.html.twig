@@ -1,6 +1,4 @@
-
 {% extends 'OroUIBundle:actions:view.html.twig' %}
-
 {% oro_title_set({params : {"%entityName%": 'oro.coupon.entity_label'|trans}}) %}
 
 {% block pageHeader %}
@@ -14,6 +12,9 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% if entity.promotion %}
+        {% set promotion = UI.entityViewLink(entity.promotion, entity.promotion.rule.name|trans, 'oro_promotion_view') %}
+    {% endif %}
     {% set dataBlocks = {
         'general': {
             'title': 'oro.coupon.sections.general'|trans,
@@ -22,6 +23,7 @@
                 {
                     'data' : {
                         'code': UI.renderProperty('oro.coupon.code.label'|trans, entity.code),
+                        'promotion': UI.renderHtmlProperty('oro.coupon.promotion.label'|trans, promotion|default('N/A'|trans)),
                         'usesPerCoupon': UI.renderProperty('oro.coupon.uses_per_coupon.label'|trans, entity.usesPerCoupon),
                         'usesPerUser': UI.renderProperty('oro.coupon.uses_per_user.label'|trans, entity.usesPerUser),
                     }

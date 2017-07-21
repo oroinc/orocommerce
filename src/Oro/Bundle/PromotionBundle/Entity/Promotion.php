@@ -19,6 +19,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
+use Oro\Bundle\CouponBundle\Entity\Coupon;
 
 /**
  * @ORM\Table(name="oro_promotion")
@@ -90,7 +91,7 @@ class Promotion extends ExtendPromotion implements
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -221,6 +222,23 @@ class Promotion extends ExtendPromotion implements
     protected $useCoupons = false;
 
     /**
+     * @var Collection|Coupon[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\CouponBundle\Entity\Coupon",
+     *     mappedBy="promotion"
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $coupons;
+
+    /**
      * @var Segment
      *
      * @ORM\ManyToOne(
@@ -239,6 +257,7 @@ class Promotion extends ExtendPromotion implements
         $this->descriptions = new ArrayCollection();
         $this->scopes = new ArrayCollection();
         $this->schedules = new ArrayCollection();
+        $this->coupons = new ArrayCollection();
     }
 
     /**
@@ -449,6 +468,40 @@ class Promotion extends ExtendPromotion implements
     public function setUseCoupons($useCoupons)
     {
         $this->useCoupons = $useCoupons;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Coupon[]
+     */
+    public function getCoupons()
+    {
+        return $this->coupons;
+    }
+
+    /**
+     * @param Coupon $coupon
+     * @return $this
+     */
+    public function addCoupon(Coupon $coupon)
+    {
+        if (!$this->coupons->contains($coupon)) {
+            $this->coupons->add($coupon);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Coupon $coupon
+     * @return $this
+     */
+    public function removeCoupon(Coupon $coupon)
+    {
+        if ($this->coupons->contains($coupon)) {
+            $this->coupons->removeElement($coupon);
+        }
 
         return $this;
     }
