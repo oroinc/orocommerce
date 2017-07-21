@@ -40,6 +40,7 @@ class Configuration implements ConfigurationInterface
     const NEW_ARRIVALS_MAX_ITEMS = 'new_arrivals_max_items';
     const NEW_ARRIVALS_MIN_ITEMS = 'new_arrivals_min_items';
     const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
+    const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
 
     /**
      * {@inheritDoc}
@@ -95,6 +96,7 @@ class Configuration implements ConfigurationInterface
                 self::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
                 self::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
                 self::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
+                self::IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED => ['type' => 'boolean', 'value' => true],
             ]
         );
 
