@@ -30,7 +30,7 @@ class Configuration implements ConfigurationInterface
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
                     ]
                 ],
-                'availability_for_guests' => ['type' => 'boolean', 'value' => true],
+                'availability_for_guests' => ['type' => 'boolean', 'value' => false],
                 self::DEFAULT_GUEST_SHOPPING_LIST_OWNER => ['type' => 'string', 'value' => null],
                 'shopping_list_limit' => ['value' => 0, 'type' => 'integer']
             ]
