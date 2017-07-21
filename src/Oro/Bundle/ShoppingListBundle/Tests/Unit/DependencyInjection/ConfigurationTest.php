@@ -34,7 +34,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app'
                 ],
                 'availability_for_guests' => [
-                    'value' => true,
+                    'value' => false,
                     'scope' => 'app'
                 ],
                 Configuration::DEFAULT_GUEST_SHOPPING_LIST_OWNER => [
