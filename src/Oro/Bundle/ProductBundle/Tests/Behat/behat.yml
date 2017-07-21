@@ -378,6 +378,20 @@ oro_behat_extension:
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
 
+    ImageCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ImagesCollection
+
+    ImageCollectionRow:
+      selector:
+        type: 'xpath'
+        locator: '//tr[contains(@data-content,"images")]'
+
+    ImageCollectionFileField:
+      selector:
+        type: 'xpath'
+        locator: '//input[contains(@id,"image_file")]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
+
     Line Item Form:
       selector: 'div.line-item-form'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\LineItemForm

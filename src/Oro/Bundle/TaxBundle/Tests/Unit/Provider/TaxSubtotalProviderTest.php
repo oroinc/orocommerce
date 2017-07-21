@@ -140,6 +140,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Oro.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
         $this->assertEquals($total->getCurrency(), $subtotal->getCurrency());
         $this->assertEquals($total->getTaxAmount(), $subtotal->getAmount());
+        $this->assertEquals(500, $subtotal->getSortOrder());
         $this->assertTrue($subtotal->isVisible());
     }
 
