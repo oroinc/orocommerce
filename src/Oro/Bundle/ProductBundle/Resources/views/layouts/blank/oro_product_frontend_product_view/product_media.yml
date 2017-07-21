@@ -19,4 +19,4 @@ layout:
         - '@setOption':
             id: product_view_attribute_group_images_attribute_product_images_images
             optionName: popup_gallery
-            optionValue: false
+            optionValue: '=data["system_config_provider"].getValue("oro_product.popup_gallery_on_product_view")'
