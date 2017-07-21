@@ -4,7 +4,9 @@
 
 {% block _checkout_form_fields_widget %}
     {{ block_widget(block) }}
-    {{ form_rest(form) }}
+    {% if form.state_token is defined %}
+        {{ form_row(form.state_token) }}
+    {% endif %}
 {% endblock %}
 
 {% block _checkout_view_widget %}
