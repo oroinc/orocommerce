@@ -1,4 +1,0 @@
-oro_coupon:
-    resource:     "@OroCouponBundle/Controller/CouponController.php"
-    type:         annotation
-    prefix:       /coupon

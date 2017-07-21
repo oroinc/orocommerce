@@ -1,0 +1,38 @@
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    coupon1:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-1'
+        promotion: '@orderDiscountPromotion'
+        totalUses: 0
+        usesPerUser: 2
+        usesPerCoupon: 3
+    coupon2:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-2'
+        promotion: '@lineItemDiscountPromotion'
+        totalUses: 0
+        usesPerUser: 3
+        usesPerCoupon: 4
+    coupon3:
+        owner: '@business_unit'
+        organization: '@organization'
+        code: 'test-3'
+        totalUses: 0
+        usesPerUser: 4
+        usesPerCoupon: 5
+    coupon4:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test-4'
+        totalUses: 0
+        usesPerUser: 5
+        usesPerCoupon: 6
+    coupon5:
+        owner: '@businessUnit'
+        organization: '@organization'
+        code: 'test-5'
+        totalUses: 0
+        usesPerUser: 6
+        usesPerCoupon: 7

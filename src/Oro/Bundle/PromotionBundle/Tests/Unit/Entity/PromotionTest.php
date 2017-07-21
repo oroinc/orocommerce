@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CouponBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;

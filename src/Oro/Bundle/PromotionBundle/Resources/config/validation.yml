@@ -23,3 +23,25 @@ Oro\Bundle\PromotionBundle\Entity\PromotionSchedule:
             chain:
                 activeAt: 'Active At'
                 deactivateAt: 'Deactivate At'
+
+Oro\Bundle\PromotionBundle\Entity\Coupon:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [code]
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDash: ~
+        totalUses:
+            - NotBlank: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - GreaterThanOrEqual: { value: 0 }
+        usesPerCoupon:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - GreaterThanOrEqual: { value: 0 }
+        usesPerUser:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - GreaterThanOrEqual: { value: 0 }

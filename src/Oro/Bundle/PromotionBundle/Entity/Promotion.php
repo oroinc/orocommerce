@@ -19,7 +19,6 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
-use Oro\Bundle\CouponBundle\Entity\Coupon;
 
 /**
  * @ORM\Table(name="oro_promotion")
@@ -225,7 +224,7 @@ class Promotion extends ExtendPromotion implements
      * @var Collection|Coupon[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\CouponBundle\Entity\Coupon",
+     *     targetEntity="Oro\Bundle\PromotionBundle\Entity\Coupon",
      *     mappedBy="promotion"
      * )
      * @ConfigField(

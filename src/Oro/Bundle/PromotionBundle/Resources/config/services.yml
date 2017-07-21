@@ -1,5 +1,6 @@
 parameters:
     oro_promotion.entity.promotion.class: Oro\Bundle\PromotionBundle\Entity\Promotion
+    oro_promotion.entity.coupon.class: Oro\Bundle\PromotionBundle\Entity\Coupon
 
 services:
     oro_promotion.security.acl.voter.promotion_matched_product_segment:
@@ -437,3 +438,11 @@ services:
         public: false
         arguments:
             - '@request_stack'
+
+    oro_promotion.mass_action.coupon_edit_mass_action_handler:
+        class: Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\CouponEditMassActionHandler
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_security.acl_helper'
+            - '@translator'
+            - '@form.factory'
