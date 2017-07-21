@@ -116,9 +116,105 @@
   &__error,
   &__error-autocomplete {
     .validation-failed, .notification--error { //override platform styles
-      margin: -10px -7px 5px;
+      margin: $quick-order-add-error-margins;
 
       background: none;
+    }
+  }
+
+  .mobile-version & {
+    @include breakpoint('mobile-big') {
+      width: 100%;
+      float: none;
+      clear: none;
+      margin: $quick-order-add-mobile-margin;
+
+      &__row {
+        border-bottom: $quick-order-add-mobile-row-border;
+        margin: $quick-order-add-mobile-bottom-margin;
+
+        &:not(:first-child) {
+          .quick-order-add__label {
+            display: block;
+          }
+        }
+      }
+
+      &__subtotal,
+      &__subtotal-input {
+        text-align: $quick-order-add-mobile-float;
+        width: 100%;
+      }
+
+
+      &__quantity,
+      &__unit {
+        width: $quick-order-add-mobile-quantity-unit-width;
+      }
+
+      &__quantity,
+      &__quantity-input {
+        text-align: $quick-order-add-mobile-float;
+      }
+
+      &__product {
+        width: 100%;
+      }
+
+      &__row-content,
+      &__col,
+      &__label {
+          margin: $quick-order-add-mobile-bottom-margin;
+      }
+
+      &__remove-row {
+        bottom: auto;
+        top: -2px;
+        right: 0;
+      }
+
+      &__error,
+      &__error-autocomplete {
+        .validation-failed, .notification--error { //override platform styles
+          margin: $quick-order-add-mobile-error-margins;
+        }
+      }
+
+      .product-tier-prices {
+        bottom: $quick-order-add-mobile-price-dropdown-bottom;
+      }
+    }
+
+    @include breakpoint('tablet-small') {
+      &__clear-button {
+        width: 100%;
+        margin: $quick-order-add-mobile-bottom-margin;
+      }
+
+      &__buttons {
+        width: 100%;
+
+        .pull-left {
+          width: 100%;
+        }
+
+        .btn-group { //override platform styles
+          margin-left: 0;
+          width: 100%;
+
+          &.widget-content {
+            margin: $quick-order-add-mobile-widget-content-margin;
+          }
+
+          a:not(.dropdown-toggle) {
+            width: 100%;
+
+            &.add-to-shopping-list-button {
+              width: $quick-order-add-mobile-add-to-shopping-list-button;
+            }
+          }
+        }
+      }
     }
   }
 }
