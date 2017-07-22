@@ -12,6 +12,8 @@ Feature: Guest shopping list merging functionality
     And I click "Shopping List" on configuration sidebar
     And uncheck Use Default for "Shopping List Limit" field
     And I fill in "Shopping List Limit" with "1"
+    And uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
     And I save setting
     And I should see "Configuration saved" flash message
 

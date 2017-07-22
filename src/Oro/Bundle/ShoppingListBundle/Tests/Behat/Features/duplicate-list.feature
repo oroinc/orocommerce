@@ -30,19 +30,13 @@ Feature: Duplicate Lists
       | User  |first_session |
       | Admin |second_session|
 
-  Scenario: Front - not logged user
-    Given I proceed as the User
-    And I am on the homepage
-    When I hover on "Shopping cart"
-    And click "View Details"
-    And I should not see following buttons:
-      |Duplicate List|
-
   Scenario: Front - user without permissions
     Given I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
     And I click "Shopping List" on configuration sidebar
+    And uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
     And fill "Shopping List Limit Form" with:
       |Shopping List Limit Default|false|
       |Shopping List Limit        |2    |
@@ -60,6 +54,14 @@ Feature: Duplicate Lists
     And I signed in as NancyJSallee@example.org on the store frontend
     When open page with shopping list "My Shopping List"
     Then I should see "My Shopping List"
+    And I should not see following buttons:
+      |Duplicate List|
+
+  Scenario: Front - not logged user
+    Given I proceed as the User
+    And I am on the homepage
+    When I hover on "Shopping cart"
+    And click "View Details"
     And I should not see following buttons:
       |Duplicate List|
 
