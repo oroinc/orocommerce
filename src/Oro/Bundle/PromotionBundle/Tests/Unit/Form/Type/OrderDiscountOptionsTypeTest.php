@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\MultiCurrencyType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
-use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use Oro\Bundle\PromotionBundle\Discount\ShippingAwareDiscount;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountOptionsType;
 use Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType;
 use Oro\Bundle\PromotionBundle\Form\Type\OrderDiscountOptionsType;
