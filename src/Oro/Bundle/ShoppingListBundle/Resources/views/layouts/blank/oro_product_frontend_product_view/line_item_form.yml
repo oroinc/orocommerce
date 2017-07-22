@@ -4,3 +4,7 @@ layout:
             id: line_item_form_update
             optionName: visible
             optionValue: '=data["oro_product_variant"].getProductVariantOrProduct(data).isSimple() && data["feature"].isFeatureEnabled("guest_shopping_list")'
+        - '@setOption':
+            id: product_view_variant_field_container
+            optionName: visible
+            optionValue: '=data["feature"].isFeatureEnabled("guest_shopping_list")'
