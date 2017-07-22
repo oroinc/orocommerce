@@ -382,6 +382,9 @@ oro_behat_extension:
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
 
+    Size Product Attribute:
+      selector: 'input[name="oro_product[variantFields][Size][is_selected]"]'
+
     Promotions Form:
       selector: 'form[name="product_promotions"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
