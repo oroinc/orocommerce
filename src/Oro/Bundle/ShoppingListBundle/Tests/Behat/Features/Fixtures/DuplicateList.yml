@@ -190,6 +190,10 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
        label: 'My Shopping List'
        customerUser: '@nancy'
        website: '@website1'
+   shoppinglist2:
+       label: 'Guest Shopping List'
+       website: '@website1'
+       organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
    lineitem1:
