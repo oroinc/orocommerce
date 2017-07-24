@@ -41,7 +41,7 @@ class BrandControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_brand_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_brand_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Product Brands', $crawler->filter('h1.oro-subtitle')->html());
@@ -59,7 +59,7 @@ class BrandControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_brand_create')
+            $this->getUrl('oro_product_brand_create')
         );
 
         /** @var Form $form */
@@ -87,7 +87,7 @@ class BrandControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_brand_update', ['id' => $brand->getId()])
+            $this->getUrl('oro_product_brand_update', ['id' => $brand->getId()])
         );
 
         $form = $crawler->selectButton('Save')->form();
@@ -140,7 +140,7 @@ class BrandControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_brand_update', ['id' => $brand->getId()])
+            $this->getUrl('oro_product_brand_update', ['id' => $brand->getId()])
         );
 
         $form = $crawler->selectButton('Save')->form();
@@ -159,7 +159,7 @@ class BrandControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            $this->getUrl('oro_brand_get_changed_slugs', ['id' => $brand->getId()]),
+            $this->getUrl('oro_product_brand_get_changed_slugs', ['id' => $brand->getId()]),
             $formValues
         );
 
