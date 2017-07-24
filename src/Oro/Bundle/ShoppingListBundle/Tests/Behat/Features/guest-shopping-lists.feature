@@ -71,12 +71,32 @@ Feature: Guest Shopping Lists
     When I save and close form
     Then I should see "Product has been saved" flash message
 
+  Scenario: Check Shopping List is not available for a guest on frontend
+    Given I proceed as the User
+    When I visit store frontend as guest
+    Then I should not see "Shopping list"
+    When type "SKU003" in "search"
+    And I click "Search Button"
+    Then I should see "Product3"
+    But I should not see "Add to Shopping list"
+
+  Scenario: Configurable product variants shouldn't be available on front store
+    And I open product with sku "1GB83" on the store frontend
+    Then I should not see "Color"
+    And I should not see "Size"
+
   Scenario: Check default status of guest shopping list in configurations
-    Given I go to System/Configuration
+    Given I proceed as the Admin
+    And I go to System/Configuration
     And I click "Commerce" on configuration sidebar
     And I click "Sales" on configuration sidebar
     When I click "Shopping List" on configuration sidebar
-    Then the "Enable guest shopping list" checkbox should be checked
+    Then the "Enable guest shopping list" checkbox should not be checked
+    When uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
+    And I save setting
+    Then I should see "Configuration saved" flash message
+    And the "Enable guest shopping list" checkbox should be checked
 
   Scenario: Configurable product variants should be available on front store
     Given I proceed as the User
@@ -123,28 +143,3 @@ Feature: Guest Shopping Lists
       | Delete        |
       | Create Order  |
       | Request Quote |
-
-  Scenario: Disable guest shopping list in configuration
-    Given I proceed as the Admin
-    And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
-    And uncheck Use Default for "Enable guest shopping list" field
-    And I uncheck "Enable guest shopping list"
-    When I save setting
-    Then I should see "Configuration saved" flash message
-    And the "Enable guest shopping list" checkbox should not be checked
-
-  Scenario: Configurable product variants shouldn't be available on front store
-    Given I proceed as the User
-    And I open product with sku "1GB83" on the store frontend
-    Then I should not see "Color"
-    And I should not see "Size"
-
-  Scenario: Check Shopping List is not available for a guest on frontend
-    Then I should not see "Shopping list"
-    When type "SKU003" in "search"
-    And I click "Search Button"
-    Then I should see "Product3"
-    But I should not see "Add to Shopping list"
