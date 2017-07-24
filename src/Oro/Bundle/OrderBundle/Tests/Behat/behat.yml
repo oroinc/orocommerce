@@ -1,5 +1,23 @@
 oro_behat_extension:
   elements:
+    BackendOrder:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder
+      selector: 'div.layout-content'
+
+    BackendOrderLineItem:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItem
+      selector: 'tr'
+
+    BackendOrderLineItemsTable:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
+      selector: 'table.order-line-items-table'
+
+    BackendOrderSubtotals:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderSubtotals
+      selector:
+          type: xpath
+          locator: '//div[@data-totals-container]'
+
     Order:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\Order
       selector: '.page-content'
@@ -15,6 +33,22 @@ oro_behat_extension:
     Order Payment Transaction Grid:
       selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    Add Discount:
+      selector: '.oro-discount-collection .add-list-item'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Order Form:
+      selector: 'form[name="oro_order_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Discount Value (first):
+            locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__value"]'
+            type: 'css'
+          Discount Type (first):
+            locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__type"]'
+            type: 'css'
 
   pages:
     OrderFrontendView:

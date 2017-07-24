@@ -220,6 +220,57 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->getTotalPriceFormatted($product);
     }
 
+    public function testCalculateTotalPriceInit()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class);
+
+        $simpleProduct00 = $this->getEntity(Product::class);
+        $simpleProduct10 = $this->getEntity(Product::class);
+
+        $productUnit = $this->getEntity(ProductUnit::class);
+
+        $collection = $this->createCollection();
+        $collection->unit = $productUnit;
+
+        $collection->rows[0]->columns[0]->product = $simpleProduct00;
+        $collection->rows[1]->columns[0]->product = $simpleProduct10;
+
+        $this->matrixGridManager->expects($this->once())
+            ->method('getMatrixCollection')
+            ->with($product)
+            ->willReturn($collection);
+
+        $lineItem00 = $this->getEntity(LineItem::class, [
+            'product' => $simpleProduct00,
+            'unit' => $productUnit,
+            'quantity' => 0
+        ]);
+        $lineItem10 = $this->getEntity(LineItem::class, [
+            'product' => $simpleProduct10,
+            'unit' => $productUnit,
+            'quantity' => 0
+        ]);
+
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'lineItems' => [$lineItem00, $lineItem10]
+        ]);
+
+        $subtotal = new Subtotal();
+        $subtotal->setAmount(0);
+
+        $this->totalProvider->expects($this->once())
+            ->method('getTotal')
+            ->with($shoppingList)
+            ->willReturn($subtotal);
+
+        $this->numberFormatter->expects($this->once())
+            ->method('formatCurrency')
+            ->with(0);
+
+        $this->provider->getTotalPriceFormatted($product);
+    }
+
     /**
      * @return MatrixCollection
      */
