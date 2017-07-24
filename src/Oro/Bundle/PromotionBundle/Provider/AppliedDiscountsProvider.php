@@ -38,29 +38,6 @@ class AppliedDiscountsProvider
     }
 
     /**
-     * Returns applied orders discounts by order id
-     *
-     * @param Order $order
-     * @return AppliedDiscount[]
-     */
-    public function getDiscountsByOrder(Order $order): array
-    {
-        $orderId = $order->getId();
-
-        $cacheKey = $this->getCacheKey($orderId);
-
-        if ($this->cache->contains($cacheKey)) {
-            return $this->cache->fetch($cacheKey);
-        }
-
-        $discounts = $this->getAppliedDiscountRepository()->findByOrder($order);
-
-        $this->cache->save($cacheKey, $discounts);
-
-        return $discounts;
-    }
-
-    /**
      * Returns sum of all AppliedDiscount amounts for given Order (including line item discounts, etc)
      *
      * @param Order $order
@@ -84,6 +61,9 @@ class AppliedDiscountsProvider
      */
     public function getDiscountsAmountByLineItem(OrderLineItem $orderLineItem): float
     {
+        if (!$orderLineItem->getId()) {
+            throw new \LogicException('Cant determine discount for non-saved line item');
+        }
         $lineItemDiscountAmount = 0.0;
 
         $order = $orderLineItem->getOrder();
@@ -101,6 +81,32 @@ class AppliedDiscountsProvider
         }
 
         return $lineItemDiscountAmount;
+    }
+
+    /**
+     * Returns applied orders discounts by order id
+     *
+     * @param Order $order
+     * @return AppliedDiscount[]
+     */
+    protected function getDiscountsByOrder(Order $order): array
+    {
+        $orderId = $order->getId();
+        if (!$orderId) {
+            throw new \LogicException('Cant determine discount for non-saved order');
+        }
+
+        $cacheKey = $this->getCacheKey($orderId);
+
+        if ($this->cache->contains($cacheKey)) {
+            return $this->cache->fetch($cacheKey);
+        }
+
+        $discounts = $this->getAppliedDiscountRepository()->findByOrder($order);
+
+        $this->cache->save($cacheKey, $discounts);
+
+        return $discounts;
     }
 
     /**
