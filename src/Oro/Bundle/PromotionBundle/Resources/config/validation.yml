@@ -30,7 +30,8 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
             fields: [code]
     properties:
         code:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [ all_coupon_fields ]
             - Length:
                 min: 1
                 max: 255

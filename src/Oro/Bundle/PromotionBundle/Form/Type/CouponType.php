@@ -4,6 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
 class CouponType extends AbstractType
 {
@@ -21,6 +24,19 @@ class CouponType extends AbstractType
                 'required' => true,
                 'tooltip' => 'oro.promotion.coupon.form.tooltip.coupon_code',
                 'label' => 'oro.promotion.coupon.code.label',
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => Coupon::class,
+                'validation_groups' => ['Default', 'all_coupon_fields'],
             ]
         );
     }

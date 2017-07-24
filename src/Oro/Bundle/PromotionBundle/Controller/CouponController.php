@@ -99,12 +99,13 @@ class CouponController extends Controller
     public function massUpdateWidgetAction(Request $request)
     {
         $responseData = [
-            'form' => $this->createForm(BaseCouponType::class, new Coupon())->createView(),
             'inset' => $request->get('inset', null),
             'values' => $request->get('values', null),
         ];
 
-        if ($request->isMethod('POST')) {
+        $form = $this->createForm(BaseCouponType::class, new Coupon());
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
             /** @var MassActionDispatcher $massActionDispatcher */
             $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
             $response = $massActionDispatcher->dispatchByRequest(
@@ -117,6 +118,8 @@ class CouponController extends Controller
                 'message' => $response->getMessage(),
             ];
         }
+        $responseData['form'] = $form->createView();
+
         return $responseData;
     }
 
