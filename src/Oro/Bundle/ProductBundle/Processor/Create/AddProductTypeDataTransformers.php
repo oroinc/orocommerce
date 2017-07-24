@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Processor\Create;
 
-use Oro\Component\ChainProcessor\ContextInterface;
-use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Get's the created formBuilder and adds necessary data transformers
