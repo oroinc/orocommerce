@@ -15,6 +15,7 @@ interface ContextDataConverterInterface
     const SHIPPING_COST = 'shippingCost';
     const PAYMENT_METHOD = 'paymentMethod';
     const SHIPPING_METHOD = 'shippingMethod';
+    const SHIPPING_METHOD_TYPE = 'shippingMethodType';
     const CRITERIA = 'criteria';
 
     /**

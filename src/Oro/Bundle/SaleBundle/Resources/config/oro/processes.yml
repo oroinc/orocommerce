@@ -15,16 +15,18 @@ processes:
                         and:
                             - e.expired = false
                             - e.validUntil < :date
+                            - IDENTITY(e.internal_status) = 'sent_to_customer' OR e.internal_status IS NULL
                     query_parameters:
                         date: $.date
                 - '@foreach':
                     array: $.quotes
                     value: $.quote
                     actions:
-                        - '@run_action_group':
-                            action_group: oro_sale_expire_quote
-                            parameters_mapping:
-                                data: $.quote
+                        - '@request_enum_entity':
+                            enum_code: 'quote_internal_status'
+                            attribute: $.quote.internalStatus
+                            identifier: 'expired'
+                        - '@assign_value': [$.quote.expired, true]
 
         send_no_quote_alert:
             label:   'Send alerts about Requests Without Quote'

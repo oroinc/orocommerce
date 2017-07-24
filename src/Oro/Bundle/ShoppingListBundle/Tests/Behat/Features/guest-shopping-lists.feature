@@ -5,13 +5,26 @@ Feature: Guest Shopping Lists
   As a Sales rep
   I want to enable shopping lists for guest customers
 
-  Scenario: Check default status of guest shopping list in configurations
+  Scenario: Check Shopping List is not available for a guest on frontend
+    And I visit store frontend as guest
+    And I should not see "Shopping list"
+    And type "SKU003" in "search"
+    And I click "Search Button"
+    And I should see "Product3"
+    Then I should not see "Add to Shopping list"
+
+  Scenario: Check default status of guest shopping list in configurations and enable feature
     Given I login as administrator
     And I go to System/Configuration
     And I click "Commerce" on configuration sidebar
     And I click "Sales" on configuration sidebar
     And I click "Shopping List" on configuration sidebar
-    Then the "Enable guest shopping list" checkbox should be checked
+    And the "Enable guest shopping list" checkbox should not be checked
+   Then uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
+    And I save setting
+    And I should see "Configuration saved" flash message
+    And the "Enable guest shopping list" checkbox should be checked
 
   Scenario: Create Shopping List as unauthorized user from product view page
     And I visit store frontend as guest
@@ -52,23 +65,3 @@ Feature: Guest Shopping Lists
       | Delete        |
       | Create Order  |
       | Request Quote |
-
-  Scenario: Disable guest shopping list in configuration
-    Given I login as administrator
-    And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
-    And uncheck Use Default for "Enable guest shopping list" field
-    And I uncheck "Enable guest shopping list"
-    And I save setting
-    And I should see "Configuration saved" flash message
-    Then the "Enable guest shopping list" checkbox should not be checked
-
-  Scenario: Check Shopping List is not available for a guest on frontend
-    And I visit store frontend as guest
-    And I should not see "Shopping list"
-    And type "SKU003" in "search"
-    And I click "Search Button"
-    And I should see "Product3"
-    Then I should not see "Add to Shopping list"
