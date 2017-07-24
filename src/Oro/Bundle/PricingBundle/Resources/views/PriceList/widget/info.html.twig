@@ -28,6 +28,8 @@
                 } %}
                 {{ UI.renderHtmlProperty('oro.pricing.pricelist.schedule.label'|trans, cronSchedulIntervals.scheduleIntervalsInfo(entity.schedules, labels)) }}
             {% endif %}
+
+            {{ entityConfig.renderDynamicFields(entity) }}
         </div>
     </div>
 </div>
