@@ -1,10 +1,12 @@
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
         label: 'List 1'
+        customer: '@customer'
         customerUser: '@amanda'
         organization: '@organization'
     shoppinglist2:
         label: 'List 2'
+        customer: '@customer'
         customerUser: '@amanda'
         organization: '@organization'
 

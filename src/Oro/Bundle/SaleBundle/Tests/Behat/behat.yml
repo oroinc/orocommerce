@@ -14,7 +14,10 @@ oro_behat_extension:
         - OroShoppingListBundle::ShoppingListContext
         - OroSecurityBundle::ACLContext
         - OroSaleBundle::FeatureContext
+        - OroSalesBundle::FeatureContext
         - OroConfigBundle::FeatureContext
+        - OroCheckoutBundle::FeatureContext
+        - OroWarehouseBundle::FeatureContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
@@ -47,3 +50,9 @@ oro_behat_extension:
     AllQuotes:
       selector: 'div[data-page-component-name="frontend-quotes-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    First Product Quantity on Quote:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'input[name="oro_sale_quote_demand[demandProducts][0][quantity]"]'
+
+

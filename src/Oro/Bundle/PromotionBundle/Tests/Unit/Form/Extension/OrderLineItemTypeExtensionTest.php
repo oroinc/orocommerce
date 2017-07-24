@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Extension;
 
+use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -9,7 +10,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
-use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\PromotionBundle\Form\Extension\OrderLineItemTypeExtension;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
@@ -29,9 +29,9 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     protected $taxManager;
 
     /**
-     * @var AppliedDiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var DiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $appliedDiscountProvider;
+    protected $discountsProvider;
 
     /**
      * @var SectionProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -52,14 +52,14 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->taxManager = $this->createMock(TaxManager::class);
-        $this->appliedDiscountProvider = $this->createMock(AppliedDiscountsProvider::class);
+        $this->discountsProvider = $this->createMock(DiscountsProvider::class);
         $this->sectionProvider = $this->createMock(SectionProvider::class);
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
 
         $this->extension = new OrderLineItemTypeExtension(
             $this->taxationSettingsProvider,
             $this->taxManager,
-            $this->appliedDiscountProvider,
+            $this->discountsProvider,
             $this->sectionProvider,
             $this->lineItemSubtotalProvider
         );
@@ -103,7 +103,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn($orderLineItem);
 
-        $this->appliedDiscountProvider
+        $this->discountsProvider
             ->expects($this->once())
             ->method('getDiscountsAmountByLineItem')
             ->with($orderLineItem)
@@ -136,7 +136,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn(null);
 
-        $this->appliedDiscountProvider
+        $this->discountsProvider
             ->expects($this->never())
             ->method('getDiscountsAmountByLineItem');
 
@@ -166,7 +166,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn($orderLineItem);
 
-        $this->appliedDiscountProvider
+        $this->discountsProvider
             ->expects($this->once())
             ->method('getDiscountsAmountByLineItem')
             ->with($orderLineItem)

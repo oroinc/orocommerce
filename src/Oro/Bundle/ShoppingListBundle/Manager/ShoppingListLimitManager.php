@@ -3,10 +3,13 @@
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessor;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Maintains shopping lists limit for user
@@ -16,7 +19,7 @@ class ShoppingListLimitManager
     /** @var ConfigManager */
     private $configManager;
 
-    /** @var TokenAccessor*/
+    /** @var TokenAccessor */
     protected $tokenAccessor;
 
     /** @var DoctrineHelper */
@@ -47,11 +50,31 @@ class ShoppingListLimitManager
         if (!$this->tokenAccessor->hasUser()) {
             return false;
         }
-        $limitConfig = $this->configManager->get('oro_shopping_list.shopping_list_limit');
+        $limitConfig = $this->getShoppingListLimit();
+
+        if ($limitConfig) {
+            $user = $this->tokenAccessor->getUser();
+            // Limit of created shopping lists is already reached
+            if ($this->countUserShoppingLists($user) >= $limitConfig) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param CustomerUser $user
+     *
+     * @return bool
+     */
+    public function isCreateEnabledForCustomerUser(CustomerUser $user)
+    {
+        $limitConfig = $this->getShoppingListLimit($user->getWebsite());
 
         if ($limitConfig) {
             // Limit of created shopping lists is already reached
-            if ($this->countUserShoppingLists() >= $limitConfig) {
+            if ($this->countUserShoppingLists($user) >= $limitConfig) {
                 return false;
             }
         }
@@ -69,11 +92,12 @@ class ShoppingListLimitManager
             return true;
         }
 
-        $limitConfig = $this->configManager->get('oro_shopping_list.shopping_list_limit');
+        $limitConfig = $this->getShoppingListLimit();
 
         if ($limitConfig) {
+            $user = $this->tokenAccessor->getUser();
             // Limit set to one and user has one shopping list
-            if ($limitConfig === 1 && $this->countUserShoppingLists() === 1) {
+            if ($limitConfig === 1 && $this->countUserShoppingLists($user) === 1) {
                 return true;
             }
         }
@@ -82,17 +106,26 @@ class ShoppingListLimitManager
     }
 
     /**
+     * @param AbstractUser $user
      * @return int
      */
-    private function countUserShoppingLists()
+    private function countUserShoppingLists(AbstractUser $user)
     {
         /** @var ShoppingListRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(ShoppingList::class);
-        $user = $this->tokenAccessor->getUser();
 
         return $repository->countUserShoppingLists(
             $user->getId(),
             $user->getOrganization()->getId()
         );
+    }
+
+    /**
+     * @param Website|null $website
+     * @return integer
+     */
+    private function getShoppingListLimit(Website $website = null)
+    {
+        return $this->configManager->get('oro_shopping_list.shopping_list_limit', false, false, $website);
     }
 }

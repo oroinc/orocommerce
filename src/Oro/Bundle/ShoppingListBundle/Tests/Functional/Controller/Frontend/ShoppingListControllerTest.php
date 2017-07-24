@@ -33,6 +33,7 @@ class ShoppingListControllerTest extends WebTestCase
     const TEST_LABEL1 = 'Shopping list label 1';
     const TEST_LABEL2 = 'Shopping list label 2';
     const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
+    const SHOPPING_LIST_AVAIL_FOR_GUEST_KEY = 'oro_shopping_list.availability_for_guests';
 
     /** @var ConfigManager $configManager */
     protected $configManager;
@@ -56,6 +57,9 @@ class ShoppingListControllerTest extends WebTestCase
         );
 
         $this->configManager = $this->getContainer()->get('oro_config.manager');
+
+        $this->configManager->set(self::SHOPPING_LIST_AVAIL_FOR_GUEST_KEY, true);
+        $this->configManager->flush();
     }
 
     public function testView()
@@ -407,6 +411,7 @@ class ShoppingListControllerTest extends WebTestCase
     protected function tearDown()
     {
         $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
+        $this->configManager->reset(self::SHOPPING_LIST_AVAIL_FOR_GUEST_KEY);
         $this->configManager->flush();
     }
 }

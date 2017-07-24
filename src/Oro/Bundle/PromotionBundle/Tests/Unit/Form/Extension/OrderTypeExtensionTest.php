@@ -13,6 +13,7 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 use Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension;
 use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
+use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
 
 class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,6 +30,11 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
     protected $appliedDiscountManager;
 
     /**
+     * @var DiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $discountsProvider;
+
+    /**
      * @var OrderTypeExtension
      */
     protected $orderTypeExtension;
@@ -37,9 +43,12 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->discountRecalculationProvider = $this->createMock(DiscountRecalculationProvider::class);
         $this->appliedDiscountManager = $this->createMock(AppliedDiscountManager::class);
+        $this->discountsProvider = $this->createMock(DiscountsProvider::class);
+
         $this->orderTypeExtension = new OrderTypeExtension(
             $this->discountRecalculationProvider,
-            $this->appliedDiscountManager
+            $this->appliedDiscountManager,
+            $this->discountsProvider
         );
     }
 
@@ -69,6 +78,8 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->appliedDiscountManager->expects($this->never())
             ->method('saveAppliedDiscounts');
 
+        $this->discountsProvider->expects($this->never())->method('enableRecalculation');
+
         $this->orderTypeExtension->onSubmit($event);
     }
 
@@ -90,6 +101,8 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->appliedDiscountManager->expects($this->once())
             ->method('removeAppliedDiscountByOrder')
             ->with($order);
+
+        $this->discountsProvider->expects($this->once())->method('enableRecalculation');
 
         $this->orderTypeExtension->onSubmit($event);
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
@@ -123,6 +124,38 @@ class DiscountContextTest extends \PHPUnit_Framework_TestCase
         $context->addLineItem($lineItem2);
 
         $this->assertEquals(30.5, $context->getTotalLineItemsDiscount());
+    }
+
+    public function testGetDiscountByLineItem()
+    {
+        $lineItem1 = new OrderLineItem();
+        $lineItemDiscount1 = new DiscountLineItem();
+        $lineItemDiscount1->setSourceLineItem($lineItem1);
+        $lineItemDiscount1->addDiscountInformation(
+            new DiscountInformation($this->createMock(DiscountInterface::class), 11)
+        );
+        $lineItemDiscount1->addDiscountInformation(
+            new DiscountInformation($this->createMock(DiscountInterface::class), 22)
+        );
+
+        $lineItem2 = new OrderLineItem();
+        $lineItemDiscount2 = new DiscountLineItem();
+        $lineItemDiscount2->setSourceLineItem($lineItem2);
+        $lineItemDiscount2->addDiscountInformation(
+            new DiscountInformation($this->createMock(DiscountInterface::class), 44)
+        );
+        $lineItemDiscount2->addDiscountInformation(
+            new DiscountInformation($this->createMock(DiscountInterface::class), 55)
+        );
+
+        $context = new DiscountContext();
+        $context->addLineItem($lineItemDiscount1);
+        $context->addLineItem($lineItemDiscount2);
+
+        $this->assertEquals(33, $context->getDiscountByLineItem($lineItem1));
+        $this->assertEquals(99, $context->getDiscountByLineItem($lineItem2));
+        $this->assertEquals(0, $context->getDiscountByLineItem(new OrderLineItem()));
+        $this->assertEquals(0, $context->getDiscountByLineItem(new \stdClass()));
     }
 
     public function testGetLineItemDiscounts()
