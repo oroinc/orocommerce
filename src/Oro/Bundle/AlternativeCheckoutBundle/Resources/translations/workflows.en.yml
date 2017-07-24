@@ -24,6 +24,8 @@ oro:
                     label: 'Order Approval Threshold'
                     tooltip: 'Orders with subtotals exceeding the specified value will have to be reviewed and approved by users with the "Approve orders that exceed the allowable amount" permission.'
             attribute:
+                additional_data:
+                    label: 'Additional Data'
                 request_approval_notes:
                     label: Notes
                 billing_address_has_shipping:
@@ -78,6 +80,12 @@ oro:
                     label: 'Billing address'
                 shipping_address:
                     label: 'Shipping address'
+                payment_in_progress:
+                    label: 'Flag indicates that payment is in progress'
+                payment_validate:
+                    label: 'Payment validation required'
+                payment_save_for_later:
+                    label: 'Save payment data for later use'
             transition:
                 __start__:
                     label: 'Create Order'
@@ -128,7 +136,13 @@ oro:
                     attribute:
                         payment_method:
                             label: ''
+                        payment_save_for_later:
+                            label: ''
+                        payment_validate:
+                            label: ''
                         state_token:
+                            label: ''
+                        additional_data:
                             label: ''
                 continue_to_request_approval:
                     label: 'Request Approval'
@@ -182,6 +196,8 @@ oro:
                             label: ''
                         ship_until:
                             label: ''
+                        state_token:
+                            label: 'State token'
                 place_order_with_inactive_possibility:
                     label: 'Submit Order'
                     warning_message: ''
@@ -194,9 +210,23 @@ oro:
                             label: ''
                         state_token:
                             label: ''
+                        remove_source:
+                            label: ''
                 approve_order:
                     label: 'Approve Order'
                     warning_message: ''
                     attribute:
                         state_token:
                             label: ''
+                finish_checkout:
+                    label: 'Finish checkout'
+                    warning_message: ''
+                payment_error:
+                    label: 'Payment error'
+                    warning_message: ''
+                verify_payment:
+                    label: 'Verify Payment'
+                    warning_message: ''
+                back_to_shipping_address_on_fail_address:
+                    label: 'Edit Shipping Information'
+                    warning_message: ''
