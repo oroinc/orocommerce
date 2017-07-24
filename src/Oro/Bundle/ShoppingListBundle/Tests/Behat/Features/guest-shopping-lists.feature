@@ -80,10 +80,11 @@ Feature: Guest Shopping Lists
     Then I should see "Product3"
     But I should not see "Add to Shopping list"
 
-  Scenario: Configurable product variants shouldn't be available on front store
+  Scenario: Configurable product variants and matrix button shouldn't be available on front store
     And I open product with sku "1GB83" on the store frontend
     Then I should not see "Color"
     And I should not see "Size"
+    And I should not see "Order with Matrix Grid"
 
   Scenario: Check default status of guest shopping list in configurations
     Given I proceed as the Admin
@@ -98,12 +99,13 @@ Feature: Guest Shopping Lists
     Then I should see "Configuration saved" flash message
     And the "Enable guest shopping list" checkbox should be checked
 
-  Scenario: Configurable product variants should be available on front store
+  Scenario: Configurable product variants and matrix button should be available on front store
     Given I proceed as the User
     When I open product with sku "1GB83" on the store frontend
     Then I should see Line Item Form with data:
       | Color  | Black |
       | Size   | L     |
+    And I should see "Order with Matrix Grid"
 
   Scenario: Create Shopping List as unauthorized user from product view page
     Given I visit store frontend as guest
