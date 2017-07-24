@@ -8,6 +8,8 @@ features:
         strategy: affirmative
         routes:
             - 'oro_shopping_list_frontend_create'
+        operations:
+            - 'oro_shoppinglist_frontend_duplicate'
     guest_shopping_list:
         label: oro.shoppinglist.system_configuration.fields.availability_for_guests.label
         description: oro.shoppinglist.system_configuration.fields.availability_for_guests.tooltip
