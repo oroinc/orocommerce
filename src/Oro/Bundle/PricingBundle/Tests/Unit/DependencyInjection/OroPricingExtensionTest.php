@@ -44,6 +44,8 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.importexport.strategy.price_attribute_product_price.add_or_replace',
             'oro_pricing.importexport.processor.import.price_attribute_product_price',
             'oro_pricing.importexport.writer.price_attribute_product_price',
+            'oro_pricing.importexport.strategy.price_attribute_product_price.reset',
+            'oro_pricing.importexport.processor.import.price_attribute_product_price.reset',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

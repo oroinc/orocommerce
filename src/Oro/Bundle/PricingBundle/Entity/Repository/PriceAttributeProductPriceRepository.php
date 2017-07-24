@@ -2,13 +2,28 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
 {
+    /**
+     * @param BasePriceList $priceList
+     *
+     * @return int
+     */
+    public function deletePricesByPriceList(BasePriceList $priceList): int
+    {
+        $qb = $this->createQueryBuilder('price');
+
+        return $qb->delete()
+            ->where($qb->expr()->eq('price.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList)
+            ->getQuery()
+            ->execute();
+    }
+
     /**
      * Return product prices for specified price list and product IDs
      *
