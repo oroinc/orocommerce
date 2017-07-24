@@ -11,10 +11,10 @@ oro:
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
         sku:
-          label: SKU
-          placeholder: "Enter Product Name or Item Number"
-          not_found: Item Number Cannot Be Found
-          description: The code of the product
+            label: SKU
+            placeholder: "Enter Product Name or Item Number"
+            not_found: Item Number Cannot Be Found
+            description: The code of the product
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields:
@@ -148,13 +148,40 @@ oro:
         productunitprecision:
             entity_label: Product Unit Precision
             entity_plural_label: Product Unit Precisions
-            product.label: Product
-            unit.label: Unit
-            precision.label: Precision
-            conversion_rate.label: Conversion Rate
-            sell.label: Sell
+            product:
+                label: Product
+                description: The product for the product unit precision
+            unit:
+                label: Unit
+                description: The unit of quantity for the product
+            precision:
+                label: Precision
+                description: The precision for the product unit precision
+            conversion_rate:
+                label: Conversion Rate
+                description: The conversion rate for the product unit precision
+            sell:
+                label: Sell
+                description: The sell flag that tells if the current product unit precision can be sold
             sell_yes.label: Yes
             sell_not.label: No
+
+        unitprecision:
+            product:
+                label: Product
+                description: The product for the product unit precision
+            unit:
+                label: Unit
+                description: The unit of quantity for the product
+            precision:
+                label: Precision
+                description: The precision for the product unit precision
+            conversion_rate:
+                label: Conversion Rate
+                description: The conversion rate for the product unit precision
+            sell:
+                label: Sell
+                description: The sell flag that tells if the current product unit precision can be sold
 
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
             conversion: ", %count% of {{ label }}"
@@ -457,30 +484,40 @@ oro:
 
             descriptions:
                 label:    Description
+                description: The descriptions for the brand
             id:
                 label:    Id
             meta_titles:
                 label:    Meta title
+                description: The meta title of the brand
             meta_descriptions:
                 label:    Meta description
+                description: The meta description for the brand
             meta_keywords:
                 label:    Meta keyword
+                description: The meta kewords for the brand
             names:
                 label:    Name
+                description: The name of the brand
             short_descriptions:
                 label:    Short description
+                description: The short description of the brand
             slug_prototypes:
                 label:    Slug prototype
+                description: The slug prototype of the brand
             slugs:
                 label:    Slug
+                description: The slug of the brand
             organization:
                 label:    Organization
             owner:
                 label:    Owner
+                description: The owner of the brand
             status:
                 label:    Status
                 disabled: Disabled
                 enabled:  Enabled
+                description: The status for the brand
 
             menu:
                 entity_plural_label:  Product Brands
