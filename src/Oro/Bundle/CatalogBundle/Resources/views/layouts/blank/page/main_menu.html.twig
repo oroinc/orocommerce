@@ -8,7 +8,6 @@
     </ul>
 {% endblock %}
 
-
 {% block _categories_main_menu_widget %}
     {% if (max_size is not null ) %}
         {% set categories = categories[0:max_size] %}
@@ -27,32 +26,52 @@
     {% set hasSublist = category.childCategories is not empty %}
     <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
        class="main-menu__link">
-        <span>{{ category.titles|localized_value }} </span>
+        <span class="main-menu__text">{{ category.titles|localized_value }} </span>
         {% if hasSublist %}
-            <i class="fa-angle-down fa--no-offset"></i>
+            <span class="main-menu__taptick">
+                <i class="fa-angle-down fa--no-offset"></i>
+            </span>
         {% endif %}
     </a>
     {% if hasSublist %}
+        {# START TOP NAVIGATION SUBLIST #}
         <div class="main-menu__sublist-container">
-            <ul class="main-menu__sublist">
-                {% do block|merge_context({'categories': category.childCategories }) %}
-                {{ block_widget(block) }}
-            </ul>
+            <div class="main-menu-columns">
+                <div class="main-menu-column main-menu-column">
+                    <div class="main-menu-column__title">{{ 'oro.catalog.menu.by_category.label'|trans }}</div>
+                    <div class="main-menu-column__inner">
+                        <ul class="main-menu-column__inner-left">
+                            {% do block|merge_context({'categories': category.childCategories }) %}
+                            {{ block_widget(block) }}
+                            <li class="main-menu-column__item">
+                                <a class="main-menu-column__link" href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+                                    {{ 'oro.catalog.menu.all.label'|trans ~ " " ~ category.titles|localized_value }}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
+        {# ENDTOP NAVIGATION SUBLIST#}
     {% endif %}
 {% endblock %}
 
 {% block _categories_main_menu_second_level_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " main-menu__sublist-item"
-    }) %}
-    <li {{ block('block_attributes') }}>
-        <div class="main-menu__sublist-title">By Category</div>
-        {% for category in categories %}
-            {% do block|merge_context({'category': category}) %}
+    {% set hasSublist = category.childCategories is not empty %}
+    {% for category in categories %}
+        <li class="main-menu-column__item">
+            <a class="main-menu-column__link"
+               href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}
+            ">
+                {{ category.titles|localized_value }}
+            </a>
+        </li>
+        {% if hasSublist %}
+            {% do block|merge_context({'categories': category.childCategories }) %}
             {{ block('container_widget') }}
-        {% endfor %}
-    </li>
+        {% endif %}
+    {% endfor %}
 {% endblock %}
 
 {% block _categories_main_menu_second_level_item_widget %}
@@ -75,22 +94,13 @@
 {% endblock %}
 
 {% block _categories_main_menu_third_level_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " main-menu__sublist_subnested"
-    }) %}
-    <ul {{ block('block_attributes') }}>
-        {% for category in categories %}
-            <li>
-                {% do block|merge_context({'category': category}) %}
-                {{ block('container_widget') }}
-            </li>
-        {% endfor %}
-    </ul>
-{% endblock %}
-
-{% block _categories_main_menu_third_level_item_widget %}
-    {% set attr = attr|merge({
-        href: path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true})
-    }) %}
-    <a {{ block('block_attributes') }}>{{ category.titles|localized_value }}</a>
+    {% for category in categories %}
+        <li class="main-menu-column__subitem">
+            <a class="main-menu-column__link"
+               href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}
+            ">
+                {{ category.titles|localized_value }}
+            </a>
+        </li>
+    {% endfor %}
 {% endblock %}
