@@ -41,10 +41,12 @@ class PriceAttributeProductPriceImportStrategy extends ConfigurableAddOrReplaceS
         $value = $this->fieldHelper->getObjectValue($entity, 'value');
         $currency = $this->fieldHelper->getObjectValue($entity, 'currency');
 
-        if ($value !== null && $currency !== null) {
-            $entity->loadPrice();
-        } else {
+        if ($value === null || $currency === null) {
             $this->fieldHelper->setObjectValue($entity, 'price', null);
+
+            return;
         }
+
+        $entity->loadPrice();
     }
 }
