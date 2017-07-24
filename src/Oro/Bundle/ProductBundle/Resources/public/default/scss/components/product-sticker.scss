@@ -11,6 +11,9 @@
 
             background: $product-sticker-icon-new-arrival-background;
             background-size: $product-sticker-icon-new-arrival-background-size;
+
+            // Fixed blurry svg image on IOS devices
+            -webkit-transform: translateZ(0);
         }
 
         &-static-size {

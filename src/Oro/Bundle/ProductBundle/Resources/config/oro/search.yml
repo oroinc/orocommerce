@@ -53,7 +53,7 @@ search:
         alias:                          oro_brand
         title_fields:                   [defaultName]
         route:
-            name:                       oro_brand_update
+            name:                       oro_product_brand_update
             parameters:
                 id:                     id
         search_template:                OroProductBundle:Product:searchResult.html.twig

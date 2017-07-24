@@ -15,6 +15,7 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
 {
     const TYPE = 'shipping_cost';
     const NAME = 'oro_order.subtotal_shipping_cost';
+    const SUBTOTAL_SORT_ORDER = 200;
 
     /**
      * @var TranslatorInterface
@@ -62,6 +63,7 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         $subtotal = new Subtotal();
 
         $subtotal->setType(self::TYPE);
+        $subtotal->setSortOrder(self::SUBTOTAL_SORT_ORDER);
         $translation = 'oro.order.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($translation));
         $subtotal->setVisible(false);
