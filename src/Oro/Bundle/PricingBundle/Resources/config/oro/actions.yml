@@ -63,6 +63,14 @@ operations:
             - price-list-websites-grid
             - pricing-price-list-select-grid
             - product-prices-grid
+    oro_customer_groups_delete:
+        exclude_datagrids:
+            - price-list-customer-groups-grid
+
+    oro_customer_delete:
+        exclude_datagrids:
+            - price-list-customers-grid
+            - price-list-select-customers-grid
     oro_pricing_price_list_set_active:
         label: oro.pricing.pricelist.status.enable
         routes: [oro_pricing_price_list_view]

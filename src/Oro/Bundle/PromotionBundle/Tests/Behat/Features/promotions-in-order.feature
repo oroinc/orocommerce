@@ -72,10 +72,11 @@ Feature: Promotions in Order page
     Given I operate as the Admin
     When I fill "Promotion Order Form" with:
       | SKU2ProductQuantity | 3 |
+#    Check that line items discounts were reloaded by ajax
     Then I see next line item discounts for backoffice order:
       | SKU  | Row Total Incl Tax | Row Total Excl Tax | Discount |
       | SKU1 | $10.00             | $10.00             | $0.00    |
-      | SKU2 | $5.00              | $5.00              | $5.00    |
+      | SKU2 | $3.00              | $3.00              | $3.00    |
     And I should see "line Item Discount Promotion" in "Order Promotions Grid" with following data:
       | Amount  | $5.00 |
     And I should see "order Discount Promotion" in "Order Promotions Grid" with following data:
@@ -83,12 +84,13 @@ Feature: Promotions in Order page
     And I click "Order Totals"
     And I see next subtotals for "Backend Order":
       | Subtotal | Amount |
-      | Subtotal | $20.00 |
-      | Discount | $12.50 |
+      | Subtotal | $16.00 |
+      | Discount | $9.50 |
       | Shipping | $3.00  |
 # TODO uncomment after fix of BB-10620
-#      | Total    | $10.50 |
+#      | Total    | $9.50 |
     When I save order without discounts recalculation
+    And agree that shipping cost may have changed
     And I click "Edit"
     Then I should see "line Item Discount Promotion" in "Order Promotions Grid" with following data:
       | Amount  | $5.00 |

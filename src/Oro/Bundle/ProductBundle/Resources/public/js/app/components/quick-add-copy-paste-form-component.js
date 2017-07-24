@@ -141,14 +141,14 @@ define(function(require) {
          * @param {object} data
          */
         onAutocompleteSuccess: function(data) {
-            this._updateField(_.matcher({sku: data.item.sku}));
+            this._updateField(_.matcher({sku: data.item.sku.toUpperCase()}));
         },
 
         /**
          * @param {object} data
          */
         onProductUpdate: function(data) {
-            this._updateField(_.matcher({sku: data.sku}));
+            this._updateField(_.matcher({sku: data.sku.toUpperCase()}));
         },
 
         _updateField: function(skuMatcher) {

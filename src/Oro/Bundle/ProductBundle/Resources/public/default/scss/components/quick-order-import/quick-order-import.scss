@@ -47,6 +47,14 @@
   .filename {
     display: none;
   }
+
+  .mobile-version & {
+    @include breakpoint('mobile-big') {
+      width: 100%;
+      float: none;
+      clear: none;
+    }
+  }
 }
 
 .quick-add-validation {

@@ -13,3 +13,12 @@ operations:
             - customer-group-product-visibility-grid
             - customer-product-visibility-grid
 
+    oro_customer_groups_delete:
+        exclude_datagrids:
+            - customer-group-category-visibility-grid
+            - customer-group-product-visibility-grid
+
+    oro_customer_delete:
+        exclude_datagrids:
+            - customer-category-visibility-grid
+            - customer-product-visibility-grid
