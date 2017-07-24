@@ -1,0 +1,83 @@
+// @theme: blank;
+
+.product-view-media-slider {
+    max-height: $product-view-media-slider-max-height;
+
+    border: $product-view-media-slider-border;
+
+    overflow: hidden;
+
+    &.slick-initialized {
+        overflow: visible;
+
+        .product-view-media-slider__image-item {
+            //Should for reset slick display value
+            display: flex;
+        }
+    }
+
+    &__image {
+        max-width: 100%;
+        max-height: $product-view-media-gallery-image-max-height;
+    }
+
+    &__image-item {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+
+        height: 378px;
+    }
+
+    .slick-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: z('base');
+
+        display: block;
+        width: $product-view-media-slider-arrow-width;
+        height: $product-view-media-slider-arrow-height;
+        padding: 0;
+
+        outline: none;
+        font-size: 0;
+        line-height: 0;
+        text-align: center;
+
+        border: none;
+        color: transparent;
+        background: none;
+
+        cursor: pointer;
+
+        &:before,
+        &:after {
+            display: block;
+
+            font-size: $product-view-media-slider-arrow-icon-size;
+
+            color: $product-view-media-slider-arrow-icon-color;
+        }
+
+        @include element-state('hover') {
+            &:before,
+            &:after {
+                color: $product-view-media-slider-arrow-icon-hover-color;
+            }
+        }
+    }
+
+    .slick-prev {
+        left: $product-view-media-slider-arrow-side-position;
+
+        @include fa-icon($product-view-media-slider-arrow-icon-prev, after);
+    }
+
+    .slick-next {
+        right: $product-view-media-slider-arrow-side-position;
+
+        @include fa-icon($product-view-media-slider-arrow-icon-next);
+    }
+}
