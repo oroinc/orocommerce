@@ -186,12 +186,14 @@ class ProductApiTest extends RestJsonApiTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function getCreateProductRequest()
     {
         $category = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
         $businessUnit = $this->getReference('TestBusinessUnit');
-        $organization = $this->getReference(LoadOrganizations::ORGANIZATION_1);
+        $organization = $businessUnit->getOrganization();
         $localization = $this->getReference('es');
         $bottleUnit = $this->getReference(LoadProductUnits::BOTTLE);
         $literUnit = $this->getReference(LoadProductUnits::LITER);
@@ -488,6 +490,8 @@ class ProductApiTest extends RestJsonApiTestCase
     /**
      * @param Product $product
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function createUpdateRequest(Product $product)
     {
