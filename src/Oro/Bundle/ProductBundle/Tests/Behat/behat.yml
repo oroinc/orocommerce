@@ -492,6 +492,17 @@ oro_behat_extension:
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
 
+    Image Gallery Form:
+      selector: 'form[name="product_images"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Use Default: 'product_images[oro_product___popup_gallery_on_product_view][use_parent_scope_value]'
+          Popup Gallery On Product View: 'product_images[oro_product___popup_gallery_on_product_view][value]'
+
+    Product Slider:
+      selector: '.product-view__aside .product-view-media-slider'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:

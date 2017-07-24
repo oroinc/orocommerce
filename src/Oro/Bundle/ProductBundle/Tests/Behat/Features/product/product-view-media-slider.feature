@@ -1,0 +1,48 @@
+@ticket-BB-9585
+@fixture-OroProductBundle:product_listing_images.yml
+
+Feature: Gallery as slider
+  In order to use the best image gallery option for my theme design
+  As an Administrator
+  I want to be able to choose whether to use popup for image gallery, or to use it inline
+
+  # Description
+  # Based on the setting selected in system configuration use one of the two tempaltes to display customer user menu:
+  # all menu items are displayed on the page
+  # menu items are displayed in a drop-down when user clicks on the user name
+  # Use different welcome messages in the templates:
+  # default template (all at once) - "Signed in as: John Doe"
+  # when only name is shown - "Welcome, John Doe"
+  #
+  # Configuration
+  # In the "Image Gallery Options" fieldset
+  # on the System -> Configuration -> COMMERCE -> Product -> Product Images page:
+  # Add new field "Popup Gallery on Product View" - checkbox,
+  # default value - enabled (checked), levels - global/organization/website, hint:
+  # Inline gallery view may work better for some product templates.
+  #
+  # Acceptance Criteria
+  # Show how administrators can switch between popup and inline gallery views on different configuration levels
+  # Show how popup and inline gallery work on product view pages
+
+  Scenario: Gallery as slider - is present on front store
+    Given I login as administrator
+    And go to System / Configuration
+    And I click "Commerce"
+    And I click "Product"
+    And I click "Product Images"
+    And fill "Image Gallery Form" with:
+      | Use Default                   | false |
+      | Popup Gallery On Product View | false |
+    And save form
+    And click "Save settings"
+    And I go to Products / Products
+    And I click Edit PSKU1 in grid
+    And I set Images with:
+      | File     | Main  | Listing | Additional |
+      | cat1.jpg | 1     | 1       | 1          |
+      | cat2.jpg |       |         | 1          |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+    When I am on "/product"
+    Then I should see "Product Slider"
