@@ -10,6 +10,14 @@
             main-menu__item--{{ (block.children|length == 1 ? "floated" : "centered") ~ "-dropdown" }}">
             {% do block|merge_context({'category': category}) %}
             {{ block('container_widget') }}
+            {% if hasSublist %}
+                <button class="main-menu__button-arrow"
+                        data-toggle="dropdown"
+                        data-go-to="next"
+                >
+                    <i class="fa-angle-down fa--no-offset"></i>
+                </button>
+            {% endif %}
         </li>
     {%- endfor %}
 {% endblock %}
