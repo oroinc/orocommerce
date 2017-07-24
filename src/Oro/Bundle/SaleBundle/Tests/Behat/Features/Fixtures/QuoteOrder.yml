@@ -1,2 +1,2 @@
 include:
-    - ../../../../../ShoppingListBundle/Tests/Behat/Features/Fixtures/ShoppingListFixture.yml
+    - '@OroShoppingListBundle:ShoppingListFixture.yml'
