@@ -10,8 +10,8 @@
     &.slick-initialized {
         overflow: visible;
 
-        .product-view-media-gallery__image-item {
-            //Should for reset slick  display value
+        .product-view-media-slider__image-item {
+            //Should for reset slick display value
             display: flex;
         }
     }
@@ -26,6 +26,8 @@
         justify-content: center;
         flex-direction: column;
         align-items: center;
+
+        height: 378px;
     }
 
     .slick-arrow {

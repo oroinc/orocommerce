@@ -140,7 +140,6 @@
                          alt="{{ product.names|localized_value }}"
                             {% if loop.first %}
                                 src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
-                                data-page-component-module="oroui/js/app/components/viewport-component"
                             {% else %}
                                 data-lazy="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
                             {% endif %}
