@@ -36,7 +36,7 @@ Feature: Editing related products
       | SKU    | NAME      |
       | PSKU2  | Product 2 |
       | PSKU3  | Product 3 |
-    And I click "Save and Close"
+    And I save and close form
     Then I should see "Product has been saved" flash message
     And I should see following grid:
       | SKU    | NAME      |
@@ -67,8 +67,8 @@ Feature: Editing related products
       | PSKU4 |
     And I click "Select products"
     And I click "Delete" on row "PSKU2" in grid
-    And I click "Save and Close"
-    Then I should see following grid:
+    And I save and close form
+    Then I should see following "RelatedProductsViewGrid" grid:
       | SKU    | NAME      |
       | PSKU3  | Product 3 |
       | PSKU4  | Product 4 |
@@ -113,7 +113,7 @@ Feature: Editing related products
       | SKU        | product12 |
       | Name       | product12 |
       | Status     | Enabled  |
-    And I click "Save and Close"
+    And I save and close form
     Then I should see "Product has been saved" flash message
 
   Scenario: Related items should not be visible in product edition if user has no permission
@@ -166,7 +166,7 @@ Feature: Editing related products
     And I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU2 |
     And I click "Select products"
-    And I click "Save and Close"
+    And I save and close form
     And I should see "Product has been saved" flash message
     And I should see following "RelatedProductsViewGrid" grid:
       | SKU   | NAME      |
@@ -178,7 +178,7 @@ Feature: Editing related products
     And I fill "ProductForm" with:
       | SKU   | PSKU22            |
       | Name  | Product 2 updated |
-    And I click "Save and Close"
+    And I save and close form
     Then go to Products/ Products
     And I click Edit "PSKU1" in grid
     And I should see following grid:
@@ -214,7 +214,7 @@ Feature: Editing related products
     And I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU3 |
     And I click "Select products"
-    And I click "Save and Close"
+    And I save and close form
     And I should see "Product has been saved" flash message
     And I should see following grid:
       | SKU    | NAME              |
