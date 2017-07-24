@@ -318,6 +318,13 @@ services:
             - '@oro.cache.memory_cache_chain'
             - '@oro_entity.doctrine_helper'
 
+    oro_promotion.provider.discounts_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\DiscountsProvider
+        public: false
+        arguments:
+            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@oro_promotion.promotion_executor'
+
     oro_promotion.provider.subtotal_provider:
         class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
         public: false
@@ -432,7 +439,7 @@ services:
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_tax.manager.tax_manager'
-            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@oro_promotion.provider.discounts_provider'
             - '@oro_order.form.section.provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
@@ -443,8 +450,19 @@ services:
         arguments:
             - '@oro_promotion.provider.discount_recalculation_provider'
             - '@oro_promotion.applied_discount_manager'
+            - '@oro_promotion.provider.discounts_provider'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
+
+    oro_promotion.event_listener.order.discounts:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener
+        arguments:
+            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_promotion.provider.discounts_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -128 }
 
     oro_promotion.provider.discount_recalculation_provider:
         class: 'Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider'
