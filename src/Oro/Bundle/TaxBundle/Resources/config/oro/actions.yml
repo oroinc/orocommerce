@@ -18,3 +18,11 @@ operations:
           - tax-jurisdiction-select-grid
           - tax-customer-group-grid
           - tax-customer-grid
+
+    oro_customer_groups_delete:
+      exclude_datagrids:
+          - tax-customer-group-grid
+
+    oro_customer_delete:
+      exclude_datagrids:
+          - tax-customer-grid
