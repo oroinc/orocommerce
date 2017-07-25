@@ -286,8 +286,6 @@ operations:
             - '@flash_message':
                   message: oro.shoppinglist.duplicate.success.message
                   type: 'success'
-                  message_parameters:
-                    'shoppinglist': $.data.label
             - '@redirect':
                 route: 'oro_shopping_list_view'
                 route_parameters:

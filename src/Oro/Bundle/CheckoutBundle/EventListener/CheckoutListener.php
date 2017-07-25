@@ -69,7 +69,7 @@ class CheckoutListener
 
             $website = $this->websiteManager->getCurrentWebsite();
             if ($website) {
-                $checkout->setOrganization($this->websiteManager->getCurrentWebsite()->getOrganization());
+                $checkout->setOrganization($website->getOrganization());
             }
         }
     }
