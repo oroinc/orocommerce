@@ -204,13 +204,11 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
                             },
                             $value
                         );
-                    } else {
-                        if ($value) {
-                            $value = $this->doctrineHelper->getEntityReference(
-                                $associationTargetClass,
-                                $value
-                            );
-                        }
+                    } elseif ($value) {
+                        $value = $this->doctrineHelper->getEntityReference(
+                            $associationTargetClass,
+                            $value
+                        );
                     }
                 }
 

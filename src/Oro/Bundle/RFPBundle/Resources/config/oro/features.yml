@@ -26,6 +26,7 @@ features:
         toggle: oro_rfp.frontend_feature_enabled
         dependencies:
             - 'rfp'
+            - 'guest_rfp'
         operations:
             - 'oro_rfp_frontend_request_a_quote'
             - 'oro_rfp_frontend_request_create'
@@ -40,10 +41,6 @@ features:
         label: oro.rfp.system_configuration.fields.guest_rfp.label
         description: oro.rfp.system_configuration.fields.guest_rfp.tooltip
         toggle: oro_rfp.guest_rfp
-        dependencies:
-            - 'rfp_frontend'
-        operations:
-            - 'oro_rfp_frontend_request_create'
         configuration:
-            - guest_rfp_owner_section
+            - 'guest_rfp_owner_section'
         strategy: affirmative
