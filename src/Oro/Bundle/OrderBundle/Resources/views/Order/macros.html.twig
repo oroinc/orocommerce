@@ -1,14 +1,29 @@
 {% macro renderPossibleShippingMethods(
     form,
+    entity,
     events = {},
-    component = 'oroorder/js/app/components/possible-shipping-methods-component',
-    savedShippingMethod = null
+    view = 'oroorder/js/app/views/possible-shipping-methods-view'
 ) %}
-    <div data-page-component-module="{{ component }}"
-        {% if events|length > 0 %}
-            data-page-component-options="{{ { events: events, savedShippingMethod: savedShippingMethod }|json_encode }}"
-        {% endif %}
-         class="possible_shipping_methods_container">
+    {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
+        {% set savedShippingMethod = {
+            method: entity.shippingMethod,
+            type: entity.shippingMethodType,
+            cost: entity.estimatedShippingCost.value
+        } %}
+        {% set savedShippingMethodLabel = oro_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType) ~ ': ' ~ entity.estimatedShippingCost|oro_format_price() %}
+    {% endif %}
+    {% set options = {
+        view: view,
+        savedShippingMethodLabel: savedShippingMethodLabel|default(null),
+        savedShippingMethod: savedShippingMethod|default(null)
+    } %}
+    {% if events|length > 0 %}
+        {% set options = options|merge({events: events}) %}
+    {% endif %}
+    <div data-page-component-module="oroui/js/app/components/view-component"
+         data-page-component-options="{{ options|json_encode }}"
+         class="possible_shipping_methods_container"
+    >
         <div class="btn-group">
             <span
                 data-role="possible_shipping_methods_btn"
