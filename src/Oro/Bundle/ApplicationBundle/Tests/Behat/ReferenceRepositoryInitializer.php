@@ -5,6 +5,7 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Behat;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\AddressBundle\Entity\Repository\AddressTypeRepository;
+use Oro\Bundle\DPDBundle\Entity\ShippingService as DPDShippingService;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
@@ -36,11 +37,19 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $us = $repository->findOneBy(['name' => 'United States']);
         $this->referenceRepository->set('united_states', $us);
 
+        /** @var Country $unitedStates */
+        $unitedStates = $repository->findOneBy(['name' => 'United States']);
+        $this->referenceRepository->set('us', $unitedStates);
+
         /** @var RegionRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroAddressBundle:Region');
         /** @var Region $berlin */
         $berlin = $repository->findOneBy(['name' => 'Berlin']);
         $this->referenceRepository->set('berlin', $berlin);
+
+        /** @var Region $florida */
+        $florida = $repository->findOneBy(['name' => 'Florida']);
+        $this->referenceRepository->set('florida', $florida);
 
         /** @var CustomerUserRoleRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroCustomerBundle:CustomerUserRole');
@@ -102,5 +111,12 @@ class ReferenceRepositoryInitializer extends BaseInitializer
             ->getRepository($inventoryStatusClassName)
             ->findOneBy(['id' => 'in_stock']);
         $this->referenceRepository->set('enumInventoryStatuses', $enumInventoryStatuses);
+
+        // move to DPDBundle after https://magecore.atlassian.net/browse/BAP-15050 will be done
+        /** @var EntityRepository $repository */
+        $repository = $this->getEntityManager()->getRepository('OroDPDBundle:ShippingService');
+        /** @var DPDShippingService $germany */
+        $germany = $repository->findOneBy(['code' => DPDShippingService::CLASSIC_SERVICE_SUBSTR]);
+        $this->referenceRepository->set('dpdClassicShippingService', $germany);
     }
 }

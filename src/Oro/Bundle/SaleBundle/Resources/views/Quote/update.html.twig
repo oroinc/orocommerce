@@ -162,19 +162,11 @@
     {% endif %}
 
     {% set shippingInformation %}
-        <div class="quote-shipping-methods-info">
-            {% set component = 'orosale/js/app/components/quote-possible-shipping-methods-component' %}
-
-            {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
-                {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
-                {% set savedShippingMethod = methodLabel ~ get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
-                ': ' ~ entity.estimatedShippingCost|oro_format_price()
-                %}
-            {% endif %}
-
+        <div class="possible-shipping-methods-info">
+            {% set possibleShippingMethodsView = 'orosale/js/app/views/quote-possible-shipping-methods-view' %}
             {{ UI.renderAttribute('oro.sale.quote.shipping_method.label'|trans,
-                '<div class="quote_possible_shipping_methods_container">' ~
-                SM.renderPossibleShippingMethods(form, quoteEntryPointEvents, component, savedShippingMethod|default(null)) ~ '</div>'
+                '<div class="possible_shipping_methods_container">' ~
+                SM.renderPossibleShippingMethods(form, entity, quoteEntryPointEvents, possibleShippingMethodsView) ~ '</div>'
             ) }}
 
             {% set options = {
