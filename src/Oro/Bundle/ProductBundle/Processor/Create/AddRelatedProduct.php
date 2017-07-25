@@ -69,7 +69,6 @@ class AddRelatedProduct implements ProcessorInterface
             $context->setResult($relatedProduct);
             $context->setId($relatedProduct->getId());
             $context->skipGroup('save_data');
-
         } catch (\InvalidArgumentException $e) {
             $errorDetail = (new Label($e->getMessage(), 'validators'))->setTranslateDirectly(true);
             $context->addError(Error::createValidationError(Constraint::VALUE, $errorDetail));
