@@ -49,7 +49,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         slugPrototypes:
             - Valid: ~
         pageTemplate:
-            - Oro\Bundle\EntityBundle\Validator\Constraints\EntityFieldFallbackValues:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\EntityFieldFallbackValues:
                 route: 'oro_product_frontend_product_view'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
