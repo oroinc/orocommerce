@@ -80,4 +80,6 @@
 
         @include fa-icon($product-view-media-slider-arrow-icon-next);
     }
+
+    @include slick-dots();
 }
