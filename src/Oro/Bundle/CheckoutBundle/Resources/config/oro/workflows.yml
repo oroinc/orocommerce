@@ -471,24 +471,25 @@ workflows:
                 actions:
                     - '@tree':
                         conditions:
-                            '@not_empty': $visitor_email
+                            '@and':
+                                - '@not_empty': $visitor_email
+                                - '@empty': $checkout.customerUser
                         actions:
-                            - '@call_method':
-                                parameters:
-                                    object: $checkout.customerUser
-                                    method: setEmail
-                                    method_parameters:
-                                        - $visitor_email
-                            - '@assign_value': [$checkout.customerUser.namePrefix, $billing_address.namePrefix]
-                            - '@assign_value': [$checkout.customerUser.firstName, $billing_address.firstName]
-                            - '@assign_value': [$checkout.customerUser.middleName, $billing_address.middleName]
-                            - '@assign_value': [$checkout.customerUser.lastName, $billing_address.lastName]
-                            - '@assign_value': [$checkout.customerUser.nameSuffix, $billing_address.nameSuffix]
-                            - '@call_method':
-                                parameters:
-                                    object: $checkout.customerUser
-                                    method: fillCustomer
-                    - '@assign_value': [$shipping_method, null]
+                            - '@call_service_method':
+                                attribute: $checkout.customerUser
+                                service: 'oro_customer.manager.guest_customer_user'
+                                method: createFromAddress
+                                method_parameters:
+                                    - $visitor_email
+                                    - $billing_address
+                    - '@tree':
+                        conditions:
+                            '@and':
+                                - '@type': [$checkout.sourceEntity, Oro\Bundle\ShoppingListBundle\Entity\ShoppingList]
+                                - '@empty': $checkout.sourceEntity.customerUser
+                        actions:
+                            - '@assign_value': [$checkout.sourceEntity.customerUser, $checkout.customerUser]
+                            - '@assign_value': [$checkout.sourceEntity.customer, $checkout.customerUser.customer]
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
                     - '@assign_value': [$shipping_method, null]
                     - '@call_method':

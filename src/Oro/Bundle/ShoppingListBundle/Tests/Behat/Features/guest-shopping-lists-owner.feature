@@ -19,7 +19,7 @@ Feature: Guest shopping lists owner
     And I should see "Configuration saved" flash message
 
   Scenario: Create shopping list on frontend
-    Given I visit store frontend as guest
+    Given I am on homepage
     And I should see "Shopping list"
     And type "PSKU1" in "search"
     And I click "Search Button"
