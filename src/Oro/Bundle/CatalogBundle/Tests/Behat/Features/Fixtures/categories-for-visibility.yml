@@ -1,0 +1,53 @@
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localValueLightingProducts']
+        setParentCategory: [1]
+        setInventoryThreshold: ['@treshhold100']
+
+    categoryRetailSupplies:
+        addTitle: ['@localValueRetailSupplies']
+        setParentCategory: [1]
+        setInventoryThreshold: ['@treshhold200']
+
+    categoryMedicalApparel:
+        addTitle: ['@localValueMedicalApparel']
+        setParentCategory: [1]
+        setInventoryThreshold: ['@treshhold300']
+
+    categoryPrinters:
+        addTitle: ['@localValuePrinters']
+        setParentCategory: ['@categoryRetailSupplies']
+        setInventoryThreshold: ['@treshhold400']
+
+    categoryFax:
+        addTitle: ['@localValueFax']
+        setParentCategory: ['@categoryRetailSupplies']
+        setInventoryThreshold: ['@treshhold500']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localValueRetailSupplies:
+        string: 'Retail Supplies'
+
+    localValuePrinters:
+        string: 'Printers'
+
+    localValueLightingProducts:
+        string: 'Lighting Products'
+
+    localValueMedicalApparel:
+        string: 'Medical Apparel'
+
+    localValueFax:
+        string: 'Fax'
+
+Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
+    treshhold100:
+        scalarValue: 100
+    treshhold200:
+        scalarValue: 200
+    treshhold300:
+        scalarValue: 300
+    treshhold400:
+        scalarValue: 400
+    treshhold500:
+        scalarValue: 500
