@@ -15,6 +15,7 @@ oro_behat_extension:
         - OroSecurityBundle::ACLContext
         - OroSaleBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
+        - OroWarehouseBundle::FeatureContext
         - OroSalesBundle::FeatureContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
@@ -49,6 +50,10 @@ oro_behat_extension:
       selector:
         locator: '#sales-contact-info'
         type: css
+
+    First Product Quantity on Quote:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'input[name="oro_sale_quote_demand[demandProducts][0][quantity]"]'
 
     AllQuotes:
       selector: 'div[data-page-component-name="frontend-quotes-grid"]'
