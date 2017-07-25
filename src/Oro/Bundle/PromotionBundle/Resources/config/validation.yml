@@ -39,10 +39,16 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
         totalUses:
             - NotBlank: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
-            - GreaterThanOrEqual: { value: 0 }
+            - Range:
+                min: 0
+                max: 2147483647
         usesPerCoupon:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
-            - GreaterThanOrEqual: { value: 0 }
+            - Range:
+                min: 0
+                max: 2147483647
         usesPerUser:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
-            - GreaterThanOrEqual: { value: 0 }
+            - Range:
+                min: 0
+                max: 2147483647
