@@ -1,5 +1,6 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroAuthorizeNetBundle:AuthorizeNetFixture.yml
+@selenium-incompatible
 Feature: Process order submission with PayPal Payments Pro and Authorize & Charge payment action
   Scenario: Create new PayPal Payments Pro Integration
     Given I login as administrator
