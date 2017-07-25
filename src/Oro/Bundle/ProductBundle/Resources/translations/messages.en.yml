@@ -148,40 +148,14 @@ oro:
         productunitprecision:
             entity_label: Product Unit Precision
             entity_plural_label: Product Unit Precisions
-            product:
-                label: Product
-                description: The product for the product unit precision
-            unit:
-                label: Unit
-                description: The unit of quantity for the product
-            precision:
-                label: Precision
-                description: The precision for the product unit precision
-            conversion_rate:
-                label: Conversion Rate
-                description: The conversion rate for the product unit precision
-            sell:
-                label: Sell
-                description: The sell flag that tells if the current product unit precision can be sold
+            id.label: Id
+            product.label: Product
+            unit.label: Unit
+            precision.label: Precision
+            conversion_rate.label: Conversion Rate
+            sell.label: Sell
             sell_yes.label: Yes
             sell_not.label: No
-
-        unitprecision:
-            product:
-                label: Product
-                description: The product for the product unit precision
-            unit:
-                label: Unit
-                description: The unit of quantity for the product
-            precision:
-                label: Precision
-                description: The precision for the product unit precision
-            conversion_rate:
-                label: Conversion Rate
-                description: The conversion rate for the product unit precision
-            sell:
-                label: Sell
-                description: The sell flag that tells if the current product unit precision can be sold
 
             representation: "{0} {{ label }} (whole numbers)|{1} {{ label }} (fractional, %count% decimal digit)|]1,Inf[ {{ label }} (fractional, %count% decimal digits)"
             conversion: ", %count% of {{ label }}"
