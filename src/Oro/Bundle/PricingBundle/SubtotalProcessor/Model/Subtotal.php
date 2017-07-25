@@ -45,6 +45,13 @@ class Subtotal
     protected $visible;
 
     /**
+     * Display order, the less the value the earlier subtotal is displayed
+     *
+     * @var boolean
+     */
+    protected $sortOrder = 0;
+
+    /**
      * Extra data
      *
      * @var array
@@ -179,6 +186,24 @@ class Subtotal
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getSortOrder()
+    {
+        return $this->sortOrder;
+    }
+
+    /**
+     * @param int $order
+     * @return Subtotal
+     */
+    public function setSortOrder($order)
+    {
+        $this->sortOrder = $order;
+
+        return $this;
+    }
 
     /**
      * @return array
@@ -209,6 +234,7 @@ class Subtotal
             'type' => $this->getType(),
             'label' => $this->getLabel(),
             'amount' => $this->getAmount(),
+            'signedAmount' => $this->getSignedAmount(),
             'currency' => $this->getCurrency(),
             'visible' => $this->isVisible(),
             'data' => $this->getData(),
@@ -221,5 +247,18 @@ class Subtotal
     public function getTotalPrice()
     {
         return (new Price())->setCurrency($this->getCurrency())->setValue($this->getAmount());
+    }
+
+    /**
+     * If operation is subtraction than negative amount is returned, otherwise positive amount is returned.
+     * @return float
+     */
+    public function getSignedAmount()
+    {
+        if ($this->amount && $this->getOperation() === self::OPERATION_SUBTRACTION) {
+            return -$this->amount;
+        }
+
+        return $this->amount;
     }
 }

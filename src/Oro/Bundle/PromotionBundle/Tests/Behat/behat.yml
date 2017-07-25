@@ -9,7 +9,7 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroPromotionBundle::PromotionContext
         - OroApplicationBundle::CommerceMainContext
-        - OroCustomerBundle::GridContext
+        - OroCustomerBundle::FrontendGridContext
         - OroConfigBundle::FeatureContext
         - OroOrderBundle::OrderContext
       paths:

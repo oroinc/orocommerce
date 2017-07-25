@@ -8,6 +8,7 @@ use Oro\Bundle\AddressBundle\Entity\Repository\AddressTypeRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\ReferenceRepositoryInitializer as BaseInitializer;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -97,10 +98,20 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $combinedPriceList = $repository->findOneBy(['id' => '1']);
         $this->referenceRepository->set('combinedPriceList', $combinedPriceList);
 
+        $this->configureDictionaries();
+    }
+
+    protected function configureDictionaries()
+    {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
         $enumInventoryStatuses = $this->getEntityManager()
             ->getRepository($inventoryStatusClassName)
             ->findOneBy(['id' => 'in_stock']);
         $this->referenceRepository->set('enumInventoryStatuses', $enumInventoryStatuses);
+
+        $types = $this->getEntityManager()->getRepository(SegmentType::class)->findAll();
+        foreach ($types as $type) {
+            $this->referenceRepository->set(sprintf('segment_%s_type', strtolower($type->getName())), $type);
+        }
     }
 }

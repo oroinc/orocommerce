@@ -151,6 +151,34 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then /^on the "(?P<step>[\w\s]+)" checkout step (?:|I )go back to "(?P<buttonTitle>(?:[^"]|\\")*)"$/
+     *
+     * @param string $step
+     * @param string $buttonTitle
+     */
+    public function goBackTo($step, $buttonTitle)
+    {
+        $this->assertTitle($step);
+
+        $goBackButton = null;
+        $titleAttribute = 'data-title';
+        foreach ($this->findAllElements('CheckoutGoBackButton') as $goBackButton) {
+            if (!$goBackButton->hasAttribute($titleAttribute)) {
+                continue;
+            }
+
+            if ($goBackButton->getAttribute($titleAttribute) === $buttonTitle) {
+                $goBackButton->click();
+                $this->waitForAjax();
+
+                return;
+            }
+        }
+
+        self::fail(sprintf('Button with title "%s" was not found', $buttonTitle));
+    }
+
+    /**
      * @param Element $productLine
      * @param array   $row
      * @param string  $elementName

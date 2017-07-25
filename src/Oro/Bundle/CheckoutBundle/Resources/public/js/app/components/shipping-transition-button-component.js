@@ -51,7 +51,7 @@ define(function(require) {
             if (this.getShippingMethodTypeSelector().length && selectedTypeValue && selectedMethodValue) {
                 var selectedEl = this
                   .getShippingMethodTypeSelector()
-                  .filter('[value="' + selectedTypeValue + '"]')
+                  .filter('[data-shipping-type="' + selectedTypeValue + '"]')
                   .filter('[data-shipping-method="' + selectedMethodValue + '"]');
                 selectedEl.prop('checked', 'checked');
                 selectedEl.trigger('change');
@@ -59,7 +59,8 @@ define(function(require) {
                 var selectedType = this.getShippingMethodTypeSelector().filter(':checked');
                 if (selectedType.val()) {
                     var method = $(selectedType).data('shipping-method');
-                    this.setElementsValue(selectedType.val(), method);
+                    var type = $(selectedType).data('shipping-type');
+                    this.setElementsValue(type, method);
                 } else {
                     this.setElementsValue(null, null);
                 }
@@ -96,7 +97,8 @@ define(function(require) {
             mediator.trigger('checkout:shipping-method:changed');
             var methodType = $(event.target);
             var method = methodType.data('shipping-method');
-            this.setElementsValue(methodType.val(), method);
+            var type = methodType.data('shipping-type');
+            this.setElementsValue(type, method);
         },
 
         /**

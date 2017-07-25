@@ -11,7 +11,7 @@ oro_behat_extension:
         - OroShippingBundle::SingleCurrencyContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::CustomerUserContext
-        - OroCustomerBundle::GridContext
+        - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
         - OroSaleBundle::FeatureContext
         - OroOrderBundle::OrderContext
@@ -26,6 +26,14 @@ oro_behat_extension:
     SelectShippingAddress:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+
+    Checkout Shipping Method:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-content="shipping_method_form"] .checkout__form__radio label'
+
+    Checkout Payment Method:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-content="payment_method_form"] .checkout__form__radio label'
 
     CheckoutStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
@@ -53,6 +61,10 @@ oro_behat_extension:
     Checkout Order Review Notes:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'input[id="addNote"]'
+
+    Checkout Totals:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
+      selector: '.totals-container'
 
     OpenOrdersGrid:
       selector: 'div[data-page-component-name="frontend-checkouts-grid"]'
@@ -104,3 +116,12 @@ oro_behat_extension:
 
     Order Summary Products GridProductLineUnit:
       selector: '.checkout-order-summary__qty'
+
+    CheckoutGoBackButton:
+        selector: 'div.checkout-sidebar ul.checkout-navigation > li > h3.checkout-navigation__title > a'
+
+    ShippingMethodFlatRate2:
+      selector: 'div[data-content="shipping_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Flat Rate: $2.00")'
+
+    PaymentMethodPaymentTerm30:
+      selector: 'div[data-content="payment_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Payment Term 30")'

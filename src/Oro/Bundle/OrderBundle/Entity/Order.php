@@ -1174,7 +1174,7 @@ class Order extends ExtendOrder implements
      */
     public function setShippingMethod($shippingMethod)
     {
-        $this->shippingMethod = $shippingMethod;
+        $this->shippingMethod = (string) $shippingMethod;
 
         return $this;
     }
@@ -1193,7 +1193,7 @@ class Order extends ExtendOrder implements
      */
     public function setShippingMethodType($shippingMethodType)
     {
-        $this->shippingMethodType = $shippingMethodType;
+        $this->shippingMethodType = (string) $shippingMethodType;
 
         return $this;
     }

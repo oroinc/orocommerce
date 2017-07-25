@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LineItemsDiscount extends ShippingAwareDiscount implements DiscountProductUnitCodeAwareInterface
+class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitCodeAwareInterface
 {
     const APPLY_TO = 'apply_to';
     const MAXIMUM_QTY = 'maximum_qty';
@@ -46,8 +46,6 @@ class LineItemsDiscount extends ShippingAwareDiscount implements DiscountProduct
      */
     public function apply(DiscountContext $discountContext)
     {
-        parent::apply($discountContext);
-
         foreach ($discountContext->getLineItems() as $discountLineItem) {
             foreach ($this->getMatchingProducts() as $discountMatchingProduct) {
                 if ($discountLineItem->getProduct()->getId() === $discountMatchingProduct->getId()
