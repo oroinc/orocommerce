@@ -1134,3 +1134,9 @@ services:
     oro_product.doctrine.abstract_cached_provider_decorator:
         class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'
         abstract: true
+
+    oro_product.provider.product_images_urls:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_attachment.manager'
