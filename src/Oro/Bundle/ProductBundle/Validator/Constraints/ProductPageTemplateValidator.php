@@ -7,9 +7,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 
-class EntityFieldFallbackValuesValidator extends ConstraintValidator
+class ProductPageTemplateValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_entity_field_fallback_values_validator';
+    const ALIAS = 'oro_product_page_template_validator';
 
     /** @var PageTemplatesManager */
     private $pageTemplatesManager;

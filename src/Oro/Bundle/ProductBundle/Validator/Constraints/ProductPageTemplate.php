@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class EntityFieldFallbackValues extends Constraint
+class ProductPageTemplate extends Constraint
 {
     /**
      * @var string
@@ -28,7 +28,7 @@ class EntityFieldFallbackValues extends Constraint
      */
     public function validatedBy()
     {
-        return EntityFieldFallbackValuesValidator::ALIAS;
+        return ProductPageTemplateValidator::ALIAS;
     }
 
 }

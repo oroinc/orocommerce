@@ -5,12 +5,12 @@ namespace Oro\Bundle\ProductBundle\Tests\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
-use Oro\Bundle\ProductBundle\Validator\Constraints\EntityFieldFallbackValues;
-use Oro\Bundle\ProductBundle\Validator\Constraints\EntityFieldFallbackValuesValidator;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplateValidator;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 
-class EntityFieldFallbackValuesValidatorTest extends \PHPUnit_Framework_TestCase
+class ProductPageTemplateValidatorTest extends \PHPUnit_Framework_TestCase
 {
     const ENTITY_CLASS = 'OroEntityBundle:EntityFieldFallbackValue';
     protected $validChoices = ["short", "two-columns", "list"];
@@ -26,12 +26,12 @@ class EntityFieldFallbackValuesValidatorTest extends \PHPUnit_Framework_TestCase
     protected $context;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityFieldFallbackValues
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductPageTemplate
      */
     protected $constraint;
 
     /**
-     * @var EntityFieldFallbackValuesValidator
+     * @var ProductPageTemplateValidator
      */
     protected $validator;
 
@@ -54,8 +54,8 @@ class EntityFieldFallbackValuesValidatorTest extends \PHPUnit_Framework_TestCase
                 ProductType::PAGE_TEMPLATE_ROUTE_NAME => ["choices" => array_flip($this->validChoices)]
             ]);
 
-        $this->constraint = new EntityFieldFallbackValues(['route' => ProductType::PAGE_TEMPLATE_ROUTE_NAME]);
-        $this->validator = new EntityFieldFallbackValuesValidator($this->pageTemplatesManager);
+        $this->constraint = new ProductPageTemplate(['route' => ProductType::PAGE_TEMPLATE_ROUTE_NAME]);
+        $this->validator = new ProductPageTemplateValidator($this->pageTemplatesManager);
 
         $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validator->initialize($this->context);
