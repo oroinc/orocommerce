@@ -13,6 +13,9 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PriceAttributeProductPriceExportTest extends AbstractImportExportTest
 {
     protected function setUp()
