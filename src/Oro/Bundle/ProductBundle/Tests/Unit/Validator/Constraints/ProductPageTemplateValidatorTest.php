@@ -36,7 +36,7 @@ class ProductPageTemplateValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->pageTemplatesManager = $this->getMockBuilder('Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager')
+        $this->pageTemplatesManager = $this->getMockBuilder(PageTemplatesManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -66,9 +66,9 @@ class ProductPageTemplateValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidate($scalarValue)
     {
+        $valueIsValid = (null == $scalarValue) || in_array($scalarValue, $this->validChoices);
         $this->context
-            ->expects(null == $scalarValue
-            || in_array($scalarValue, $this->validChoices)? $this->never() : $this->once())
+            ->expects($valueIsValid ? $this->never() : $this->once())
             ->method('addViolation')
             ->with($this->constraint->message);
 

@@ -203,7 +203,6 @@ services:
         class: 'Oro\Bundle\EntityBundle\Validator\Constraints\ProductPageTemplateValidator'
         arguments:
             - '@oro_layout.page_templates_manager'
-        public: true
         tags:
             - { name: validator.constraint_validator, alias: oro_product_page_template_validator }
 
