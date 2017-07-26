@@ -17,6 +17,9 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
+/**
+ * Form type that used to receive options for coupon generation from User.
+ */
 class CouponGenerationType extends AbstractType
 {
     const NAME = 'oro_promotion_coupon_generation_type';
