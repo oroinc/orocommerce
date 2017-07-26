@@ -32,7 +32,17 @@ Feature: Duplicate Lists
 
   Scenario: Front - user without permissions
     Given I proceed as the Admin
-    And I signed in as AmandaRCole@example.org on the store frontend
+    And login as administrator
+    And go to System/ Configuration
+    And I click "Shopping List" on configuration sidebar
+    And uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
+    And fill "Shopping List Limit Form" with:
+      |Shopping List Limit Default|false|
+      |Shopping List Limit        |2    |
+    And click "Save settings"
+    And I click Logout in user menu
+    When I signed in as AmandaRCole@example.org on the store frontend
     And click "Account"
     And click "Roles"
     And click edit "Buyer" in grid
@@ -44,6 +54,14 @@ Feature: Duplicate Lists
     And I signed in as NancyJSallee@example.org on the store frontend
     When open page with shopping list "My Shopping List"
     Then I should see "My Shopping List"
+    And I should not see following buttons:
+      |Duplicate List|
+
+  Scenario: Front - not logged user
+    Given I proceed as the User
+    And I am on the homepage
+    When I hover on "Shopping cart"
+    And click "View Details"
     And I should not see following buttons:
       |Duplicate List|
 
@@ -60,15 +78,17 @@ Feature: Duplicate Lists
     Then I should see following buttons:
       |Duplicate List|
     When click "Duplicate List"
-    Then should see 'Shopping list "My Shopping List" has been duplicated' flash message
+    Then should see 'The shopping list has been duplicated' flash message
     And should see "My Shopping List (copied"
     And I should see following line items in "Shopping List Line Items Table":
       |SKU |Quantity|Unit|
       |SKU1|10      |item|
       |SKU2|11      |item|
+    And I should not see following buttons:
+      |Duplicate List|
     And open page with shopping list "My Shopping List"
     And click "Edit Shopping List Label"
-    And type "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" in "value"
+    And type "Main Shopping List" in "value"
     And click "Save"
     And click "Sign Out"
 
@@ -76,31 +96,64 @@ Feature: Duplicate Lists
     Given I proceed as the User
     And I login as "Charlie1@example.com" user
     And go to Sales/ Shopping Lists
-    When I click view "Lorem ipsum dolor" in grid
+    When I click view "Main Shopping List" in grid
     Then I should not see following buttons:
       |Duplicate List|
 
-  @skip
-  # todo: uncomment after resolve BB-10693
-  Scenario: Backend - user with permissions
+  Scenario: Backend - user with permissions does not able to duplicate guest shopping list
+    Given I login as administrator
+    And I login as "Charlie1@example.com" user
+    And go to Sales/ Shopping Lists
+    When I click view "Guest Shopping List" in grid
+    Then I should not see following buttons:
+      |Duplicate List|
+
+  Scenario: Backend - user with permissions does not able to duplicate shopping list for customer user when limit reached
+    And I login as "Charlie1@example.com" user
+    And go to Sales/ Shopping Lists
+    When I click view "Main Shopping List" in grid
+    Then I should not see following buttons:
+      |Duplicate List|
+
+  Scenario: Backend - user with permissions, shopping list limit not reached
     Given user have "Organization" permissions for "Duplicate" "Shopping List" entity
+    And I proceed as the Admin
+    And login as administrator
+    And go to System/ Configuration
+    And I click "Shopping List" on configuration sidebar
+    And fill "Shopping List Limit Form" with:
+      |Shopping List Limit Default|true|
+    And click "Save settings"
     And I proceed as the User
     When reload the page
     Then I should see following buttons:
       |Duplicate List|
     And click "Duplicate List"
-    Then should see 'Shopping list "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" has been duplicated' flash message
-    And should see "Donec quam felis, ultricies nec,… (copied"
+    Then should see 'The shopping list has been duplicated' flash message
+    And should see "Main Shopping List (copied"
     And should see following grid:
       |SKU |Product |Quantity|Unit|
       |SKU1|Product1|10      |item|
       |SKU2|Product2|11      |item|
     And click Logout in user menu
     And I signed in as NancyJSallee@example.org on the store frontend
-    Then click "Frontend Shopping Lists Dropdown"
-    And click "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,… (copied"
-    And I should see "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec,… (copied"
+    When I hover on "Shopping cart"
+    And click "Main Shopping List (copied"
+    And I should see "Main Shopping List (copied"
     And I should see following line items in "Shopping List Line Items Table":
       |SKU |Quantity|Unit|
       |SKU1|10      |item|
       |SKU2|11      |item|
+
+  Scenario: Shopping list title limit
+    Given I proceed as the User
+    And click "Delete"
+    And click "Yes, Delete"
+    And click "Delete"
+    And click "Yes, Delete"
+    And open page with shopping list "Main Shopping List"
+    When click "Edit Shopping List Label"
+    And type "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium.12345" in "value"
+    And click "Save"
+    And click "Duplicate List"
+    Then I should not see text matching "/Lorem ipsum dolor sit amet, consectetuer adipiscing elit\. Aenean commodo ligula eget dolor\. Aenean massa\. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus\. Donec quam felis, ultricies nec?,?… \(copied /"

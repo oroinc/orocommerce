@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Compiler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -13,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -198,14 +200,17 @@ class PriceListRuleCompilerTest extends WebTestCase
         $basePriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         /** @var PriceList $basePriceList2 */
         $basePriceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         $price = (new ProductPrice())
             ->setUnit($this->getReference(LoadProductUnits::LITER))
             ->setPrice(Price::create('10', 'USD'))
             ->setQuantity(1)
             ->setPriceList($basePriceList2)
             ->setProduct($product1);
-        $em = $this->registry->getManagerForClass(PriceList::class);
-        $em->persist($price);
+        $priceManager->persist($price);
+        $priceManager->flush();
+
         $rule = sprintf(
             'pricelist[%s].prices.value + product.price_attribute_price_list_1.value + pricelist[%s].prices.value',
             $basePriceList->getId(),
@@ -238,6 +243,101 @@ class PriceListRuleCompilerTest extends WebTestCase
                 'productSku' => 'product-1',
                 'priceRule' => $priceRule->getId(),
                 'value' => '31.0000'
+            ],
+        ];
+
+
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEqualsPrices($expected, $actual);
+    }
+
+    public function testApplyRuleConditionsWithPriceListRelationAndStaticValues()
+    {
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        /** @var PriceList $basePriceList */
+        $basePriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $rule = sprintf(
+            'pricelist[%s].prices.value * 100',
+            $basePriceList->getId()
+        );
+
+        $priceList = $this->createPriceList();
+        $this->assignProducts($priceList, [$product1, $product2]);
+        $priceRule = new PriceRule();
+        $priceRule
+            ->setPriceList($priceList)
+            ->setPriority(1)
+            ->setCurrency('USD')
+            ->setProductUnit($this->getReference(LoadProductUnits::LITER))
+            ->setQuantity(10)
+            ->setRule($rule);
+
+        $em = $this->registry->getManagerForClass(PriceRule::class);
+        $em->persist($priceRule);
+        $em->flush();
+
+        $expected = [
+            [
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'quantity' => 10,
+                'productSku' => 'product-1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '1220.0000'
+            ],
+        ];
+
+
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEqualsPrices($expected, $actual);
+    }
+
+    public function testApplyRuleConditionsWithPriceAttributeRelationAndStaticValues()
+    {
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $priceList = $this->createPriceList();
+        $this->assignProducts($priceList, [$product1, $product2]);
+        $priceRule = new PriceRule();
+        $priceRule
+            ->setPriceList($priceList)
+            ->setPriority(1)
+            ->setCurrency('USD')
+            ->setProductUnit($this->getReference(LoadProductUnits::LITER))
+            ->setQuantity(5)
+            ->setRule('product.price_attribute_price_list_1.value * 50');
+
+        $em = $this->registry->getManagerForClass(PriceRule::class);
+        $em->persist($priceRule);
+        $em->flush();
+
+        $expected = [
+            [
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'quantity' => 5,
+                'productSku' => 'product-1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '550.0000'
+            ],
+            [
+                'product' => $product2->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'quantity' => 5,
+                'productSku' => 'product-2',
+                'priceRule' => $priceRule->getId(),
+                'value' => '1000.0000'
             ],
         ];
 
@@ -330,9 +430,9 @@ class PriceListRuleCompilerTest extends WebTestCase
             ->setQuantity(1)
             ->setUnit($unitLitre)
             ->setPrice(Price::create(500, 'EUR'));
-        $em = $this->registry->getManagerForClass(ProductPrice::class);
-        $em->persist($manualPrice);
-        $em->flush();
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($manualPrice);
+        $priceManager->flush();
 
         $expected = [
             [
@@ -672,8 +772,15 @@ class PriceListRuleCompilerTest extends WebTestCase
      */
     protected function getActualResult(QueryBuilder $qb)
     {
-        $actual = $qb->getQuery()->getResult();
+        $query = $qb->getQuery();
+
+        $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+
+        $actual = $query->getResult();
         ArrayUtil::sortBy($actual, false, 'value');
+
         return $actual;
     }
 
@@ -735,9 +842,11 @@ class PriceListRuleCompilerTest extends WebTestCase
      */
     protected function assertEqualsPrices(array $expected, array $actual)
     {
+        $this->assertCount(count($expected), $actual);
         foreach ($actual as $key => $price) {
             $this->assertArrayHasKey('id', $price);
             unset($price['id']);
+            self::assertArrayHasKey($key, $expected);
             self::assertEquals($expected[$key], $price);
         }
     }

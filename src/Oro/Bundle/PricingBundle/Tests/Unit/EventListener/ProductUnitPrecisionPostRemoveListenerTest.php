@@ -7,6 +7,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -16,13 +17,21 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit_Framework_Test
 {
     use EntityTrait;
 
-    /** @var ProductUnitPrecisionPostRemoveListener */
+    /**
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $shardManager;
+
+    /**
+     * @var ProductUnitPrecisionPostRemoveListener
+     * */
     private $listener;
 
     /** {@inheritdoc} */
     protected function setUp()
     {
-        $this->listener = new ProductUnitPrecisionPostRemoveListener();
+        $this->shardManager = $this->createMock(ShardManager::class);
+        $this->listener = new ProductUnitPrecisionPostRemoveListener($this->shardManager);
         $this->listener->setPriceAttributeClass(PriceAttributeProductPrice::class);
     }
 
@@ -88,8 +97,8 @@ class ProductUnitPrecisionPostRemoveListenerTest extends \PHPUnit_Framework_Test
             ->getMock();
 
         $repository->expects($this->once())
-            ->method('removeByUnitProduct')
-            ->with($product, $unit);
+            ->method('deleteByProductUnit')
+            ->with($this->shardManager, $product, $unit);
 
         $em = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()

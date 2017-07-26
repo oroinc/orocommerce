@@ -154,8 +154,11 @@ class CheckoutController extends Controller
         $manager = $this->get('oro_checkout.data_provider.manager.checkout_line_items');
         $orderLineItemsCount = $manager->getData($checkout, true)->count();
         if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
-            $this->get('session')->getFlashBag()
-                ->add('warning', 'oro.checkout.order.line_items.line_item_has_no_price.message');
+            $orderLineItemsRfp = $manager->getData($checkout, true, 'oro_rfp.frontend_product_visibility');
+            $message = $orderLineItemsRfp->isEmpty()
+                ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
+                : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
+            $this->get('session')->getFlashBag()->add('warning', $message);
         }
     }
 

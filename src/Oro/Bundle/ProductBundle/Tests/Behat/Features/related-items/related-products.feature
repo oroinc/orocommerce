@@ -1,6 +1,7 @@
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @feature-BB-8377
+
 Feature: Editing related products
   In order to propose my customer some other products
   As admin
@@ -13,10 +14,11 @@ Feature: Editing related products
     And I click "Select related products"
     And I filter SKU as contains "PSKU" in "SelectRelatedProductsGrid"
     Then I should see following "SelectRelatedProductsGrid" grid:
-      | SKU    | NAME      |
-      | PSKU2  | Product 2 |
-      | PSKU3  | Product 3 |
-      | PSKU4  | Product 4 |
+      | SKU    | NAME               |
+      | PSKU5  | Product5(disabled) |
+      | PSKU4  | Product 4          |
+      | PSKU3  | Product 3          |
+      | PSKU2  | Product 2          |
     And I click "Cancel"
 
   Scenario: Create relation
@@ -24,9 +26,11 @@ Feature: Editing related products
     And I click Edit "PSKU1" in grid
     And I click "Select related products"
     And I should see following "SelectRelatedProductsGrid" grid:
-      | Is Related  | SKU    | NAME      |
-      | 0           | PSKU2  | Product 2 |
-      | 0           | PSKU3  | Product 3 |
+      | Is Related  | SKU    | NAME               |
+      | 0           | PSKU5  | Product5(disabled) |
+      | 0           | PSKU4  | Product 4          |
+      | 0           | PSKU3  | Product 3          |
+      | 0           | PSKU2  | Product 2          |
     When I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU2 |
       | PSKU3 |
@@ -34,59 +38,60 @@ Feature: Editing related products
     And I filter SKU as contains "PSKU" in "RelatedProductsEditGrid"
     And I should see following grid:
       | SKU    | NAME      |
-      | PSKU2  | Product 2 |
       | PSKU3  | Product 3 |
-    And I click "Save and Close"
+      | PSKU2  | Product 2 |
+    And I save and close form
     Then I should see "Product has been saved" flash message
     And I should see following grid:
       | SKU    | NAME      |
-      | PSKU2  | Product 2 |
       | PSKU3  | Product 3 |
+      | PSKU2  | Product 2 |
 
   Scenario: Grid in popup should have related products checked
     Given go to Products/ Products
     And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU    | NAME      |
-      | PSKU2  | Product 2 |
       | PSKU3  | Product 3 |
+      | PSKU2  | Product 2 |
     When I click "Select related products"
     Then I should see following "SelectRelatedProductsGrid" grid:
-      | Is Related  | SKU    | NAME      |
-      | 1           | PSKU2  | Product 2 |
-      | 1           | PSKU3  | Product 3 |
-      | 0           | PSKU4  | Product 4 |
+      | Is Related  | SKU    | NAME               |
+      | 1           | PSKU3  | Product 3          |
+      | 1           | PSKU2  | Product 2          |
+      | 0           | PSKU5  | Product5(disabled) |
+      | 0           | PSKU4  | Product 4          |
     And I click "Cancel"
 
   Scenario: Change relation with quick edit
     Given go to Products/ Products
-    And I click View Product 1 in grid
+    And I click View PSKU1 in grid
     And I click "Quick edit"
     And I click "Select related products"
     When I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU4 |
     And I click "Select products"
     And I click "Delete" on row "PSKU2" in grid
-    And I click "Save and Close"
-    Then I should see following grid:
+    And I save and close form
+    Then I should see following "RelatedProductsViewGrid" grid:
       | SKU    | NAME      |
-      | PSKU3  | Product 3 |
       | PSKU4  | Product 4 |
+      | PSKU3  | Product 3 |
 
   Scenario: Canceling edit will not affect related products
     Given go to Products/ Products
     And I click Edit "PSKU1" in grid
-    And I should see following grid:
+    And I should see following "RelatedProductsEditGrid" grid:
       | SKU    | NAME      |
-      | PSKU3  | Product 3 |
       | PSKU4  | Product 4 |
+      | PSKU3  | Product 3 |
     And I click "Delete" on row "PSKU4" in grid
     And I click "Cancel"
-    And I click View Product 1 in grid
-    Then I should see following grid:
+    And I click View PSKU1 in grid
+    Then I should see following "RelatedProductsViewGrid" grid:
       | SKU    | NAME      |
-      | PSKU3  | Product 3 |
       | PSKU4  | Product 4 |
+      | PSKU3  | Product 3 |
 
   Scenario: Related products of inverse side should not be visible in admin panel
     Given go to Products/ Products
@@ -113,7 +118,7 @@ Feature: Editing related products
       | SKU        | product12 |
       | Name       | product12 |
       | Status     | Enabled  |
-    And I click "Save and Close"
+    And I save and close form
     Then I should see "Product has been saved" flash message
 
   Scenario: Related items should not be visible in product edition if user has no permission
@@ -166,23 +171,25 @@ Feature: Editing related products
     And I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU2 |
     And I click "Select products"
-    And I click "Save and Close"
+    And I save and close form
     And I should see "Product has been saved" flash message
     And I should see following "RelatedProductsViewGrid" grid:
       | SKU   | NAME      |
-      | PSKU2 | Product 2 |
-      | PSKU3 | Product 3 |
       | PSKU4 | Product 4 |
+      | PSKU3 | Product 3 |
+      | PSKU2 | Product 2 |
     When go to Products/ Products
     And I click Edit PSKU2 in grid
     And I fill "ProductForm" with:
       | SKU   | PSKU22            |
       | Name  | Product 2 updated |
-    And I click "Save and Close"
+    And I save and close form
     Then go to Products/ Products
     And I click Edit "PSKU1" in grid
-    And I should see following grid:
+    And I should see following "RelatedProductsEditGrid" grid:
       | SKU    | NAME              |
+      | PSKU4  | Product 4         |
+      | PSKU3  | Product 3         |
       | PSKU22 | Product 2 updated |
 
   Scenario: Check if relation is saved after disable/enable related items feature
@@ -205,6 +212,8 @@ Feature: Editing related products
     And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU    | NAME              |
+      | PSKU4  | Product 4         |
+      | PSKU3  | Product 3         |
       | PSKU22 | Product 2 updated |
 
   Scenario: Verify relation is removed in case when related product has been removed
@@ -214,12 +223,13 @@ Feature: Editing related products
     And I select following records in "SelectRelatedProductsGrid" grid:
       | PSKU3 |
     And I click "Select products"
-    And I click "Save and Close"
+    And I save and close form
     And I should see "Product has been saved" flash message
     And I should see following grid:
       | SKU    | NAME              |
-      | PSKU22 | Product 2 updated |
+      | PSKU4  | Product 4         |
       | PSKU3  | Product 3         |
+      | PSKU22 | Product 2 updated |
     And go to Products/ Products
     And I click Edit "PSKU22" in grid
     When I click "Delete"
@@ -228,4 +238,5 @@ Feature: Editing related products
     And I click Edit "PSKU1" in grid
     And I should see following grid:
       | SKU   | NAME      |
+      | PSKU4 | Product 4 |
       | PSKU3 | Product 3 |

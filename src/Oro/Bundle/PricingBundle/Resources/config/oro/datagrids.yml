@@ -1,5 +1,6 @@
 datagrids:
     pricing-price-list-select-grid:
+        extended_entity_name: '%oro_pricing.entity.price_list.class%'
         acl_resource:      oro_pricing_price_list_view
         options:
             entityHint:        price lists

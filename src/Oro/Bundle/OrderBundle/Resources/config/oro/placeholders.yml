@@ -11,3 +11,4 @@ placeholders:
     items:
         line_item_templates:
             template: OroOrderBundle:Js:line_item_templates.js.twig
+            applicable: "@oro_layout.helper->isTemplateRequest()"

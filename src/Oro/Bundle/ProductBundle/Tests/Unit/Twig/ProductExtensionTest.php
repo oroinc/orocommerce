@@ -44,7 +44,7 @@ class ProductExtensionTest extends \PHPUnit_Framework_TestCase
         $container = self::getContainerBuilder()
             ->add('oro_product.autocomplete_fields_provider', $this->autocompleteFieldsProvider)
             ->add('oro_entity.doctrine_helper', $this->doctrineHelper)
-            ->add('oro.product.related_item.related_product.finder_strategy', $this->finderDatabaseStrategy)
+            ->add('oro_product.related_item.related_product.finder_strategy', $this->finderDatabaseStrategy)
             ->getContainer($this);
 
         $this->extension = new ProductExtension($container);

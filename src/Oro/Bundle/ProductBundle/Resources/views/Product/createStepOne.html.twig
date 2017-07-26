@@ -23,12 +23,23 @@
     {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
 {% endblock pageHeader %}
 
+{% block page_widget_actions %}
+    <div class="widget-actions">
+        <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
+        <button type="submit" class="btn btn-success">{{ 'oro.product.ui.continue'|trans }}</button>
+    </div>
+{% endblock %}
+
 {% block content_data %}
     {% set id = 'product-create-step-one' %}
 
     {% set generalData = [
         form_row(form.type)
     ] %}
+
+    {% if isWidgetContext is defined and isWidgetContext %}
+        {% set generalData = generalData|merge(['<input type="hidden" name="input_action" value="oro_product_create">']) %}
+    {% endif %}
 
     {% set data = {
         'formErrors': form_errors(form),

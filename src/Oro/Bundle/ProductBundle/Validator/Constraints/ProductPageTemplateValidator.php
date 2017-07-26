@@ -30,6 +30,10 @@ class ProductPageTemplateValidator extends ConstraintValidator
      */
     public function validate($entityFieldFallbackValue, Constraint $constraint)
     {
+        if (is_null($entityFieldFallbackValue)) {
+            return;
+        }
+
         $selectedValue = $this->getSelectedValue($entityFieldFallbackValue, $constraint->route);
 
         if (!$this->selectedValuesAreValid($selectedValue, $this->getValidValues($constraint->route))) {

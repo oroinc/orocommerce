@@ -24,10 +24,11 @@ class ProductRowsGrouperTest extends \PHPUnit_Framework_TestCase
             $this->createProductRowObject('SKU2', 3, 'item'),
             $this->createProductRowObject('SKU1', 3, 'item'),
             $this->createProductRowObject('SKU1', 2, 'kg'),
+            $this->createProductRowObject('sku1', 1, 'item'),
         ];
 
         $expectedResult = [
-            $this->createProductRowObject('SKU1', 5, 'item'),
+            $this->createProductRowObject('SKU1', 6, 'item'),
             $this->createProductRowObject('SKU2', 3, 'item'),
             $this->createProductRowObject('SKU1', 2, 'kg'),
         ];

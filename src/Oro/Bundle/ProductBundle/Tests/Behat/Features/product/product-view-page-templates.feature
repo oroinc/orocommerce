@@ -1,4 +1,5 @@
 @ticket-BB-9302
+@ticket-BB-10781
 @automatically-ticket-tagged
 @fixture-OroProductBundle:Products_view_page_templates.yml
 Feature: Product View Page Templates
@@ -160,6 +161,21 @@ Feature: Product View Page Templates
     And I check gtsh_l and rtsh_m in grid
     And I save form
     Then I should see "Product has been saved" flash message
+
+  Scenario: Open, fill and submit Matrix Order Form
+    Given I signed in as AmandaRCole@example.org on the store frontend
+    And I open product with sku "shirt_main" on the store frontend
+    And I should see "Order with Matrix Grid"
+    And I click "Order with Matrix Grid"
+    And I should see "Green"
+    And I should see "Red"
+    And I should see "Total QTY"
+    And I type "1" in "matrix_collection[rows][0][columns][0][quantity]"
+    And I type "2" in "matrix_collection[rows][1][columns][1][quantity]"
+    And I should see "$24.00"
+    And I click "Add to Shopping List" in matrix order window
+    And I should see "Product has been added to" flash message
+    Then I should see "In shopping list"
 
   Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
     Given I login as administrator

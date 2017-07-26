@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
@@ -49,25 +50,20 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFilteredRuleOwnersWhenNoLineItemsSetInContext()
     {
-        $firstPromotion = new Promotion();
-        $secondPromotion = new Promotion();
-        $ruleOwners = [$firstPromotion, $secondPromotion];
-
         $this->configureFiltrationService();
 
         $this->matchingProductsProvider
             ->expects($this->never())
             ->method('getMatchingProducts');
 
-        $this->assertSame($ruleOwners, $this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, []));
+        $promotion = $this->createPromotion(new Segment());
+        $this->assertEmpty($this->matchingItemsFiltrationService->getFilteredRuleOwners([$promotion], []));
     }
 
-    public function testGetFilteredRuleOwnersWhenNotPromotionRuleOwnersGiven()
+    public function testGetFilteredRuleOwnersWhenNotPromotionRuleOwnerGiven()
     {
-        $firstRuleOwner = $this->createMock(RuleOwnerInterface::class);
-        $secondRuleOwner = $this->createMock(RuleOwnerInterface::class);
+        $ruleOwner = $this->createMock(RuleOwnerInterface::class);
 
-        $ruleOwners = [$firstRuleOwner, $secondRuleOwner];
         $product = new Product();
         $lineItems = [(new DiscountLineItem())->setProduct($product)];
 
@@ -78,27 +74,19 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             ->method('getMatchingProducts');
 
         $this->assertEmpty(
-            $this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, ['lineItems' => $lineItems])
+            $this->matchingItemsFiltrationService->getFilteredRuleOwners(
+                [$ruleOwner],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
         );
     }
 
-    public function testGetFilteredRuleOwners()
+    public function testGetFilteredRuleOwnersWhenNoMatchingProductsFound()
     {
         $firstPromotionSegment = new Segment();
-        $firstPromotion = $this->createPromotion($firstPromotionSegment, self::UNIT_CODE_SET);
+        $firstPromotion = $this->createPromotion($firstPromotionSegment);
         $secondPromotionSegment = new Segment();
         $secondPromotion = $this->createPromotion($secondPromotionSegment, self::UNIT_CODE_ITEM);
-        $thirdPromotionSegment = new Segment();
-        $thirdPromotion = $this->createPromotion($thirdPromotionSegment, self::UNIT_CODE_ITEM);
-        $fourthPromotionSegment = new Segment();
-        $promotionWithNotUnitAwareDiscountAndWithoutProducts = $this->createPromotion($fourthPromotionSegment);
-
-        $ruleOwners = [
-            $firstPromotion,
-            $secondPromotion,
-            $thirdPromotion,
-            $promotionWithNotUnitAwareDiscountAndWithoutProducts,
-        ];
 
         $product = new Product();
         $lineItems = [
@@ -110,18 +98,102 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $this->configureFiltrationService();
 
         $this->matchingProductsProvider
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(2))
             ->method('getMatchingProducts')
-            ->willReturnMap([
-                [$firstPromotionSegment, $lineItems, [$product]],
-                [$secondPromotionSegment, $lineItems, []],
-                [$thirdPromotionSegment, $lineItems, [$product]],
-                [$fourthPromotionSegment, $lineItems, []]
-            ]);
+            ->withConsecutive([$firstPromotionSegment, $lineItems], [$secondPromotionSegment, $lineItems])
+            ->willReturn([]);
+
+        $this->assertEmpty(
+            $this->matchingItemsFiltrationService->getFilteredRuleOwners(
+                [$firstPromotion, $secondPromotion],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
+        );
+    }
+
+    public function testGetFilteredRuleOwnersWithMatchingProductsAndNotUnitAwarePromotion()
+    {
+        $promotionSegment = new Segment();
+        $promotion = $this->createPromotion($promotionSegment);
+
+        $product = new Product();
+        $lineItems = [
+            (new DiscountLineItem())
+                ->setProduct($product)
+                ->setProductUnitCode(self::UNIT_CODE_ITEM)
+        ];
+
+        $this->configureFiltrationService();
+
+        $this->matchingProductsProvider
+            ->expects($this->once())
+            ->method('getMatchingProducts')
+            ->with($promotionSegment, $lineItems)
+            ->willReturn([$product]);
 
         $this->assertEquals(
-            [$thirdPromotion],
-            $this->matchingItemsFiltrationService->getFilteredRuleOwners($ruleOwners, ['lineItems' => $lineItems])
+            [$promotion],
+            $this->matchingItemsFiltrationService->getFilteredRuleOwners(
+                [$promotion],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
+        );
+    }
+
+    public function testGetFilteredRuleOwnersWithUnitAwarePromotionWhenUnitsDiffer()
+    {
+        $promotionSegment = new Segment();
+        $promotion = $this->createPromotion($promotionSegment, self::UNIT_CODE_SET);
+
+        $product = new Product();
+        $lineItems = [
+            (new DiscountLineItem())
+                ->setProduct($product)
+                ->setProductUnitCode(self::UNIT_CODE_ITEM)
+        ];
+
+        $this->configureFiltrationService();
+
+        $this->matchingProductsProvider
+            ->expects($this->once())
+            ->method('getMatchingProducts')
+            ->with($promotionSegment, $lineItems)
+            ->willReturn([$product]);
+
+        $this->assertEmpty(
+            $this->matchingItemsFiltrationService->getFilteredRuleOwners(
+                [$promotion],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
+        );
+    }
+
+    public function testGetFilteredRuleOwnersWithUnitAwarePromotionWhenUnitsMatch()
+    {
+        $promotionSegment = new Segment();
+        $promotion = $this->createPromotion($promotionSegment, self::UNIT_CODE_ITEM);
+
+        $product = new Product();
+        $lineItems = [
+            (new DiscountLineItem())
+                ->setProduct($product)
+                ->setProductUnitCode(self::UNIT_CODE_ITEM)
+        ];
+
+        $this->configureFiltrationService();
+
+        $this->matchingProductsProvider
+            ->expects($this->once())
+            ->method('getMatchingProducts')
+            ->with($promotionSegment, $lineItems)
+            ->willReturn([$product]);
+
+        $this->assertEquals(
+            [$promotion],
+            $this->matchingItemsFiltrationService->getFilteredRuleOwners(
+                [$promotion],
+                [ContextDataConverterInterface::LINE_ITEMS => $lineItems]
+            )
         );
     }
 
@@ -150,7 +222,7 @@ class MatchingItemsFiltrationServiceTest extends \PHPUnit_Framework_TestCase
     private function configureFiltrationService()
     {
         $this->filtrationService
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getFilteredRuleOwners')
             ->willReturnCallback(function ($ruleOwners) {
                 return $ruleOwners;

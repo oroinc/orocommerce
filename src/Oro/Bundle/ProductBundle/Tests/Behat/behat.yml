@@ -103,6 +103,16 @@ oro_behat_extension:
           Maximum Number Of Assigned Items: 'related_items[oro_product___max_number_of_related_products][value]'
           Enable Related Products Use Default: 'related_items[oro_product___related_products_enabled][use_parent_scope_value]'
           Enable Related Products: 'related_items[oro_product___related_products_enabled][value]'
+          Maximum Items Use Default: 'related_items[oro_product___related_products_max_items][use_parent_scope_value]'
+          Maximum Items: 'related_items[oro_product___related_products_max_items][value]'
+          Minimum Items Use Default: 'related_items[oro_product___related_products_min_items][use_parent_scope_value]'
+          Minimum Items: 'related_items[oro_product___related_products_min_items][value]'
+          Assign in Both Directions Use Default: 'related_items[oro_product___related_products_bidirectional][use_parent_scope_value]'
+          Assign in Both Directions: 'related_items[oro_product___related_products_bidirectional][value]'
+          Show Add Button Use Default: 'related_items[oro_product___related_products_show_add_button][use_parent_scope_value]'
+          Show Add Button: 'related_items[oro_product___related_products_show_add_button][value]'
+          Use Slider On Mobile Use Default: 'related_items[oro_product___related_products_use_slider_on_mobile][use_parent_scope_value]'
+          Use Slider On Mobile: 'related_items[oro_product___related_products_use_slider_on_mobile][value]'
 
     Product Family Form:
       selector: 'div#container'
@@ -312,6 +322,25 @@ oro_behat_extension:
       selector: 'button[name="oro_website_search_search_button"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    # front products grid
+    ProductFrontendGrid:
+      selector: '.product-list'
+
+    ProductRelatedItems:
+      selector: '.product-view__related-products .embedded-list__item'
+
+    Related Products Slider:
+      selector: '.product-view__related-products .embedded-list-slider'
+
+    ProductRelatedItem:
+      selector: '.embedded-product'
+
+    ProductFrontendRow:
+      selector: '.product-list .product-item.grid-row'
+
+    ProductFrontendRowSku:
+      selector: '.product-item__primary-content .product-item__number span'
+
     Galery View Button:
       selector:
         type: xpath
@@ -349,6 +378,20 @@ oro_behat_extension:
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
 
+    ImageCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ImagesCollection
+
+    ImageCollectionRow:
+      selector:
+        type: 'xpath'
+        locator: '//tr[contains(@data-content,"images")]'
+
+    ImageCollectionFileField:
+      selector:
+        type: 'xpath'
+        locator: '//input[contains(@id,"image_file")]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
+
     Line Item Form:
       selector: 'div.line-item-form'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\LineItemForm
@@ -383,6 +426,9 @@ oro_behat_extension:
 
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
+
+    Size Product Attribute:
+      selector: 'input[name="oro_product[variantFields][Size][is_selected]"]'
 
     Promotions Form:
       selector: 'form[name="product_promotions"]'
@@ -448,6 +494,8 @@ oro_behat_extension:
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
+    Create Product Plus Button:
+      selector: '.content-variant-item-default .entity-create-btn'
 
   suites:
     # Revert by OPI-52
@@ -469,6 +517,7 @@ oro_behat_extension:
         - '@OroProductBundle/Tests/Behat/Features/product'
     OroProductBundleRelatedItems:
       contexts:
+        - OroApplicationBundle::CommerceMainContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext

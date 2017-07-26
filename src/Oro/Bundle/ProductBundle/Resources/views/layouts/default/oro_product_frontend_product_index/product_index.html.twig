@@ -22,7 +22,7 @@
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _filter_container_tpl_widget %}
+{% block _product_require_js_config_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-grid-toolbar': 'top',
         'data-sticky-target': 'top-sticky-panel',
@@ -34,6 +34,16 @@
             'placeholderId': 'sticky_element_toolbar'
         }
     }) %}
-
-    {{ parent_block_widget(block, {attr: attr}) }}
+    {% set attr = block('block_attributes') %}
+    <script>
+        require({
+            config: {
+                'orofrontend/js/app/datafilter/frontend-collection-filters-manager': {
+                    templateData: {
+                        attributes: '{{ attr|raw }}'
+                    }
+                }
+            }
+        });
+    </script>
 {% endblock %}

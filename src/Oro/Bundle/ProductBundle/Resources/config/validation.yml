@@ -124,6 +124,7 @@ Oro\Bundle\ProductBundle\Model\ProductLineItem:
                 groups: [create, update, add_product]
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 value: 0
+                message: oro.product.productlineitem.quantity.greaterThanZero
                 groups: [create, update, add_product]
             - NotBlank:
                 groups: [create, update, add_product]

@@ -16,6 +16,12 @@ class Configuration implements ConfigurationInterface
     const RELATED_PRODUCTS_BIDIRECTIONAL = 'related_products_bidirectional';
     const MAX_NUMBER_OF_RELATED_PRODUCTS = 'max_number_of_related_products';
     const MAX_NUMBER_OF_RELATED_PRODUCTS_COUNT = 25;
+    const RELATED_PRODUCTS_MAX_ITEMS = 'related_products_max_items';
+    const RELATED_PRODUCTS_MAX_ITEMS_COUNT = 4;
+    const RELATED_PRODUCTS_MIN_ITEMS = 'related_products_min_items';
+    const RELATED_PRODUCTS_MIN_ITEMS_COUNT = 3;
+    const RELATED_PRODUCTS_SHOW_ADD_BUTTON = 'related_products_show_add_button';
+    const RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE = 'related_products_use_slider_on_mobile';
     const SINGLE_UNIT_MODE = 'single_unit_mode';
     const SINGLE_UNIT_MODE_SHOW_CODE = 'single_unit_mode_show_code';
     const DEFAULT_UNIT = 'default_unit';
@@ -52,6 +58,14 @@ class Configuration implements ConfigurationInterface
                 self::MAX_NUMBER_OF_RELATED_PRODUCTS => [
                     'value' => self::MAX_NUMBER_OF_RELATED_PRODUCTS_COUNT,
                 ],
+                self::RELATED_PRODUCTS_MAX_ITEMS => [
+                    'value' => self::RELATED_PRODUCTS_MAX_ITEMS_COUNT,
+                ],
+                self::RELATED_PRODUCTS_MIN_ITEMS => [
+                    'value' => self::RELATED_PRODUCTS_MIN_ITEMS_COUNT,
+                ],
+                self::RELATED_PRODUCTS_SHOW_ADD_BUTTON => ['value' => true],
+                self::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE => ['value' => false],
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
                 self::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
                 self::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],

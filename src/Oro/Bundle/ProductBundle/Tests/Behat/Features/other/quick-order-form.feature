@@ -1,9 +1,11 @@
 @ticket-BB-7523
+@selenium-incompatible
 @fixture-OroProductBundle:Products_quick_order_form.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
 @automatically-ticket-tagged
+@regression
 Feature: Quick order form
   In order to provide customers with ability to quickly start an order
   As customer

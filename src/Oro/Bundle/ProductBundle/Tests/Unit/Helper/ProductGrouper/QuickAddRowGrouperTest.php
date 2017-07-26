@@ -26,12 +26,13 @@ class QuickAddRowGrouperTest extends \PHPUnit_Framework_TestCase
             $this->createQuickAddRow(2, 'SKU2', 3, 'item'),
             $this->createQuickAddRow(3, 'SKU1', 3, 'item', 'some_error'),
             $this->createQuickAddRow(4, 'SKU1', 2, 'kg'),
+            $this->createQuickAddRow(5, 'sku1', 1, 'item'),
         ]);
         $priceField = new QuickAddField('price', 10);
         $products->addAdditionalField($priceField);
 
         $expectedResult = new QuickAddRowCollection([
-            $this->createQuickAddRow(1, 'SKU1', 5, 'item', 'some_error', new QuickAddField('test', 'test')),
+            $this->createQuickAddRow(1, 'SKU1', 6, 'item', 'some_error', new QuickAddField('test', 'test')),
             $this->createQuickAddRow(2, 'SKU2', 3, 'item'),
             $this->createQuickAddRow(4, 'SKU1', 2, 'kg'),
         ]);
