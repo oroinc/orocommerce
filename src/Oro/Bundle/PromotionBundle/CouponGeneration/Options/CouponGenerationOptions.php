@@ -5,6 +5,9 @@ namespace  Oro\Bundle\PromotionBundle\CouponGeneration\Options;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 
+/**
+ * Simple DTO that used to transfer coupon generation options through different code layers.
+ */
 class CouponGenerationOptions
 {
     const NUMERIC_CODE_TYPE = 'numeric';
