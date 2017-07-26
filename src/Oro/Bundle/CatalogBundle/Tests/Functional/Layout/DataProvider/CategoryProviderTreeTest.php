@@ -3,10 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\PersistentCollection;
-use Doctrine\Common\Util\Debug;
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
@@ -14,7 +10,6 @@ use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLocalizedTitles;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CategoryProviderTreeTest extends WebTestCase
@@ -53,15 +48,15 @@ class CategoryProviderTreeTest extends WebTestCase
     /**
      * Returns categoryProvider for given category identifier
      *
-     * @param int $node_id
+     * @param int $nodeId
      * @return CategoryProvider
      */
-    private function getCategoryProviderForNode($node_id)
+    private function getCategoryProviderForNode($nodeId)
     {
         $requestProductHandler = $this->createMock(RequestProductHandler::class);
         $requestProductHandler->expects($this->once())
             ->method('getCategoryId')
-            ->willReturn($node_id);
+            ->willReturn($nodeId);
 
         return new CategoryProvider(
             $requestProductHandler,
@@ -75,8 +70,8 @@ class CategoryProviderTreeTest extends WebTestCase
      */
     public function testGetParentTraverseToRootCategories()
     {
-        $category_1_2_3_id = $this->repository->findOneByDefaultTitle('category_1_2_3')->getId();
-        $categoryProvider = $this->getCategoryProviderForNode($category_1_2_3_id);
+        $categoryId = $this->repository->findOneByDefaultTitle('category_1_2_3')->getId();
+        $categoryProvider = $this->getCategoryProviderForNode($categoryId);
         $parents = $categoryProvider->getParentCategories();
 
         $this->assertCount(3, $parents);

@@ -12,6 +12,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response as PayflowResponse;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
 class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,22 +22,48 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
     /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
     protected $session;
 
-    /** @var PaymentTransaction */
-    protected $paymentTransaction;
+    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvider;
 
     protected function setUp()
     {
-        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->session = $this->createMock(Session::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
-        $this->paymentTransaction = new PaymentTransaction();
-        $this->listener = new RedirectListener($this->session);
+        $this->listener = new RedirectListener($this->session, $this->paymentMethodProvider);
     }
 
     protected function tearDown()
     {
-        unset($this->listener, $this->paymentTransaction, $this->session);
+        unset($this->listener, $this->session);
+    }
+
+    public function testOnErrorWithoutPaymentTransaction()
+    {
+        $event = new CallbackErrorEvent();
+
+        $this->paymentMethodProvider->expects($this->never())
+            ->method('hasPaymentMethod');
+
+        $this->listener->onError($event);
+    }
+
+    public function testOnErrorWithoutPaymentMethod()
+    {
+        $event = new CallbackErrorEvent();
+
+        $paymentTransaction = new PaymentTransaction();
+
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->willReturn(false);
+
+        $this->session->expects($this->never())
+            ->method('getFlashBag');
+
+        $this->listener->onError($event);
     }
 
     /**
@@ -54,15 +81,15 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $expectedResponse,
         $expectedFlashError = null
     ) {
-        $this->paymentTransaction
+        $paymentTransaction = (new PaymentTransaction())
             ->setTransactionOptions($options)
             ->setResponse($receivedResponse);
 
         $event = new CallbackErrorEvent();
-        $event->setPaymentTransaction($this->paymentTransaction);
+        $event->setPaymentTransaction($paymentTransaction);
 
         /** @var FlashBagInterface|\PHPUnit_Framework_MockObject_MockObject $flashBag */
-        $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag = $this->createMock(FlashBagInterface::class);
 
         $flashBag->expects($this->once())
             ->method('has')
@@ -76,6 +103,10 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
         $this->session->expects($this->once())
             ->method('getFlashBag')
             ->willReturn($flashBag);
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->willReturn(true);
 
         $this->listener->onError($event);
 
@@ -93,9 +124,27 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
                 'options' => [RedirectListener::FAILED_SHIPPING_ADDRESS_URL_KEY => 'failedShippingUrl'],
                 'receivedResponse' => [PayflowResponse::RESULT_KEY => ResponseStatusMap::FIELD_FORMAT_ERROR],
                 'expectedResponse' => new RedirectResponse('failedShippingUrl'),
-                'expectedFlashError' => 'oro.paypal.result.incorrect_shipping_address_error'
+                'expectedFlashError' => 'oro.paypal.result.incorrect_shipping_address_error',
             ],
         ];
+    }
+
+    public function testOnErrorWithNonFieldFormatError()
+    {
+        $paymentTransaction = (new PaymentTransaction())
+            ->setResponse([PayflowResponse::RESULT_KEY => ResponseStatusMap::DECLINED]);
+
+        $event = new CallbackErrorEvent();
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $this->session->expects($this->never())
+            ->method('getFlashBag');
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->willReturn(true);
+
+        $this->listener->onError($event);
     }
 
     public function testOnErrorWithoutTransaction()
@@ -104,7 +153,7 @@ class RedirectListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onError($event);
 
-        $this->assertNotInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $event->getResponse());
+        $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
     }
 
     /**

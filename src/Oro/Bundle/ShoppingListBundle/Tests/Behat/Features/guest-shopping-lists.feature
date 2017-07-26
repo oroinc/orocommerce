@@ -5,52 +5,132 @@ Feature: Guest Shopping Lists
   As a Sales rep
   I want to enable shopping lists for guest customers
 
-  Scenario: Check Shopping List is not available for a guest on frontend
-    And I visit store frontend as guest
-    And I should not see "Shopping list"
-    And type "SKU003" in "search"
-    And I click "Search Button"
-    And I should see "Product3"
-    Then I should not see "Add to Shopping list"
+  Scenario: Create different window session
+    Given sessions active:
+      | Admin | first_session  |
+      | User  | second_session |
 
-  Scenario: Check default status of guest shopping list in configurations and enable feature
-    Given I login as administrator
+  Scenario: Create configurable attributes
+    Given I proceed as the Admin
+    And I login as administrator
+    And I go to Products/ Product Attributes
+    And press "Create Attribute"
+    And fill form with:
+      | Field Name | Color  |
+      | Type       | Select |
+    And press "Continue"
+    And set Options with:
+      | Label |
+      | Black |
+      | White |
+    And save and close form
+    And I press "Create Attribute"
+    And fill form with:
+      | Field Name | Size   |
+      | Type       | Select |
+    And press "Continue"
+    And set Options with:
+      | Label |
+      | L     |
+      | M     |
+    When I save and close form
+      And click update schema
+    Then I should see Schema updated flash message
+
+  Scenario: Add new attributes to product family
+    Given I go to Products/ Product Families
+    And I click Edit Default Family in grid
+    And fill "Product Family Form" with:
+      | Attributes | [Color, Size] |
+    When I save and close form
+    Then I should see "Successfully updated" flash message
+
+  Scenario: Set new attributes values in simple products
+    Given I go to Products/ Products
+    When I click Edit "1GB81" in grid
+    And I fill "ProductForm" with:
+      | Color | Black |
+      | Size  | L     |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+    When I go to Products/ Products
+    And I click Edit "1GB82" in grid
+    And I fill "ProductForm" with:
+      | Color | White |
+      | Size  | M     |
+    And I save and close form
+    Then I should see "Product has been saved" flash message
+
+  Scenario: Set configurable product variants
+    Given I go to Products/ Products
+    And I click Edit "1GB83" in grid
+    And I check "Color Product Attribute" element
+    And I check "Size Product Attribute" element
+    And I save form
+    And I check 1GB81 and 1GB82 in grid
+    When I save and close form
+    Then I should see "Product has been saved" flash message
+
+  Scenario: Check Shopping List is not available for a guest on frontend
+    Given I proceed as the User
+    When I visit store frontend as guest
+    Then I should not see "Shopping list"
+    When type "SKU003" in "search"
+    And I click "Search Button"
+    Then I should see "Product3"
+    But I should not see "Add to Shopping list"
+
+  Scenario: Configurable product variants and matrix button shouldn't be available on front store
+    And I open product with sku "1GB83" on the store frontend
+    Then I should not see "Color"
+    And I should not see "Size"
+    And I should not see "Order with Matrix Grid"
+
+  Scenario: Check default status of guest shopping list in configurations
+    Given I proceed as the Admin
     And I go to System/Configuration
     And I click "Commerce" on configuration sidebar
     And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
-    And the "Enable guest shopping list" checkbox should not be checked
-   Then uncheck Use Default for "Enable guest shopping list" field
+    When I click "Shopping List" on configuration sidebar
+    Then the "Enable guest shopping list" checkbox should not be checked
+    When uncheck Use Default for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     And I save setting
-    And I should see "Configuration saved" flash message
+    Then I should see "Configuration saved" flash message
     And the "Enable guest shopping list" checkbox should be checked
 
+  Scenario: Configurable product variants and matrix button should be available on front store
+    Given I proceed as the User
+    When I open product with sku "1GB83" on the store frontend
+    Then I should see Line Item Form with data:
+      | Color  | Black |
+      | Size   | L     |
+    And I should see "Order with Matrix Grid"
+
   Scenario: Create Shopping List as unauthorized user from product view page
-    And I visit store frontend as guest
-    And I should see "Shopping list"
-    And type "PSKU1" in "search"
+    Given I visit store frontend as guest
+    Then I should see "Shopping list"
+    When type "PSKU1" in "search"
     And I click "Search Button"
-    And I should see "Product1"
+    Then I should see "Product1"
     And I should see "Add to Shopping list"
-    And I click "Product1"
-    And I should see "Add to Shopping list"
-    And I click "Add to Shopping list"
-    And I should see "Product has been added to" flash message
+    When I click "Product1"
+    Then I should see "Add to Shopping list"
+    When I click "Add to Shopping list"
+    Then I should see "Product has been added to" flash message
     And I should see "In shopping list"
 
   Scenario: Check Update Shopping List
     Given I should see "Update Shoppin..."
-    And I fill "FrontendLineItemForm" with:
+    When I fill "FrontendLineItemForm" with:
       | Quantity | 10 |
       | Unit | each |
     And I click "Update Shoppin..."
     Then I should see "Record has been succesfully updated" flash message
-    And I click "NewCategory"
+    When I click "NewCategory"
     Then I should see "In shopping list"
 
   Scenario: Add more products to shopping list from list page (search)
-    And I visit store frontend as guest
     Given I type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"
@@ -58,10 +138,10 @@ Feature: Guest Shopping Lists
     Then I should see "Product has been added to" flash message
 
   Scenario: Check added products available in Guest Shopping List
-    When I click "Shopping list"
-    And  I should see "Control Product"
+    Given I click "Shopping list"
+    Then  I should see "Control Product"
     And  I should see "Product1"
-    Then I should not see following buttons:
+    And I should not see following buttons:
       | Delete        |
       | Create Order  |
       | Request Quote |

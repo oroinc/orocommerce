@@ -10,6 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
+use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
 
 class OrderTypeExtension extends AbstractTypeExtension
 {
@@ -18,23 +19,31 @@ class OrderTypeExtension extends AbstractTypeExtension
     /**
      * @var DiscountRecalculationProvider
      */
-    private $discountRecalculationProvider;
+    protected $discountRecalculationProvider;
 
     /**
      * @var AppliedDiscountManager
      */
-    private $appliedDiscountManager;
+    protected $appliedDiscountManager;
+
+    /**
+     * @var DiscountsProvider
+     */
+    protected $discountsProvider;
 
     /**
      * @param DiscountRecalculationProvider $discountRecalculationProvider
      * @param AppliedDiscountManager $appliedDiscountManager
+     * @param DiscountsProvider $discountsProvider
      */
     public function __construct(
         DiscountRecalculationProvider $discountRecalculationProvider,
-        AppliedDiscountManager $appliedDiscountManager
+        AppliedDiscountManager $appliedDiscountManager,
+        DiscountsProvider $discountsProvider
     ) {
         $this->discountRecalculationProvider = $discountRecalculationProvider;
         $this->appliedDiscountManager = $appliedDiscountManager;
+        $this->discountsProvider = $discountsProvider;
     }
 
     /**
@@ -57,6 +66,7 @@ class OrderTypeExtension extends AbstractTypeExtension
         }
 
         if ($this->discountRecalculationProvider->isRecalculationRequired()) {
+            $this->discountsProvider->enableRecalculation();
             $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
             $this->appliedDiscountManager->saveAppliedDiscounts($order);
         }
