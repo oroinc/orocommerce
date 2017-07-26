@@ -3,11 +3,13 @@
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Form\Type\BusinessUnitSelectAutocomplete;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationParams;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
-
 use Oro\Bundle\UserBundle\Entity\User;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -35,7 +37,7 @@ class CouponGenerationType extends AbstractType
         $builder
             ->add(
                 'owner',
-                'oro_type_business_unit_select_autocomplete',
+                BusinessUnitSelectAutocomplete::NAME,
                 [
                     'required' => false,
                     'label' => 'oro.user.owner.label',
@@ -173,7 +175,7 @@ class CouponGenerationType extends AbstractType
     {
         $currentOrganization = $this->tokenAccessor->getOrganization();
         $user = $this->tokenAccessor->getUser();
-        if (!$user instanceof User) {
+        if (!$user instanceof User || !$currentOrganization instanceof Organization) {
             return null;
         }
 
