@@ -7,7 +7,7 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroCustomerBundle::ACLContext
         - OroCustomerBundle::CustomerUserContext
-        - OroCustomerBundle::GridContext
+        - OroCustomerBundle::FrontendGridContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FeatureContext
         - OroFormBundle::FormContext

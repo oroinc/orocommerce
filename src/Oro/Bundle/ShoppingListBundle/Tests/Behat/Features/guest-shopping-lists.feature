@@ -73,7 +73,7 @@ Feature: Guest Shopping Lists
 
   Scenario: Check Shopping List is not available for a guest on frontend
     Given I proceed as the User
-    When I visit store frontend as guest
+    When I am on homepage
     Then I should not see "Shopping list"
     When type "SKU003" in "search"
     And I click "Search Button"
@@ -108,7 +108,7 @@ Feature: Guest Shopping Lists
     And I should see "Order with Matrix Grid"
 
   Scenario: Create Shopping List as unauthorized user from product view page
-    Given I visit store frontend as guest
+    Given I am on homepage
     Then I should see "Shopping list"
     When type "PSKU1" in "search"
     And I click "Search Button"
@@ -145,23 +145,3 @@ Feature: Guest Shopping Lists
       | Delete        |
       | Create Order  |
       | Request Quote |
-
-  Scenario: Disable guest shopping list in configuration
-    Given I login as administrator
-    And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
-    And uncheck Use Default for "Enable guest shopping list" field
-    And I uncheck "Enable guest shopping list"
-    And I save setting
-    And I should see "Configuration saved" flash message
-    Then the "Enable guest shopping list" checkbox should not be checked
-
-  Scenario: Check Shopping List is not available for a guest on frontend
-    Given I am on homepage
-    And I should not see "Shopping list"
-    And type "SKU003" in "search"
-    And I click "Search Button"
-    And I should see "Product3"
-    Then I should not see "Add to Shopping list"
