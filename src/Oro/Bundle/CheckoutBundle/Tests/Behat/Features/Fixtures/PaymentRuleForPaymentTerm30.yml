@@ -1,0 +1,20 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRuleForPaymentTerm30:
+        name: 'Payment Term 30'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfigForPaymentTerm30:
+        type: '<("payment_term_".@paymentTerm30Integration->id)>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRuleForPaymentTerm30:
+        rule: '@paymentRuleForPaymentTerm30'
+        methodConfigs: ['@paymentMethodConfigForPaymentTerm30']
+        currency: 'USD'
+        organization: '@organization'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+    paymentTerm30:
+        label: net 30

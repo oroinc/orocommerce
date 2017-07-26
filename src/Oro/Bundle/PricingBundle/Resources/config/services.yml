@@ -62,6 +62,8 @@ services:
     oro_pricing.listener.product_unit_precision_on_post_remove:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener'
         public: false
+        arguments:
+            - '@oro_pricing.shard_manager'
         calls:
             - [setPriceAttributeClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
         tags:

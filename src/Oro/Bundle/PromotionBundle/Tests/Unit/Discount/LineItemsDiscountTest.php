@@ -6,7 +6,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountProductUnitCodeAwareInterface;
 use Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount;
@@ -17,22 +16,16 @@ class LineItemsDiscountTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $shippingDiscount;
-
-    /**
      * @var LineItemsDiscount
      */
     protected $discount;
 
     protected function setUp()
     {
-        $this->shippingDiscount = $this->createMock(DiscountInterface::class);
-        $this->discount = new LineItemsDiscount($this->shippingDiscount);
+        $this->discount = new LineItemsDiscount();
     }
 
-    public function testApplyWithoutShippingDiscount()
+    public function testApply()
     {
         $product1 = $this->getEntity(Product::class, ['id' => 1, 'sku' => 'PROD_1']);
         $product2 = $this->getEntity(Product::class, ['id' => 2, 'sku' => 'PROD_2']);

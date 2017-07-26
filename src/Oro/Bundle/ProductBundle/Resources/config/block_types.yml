@@ -85,6 +85,15 @@ services:
         tags:
             - { name: layout.block_type, alias: product_sticker }
 
+    oro_product.block_type.product_list_item_image:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setOptionsConfig, [{product_image_size: {default: 'product_large'}}]]
+            - [setName, ['product_list_item_image']]
+            - [setParent, ['container']]
+        tags:
+            - { name: layout.block_type, alias: product_list_item_image }
+
     oro_product.block_type.directions:
         parent: oro_layout.block_type.abstract_configurable
         calls:

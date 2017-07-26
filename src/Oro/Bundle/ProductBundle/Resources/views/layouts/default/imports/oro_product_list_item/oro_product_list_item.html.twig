@@ -19,9 +19,9 @@
         '~class': ' product-item__image-holder product-item__image-holder--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
+        {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"
-           style="background-image: url('{{ Image.url(productImage, 'product_large') }}')">
+           style="background-image: url('{{ Image.url(productImage, product_image_size) }}')">
         </a>
         {{ block_widget(block) }}
     </div>

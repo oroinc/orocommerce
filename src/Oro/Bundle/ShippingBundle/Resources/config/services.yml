@@ -229,6 +229,7 @@ services:
             - '@oro_shipping.shipping_method_provider'
             - '@oro_shipping.shipping_price.provider.cache'
             - '@oro_shipping.method.view_factory'
+            - '@event_dispatcher'
 
     oro_shipping.shipping_price.provider_enabled_methods_decorator:
         class: 'Oro\Bundle\ShippingBundle\Provider\EnabledMethodsShippingPriceProviderDecorator'

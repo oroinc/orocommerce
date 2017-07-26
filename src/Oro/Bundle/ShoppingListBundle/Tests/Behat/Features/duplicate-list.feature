@@ -30,19 +30,13 @@ Feature: Duplicate Lists
       | User  |first_session |
       | Admin |second_session|
 
-  Scenario: Front - not logged user
-    Given I proceed as the User
-    And I am on the homepage
-    When I hover on "Shopping cart"
-    And click "View Details"
-    And I should not see following buttons:
-      |Duplicate List|
-
   Scenario: Front - user without permissions
     Given I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
     And I click "Shopping List" on configuration sidebar
+    And uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
     And fill "Shopping List Limit Form" with:
       |Shopping List Limit Default|false|
       |Shopping List Limit        |2    |
@@ -63,6 +57,14 @@ Feature: Duplicate Lists
     And I should not see following buttons:
       |Duplicate List|
 
+  Scenario: Front - not logged user
+    Given I proceed as the User
+    And I am on the homepage
+    When I hover on "Shopping cart"
+    And click "View Details"
+    And I should not see following buttons:
+      |Duplicate List|
+
   Scenario: Front - user with permissions
     Given I proceed as the Admin
     And click "Roles"
@@ -76,7 +78,7 @@ Feature: Duplicate Lists
     Then I should see following buttons:
       |Duplicate List|
     When click "Duplicate List"
-    Then should see 'Shopping list "My Shopping List" has been duplicated' flash message
+    Then should see 'The shopping list has been duplicated' flash message
     And should see "My Shopping List (copied"
     And I should see following line items in "Shopping List Line Items Table":
       |SKU |Quantity|Unit|
@@ -98,14 +100,36 @@ Feature: Duplicate Lists
     Then I should not see following buttons:
       |Duplicate List|
 
-  Scenario: Backend - user with permissions
+  Scenario: Backend - user with permissions does not able to duplicate guest shopping list
+    Given I login as administrator
+    And I login as "Charlie1@example.com" user
+    And go to Sales/ Shopping Lists
+    When I click view "Guest Shopping List" in grid
+    Then I should not see following buttons:
+      |Duplicate List|
+
+  Scenario: Backend - user with permissions does not able to duplicate shopping list for customer user when limit reached
+    And I login as "Charlie1@example.com" user
+    And go to Sales/ Shopping Lists
+    When I click view "Main Shopping List" in grid
+    Then I should not see following buttons:
+      |Duplicate List|
+
+  Scenario: Backend - user with permissions, shopping list limit not reached
     Given user have "Organization" permissions for "Duplicate" "Shopping List" entity
+    And I proceed as the Admin
+    And login as administrator
+    And go to System/ Configuration
+    And I click "Shopping List" on configuration sidebar
+    And fill "Shopping List Limit Form" with:
+      |Shopping List Limit Default|true|
+    And click "Save settings"
     And I proceed as the User
     When reload the page
     Then I should see following buttons:
       |Duplicate List|
     And click "Duplicate List"
-    Then should see 'Shopping list "Main Shopping List" has been duplicated' flash message
+    Then should see 'The shopping list has been duplicated' flash message
     And should see "Main Shopping List (copied"
     And should see following grid:
       |SKU |Product |Quantity|Unit|

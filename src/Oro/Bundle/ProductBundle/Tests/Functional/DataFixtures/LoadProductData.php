@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -87,8 +88,6 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $data = Yaml::parse(file_get_contents($filePath));
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
-        $productsList = [];
-
         foreach ($data as $item) {
             $unit = $this->getReference('product_unit.milliliter');
 
@@ -110,9 +109,8 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setType($item['type'])
                 ->setFeatured($item['featured']);
 
-            $productsList[$product->getSku()] = $product;
-
             $this->addAdvancedValue($item, $product);
+            $this->addEntityFieldFallbackValue($item, $product);
 
             $manager->persist($product);
             $this->addReference($product->getSku(), $product);
@@ -120,18 +118,6 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 sprintf('product_unit_precision.%s', implode('.', [$product->getSku(), $unit->getCode()])),
                 $unitPrecision
             );
-
-            if (isset($item['related_products'])) {
-                foreach ($item['related_products'] as $relatedProduct) {
-                    if (isset($productsList[$relatedProduct])) {
-                        $relatedProducts = new RelatedProduct();
-                        $relatedProducts->setProduct($product)
-                            ->setRelatedProduct($productsList[$relatedProduct]);
-
-                        $manager->persist($relatedProducts);
-                    }
-                }
-            }
         }
 
         $manager->flush();
@@ -162,6 +148,28 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
         return $value;
     }
+
+    /**
+     * @param array $name
+     * @return EntityFieldFallbackValue
+     */
+    protected function createFieldFallbackValue(array $name)
+    {
+        $value = new EntityFieldFallbackValue();
+        if (array_key_exists('fallback', $name)) {
+            $value->setFallback($name['fallback']);
+        }
+        if (array_key_exists('scalarValue', $name)) {
+            $value->setScalarValue($name['scalarValue']);
+        }
+        if (array_key_exists('arrayValue', $name)) {
+            $value->setArrayValue($name['arrayValue']);
+        }
+        $this->setReference($name['reference'], $value);
+
+        return $value;
+    }
+
 
     /**
      * @param EntityManager $manager
@@ -223,6 +231,37 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
             foreach ($item['shortDescriptions'] as $slugPrototype) {
                 $product->addShortDescription($this->createValue($slugPrototype));
             }
+        }
+    }
+
+    /**
+     * @param array $item
+     * @param Product $product
+     */
+    private function addEntityFieldFallbackValue(array $item, Product $product)
+    {
+        if (!empty($item['manageInventory'])) {
+            $product->setManageInventory($this->createFieldFallbackValue($item['manageInventory']));
+        }
+
+        if (!empty($item['inventoryThreshold'])) {
+            $product->setInventoryThreshold($this->createFieldFallbackValue($item['inventoryThreshold']));
+        }
+
+        if (!empty($item['minimumQuantityToOrder'])) {
+            $product->setMinimumQuantityToOrder($this->createFieldFallbackValue($item['minimumQuantityToOrder']));
+        }
+
+        if (!empty($item['maximumQuantityToOrder'])) {
+            $product->setMaximumQuantityToOrder($this->createFieldFallbackValue($item['maximumQuantityToOrder']));
+        }
+
+        if (!empty($item['decrementQuantity'])) {
+            $product->setDecrementQuantity($this->createFieldFallbackValue($item['decrementQuantity']));
+        }
+
+        if (!empty($item['backOrder'])) {
+            $product->setBackOrder($this->createFieldFallbackValue($item['backOrder']));
         }
     }
 }
