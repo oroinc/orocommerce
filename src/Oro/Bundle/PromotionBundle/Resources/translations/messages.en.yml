@@ -208,7 +208,7 @@ oro:
                     alphabetic.label: Alphabetic
                 codePrefix.label: Code Prefix
                 codeSuffix.label: Code Suffix
-                dashesSequence.label: Add Dashes Every
+                dashesSequence.label: Add Dashes Every Symbols
                 message:
                     save_success: Generation of Coupon was successful
 
