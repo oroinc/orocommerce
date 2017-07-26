@@ -5,18 +5,10 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\OrderDiscount;
-use Oro\Bundle\PromotionBundle\Discount\ShippingAwareDiscount;
-use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
 
 class OrderDiscountTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var DiscountInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $shippingDiscount;
-
     /**
      * @var OrderDiscount
      */
@@ -24,17 +16,12 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shippingDiscount = $this->createMock(DiscountInterface::class);
-        $this->discount = new OrderDiscount($this->shippingDiscount);
+        $this->discount = new OrderDiscount();
     }
 
-    public function testApplyWithoutShippingDiscount()
+    public function testApply()
     {
-        /** @var DiscountContext|\PHPUnit_Framework_MockObject_MockObject $discountContext */
-        $discountContext = $this->createMock(DiscountContext::class);
-        $discountContext->expects($this->once())
-            ->method('addSubtotalDiscount')
-            ->with($this->discount);
+        $discountContext = new DiscountContext();
 
         $options = [
             AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
@@ -43,27 +30,8 @@ class OrderDiscountTest extends \PHPUnit_Framework_TestCase
         $this->discount->configure($options);
 
         $this->discount->apply($discountContext);
-    }
-
-    public function testApplyWithShippingDiscount()
-    {
-        /** @var DiscountContext|\PHPUnit_Framework_MockObject_MockObject $discountContext */
-        $discountContext = $this->createMock(DiscountContext::class);
-        $discountContext->expects($this->once())
-            ->method('addSubtotalDiscount')
-            ->with($this->discount);
-        $discountContext->expects($this->once())
-            ->method('addShippingDiscount')
-            ->with($this->shippingDiscount);
-
-        $options = [
-            AbstractDiscount::DISCOUNT_TYPE => AbstractDiscount::TYPE_PERCENT,
-            AbstractDiscount::DISCOUNT_VALUE => 0.2,
-            ShippingAwareDiscount::SHIPPING_DISCOUNT => ShippingDiscount::APPLY_TO_ITEMS
-        ];
-        $this->discount->configure($options);
-
-        $this->discount->apply($discountContext);
+        $this->assertCount(1, $discountContext->getSubtotalDiscounts());
+        $this->assertEquals($this->discount, $discountContext->getSubtotalDiscounts()[0]);
     }
 
     public function testCalculateNonSupportedEntity()

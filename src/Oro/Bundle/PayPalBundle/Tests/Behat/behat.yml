@@ -28,12 +28,12 @@ oro_behat_extension:
           Month: 'oro_paypal_credit_card[expirationDate][month]'
           Year: 'oro_paypal_credit_card[expirationDate][year]'
           CVV: 'CVV2'
-    TransactionCaptureButton:
+    Transaction Capture Button:
       selector: 'div.action-row a.action[title="Capture"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-    TransactionsHistoryGrid:
+    Transactions History Grid:
       selector:
-        locator: '//div[contains(@class, "responsive-section ")]/div/h4[text()="Payment History"]/../..//div[@class="oro-datagrid"]//table'
+        locator: '//div[contains(@class, "responsive-section ")]/h4[text()="Payment History"]/..//div[@class="oro-datagrid"]//table'
         type: xpath
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
   suites:

@@ -91,10 +91,8 @@ define(function(require) {
                 success: function(response) {
                     self.resetProduct();
 
-                    val = val.toUpperCase();
-
                     var item = response.results[0];
-                    if (item && (item.sku === val)) {
+                    if (item && (item.sku.toUpperCase() === val.toUpperCase())) {
                         self.product.sku = item.sku;
                         self.product.name = item['defaultName.string'];
                         self.product.displayName = [self.product.sku, self.product.name].join(' - ');

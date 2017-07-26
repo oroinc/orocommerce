@@ -14,6 +14,7 @@ Feature: Start checkout for a quote
   Scenario: BackOffice scenario background
     And I login as administrator
     And I create a quote from RFQ with PO Number "PONUMBER1"
+    And I agree that shipping cost may have changed
     And I click "Send to Customer"
     And I click "Send"
 

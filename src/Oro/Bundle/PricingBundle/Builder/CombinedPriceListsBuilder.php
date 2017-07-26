@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 
 class CombinedPriceListsBuilder
 {
-    const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12;
+    const DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES = 12.0;
 
     /**
      * @var PriceListCollectionProvider

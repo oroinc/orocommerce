@@ -18,7 +18,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 class BrandController extends Controller
 {
     /**
-     * @Route("/", name="oro_brand_index")
+     * @Route("/", name="oro_product_brand_index")
      * @Template
      *
      * @return array
@@ -31,7 +31,7 @@ class BrandController extends Controller
     }
 
     /**
-     * @Route("/create", name="oro_brand_create")
+     * @Route("/create", name="oro_product_brand_create")
      * @Template("OroProductBundle:Brand:update.html.twig")
      *
      * @param Request $request
@@ -43,7 +43,7 @@ class BrandController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="oro_brand_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_product_brand_update", requirements={"id"="\d+"})
      * @Template
      *
      * @param Brand   $brand
@@ -72,9 +72,9 @@ class BrandController extends Controller
     }
 
     /**
-     * @Route("/get-changed-urls/{id}", name="oro_brand_get_changed_slugs", requirements={"id"="\d+"})
+     * @Route("/get-changed-urls/{id}", name="oro_product_brand_get_changed_slugs", requirements={"id"="\d+"})
      *
-     * @AclAncestor("oro_brand_update")
+     * @AclAncestor("oro_product_brand_update")
      *
      * @param Brand $brand
      * @return JsonResponse

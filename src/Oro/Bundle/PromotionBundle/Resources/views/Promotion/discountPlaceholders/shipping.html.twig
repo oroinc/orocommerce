@@ -1,0 +1,12 @@
+{% extends 'OroPromotionBundle:Promotion/discountPlaceholders:baseDiscountPlaceholder.html.twig' %}
+
+{% block content %}
+    {% set options = entity.discountConfiguration.options %}
+    {% set data = [
+        UI.renderProperty(
+            'oro.discount_options.shipping_type.shipping_method.label'|trans,
+            oro_shipping_method_with_type_label(options['shipping_options']['shipping_method'], options['shipping_options']['shipping_method_type'])
+        ),
+    ] %}
+    {{ parent() }}
+{% endblock %}
