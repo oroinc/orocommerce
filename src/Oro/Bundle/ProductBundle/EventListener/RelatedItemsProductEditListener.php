@@ -192,7 +192,8 @@ class RelatedItemsProductEditListener
             '@OroProduct/Product/RelatedItems/upsellProducts.html.twig',
             [
                 'form' => $event->getFormView(),
-                'entity' => $event->getEntity()
+                'entity' => $event->getEntity(),
+                'upsellProductsLimit' => $this->upsellProductsConfigProvider->getLimit(),
             ]
         );
     }

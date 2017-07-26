@@ -5,7 +5,7 @@
         path('oro_product_possible_products_for_upsell_products', {'id': entity.id}),
         'oro.product.widgets.select_upsell_products.label'|trans,
         'oro.product.widgets.select_upsell_products.title'|trans({'{{ sku }}': entity.sku, '{{ name }}': entity.name}),
-        25,
+        upsellProductsLimit,
         '#productAppendUpsell',
         '#productRemoveUpsell',
         gridName

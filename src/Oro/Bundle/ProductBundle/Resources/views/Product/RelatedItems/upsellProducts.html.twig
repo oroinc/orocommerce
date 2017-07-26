@@ -30,6 +30,7 @@
     {{ form_widget(form.removeUpsell, {'id': 'productRemoveUpsell'}) }}
     {{ placeholder('oro_product_upsell_products_buttons', {
         'entity':  entity,
+        'upsellProductsLimit': upsellProductsLimit,
         'gridName': gridName
     }) }}
     {{ dataGrid.renderGrid(gridName, relatedGridParams) }}
