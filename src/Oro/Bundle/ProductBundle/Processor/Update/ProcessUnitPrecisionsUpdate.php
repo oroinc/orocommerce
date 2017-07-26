@@ -28,6 +28,9 @@ class ProcessUnitPrecisionsUpdate extends ProcessUnitPrecisions
         );
         $productUnitPrecisions = $this->formatProductUnitPrecisions($productUnitPrecisions);
         foreach ($includedData as $key => $data) {
+            if (!isset($data[JsonApi::RELATIONSHIPS][self::ATTR_UNIT])) {
+                continue;
+            }
             $keyPointer = $this->buildPointer($pointer, $key);
             if (array_key_exists(JsonApi::META, $data)
                 && array_key_exists('update', $data[JsonApi::META])

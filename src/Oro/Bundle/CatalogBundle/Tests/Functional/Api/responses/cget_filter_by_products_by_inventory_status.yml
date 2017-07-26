@@ -34,34 +34,6 @@ data:
                 data:
                     type: productunitprecisions
                     id: '<toString(@product_unit_precision.product-2.milliliter->id)>'
-            names:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-2.names.default->id)>'
-            descriptions:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-2.descriptions.default->id)>'
-            shortDescriptions:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-2.shortDescriptions.default->id)>'
-            slugPrototypes:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-2.slugPrototypes.default->id)>'
-            taxCode:
-                data:
-                    type: producttaxcodes
-                    id: '<toString(@product_tax_code.TAX1->id)>'
-            manageInventory:
-                data:
-                    type: entityfieldfallbackvalues
-                    id: '<toString(@product-2.manageInventory->id)>'
             inventory_status:
                 data:
                     type: prodinventorystatuses
@@ -95,35 +67,11 @@ data:
                 data:
                     type: productunitprecisions
                     id: '<toString(@product_unit_precision.product-3.milliliter->id)>'
-            names:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-3.names.default->id)>'
-            descriptions:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-3.descriptions.default->id)>'
-            shortDescriptions:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-3.shortDescriptions.default->id)>'
-            slugPrototypes:
-                data:
-                    -
-                        type: localizedfallbackvalues
-                        id: '<toString(@product-3.slugPrototypes.default->id)>'
-            taxCode:
-                data:
-                    type: producttaxcodes
-                    id: '<toString(@product_tax_code.TAX2->id)>'
-            manageInventory:
-                data:
-                    type: entityfieldfallbackvalues
-                    id: '<toString(@product-3.manageInventory->id)>'
             inventory_status:
                 data:
                     type: prodinventorystatuses
                     id: out_of_stock
+            category:
+                data:
+                    type: categories
+                    id: '@category_1_2_3->id'
