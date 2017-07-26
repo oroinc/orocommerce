@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationParams;
 
 use Symfony\Component\Form\AbstractType;
@@ -69,6 +70,14 @@ class CouponGenerationType extends AbstractType
                     'required' => false,
                     'label' => 'oro.promotion.coupon.uses_per_user.label',
                     'data' => 1
+                ]
+            )
+            ->add(
+                'expirationDate',
+                OroDateTimeType::NAME,
+                [
+                    'label' => 'oro.promotion.coupon.generation.expirationDate.label',
+                    'required' => false
                 ]
             )
             ->add(
