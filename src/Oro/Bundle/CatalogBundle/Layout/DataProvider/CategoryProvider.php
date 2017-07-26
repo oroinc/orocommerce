@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class CategoryProvider
 {
@@ -91,10 +91,24 @@ class CategoryProvider
         if (!array_key_exists($userId, $this->tree)) {
             $rootCategory = $this->loadCategory();
 
-            $categories = $rootCategory ? $this->categoryTreeProvider->getCategories($user, $rootCategory, false) : [];
-            $this->tree[$userId] = array_filter($categories, function (Category $category) use ($rootCategory) {
-                return $category->getParentCategory() === $rootCategory;
-            });
+            $this->tree[$userId] = [];
+            if ($rootCategory) {
+                /** @var DTO\Category[] $categoryDTOs */
+                $categoryDTOs = [];
+                $categoryDTOs[$rootCategory->getMaterializedPath()] = new DTO\Category($rootCategory);
+                $categories = $this->categoryTreeProvider->getCategories($user, $rootCategory, false);
+                foreach ($categories as $category) {
+                    $dto = new DTO\Category($category);
+                    $categoryDTOs[$category->getMaterializedPath()] = $dto;
+                    if ($category->getParentCategory()) {
+                        $categoryDTOs[$category->getParentCategory()->getMaterializedPath()]
+                            ->addChildCategory($dto);
+                    }
+                }
+
+                $this->tree[$userId] = $categoryDTOs[$rootCategory->getMaterializedPath()]->getChildCategories();
+                unset($categoryDTOs);
+            }
         }
 
         return $this->tree[$userId];

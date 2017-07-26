@@ -12,6 +12,7 @@ services:
         lazy: true
         arguments:
             - '@session'
+            - '@oro_paypal.method.provider.express_checkout.composite'
         tags:
             - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }
 
@@ -65,6 +66,7 @@ services:
 
     oro_paypal.express_checkout.method_view_factory_basic:
         class: 'Oro\Bundle\PayPalBundle\Method\View\Factory\BasicPayPalExpressCheckoutPaymentMethodViewFactory'
+        public: false
 
     oro_paypal.settings.payment_action.provider:
         class: Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicPaymentActionsDataProvider

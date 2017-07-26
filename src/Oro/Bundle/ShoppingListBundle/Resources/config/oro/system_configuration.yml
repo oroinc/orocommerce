@@ -40,6 +40,13 @@ system_configuration:
                 label: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.title
                 tooltip: oro.shoppinglist.system_configuration.fields.default_guest_shopping_list_owner.tooltip
                 required: true
+                configs:
+                    allowClear: false
+                    placeholder: 'oro.user.form.choose_user'
+                    result_template_twig: 'OroUserBundle:User:Autocomplete/result.html.twig'
+                    selection_template_twig: 'OroUserBundle:User:Autocomplete/selection.html.twig'
+                constraints:
+                    - NotBlank: ~
 
     tree:
         system_configuration:

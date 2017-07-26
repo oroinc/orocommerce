@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressions;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
 use Oro\Component\Expression\Node\BinaryNode;
@@ -85,29 +89,42 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $this->validator->initialize($this->context);
     }
 
-    public function testValidateSuccess()
-    {
+    /**
+     * @dataProvider validaDataProvider
+     *
+     * @param string $ruleExpression
+     * @param NodeInterface $ruleNode
+     * @param string $currencyExpression
+     * @param NodeInterface $currencyNode
+     * @param string $unitExpression
+     * @param NodeInterface $unitNode
+     * @param string $qtyExpression
+     * @param NodeInterface $qtyNode
+     */
+    public function testValidateSuccess(
+        $ruleExpression,
+        NodeInterface $ruleNode,
+        $currencyExpression,
+        NodeInterface $currencyNode,
+        $unitExpression,
+        NodeInterface $unitNode,
+        $qtyExpression,
+        NodeInterface $qtyNode
+    ) {
         $rule = new PriceRule();
-        $rule
-            ->setRule('product.msrp.value')
-            ->setCurrencyExpression('product.msrp.currency')
-            ->setProductUnitExpression('product.msrp.unit')
-            ->setQuantityExpression('product.msrp.quantity');
+        $rule->setRule($ruleExpression)
+            ->setCurrencyExpression($currencyExpression)
+            ->setProductUnitExpression($unitExpression)
+            ->setQuantityExpression($qtyExpression);
 
         $this->fieldsProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
-                        [
-                            'Oro\Bundle\ProductBundle\Entity\Product',
-                            'msrp',
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                        ],
-                        [
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                            'unit',
-                            'Oro\Bundle\ProductBundle\Entity\ProductUnit',
-                        ],
+                        [Product::class, 'msrp', PriceAttributeProductPrice::class],
+                        [PriceAttributeProductPrice::class, 'unit', ProductUnit::class],
+                        [Product::class, 'primaryUnit', ProductUnitPrecision::class],
+                        [ProductUnitPrecision::class, 'unit', ProductUnit::class],
                     ]
                 )
             );
@@ -115,16 +132,10 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->will(
                 $this->returnValueMap(
                     [
-                        [
-                            'Oro\Bundle\ProductBundle\Entity\Product',
-                            'msrp',
-                            true
-                        ],
-                        [
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                            'unit',
-                            true
-                        ],
+                        [Product::class, 'msrp', true],
+                        [Product::class, 'primaryUnit', true],
+                        [PriceAttributeProductPrice::class, 'unit', true],
+                        [ProductUnitPrecision::class, 'unit', true],
                     ]
                 )
             );
@@ -132,28 +143,59 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->will(
                 $this->returnValueMap(
                     [
-                        [
-                            $rule->getCurrencyExpression(),
-                            new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'currency'),
-                        ],
-                        [
-                            $rule->getProductUnitExpression(),
-                            new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
-                        ],
-                        [
-                            $rule->getQuantityExpression(),
-                            new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
-                        ],
-                        [
-                            $rule->getRule(),
-                            new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'value'),
-                        ],
+                        [$rule->getCurrencyExpression(), $currencyNode],
+                        [$rule->getProductUnitExpression(), $unitNode],
+                        [$rule->getQuantityExpression(), $qtyNode],
+                        [$rule->getRule(), $ruleNode]
                     ]
                 )
             );
 
         $this->context->expects($this->never())->method('buildViolation');
         $this->validator->validate($rule, new PriceRuleRelationExpressions());
+    }
+
+    /**
+     * @return array
+     */
+    public function validaDataProvider()
+    {
+        return [
+            'valid expression with base price relation' => [
+                'rule' => 'product.msrp.value',
+                'ruleNode' => new RelationNode(Product::class, 'msrp', 'value'),
+                'currencyExpression' => 'product.msrp.currency',
+                'currencyNode' => new RelationNode(Product::class, 'msrp', 'currency'),
+                'unitExpression' => 'product.msrp.unit',
+                'unitNode' => new RelationNode(Product::class, 'msrp', 'unit'),
+                'qtyExpression' => 'product.msrp.quantity',
+                'qtyNode' => new RelationNode(Product::class, 'msrp', 'quantity')
+            ],
+            'valid expression with base price relation and qty sum' => [
+                'rule' => 'product.msrp.value',
+                'ruleNode' => new RelationNode(Product::class, 'msrp', 'value'),
+                'currencyExpression' => 'product.msrp.currency',
+                'currencyNode' => new RelationNode(Product::class, 'msrp', 'currency'),
+                'unitExpression' => 'product.msrp.unit',
+                'unitNode' => new RelationNode(Product::class, 'msrp', 'unit'),
+                'qtyExpression' => 'product.msrp.quantity + 10',
+                'qtyNode' => new BinaryNode(
+                    new RelationNode(Product::class, 'msrp', 'quantity'),
+                    new ValueNode(10),
+                    '+'
+                )
+            ],
+            'valid expression with non base price relation' => [
+                'rule' => 'product.msrp.value',
+                'ruleNode' => new RelationNode(Product::class, 'msrp', 'value'),
+                'currencyExpression' => 'product.msrp.currency',
+                'currencyNode' => new RelationNode(Product::class, 'msrp', 'currency'),
+                'unitExpression' => 'product.primaryUnit.unit',
+                'unitNode' => new RelationNode(Product::class, 'primaryUnit', 'unit'),
+                'qtyExpression' => 'product.msrp.quantity',
+                'qtyNode' => new RelationNode(Product::class, 'msrp', 'quantity')
+            ],
+        ];
     }
 
     /**
@@ -174,20 +216,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->will(
                 $this->returnValueMap(
                     [
-                        [
-                            'Oro\Bundle\ProductBundle\Entity\Product',
-                            'msrp',
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                        ],
-                        [
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                            'currency',
-                            null,
-                        ],
+                        [Product::class, 'msrp', PriceAttributeProductPrice::class],
+                        [PriceAttributeProductPrice::class, 'currency', null]
                     ]
                 )
             );
-
 
         $rule = new PriceRule();
         $rule->setCurrencyExpression($currencyExpression);
@@ -229,7 +262,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 'message' => 'oro.pricing.validators.one_expression_allowed.message',
                 'messageParams' => ['%fieldName%' => 'oro.pricing.pricerule.currency.label' . $this->translatedLabel],
                 'parsedCurrencyExpression' => new BinaryNode(
-                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    new RelationNode(Product::class, 'msrp', 'quantity'),
                     new ValueNode(10),
                     '+'
                 ),
@@ -238,7 +271,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 'currencyExpression' => 'product.id',
                 'message' => 'oro.pricing.validators.only_price_relations_available.message',
                 'messageParams' => ['%fieldName%' => 'oro.pricing.pricerule.currency.label' . $this->translatedLabel],
-                'parsedCurrencyExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+                'parsedCurrencyExpression' => new NameNode(Product::class, 'id'),
             ],
         ];
     }
@@ -265,20 +298,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->will(
                 $this->returnValueMap(
                     [
-                        [
-                            'Oro\Bundle\ProductBundle\Entity\Product',
-                            'msrp',
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                        ],
-                        [
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                            'currency',
-                            null,
-                        ],
+                        [Product::class, 'msrp', PriceAttributeProductPrice::class],
+                        [PriceAttributeProductPrice::class, 'currency', null]
                     ]
                 )
             );
-
 
         $rule = new PriceRule();
         $rule->setCurrencyExpression($currencyExpression)
@@ -329,16 +353,8 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     '%fieldName%' => 'quantity',
                     '%inputName%' => 'oro.pricing.pricerule.currency.label' . $this->translatedLabel
                 ],
-                'parsedCurrencyExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'msrp',
-                    'quantity'
-                ),
-                'parsedRuleExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'msrp',
-                    'value'
-                ),
+                'parsedCurrencyExpression' => new RelationNode(Product::class, 'msrp', 'quantity'),
+                'parsedRuleExpression' => new RelationNode(Product::class, 'msrp', 'value'),
             ],
             'test_relation_exists_in_rule_condition' => [
                 'currencyExpression' => 'product.msrp.currency',
@@ -348,16 +364,8 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     '%relationName%' => 'msrp',
                     '%fieldName%' => 'oro.pricing.pricerule.currency.label' . $this->translatedLabel
                 ],
-                'parsedCurrencyExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'msrp',
-                    'currency'
-                ),
-                'parsedRuleExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'map',
-                    'value'
-                ),
+                'parsedCurrencyExpression' => new RelationNode(Product::class, 'msrp', 'currency'),
+                'parsedRuleExpression' => new RelationNode(Product::class, 'map', 'value'),
             ],
         ];
     }
@@ -416,8 +424,8 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 'message' => 'oro.pricing.validators.too_many_relations.message',
                 'messageParams' => ['%fieldName%' => 'oro.pricing.pricerule.quantity.label' . $this->translatedLabel],
                 'parsedQuantityExpression' => new BinaryNode(
-                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
-                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'quantity'),
+                    new RelationNode(Product::class, 'msrp', 'quantity'),
+                    new RelationNode(Product::class, 'map', 'quantity'),
                     '+'
                 ),
             ],
@@ -426,7 +434,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 'message' => 'oro.pricing.validators.too_many_relations.message',
                 'messageParams' => ['%fieldName%' => 'oro.pricing.pricerule.quantity.label' . $this->translatedLabel],
                 'parsedQuantityExpression' => new BinaryNode(
-                    new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+                    new NameNode(Product::class, 'id'),
                     new ValueNode(10),
                     '+'
                 ),
@@ -452,6 +460,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         NodeInterface $parsedQuantityExpression,
         NodeInterface $parsedRuleExpression = null
     ) {
+        $this->fieldsProvider->expects($this->any())
+            ->method('getRealClassName')
+            ->with(Product::class, 'msrp')
+            ->willReturn(PriceAttributeProductPrice::class);
+
         $rule = new PriceRule();
         $rule->setQuantityExpression($quantityExpression)
             ->setRule($ruleExpression);
@@ -501,16 +514,8 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     '%relationName%' => 'msrp',
                     '%fieldName%' => 'oro.pricing.pricerule.quantity.label' . $this->translatedLabel
                 ],
-                'parsedQuantityExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'msrp',
-                    'quantity'
-                ),
-                'parsedRuleExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'map',
-                    'value'
-                ),
+                'parsedQuantityExpression' => new RelationNode(Product::class, 'msrp', 'quantity'),
+                'parsedRuleExpression' => new RelationNode(Product::class, 'map', 'value'),
             ],
         ];
     }
@@ -529,23 +534,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         array $messageParams,
         NodeInterface $parsedUnitExpression
     ) {
-        $this->fieldsProvider->method('getRealClassName')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [
-                            'Oro\Bundle\ProductBundle\Entity\Product',
-                            'msrp',
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                        ],
-                        [
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                            'currency',
-                            null,
-                        ],
-                    ]
-                )
-            );
+        $this->fieldsProvider->expects($this->any())
+            ->method('getRealClassName')
+            ->with(Product::class, 'msrp')
+            ->willReturn(PriceAttributeProductPrice::class);
+
         $rule = new PriceRule();
         $rule->setProductUnitExpression($productUnitExpression);
 
@@ -588,7 +581,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     '%fieldName%' => 'oro.pricing.pricerule.product_unit.label' . $this->translatedLabel
                 ],
                 'parsedUnitExpression' => new BinaryNode(
-                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
+                    new RelationNode(Product::class, 'msrp', 'unit'),
                     new ValueNode(10),
                     '+'
                 ),
@@ -599,7 +592,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 'messageParams' => [
                     '%fieldName%' => 'oro.pricing.pricerule.product_unit.label' . $this->translatedLabel
                 ],
-                'parsedUnitExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+                'parsedUnitExpression' => new NameNode(Product::class, 'id'),
             ],
         ];
     }
@@ -622,23 +615,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         NodeInterface $parsedUnitExpression,
         NodeInterface $parsedRuleExpression = null
     ) {
-        $this->fieldsProvider->method('getRealClassName')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [
-                            'Oro\Bundle\ProductBundle\Entity\Product',
-                            'msrp',
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                        ],
-                        [
-                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
-                            'currency',
-                            null,
-                        ],
-                    ]
-                )
-            );
+        $this->fieldsProvider->expects($this->any())
+            ->method('getRealClassName')
+            ->with(Product::class, 'msrp')
+            ->willReturn(PriceAttributeProductPrice::class);
+
         $rule = new PriceRule();
         $rule->setProductUnitExpression($productUnitExpression)
             ->setRule($ruleExpression);
@@ -688,16 +669,8 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     '%fieldName%' => 'quantity',
                     '%inputName%' => 'oro.pricing.pricerule.product_unit.label' . $this->translatedLabel
                 ],
-                'parsedUnitExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'msrp',
-                    'quantity'
-                ),
-                'parsedRuleExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'msrp',
-                    'value'
-                ),
+                'parsedUnitExpression' => new RelationNode(Product::class, 'msrp', 'quantity'),
+                'parsedRuleExpression' => new RelationNode(Product::class, 'msrp', 'value')
             ],
             'test_relation_exists_in_rule_condition' => [
                 'productUnitExpression' => 'product.msrp.unit',
@@ -707,16 +680,8 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     '%relationName%' => 'msrp',
                     '%fieldName%' => 'oro.pricing.pricerule.product_unit.label' . $this->translatedLabel
                 ],
-                'parsedUnitExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'msrp',
-                    'unit'
-                ),
-                'parsedRuleExpression' => new RelationNode(
-                    'Oro\Bundle\ProductBundle\Entity\Product',
-                    'map',
-                    'value'
-                ),
+                'parsedUnitExpression' => new RelationNode(Product::class, 'msrp', 'unit'),
+                'parsedRuleExpression' => new RelationNode(Product::class, 'map', 'value')
             ],
         ];
     }

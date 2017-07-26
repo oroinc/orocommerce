@@ -78,11 +78,19 @@ services:
             - '@oro_promotion.rule_filtration.matching_items.inner'
             - '@oro_promotion.provider.matching_products_provider'
 
+    oro_promotion.rule_filtration.shipping_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\ShippingFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 350
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.shipping_decorator.inner'
+
     oro_promotion.rule_filtration.stop_processing_decorator:
         class: Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator
         public: false
         decorates: oro_promotion.rule_filtration.service
-        decoration_priority: 350
+        decoration_priority: 400
         arguments:
             - '@oro_promotion.rule_filtration.stop_processing_decorator.inner'
 
@@ -103,6 +111,7 @@ services:
             - ['addType', ['order', 'oro_promotion.discount.order_discount']]
             - ['addType', ['line_item', 'oro_promotion.discount.line_item_discount']]
             - ['addType', ['buy_x_get_y', 'oro_promotion.discount.buy_x_get_y_discount']]
+            - ['addType', ['shipping', 'oro_promotion.discount.shipping_discount']]
 
     oro_promotion.discount.context_converter.registry:
         class: Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterRegistry
@@ -232,17 +241,17 @@ services:
         tags:
             - { name: form.type, alias: oro_promotion_buy_x_get_y_discount_options }
 
-    oro_promotion.form.type.discount_free_shipping:
-        class: Oro\Bundle\PromotionBundle\Form\Type\DiscountFreeShippingType
-        tags:
-            - { name: form.type, alias: oro_promotion_discount_free_shipping_choice }
-
     oro_promotion.form.type.discount_strategy_select:
         class: Oro\Bundle\PromotionBundle\Form\Type\DiscountStrategySelectType
         arguments:
             - '@oro_promotion.discount.strategy_registry'
         tags:
             - { name: form.type, alias: oro_discount_strategy_select }
+
+    oro_promotion.form.type.shipping_discount:
+        class: Oro\Bundle\PromotionBundle\Form\Type\ShippingDiscountOptionsType
+        tags:
+            - { name: form.type, alias: oro_promotion_shipping_discount_options }
 
     oro_promotion.form.autocomplete.promotion.search_handler:
         public: false
@@ -260,14 +269,10 @@ services:
     oro_promotion.discount.order_discount:
         class: Oro\Bundle\PromotionBundle\Discount\OrderDiscount
         shared: false
-        arguments:
-            - '@oro_promotion.discount.shipping_discount'
 
     oro_promotion.discount.line_item_discount:
         class: Oro\Bundle\PromotionBundle\Discount\LineItemsDiscount
         shared: false
-        arguments:
-            - '@oro_promotion.discount.shipping_discount'
 
     oro_promotion.discount.buy_x_get_y_discount:
         class: Oro\Bundle\PromotionBundle\Discount\BuyXGetYDiscount
@@ -280,6 +285,7 @@ services:
             - ['addFormType', ['order', 'oro_promotion_order_discount_options']]
             - ['addFormType', ['line_item', 'oro_promotion_line_item_discount_options']]
             - ['addFormType', ['buy_x_get_y', 'oro_promotion_buy_x_get_y_discount_options']]
+            - ['addFormType', ['shipping', 'oro_promotion_shipping_discount_options']]
 
     oro_promotion.layout.discount_information_data_provider:
         class: Oro\Bundle\PromotionBundle\Layout\DataProvider\DiscountsInformationDataProvider
@@ -310,6 +316,13 @@ services:
         arguments:
             - '@oro.cache.memory_cache_chain'
             - '@oro_entity.doctrine_helper'
+
+    oro_promotion.provider.discounts_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\DiscountsProvider
+        public: false
+        arguments:
+            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@oro_promotion.promotion_executor'
 
     oro_promotion.provider.subtotal_provider:
         class: Oro\Bundle\PromotionBundle\Provider\SubtotalProvider
@@ -405,6 +418,13 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
 
+    oro_promotion.event_listener.shipping_methods_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\ShippingMethodsListener
+        arguments:
+            - '@oro_promotion.promotion_executor'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.applicable_methods, method: modifyPrices }
+
     oro_promotion.event_listener.grid.order_line_item:
         class: 'Oro\Bundle\PromotionBundle\EventListener\OrderLineItemGridListener'
         arguments:
@@ -418,7 +438,7 @@ services:
         arguments:
             - '@oro_tax.provider.taxation_settings_provider'
             - '@oro_tax.manager.tax_manager'
-            - '@oro_promotion.provider.applied_discounts_provider'
+            - '@oro_promotion.provider.discounts_provider'
             - '@oro_order.form.section.provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
         tags:
@@ -429,11 +449,31 @@ services:
         arguments:
             - '@oro_promotion.provider.discount_recalculation_provider'
             - '@oro_promotion.applied_discount_manager'
+            - '@oro_promotion.provider.discounts_provider'
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
+
+    oro_promotion.event_listener.order.discounts:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener
+        arguments:
+            - '@oro_tax.manager.tax_manager'
+            - '@oro_tax.provider.taxation_settings_provider'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_promotion.provider.discounts_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -128 }
 
     oro_promotion.provider.discount_recalculation_provider:
         class: 'Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider'
         public: false
         arguments:
             - '@request_stack'
+
+    oro_promotion.form.type.shipping_method_types_choice:
+        class: 'Oro\Bundle\PromotionBundle\Form\Type\ShippingMethodTypesChoiceType'
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+            - '@oro_shipping.provider.shipping_method_icon'
+            - '@assets.packages'
+        tags:
+            - { name: form.type, alias: oro_promotion_shipping_methods }
