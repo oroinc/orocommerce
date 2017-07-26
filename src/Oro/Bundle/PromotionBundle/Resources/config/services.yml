@@ -489,3 +489,21 @@ services:
 
     oro_promotion.coupon_generation.handler:
         class: 'Oro\Bundle\PromotionBundle\Handler\CouponGenerationHandler'
+        arguments:
+            - '@oro_promotion.coupon_generation.manager'
+
+    oro_promotion.coupon_generation.manager:
+        class: 'Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager'
+        arguments:
+            - '@oro_promotion.coupon_generation.generator'
+            - '@oro_promotion.coupon_generation.inserter'
+
+    oro_promotion.coupon_generation.generator:
+        class: 'Oro\Bundle\PromotionBundle\Service\SimpleCouponGenerator'
+        public: false
+
+    oro_promotion.coupon_generation.inserter:
+        class: 'Oro\Bundle\PromotionBundle\Service\SimpleCouponInserter'
+        public: false
+
+
