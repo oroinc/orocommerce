@@ -98,7 +98,9 @@ define(function(require) {
         },
 
         onIncludeSubcategoriesChange: function() {
-            this.triggerSidebarChanged();
+            if (this.selectedCategoryId !== 'false' && this.selectedCategoryId !== null) {
+                this.triggerSidebarChanged();
+            }
         },
 
         triggerSidebarChanged: function() {
