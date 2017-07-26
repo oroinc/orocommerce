@@ -12,7 +12,6 @@ use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 
 class ProductPageTemplateValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    const ENTITY_CLASS = 'OroEntityBundle:EntityFieldFallbackValue';
     protected $validChoices = ["short", "two-columns", "list"];
 
     /**
