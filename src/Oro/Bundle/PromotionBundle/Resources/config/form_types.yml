@@ -8,3 +8,8 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType'
         tags:
             - { name: form.type, alias: oro_promotion_base_coupon_type  }
+
+    oro_promotion.form.type.coupon_generate:
+        class: 'Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType'
+        tags:
+            - { name: form.type, alias: oro_promotion_coupon_generation_type  }

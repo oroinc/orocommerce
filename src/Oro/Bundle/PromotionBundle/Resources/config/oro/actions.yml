@@ -48,6 +48,48 @@ operations:
                 route_parameters:
                     id: $.promotion_copy_id
 
+    oro_promotion_coupon_generation:
+        label: oro.promotion.coupon.generation.label
+        routes:
+            - oro_promotion_coupon_index
+        acl_resource: [CREATE, entity:Oro\Bundle\PromotionBundle\Entity\Coupon]
+        button_options:
+            icon: fa-list-alt
+        frontend_options:
+            template: OroPromotionBundle:Coupon:generate.html.twig
+            title: oro.promotion.coupon.generation.label
+            options:
+                width: 550
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: false
+                allowMinimize: false
+        attributes:
+            couponGenerateOptions:
+                label: ' '
+                type: object
+                options:
+                    class: Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationParams
+        form_options:
+            attribute_fields:
+                couponGenerateOptions:
+                    form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType
+            attribute_default_values:
+                couponGenerateOptions:
+                    $.couponGenerateOptions
+        form_init:
+            - '@assign_value': [$.couponGenerateOptions, $.data.couponGenerateOptions]
+        actions:
+            - '@call_service_method':
+                service: oro_promotion.coupon_generation.handler
+                method: process
+                method_parameters: [$.data, $.form]
+            - '@flash_message':
+                message: oro_promotion.coupon.generation.message.save_success
+                type: 'success'
+            - '@refresh_grid': promotion-coupons-grid
+
 action_groups:
     oro_promotion_duplicate:
         parameters:
