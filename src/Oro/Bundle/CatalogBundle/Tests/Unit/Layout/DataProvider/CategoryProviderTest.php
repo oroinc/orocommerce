@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
+use Oro\Bundle\CatalogBundle\Layout\DataProvider\DTO\Category as CategoryDTO;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider;
 
 class CategoryProviderTest extends \PHPUnit_Framework_TestCase
@@ -100,15 +102,23 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCategoryTree()
     {
+        $filteredChildCategory = new Category();
+        $filteredChildCategory->setLevel(2);
+        $filteredChildCategory->setMaterializedPath('1_2_4');
+
         $childCategory = new Category();
         $childCategory->setLevel(2);
+        $childCategory->setMaterializedPath('1_2_3');
 
         $mainCategory = new Category();
         $mainCategory->setLevel(1);
+        $mainCategory->setMaterializedPath('1_2');
         $mainCategory->addChildCategory($childCategory);
+        $mainCategory->addChildCategory($filteredChildCategory);
 
         $rootCategory = new Category();
         $rootCategory->setLevel(0);
+        $rootCategory->setMaterializedPath('1');
         $rootCategory->addChildCategory($mainCategory);
 
         $user = new CustomerUser();
@@ -121,11 +131,14 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $this->categoryTreeProvider->expects($this->once())
             ->method('getCategories')
             ->with($user, $rootCategory, null)
-            ->willReturn([$mainCategory]);
+            ->willReturn([$mainCategory, $childCategory]);
 
         $actual = $this->categoryProvider->getCategoryTree($user);
 
-        $this->assertEquals([$mainCategory], $actual);
+        $expectedDTO = new CategoryDTO($mainCategory);
+        $expectedDTO->addChildCategory(new CategoryDTO($childCategory));
+
+        $this->assertEquals(new ArrayCollection([$expectedDTO]), $actual);
     }
 
     public function testGetBreadcrumbs()

@@ -211,7 +211,10 @@ class ProductController extends Controller
             return $this->forward('OroProductBundle:Product:createStepTwo');
         }
 
-        return ['form' => $form->createView()];
+        return [
+            'form' => $form->createView(),
+            'isWidgetContext' => (bool)$request->get('_wid', false)
+        ];
     }
 
     /**
@@ -236,7 +239,8 @@ class ProductController extends Controller
 
             return [
                 'form' => $form->createView(),
-                'entity' => $product
+                'entity' => $product,
+                'isWidgetContext' => (bool)$request->get('_wid', false)
             ];
         } else {
             $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
