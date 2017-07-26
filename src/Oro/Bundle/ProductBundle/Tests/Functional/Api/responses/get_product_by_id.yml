@@ -2,12 +2,11 @@ data:
     type: products
     id: '<toString(@product-1->id)>'
     attributes:
-        sku: new-sku
-        status: disabled
+        sku: product-1
+        status: enabled
         variantFields: {  }
         productType: simple
-        featured: true
-        newArrival: true
+        newArrival: false
     relationships:
         owner:
             data:
@@ -17,6 +16,21 @@ data:
             data:
                 type: organizations
                 id: '1'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.liter->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
         names:
             data:
                 -
@@ -25,9 +39,6 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.names.en_US->id)>'
-                -
-                    type: localizedfallbackvalues
-                    id: '<toString(@product-1.names.es->id)>'
         descriptions:
             data:
                 -
@@ -44,25 +55,23 @@ data:
                 -
                     type: localizedfallbackvalues
                     id: '<toString(@product-1.shortDescriptions.en_US->id)>'
-        unitPrecisions:
+        slugPrototypes:
             data:
                 -
-                    type: productunitprecisions
-                    id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.slugPrototypes.default->id)>'
                 -
-                    type: productunitprecisions
-                    id: '<toString(@product_unit_precision.product-1.liter->id)>'
-                -
-                    type: productunitprecisions
-                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
-                -
-                    type: productunitprecisions
-                    id: '<toString(@product_unit_precision.product-1.box->id)>'
-        primaryUnitPrecision:
+                    type: localizedfallbackvalues
+                    id: '<toString(@product-1.slugPrototypes.en_US->id)>'
+        taxCode:
             data:
-                type: productunitprecisions
-                id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+                type: producttaxcodes
+                id: '<toString(@product_tax_code.TAX1->id)>'
+        manageInventory:
+            data:
+                type: entityfieldfallbackvalues
+                id: '<toString(@product-1.manageInventory->id)>'
         inventory_status:
             data:
                 type: prodinventorystatuses
-                id: out_of_stock
+                id: in_stock
