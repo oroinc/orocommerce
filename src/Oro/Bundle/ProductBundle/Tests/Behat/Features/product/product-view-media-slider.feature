@@ -1,4 +1,3 @@
-@ticket-BB-9585
 @fixture-OroProductBundle:product_listing_images.yml
 
 Feature: Gallery as slider
@@ -28,13 +27,10 @@ Feature: Gallery as slider
   Scenario: Gallery as slider - is present on front store
     Given I login as administrator
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Product"
-    And I click "Product Images"
+    And click "Product Images" on configuration sidebar
     And fill "Image Gallery Form" with:
       | Use Default                   | false |
       | Popup Gallery On Product View | false |
-    And save form
     And click "Save settings"
     And I go to Products / Products
     And I click Edit PSKU1 in grid
@@ -44,5 +40,8 @@ Feature: Gallery as slider
       | cat2.jpg |       |         | 1          |
     And I save and close form
     Then I should see "Product has been saved" flash message
-    When I am on "/product"
-    Then I should see "Product Slider"
+    And I am on the homepage
+    And type "Product1" in "search"
+    And click "Search Button"
+    And I click "Product1"
+    And I should see an "Product Slider" element
