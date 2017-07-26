@@ -59,6 +59,7 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.uses_per_coupon.label',
+                    'data' => 1
                 ]
             )
             ->add(
@@ -67,6 +68,7 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.uses_per_user.label',
+                    'data' => 1
                 ]
             )
             ->add(
@@ -75,6 +77,7 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'oro.promotion.coupon.generation.codeLength.label',
+                    'data' => 12
                 ]
             )->add(
                 'codeType',
