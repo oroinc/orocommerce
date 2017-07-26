@@ -488,7 +488,7 @@ services:
             - { name: form.type, alias: oro_promotion_shipping_methods }
 
     oro_promotion.coupon_generation.handler:
-        class: 'Oro\Bundle\PromotionBundle\Handler\CouponGenerationHandler'
+        class: 'Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler'
         arguments:
             - '@oro_promotion.coupon_generation.manager'
 
@@ -499,11 +499,11 @@ services:
             - '@oro_promotion.coupon_generation.inserter'
 
     oro_promotion.coupon_generation.generator:
-        class: 'Oro\Bundle\PromotionBundle\Service\SimpleCouponGenerator'
+        class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Generator\SimpleCouponGenerator'
         public: false
 
     oro_promotion.coupon_generation.inserter:
-        class: 'Oro\Bundle\PromotionBundle\Service\SimpleCouponInserter'
+        class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Inserter\SimpleCouponInserter'
         public: false
 
 

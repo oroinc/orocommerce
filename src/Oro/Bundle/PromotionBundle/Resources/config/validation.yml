@@ -53,7 +53,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
                 min: 0
                 max: 2147483647
 
-Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationParams:
+Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
     properties:
         owner:
             - NotBlank: ~

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
-use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationParams;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -91,11 +91,11 @@ class CouponGenerationType extends AbstractType
                 ChoiceType::class,
                 [
                     'choices' => [
-                        CouponGenerationParams::NUMERIC_CODE_TYPE =>
+                        CouponGenerationOptions::NUMERIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.numeric.label',
-                        CouponGenerationParams::ALPHANUMERIC_CODE_TYPE =>
+                        CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.alphanumeric.label',
-                        CouponGenerationParams::ALPHABETIC_CODE_TYPE =>
+                        CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.alphabetic.label',
                     ],
                 ]
@@ -130,7 +130,7 @@ class CouponGenerationType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => CouponGenerationParams::class,
+                'data_class' => CouponGenerationOptions::class,
             ]
         );
     }

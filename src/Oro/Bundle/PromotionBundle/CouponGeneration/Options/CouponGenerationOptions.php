@@ -5,7 +5,7 @@ namespace  Oro\Bundle\PromotionBundle\CouponGeneration\Options;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 
-class CouponGenerationParams
+class CouponGenerationOptions
 {
     const NUMERIC_CODE_TYPE = 'numeric';
     const ALPHANUMERIC_CODE_TYPE = 'alphanumeric';

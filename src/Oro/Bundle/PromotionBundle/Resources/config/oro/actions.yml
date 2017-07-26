@@ -66,25 +66,25 @@ operations:
                 allowMaximize: false
                 allowMinimize: false
         attributes:
-            couponGenerateOptions:
+            couponGenerationOptions:
                 label: ' '
                 type: object
                 options:
-                    class: Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationParams
+                    class: Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions
         form_options:
             attribute_fields:
-                couponGenerateOptions:
+                couponGenerationOptions:
                     form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType
             attribute_default_values:
-                couponGenerateOptions:
-                    $.couponGenerateOptions
+                couponGenerationOptions:
+                    $.couponGenerationOptions
         form_init:
-            - '@assign_value': [$.couponGenerateOptions, $.data.couponGenerateOptions]
+            - '@assign_value': [$.couponGenerationOptions, $.data.couponGenerationOptions]
         actions:
             - '@call_service_method':
                 service: oro_promotion.coupon_generation.handler
                 method: process
-                method_parameters: [$.data, $.form]
+                method_parameters: [$.form]
             - '@flash_message':
                 message: oro_promotion.coupon.generation.message.save_success
                 type: 'success'
