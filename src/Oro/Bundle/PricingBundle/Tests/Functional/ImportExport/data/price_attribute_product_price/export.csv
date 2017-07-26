@@ -1,0 +1,15 @@
+"Product SKU","Price Attribute","Unit Code",Currency,Price
+product-1,priceAttributePriceList1,liter,USD,11.0000
+product-1,priceAttributePriceList1,liter,EUR,10.0000
+product-1,priceAttributePriceList1,bottle,USD,12.2000
+product-1,priceAttributePriceList1,bottle,EUR,20.0000
+product-2,priceAttributePriceList1,liter,USD,20.0000
+product-2,priceAttributePriceList1,bottle,EUR,16.5000
+product-2,priceAttributePriceList1,bottle,USD,12.2000
+product-3,priceAttributePriceList1,liter,USD,5.0000
+product-1,priceAttributePriceList2,liter,USD,12.2000
+product-2,priceAttributePriceList2,liter,EUR,12.2000
+product-2,priceAttributePriceList2,bottle,USD,12.2000
+product-2,priceAttributePriceList2,bottle,EUR,16.5000
+product-2,priceAttributePriceList6,liter,USD,15.0000
+product-2,priceAttributePriceList6,bottle,EUR,15.0000
