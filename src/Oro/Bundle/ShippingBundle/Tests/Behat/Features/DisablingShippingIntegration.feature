@@ -1,4 +1,5 @@
 @ticket-BB-7664
+@selenium-incompatible
 @automatically-ticket-tagged
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroShippingBundle:ShippingMethodsConfigsRule.yml

@@ -378,6 +378,20 @@ oro_behat_extension:
     AttributeGroupCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\AttributeGroupCollection
 
+    ImageCollection:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ImagesCollection
+
+    ImageCollectionRow:
+      selector:
+        type: 'xpath'
+        locator: '//tr[contains(@data-content,"images")]'
+
+    ImageCollectionFileField:
+      selector:
+        type: 'xpath'
+        locator: '//input[contains(@id,"image_file")]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\FileField
+
     Line Item Form:
       selector: 'div.line-item-form'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\LineItemForm
@@ -412,6 +426,9 @@ oro_behat_extension:
 
     Color Product Attribute:
       selector: 'input[name="oro_product[variantFields][Color][is_selected]"]'
+
+    Size Product Attribute:
+      selector: 'input[name="oro_product[variantFields][Size][is_selected]"]'
 
     Promotions Form:
       selector: 'form[name="product_promotions"]'
@@ -477,6 +494,8 @@ oro_behat_extension:
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
+    Create Product Plus Button:
+      selector: '.content-variant-item-default .entity-create-btn'
 
   suites:
     # Revert by OPI-52

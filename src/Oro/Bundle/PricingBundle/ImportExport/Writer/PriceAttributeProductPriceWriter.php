@@ -16,13 +16,37 @@ class PriceAttributeProductPriceWriter extends PersistentBatchWriter
     protected function saveItems(array $items, EntityManager $em)
     {
         foreach ($items as $item) {
-            if ($item->getId() !== null && $item->getPrice() === null) {
+            if ($this->priceShouldBeDeleted($item)) {
                 $em->remove($item);
-            } elseif ($item->getPrice() !== null) {
+
+                continue;
+            }
+
+            if ($this->priceShouldBeSaved($item)) {
                 $em->persist($item);
             }
         }
 
         $em->flush();
+    }
+
+    /**
+     * @param PriceAttributeProductPrice $price
+     *
+     * @return bool
+     */
+    private function priceShouldBeDeleted(PriceAttributeProductPrice $price): bool
+    {
+        return $price->getId() !== null && $price->getPrice() === null;
+    }
+
+    /**
+     * @param PriceAttributeProductPrice $price
+     *
+     * @return bool
+     */
+    private function priceShouldBeSaved(PriceAttributeProductPrice $price): bool
+    {
+        return $price->getPrice() !== null;
     }
 }

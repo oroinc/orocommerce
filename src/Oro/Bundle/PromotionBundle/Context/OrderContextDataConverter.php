@@ -85,6 +85,7 @@ class OrderContextDataConverter implements ContextDataConverterInterface
             self::SHIPPING_ADDRESS => $entity->getShippingAddress(),
             self::SHIPPING_COST => $entity->getShippingCost(),
             self::SHIPPING_METHOD => $entity->getShippingMethod(),
+            self::SHIPPING_METHOD_TYPE => $entity->getShippingMethodType()
         ];
     }
 

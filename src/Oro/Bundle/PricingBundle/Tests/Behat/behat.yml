@@ -67,3 +67,12 @@ oro_behat_extension:
       selector: '.active.expression-editor-data-source .entity-select-btn'
     Price List Select Clear Button:
       selector: '.active.expression-editor-data-source .select2-search-choice-close'
+
+    PricingConfigurationForm:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Offset Of Processing CPL Prices Use Default: 'pricing[oro_pricing___offset_of_processing_cpl_prices][use_parent_scope_value]'
+          Offset Of Processing CPL Prices: 'pricing[oro_pricing___offset_of_processing_cpl_prices][value]'
+          Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
