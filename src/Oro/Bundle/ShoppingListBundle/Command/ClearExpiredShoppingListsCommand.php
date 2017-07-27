@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Command;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -55,9 +56,13 @@ class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements 
     private function getExpiredShoppingListIds()
     {
         $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $cookieLifetime = $this->getContainer()
+            ->get('oro_config.manager')
+            ->get('oro_customer.customer_visitor_cookie_lifetime_days');
+
         $expiredLastVisitDate->modify(sprintf(
             '-%d seconds',
-            $this->getContainer()->getParameter('oro_customer.anonymous_customer_user.lifetime')
+            $cookieLifetime * Configuration::SECONDS_IN_DAY
         ));
 
         $registry = $this->getContainer()->get('doctrine');
