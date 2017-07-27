@@ -451,16 +451,14 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            /*
-             * @todo: must be investigated in scope of BB-10751
-             * 'customer1 user3 (CustomerUser:DEEP)' => [
+            'customer1 user3 (CustomerUser:DEEP)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE9,
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,
                     'password' => LoadUserData::PARENT_ACCOUNT_USER1,
                 ],
                 'expected' => [
-                    'createOrderButton' => false,
+                    'createOrderButton' => true,
                     'columns' => [
                         [
                             'label' => 'oro.frontend.sale.quote.qid.label',
@@ -484,7 +482,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                     ],
                 ],
-            ],*/
+            ],
             'customer1 user3 (CustomerUser:DEEP) not acceptable' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE12,
