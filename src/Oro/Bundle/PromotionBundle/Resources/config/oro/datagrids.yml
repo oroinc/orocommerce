@@ -19,6 +19,8 @@ datagrids:
                 join:
                     inner:
                         - { join: promotion.rule, alias: rule}
+        properties:
+            id: ~
         columns:
             name:
                 label: oro.promotion.rule.name.label
@@ -129,3 +131,128 @@ datagrids:
                     type: number-range
                     data_name: discountAmount
                     filter_by_having: true
+
+    promotion-coupons-grid:
+        extended_entity_name: '%oro_promotion.entity.coupon.class%'
+        options:
+            entityHint: coupon
+            export: true
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: oro_promotion_coupon_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_promotion_coupon_view
+                rowAction:     true
+        source:
+            type: orm
+            query:
+                select:
+                    - coupon.id
+                    - coupon.code
+                    - rule.name as promotionName
+                    - coupon.createdAt
+                    - coupon.updatedAt
+                    - coupon.totalUses
+                    - coupon.usesPerCoupon
+                    - coupon.usesPerUser
+                    - coupon.validUntil
+                from:
+                    - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
+                join:
+                    left:
+                        - { join: coupon.promotion, alias: promotion }
+                        - { join: promotion.rule, alias: rule }
+        columns:
+            code:
+                label:         oro.promotion.coupon.code.label
+            promotionName:
+                label:         oro.promotion.coupon.promotion.label
+                frontend_type: html
+                type:          twig
+                template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
+            usesPerCoupon:
+                label:         oro.promotion.coupon.uses_per_coupon.label
+            usesPerUser:
+                label:         oro.promotion.coupon.uses_per_user.label
+            totalUses:
+                label:         oro.promotion.coupon.total_uses.label
+            validUntil:
+                label:         oro.promotion.coupon.valid_until.label
+                frontend_type: datetime
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: coupon.code
+                promotionName:
+                    data_name: rule.name
+                totalUses:
+                    data_name: coupon.totalUses
+                usesPerCoupon:
+                    data_name: coupon.usesPerCoupon
+                usesPerUser:
+                    data_name: coupon.usesPerUser
+                validUntil:
+                    data_name: coupon.validUntil
+                createdAt:
+                    data_name: coupon.createdAt
+                updatedAt:
+                    data_name: coupon.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: coupon.code
+                promotionName:
+                    type:      string
+                    data_name: rule.name
+                usesPerCoupon:
+                    type:      number
+                    data_name: coupon.usesPerCoupon
+                usesPerUser:
+                    type:      number
+                    data_name: coupon.usesPerUser
+                totalUses:
+                    type:      number
+                    data_name: coupon.totalUses
+                validUntil:
+                    type:      datetime
+                    data_name: coupon.validUntil
+                createdAt:
+                    type:      datetime
+                    data_name: coupon.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: coupon.updatedAt
+        mass_actions:
+            edit:
+                type:            massedit
+                handler:         oro_promotion.mass_action.coupon_edit_mass_action_handler
+                acl_resource:    oro_promotion_coupon_edit
+                route:           oro_promotion_coupon_mass_edit_widget
+                label:           oro.ui.edit
+                icon:            edit
+                data_identifier: coupon.id
+                frontend_options:
+                    title:       "@translator->trans(oro.promotion.coupon.form.title.mass_edit)"
+                    dialogOptions:
+                        width: 500
+                        modal: false
+                        allowMaximize: false
+                        allowMinimize: false
