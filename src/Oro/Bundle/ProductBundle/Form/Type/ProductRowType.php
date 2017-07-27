@@ -45,7 +45,7 @@ class ProductRowType extends AbstractProductAwareType
                 ProductUnitsType::NAME,
                 [
                     'required' => true,
-                    'label' => 'oro.product.unit.label'
+                    'label' => 'oro.product.productunitprecision.unit.label'
                 ]
             )
             ->add(

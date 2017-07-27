@@ -45,7 +45,7 @@ oro_behat_extension:
 
     Checkout Order Review Notes:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-      selector: 'input[id="addNote"]'
+      selector: 'input[id="addNote"]+.custom-checkbox__icon'
 
     OpenOrdersGrid:
       selector: 'div[data-page-component-name="frontend-checkouts-grid"]'
