@@ -1,4 +1,5 @@
 @fixture-OroVisibilityBundle:category_tree_with_product_visibility.yml
+@skip
 Feature: Product Visibility
 
   Scenario: Create two session
