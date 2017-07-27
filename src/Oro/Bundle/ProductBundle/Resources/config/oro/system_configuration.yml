@@ -472,3 +472,7 @@ system_configuration:
                                             - oro_product.related_products_min_items
                                             - oro_product.related_products_show_add_button
                                             - oro_product.related_products_use_slider_on_mobile
+                                    upsell_products:
+                                        children:
+                                            - oro_product.upsell_products_enabled
+                                            - oro_product.max_number_of_upsell_products

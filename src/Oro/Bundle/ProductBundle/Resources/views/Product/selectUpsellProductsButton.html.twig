@@ -1,6 +1,6 @@
 {% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedItemsUI %}
 
-<div class="upsell-products-widget">
+<div class="related-items-widget">
     {{ relatedItemsUI.renderRelatedItemButton(
         path('oro_product_possible_products_for_upsell_products', {'id': entity.id}),
         'oro.product.widgets.select_upsell_products.label'|trans,
