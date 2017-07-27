@@ -82,6 +82,12 @@
         }
     }
 
+    .checkout-billing-address {
+        #checkout_ship_to_billing_address_label {
+            margin-bottom: 15px;
+        }
+    }
+
     .checkout-order-summary {
         margin-top: 5px;
     }
@@ -129,7 +135,7 @@
     .checkout-view {
         &__column {
             padding: 0;
-            
+
             &:not(:last-child) {
                 width: 100%;
             }

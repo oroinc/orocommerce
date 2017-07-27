@@ -72,9 +72,9 @@
                      address: '#' ~ form.shipping_address.customerAddress.vars.id,
                      region: '#' ~ form.shipping_address.region.vars.id,
                      fieldsContainer: '#checkout-address-fields-container',
-                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id
+                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
+                     externalShipToBillingCheckbox: '#checkout_ship_to_billing_address_checkbox',
                  },
-                 hideInputOnShipTo: true
              }|json_encode }}">
 
             {{ form_row(form.shipping_address.customerAddress) }}
@@ -115,6 +115,12 @@
                 {{ form_row(form.billing_address.customerAddress) }}
 
                 {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, compact) }}
+                {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
+                    <label for="checkout_ship_to_billing_address_checkbox" id="checkout_ship_to_billing_address_label" class="custom-checkbox input-widget">
+                        <input type="checkbox" id="checkout_ship_to_billing_address_checkbox" class=" custom-checkbox__input" value="1"><span class="custom-checkbox__icon"></span>
+                        <span class="custom-checkbox__text">{{ 'oro.checkout.workflow.b2b_flow_checkout.form.ship_to_this_address.label'|trans }}</span>
+                    </label>
+                {% endif %}
             </div>
         {% endif %}
     </div>
@@ -261,7 +267,7 @@
                 {{ transitionData.transition.label|trans({},'workflows') }}
             </button>
         </div>
-            
+
         <div {{ UI.renderPageComponentAttributes({
             module: 'orocheckout/js/app/components/shipping-transition-button-component',
             options: {
