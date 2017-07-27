@@ -63,42 +63,21 @@
             transition: border-color .5s;
         }
 
-        .slick-arrow {
-            position: absolute;
-            top: 0;
-            z-index: z('base') + 1;
-
-            width: $product-view-media-gallery-nav-arrow-width;
-            height: $product-view-media-gallery-nav-arrow-height;
-
-            // hide text
-            font-size: 0;
-
-            border: $product-view-media-gallery-nav-arrow-border;
-            background: $product-view-media-gallery-nav-arrow-bg;
-        }
-
-        .slick-arrow {
-            &:before,
-            &:after {
-                position: relative;
-
-                display: block;
-
-                font-size: $product-view-media-gallery-nav-arrow-icon-size;
-            }
-        }
-
-        .slick-prev {
-            left: $product-view-media-gallery-nav-arrow-side-position;
-
-            @include fa-icon($product-view-media-gallery-nav-arrow-icon-prev);
-        }
-
-        .slick-next {
-            right: $product-view-media-gallery-nav-arrow-side-position;
-
-            @include fa-icon($product-view-media-gallery-nav-arrow-icon-next);
-        }
+        @include slick-arrow(
+            $slick-arrow-top: 0,
+            $slick-arrow-transform: null,
+            $slick-arrow-z-index: z('base') + 1,
+            $slick-arrow-width: $product-view-media-gallery-nav-arrow-width,
+            $slick-arrow-height: $product-view-media-gallery-nav-arrow-height,
+            $slick-arrow-color: null,
+            $slick-arrow-background: $product-view-media-gallery-nav-arrow-bg,
+            $slick-arrow-border: $product-view-media-gallery-nav-arrow-border,
+            $slick-arrow-icon-size: $product-view-media-gallery-nav-arrow-icon-size,
+            $slick-arrow-icon-color: null,
+            $slick-arrow-prev-icon: $product-view-media-gallery-nav-arrow-icon-prev,
+            $slick-arrow-next-icon: $product-view-media-gallery-nav-arrow-icon-next,
+            $slick-arrow-next-icon-right: $product-view-media-gallery-nav-arrow-side-position,
+            $slick-arrow-prev-icon-left: $product-view-media-gallery-nav-arrow-side-position,
+        );
     }
 }

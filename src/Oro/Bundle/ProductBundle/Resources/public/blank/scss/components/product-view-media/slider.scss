@@ -30,56 +30,18 @@
         height: 378px;
     }
 
-    .slick-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: z('base');
-
-        display: block;
-        width: $product-view-media-slider-arrow-width;
-        height: $product-view-media-slider-arrow-height;
-        padding: 0;
-
-        outline: none;
-        font-size: 0;
-        line-height: 0;
-        text-align: center;
-
-        border: none;
-        color: transparent;
-        background: none;
-
-        cursor: pointer;
-
-        &:before,
-        &:after {
-            display: block;
-
-            font-size: $product-view-media-slider-arrow-icon-size;
-
-            color: $product-view-media-slider-arrow-icon-color;
-        }
-
-        @include element-state('hover') {
-            &:before,
-            &:after {
-                color: $product-view-media-slider-arrow-icon-hover-color;
-            }
-        }
-    }
-
-    .slick-prev {
-        left: $product-view-media-slider-arrow-side-position;
-
-        @include fa-icon($product-view-media-slider-arrow-icon-prev, after);
-    }
-
-    .slick-next {
-        right: $product-view-media-slider-arrow-side-position;
-
-        @include fa-icon($product-view-media-slider-arrow-icon-next);
-    }
+    @include slick-arrow(
+        $slick-arrow-width: $product-view-media-slider-arrow-width,
+        $slick-arrow-height: $product-view-media-slider-arrow-height,
+        $slick-arrow-outline: none,
+        $slick-arrow-icon-size: $product-view-media-slider-arrow-icon-size,
+        $slick-arrow-icon-color: $product-view-media-slider-arrow-icon-color,
+        $slick-arrow-icon-hover-color: $product-view-media-slider-arrow-icon-hover-color,
+        $slick-arrow-prev-icon: $product-view-media-slider-arrow-icon-prev,
+        $slick-arrow-next-icon: $product-view-media-slider-arrow-icon-next,
+        $slick-arrow-next-icon-right: $product-view-media-slider-arrow-side-position,
+        $slick-arrow-prev-icon-left: $product-view-media-slider-arrow-side-position,
+    );
 
     @include slick-dots();
 }
