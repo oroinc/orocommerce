@@ -126,7 +126,7 @@ Feature: Guest Shopping Lists
       | Quantity | 10 |
       | Unit | each |
     And I click "Update Shoppin..."
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     When I click "NewCategory"
     Then I should see "In shopping list"
 

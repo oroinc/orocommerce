@@ -16,10 +16,6 @@ oro:
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields.label: Configurable Attributes
-        unit.label: Unit
-        price.label: Price
-        has_variants.label: Has Variants
-        variant_fields.label: Variant Fields
         inventory_status:
             label: Inventory Status
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
