@@ -9,22 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
 {
     /**
-     * @param BasePriceList $priceList
-     *
-     * @return int
-     */
-    public function deletePricesByPriceList(BasePriceList $priceList): int
-    {
-        $qb = $this->createQueryBuilder('price');
-
-        return $qb->delete()
-            ->where($qb->expr()->eq('price.priceList', ':priceList'))
-            ->setParameter('priceList', $priceList)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
      * Return product prices for specified price list and product IDs
      *
      * @param integer[] $priceAttributePriceListIds

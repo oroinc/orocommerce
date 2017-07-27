@@ -6,6 +6,9 @@ use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
 
+/**
+ * Removes attribute prices only for attributes that are listed in an import file
+ */
 class PriceAttributeProductPriceImportResetStrategy extends PriceAttributeProductPriceImportStrategy
 {
     /**
