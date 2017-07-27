@@ -1,3 +1,4 @@
+@selenium-incompatible
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @fixture-OroProductBundle:related_items_customer_users.yml
