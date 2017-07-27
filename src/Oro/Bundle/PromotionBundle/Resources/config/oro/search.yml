@@ -1,7 +1,7 @@
 search:
     Oro\Bundle\PromotionBundle\Entity\Promotion:
         alias:                          oro_promotion
-        title_fields:                   [name]
+        title_fields:                   [ruleName]
         route:
             name:                       oro_promotion_view
             parameters:
@@ -9,6 +9,10 @@ search:
         search_template:                OroPromotionBundle:Promotion:searchResult.html.twig
         fields:
             -
-                name:                   name
-                target_type:            text
-                target_fields:          [name]
+                name:                   rule
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name: name
+                        target_type: text
+                        target_fields: [ruleName]

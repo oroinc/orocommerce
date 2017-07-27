@@ -106,6 +106,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {
+        $this->waitForAjax();
         /** @var PromotionBackendOrder $order */
         $order = $this->createElement('PromotionBackendOrder');
 

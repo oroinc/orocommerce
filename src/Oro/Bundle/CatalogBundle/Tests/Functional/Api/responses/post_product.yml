@@ -1,0 +1,175 @@
+data:
+  type: products
+  attributes:
+    sku: test-api-1
+    status: enabled
+    variantFields: []
+    productType: simple
+    featured: true
+    newArrival: false
+  relationships:
+    owner:
+      data:
+        type: businessunits
+        id: 1
+    organization:
+      data:
+        type: organizations
+        id: 1
+    names:
+      data:
+      -
+        type: localizedfallbackvalues
+        id: names-1
+    slugPrototypes:
+      data:
+      -
+        type: localizedfallbackvalues
+        id: slug-id-1
+    attributeFamily:
+      data:
+        type: attributefamilies
+        id: 1
+    primaryUnitPrecision:
+      data:
+        type: productunitprecisions
+        id: product-unit-precision-id-3
+    unitPrecisions:
+      data:
+        -
+          type: productunitprecisions
+          id: product-unit-precision-id-1
+        -
+          type: productunitprecisions
+          id: product-unit-precision-id-2
+    inventory_status:
+      data:
+        type: prodinventorystatuses
+        id: out_of_stock
+    manageInventory:
+      data:
+        type: entityfieldfallbackvalues
+        id: 1abcd
+    inventoryThreshold:
+      data:
+        type: entityfieldfallbackvalues
+        id: 2abcd
+    minimumQuantityToOrder:
+      data:
+        type: entityfieldfallbackvalues
+        id: 3abcd
+    maximumQuantityToOrder:
+      data:
+        type: entityfieldfallbackvalues
+        id: 4abcd
+    decrementQuantity:
+      data:
+        type: entityfieldfallbackvalues
+        id: 5abcd
+    backOrder:
+      data:
+        type: entityfieldfallbackvalues
+        id: 6abcd
+    category:
+      data:
+        type: categories
+        id: '@category_1->id'
+included:
+  -
+    type: entityfieldfallbackvalues
+    id: 1abcd
+    attributes:
+      fallback: systemConfig
+      scalarValue: ~
+      arrayValue: ~
+  -
+    type: entityfieldfallbackvalues
+    id: 2abcd
+    attributes:
+      fallback: ~
+      scalarValue: 31
+      arrayValue: ~
+  -
+    type: entityfieldfallbackvalues
+    id: 3abcd
+    attributes:
+      fallback: systemConfig
+      scalarValue: ~
+      arrayValue: ~
+  -
+    type: entityfieldfallbackvalues
+    id: 4abcd
+    attributes:
+      fallback: ~
+      scalarValue: 12
+      arrayValue: ~
+  -
+    type: entityfieldfallbackvalues
+    id: 5abcd
+    attributes:
+      fallback: ~
+      scalarValue: 1
+      arrayValue: ~
+  -
+    type: entityfieldfallbackvalues
+    id: 6abcd
+    attributes:
+      fallback: ~
+      scalarValue: 0
+      arrayValue: ~
+  -
+    type: localizedfallbackvalues
+    id: names-1
+    attributes:
+      fallback: ~
+      string: Test product
+      text: ~
+    relationships:
+      localization:
+        data: ~
+  -
+    type: localizedfallbackvalues
+    id: slug-id-1
+    attributes:
+      fallback: ~
+      string: test-prod-slug
+      text: ~
+    relationships:
+      localization:
+        data: ~
+  -
+    type: productunitprecisions
+    id: product-unit-precision-id-1
+    attributes:
+      precision: 0
+      conversionRate: 5
+      sell: 1
+    relationships:
+      unit:
+        data:
+          type: productunits
+          id: each
+  -
+    type: productunitprecisions
+    id: product-unit-precision-id-2
+    attributes:
+      precision: 0
+      conversionRate: 10
+      sell: 1
+    relationships:
+      unit:
+        data:
+          type: productunits
+          id: item
+  -
+    type: productunitprecisions
+    id: product-unit-precision-id-3
+    attributes:
+      precision: 0
+      conversionRate: 2
+      sell: 1
+    relationships:
+      unit:
+        data:
+          type: productunits
+          id: set
