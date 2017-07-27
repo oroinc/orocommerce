@@ -1,0 +1,142 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precision2:
+        unit: '@item'
+        precision: '1'
+        sell: true
+    precision3:
+        unit: '@item'
+        precision: '1'
+        sell: true
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        productSku: 'PSKU1'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 95
+    price2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        productSku: 'PSKU2'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 9
+    price3:
+        product: '@product3'
+        priceList: '@defaultPriceList'
+        productSku: 'PSKU3'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: 5
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelation2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+    priceRelation3:
+        product: '@product3'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPriceProduct1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'PSKU1'
+        quantity: 1
+        unit: '@item'
+        value: 45
+        currency: 'USD'
+   combinedProductPriceProduct2:
+        pricelist: '@combinedPriceList'
+        product: '@product2'
+        productSku: 'PSKU2'
+        quantity: 1
+        unit: '@set'
+        value: 35
+        currency: 'USD'
+   combinedProductPriceProduct3:
+        pricelist: '@combinedPriceList'
+        product: '@product3'
+        productSku: 'PSKU3'
+        quantity: 1
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision1'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue1']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+        addDescription: ['@description']
+    product2:
+        sku: 'PSKU2'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision2'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue2']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatusOutOfStock'
+    product3:
+        sku: 'PSKU3'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        primaryUnitPrecision: '@precision3'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue3']
+        status: 'enabled'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    category1:
+        addTitle: ['@localNewCategory']
+        addProduct: ['@product1']
+    category2:
+        addTitle: ['@localNewCategory2']
+        setParentCategory: ['@category1']
+        addProduct: ['@product2']
+    category3:
+        addTitle: ['@localNewCategory3']
+        setParentCategory: ['@category2']
+        addProduct: ['@product3']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: 'Product1'
+    locvalue2:
+        string: 'Product2'
+    locvalue3:
+        string: 'Product3'
+    localNewCategory:
+        string: 'NewCategory'
+    localNewCategory2:
+        string: 'NewCategory2'
+    localNewCategory3:
+        string: 'NewCategory3'
+    description:
+        text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industryLorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry'

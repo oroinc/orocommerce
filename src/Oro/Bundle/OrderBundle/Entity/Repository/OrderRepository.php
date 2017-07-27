@@ -43,7 +43,9 @@ class OrderRepository extends EntityRepository
             ->leftJoin('orders.shippingAddress', 'shippingAddress')
             ->leftJoin('orders.billingAddress', 'billingAddress')
             ->leftJoin('orders.discounts', 'discounts')
-            ->where($qb->expr()->eq('orders.id', $id));
+            ->where($qb->expr()->eq('orders.id', $id))
+            ->addOrderBy($qb->expr()->asc('orders.id'))
+            ->addOrderBy($qb->expr()->asc('lineItems.id'));
 
         return $qb->getQuery()->getOneOrNullResult();
     }

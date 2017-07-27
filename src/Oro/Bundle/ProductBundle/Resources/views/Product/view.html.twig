@@ -37,10 +37,10 @@
         }) }}
     {% endset %}
     {% set productDescription %}
-        {{ UI.renderHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription) }}
+        {{ UI.renderCollapsibleHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription, entity, 'defaultDescription', 'More', 'Less') }}
     {% endset %}
     {% set productShortDescription %}
-        {{ UI.renderHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription) }}
+        {{ UI.renderCollapsibleHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription, entity, 'defaultShortDescription', 'More', 'Less') }}
     {% endset %}
 
     {% set productInfo %}
@@ -170,7 +170,7 @@
             'subblocks': [{
                 'title': '',
                 'data': {
-                    'inventory_status': UI.renderProperty('oro.product.inventory_status.label'|trans, entity.inventoryStatus)
+                    'inventory_status': UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, '<span class="product-inventory-status-' ~ entity.inventoryStatus.id ~'">' ~ entity.inventoryStatus ~ '</span>')
                 }
             }]
         }

@@ -18,15 +18,6 @@
         <li class="main-menu__item {{ hasSublist ? "main-menu__item--ancestor": "" }}">
             {% do block|merge_context({'category': category}) %}
             {{ block('container_widget') }}
-
-            {% if hasSublist %}
-                <button class="main-menu__button-arrow"
-                        data-toggle="dropdown"
-                        data-go-to="next"
-                >
-                    <i class="fa-angle-down fa--no-offset"></i>
-                </button>
-            {% endif %}
         </li>
     {%- endfor %}
 {% endblock %}
@@ -43,8 +34,16 @@
         {% endif %}
     </a>
     {% if hasSublist %}
+        <button class="main-menu__button-arrow"
+                data-toggle="dropdown"
+                data-go-to="next"
+        >
+            <i class="fa-angle-down fa--no-offset"></i>
+        </button>
         {# START TOP NAVIGATION SUBLIST #}
-        <div class="main-menu__sublist-container">
+        <div class="main-menu__sublist-container"
+             data-header-row-toggle
+             data-scroll="true">
             <div class="main-menu-columns">
                 <div class="main-menu-column main-menu-column">
                     <div class="main-menu-column__title">{{ 'oro.catalog.menu.by_category.label'|trans }}</div>

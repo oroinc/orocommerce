@@ -21,13 +21,14 @@ class LineItemRepository extends EntityRepository
      */
     public function findDuplicate(LineItem $lineItem)
     {
-        $qb = $this->createQueryBuilder('li')
-            ->where('li.product = :product')
+        $qb = $this->createQueryBuilder('li');
+        $qb->where('li.product = :product')
             ->andWhere('li.unit = :unit')
             ->andWhere('li.shoppingList = :shoppingList')
             ->setParameter('product', $lineItem->getProduct())
             ->setParameter('unit', $lineItem->getUnit())
-            ->setParameter('shoppingList', $lineItem->getShoppingList());
+            ->setParameter('shoppingList', $lineItem->getShoppingList())
+            ->addOrderBy($qb->expr()->asc('li.id'));
 
         if ($lineItem->getId()) {
             $qb
@@ -45,11 +46,12 @@ class LineItemRepository extends EntityRepository
      */
     public function getProductItemsWithShoppingListNames(AclHelper $aclHelper, $products)
     {
-        $qb = $this->createQueryBuilder('li')
-            ->select('li, shoppingList')
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
             ->andWhere('li.product IN (:products)')
-            ->setParameter('products', $products);
+            ->setParameter('products', $products)
+            ->addOrderBy($qb->expr()->asc('li.id'));
 
         return $aclHelper->apply($qb, 'EDIT')->getResult();
     }
@@ -60,12 +62,13 @@ class LineItemRepository extends EntityRepository
      */
     public function getItemsWithProductByShoppingList(ShoppingList $shoppingList)
     {
-        $qb = $this->createQueryBuilder('li')
-            ->select('li, product, names')
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li, product, names')
             ->join('li.product', 'product')
             ->join('product.names', 'names')
             ->where('li.shoppingList = :shoppingList')
-            ->setParameter('shoppingList', $shoppingList);
+            ->setParameter('shoppingList', $shoppingList)
+            ->addOrderBy($qb->expr()->asc('li.id'));
 
         return $qb->getQuery()->getResult();
     }
@@ -81,7 +84,8 @@ class LineItemRepository extends EntityRepository
         $qb->select('li')
             ->where('li.shoppingList = :shoppingList', $qb->expr()->in('li.product', ':product'))
             ->setParameter('shoppingList', $shoppingList)
-            ->setParameter('product', $products);
+            ->setParameter('product', $products)
+            ->addOrderBy($qb->expr()->asc('li.id'));
 
         return $qb->getQuery()->getResult();
     }
@@ -93,13 +97,14 @@ class LineItemRepository extends EntityRepository
      */
     public function getOneProductLineItemsWithShoppingListNames(Product $product, CustomerUser $customerUser)
     {
-        $qb = $this->createQueryBuilder('li')
-            ->select('li, shoppingList')
+        $qb = $this->createQueryBuilder('li');
+        $qb->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
             ->andWhere('li.product = :product')
             ->andWhere('li.customerUser = :customerUser')
             ->setParameter('product', $product)
-            ->setParameter('customerUser', $customerUser);
+            ->setParameter('customerUser', $customerUser)
+            ->addOrderBy($qb->expr()->asc('li.id'));
 
         return $qb->getQuery()->getResult();
     }

@@ -18,7 +18,9 @@
     </div>
     {% if not app.user %}
         <div class="notification-flash notification-flash--warning">
-            {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans }}
+            <div class="notification-flash__text">
+                {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans({'%url%': path('oro_customer_customer_user_security_login')})|raw }}
+            </div>
         </div>
     {% endif %}
 {% endblock %}

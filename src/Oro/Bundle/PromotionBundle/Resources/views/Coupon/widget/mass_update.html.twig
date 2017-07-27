@@ -1,0 +1,24 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+{% set formAction = path('oro_promotion_coupon_mass_edit_widget', {gridName: 'promotion-coupons-grid', actionName: 'edit', inset: inset, values: values }) %}
+{% block form %}
+    <form id="{{ form.vars.id }}"
+          name="{{ form.vars.name }}"
+          action="{{ formAction }}"
+          method="{{ form.vars.method }}"
+          class="form-dialog"
+    >
+        <fieldset class="form-horizontal">
+            {{ form_widget(form) }}
+        </fieldset>
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
+
+        <div class="widget-actions">
+            <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+            <button class="btn btn-success" type="submit">{{ 'Apply'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+{% endblock %}
