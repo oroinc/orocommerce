@@ -1,4 +1,5 @@
 @ticket-BB-7523
+@selenium-incompatible
 @fixture-OroProductBundle:Products_quick_order_form.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml

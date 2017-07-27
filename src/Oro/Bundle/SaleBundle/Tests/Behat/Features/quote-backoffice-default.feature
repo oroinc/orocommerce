@@ -1,4 +1,5 @@
 @regression
+@skip
 @ticket-BB-7802
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteBackofficeDefaultFixture.yml
