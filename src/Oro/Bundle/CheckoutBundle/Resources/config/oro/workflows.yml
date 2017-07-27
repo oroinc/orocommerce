@@ -482,6 +482,7 @@ workflows:
                                 method_parameters:
                                     - $visitor_email
                                     - $billing_address
+                            - '@flush_entity': $checkout.customerUser
                     - '@tree':
                         conditions:
                             '@and':

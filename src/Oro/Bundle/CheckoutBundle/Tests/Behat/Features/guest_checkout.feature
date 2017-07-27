@@ -13,6 +13,20 @@ Feature: Guest Checkout
       | Admin | first_session  |
       | User  | second_session |
 
+  Scenario: Enable guest shopping list setting
+    Given I proceed as the Admin
+    And login as administrator
+    And go to System/ Configuration
+    And I click "Commerce" on configuration sidebar
+    And I click "Sales" on configuration sidebar
+    When I click "Shopping List" on configuration sidebar
+    Then the "Enable guest shopping list" checkbox should not be checked
+    When uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
+    When I save form
+    Then I should see "Configuration saved" flash message
+    And the "Enable guest shopping list" checkbox should be checked
+
   Scenario: Set payment term for Non-Authenticated Visitors group
     Given I proceed as the Admin
     And I login as administrator

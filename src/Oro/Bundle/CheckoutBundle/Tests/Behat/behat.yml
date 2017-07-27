@@ -2,25 +2,22 @@ oro_behat_extension:
   suites:
     OroCheckoutBundle:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroCheckoutBundle::FeatureContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroFormBundle::FeatureContext
         - OroConfigBundle::FeatureContext
-        - OroCustomerBundle::ACLContext
+        - OroFormBundle::FormContext
+        - OroDataGridBundle::GridContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroShippingBundle::SingleCurrencyContext
+        - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
-        - OroDataGridBundle::GridContext
-        - OroFormBundle::FeatureContext
-        - OroFormBundle::FormContext
-        - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
-        - OroSaleBundle::FeatureContext
-        - OroOrderBundle::OrderContext
-        - OroProductBundle::FeatureContext
         - OroSalesBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroShippingBundle::SingleCurrencyContext
+        - OroOrderBundle::OrderContext
+        - OroCustomerBundle::ACLContext
+        - OroProductBundle::FeatureContext
         - OroWarehouseBundle::FeatureContext
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
