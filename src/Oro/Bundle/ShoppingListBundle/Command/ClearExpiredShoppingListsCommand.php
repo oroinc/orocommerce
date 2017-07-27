@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Command;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 
 class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements CronCommandInterface
 {
