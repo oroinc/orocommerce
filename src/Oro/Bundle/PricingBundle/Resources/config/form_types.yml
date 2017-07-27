@@ -194,6 +194,8 @@ services:
         arguments:
             - '@translator'
             - '@oro_pricing.provider.price_list_provider'
+            - '@oro_pricing.shard_manager'
+            - '%oro_pricing.entity.price_list.class%'
         tags:
             - { name: form.type, alias: oro_type_default_price_list_filter }
 

@@ -1,43 +1,46 @@
-<% var i = 0; %>
-<% _.each(methods, function(method) { %>
-    <% if (_.size(method.types) > 0) { %>
-        <div class="method_title">
-            <% if (method.isGrouped === true) { %>
-                <span><%= method.label %></span>
+<table class="table table-hover table-bordered grid">
+    <thead>
+    <tr>
+        <th>&nbsp;</th>
+        <th><span><%= _.__('oro.shipping.methods_table.method.label') %></span></th>
+        <th><span><%= _.__('oro.shipping.methods_table.option.label') %></span></th>
+        <th><span><%= _.__('oro.shipping.methods_table.price.label') %></span></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% _.each(methods, function(method) {
+    if (!_.keys(method.types).length) return;
+    %>
+    <% _.each(method.types, function(type) {
+    if (type.price.value === null) return;
+    var checked = areMethodsEqual(createMethodObject(method.identifier, type.identifier, type.price.value), selectedMethod);
+    %>
+    <tr>
+        <td>
+            <input type="radio" <%= checked ? 'checked="checked"' : '' %>
+            id="<%= 'possible_shipping_method_' + method.identifier + '_' + type.identifier %>"
+            name="possibleShippingMethodType"
+            value="<%= type.identifier %>"
+            data-shipping-method="<%= method.identifier %>"
+            data-shipping-price="<%= type.price.value %>"
+            data-choice="<%= type.identifier %>"
+            />
+        </td>
+        <td>
+            <label for="<%= 'possible_shipping_method_' + method.identifier + '_' + type.identifier %>"><%= _.__('oro.shipping.method_type.backend.method.label', {
+                translatedMethod: _.__(method.label),
+                }) %></label>
+        </td>
+        <td>
+            <% if (method.label !== type.label) { %>
+            <%= _.__('oro.shipping.method_type.backend.method_type.label', {
+            translatedMethodType: _.__(type.label),
+            }) %>
             <% } %>
-        </div>
-        <% _.each(method.types, function(type) { %>
-            <% if (type.price.value !== null) { %>
-                <div>
-                    <label>
-                        <input
-                            type="radio"
-                            name="possibleShippingMethodType"
-                            data-name="field__possible-shipping-method-type"
-                            value="<%= type.identifier %>"
-                            data-shipping-method="<%= method.identifier %>"
-                            data-shipping-price="<%= type.price.value %>"
-                            data-choice="<%= type.identifier %>"
-                            <% if (method.identifier === selectedMethod && type.identifier === selectedType) { %>
-                                <%= 'checked="checked"' %>
-                            <% } %>
-                        />
-                        <span class="radio_button_label">
-                            <%= _.__(
-                                'oro.shipping.method_type.backend.method_type_and_price.label',
-                                {
-                                    translatedMethodType: type.label,
-                                    price: '<strong>' + formatter.formatCurrency(type.price.value, type.price.currency) + '</strong>'
-                                })
-                            %>
-                        </span>
-                    </label>
-                </div>
-            <% } %>
-        <% }); %>
-    <% } %>
-    <% i = i + 1; %>
-    <% if (_.size(methods) > i) { %>
-        <hr>
-    <% } %>
-<% }); %>
+        </td>
+        <td><%= NumberFormatter.formatCurrency(type.price.value, type.price.currency) %></td>
+    </tr>
+    <% }) %>
+    <% }) %>
+    </tbody>
+</table>

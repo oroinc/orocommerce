@@ -242,6 +242,22 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     }
 
     /**
+     * @param object $lineItem
+     * @return float
+     */
+    public function getDiscountByLineItem($lineItem): float
+    {
+        $amount = 0.0;
+        foreach ($this->getLineItems() as $discountLineItem) {
+            if ($discountLineItem->getSourceLineItem() === $lineItem) {
+                $amount += $discountLineItem->getDiscountTotal();
+            }
+        }
+
+        return $amount;
+    }
+
+    /**
      * @return float
      */
     public function getTotalDiscountAmount(): float

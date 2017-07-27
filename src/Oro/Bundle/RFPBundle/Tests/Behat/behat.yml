@@ -7,11 +7,16 @@ oro_behat_extension:
                 - OroFormBundle::FormContext
                 - OroWorkflowBundle::FeatureContext
                 - OroApplicationBundle::CommerceMainContext
+                - OroShoppingListBundle::ShoppingListContext
                 - OroRFPBundle::FeatureContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 
     elements:
+        RFQ:
+            class: Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote
+            selector: '.page-content'
+
         RequestForQuote:
             class: Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote
             selector: '.page-content'
