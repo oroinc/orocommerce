@@ -55,7 +55,6 @@ class ProductPageTemplateValidator extends ConstraintValidator
         }
 
         foreach ($selectedValues as $selectedValue) {
-
             if (!in_array($selectedValue, $choices)) {
                 return false;
             }

@@ -23,7 +23,9 @@ class AddProductTypeDataTransformers implements ProcessorInterface
 
         if ($formBuilder->has('pageTemplate')) {
             $formBuilder->get('pageTemplate')
-                ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(ProductType::PAGE_TEMPLATE_ROUTE_NAME));
+                ->addModelTransformer(
+                    new PageTemplateEntityFieldFallbackValueTransformer(ProductType::PAGE_TEMPLATE_ROUTE_NAME)
+                );
         }
 
         $context->setFormBuilder($formBuilder);

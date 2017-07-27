@@ -30,5 +30,4 @@ class ProductPageTemplate extends Constraint
     {
         return ProductPageTemplateValidator::ALIAS;
     }
-
 }
