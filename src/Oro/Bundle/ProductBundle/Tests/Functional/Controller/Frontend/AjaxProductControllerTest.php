@@ -74,16 +74,10 @@ class AjaxProductControllerTest extends WebTestCase
         ];
     }
 
-    /**
-     * @dataProvider productImagesByIdDataProvider
-     *
-     * @param string|int $productReference
-     * @param array      $expectedData
-     */
-    public function testProductImagesById($productReference, array $expectedData)
+    public function testProductImagesById()
     {
         /** @var Product $product */
-        $product = $this->getReference($productReference);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->client->request(
             'GET',
             $this->getUrl(
@@ -98,34 +92,35 @@ class AjaxProductControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
         $data = json_decode($result->getContent(), true);
-        array_walk_recursive($expectedData, function (&$value) use ($product) {
-            if (!is_array($value)) {
-                $value = sprintf($value, $this->getReference('img.'.$product->getSku())->getId());
-            }
-        });
 
-        $this->assertEquals($expectedData, $data);
+        $this->assertNotEmpty($data);
+        $this->assertArrayHasKey(0, $data);
+        $this->assertArrayHasKey('product_gallery_popup', $data[0]);
+        $this->assertStringMatchesFormat(
+            '/media/cache/attachment/%s/%s/product_gallery_popup/product-1',
+            $data[0]['product_gallery_popup']
+        );
     }
 
-    /**
-     * @return array
-     */
-    public function productImagesByIdDataProvider()
+    public function testProductImagesByIdWhenProductHasNoImages()
     {
-        return [
-            'product has image' => [
-                'productId' => LoadProductData::PRODUCT_1,
-                'expectedData' => [
-                    [
-                        'product_gallery_popup' => '/media/cache/attachment/resize/%d/product_gallery_popup/product-1',
-                    ],
-                ],
-            ],
-            'product has no images' => [
-                'productId' => LoadProductData::PRODUCT_3,
-                'expectedData' => [],
-            ],
-        ];
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_product_frontend_ajax_images_by_id',
+                [
+                    'id' => $product->getId(),
+                    'filters' => ['product_gallery_popup'],
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertSame([], $data);
     }
 
     public function testProductImagesByIdWhenProductIsMissing()
