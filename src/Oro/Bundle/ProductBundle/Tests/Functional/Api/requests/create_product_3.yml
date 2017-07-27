@@ -19,7 +19,7 @@ data:
         organization:
             data:
                 type: organizations
-                id: '<toString(@order.simple_organization_1->getId())>'
+                id: '<toString(@TestBusinessUnit->getOrganization()->getId())>'
         pageTemplate:
             data:
                 type: entityfieldfallbackvalues
