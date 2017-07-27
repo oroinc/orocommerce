@@ -15,7 +15,7 @@ use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  * @group CommunityEdition
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
