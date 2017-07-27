@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 use Oro\Bundle\ProductBundle\Processor\Shared\RelatedItemSecurityCheck;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
 use Oro\Component\ChainProcessor\ContextInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class RelatedItemSecurityCheckTest extends \PHPUnit_Framework_TestCase
 {
