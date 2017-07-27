@@ -5,6 +5,11 @@ layout:
         - '@move':
             id: web_catalog_menu
             parentId: sidebar_product_categories_container
+        - '@move':
+            id: categories_main_menu
+            parentId: sidebar_product_categories_container
         - '@remove':
             id: web_catalog_menu_list
+        - '@remove':
+            id: main_menu_container
 
