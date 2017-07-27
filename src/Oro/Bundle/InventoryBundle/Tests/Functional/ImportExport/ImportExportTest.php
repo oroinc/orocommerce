@@ -15,6 +15,7 @@ use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLeve
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
+ * @dbIsolationPerTest
  * @group CommunityEdition
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
