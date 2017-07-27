@@ -22,3 +22,8 @@ PayPalBundle
 ------------
 - Class `Oro\Bundle\PayPalBundle\EventListener\Callback\RedirectListener`
     - changed signature of `__construct` method. Dependency on `PaymentMethodProviderInterface` added.
+
+ProductBundle
+------------
+
+Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API
