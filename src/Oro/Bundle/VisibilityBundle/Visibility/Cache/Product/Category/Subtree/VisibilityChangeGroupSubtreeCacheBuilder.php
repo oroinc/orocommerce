@@ -24,8 +24,10 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
 
     /**
      * @param Category $category
-     * @param Scope $scope
-     * @param int $visibility
+     * @param Scope    $scope
+     * @param int      $visibility
+     *
+     * @return array|int[] Affected categories id
      */
     public function resolveVisibilitySettings(Category $category, Scope $scope, $visibility)
     {
@@ -43,6 +45,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
 
         $this->clearChangedEntities();
+
+        return $categoryIds;
     }
 
     /**
