@@ -135,7 +135,7 @@
             </div>
         {% else %}
             {% for productImage in productImages %}
-                <div class="product-view-media-slider__image-item" data-trigger-gallery-open>
+                <div class="product-view-media-slider__image-item">
                     <img class="product-view-media-slider__image"
                          alt="{{ product.names|localized_value }}"
                             {% if loop.first %}

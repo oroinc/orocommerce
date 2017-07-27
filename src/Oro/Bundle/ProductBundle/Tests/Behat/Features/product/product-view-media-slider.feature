@@ -24,24 +24,35 @@ Feature: Gallery as slider
   # Show how administrators can switch between popup and inline gallery views on different configuration levels
   # Show how popup and inline gallery work on product view pages
 
-  Scenario: Gallery as slider - is present on front store
+  Scenario: Check gallery popup is present on front store
     Given I login as administrator
-    And go to System / Configuration
-    And click "Product Images" on configuration sidebar
-    And fill "Image Gallery Form" with:
-      | Use Default                   | false |
-      | Popup Gallery On Product View | false |
-    And click "Save settings"
     And I go to Products / Products
-    And I click Edit PSKU1 in grid
+    And I click Edit "PSKU1" in grid
     And I set Images with:
       | File     | Main  | Listing | Additional |
       | cat1.jpg | 1     | 1       | 1          |
       | cat2.jpg |       |         | 1          |
     And I save and close form
-    Then I should see "Product has been saved" flash message
+    And I should see "Product has been saved" flash message
     And I am on the homepage
-    And type "Product1" in "search"
+    And type "PSKU1" in "search"
     And click "Search Button"
-    And I click "Product1"
+    And click "View Details" for "PSKU1" product
+    And I should see an "Product View Gallery Trigger" element
+    And I click "Product View Gallery Trigger"
+    And I should see an "Popup Gallery Widget" element
+
+  Scenario: Check gallery as slider is present on front store
+    Given I login as administrator
+    And go to System / Configuration
+    And click "Product Images" on configuration sidebar
+    And fill "Product Images Form" with:
+      | Popup Gallery Default         | false |
+      | Popup Gallery On Product View | false |
+    And click "Save settings"
+    And I am on the homepage
+    And type "PSKU1" in "search"
+    And click "Search Button"
+    And click "View Details" for "PSKU1" product
     And I should see an "Product Slider" element
+    And I should not see an "Product View Gallery Trigger" element

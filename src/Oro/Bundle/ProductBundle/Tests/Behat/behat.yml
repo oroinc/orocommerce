@@ -441,6 +441,14 @@ oro_behat_extension:
           Show On Product View Default: 'product_promotions[oro_product___product_promotion_show_on_product_view][use_parent_scope_value]'
           Show On Product View: 'product_promotions[oro_product___product_promotion_show_on_product_view][value]'
 
+    Product Images Form:
+      selector: 'form[name="product_images"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Popup Gallery Default: 'product_images[oro_product___popup_gallery_on_product_view][use_parent_scope_value]'
+          Popup Gallery On Product View: 'product_images[oro_product___popup_gallery_on_product_view][value]'
+
     RequestAQuoteProducts:
       selector: '.page-content .request-form [data-role="product-container"]'
 
@@ -492,16 +500,12 @@ oro_behat_extension:
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
 
-    Image Gallery Form:
-      selector: 'form[name="product_images"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Use Default: 'product_images[oro_product___popup_gallery_on_product_view][use_parent_scope_value]'
-          Popup Gallery On Product View: 'product_images[oro_product___popup_gallery_on_product_view][value]'
-
     Product Slider:
-      selector: '.product-view__aside .product-view-media-slider'
+      selector: '.product-view-media-container .product-view-media-slider'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Product View Gallery Trigger:
+      selector: '.product-view-media-container [data-trigger-gallery-open]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
   suites:
