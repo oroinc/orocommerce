@@ -1,3 +1,4 @@
+@selenium-incompatible
 @fixture-OroDPDBundle:DPDIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroOrderBundle:OrderShippingMethod.yml
