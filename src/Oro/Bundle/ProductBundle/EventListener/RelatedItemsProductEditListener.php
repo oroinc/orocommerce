@@ -82,7 +82,9 @@ class RelatedItemsProductEditListener
             $grids = array_merge([$this->renderTabs($twigEnv, $tabs)], $grids);
         }
 
-        $this->addEditPageBlock($event->getScrollData(), $grids);
+        if (count($grids) > 0) {
+            $this->addEditPageBlock($event->getScrollData(), $grids);
+        }
     }
 
     /**

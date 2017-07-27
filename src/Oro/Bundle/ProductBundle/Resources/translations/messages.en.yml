@@ -206,7 +206,7 @@ oro:
             related_products:
                 edit.label: '[Related Products] Edit related products'
             upsell_products:
-                edit.label: '[Upsell Products] Edit upsell products'
+                edit.label: '[Up-sell Products] Edit up-sell products'
 
         rounding:
             type:
@@ -226,11 +226,11 @@ oro:
             images: Images
             design: Design
             relatedItems: Related Items
-            upsellItems: Upsell items
+            upsellItems: Up-sell items
 
         tabs:
             relatedProducts: Related Products
-            upsellProducts: Upsell Products
+            upsellProducts: Up-sell Products
 
         widgets:
             product_information: Product Information
@@ -240,9 +240,9 @@ oro:
               limit_has_been_reached: Limit of related products has been reached
             select_products: Select products
             select_upsell_products:
-              title: Select upsell products for {{ sku }} - {{ name }}
-              label: Select upsell products
-              limit_has_been_reached: Limit of upsell products has been reached
+              title: Select up-sell products for {{ sku }} - {{ name }}
+              label: Select up-sell products
+              limit_has_been_reached: Limit of up-sell products has been reached
 
         controller:
             product.saved.message: Product has been saved
@@ -261,7 +261,7 @@ oro:
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
                 related_items.title: 'Related Items'
-                upsell_products.title: 'Up-sell Items'
+                upsell_products.title: 'Up-sell Products'
                 related_products.title: 'Related Products'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
@@ -282,7 +282,7 @@ oro:
                 max_number_of_related_products:
                     label: 'Maximum Number of Assigned Items'
                     tooltip: 'You may use this option to set the limit on the number of related products that the catalog managers can link.'
-                enable_upsell_products.label: 'Enable Up-sell Items'
+                enable_upsell_products.label: 'Enable Up-sell Products'
                 max_number_of_upsell_products:
                     label: 'Maximum Number of Assigned Items'
                     tooltip: 'You may use this option to set the limit on the number of cross-sell items that the catalog managers can link.'

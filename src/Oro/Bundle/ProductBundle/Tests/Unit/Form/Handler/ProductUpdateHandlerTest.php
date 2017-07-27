@@ -298,45 +298,9 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $removeRelatedProductsField = $this->getSubForm();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                ['appendRelated', $appendRelatedProductsField],
-                ['removeRelated', $removeRelatedProductsField],
-            ]);
-        $form->expects($this->any())
-            ->method('has')
-            ->willReturnMap([
-                ['appendRelated', true],
-                ['removeRelated', true],
-            ]);
-        $form->expects($this->any())
-            ->method('getErrors')
-            ->willReturn(new FormErrorIterator($form, []));
-
+        $form = $this->prepareAppendedFields($appendRelatedProductsField, $removeRelatedProductsField, $entity);
         /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
         $formHandlerMock = $this->getFormHandlerMock($entity);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getSingleEntityIdentifier')
-            ->with($entity)
-            ->will($this->returnValue(1));
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityManager')
-            ->with($entity)
-            ->will($this->returnValue($this->entityManager));
-
-        $this->relatedItemsHandler->expects($this->once())
-            ->method('process')
-            ->with(
-                RelatedItemsHandler::RELATED_PRODUCTS,
-                $entity,
-                $appendRelatedProductsField,
-                $removeRelatedProductsField
-            )
-            ->willReturn(true);
 
         $handler = new ProductUpdateHandler(
             $this->requestStack,
@@ -369,45 +333,9 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
         $removeRelatedProductsField = $this->getSubForm([$relatedEntity]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap([
-                ['appendRelated', $appendRelatedProductsField],
-                ['removeRelated', $removeRelatedProductsField],
-            ]);
-        $form->expects($this->any())
-            ->method('has')
-            ->willReturnMap([
-                ['appendRelated', true],
-                ['removeRelated', true],
-            ]);
-        $form->expects($this->any())
-            ->method('getErrors')
-            ->willReturn(new FormErrorIterator($form, []));
+        $form = $this->prepareAppendedFields($appendRelatedProductsField, $removeRelatedProductsField, $entity);
+        /** @var FormHandler|\PHPUnit_Framework_MockObject_MockObject $formHandlerMock */
         $formHandlerMock = $this->getFormHandlerMock($entity);
-
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getSingleEntityIdentifier')
-            ->with($entity)
-            ->will($this->returnValue(1));
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityManager')
-            ->with($entity)
-            ->will($this->returnValue($this->entityManager));
-
-        $this->relatedItemsHandler->expects($this->once())
-            ->method('process')
-            ->with(
-                RelatedItemsHandler::RELATED_PRODUCTS,
-                $entity,
-                $appendRelatedProductsField,
-                $removeRelatedProductsField
-            )
-            ->willReturn(true);
 
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
@@ -638,5 +566,54 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             ->with($entity)
             ->will($this->returnValue(true));
         return $formHandlerMock;
+    }
+
+    /**
+     * @param $appendRelatedProductsField
+     * @param $removeRelatedProductsField
+     * @param $entity
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|Form
+     */
+    private function prepareAppendedFields($appendRelatedProductsField, $removeRelatedProductsField, $entity)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        $form = $this->createMock(Form::class);
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['appendRelated', $appendRelatedProductsField],
+                ['removeRelated', $removeRelatedProductsField],
+            ]);
+        $form->expects($this->any())
+            ->method('has')
+            ->willReturnMap([
+                ['appendRelated', true],
+                ['removeRelated', true],
+            ]);
+        $form->expects($this->any())
+            ->method('getErrors')
+            ->willReturn(new FormErrorIterator($form, []));
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->will($this->returnValue(1));
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManager')
+            ->with($entity)
+            ->will($this->returnValue($this->entityManager));
+
+        $this->relatedItemsHandler->expects($this->once())
+            ->method('process')
+            ->with(
+                RelatedItemsHandler::RELATED_PRODUCTS,
+                $entity,
+                $appendRelatedProductsField,
+                $removeRelatedProductsField
+            )
+            ->willReturn(true);
+
+        return $form;
     }
 }

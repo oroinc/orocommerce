@@ -120,7 +120,7 @@ define(function(require) {
 
             $(this.elements.widgetActions).prepend(this.options.limitErrorTemplate({
                 dataAttr: this.elements.limitError.replace(new RegExp(/\[|]/g), ''),
-                msg: __('oro.product.widgets.select_related_products.limit_has_been_reached')
+                msg: __('oro.product.widgets.select_related_items.limit_has_been_reached')
             }));
         },
 
