@@ -35,12 +35,12 @@ Feature: Gallery as slider
     And I save and close form
     And I should see "Product has been saved" flash message
     And I am on the homepage
-    And type "PSKU1" in "search"
+    When I type "PSKU1" in "search"
     And click "Search Button"
-    And click "View Details" for "PSKU1" product
+    And I click "View Details" for "PSKU1" product
     And I should see an "Product View Gallery Trigger" element
     And I click "Product View Gallery Trigger"
-    And I should see an "Popup Gallery Widget" element
+    Then I should see an "Popup Gallery Widget" element
 
   Scenario: Check gallery as slider is present on front store
     Given I login as administrator
@@ -51,8 +51,8 @@ Feature: Gallery as slider
       | Popup Gallery On Product View | false |
     And click "Save settings"
     And I am on the homepage
-    And type "PSKU1" in "search"
+    When I type "PSKU1" in "search"
     And click "Search Button"
     And click "View Details" for "PSKU1" product
     And I should see an "Product Slider" element
-    And I should not see an "Product View Gallery Trigger" element
+    Then I should not see an "Product View Gallery Trigger" element
