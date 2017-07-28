@@ -349,6 +349,7 @@ class Order extends ExtendOrder implements
      * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
+     * @ORM\OrderBy({"id" = "ASC"})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

@@ -17,8 +17,8 @@ Feature: Promotions at Checkout
       And I press "Create Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
-      | SKU2 | $5.00    |
       | SKU1 |          |
+      | SKU2 | $5.00    |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount |
       | Discount | $12.50 |
@@ -28,8 +28,8 @@ Feature: Promotions at Checkout
     Given Page title equals to "Shipping Information - Open Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
-      | SKU2 | $5.00    |
       | SKU1 |          |
+      | SKU2 | $5.00    |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount |
       | Discount | $12.50 |
@@ -39,8 +39,8 @@ Feature: Promotions at Checkout
     Given Page title equals to "Shipping Method - Open Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
-      | SKU2 | $5.00    |
       | SKU1 |          |
+      | SKU2 | $5.00    |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount |
       | Discount | $12.50 |
@@ -50,8 +50,8 @@ Feature: Promotions at Checkout
     Given Page title equals to "Payment - Open Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
-      | SKU2 | $5.00    |
       | SKU1 |          |
+      | SKU2 | $5.00    |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount |
       | Discount | $12.50 |
@@ -61,8 +61,8 @@ Feature: Promotions at Checkout
     Given Page title equals to "Order Review - Open Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
-      | SKU2 | $5.00    |
       | SKU1 |          |
+      | SKU2 | $5.00    |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount |
       | Discount | $12.50 |
@@ -74,8 +74,8 @@ Feature: Promotions at Checkout
       And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I see next line item discounts for order:
       | SKU  | Row Total (Discount Amount) |
-      | SKU2 | $5.00                       |
       | SKU1 | $0.00                       |
+      | SKU2 | $5.00                       |
     And I see next subtotals for "Order":
       | Subtotal | Amount |
       | Discount | $12.50 |

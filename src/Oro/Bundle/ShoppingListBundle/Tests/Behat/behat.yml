@@ -62,6 +62,9 @@ oro_behat_extension:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals
       selector: '.order-checkout-widget__container'
 
+    Add a Note to This Shopping List:
+      selector: 'input[name=addANote]+.custom-checkbox__icon'
+
   suites:
     OroShoppingListBundle:
       contexts:

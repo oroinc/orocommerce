@@ -60,8 +60,8 @@ Feature: Promotions in Order page
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 2 Item #: SKU2 | $5.00 |
       | Product 1 Item #: SKU1 | $0.00 |
+      | Product 2 Item #: SKU2 | $5.00 |
     And I see next subtotals for "Order":
       | Subtotal | Amount |
       | Subtotal | $20.00 |
@@ -71,6 +71,7 @@ Feature: Promotions in Order page
 
   Scenario: Change product's quantity and check that after saving without discount recalculation discount amount hasn't changed
     Given I operate as the Admin
+    And I click "Line Items"
     When I fill "Promotion Order Form" with:
       | SKU2ProductQuantity | 3 |
 #    Check that line items discounts were reloaded by ajax
@@ -120,8 +121,8 @@ Feature: Promotions in Order page
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 2 Item #: SKU2 | $5.00 |
       | Product 1 Item #: SKU1 | $0.00 |
+      | Product 2 Item #: SKU2 | $5.00 |
     And I see next subtotals for "Order":
       | Subtotal | Amount |
       | Subtotal | $16.00 |
@@ -159,8 +160,8 @@ Feature: Promotions in Order page
     When I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 2 Item #: SKU2 | $3.00 |
       | Product 1 Item #: SKU1 | $0.00 |
+      | Product 2 Item #: SKU2 | $3.00 |
     And I see next subtotals for "Order":
       | Subtotal | Amount |
       | Subtotal | $16.00 |
