@@ -37,10 +37,10 @@
         }) }}
     {% endset %}
     {% set productDescription %}
-        {{ UI.renderHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription) }}
+        {{ UI.renderCollapsibleHtmlProperty('oro.product.descriptions.label'|trans, entity.defaultDescription, entity, 'defaultDescription', 'More', 'Less') }}
     {% endset %}
     {% set productShortDescription %}
-        {{ UI.renderHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription) }}
+        {{ UI.renderCollapsibleHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription, entity, 'defaultShortDescription', 'More', 'Less') }}
     {% endset %}
 
     {% set productInfo %}
@@ -170,22 +170,27 @@
             'subblocks': [{
                 'title': '',
                 'data': {
-                    'inventory_status': UI.renderProperty('oro.product.inventory_status.label'|trans, entity.inventoryStatus)
+                    'inventory_status': UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, '<span class="product-inventory-status-' ~ entity.inventoryStatus.id ~'">' ~ entity.inventoryStatus ~ '</span>')
                 }
             }]
         }
     }) %}
 
     {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
+        {% set headerLinkContent = '' %}
+        {% if resource_granted('oro_product_update') %}
+            {% set headerLinkContent = UII.link({
+                path: path('oro_product_related_items_update', {id: entity.id}),
+                label: 'oro.product.quick_edit.label'|trans,
+                iCss: 'fa-edit',
+                class: 'quick-editable pull-right'
+            }) %}
+        {% endif %}
+
         {% set dataBlocks = dataBlocks|merge({
             'relatedItems': {
                 'title': 'oro.product.sections.relatedItems'|trans,
-                'headerLinkContent': UII.link({
-                        path: path('oro_product_related_items_update', {id: entity.id}),
-                        label: 'oro.product.quick_edit.label'|trans,
-                        iCss: 'fa-edit',
-                        class: 'quick-editable pull-right'
-                    }),
+                'headerLinkContent': headerLinkContent,
                 'priority': 450,
                 'subblocks': [{
                     'data': [
