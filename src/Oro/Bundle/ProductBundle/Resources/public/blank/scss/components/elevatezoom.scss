@@ -11,6 +11,11 @@
 
 .zoomContainer {
     z-index: z('base') + 9;
+    pointer-events: none;
+}
+
+.zoomLens {
+    pointer-events: none;
 }
 
 .zoomWindowContainer {
