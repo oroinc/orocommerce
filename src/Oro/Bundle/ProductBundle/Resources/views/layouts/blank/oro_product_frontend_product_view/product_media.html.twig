@@ -1,31 +1,6 @@
 {% block _product_view_media_container_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-    {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
-
-    {% if productImages|length == 0 %}
-        {% set productImages = collect_product_images_by_types(product, ['listing']) %}
-    {% endif %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view-media-container'
-    }) %}
-
-    {% set galleryImages = [] %}
-    {% for productImage in productImages %}
-        {% set galleryImages = galleryImages|merge([{
-            src: Image.url(productImage.image, 'product_gallery_popup'),
-            thumb: Image.url(productImage.image, 'product_small'),
-            alt: (product.names|localized_value|e)
-        }]) %}
-    {% endfor %}
-
-    {% set options = {
-        galleryImages: galleryImages
-    } %}
-
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'orofrontend/js/app/components/popup-gallery-widget'
-        'data-page-component-options': options|json_encode
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -45,7 +20,6 @@
 
     {% if popup_gallery %}
         {{ block('_product_view_media_gallery_widget') }}
-        {{ block('_product_media_popup_widget') }}
     {% else %}
         {{ block('_product_view_media_slider_widget') }}
     {% endif %}
@@ -173,53 +147,5 @@
                 </div>
             {% endfor %}
         {% endif %}
-    </div>
-{% endblock %}
-
-{% block _product_media_popup_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
-    {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
-
-    {% if productImages|length == 0 %}
-        {% set productImages = collect_product_images_by_types(product, ['listing']) %}
-    {% endif %}
-
-    <div class="popup-gallery-widget"
-         data-gallery-content
-         data-product-gallery
-         data-page-component-module="orofrontend/js/app/components/popup-gallery-widget">
-        <div class="popup-gallery-widget__bg"
-             data-trigger-gallery-close></div>
-        <div class="popup-gallery-widget__wrapper">
-            <button class="popup-gallery-widget__close" data-trigger-gallery-close></button>
-            <div class="popup-gallery-widget__images"
-                 data-gallery-images>
-                {% for productImage in productImages %}
-                    <div class="popup-gallery-widget__image">
-                        <img data-lazy="{{ Image.url(productImage.image, 'product_gallery_popup') }}"
-                             alt="{{ product.names|localized_value }}"
-                             width="100%"
-                             height="100%"
-                        />
-                    </div>
-                {% endfor %}
-            </div>
-            {% if productImages|length > 1 %}
-                <div class="popup-gallery-widget__thumbnails"
-                     data-gallery-thumbnails>
-                    {% for productImage in productImages %}
-                        <div class="popup-gallery-widget__thumbnails-img">
-                            <img
-                                    src="{{ Image.url(productImage.image, 'product_small') }}"
-                                    alt="{{ product.names|localized_value }}"
-                                    width="80"
-                                    height="80"
-                            />
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
     </div>
 {% endblock %}
