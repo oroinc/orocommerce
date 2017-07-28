@@ -281,7 +281,7 @@ oro:
                 enable_upsell_products.label: 'Enable Up-sell Products'
                 max_number_of_upsell_products:
                     label: 'Maximum Number of Assigned Items'
-                    tooltip: 'You may use this option to set the limit on the number of cross-sell items that the catalog managers can link.'
+                    tooltip: 'You may use this option to set the limit on the number of up-sell items that the catalog managers can link.'
                 related_products_max_items:
                     label: 'Maximum Items'
                     tooltip: 'Show not more than the specified number of items (applied after filtering out the products that are not visible to the current user).'
