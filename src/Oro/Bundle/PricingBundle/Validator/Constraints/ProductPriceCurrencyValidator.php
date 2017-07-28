@@ -3,11 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\Common\Util\ClassUtils;
-
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceCurrencyValidator extends ConstraintValidator
 {
@@ -31,6 +29,9 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
 
         $price = $value->getPrice();
         if (!$price) {
+            return;
+        }
+        if ($value->getPriceList() === null) {
             return;
         }
 

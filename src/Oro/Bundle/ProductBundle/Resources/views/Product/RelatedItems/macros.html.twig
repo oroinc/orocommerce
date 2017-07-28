@@ -1,0 +1,34 @@
+{% macro renderRelatedItemButton(dataUrl, label, title, limit, itemsIdsToAddFieldName, itemsIdsToRemoveFieldName, gridName) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {{ UI.clientLink({
+        'dataUrl': dataUrl,
+        'aCss': 'btn no-hash related-items-widget__button',
+        'label' : label,
+        'widget' : {
+            'type' : 'related-items',
+            'options' : {
+                'dialogOptions' : {
+                    'title': title,
+                    'modal': true,
+                    'resizable': false,
+                    'width': 820,
+                    'height': '80vh',
+                    'autoResize': true,
+                },
+                'itemsLimit': limit,
+                'itemsIdsToAdd': itemsIdsToAddFieldName,
+                'itemsIdsToRemove': itemsIdsToRemoveFieldName,
+                'gridName': gridName
+            }
+        }
+    }) }}
+{% endmacro %}
+
+{% macro renderGrid(name, params = {}, renderParams = {}) %}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+    <div id="{{ name }}">
+        {{ dataGrid.renderGrid(name, params, renderParams) }}
+    </div>
+{% endmacro %}

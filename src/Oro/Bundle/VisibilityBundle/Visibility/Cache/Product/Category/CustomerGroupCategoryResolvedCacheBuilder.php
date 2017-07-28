@@ -91,9 +91,9 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBui
         }
         $this->executeDbQuery($repository, $insert, $delete, $update, $where);
 
-        $this->visibilityChangeCustomerGroupSubtreeCacheBuilder
+        $categories = $this->visibilityChangeCustomerGroupSubtreeCacheBuilder
             ->resolveVisibilitySettings($category, $scope, $visibility);
-        $this->triggerCategoryReindexation($category);
+        $this->triggerCategoriesReindexation($categories);
     }
 
     /**

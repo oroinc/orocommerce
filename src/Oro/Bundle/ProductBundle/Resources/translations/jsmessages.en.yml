@@ -154,5 +154,5 @@ oro:
                 continue: Continue
                 confirmation_modal_content: You have changes in the Filters section that have not been applied. Please click Cancel if you want to review and apply these changes before saving, or click Continue if you want to save all the changes.
         widgets:
-            select_related_products:
-                limit_has_been_reached: Limit of related products has been reached
+            select_related_items:
+                limit_has_been_reached: Limit of related items has been reached
