@@ -28,7 +28,7 @@ class ValidateRelatedProduct extends ValidateRequestData
     {
         return $this->validateRequired($data, 'product', $pointer)
             && $this->validateArray($data['product'], JsonApiDoc::DATA, $pointer, true)
-            && $this->validateRequired($data, 'relatedProduct', $pointer)
-            && $this->validateArray($data['relatedProduct'], JsonApiDoc::DATA, $pointer, true);
+            && $this->validateRequired($data, 'relatedItem', $pointer)
+            && $this->validateArray($data['relatedItem'], JsonApiDoc::DATA, $pointer, true);
     }
 }

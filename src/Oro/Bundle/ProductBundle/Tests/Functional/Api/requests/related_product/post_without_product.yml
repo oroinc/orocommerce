@@ -1,7 +1,7 @@
 data:
     type: relatedproducts
     relationships:
-        relatedProduct:
+        relatedItem:
             data:
                 type: products
                 id: '<toString(@product-7->id)>'

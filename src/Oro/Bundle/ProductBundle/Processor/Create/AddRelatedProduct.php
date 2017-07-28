@@ -47,7 +47,7 @@ class AddRelatedProduct implements ProcessorInterface
         /** @var RelatedProduct $relatedProduct */
         $relatedProduct = $context->getResult();
         $productFrom = $relatedProduct->getProduct();
-        $productTo = $relatedProduct->getRelatedProduct();
+        $productTo = $relatedProduct->getRelatedItem();
 
         if ($this->relationAlreadyExists($productFrom, $productTo)) {
             $context->addError(Error::createValidationError(
@@ -63,7 +63,7 @@ class AddRelatedProduct implements ProcessorInterface
 
             $relatedProduct = $this->getRelatedProductsRepository()->findOneBy([
                 'product' => $productFrom,
-                'relatedProduct' => $productTo
+                'relatedItem' => $productTo
             ]);
 
             $context->setResult($relatedProduct);

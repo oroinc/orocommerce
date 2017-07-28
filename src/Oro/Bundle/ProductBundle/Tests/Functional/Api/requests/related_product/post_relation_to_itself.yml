@@ -5,7 +5,7 @@ data:
             data:
                 type: products
                 id: '<toString(@product-6->id)>'
-        relatedProduct:
+        relatedItem:
             data:
                 type: products
                 id: '<toString(@product-6->id)>'

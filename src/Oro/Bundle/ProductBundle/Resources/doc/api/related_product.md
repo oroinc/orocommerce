@@ -49,7 +49,7 @@ Example:
                "id":"1"
             }
          },
-         "relatedProduct":{  
+         "relatedItem":{  
             "data":{  
                "type":"products",
                "id":"2"
@@ -90,7 +90,7 @@ The main product in the relationship.
 
 **Required field**
 
-### relatedProduct
+### relatedItem
 
 #### common
 
@@ -114,7 +114,7 @@ Get complete product information about the main product in the relationship. The
 
 Get the identifier of the main product in the relationship. The relationship is identified by id.
 
-### relatedProduct
+### relatedItem
 
 #### get_subresource
 

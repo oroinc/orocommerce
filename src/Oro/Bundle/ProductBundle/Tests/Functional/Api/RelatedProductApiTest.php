@@ -93,7 +93,7 @@ class RelatedProductApiTest extends RestJsonApiTestCase
 
         $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post.yml', [], false);
 
-        $this->assertValidationErrorMessage($response, 'Related Products functionality is disabled.');
+        $this->assertValidationErrorMessage($response, 'Related Items functionality is disabled.');
     }
 
     public function testValidationErrorOnPostInCaseUserTriesToAddProductToItself()
@@ -128,7 +128,7 @@ class RelatedProductApiTest extends RestJsonApiTestCase
 
         $this->assertValidationErrorMessage(
             $response,
-            'It is not possible to add more items, because of the limit of relations.'
+            'It is not possible to add more related items, because of the limit of relations.'
         );
     }
 
@@ -175,7 +175,7 @@ class RelatedProductApiTest extends RestJsonApiTestCase
 
         $this->assertValidationErrorMessage(
             $response,
-            "The 'relatedProduct' property is required"
+            "The 'relatedItem' property is required"
         );
     }
 
