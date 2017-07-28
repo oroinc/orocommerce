@@ -509,7 +509,7 @@ services:
             - '@oro_promotion.coupon_generation.inserter'
 
     oro_promotion.coupon_generation.generator:
-        class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Generator\SimpleCouponGenerator'
+        class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Generator\SimpleCodeGenerator'
         public: false
 
     oro_promotion.coupon_generation.inserter:

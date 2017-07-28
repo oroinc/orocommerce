@@ -16,7 +16,7 @@ class CodeGenerationOptions
     /**
      * @var string
      */
-    protected $codeType;
+    protected $codeType = self::ALPHANUMERIC_CODE_TYPE;
 
     /**
      * @var string
@@ -43,10 +43,13 @@ class CodeGenerationOptions
 
     /**
      * @param int $codeLength
+     * @return CodeGenerationOptions
      */
     public function setCodeLength($codeLength)
     {
         $this->codeLength = $codeLength;
+
+        return $this;
     }
 
     /**
@@ -59,10 +62,13 @@ class CodeGenerationOptions
 
     /**
      * @param string $codeType
+     * @return CodeGenerationOptions
      */
     public function setCodeType($codeType)
     {
         $this->codeType = $codeType;
+
+        return $this;
     }
 
     /**
@@ -75,10 +81,13 @@ class CodeGenerationOptions
 
     /**
      * @param string $codePrefix
+     * @return CodeGenerationOptions
      */
     public function setCodePrefix($codePrefix)
     {
         $this->codePrefix = $codePrefix;
+
+        return $this;
     }
 
     /**
@@ -91,10 +100,13 @@ class CodeGenerationOptions
 
     /**
      * @param string $codeSuffix
+     * @return CodeGenerationOptions
      */
     public function setCodeSuffix($codeSuffix)
     {
         $this->codeSuffix = $codeSuffix;
+
+        return $this;
     }
 
     /**
@@ -107,9 +119,12 @@ class CodeGenerationOptions
 
     /**
      * @param int $dashesSequence
+     * @return CodeGenerationOptions
      */
     public function setDashesSequence($dashesSequence)
     {
         $this->dashesSequence = $dashesSequence;
+
+        return $this;
     }
 }
