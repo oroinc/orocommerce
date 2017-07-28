@@ -2,6 +2,7 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions.yml
 @fixture-OroPromotionBundle:shopping_list.yml
+@skip # BB-11114
 Feature: Promotions in Order page
   In order to find out applied discounts in order
   As administrator
