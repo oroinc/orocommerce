@@ -44,7 +44,7 @@ class ProductController extends Controller
             'entity' => $product,
             'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
             'pageTemplate' => $pageTemplate,
-            'upsellProductsEnabled' => $this->get('oro_product.related_item.upsell_products.config_provider')
+            'upsellProductsEnabled' => $this->get('oro_product.related_item.upsell_product.config_provider')
                 ->isEnabled(),
             'relatedProductsEnabled' => $this->get('oro_product.related_item.related_product.config_provider')
                 ->isEnabled(),
@@ -171,7 +171,7 @@ class ProductController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
+        if (!$this->get('oro_product.related_item.helper.config_helper')->isAnyEnabled()) {
             throw $this->createNotFoundException();
         }
 

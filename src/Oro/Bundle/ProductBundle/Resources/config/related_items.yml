@@ -5,6 +5,12 @@ services:
         class: Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider
         arguments: ['@oro_config.manager']
 
+    oro_product.related_item.helper.config_helper:
+        class: Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper
+        calls:
+            - [addConfigProvider, ['related_product', '@oro_product.related_item.related_product.config_provider']]
+            - [addConfigProvider, ['upsell_product', '@oro_product.related_item.upsell_product.config_provider']]
+
     # RELATED PRODUCTS
     oro_product.related_item.related_product.config_provider:
         parent: oro_product.related_item.abstract_config_provider
@@ -32,7 +38,7 @@ services:
             - { name: layout.data_provider, alias: oro_product_related_products }
 
     # UPSELL PRODUCTS
-    oro_product.related_item.upsell_products.config_provider:
+    oro_product.related_item.upsell_product.config_provider:
         parent: oro_product.related_item.abstract_config_provider
         public: true
         class: Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider
@@ -40,10 +46,10 @@ services:
     oro_product.related_item.upsell_product.assigner_strategy:
         public: false
         class: Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\AssignerDatabaseStrategy
-        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.upsell_products.config_provider']
+        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.upsell_product.config_provider']
 
     oro.product.related_item.upsell_product.finder_strategy:
         class: Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_product.related_item.upsell_products.config_provider'
+            - '@oro_product.related_item.upsell_product.config_provider'
