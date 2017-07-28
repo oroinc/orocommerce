@@ -9,5 +9,4 @@ namespace Oro\Bundle\PromotionBundle\CouponGeneration\Inserter;
  */
 class SimpleCouponInserter implements CouponInserterInterface
 {
-
 }

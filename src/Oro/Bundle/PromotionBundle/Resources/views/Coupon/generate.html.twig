@@ -6,16 +6,10 @@
     <div class="widget-content">
         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
               method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-              data-page-component-module="oropromotion/js/app/components/coupon-generation-preview-component"
+                {% if buttonOptions.page_component_module is defined %}data-page-component-module="{{ buttonOptions.page_component_module }}"{% endif %}
         >
             <fieldset class="form-horizontal">
                 {{ form_widget(form.couponGenerationOptions) }}
-                <div class="control-group attribute-row">
-                    <label class="control-label">Code Preview</label>
-                    <div class="controls">
-                        <div id="coupon-code-preview" class="control-label"></div>
-                    </div>
-                </div>
             </fieldset>
 
             <div class="hidden">

@@ -1,3 +1,4 @@
+@selenium-incompatible
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions.yml
@@ -47,8 +48,8 @@ Feature: Promotions in Order page
       | Discount          | -$12.50 |
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
-# TODO uncomment after fix of BB-10620
-#      | Total            | $9.50   |
+      | Total            | $9.50   |
+
 
   Scenario: Check that applied discounts are shown on frontend order view page
     Given I operate as the Buyer
@@ -60,16 +61,15 @@ Feature: Promotions in Order page
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 2 Item #: SKU2 | $5.00 |
       | Product 1 Item #: SKU1 | $0.00 |
+      | Product 2 Item #: SKU2 | $5.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount  |
       | Subtotal          | $20.00  |
       | Discount          | -$12.50 |
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
-# TODO uncomment after fix of BB-10620
-#     | Total             | $9.50   |
+      | Total             | $9.50   |
 
   Scenario: Change product's quantity and check that after saving without discount recalculation discount amount hasn't changed
     Given I operate as the Admin
@@ -90,8 +90,7 @@ Feature: Promotions in Order page
       | Discount          | -$9.50 |
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
-# TODO uncomment after fix of BB-10620
-#      | Total    | $8.50 |
+      | Total    | $8.50 |
     When I save order without discounts recalculation
     And agree that shipping cost may have changed
     And I click "Edit"
@@ -110,8 +109,7 @@ Feature: Promotions in Order page
       | Discount          | -$12.50 |
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
-# TODO uncomment after fix of BB-10620
-#      | Total            | $5.50   |
+      | Total            | $5.50   |
 
   Scenario: Check that applied discounts amounts haven't changed on frontend order view page and right total displayed in orders' grid
     Given I operate as the Buyer
@@ -123,16 +121,15 @@ Feature: Promotions in Order page
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 2 Item #: SKU2 | $5.00 |
       | Product 1 Item #: SKU1 | $0.00 |
+      | Product 2 Item #: SKU2 | $5.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount  |
       | Subtotal          | $16.00  |
       | Discount          | -$12.50 |
       | Shipping          | $3.00   |
       | Shipping Discount | -$1.00  |
-# TODO uncomment after fix of BB-10620
-#     | Total             | $5.50   |
+      | Total             | $5.50   |
 
   Scenario: Change products quantity and check that after form saving discount amount has changed
     Given I operate as the Admin
@@ -152,8 +149,7 @@ Feature: Promotions in Order page
       | Discount          | -$9.50 |
       | Shipping          | $3.00  |
       | Shipping Discount | -$1.00 |
-# TODO uncomment after fix of BB-10620
-#      | Total            | $8.50  |
+      | Total            | $8.50  |
 
   Scenario: Check that applied discounts amounts have changed on frontend order view page
     Given I operate as the Buyer
@@ -165,13 +161,12 @@ Feature: Promotions in Order page
     When I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  |
-      | Product 2 Item #: SKU2 | $3.00 |
       | Product 1 Item #: SKU1 | $0.00 |
+      | Product 2 Item #: SKU2 | $3.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount |
       | Subtotal          | $16.00 |
       | Discount          | -$9.50 |
       | Shipping          | $3.00  |
       | Shipping Discount | -$1.00 |
-# TODO uncomment after fix of BB-10620
-#     | Total             | $9.50  |
+      | Total             | $8.50  |

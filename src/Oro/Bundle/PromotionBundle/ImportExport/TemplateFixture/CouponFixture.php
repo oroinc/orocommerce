@@ -44,7 +44,9 @@ class CouponFixture extends AbstractTemplateRepository implements TemplateFixtur
                     ->setPromotion($promotion)
                     ->setTotalUses(10)
                     ->setUsesPerCoupon(100)
-                    ->setUsesPerUser(3);
+                    ->setUsesPerUser(3)
+                    ->setValidUntil((new \DateTime())->modify('+1 year'))
+                ;
 
                 $entity->setOwner($owner);
                 return;

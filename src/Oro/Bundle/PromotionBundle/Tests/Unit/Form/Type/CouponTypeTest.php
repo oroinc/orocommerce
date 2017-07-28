@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
@@ -49,13 +50,17 @@ class CouponTypeTest extends FormIntegrationTestCase
                 'promotion1' => $this->getEntity(Promotion::class, ['id' => 1]),
                 'promotion2' => $this->getEntity(Promotion::class, ['id' => 2]),
             ],
-            PromotionSelectType::NAME
+            PromotionSelectType::NAME,
+            [
+                'autocomplete_alias' => 'oro_promotion',
+            ]
         );
 
         return [
             new PreloadedExtension(
                 [
                     $promotionSelectType->getName() => $promotionSelectType,
+                    OroDateTimeType::NAME => new OroDateTimeType(),
                 ],
                 [
                     'form' => [
@@ -92,6 +97,7 @@ class CouponTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('promotion'));
         $this->assertTrue($form->has('usesPerUser'));
         $this->assertTrue($form->has('usesPerCoupon'));
+        $this->assertTrue($form->has('validUntil'));
     }
 
     /**
@@ -100,6 +106,7 @@ class CouponTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         $promotion2 = $this->getEntity(Promotion::class, ['id' => 2]);
+        $validUntilDate = '01-01-2020 12:00:00';
 
         return [
             'coupon with promotion' => [
@@ -108,8 +115,9 @@ class CouponTypeTest extends FormIntegrationTestCase
                     'promotion' => 'promotion2',
                     'usesPerUser' => 2,
                     'usesPerCoupon' => 3,
+                    'validUntil' => $validUntilDate,
                 ],
-                'expectedData' => $this->createCoupon('test1234', 2, 3, $promotion2),
+                'expectedData' => $this->createCoupon('test1234', 2, 3, $promotion2, new \DateTime($validUntilDate)),
             ],
             'coupon without promotion' => [
                 'submittedData' => [
@@ -117,6 +125,7 @@ class CouponTypeTest extends FormIntegrationTestCase
                     'promotion' => null,
                     'usesPerUser' => 2,
                     'usesPerCoupon' => 3,
+                    'validUntil' => null,
                 ],
                 'expectedData' => $this->createCoupon('test1234', 2, 3),
             ],
@@ -127,15 +136,22 @@ class CouponTypeTest extends FormIntegrationTestCase
      * @param string $couponCode
      * @param int|null $usesPerUser
      * @param int|null $usesPerCoupon
-     * @param Promotion $promotion
+     * @param Promotion|null $promotion
+     * @param \DateTime|null $validUntil
      * @return Coupon
      */
-    public function createCoupon($couponCode, $usesPerUser = null, $usesPerCoupon = null, $promotion = null)
-    {
+    public function createCoupon(
+        $couponCode,
+        $usesPerUser = null,
+        $usesPerCoupon = null,
+        $promotion = null,
+        \DateTime $validUntil = null
+    ) {
         return (new Coupon())
             ->setCode($couponCode)
             ->setUsesPerUser($usesPerUser)
             ->setUsesPerCoupon($usesPerCoupon)
-            ->setPromotion($promotion);
+            ->setPromotion($promotion)
+            ->setValidUntil($validUntil);
     }
 }

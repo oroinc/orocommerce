@@ -15,6 +15,7 @@ Feature: Mass edit of Coupons codes
       |Promotion         | order Discount Promotion |
       |Uses per Coupon   |77                        |
       |Uses per Customer |88                        |
+    And I press "Today"
     And I click "Apply"
     Then I should see "2 entities were edited" flash message
     And I filter Uses per Coupon as = "77"
@@ -33,6 +34,7 @@ Feature: Mass edit of Coupons codes
     When I fill form with:
       |Uses per Coupon   |88        |
       |Uses per Customer |99        |
+    And I press "Today"
     And I click "Apply"
     Then I should see "10 entities were edited" flash message
     And I filter Uses per Coupon as = "88"
@@ -51,8 +53,12 @@ Feature: Mass edit of Coupons codes
     When I fill form with:
       |Uses per Coupon   |99        |
       |Uses per Customer |100       |
+    And I press "Today"
+    And I fill form with:
+      |Valid Until       | <DateTime:Jul 10, 2010, 10:00 AM> |
     And I click "Apply"
     Then I should see "100 entities were edited" flash message
     And I filter Uses per Coupon as = "99"
     And I filter Uses per Customer as = "100"
     And there are 100 records in grid
+    And I should see "Jul 10, 2010, 10:00 AM" in grid

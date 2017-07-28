@@ -1097,3 +1097,9 @@ services:
         class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister
         arguments:
             - '@oro_config.manager'
+
+    oro_pricing.provider.price_list_default_value:
+        class: 'Oro\Bundle\PricingBundle\Provider\PriceListDefaultValueProvider'
+        arguments:
+            - '@oro_pricing.provider.price_list_provider'
+            - '@oro_pricing.shard_manager'

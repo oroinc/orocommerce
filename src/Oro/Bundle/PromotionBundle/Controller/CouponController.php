@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Controller;
 
-use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
-use Oro\Bundle\PromotionBundle\Form\Type\CouponCodePreviewType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -17,7 +15,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CouponController extends Controller
 {
@@ -124,29 +121,6 @@ class CouponController extends Controller
         $responseData['form'] = $form->createView();
 
         return $responseData;
-    }
-
-    /**
-     * @Route("/coupon-generation-preview", name="oro_promotion_coupon_generation_preview")
-     * @AclAncestor("oro_promotion_coupon_view")
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function couponGenerationPreview(Request $request)
-    {
-        $responseData = [];
-        $formData = $request->get('couponGenerationData');
-        if ($formData) {
-            $form = $this->createForm(CouponCodePreviewType::class, new CouponGenerationOptions());
-            $form->submit($formData);
-            if ($form->isValid()) {
-                $couponGenerationOptions = $form->getData();
-                $couponGenerationOptions->setCouponQuantity(1);
-                $couponCodeGenerator = $this->get('oro_promotion.coupon_generation.generator');
-            }
-        }
-
-        return new JsonResponse($responseData);
     }
 
     /**

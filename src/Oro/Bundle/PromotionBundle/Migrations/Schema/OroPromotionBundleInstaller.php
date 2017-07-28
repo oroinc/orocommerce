@@ -101,6 +101,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $table->addColumn('uses_per_user', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('valid_until', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addUniqueIndex(['code']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'idx_oro_promotion_coupon_created_at', []);

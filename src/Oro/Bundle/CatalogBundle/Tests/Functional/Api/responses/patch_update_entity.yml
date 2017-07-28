@@ -1,0 +1,40 @@
+data:
+    type: products
+    id: '<toString(@product-1->id)>'
+    attributes:
+        sku: product-1
+        status: enabled
+        variantFields: {  }
+        productType: simple
+    relationships:
+        owner:
+            data:
+                type: businessunits
+                id: '1'
+        organization:
+            data:
+                type: organizations
+                id: '1'
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.bottle->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.liter->id)>'
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        primaryUnitPrecision:
+            data:
+                type: productunitprecisions
+                id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+        inventory_status:
+            data:
+                type: prodinventorystatuses
+                id: out_of_stock
+        category:
+            data:
+                type: categories
+                id: '@category_1_2->id'

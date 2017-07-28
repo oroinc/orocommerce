@@ -62,6 +62,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $unitPrice->blur();
 
         $this->getPage()->pressButton('Save and Close');
+
+        // Click on "Save" button in the confirmation dialog.
+        $saveLink = $this->getPage()->find('css', '.oro-modal-normal .ok.btn-primary');
+        self::assertNotNull($saveLink, "Can't find modal window or 'Save' button");
+        $saveLink->click();
     }
 
     /**

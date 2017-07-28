@@ -38,6 +38,5 @@ class CouponGenerationManager
      */
     public function generateCoupons(CouponGenerationOptions $couponGenerationOptions)
     {
-
     }
 }

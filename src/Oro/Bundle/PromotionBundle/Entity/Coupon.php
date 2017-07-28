@@ -148,7 +148,7 @@ class Coupon implements
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=50
+     *              "order"=60
      *          }
      *      }
      *  )
@@ -206,6 +206,23 @@ class Coupon implements
      * )
      */
     protected $organization;
+
+    /**
+     * @ORM\Column(name="valid_until", type="datetime", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=50
+     *          }
+     *      }
+     *  )
+     *
+     * @var \DateTime|null
+     */
+    protected $validUntil;
 
     /**
      * @return int
@@ -306,6 +323,25 @@ class Coupon implements
     public function setPromotion($promotion)
     {
         $this->promotion = $promotion;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getValidUntil()
+    {
+        return $this->validUntil;
+    }
+
+    /**
+     * @param \DateTime|null $validUntil
+     * @return Coupon
+     */
+    public function setValidUntil($validUntil)
+    {
+        $this->validUntil = $validUntil;
 
         return $this;
     }

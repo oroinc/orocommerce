@@ -4,7 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationParams;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -37,7 +37,7 @@ class CouponGenerationTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => CouponGenerationParams::class
+                    'data_class' => CouponGenerationOptions::class
                 ]
             );
         $this->couponGenerationType->configureOptions($resolver);

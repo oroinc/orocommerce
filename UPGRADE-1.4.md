@@ -17,3 +17,8 @@ PricingBundle
 -------------
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository` got an abstract method:
     - `getPriceListIdsByProduct(Product $product)` - that should return array of Price Lists identifiers witch contains price for given product
+
+PayPalBundle
+------------
+- Class `Oro\Bundle\PayPalBundle\EventListener\Callback\RedirectListener`
+    - changed signature of `__construct` method. Dependency on `PaymentMethodProviderInterface` added.

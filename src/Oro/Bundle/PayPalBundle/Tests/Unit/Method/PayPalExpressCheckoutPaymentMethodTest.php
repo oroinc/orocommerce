@@ -106,7 +106,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
                     $this->getAdditionalOptions()
                 )
             )
-            ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0']));
+            ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => 'TOKEN']));
 
         $this->gateway->expects($this->exactly(1))
             ->method('setTestMode')
@@ -114,6 +114,30 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
         $this->assertTrue($transaction->isActive());
+        $this->assertFalse($transaction->isSuccessful());
+    }
+
+    public function testExecuteWithoutPNREF()
+    {
+        $transaction = $this->createTransaction(PaymentMethodInterface::CHARGE);
+
+        $this->gateway->expects($this->any())
+            ->method('request')
+            ->with(
+                'S',
+                array_merge(
+                    ['ACTION' => 'S'],
+                    $this->getAdditionalOptions()
+                )
+            )
+            ->willReturn(new Response(['RESPMSG' => 'Error', 'RESULT' => '1']));
+
+        $this->gateway->expects($this->exactly(1))
+            ->method('setTestMode')
+            ->with(false);
+
+        $this->expressCheckout->execute($transaction->getAction(), $transaction);
+        $this->assertFalse($transaction->isActive());
         $this->assertFalse($transaction->isSuccessful());
     }
 

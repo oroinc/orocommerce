@@ -14,7 +14,7 @@ Feature: Inline Editing
     When I click "Edit Shopping List Label"
     And I type "Shopping List 2" in "value"
     And I click "Save"
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
 
   Scenario: Deny edit shopping list
     Given I proceed as the Admin

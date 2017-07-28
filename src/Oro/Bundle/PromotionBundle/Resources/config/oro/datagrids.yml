@@ -164,6 +164,7 @@ datagrids:
                     - coupon.totalUses
                     - coupon.usesPerCoupon
                     - coupon.usesPerUser
+                    - coupon.validUntil
                 from:
                     - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
                 join:
@@ -184,6 +185,9 @@ datagrids:
                 label:         oro.promotion.coupon.uses_per_user.label
             totalUses:
                 label:         oro.promotion.coupon.total_uses.label
+            validUntil:
+                label:         oro.promotion.coupon.valid_until.label
+                frontend_type: datetime
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -202,6 +206,8 @@ datagrids:
                     data_name: coupon.usesPerCoupon
                 usesPerUser:
                     data_name: coupon.usesPerUser
+                validUntil:
+                    data_name: coupon.validUntil
                 createdAt:
                     data_name: coupon.createdAt
                 updatedAt:
@@ -225,6 +231,9 @@ datagrids:
                 totalUses:
                     type:      number
                     data_name: coupon.totalUses
+                validUntil:
+                    type:      datetime
+                    data_name: coupon.validUntil
                 createdAt:
                     type:      datetime
                     data_name: coupon.createdAt

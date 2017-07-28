@@ -25,6 +25,7 @@ class CouponTest extends \PHPUnit_Framework_TestCase
                 ['organization', new Organization()],
                 ['createdAt', $now, false],
                 ['updatedAt', $now, false],
+                ['validUntil', $now],
             ]
         );
     }
