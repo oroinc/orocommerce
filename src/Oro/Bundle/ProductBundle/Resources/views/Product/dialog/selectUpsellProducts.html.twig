@@ -1,18 +1,18 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 <div class="widget-content">
     <input
-            type="hidden"
-            data-role="related-items-appended-ids"
-            name="productAppendUpsellSelect"
-            id="productAppendUpsellSelect"
-            value="{{ app.request.get('addedProductRelated')|join(',') }}"
+        type="hidden"
+        data-role="related-items-appended-ids"
+        name="productAppendUpsellSelect"
+        id="productAppendUpsellSelect"
+        value="{{ app.request.get('addedProductRelatedItems')|join(',') }}"
     />
     <input
-            type="hidden"
-            data-role="related-items-removed-ids"
-            name="productRemoveUpsellSelect"
-            id="productRemoveUpsellSelect"
-            value="{{ app.request.get('removedProductRelated')|join(',') }}"
+        type="hidden"
+        data-role="related-items-removed-ids"
+        name="productRemoveUpsellSelect"
+        id="productRemoveUpsellSelect"
+        value="{{ app.request.get('removedProductRelatedItems')|join(',') }}"
     />
 
     {{ dataGrid.renderGrid('products-upsell-products-select', {'productId': product.id, 'relatedItemsIds': get_upsell_products_ids(product)}) }}

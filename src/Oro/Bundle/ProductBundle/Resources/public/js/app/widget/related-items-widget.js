@@ -54,13 +54,13 @@ define(function(require) {
         },
 
         prepareContentRequestOptions: function(data, method, url) {
-            var addedProductRelatedIds = $(this.options.itemsIdsToAdd).val();
-            var removedProductRelatedIds = $(this.options.itemsIdsToRemove).val();
+            var addedProductRelatedItemsIds = $(this.options.itemsIdsToAdd).val();
+            var removedProductRelatedItemsIds = $(this.options.itemsIdsToRemove).val();
 
             var options = RelatedItemsWidget.__super__.prepareContentRequestOptions.apply(this, arguments);
             options.data += '&' + $.param({
-                addedProductRelated: addedProductRelatedIds,
-                removedProductRelated: removedProductRelatedIds
+                addedProductRelatedItems: addedProductRelatedItemsIds,
+                removedProductRelatedItems: removedProductRelatedItemsIds
             });
 
             return options;
