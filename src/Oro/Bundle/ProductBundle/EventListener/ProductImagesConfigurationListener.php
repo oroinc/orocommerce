@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
 class ProductImagesConfigurationListener
 {
@@ -35,11 +34,12 @@ class ProductImagesConfigurationListener
     }
 
     /**
-     * @param ConfigSettingsUpdateEvent $event
+     * @param ConfigUpdateEvent $event
      */
-    public function beforeSave(ConfigSettingsUpdateEvent $event)
+    public function afterUpdate(ConfigUpdateEvent $event)
     {
-        foreach ($event->getSettings() as $configKey => $setting) {
+        $changeSet = $event->getChangeSet();
+        foreach ($changeSet as $configKey => $change) {
             if (false !== strpos($configKey, self::PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX)) {
                 $this->session->getFlashBag()->add(self::MESSAGE_TYPE, $this->getNotice($event));
 
@@ -49,10 +49,11 @@ class ProductImagesConfigurationListener
     }
 
     /**
-     * @param ConfigSettingsUpdateEvent $event
+     * @param ConfigUpdateEvent $event
+     *
      * @return string
      */
-    protected function getNotice(ConfigSettingsUpdateEvent $event)
+    protected function getNotice(ConfigUpdateEvent $event)
     {
         return sprintf(
             '%s <code>%s</code>',
