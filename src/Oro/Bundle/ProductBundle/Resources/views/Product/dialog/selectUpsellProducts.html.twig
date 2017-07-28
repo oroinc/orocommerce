@@ -12,7 +12,7 @@
             data-role="related-items-removed-ids"
             name="productRemoveUpsellSelect"
             id="productRemoveUpsellSelect"
-            value="{{ app.request.get('removedUpsellRelated')|join(',') }}"
+            value="{{ app.request.get('removedProductRelated')|join(',') }}"
     />
 
     {{ dataGrid.renderGrid('products-upsell-products-select', {'productId': product.id, 'relatedItemsIds': get_upsell_products_ids(product)}) }}

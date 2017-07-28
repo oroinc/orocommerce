@@ -680,7 +680,7 @@ datagrids:
                 columnName: isRelated
                 selectors:
                     included: '#productAppendUpsellSelect'
-                    excluded: '#productRemoveUpselldSelect'
+                    excluded: '#productRemoveUpsellSelect'
 
     frontend-product-search-grid:
         options:
