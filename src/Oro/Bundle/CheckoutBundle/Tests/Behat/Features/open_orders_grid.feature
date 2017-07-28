@@ -1,6 +1,5 @@
 @ticket-BB-9254
 @ticket-BB-9255
-@selenium-incompatible
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroCheckoutBundle:Checkout.yml
