@@ -59,10 +59,6 @@ layout:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
                         group: 'images'
-                product_media_popup:
-                    blockType: product_image
-                    options:
-                        product: '=data["product"]'
                 product_view_main_attributes_container:
                     blockType: container
             tree:
@@ -74,7 +70,6 @@ layout:
                             product_view_aside_container:
                                 product_view_gallery_container:
                                     product_view_attribute_group_images: ~
-                                product_media_popup: ~
                         product_view_main_container:
                             product_view_content_container:
                                 product_view_specification_container: ~
