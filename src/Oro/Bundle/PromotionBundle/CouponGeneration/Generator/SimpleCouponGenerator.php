@@ -4,9 +4,18 @@ namespace Oro\Bundle\PromotionBundle\CouponGeneration\Generator;
 
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
+/**
+ * This class is used for generating Coupon code by given options.
+ */
 class SimpleCodeGenerator implements CodeGeneratorInterface
 {
     const DASHES_SYMBOL = '-';
+
+    const NUMERIC_TEMPLATE = '123456789';
+
+    const ALPHABETIC_TEMPLATE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    const ALPHANUMERIC_TEMPLATE = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     /**
      * {@inheritdoc}
@@ -18,7 +27,7 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
         if (!$options->getDashesSequence()) {
             return $string;
         }
-        return implode(static::DASHES_SYMBOL, $this->mbStrSplit($string, $options->getDashesSequence()));
+        return implode(static::DASHES_SYMBOL, $this->splitString($string, $options->getDashesSequence()));
     }
 
     /**
@@ -48,28 +57,28 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
     {
         switch ($type) {
             case CodeGenerationOptions::NUMERIC_CODE_TYPE:
-                $characters = '123456789';
+                return self::NUMERIC_TEMPLATE;
                 break;
             case CodeGenerationOptions::ALPHABETIC_CODE_TYPE:
-                $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                return self::ALPHABETIC_TEMPLATE;
                 break;
             default:
-                $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                $characters = self::ALPHANUMERIC_TEMPLATE;
         }
         return $characters;
     }
 
     /**
      * @param string $string
-     * @param int $length
+     * @param int $interval
      * @return array
      */
-    protected function mbStrSplit(string $string, int $length): array
+    protected function splitString(string $string, int $interval): array
     {
         $parts = [];
-        $len = mb_strlen($string, 'UTF-8');
-        for ($i = 0; $i < $len; $i += $length) {
-            $parts[] = mb_substr($string, $i, $length);
+        $stringLength = mb_strlen($string, 'UTF-8');
+        for ($i = 0; $i < $stringLength; $i += $interval) {
+            $parts[] = mb_substr($string, $i, $interval);
         }
         return $parts;
     }
