@@ -16,10 +16,17 @@ services:
         parent: oro_product.related_item.abstract_config_provider
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider
 
+    oro_product.related_item.related_product.assigner_database_strategy_abstract:
+      abstract: true
+      public: false
+      class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy
+      arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']
+
     oro_product.related_item.related_product.assigner_strategy:
-        public: false
-        class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy
-        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']
+      parent: oro_product.related_item.related_product.assigner_database_strategy_abstract
+
+    oro_product.related_item.related_product.assigner_database_strategy:
+      parent: oro_product.related_item.related_product.assigner_database_strategy_abstract
 
     oro_product.related_item.related_product.finder_strategy:
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy

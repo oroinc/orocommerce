@@ -226,7 +226,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
             ->method('persist')
             ->with($this->callback(function (RelatedProduct $relatedProducts) use ($expectedRelatedProduct) {
                 return $relatedProducts->getProduct() === $expectedRelatedProduct->getProduct()
-                    && $relatedProducts->getRelatedProduct() === $expectedRelatedProduct->getRelatedProduct();
+                    && $relatedProducts->getRelatedItem() === $expectedRelatedProduct->getRelatedItem();
             }));
     }
 
