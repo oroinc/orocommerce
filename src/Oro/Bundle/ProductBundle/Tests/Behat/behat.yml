@@ -8,10 +8,20 @@ oro_behat_extension:
       selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
     OptionCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
-
+    InStockInventoryStatus:
+        selector: "span.product-inventory-status-in_stock"
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    OutOfStockInventoryStatus:
+        selector: "span.product-inventory-status-out_of_stock"
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
     Configurable Attributes:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
+
+    ProductViewRelatedItemQuickEdit:
+      selector:
+          type: xpath
+          locator: '//h4[text()[contains(.,"Related Items")]]/parent::div//a[contains(@class, "quick-editable")]'
 
     ### Related Items ###
     SelectRelatedProductsGrid:
@@ -176,7 +186,7 @@ oro_behat_extension:
           Maximum Number Of Assigned Items: 'related_items[oro_product___max_number_of_upsell_products][value]'
           Enable Up-sell Products Use Default: 'related_items[oro_product___upsell_products_enabled][use_parent_scope_value]'
           Enable Up-sell Products: 'related_items[oro_product___upsell_products_enabled][value]'
-          
+
     Product Family Form:
       selector: 'div#container'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
