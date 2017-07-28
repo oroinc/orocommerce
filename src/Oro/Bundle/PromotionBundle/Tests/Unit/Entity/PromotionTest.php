@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
@@ -42,6 +43,7 @@ class PromotionTest extends \PHPUnit_Framework_TestCase
             ['descriptions', new LocalizedFallbackValue()],
             ['scopes', new Scope()],
             ['schedules', new PromotionSchedule()],
+            ['coupons', new Coupon()],
         ];
 
         $this->assertPropertyCollections(new Promotion(), $collections);

@@ -76,6 +76,11 @@ workflows:
                         title: oro.sale.quote.actions.quote_expire_title
                         message: oro.sale.quote.actions.quote_expire_confirm
                         okText: oro.sale.quote.actions.mark_as_expired
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+                        event: update
+                        require: "(entity.isExpired() and !prevEntity.isExpired()) or (entity.getInternalStatus().getId() === 'expired' and prevEntity.getInternalStatus().getId() !== 'expired')"
             create_new_quote_transition:
                 step_to: sent_to_customer
                 transition_definition: create_new_quote_transition_definition

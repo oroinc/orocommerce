@@ -18,6 +18,8 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShardManager implements \Serializable
 {
@@ -469,5 +471,13 @@ class ShardManager implements \Serializable
     public function getShardList()
     {
         return $this->shardList;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isShardingEnabled()
+    {
+        return $this->enableSharding;
     }
 }

@@ -8,5 +8,4 @@ layout:
             parentId: __root
             options:
                 product: '=data["product"]'
-                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") and data["oro_shopping_list_matrix_grid_order"].isAvailable(data["product"])'
-    conditions: 'context["is_logged_in"]'
+                visible: '=data["oro_shopping_list_matrix_grid_order"].isAvailable(data["product"]) and data["feature"].isFeatureEnabled("guest_shopping_list")'

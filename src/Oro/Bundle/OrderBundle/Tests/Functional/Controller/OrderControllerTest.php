@@ -417,9 +417,8 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')
             ->eq(2)
             ->filter('.scrollspy-title')
-            ->filter('.pull-left')
             ->html();
-        self::assertEquals('Shipping Information', $titleBlock);
+        self::assertEquals('Shipping Information', trim($titleBlock));
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
         self::assertEquals('$999.99', $value);
@@ -446,9 +445,8 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')
             ->eq(2)
             ->filter('.scrollspy-title')
-            ->filter('.pull-left')
             ->html();
-        self::assertEquals('Shipping Information', $titleBlock);
+        self::assertEquals('Shipping Information', trim($titleBlock));
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
         self::assertEquals('N/A', $value);
@@ -475,9 +473,8 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')
             ->eq(2)
             ->filter('.scrollspy-title')
-            ->filter('.pull-left')
             ->html();
-        self::assertEquals('Shipping Information', $titleBlock);
+        self::assertEquals('Shipping Information', trim($titleBlock));
 
         $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
         self::assertEquals('$0.00', $value);

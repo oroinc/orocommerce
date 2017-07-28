@@ -283,7 +283,6 @@ class ProductRepositoryTest extends WebTestCase
                 ],
                 'expectedImages' => [
                     'img.product-1',
-                    'img.product-2',
                 ],
             ],
             [
@@ -293,7 +292,6 @@ class ProductRepositoryTest extends WebTestCase
                 ],
                 'expectedImages' => [
                     'img.product-1',
-                    'img.product-2',
                 ],
             ],
         ];
@@ -396,7 +394,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         $queryBuilder = $this->getRepository()->getFeaturedProductsQueryBuilder(2);
         $result = $queryBuilder->getQuery()->getResult();
-        $this->assertCount(2, $result);
+        $this->assertCount(1, $result);
         $this->assertInstanceOf(Product::class, $result[0]);
     }
 

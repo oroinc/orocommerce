@@ -349,6 +349,7 @@ class Order extends ExtendOrder implements
      * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
+     * @ORM\OrderBy({"id" = "ASC"})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -1174,7 +1175,7 @@ class Order extends ExtendOrder implements
      */
     public function setShippingMethod($shippingMethod)
     {
-        $this->shippingMethod = $shippingMethod;
+        $this->shippingMethod = (string) $shippingMethod;
 
         return $this;
     }
@@ -1193,7 +1194,7 @@ class Order extends ExtendOrder implements
      */
     public function setShippingMethodType($shippingMethodType)
     {
-        $this->shippingMethodType = $shippingMethodType;
+        $this->shippingMethodType = (string) $shippingMethodType;
 
         return $this;
     }

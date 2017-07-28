@@ -6,6 +6,7 @@ oro:
                 order: Order
                 line_item: Line Item
                 buy_x_get_y: Buy X Get Y
+                shipping: Shipping
     discount_options:
         general:
             type:
@@ -40,11 +41,15 @@ oro:
             limit_times:
                 label: Limit, times
                 tooltip: The quantity of discounted groups (X+Y) of the same type eligible for a discount in a line item/order. For example, when the limit is set to 2 and a buyer orders 3 groups of 3+2 items (15 in total), they will be charged the discounted price for 2 groups out of 3, and will pay the full price for the remaining one group.
+        shipping_type:
+            shipping_method:
+                label: Shipping Method
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions
         entity_description: Represents promotion information
         id.label: ID
+        coupons.label: Coupons
         descriptions.label: Descriptions
         descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration
@@ -161,6 +166,35 @@ oro:
                     discount_optins.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
+
+        coupon:
+            entity_label: Coupon
+            entity_plural_label: Coupons
+            organization.label: Organization
+            owner.label: Owner
+            id.label: Id
+            code.label: Coupon Code
+            promotion.label: Promotion
+            total_uses.label: Used
+            uses_per_coupon.label: Uses per Coupon
+            uses_per_user.label: Uses per Customer
+            valid_until.label: Valid Until
+            menu:
+                coupon_list.description: List of existing coupons
+                shortcut_new_coupon.label: Create new coupon
+                shortcut_new_coupon.description: Create new coupon
+            sections:
+                general: General
+                additional: Additional
+            form:
+                title:
+                    mass_edit: Mass Coupon Edit
+                message:
+                    saved: 'Coupon has been saved'
+                tooltip:
+                    coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
+                    uses_per_user: 'Limits how many times the coupon may be used by the same customer user'
+                    uses_per_coupon: 'Limits how many times the coupon may be used'
 
     applied_discount:
         name: Name

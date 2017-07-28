@@ -1,0 +1,225 @@
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+  price:
+    value: '1'
+    currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  company_A:
+    name: 'Company A'
+    organization: '@organization'
+    owner: '@admin'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  amanda:
+    email: 'AmandaRCole@example.org'
+    username: 'AmandaRCole@example.org'
+    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    firstName: 'Amanda'
+    lastName: 'Cole'
+    enabled: '1'
+    confirmed: '1'
+    customer: '@company_A'
+    organization: '@organization'
+    role: ['@buyer']
+    owner: '@admin'
+    website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  precision1:
+    unit: '@item'
+    precision: '1'
+
+Oro\Bundle\ShippingBundle\Model\Weight(local):
+    weight:
+        unit: 'kg'
+        value: 1
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue(local):
+    dimensionsValue:
+        length: 1
+        width: 1
+        height: 1
+
+Oro\Bundle\ShippingBundle\Model\Dimensions(local):
+    dimensions:
+        value: '@dimensionsValue'
+        unit: 'cm'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  locValue1:
+    string: 'Product1'
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    productShippingOptions:
+        product: '@product1'
+        productUnit: '@item'
+        weight: '@weight'
+        dimensions: '@dimensions'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product1:
+    sku: 'SKU1'
+    type: 'simple'
+    organization: '@organization'
+    owner: '@businessUnit'
+    primaryUnitPrecision: '@precision1'
+    unitPrecisions: []
+    attributeFamily: '@defaultProductFamily'
+    addName: ['@locValue1']
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+
+Doctrine\Common\Collections\ArrayCollection(local):
+    addressTypes:
+        __construct: [['@billingType', '@shippingType']]
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+  address:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'VOTUM GmbH Ohlauer Str.'
+    street2: '43'
+    city: 'Berlin'
+    postalCode: '10999'
+    frontendOwner: '@amanda'
+    owner: '@admin'
+    types: '@addressTypes'
+    defaults: '@addressTypes'
+    organization: '@organization'
+    firstName: 'Amanda'
+    lastName: 'Cole'
+    systemOrganization: '@organization'
+    primary: true
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+  pricelistShipping:
+    name: 'pricelist_shipping'
+    default: true
+    setCurrencies: [['USD']]
+    active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+  priceListToCustomer:
+    customer: '@company_A'
+    pricelist: '@pricelistShipping'
+    website: '@website1'
+    sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  productPrice1:
+    pricelist: '@pricelistShipping'
+    product: '@product1'
+    productSku: 'SKU1'
+    quantity: 1
+    unit: '@item'
+    value: 5
+    currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+  combinedProductPrice1:
+    pricelist: '@combinedPriceList'
+    product: '@product1'
+    productSku: 'SKU1'
+    quantity: 1
+    unit: '@item'
+    value: 3
+    currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+  combinedPriceListToCustomer:
+    pricelist: '@combinedPriceList'
+    customer: '@company_A'
+    website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+  combinedPriceListToWebsite:
+    pricelist: '@combinedPriceList'
+    website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+  customerUserSetting:
+    customerUser: '@amanda'
+    __construct: ['@website1']
+    currency: 'USD'
+
+Oro\Bundle\WarehouseBundle\Entity\Warehouse:
+  testWarehouse:
+    name: 'Test Warehouse'
+    organization: '@organization'
+
+Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+  inventoryLevel1:
+    product: '@product1'
+    productUnitPrecision: '@precision1'
+    quantity: 100
+    warehouse: '@testWarehouse'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+  shoppinglist:
+    label: 'List 1'
+    customerUser: '@amanda'
+    organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+  lineitem1:
+    product: '@product1'
+    quantity: '5'
+    unit: '@item'
+    customerUser: '@amanda'
+    shoppingList: '@shoppinglist'
+    organization: '@organization'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    flatRateShippingRule:
+        name: 'Shipping Rule Flat Rate'
+        enabled: true
+        sortOrder: 5
+        expression: 'true'
+        stopProcessing: false
+    dpdShippingRule:
+        name: 'Shipping Rule DPD'
+        enabled: true
+        sortOrder: 5
+        expression: 'true'
+        stopProcessing: false
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    flatRateMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 10
+            type: 'per_item'
+            handling_fee: 0
+    dpdMethodTypeConfig:
+        type: '<(@dpdClassicShippingService->code)>'
+        enabled: true
+        options:
+            handling_fee: 10
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    flatRateShippingMethodConfig:
+        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        typeConfigs: ['@flatRateMethodTypeConfig']
+    dpdShippingMethodConfig:
+        method: '<("dpd_".@dpdIntegration->id)>'
+        typeConfigs: ['@dpdMethodTypeConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    flatRateMethodsConfigsRule:
+        rule: '@flatRateShippingRule'
+        methodConfigs: ['@flatRateShippingMethodConfig']
+        currency: 'USD'
+        organization: '@organization'
+    dpdMethodsConfigsRule:
+        rule: '@dpdShippingRule'
+        methodConfigs: ['@dpdShippingMethodConfig']
+        currency: 'USD'
+        organization: '@organization'

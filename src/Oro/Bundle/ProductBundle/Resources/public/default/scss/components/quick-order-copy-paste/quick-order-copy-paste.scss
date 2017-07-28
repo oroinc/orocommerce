@@ -26,4 +26,11 @@
     float: right;
     margin: $quick-order-copy-paste-buttons-margin;
   }
+  .mobile-version & {
+    @include breakpoint('mobile-big') {
+      width: 100%;
+      float: none;
+      clear: none;
+    }
+  }
 }

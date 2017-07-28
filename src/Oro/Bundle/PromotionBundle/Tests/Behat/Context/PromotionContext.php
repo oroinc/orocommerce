@@ -103,6 +103,9 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {
+        // discount update request is executed after 1.5 sec timeout
+        $this->getSession()->wait(1600);
+        $this->waitForAjax();
         /** @var PromotionBackendOrder $order */
         $order = $this->createElement('PromotionBackendOrder');
 
@@ -198,15 +201,34 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
      */
     private function assertLineItemDiscounts($element, TableNode $table)
     {
-        $discounts = [];
+        $expectedDiscounts = [];
         /** @var PromotionShoppingListLineItem $lineItem */
         foreach ($element->getLineItems() as $lineItem) {
-            $discounts[] = [$lineItem->getProductSKU(), $lineItem->getDiscount()];
+            $sku = $lineItem->getProductSKU();
+            $expectedDiscounts[$sku] = ['sku' => $sku, 'discount' => $lineItem->getDiscount()];
         }
 
         $rows = $table->getRows();
         array_shift($rows);
 
-        static::assertEquals($rows, $discounts);
+        foreach ($rows as list($sku, $discount)) {
+            static::assertNotEmpty(
+                $expectedDiscounts[$sku],
+                sprintf(
+                    'Can\'t find line item with "%s" sku.',
+                    $sku
+                )
+            );
+            static::assertEquals(
+                (string)$expectedDiscounts[$sku]['discount'],
+                $discount,
+                sprintf(
+                    'Wrong value for "%s" line item. Expected "%s" got "%s"',
+                    $sku,
+                    $expectedDiscounts[$sku]['discount'],
+                    $discount
+                )
+            );
+        }
     }
 }

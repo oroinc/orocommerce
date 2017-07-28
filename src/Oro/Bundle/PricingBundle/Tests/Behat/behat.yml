@@ -67,3 +67,34 @@ oro_behat_extension:
       selector: '.active.expression-editor-data-source .entity-select-btn'
     Price List Select Clear Button:
       selector: '.active.expression-editor-data-source .select2-search-choice-close'
+    ProductPricesGrid:
+      selector: 'div[data-page-component-name="product-prices-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    ProductPricesGridFilters:
+      selector: 'div[data-page-component-name="product-prices-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+    ProductPricesGridToolbarActions:
+        selector: 'div[data-page-component-name="product-prices-grid"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+    ProductPricesGridFiltersState:
+        selector: 'div[data-page-component-name="product-prices-grid"] div.filters-state'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    ProductPricesGridFilterItem:
+      selector: 'div.filter-item'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
+    ProductPricesGridFiltersButton:
+      selector:
+        locator: '//div/h4[text()="Product Prices"]/../..//div[@class="oro-datagrid"]/div[@class="toolbar"]//a[@title="Filters"]'
+        type: xpath
+    PriceListFilterHint:
+      selector:
+        locator: '//div[@class="filter-item oro-drop"]/div[contains(text(), "Price List")]/span[@class="filter-item-hint"]/span/strong'
+        type: 'xpath'
+    PricingConfigurationForm:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Offset Of Processing CPL Prices Use Default: 'pricing[oro_pricing___offset_of_processing_cpl_prices][use_parent_scope_value]'
+          Offset Of Processing CPL Prices: 'pricing[oro_pricing___offset_of_processing_cpl_prices][value]'
+          Default Currency: 'pricing[oro_pricing_pro___default_currency][value]'
