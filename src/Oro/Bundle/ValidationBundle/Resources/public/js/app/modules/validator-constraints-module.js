@@ -13,6 +13,7 @@ require([
         var constraints = [
             'orovalidation/js/validator/letters',
             'orovalidation/js/validator/alphanumeric',
+            'orovalidation/js/validator/alphanumeric-dash',
             'orovalidation/js/validator/alphanumeric-dash-underscore',
             'orovalidation/js/validator/url-safe',
             'orovalidation/js/validator/decimal',

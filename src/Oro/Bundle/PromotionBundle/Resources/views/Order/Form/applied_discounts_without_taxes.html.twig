@@ -5,7 +5,7 @@
 {% set rowTotalWithoutDiscount = appliedDiscounts.rowTotalWithoutDiscount|default(0.0) %}
 {% set rowTotalAfterDiscount = rowTotalWithoutDiscount - appliedDiscountsAmount %}
 
-<div>
+<div data-page-component-module="oropromotion/js/app/components/order-line-item-discounts-no-tax-component">
     <span data-value-container>
         <table class="grid table table-condensed table-bordered applied_discount-result-grid">
             <thead>
@@ -18,8 +18,8 @@
             <tbody>
                 <tr>
                     <td class="renderable">{{ 'oro.tax.result.row'|format('row')|trans }}</td>
-                    <td class="renderable">{{ rowTotalAfterDiscount|oro_format_currency({currency: currency}) }}</td>
-                    <td class="renderable">{{ appliedDiscountsAmount|oro_format_currency({currency: currency}) }}</td>
+                    <td class="renderable applied-discount-row-total-after-discount">{{ rowTotalAfterDiscount|oro_format_currency({currency: currency}) }}</td>
+                    <td class="renderable applied-discount-row-total-discount-amount">{{ appliedDiscountsAmount|oro_format_currency({currency: currency}) }}</td>
                 </tr>
             </tbody>
         </table>

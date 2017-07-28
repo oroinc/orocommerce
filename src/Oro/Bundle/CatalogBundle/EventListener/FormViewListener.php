@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Exception\UnexpectedTypeException;

@@ -1,6 +1,7 @@
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @feature-BB-8377
+
 Feature: Editing related products
   In order to propose my customer some other products
   As admin
@@ -239,3 +240,18 @@ Feature: Editing related products
       | SKU   | NAME      |
       | PSKU4 | Product 4 |
       | PSKU3 | Product 3 |
+
+  Scenario: Related items should not be editable on view if user has no permission
+    Given user has following permissions
+      | Assign | Product | None   |
+      | Create | Product | None   |
+      | Delete | Product | None   |
+      | Edit   | Product | None   |
+      | View   | Product | Global |
+    And user has following entity permissions enabled
+      | [Related Products] Edit Related Products |
+    And I login as "CatalogManager1" user
+    When I go to Products/ Products
+    And I click View "PSKU1" in grid
+    Then I should see "Related Items"
+    And I should not see an "ProductViewRelatedItemQuickEdit" element

@@ -23,6 +23,8 @@ oro:
                 order_created:
                     label: 'Order Created'
             attribute:
+                additional_data:
+                    label: 'Additional Data'
                 billing_address_has_shipping:
                     label: 'If billing address also shipping'
                 allow_manual_source_remove:
@@ -132,6 +134,8 @@ oro:
                         payment_validate:
                             label: ''
                         state_token:
+                            label: ''
+                        additional_data:
                             label: ''
                 back_to_billing_address:
                     label: 'Edit Billing Information'

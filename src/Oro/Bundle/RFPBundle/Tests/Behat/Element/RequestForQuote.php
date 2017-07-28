@@ -3,6 +3,8 @@
 namespace Oro\Bundle\RFPBundle\Tests\Behat\Element;
 
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 class RequestForQuote extends Element
 {
@@ -31,5 +33,24 @@ class RequestForQuote extends Element
             $matches[1],
             sprintf('Request status is not equal to %s', $text)
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function assertPageContainsValue($label, $value)
+    {
+        /* @var $rowElement TableRow */
+        $rowElement = $this->findElementContains('TableRow', $label);
+
+        if (!$rowElement->isIsset()) {
+            self::fail(sprintf('Can\'t find "%s" label', $label));
+        }
+
+        if ($rowElement->getCellByNumber(1)->getText() === Form::normalizeValue($value)) {
+            return;
+        }
+
+        self::fail(sprintf('Found "%s" label, but it doesn\'t have "%s" value', $label, $value));
     }
 }

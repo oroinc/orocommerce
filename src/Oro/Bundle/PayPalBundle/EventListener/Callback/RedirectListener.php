@@ -9,20 +9,30 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
 class RedirectListener
 {
     const FAILED_SHIPPING_ADDRESS_URL_KEY = 'failedShippingAddressUrl';
 
-    /** @var Session */
+    /**
+     * @var Session
+     */
     protected $session;
 
     /**
-     * @param Session $session
+     * @var PaymentMethodProviderInterface
      */
-    public function __construct(Session $session)
+    protected $paymentMethodProvider;
+
+    /**
+     * @param Session $session
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
+     */
+    public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->session = $session;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -30,6 +40,16 @@ class RedirectListener
      */
     public function onError(CallbackErrorEvent $event)
     {
+        $paymentTransaction = $event->getPaymentTransaction();
+
+        if (!$paymentTransaction) {
+            return;
+        }
+
+        if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentTransaction->getPaymentMethod())) {
+            return;
+        }
+
         if (!$this->checkResponse($event, ResponseStatusMap::FIELD_FORMAT_ERROR)) {
             return;
         }
@@ -47,10 +67,6 @@ class RedirectListener
     protected function handleEvent(AbstractCallbackEvent $event, $expectedOptionsKey)
     {
         $transaction = $event->getPaymentTransaction();
-        if (!$transaction) {
-            return;
-        }
-
         $transactionOptions = $transaction->getTransactionOptions();
 
         if (!empty($transactionOptions[$expectedOptionsKey])) {
@@ -78,10 +94,6 @@ class RedirectListener
     protected function checkResponse(AbstractCallbackEvent $event, $responseCode)
     {
         $transaction = $event->getPaymentTransaction();
-        if (!$transaction) {
-            return false;
-        }
-
         $response = new Response($transaction->getResponse());
 
         return $response->getResult() === $responseCode;

@@ -159,13 +159,17 @@ class ProductController extends Controller
      *
      * @Route("/related-items-update/{id}", name="oro_product_related_items_update", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("oro_related_products_edit")
+     * @AclAncestor("oro_product_update")
      * @param Product $product
      *
      * @return array|RedirectResponse
      */
     public function updateRelatedItemsAction(Product $product)
     {
+        if (!$this->relatedItemsIsGranted()) {
+            throw $this->createAccessDeniedException();
+        }
+
         if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
             throw $this->createNotFoundException();
         }
@@ -211,7 +215,10 @@ class ProductController extends Controller
             return $this->forward('OroProductBundle:Product:createStepTwo');
         }
 
-        return ['form' => $form->createView()];
+        return [
+            'form' => $form->createView(),
+            'isWidgetContext' => (bool)$request->get('_wid', false)
+        ];
     }
 
     /**
@@ -236,7 +243,8 @@ class ProductController extends Controller
 
             return [
                 'form' => $form->createView(),
-                'entity' => $product
+                'entity' => $product,
+                'isWidgetContext' => (bool)$request->get('_wid', false)
             ];
         } else {
             $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
@@ -335,5 +343,15 @@ class ProductController extends Controller
             'parameters' => $hiddenProducts ? ['hiddenProducts' => $hiddenProducts] : [],
             'gridName' => $gridName,
         ];
+    }
+
+    /**
+     * Checks if at least one "Related Items" functionality is available for the user
+     *
+     * @return bool
+     */
+    private function relatedItemsIsGranted()
+    {
+        return $this->isGranted('oro_related_products_edit');
     }
 }
