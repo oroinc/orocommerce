@@ -5,21 +5,21 @@ define([
 ], function(_, mediator, AbstractListener) {
     'use strict';
 
-    var RelatedProductListener;
+    var RelatedItemsListener;
 
     /**
      * @export  oroproduct/js/datagrid/listener/related-product-listener
      * @class   oroproduct.datagrid.listener.RelatedProductListener
      * @extends orodatagrid.datagrid.listener.AbstractListener
      */
-    RelatedProductListener = AbstractListener.extend({
+    RelatedItemsListener = AbstractListener.extend({
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.grid = options.grid;
 
-            mediator.on('product:save-related-items', this.updateRelatedProductsGrid, this);
+            mediator.on('change:' + this.grid.name, this.updateRelatedProductsGrid, this);
         },
 
         /**
@@ -47,7 +47,7 @@ define([
                 return;
             }
             delete this.grid;
-            RelatedProductListener.__super__.dispose.apply(this, arguments);
+            RelatedItemsListener.__super__.dispose.apply(this, arguments);
         }
     });
 
@@ -62,7 +62,7 @@ define([
      * @param {Object} [options.data] data for grid's collection
      * @param {Object} [options.metadata] configuration for the grid
      */
-    RelatedProductListener.init = function(deferred, options) {
+    RelatedItemsListener.init = function(deferred, options) {
         var gridInitialization = options.gridPromise;
 
         gridInitialization.done(function(grid) {
@@ -72,12 +72,12 @@ define([
                 grid: grid
             };
 
-            var listener = new RelatedProductListener(listenerOptions);
+            var listener = new RelatedItemsListener(listenerOptions);
             deferred.resolve(listener);
         }).fail(function() {
             deferred.reject();
         });
     };
 
-    return RelatedProductListener;
+    return RelatedItemsListener;
 });

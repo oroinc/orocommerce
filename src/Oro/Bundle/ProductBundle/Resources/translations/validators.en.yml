@@ -64,6 +64,6 @@ oro:
             blank_condition_item: "Conditions in filters should not be blank."
             blank_condition_group: "Conditions groups in filters should not be blank."
 
-"Related Products functionality is disabled.": "Related Products functionality is disabled."
+"Related Items functionality is disabled.": "Related Items functionality is disabled."
 "It is not possible to create relations from product to itself.": "It is not possible to create relations from product to itself."
 "It is not possible to add more related products, because of the limit of relations.": "It is not possible to add more related products, because of the limit of relations."

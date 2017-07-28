@@ -8,9 +8,18 @@ placeholders:
         oro_product_related_products_buttons:
             items:
                 oro_product_select_related_products_button: ~
+        oro_product_upsell_products_buttons:
+            items:
+                oro_product_select_upsell_products_button: ~
+        oro_product_upsell_products_view: ~
+        oro_product_upsell_products_edit: ~
 
     items:
         quick_add_actions_buttons:
             template: OroActionBundle:Widget:buttons.html.twig
         oro_product_select_related_products_button:
             template: OroProductBundle:Product:selectRelatedProductsButton.html.twig
+        oro_product_select_upsell_products_button:
+            template: OroProductBundle:Product:selectUpsellProductsButton.html.twig
+        oro_product_requirejs_config:
+            template: OroProductBundle::requirejs.config.js.twig
