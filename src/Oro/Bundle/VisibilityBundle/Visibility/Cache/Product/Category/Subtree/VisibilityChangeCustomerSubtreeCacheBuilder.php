@@ -14,8 +14,10 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
 {
     /**
      * @param Category $category
-     * @param Scope $scope
-     * @param int $categoryVisibility visible|hidden|config
+     * @param Scope    $scope
+     * @param int      $categoryVisibility visible|hidden|config
+     *
+     * @return array|int[] Affected categories id
      */
     public function resolveVisibilitySettings(Category $category, Scope $scope, $categoryVisibility)
     {
@@ -29,6 +31,8 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
         $this->updateCustomerProductVisibilityByCategory($categoryIds, $categoryVisibility, $scope);
+
+        return $categoryIds;
     }
 
     /**

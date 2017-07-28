@@ -35,6 +35,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
 
     /**
      * @param Category $category
+     *
+     * @return array|int[] Affected categories id
      */
     public function categoryPositionChanged(Category $category)
     {
@@ -57,6 +59,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $this->updateConfigVisibilityRelatedEntities($category);
 
         $this->clearChangedEntities();
+
+        return $categoryIds;
     }
 
     protected function clearChangedEntities()
