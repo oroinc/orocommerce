@@ -364,6 +364,9 @@ oro:
                 image_preview_on_product_listing_enabled:
                     label: 'Enable Image Preview on Product Listing'
                     tooltip: 'If enabled, the customers will see product image gallery instead of going to the product view page when they click on a product image in the product listing.'
+                popup_gallery_on_product_view:
+                    label: 'Popup Gallery on Product View'
+                    tooltip: 'Inline gallery view may work better for some product templates.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

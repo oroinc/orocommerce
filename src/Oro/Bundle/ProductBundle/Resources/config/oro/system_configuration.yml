@@ -366,6 +366,14 @@ system_configuration:
                 label: oro.product.system_configuration.fields.image_preview_on_product_listing_enabled.label
                 tooltip: oro.product.system_configuration.fields.image_preview_on_product_listing_enabled.tooltip
 
+        oro_product.popup_gallery_on_product_view:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.popup_gallery_on_product_view.label
+                tooltip: oro.product.system_configuration.fields.popup_gallery_on_product_view.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -426,6 +434,7 @@ system_configuration:
                                     image_gallery:
                                         children:
                                             - oro_product.image_preview_on_product_listing_enabled
+                                            - oro_product.popup_gallery_on_product_view
                             featured_products:
                                 priority: 100
                                 children:

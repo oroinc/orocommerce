@@ -58,6 +58,11 @@ services:
     oro_product.block_type.attribute_product_images:
         parent: oro_layout.block_type.abstract_configurable
         calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        popup_gallery: {default: true}
             - [setName, ['attribute_product_images']]
             - [setParent, ['attribute_text']]
         tags:

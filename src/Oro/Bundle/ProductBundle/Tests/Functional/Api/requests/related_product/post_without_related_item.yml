@@ -1,0 +1,7 @@
+data:
+    type: relatedproducts
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product-6->id)>'

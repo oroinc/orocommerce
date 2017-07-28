@@ -160,6 +160,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => true,
                     'scope' => 'app',
                 ],
+                'popup_gallery_on_product_view' => [
+                    'value' => true,
+                    'scope' => 'app',
+                ],
             ]
         ];
 

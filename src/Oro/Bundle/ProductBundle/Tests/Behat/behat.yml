@@ -524,6 +524,8 @@ oro_behat_extension:
         mapping:
           Product Images Default: 'product_images[oro_product___image_preview_on_product_listing_enabled][use_parent_scope_value]'
           Product Images: 'product_images[oro_product___image_preview_on_product_listing_enabled][value]'
+          Popup Gallery Default: 'product_images[oro_product___popup_gallery_on_product_view][use_parent_scope_value]'
+          Popup Gallery On Product View: 'product_images[oro_product___popup_gallery_on_product_view][value]'
 
     RequestAQuoteProducts:
       selector: '.page-content .request-form [data-role="product-container"]'
@@ -584,6 +586,14 @@ oro_behat_extension:
 
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
+
+    Product Slider:
+      selector: '.product-view-media-container .product-view-media-slider'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Product View Gallery Trigger:
+      selector: '.product-view-media-container [data-trigger-gallery-open]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
   suites:
     # Revert by OPI-52
