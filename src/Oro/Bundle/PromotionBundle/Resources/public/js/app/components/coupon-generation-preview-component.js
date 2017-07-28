@@ -45,8 +45,8 @@ define(function(require) {
                     method: 'POST',
                     url: routing.generate(this.options.routeName, {'couponGenerationData': this.getFieldsData()}),
                     success: function(response) {
-                        if (response) {
-                        $(self.options.codePreviewSelector).text(response.codePreview);
+                        if (response.codePreview) {
+                            $(self.options.codePreviewSelector).html(response.codePreview);
                         }
                     }
                 });
