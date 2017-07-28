@@ -28,7 +28,7 @@
 {% block _product_view_media_gallery_widget %}
     {% set zoomOptions = {
         viewport: {
-        minScreenType: 'desktop'
+            minScreenType: 'desktop'
         },
         component: 'oroui/js/app/components/jquery-widget-component',
         widgetModule: 'oroproduct/js/widget/zoom-widget'
@@ -65,8 +65,45 @@
         'data-page-component-options': navListOptions|json_encode
     } : {} %}
 
-    <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
-        {% if productImages|length == 0 %}
+    {% if productImages|length > 0 %}
+        {% set galleryImages = [] %}
+        {% for productImage in productImages %}
+            {% set galleryImages = galleryImages|merge([{
+                src: Image.url(productImage.image, 'product_gallery_popup'),
+                thumb: Image.url(productImage.image, 'product_small'),
+                alt: (product.names|localized_value|e)
+            }]) %}
+        {% endfor %}
+
+        {% set options = {
+            galleryImages: galleryImages
+        } %}
+
+        {% set popupGalleryAttr = {
+            'data-page-component-module': 'orofrontend/js/app/components/popup-gallery-widget',
+            'data-page-component-options': options|json_encode
+        } %}
+        <div {{ UI.attributes(popupGalleryAttr) }}>
+            <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
+                {% for productImage in productImages %}
+                    <div class="product-view-media-gallery__image-item" data-trigger-gallery-open>
+                        <img class="product-view-media-gallery__image"
+                             alt="{{ product.names|localized_value }}"
+                             data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                                {% if loop.first %}
+                                    src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
+                                    data-page-component-module="oroui/js/app/components/viewport-component"
+                                    data-page-component-options="{{ zoomOptions|json_encode }}"
+                                {% else %}
+                                    data-lazy="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
+                                {% endif %}
+                        />
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="product-view-media-gallery">
             <div class="product-view-media-gallery__image-item">
                 <img class="product-view-media-gallery__image"
                      src="{{ Image.url(null, 'product_gallery_main') }}"
@@ -75,24 +112,8 @@
                      height="378"
                 />
             </div>
-        {% else %}
-            {% for productImage in productImages %}
-                <div class="product-view-media-gallery__image-item" data-trigger-gallery-open>
-                    <img class="product-view-media-gallery__image"
-                         alt="{{ product.names|localized_value }}"
-                         data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
-                            {% if loop.first %}
-                                src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
-                                data-page-component-module="oroui/js/app/components/viewport-component"
-                                data-page-component-options="{{ zoomOptions|json_encode }}"
-                            {% else %}
-                                data-lazy="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
-                            {% endif %}
-                    />
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 
     <div id="zoom-container"></div>
     {% if productImages|length > 1 %}
