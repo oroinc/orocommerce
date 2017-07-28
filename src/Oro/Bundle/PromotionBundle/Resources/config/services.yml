@@ -506,7 +506,7 @@ services:
         class: 'Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager'
         arguments:
             - '@oro_promotion.coupon_generation.generator'
-            - '@oro_promotion.coupon_generation.inserter'
+            - '@oro_entity.doctrine_helper'
 
     oro_promotion.coupon_generation.generator:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Generator\SimpleCouponGenerator'
