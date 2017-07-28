@@ -347,7 +347,7 @@ class ProductApiTest extends RestJsonApiTestCase
                     "attributes" => [
                         "fallback" => null,
                         "scalarValue" => null,
-                        "arrayValue" => "short"
+                        "arrayValue" => ["short"]
                     ]
                 ],
                 2 => [
