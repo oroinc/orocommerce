@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\CouponGeneratorInterface;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Inserter\CouponInserterInterface;
 
 /**
@@ -12,7 +12,7 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\Inserter\CouponInserterInterface
 class CouponGenerationManager
 {
     /**
-     * @var CouponGeneratorInterface
+     * @var CodeGeneratorInterface
      */
     protected $couponGenerator;
 
@@ -22,10 +22,10 @@ class CouponGenerationManager
     protected $couponInserter;
 
     /**
-     * @param CouponGeneratorInterface $couponGenerator
+     * @param CodeGeneratorInterface $couponGenerator
      * @param CouponInserterInterface $couponInserter
      */
-    public function __construct(CouponGeneratorInterface $couponGenerator, CouponInserterInterface $couponInserter)
+    public function __construct(CodeGeneratorInterface $couponGenerator, CouponInserterInterface $couponInserter)
     {
         $this->couponGenerator = $couponGenerator;
         $this->couponInserter = $couponInserter;
