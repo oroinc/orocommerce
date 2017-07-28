@@ -44,18 +44,50 @@
 {% endblock %}
 
 {% block __oro_product_grid__product_image_holder_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': " product-item__image-holder product-item__image-holder--{{ class_prefix }}"
     }) %}
 
-    {% set noImageUrl = Image.url(null, 'product_large') %}
     <div {{ block('block_attributes') }}>
-        {% set image = product.image is defined ? product.image : noImageUrl %}
-        <a href="{{ product.view_link }}" class="view-product" style="background-image: url('{{ image }}')"></a>
         {{ block('container_widget') }}
     </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_view_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' view-product'
+    }) %}
+    
+    {% if popup_gallery %}
+        {% set options = {
+            ajaxMode: true,
+            ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
+            id: product.id,
+            galleryFilter: 'product_gallery_popup',
+            alt: product.name
+        } %}
+
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': "orofrontend/js/app/components/popup-gallery-widget",
+            'data-page-component-options': options|json_encode
+        }) %}
+    {% endif %}
+
+    <a href="{{ product.view_link }}" {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </a>
+{% endblock %}
+
+{% block __oro_product_list_item__product_view_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' view-product-image'
+    }) %}
+
+    {% set image = product.image is defined ? product.image : Image.url(null, 'product_large') %}
+
+    <img src="{{ image }}" {{ block('block_attributes') }} alt="{{ product.name }}">
 {% endblock %}
 
 {% block __oro_product_grid__product_title_widget %}
