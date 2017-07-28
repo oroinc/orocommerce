@@ -4,8 +4,8 @@ oro:
         entity_plural_label: Checkouts
         id.label: Id
         owner.label: Owner
-        customer.label: Global Address Book
-        customer_user.label: My Address Book
+        customer.label: Customer
+        customer_user.label: Customer User
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
@@ -47,8 +47,8 @@ oro:
             entity_plural_label: Base Checkouts
             id.label: Id
             owner.label: Owner
-            customer.label: Global Address Book
-            customer_user.label: My Address Book
+            customer.label: Customer
+            customer_user.label: Customer User
             organization.label: Organization
             customer_notes.label: Customer Notes
             customer_notes.frontend.label: Notes
@@ -164,6 +164,9 @@ oro:
                             sufix: ""
         form:
             address.manual: New address
+            address.group_label:
+                customer: Global Address Book
+                customer_user: My address book
             address.select.billing.label: SELECT BILLING ADDRESS
             address.enter.billing.label: ENTER BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS

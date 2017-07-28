@@ -220,11 +220,11 @@ oro:
         form:
             address:
                 choose: Select an address
-                choose_or_create: Select an existing address or enter a new address below
-                manual: New address
+                choose_or_create: Select an existing address or enter a other address below
+                manual: Enter other address
                 group_label:
                     customer: Customer Address Book
-                    customer_user: Customer User Address Book
+                    customer_user: User Address Book
             shipping_options.label: Shipping Options
             override_shipping_cost.label: Override Shipping Cost
 
@@ -265,10 +265,6 @@ oro:
         order:
             entity_plural_label: Orders
             create.label: 'Create Order'
-            form:
-                group_label:
-                    customer: Global Address Book
-                    customer_user: My Address Book
             past_orders.label: Past Orders
             method_type:
                 view:
