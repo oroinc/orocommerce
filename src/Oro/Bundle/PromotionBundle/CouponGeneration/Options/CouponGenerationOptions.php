@@ -130,6 +130,8 @@ class CouponGenerationOptions extends CodeGenerationOptions
 
     /**
      * @param BusinessUnit|null $owner
+     *
+     * @return $this
      */
     public function setOwner(BusinessUnit $owner)
     {

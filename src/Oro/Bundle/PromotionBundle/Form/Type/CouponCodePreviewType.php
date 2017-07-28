@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
-use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -37,11 +37,11 @@ class CouponCodePreviewType extends AbstractType
                 ChoiceType::class,
                 [
                     'choices' => [
-                        CouponGenerationOptions::NUMERIC_CODE_TYPE =>
+                        CodeGenerationOptions::NUMERIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.numeric.label',
-                        CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
+                        CodeGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.alphanumeric.label',
-                        CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
+                        CodeGenerationOptions::ALPHABETIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.alphabetic.label',
                     ],
                 ]
@@ -61,11 +61,11 @@ class CouponCodePreviewType extends AbstractType
                 ]
             )->add(
                 'dashesSequence',
-                IntegerType::class,
+                DashesSequenceType::class,
                 [
                     'required' => false,
-                    'label' => 'oro.promotion.coupon.generation.dashesSequence.label',
-                    'attr' => ['class' => 'input-small']
+                    'label' => 'oro.promotion.coupon.generation.dashesSequence.prefix.label',
+                    'attr' => ['class' => 'input-small'],
                 ]
             );
     }
@@ -77,7 +77,7 @@ class CouponCodePreviewType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => CouponGenerationOptions::class,
+                'data_class' => CodeGenerationOptions::class,
                 'csrf_protection' => false
             ]
         );
