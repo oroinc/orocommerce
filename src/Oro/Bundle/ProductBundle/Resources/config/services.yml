@@ -125,6 +125,14 @@ services:
         calls:
             - [setSkuIncrementor,  ["@oro_product.service.sku_incrementor"]]
 
+    oro_product.service.related_items_handler:
+        class: 'Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler'
+        arguments:
+            - '@translator'
+        calls:
+            - [addAssigner, ['relatedProducts', '@oro_product.related_item.related_product.assigner_strategy']]
+            - [addAssigner, ['upsellProducts', '@oro_product.related_item.upsell_product.assigner_strategy']]
+
     oro_product.service.product_update_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
         parent: oro_form.model.update_handler
@@ -132,7 +140,7 @@ services:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setRouter, ['@router']]
-            - [setRelatedProductAssigner, ['@oro_product.related_item.related_product.assigner_strategy']]
+            - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     oro_product.storage.product_data_bag:
         class: '%session.attribute_bag.class%'
@@ -245,6 +253,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_product.related_item.related_product.config_provider'
+            - '@oro_product.related_item.upsell_product.config_provider'
             - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }

@@ -201,6 +201,8 @@ oro:
                 remove.label: '[Product Attribute] Remove attribute'
             related_products:
                 edit.label: '[Related Products] Edit related products'
+            upsell_products:
+                edit.label: '[Up-sell Products] Edit up-sell products'
 
         rounding:
             type:
@@ -220,6 +222,11 @@ oro:
             images: Images
             design: Design
             relatedItems: Related Items
+            upsellItems: Up-sell items
+
+        tabs:
+            relatedProducts: Related Products
+            upsellProducts: Up-sell Products
 
         widgets:
             product_information: Product Information
@@ -228,6 +235,10 @@ oro:
               label: Select related products
               limit_has_been_reached: Limit of related products has been reached
             select_products: Select products
+            select_upsell_products:
+              title: Select up-sell products for {{ sku }} - {{ name }}
+              label: Select up-sell products
+              limit_has_been_reached: Limit of up-sell products has been reached
 
         controller:
             product.saved.message: Product has been saved
@@ -246,6 +257,7 @@ oro:
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
                 related_items.title: 'Related Items'
+                upsell_products.title: 'Up-sell Products'
                 related_products.title: 'Related Products'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
@@ -266,6 +278,10 @@ oro:
                 max_number_of_related_products:
                     label: 'Maximum Number of Assigned Items'
                     tooltip: 'You may use this option to set the limit on the number of related products that the catalog managers can link.'
+                enable_upsell_products.label: 'Enable Up-sell Products'
+                max_number_of_upsell_products:
+                    label: 'Maximum Number of Assigned Items'
+                    tooltip: 'You may use this option to set the limit on the number of up-sell items that the catalog managers can link.'
                 related_products_max_items:
                     label: 'Maximum Items'
                     tooltip: 'Show not more than the specified number of items (applied after filtering out the products that are not visible to the current user).'

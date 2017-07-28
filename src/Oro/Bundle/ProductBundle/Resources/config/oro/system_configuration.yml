@@ -12,6 +12,8 @@ system_configuration:
             icon: 'fa-cog'
         related_products:
             title: oro.product.system_configuration.groups.related_products.title
+        upsell_products:
+            title: oro.product.system_configuration.groups.upsell_products.title
         product_unit:
             title: oro.product.system_configuration.groups.product_unit.title
             icon: 'fa-briefcase'
@@ -77,6 +79,25 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.max_number_of_related_products.label
                 tooltip: oro.product.system_configuration.fields.max_number_of_related_products.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+
+        oro_product.upsell_products_enabled:
+                data_type: boolean
+                type: oro_config_checkbox
+                priority: 30
+                options:
+                    label: oro.product.system_configuration.fields.enable_upsell_products.label
+
+        oro_product.max_number_of_upsell_products:
+            data_type: integer
+            type: integer
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.max_number_of_upsell_products.label
+                tooltip: oro.product.system_configuration.fields.max_number_of_upsell_products.tooltip
                 constraints:
                     - NotBlank: ~
                     - Range:
@@ -363,6 +384,10 @@ system_configuration:
                                             - oro_product.related_products_min_items
                                             - oro_product.related_products_show_add_button
                                             - oro_product.related_products_use_slider_on_mobile
+                                    upsell_products:
+                                        children:
+                                            - oro_product.upsell_products_enabled
+                                            - oro_product.max_number_of_upsell_products
                     product:
                         priority: 700
                         children:
@@ -447,3 +472,7 @@ system_configuration:
                                             - oro_product.related_products_min_items
                                             - oro_product.related_products_show_add_button
                                             - oro_product.related_products_use_slider_on_mobile
+                                    upsell_products:
+                                        children:
+                                            - oro_product.upsell_products_enabled
+                                            - oro_product.max_number_of_upsell_products

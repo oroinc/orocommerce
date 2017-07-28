@@ -291,7 +291,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     ) {
         $this->relatedProductsRepository->expects($this->any())
             ->method('findOneBy')
-            ->with(['product' => $productFrom, 'relatedProduct' => $productTo], null)
+            ->with(['product' => $productFrom, 'relatedItem' => $productTo], null)
             ->willReturn($relatedProducts);
     }
 
@@ -303,7 +303,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit_Framework_TestCase
     {
         $this->relatedProductsRepository->expects($this->any())
             ->method('findOneBy')
-            ->with(['product' => $productFrom, 'relatedProduct' => $productTo], null)
+            ->with(['product' => $productFrom, 'relatedItem' => $productTo], null)
             ->willReturn(null);
     }
 
