@@ -15,3 +15,8 @@ services:
             - '@oro_security.token_accessor'
         tags:
             - { name: form.type, alias: oro_promotion_coupon_generation_type  }
+
+    oro_promotion.form.type.coupon_code_preview_type:
+        class: 'Oro\Bundle\PromotionBundle\Form\Type\CouponCodePreviewType'
+        tags:
+            - { name: form.type, alias: oro_promotion_coupon_code_preview_type }

@@ -500,7 +500,6 @@ services:
 
     oro_promotion.coupon_generation.generator:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Generator\SimpleCouponGenerator'
-        public: false
 
     oro_promotion.coupon_generation.inserter:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Inserter\SimpleCouponInserter'

@@ -83,6 +83,8 @@ class CouponGenerationOptions
     public function setCouponQuantity($couponQuantity)
     {
         $this->couponQuantity = $couponQuantity;
+
+        return $this;
     }
 
     /**
@@ -99,6 +101,8 @@ class CouponGenerationOptions
     public function setPromotion($promotion)
     {
         $this->promotion = $promotion;
+
+        return $this;
     }
 
     /**
@@ -115,6 +119,8 @@ class CouponGenerationOptions
     public function setUsesPerCoupon($usesPerCoupon)
     {
         $this->usesPerCoupon = $usesPerCoupon;
+
+        return $this;
     }
 
     /**
@@ -131,6 +137,8 @@ class CouponGenerationOptions
     public function setUsesPerUser($usersPerUser)
     {
         $this->usesPerUser = $usersPerUser;
+
+        return $this;
     }
 
     /**
@@ -147,6 +155,8 @@ class CouponGenerationOptions
     public function setExpirationDate($expirationDate)
     {
         $this->expirationDate = $expirationDate;
+
+        return $this;
     }
 
     /**
@@ -163,6 +173,8 @@ class CouponGenerationOptions
     public function setCodeLength($codeLength)
     {
         $this->codeLength = $codeLength;
+
+        return $this;
     }
 
     /**
@@ -179,6 +191,8 @@ class CouponGenerationOptions
     public function setCodeType($codeType)
     {
         $this->codeType = $codeType;
+
+        return $this;
     }
 
     /**
@@ -195,6 +209,8 @@ class CouponGenerationOptions
     public function setCodePrefix($codePrefix)
     {
         $this->codePrefix = $codePrefix;
+
+        return $this;
     }
 
     /**
@@ -211,6 +227,8 @@ class CouponGenerationOptions
     public function setCodeSuffix($codeSuffix)
     {
         $this->codeSuffix = $codeSuffix;
+
+        return $this;
     }
 
     /**
@@ -227,6 +245,8 @@ class CouponGenerationOptions
     public function setDashesSequence($dashesSequence)
     {
         $this->dashesSequence = $dashesSequence;
+
+        return $this;
     }
 
 

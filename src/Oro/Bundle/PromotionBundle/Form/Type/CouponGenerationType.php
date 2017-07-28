@@ -96,50 +96,6 @@ class CouponGenerationType extends AbstractType
                     'label' => 'oro.promotion.coupon.generation.expirationDate.label',
                     'required' => false
                 ]
-            )
-            ->add(
-                'codeLength',
-                IntegerType::class,
-                [
-                    'required' => true,
-                    'label' => 'oro.promotion.coupon.generation.codeLength.label',
-                    'data' => 12
-                ]
-            )->add(
-                'codeType',
-                ChoiceType::class,
-                [
-                    'choices' => [
-                        CouponGenerationOptions::NUMERIC_CODE_TYPE =>
-                            'oro.promotion.coupon.generation.codeType.numeric.label',
-                        CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
-                            'oro.promotion.coupon.generation.codeType.alphanumeric.label',
-                        CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
-                            'oro.promotion.coupon.generation.codeType.alphabetic.label',
-                    ],
-                ]
-            )->add(
-                'codePrefix',
-                TextType::class,
-                [
-                    'required' => false,
-                    'label' => 'oro.promotion.coupon.generation.codePrefix.label',
-                ]
-            )->add(
-                'codeSuffix',
-                TextType::class,
-                [
-                    'required' => false,
-                    'label' => 'oro.promotion.coupon.generation.codeSuffix.label',
-                ]
-            )->add(
-                'dashesSequence',
-                IntegerType::class,
-                [
-                    'required' => false,
-                    'label' => 'oro.promotion.coupon.generation.dashesSequence.label',
-                    'attr' => ['class' => 'input-small']
-                ]
             );
     }
 
@@ -151,6 +107,7 @@ class CouponGenerationType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => CouponGenerationOptions::class,
+                'validation_groups' => ['Default', 'coupon_generation'],
             ]
         );
     }
@@ -169,6 +126,14 @@ class CouponGenerationType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return CouponCodePreviewType::class;
     }
 
     /**

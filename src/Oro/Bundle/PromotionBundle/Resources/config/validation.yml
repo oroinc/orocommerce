@@ -56,9 +56,11 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
 Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
     properties:
         owner:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [ coupon_generation ]
         couponQuantity:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [ coupon_generation ]
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
                 min: 0
