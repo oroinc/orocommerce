@@ -9,7 +9,6 @@ interface CouponGeneratorInterface
     /**
      * @param CodeGenerationOptions $options
      * @return string
-     * @throws BadOptionsException
      */
     public function generate(CodeGenerationOptions $options);
 }
