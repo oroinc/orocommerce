@@ -35,6 +35,10 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
      */
     public function addRelations(Product $productFrom, array $productsTo)
     {
+        if (count($productsTo) === 0) {
+            return;
+        }
+
         $productsTo = $this->validateRelations($productFrom, $productsTo);
 
         if (count($productsTo) === 0) {
