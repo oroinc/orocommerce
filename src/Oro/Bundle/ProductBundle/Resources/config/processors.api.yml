@@ -18,6 +18,13 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', requestType: json_api, priority: 89 }
 
+    oro_product.create.related_product.validate_required:
+        class: Oro\Bundle\ProductBundle\Processor\Create\ValidateRelatedProduct
+        arguments:
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, requestType: json_api, priority: 89 }
+
     oro_product.create.related_product.security_check:
         class: Oro\Bundle\ProductBundle\Processor\Shared\RelatedItemSecurityCheck
         arguments:

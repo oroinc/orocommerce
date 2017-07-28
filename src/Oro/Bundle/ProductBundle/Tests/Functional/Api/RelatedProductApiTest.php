@@ -132,6 +132,53 @@ class RelatedProductApiTest extends RestJsonApiTestCase
         );
     }
 
+    public function testValidationErrorOnPostIfRequestHasNoRelationshipData()
+    {
+        $this->setRelatedProductsLimit(10);
+
+        $response = $this->post(
+            ['entity' => 'relatedproducts'],
+            'related_product/post_no_relationships.yml',
+            [],
+            false
+        );
+
+        $this->assertValidationErrorMessage(
+            $response,
+            "The 'relationships' property is required"
+        );
+    }
+
+    public function testValidationErrorOnPostIfRequestHasNoProductRelationshipData()
+    {
+        $response = $this->post(
+            ['entity' => 'relatedproducts'],
+            'related_product/post_without_product.yml',
+            [],
+            false
+        );
+
+        $this->assertValidationErrorMessage(
+            $response,
+            "The 'product' property is required"
+        );
+    }
+
+    public function testValidationErrorOnPostIfRequestHasNoRelatedItemRelationshipData()
+    {
+        $response = $this->post(
+            ['entity' => 'relatedproducts'],
+            'related_product/post_without_related_item.yml',
+            [],
+            false
+        );
+
+        $this->assertValidationErrorMessage(
+            $response,
+            "The 'relatedProduct' property is required"
+        );
+    }
+
     public function testRelatedProductIsAddedOnPost()
     {
         $this->setRelatedProductsEnabled(true);
