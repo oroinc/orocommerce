@@ -177,15 +177,20 @@
     }) %}
 
     {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
+        {% set headerLinkContent = '' %}
+        {% if resource_granted('oro_product_update') %}
+            {% set headerLinkContent = UII.link({
+                path: path('oro_product_related_items_update', {id: entity.id}),
+                label: 'oro.product.quick_edit.label'|trans,
+                iCss: 'fa-edit',
+                class: 'quick-editable pull-right'
+            }) %}
+        {% endif %}
+
         {% set dataBlocks = dataBlocks|merge({
             'relatedItems': {
                 'title': 'oro.product.sections.relatedItems'|trans,
-                'headerLinkContent': UII.link({
-                        path: path('oro_product_related_items_update', {id: entity.id}),
-                        label: 'oro.product.quick_edit.label'|trans,
-                        iCss: 'fa-edit',
-                        class: 'quick-editable pull-right'
-                    }),
+                'headerLinkContent': headerLinkContent,
                 'priority': 450,
                 'subblocks': [{
                     'data': [

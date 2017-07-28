@@ -18,6 +18,11 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'
 
+    ProductViewRelatedItemQuickEdit:
+      selector:
+          type: xpath
+          locator: '//h4[text()[contains(.,"Related Items")]]/parent::div//a[contains(@class, "quick-editable")]'
+
     SelectRelatedProductsGrid:
       selector: 'div[data-page-component-name="products-related-products-select"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
