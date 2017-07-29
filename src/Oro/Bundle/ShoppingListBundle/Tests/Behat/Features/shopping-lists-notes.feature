@@ -1,4 +1,3 @@
-@selenium-incompatible
 @fixture-OroShoppingListBundle:ShoppingListRule.yml
 Feature: Shopping list notes
   As Customer User I have a possibility to save notes to shopping list
