@@ -32,7 +32,7 @@ Feature: Product view page breadcrumbs
   Scenario: Breadcrumbs should be built based on web catalog
     Given I am on homepage
     And I click "Headlamps"
-    When I click "220 Lumen Rechargeable Headlamp"
+    When I click "View Details" for "PSKU1" product
     Then I should see "Lighting Products / Headlamps / 220 Lumen Rechargeable Headlamp"
     When I follow "Lighting Products"
     Then I should be on homepage
@@ -41,5 +41,5 @@ Feature: Product view page breadcrumbs
     And I should not see "220 Lumen Rechargeable Headlamp"
     When I follow "Lighting Products"
     And I click on "Headlamps category"
-    And I click "220 Lumen Rechargeable Headlamp"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Products categories / Headlamps / 220 Lumen Rechargeable Headlamp"

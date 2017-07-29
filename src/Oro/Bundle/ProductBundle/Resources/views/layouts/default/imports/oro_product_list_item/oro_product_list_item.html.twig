@@ -23,7 +23,7 @@
 
 {% block __oro_product_list_item__product_view_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' view-product'
+        '~class': ' product-item__preview'
     }) %}
     
     {% if popup_gallery %}
@@ -59,7 +59,7 @@
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' view-product-image'
+        '~class': ' product-item__preview-image'
     }) %}
 
     {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}

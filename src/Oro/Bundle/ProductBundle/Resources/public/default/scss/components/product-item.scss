@@ -87,12 +87,18 @@
     }
 
     &__image-holder {
-        position: relative;
+        @include aspect-ratio();
 
-        &::before {
-            content: "";
-            padding-top: 100%;
-            float: left;
+        &:hover {
+            .product-item__quick-view-btn {
+                visibility: visible;
+
+                span {
+                    visibility: visible;
+
+                    opacity: 1;
+                }
+            }
         }
 
         &--gallery-view {
@@ -100,45 +106,7 @@
             overflow: hidden;
             margin: 0 0 10px;
             max-height: 249px;
-            border: 1px solid get-color('additional', 'light');
-
-            a {
-                position: absolute;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                right: 0;
-
-                display: block;
-                border: 1px solid transparent;
-
-                background-position: 50%;
-                background-size: auto 100%;
-                background-repeat: no-repeat;
-
-                transition: all .5s ease-out;
-
-                &:hover, &:focus {
-                    outline: 0;
-                }
-            }
-
-            &:hover {
-                .product-item__quick-view-btn {
-                    visibility: visible;
-
-                    span {
-                        visibility: visible;
-
-                        opacity: 1;
-                    }
-                }
-            }
-
-            img {
-                display: block;
-                width: 100%;
-            }
+            border: 1px solid get-color('additional', 'light');   
         }
 
         &--list-view {
@@ -147,44 +115,6 @@
             width: 23%;
             overflow: hidden;
             border: 1px solid get-color('additional', 'light');
-
-            a {
-                position: absolute;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                right: 0;
-
-                display: block;
-                border: 1px solid transparent;
-
-                background-position: 50%;
-                background-size: cover;
-                background-repeat: no-repeat;
-
-                transition: all .5s ease-out;
-
-                &:hover, &:focus {
-                    outline: 0;
-                }
-            }
-
-            &:hover {
-                .product-item__quick-view-btn {
-                    visibility: visible;
-
-                    span {
-                        visibility: visible;
-
-                        opacity: 1;
-                    }
-                }
-            }
-
-            img {
-                display: block;
-                width: 100%;
-            }
         }
 
         &--no-image-view {
@@ -210,6 +140,19 @@
                 max-width: 100%;
             }
         }
+    }
+
+    &__preview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+
+    &__preview-image {
+        display: block;
+        width: 100%;
     }
 
     &__primary-content {
