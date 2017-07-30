@@ -502,3 +502,10 @@ services:
             - [ setFeatureName, ['guest_checkout'] ]
         tags:
             - { name: oro_featuretogle.voter }
+
+    oro_checkout.condition.is_workflow_start_from_shopping_list_allowed:
+        class: Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed
+        arguments:
+           - '@oro_featuretoggle.checker.feature_checker'
+           - '@security.token_storage'
+        lazy: true

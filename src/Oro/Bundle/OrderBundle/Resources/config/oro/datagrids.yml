@@ -559,6 +559,9 @@ datagrids:
                 where:
                     and:
                         - order_item.order = :order_id
+                orderBy:
+                    - column: order_item.id
+                      dir: ASC
             bind_parameters:
                 - order_id
         properties:

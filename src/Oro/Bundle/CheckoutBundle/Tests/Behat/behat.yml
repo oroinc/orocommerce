@@ -2,25 +2,22 @@ oro_behat_extension:
   suites:
     OroCheckoutBundle:
       contexts:
-        - OroApplicationBundle::CommerceMainContext
-        - OroCheckoutBundle::FeatureContext
-        - OroConfigBundle::FeatureContext
-        - OroCustomerBundle::ACLContext
-        - OroCustomerBundle::CustomerUserContext
-        - OroCustomerBundle::GridContext
-        - OroDataGridBundle::GridContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroFormBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
         - OroFormBundle::FormContext
+        - OroDataGridBundle::GridContext
+        - OroApplicationBundle::CommerceMainContext
+        - OroShippingBundle::SingleCurrencyContext
+        - OroShoppingListBundle::ShoppingListContext
+        - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
-        - OroSaleBundle::FeatureContext
-        - OroOrderBundle::OrderContext
-        - OroProductBundle::FeatureContext
         - OroSalesBundle::FeatureContext
-        - OroShoppingListBundle::ShoppingListContext
-        - OroShippingBundle::SingleCurrencyContext
+        - OroOrderBundle::OrderContext
+        - OroCustomerBundle::ACLContext
+        - OroProductBundle::FeatureContext
         - OroWarehouseBundle::FeatureContext
-        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
@@ -50,7 +47,7 @@ oro_behat_extension:
 
     Checkout Order Review Notes:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-      selector: 'input[id="addNote"]'
+      selector: 'input[id="addNote"]+.custom-checkbox__icon'
 
     OpenOrdersGrid:
       selector: 'div[data-page-component-name="frontend-checkouts-grid"]'
@@ -108,3 +105,12 @@ oro_behat_extension:
 
     Order Summary Products GridProductLineUnit:
       selector: '.checkout-order-summary__qty'
+
+    CheckoutGoBackButton:
+        selector: 'div.checkout-sidebar ul.checkout-navigation > li > h3.checkout-navigation__title > a'
+
+    ShippingMethodFlatRate2:
+      selector: 'div[data-content="shipping_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Flat Rate: $2.00")'
+
+    PaymentMethodPaymentTerm30:
+      selector: 'div[data-content="payment_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Payment Term 30")'

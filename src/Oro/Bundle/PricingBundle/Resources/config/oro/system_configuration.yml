@@ -56,9 +56,9 @@ system_configuration:
                 tooltip: oro.pricing.system_configuration.fields.offset_of_processing_cpl_prices.tooltip
                 constraints:
                     - NotBlank: ~
-                    - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
                     - Type:
                         type: float
+                    - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
         oro_pricing.price_strategy:
             data_type: string
             type: oro_pricing_list_strategy_selection

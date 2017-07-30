@@ -245,6 +245,19 @@ operations:
         button_options:
             class: btn--action icons-holder-text
             icon: fa-clone
+        preactions:
+            - '@assign_value': [$.createEnabledForCustomerUser, false]
+            - '@tree':
+                conditions:
+                    '@not_equal': [null, $.data.customerUser]
+                actions:
+                    - '@call_service_method':
+                        service: oro_shopping_list.manager.shopping_list_limit
+                        method: isCreateEnabledForCustomerUser
+                        method_parameters: [$.data.customerUser]
+                        attribute: $.createEnabledForCustomerUser
+        preconditions:
+            '@equal': [true, $.createEnabledForCustomerUser]
         actions:
             - '@call_service_method':
                 service: oro_locale.formatter.date_time
@@ -272,6 +285,7 @@ operations:
                   - [[setNull], [propertyName, [id]]]
                   - [[collection], [propertyName, [totals]]]
                   - [[collection], [propertyName, [lineItems]]]
+                  - [[collection], [propertyName, [visitors]]]
                   - [[keep], [propertyName, [customerUser]]]
                   - [[keep], [propertyName, [customer]]]
                   - [[replaceValue, $.currentUser], [propertyName, [owner]]]
@@ -328,6 +342,7 @@ operations:
                   - [[setNull], [propertyName, [id]]]
                   - [[collection], [propertyName, [totals]]]
                   - [[collection], [propertyName, [lineItems]]]
+                  - [[collection], [propertyName, [visitors]]]
                   - [[replaceValue, $.currentUser], [propertyName, [customerUser]]]
                   - [[replaceValue, $.currentUser.customer], [propertyName, [customer]]]
                   - [[replaceValue, $.currentUser.owner], [propertyName, [owner]]]
