@@ -4,7 +4,10 @@ namespace Oro\Bundle\PromotionBundle\CouponGeneration\Generator;
 
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
-interface CouponGeneratorInterface
+/**
+ * This interface used to provide different implementation of Coupon code generators.
+ */
+interface CodeGeneratorInterface
 {
     /**
      * @param CodeGenerationOptions $options
