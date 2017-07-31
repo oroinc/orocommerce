@@ -14,6 +14,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
  */
 class CouponGenerationManager
 {
+    const BULK_SIZE = 500;
     /**
      * @var CodeGeneratorInterface
      */
@@ -28,6 +29,11 @@ class CouponGenerationManager
      * @var Statement|null
      */
     protected $insertStatement;
+
+    /**
+     * @var Statement|null
+     */
+    protected $selectStatement;
 
     /**
      * @param CodeGeneratorInterface $couponGenerator
@@ -48,8 +54,6 @@ class CouponGenerationManager
      */
     public function generateCoupons(CouponGenerationOptions $options)
     {
-        $checkStatement = $this->getConnection()->prepare('SELECT 1 FROM oro_promotion_coupon WHERE code = :code');
-
         $statement = $this->getInsertStatement();
         $statement->bindValue(
             'organization_id',
@@ -69,14 +73,16 @@ class CouponGenerationManager
         $statement->bindValue('created_at', date('Y-m-d H:i:s'));
         $statement->bindValue('updated_at', date('Y-m-d H:i:s'));
 
-        for ($i = 0; $i < $options->getCouponQuantity(); $i++) {
-            do {
-                $code = $this->couponGenerator->generate($options);
-                $checkStatement->execute(['code' => $code]);
-            } while ($checkStatement->rowCount());
+        $inserted = 0;
 
-            $statement->bindValue('code', $code);
-            $statement->execute();
+        while ($inserted < $options->getCouponQuantity()) {
+            $this->getConnection()->transactional(function ($conn) use ($statement, $options, &$inserted) {
+                foreach ($this->getUniqueCodes($options, self::BULK_SIZE) as $key => $code) {
+                    $statement->bindValue("code$key", $code);
+                    $inserted++;
+                }
+                $statement->execute();
+            });
         }
     }
 
@@ -94,7 +100,7 @@ class CouponGenerationManager
     protected function getInsertStatement()
     {
         if (!$this->insertStatement) {
-            $this->insertStatement = $this->getConnection()->prepare('
+            $sql = '
                 INSERT INTO oro_promotion_coupon (
                   organization_id,
                   business_unit_owner_id,
@@ -105,20 +111,55 @@ class CouponGenerationManager
                   created_at,
                   updated_at,
                   valid_until
-                )
-                VALUES (
-                  :organization_id,
-                  :business_unit_owner_id,
-                  :promotion_id,
-                  :code,
-                  :uses_per_coupon,
-                  :uses_per_user,
-                  :created_at,
-                  :updated_at,
-                  :valid_until
-                )
-            ');
+                ) VALUES
+            ';
+            $codeValues = [];
+            for ($i=0; $i < self::BULK_SIZE; $i++) {
+                $codeValues[] =  "
+                    (
+                      :organization_id,
+                      :business_unit_owner_id,
+                      :promotion_id,
+                      :code$i,
+                      :uses_per_coupon,
+                      :uses_per_user,
+                      :created_at,
+                      :updated_at,
+                      :valid_until
+                    )
+                ";
+            }
+            $this->insertStatement = $this->getConnection()->prepare($sql . implode(',', $codeValues));
         }
         return $this->insertStatement;
+    }
+
+    protected function getUniqueCodes(CouponGenerationOptions $options)
+    {
+        $codes = [];
+        $select = $this->getSelectStatement();
+        while (count($codes) < self::BULK_SIZE) {
+            do {
+                $code = $this->couponGenerator->generate($options);
+                if (array_key_exists($code, $codes)) {
+                    continue;
+                }
+                $select->execute(['code' => $code]);
+            } while ($select->rowCount());
+            $codes[$code] = $code;
+        }
+        return array_values($codes);
+    }
+
+    /**
+     * @return Statement
+     */
+    protected function getSelectStatement()
+    {
+        if (!$this->selectStatement) {
+            $this->selectStatement = $this->getConnection()
+                ->prepare('SELECT 1 FROM oro_promotion_coupon WHERE code = :code');
+        }
+        return $this->selectStatement;
     }
 }
