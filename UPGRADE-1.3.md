@@ -203,6 +203,11 @@ ShippingBundle
     - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
 - Service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
 
+OrderBundle
+-----------
+- Return value of method `Oro\Bundle\OrderBundle\Manager\AbstractAddressManager:getGroupedAddresses` changed from `array` to `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection`
+- Removed protected method `Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
+
 PricingBundle
 --------------
 - Form type `Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType` was removed, use `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType` instead
@@ -266,6 +271,7 @@ SaleBundle
     - oro_quote_review_and_approve
     - oro_quote_add_free_form_items
 - Added new workflow `b2b_quote_backoffice_approvals`
+- Removed protected method `Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
 
 UPSBundle
 ---------

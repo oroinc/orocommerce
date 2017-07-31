@@ -1,0 +1,143 @@
+workflows:
+    b2b_flow_checkout_single_page:
+        transitions:
+            __start__:
+                step_to: checkout
+
+            start_from_shoppinglist:
+                step_to: checkout
+
+            start_from_quickorderform:
+                step_to: checkout
+
+            payment_error:
+                step_to: checkout
+
+            finish_checkout:
+                step_to: order_created
+
+            save_state:
+                step_to: checkout
+                transition_definition: save_state_definition
+                is_hidden: true
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                form_options:
+                    form_init:
+                        - '@generate_checkout_state_snapshot':
+                            entity: $checkout
+                            attribute: $.result.initCheckoutState
+                    attribute_fields:
+                        billing_address:
+                            form_type: oro_checkout_address
+                            options:
+                                object: $checkout
+                                isEditEnabled: true
+                                addressType: 'billing'
+                                required: true
+                                translation_domain: messages
+                                disabled: $disallow_billing_address_edit
+                        save_billing_address: ~
+                        shipping_address:
+                            form_type: oro_checkout_address
+                            options:
+                                object: $checkout
+                                isEditEnabled: true
+                                addressType: 'shipping'
+                                required: true
+                                translation_domain: messages
+                                disabled: $disallow_shipping_address_edit
+                        save_shipping_address: ~
+                        ship_to_billing_address:
+                            form_type: oro_ship_to_billing_address
+                        shipping_method: ~
+                        shipping_method_type: ~
+                        payment_method: ~
+                        payment_validate:
+                            form_type: checkbox
+                        payment_save_for_later:
+                            form_type: checkbox
+                        additional_data:
+                            form_type: hidden
+                        ship_until: ~
+                        po_number: ~
+                        customer_notes:
+                            form_type: textarea
+                        remove_source: ~
+                        state_token:
+                            form_type: hidden
+                            options:
+                                data: $internal_state_token
+
+            create_order:
+                step_to: checkout
+                transition_definition: create_order_transition_definition
+                display_type: page
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                    page-component-module: 'orocheckout/js/app/components/single-page-transition-button-component'
+                    page-component-options:
+                        saveStateUrl: $.result.saveStateUrl
+                        targetEvents:
+                            '.checkout-billing-address, .checkout-shipping-address':
+                                - 'payment-methods:refresh'
+                                - 'shipping-methods:refresh'
+                        ignoreTargets:
+                            - '.checkout-payment-methods .checkout__form__payment-container'
+                        enableOnLoad: false
+                form_options:
+                    attribute_fields:
+                        billing_address:
+                            form_type: oro_checkout_address
+                            options:
+                                object: $checkout
+                                isEditEnabled: true
+                                addressType: 'billing'
+                                required: true
+                                translation_domain: messages
+                                constraints:
+                                    - Valid: ~
+                                    - NotBlank: ~
+                                disabled: $disallow_billing_address_edit
+                        save_billing_address: ~
+                        shipping_address:
+                            form_type: oro_checkout_address
+                            options:
+                                object: $checkout
+                                isEditEnabled: true
+                                addressType: 'shipping'
+                                required: true
+                                disabled: $disallow_shipping_address_edit
+                                translation_domain: messages
+                                constraints:
+                                    - Valid: ~
+                                    - NotBlank: ~
+                        save_shipping_address: ~
+                        ship_to_billing_address:
+                            form_type: oro_ship_to_billing_address
+                        shipping_method:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        shipping_method_type:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        payment_method: ~
+                        payment_validate:
+                            form_type: checkbox
+                        payment_save_for_later:
+                            form_type: checkbox
+                        additional_data:
+                            form_type: hidden
+                        remove_source: ~
+                        po_number: ~
+                        ship_until: ~
+                        customer_notes:
+                            form_type: textarea
+                        state_token:
+                            form_type: hidden
+                            options:
+                                data: $internal_state_token
