@@ -13,14 +13,32 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            this.defaults.selectors.paymentForm = '[data-content="payment_method_form"]';
-            this.defaults.selectors.paymentMethodSelector = '[name="paymentMethod"]';
-            this.defaults.selectors.paymentMethod = '[name$="[payment_method]"]';
+            this.defaults = $.extend(
+                true,
+                {},
+                this.defaults,
+                {
+                    selectors: {
+                        paymentForm: '[data-content="payment_method_form"]',
+                        paymentMethodSelectorAbsolute: '[data-content="payment_method_form"] [name="paymentMethod"]',
+                        paymentMethodSelector: '[name="paymentMethod"]',
+                        paymentMethod: '[name$="[payment_method]"]'
+                    }
+                }
+            );
 
             PaymentTransitionButtonComponent.__super__.initialize.call(this, options);
 
+            this.onPaymentMethodRendered();
+        },
+
+        onPaymentMethodRendered: function() {
+            this.getContent().on(
+                'change',
+                this.options.selectors.paymentMethodSelectorAbsolute,
+                $.proxy(this.onPaymentMethodChange, this)
+            );
             this.initPaymentMethod();
-            this.getPaymentMethodSelector().on('change', $.proxy(this.onPaymentMethodChange, this));
         },
 
         initPaymentMethod: function() {
@@ -89,7 +107,7 @@ define(function(require) {
                 return;
             }
 
-            this.getPaymentMethodSelector().off('change', $.proxy(this.onPaymentMethodChange, this));
+            this.getContent().off('change', this.options.selectors.paymentMethodSelectorAbsolute);
 
             PaymentTransitionButtonComponent.__super__.dispose.call(this);
         },
@@ -117,44 +135,28 @@ define(function(require) {
          * @returns {jQuery|HTMLElement}
          */
         getContent: function() {
-            if (!this.hasOwnProperty('$content')) {
-                this.$content = $(this.options.selectors.checkoutContent);
-            }
-
-            return this.$content;
+            return $(this.options.selectors.checkoutContent);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getPaymentForm: function() {
-            if (!this.hasOwnProperty('$paymentForm')) {
-                this.$paymentForm = this.getContent().find(this.options.selectors.paymentForm);
-            }
-
-            return this.$paymentForm;
+            return this.getContent().find(this.options.selectors.paymentForm);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getPaymentMethodSelector: function() {
-            if (!this.hasOwnProperty('$paymentMethodSelector')) {
-                this.$paymentMethodSelector = this.getPaymentForm().find(this.options.selectors.paymentMethodSelector);
-            }
-
-            return this.$paymentMethodSelector;
+            return this.getPaymentForm().find(this.options.selectors.paymentMethodSelector);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getPaymentMethodElement: function() {
-            if (!this.hasOwnProperty('$paymentMethodElement')) {
-                this.$paymentMethodElement = this.getContent().find(this.options.selectors.paymentMethod);
-            }
-
-            return this.$paymentMethodElement;
+            return this.getContent().find(this.options.selectors.paymentMethod);
         }
     });
 

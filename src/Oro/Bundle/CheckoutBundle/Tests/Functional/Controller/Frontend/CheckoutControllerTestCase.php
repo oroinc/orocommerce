@@ -222,6 +222,26 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     }
 
     /**
+     * @param string $transitionName
+     * @return string
+     */
+    protected function getTransitionUrl($transitionName)
+    {
+        return sprintf('%s?transition=%s', self::$checkoutUrl, $transitionName);
+    }
+
+    /**
+     * @param string $transitionName
+     * @return Crawler
+     */
+    protected function getTransitionPage($transitionName)
+    {
+        $crawler = $this->client->request('GET', $this->getTransitionUrl($transitionName));
+
+        return $crawler;
+    }
+
+    /**
      * @param Crawler $crawler
      * @return Form
      */

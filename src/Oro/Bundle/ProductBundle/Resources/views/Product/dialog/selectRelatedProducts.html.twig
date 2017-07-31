@@ -5,17 +5,17 @@
         data-role="related-items-appended-ids"
         name="productAppendRelatedSelect"
         id="productAppendRelatedSelect"
-        value="{{ app.request.get('addedProductRelated')|join(',') }}"
+        value="{{ app.request.get('addedProductRelatedItems')|join(',') }}"
     />
     <input
         type="hidden"
         data-role="related-items-removed-ids"
         name="productRemoveRelatedSelect"
         id="productRemoveRelatedSelect"
-        value="{{ app.request.get('removedProductRelated')|join(',') }}"
+        value="{{ app.request.get('removedProductRelatedItems')|join(',') }}"
     />
 
-    {{ dataGrid.renderGrid('products-related-products-select', {'productId': product.id, 'relatedProducts': get_related_products_ids(product)}) }}
+    {{ dataGrid.renderGrid('products-related-products-select', {'productId': product.id, 'relatedItemsIds': get_related_products_ids(product)}) }}
 
     <div class="widget-actions form-actions">
         <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>

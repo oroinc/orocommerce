@@ -83,13 +83,19 @@ oro:
                     label: 'Email'
             transition:
                 __start__:
-                    label: 'Create Order'
+                    label: 'Start Checkout (System)'
+                    button_label: 'Create Order'
+                    button_title: ''
                     warning_message: ''
                 start_from_shoppinglist:
-                    label: 'Create Order'
+                    label: 'Start Checkout From Shopping List'
+                    button_label: 'Create Order'
+                    button_title: ''
                     warning_message: ''
                 start_from_quickorderform:
-                    label: 'Create Order'
+                    label: 'Start Checkout From Quick Order Form'
+                    button_label: 'Create Order'
+                    button_title: ''
                     warning_message: ''
                 continue_to_shipping_address:
                     label: Continue
@@ -171,6 +177,101 @@ oro:
                             label: 'Customer Notes'
                         state_token:
                             label: 'State token'
+                finish_checkout:
+                    label: 'Finish checkout'
+                    warning_message: ''
+                payment_error:
+                    label: 'Payment error'
+                    warning_message: ''
+
+        b2b_flow_checkout_single_page:
+            label: 'Single Page Checkout'
+            step:
+                checkout:
+                    label: 'Checkout'
+                order_created:
+                    label: 'Order Created'
+            attribute:
+                billing_address:
+                    label: 'Billing address'
+                save_billing_address:
+                    label: 'Save Billing Address'
+                ship_to_billing_address:
+                    label: 'Use billing address'
+                shipping_address:
+                    label: 'Shipping address'
+                save_shipping_address:
+                    label: 'Save Shipping Address'
+                shipping_method:
+                    label: 'Shipping method'
+                shipping_method_type:
+                    label: 'Shipping method type'
+                billing_address_has_shipping:
+                    label: 'If billing address also shipping'
+                payment_method:
+                    label: 'Payment Method'
+                payment_validate:
+                    label: 'Payment validation required'
+                additional_data:
+                    label: 'Additional Data'
+                po_number:
+                    label: 'PO Number'
+                ship_until:
+                    label: 'Do Not Ship Later Than'
+                customer_notes:
+                    label: 'Customer Notes'
+                allow_manual_source_remove:
+                    label: 'Allow manual source entity removal'
+                disallow_billing_address_edit:
+                    label: 'Disallow billing address edit'
+                disallow_shipping_address_edit:
+                    label: 'Disallow shipping address edit'
+                disallow_shipping_method_edit:
+                    label: 'Disallow shipping method edit'
+                remove_source:
+                    label: 'Remove Source Entity'
+                auto_remove_source:
+                    label: 'Always remove source entity automatically'
+                source_remove_label:
+                    label: 'Label for remove source'
+                edit_order_link:
+                    label: 'Edit Order Link'
+                payment_in_progress:
+                    label: 'Flag indicates that payment is in progress'
+                payment_save_for_later:
+                    label: 'Save payment data for later use'
+                state_token:
+                    label: 'Token to track checkout state'
+                internal_state_token:
+                    label: 'Internal checkout state token'
+                order:
+                    label: 'Instance of Order entity'
+            transition:
+                __start__:
+                    label: 'Start Checkout (System)'
+                    button_label: 'Create Order'
+                    button_title: ''
+                    warning_message: ''
+                start_from_shoppinglist:
+                    label: 'Start Checkout From Shopping List'
+                    button_label: 'Create Order'
+                    button_title: ''
+                    warning_message: ''
+                start_from_quickorderform:
+                    label: 'Start Checkout From Quick Order Form'
+                    button_label: 'Create Order'
+                    button_title: ''
+                    warning_message: ''
+                save_state:
+                    label: 'Save State'
+                    button_label: ''
+                    button_title: ''
+                    warning_message: ''
+                create_order:
+                    label: 'Submit Order'
+                    button_label: ''
+                    button_title: ''
+                    warning_message: ''
                 finish_checkout:
                     label: 'Finish checkout'
                     warning_message: ''

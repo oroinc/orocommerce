@@ -11,12 +11,12 @@ class SingleCurrencyContext extends OroFeatureContext implements KernelAwareCont
     use KernelDictionary;
 
     /**
-     * @Given There is EUR currency in the system configuration
+     * @Given There is :currency currency in the system configuration
      */
-    public function thereIsEurCurrencyInTheSystemConfiguration()
+    public function thereIsEurCurrencyInTheSystemConfiguration($currency)
     {
         $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set('oro_currency.default_currency', 'EUR');
+        $configManager->set('oro_currency.default_currency', $currency);
         $configManager->flush();
     }
 
@@ -25,9 +25,7 @@ class SingleCurrencyContext extends OroFeatureContext implements KernelAwareCont
      */
     public function currencyIsSetToUsd()
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set('oro_currency.default_currency', 'USD');
-        $configManager->flush();
+        $this->thereIsEurCurrencyInTheSystemConfiguration('USD');
     }
 
     /**
@@ -35,8 +33,6 @@ class SingleCurrencyContext extends OroFeatureContext implements KernelAwareCont
      */
     public function currencyIsSetToEur()
     {
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set('oro_currency.default_currency', 'EUR');
-        $configManager->flush();
+        $this->thereIsEurCurrencyInTheSystemConfiguration('EUR');
     }
 }

@@ -12,6 +12,8 @@ layout:
             blockType: shipping_methods
             prepend: true
             options:
+                attr:
+                    class: 'grid__column grid__column--offset-y grid__column--6'
                 class_prefix: 'checkout'
                 methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
                 currentShippingMethod: '=data["checkout"].getShippingMethod()'

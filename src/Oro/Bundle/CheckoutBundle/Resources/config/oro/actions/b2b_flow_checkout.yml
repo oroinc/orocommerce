@@ -1,0 +1,400 @@
+action_groups:
+    b2b_flow_checkout_update_billing_address:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            disallow_shipping_address_edit:
+                default: false
+        actions:
+            - '@assign_constant_value': [$.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
+            - '@call_method':
+                conditions:
+                    '@not_empty': $.checkout.billingAddress.customerAddress
+                parameters:
+                    attribute: $.billing_address_has_shipping
+                    object: $.checkout.billingAddress.customerAddress
+                    method: hasTypeWithName
+                    method_parameters:
+                        - $.typeShippingName
+            - '@call_method':
+                conditions:
+                    '@not_empty': $.checkout.billingAddress.customerUserAddress
+                parameters:
+                    attribute: $.billing_address_has_shipping
+                    object: $.checkout.billingAddress.customerUserAddress
+                    method: hasTypeWithName
+                    method_parameters:
+                        - $.typeShippingName
+            - '@assign_value':
+                conditions:
+                    '@and':
+                        - '@empty': $.checkout.billingAddress.customerAddress
+                        - '@empty': $.checkout.billingAddress.customerUserAddress
+                parameters: [$.billing_address_has_shipping, true]
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@equal': [$.disallow_shipping_address_edit, false]
+                        - '@equal': [$.checkout.shipToBillingAddress, true]
+                        - '@equal': [$.billing_address_has_shipping, true]
+                actions:
+                    - '@remove_entity':
+                        conditions:
+                            '@not_empty': $.checkout.shippingAddress
+                        parameters: [$.checkout.shippingAddress]
+                    - '@duplicate':
+                        target: $.checkout.billingAddress
+                        attribute: $.checkout.shippingAddress
+                        settings:
+                          - [[setNull], [propertyName, [id]]]
+                          - [[keep], [propertyName, [customerAddress]]]
+                          - [[keep], [propertyName, [customerUserAddress]]]
+                          - [[keep], [propertyName, [city]]]
+                          - [[keep], [propertyName, [country]]]
+                          - [[keep], [propertyName, [region]]]
+                          - [[keep], [propertyName, [organization]]]
+                          - [[shallowCopy], [propertyType, ['\DateTime']]]
+                    - '@flush_entity': $.checkout.shippingAddress
+
+    b2b_flow_checkout_update_shipping_address:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            billing_address_has_shipping:
+                default: false
+        actions:
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@equal': [$.checkout.shipToBillingAddress, true]
+                        - '@equal': [$.billing_address_has_shipping, true]
+                actions:
+                    - '@remove_entity':
+                        conditions:
+                            '@not_empty': $.checkout.shippingAddress
+                        parameters: [$.checkout.shippingAddress]
+                    - '@duplicate':
+                        target: $.checkout.billingAddress
+                        attribute: $.checkout.shippingAddress
+                        settings:
+                          - [[setNull], [propertyName, [id]]]
+                          - [[keep], [propertyName, [customerAddress]]]
+                          - [[keep], [propertyName, [customerUserAddress]]]
+                          - [[keep], [propertyName, [city]]]
+                          - [[keep], [propertyName, [country]]]
+                          - [[keep], [propertyName, [region]]]
+                          - [[keep], [propertyName, [organization]]]
+                          - [[shallowCopy], [propertyType, ['\DateTime']]]
+                    - '@flush_entity': $.checkout.shippingAddress
+
+    b2b_flow_checkout_update_shipping_method:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@run_action_group':
+                action_group: oro_update_shipping_price
+                parameters_mapping:
+                    checkout: $.checkout
+
+    b2b_flow_checkout_place_order:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        actions:
+            - '@assign_value':
+                conditions:
+                    '@equal': [$.checkout.shipToBillingAddress, false]
+                parameters: [$.shippingAddress, $.checkout.shippingAddress]
+            - '@assign_value':
+                conditions:
+                    '@equal': [$.checkout.shipToBillingAddress, true]
+                parameters: [$.shippingAddress, $.checkout.billingAddress]
+
+            # Place order
+            - '@get_class_name':
+                object: $.checkout.sourceEntity.sourceDocument
+                attribute: $.sourceDocumentEntityClassName
+            - '@duplicate':
+                target: $.checkout.billingAddress
+                attribute: $.billingAddress
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[keep], [propertyName, [customerAddress]]]
+                  - [[keep], [propertyName, [customerUserAddress]]]
+                  - [[keep], [propertyName, [city]]]
+                  - [[keep], [propertyName, [country]]]
+                  - [[keep], [propertyName, [region]]]
+                  - [[keep], [propertyName, [organization]]]
+                  - [[shallowCopy], [propertyType, ['\DateTime']]]
+            - '@flush_entity': $.billingAddress
+
+            - '@duplicate':
+                target: $.shippingAddress
+                attribute: $.shippingAddress
+                settings:
+                  - [[setNull], [propertyName, [id]]]
+                  - [[keep], [propertyName, [customerAddress]]]
+                  - [[keep], [propertyName, [customerUserAddress]]]
+                  - [[keep], [propertyName, [city]]]
+                  - [[keep], [propertyName, [country]]]
+                  - [[keep], [propertyName, [region]]]
+                  - [[keep], [propertyName, [organization]]]
+                  - [[shallowCopy], [propertyType, ['\DateTime']]]
+            - '@flush_entity': $.shippingAddress
+
+            - '@call_service_method':
+                service: oro_payment_term.provider.payment_term
+                method: getCurrentPaymentTerm
+                attribute: $.paymentTerm
+            - '@get_order_line_items':
+                attribute: $.lineItems
+                checkout: $.checkout
+            - '@create_order':
+                attribute: $.order
+                checkout: $.checkout
+                data:
+                    billingAddress: $.billingAddress
+                    shippingAddress: $.shippingAddress
+                    sourceEntityClass: $.sourceDocumentEntityClassName
+                    paymentTerm: $.paymentTerm
+                    lineItems: $.lineItems
+            - '@call_service_method':
+                service: oro_order.handler.order_totals_handler
+                method: fillSubtotals
+                method_parameters:
+                    - $.order
+            - '@flush_entity': $.order
+
+    b2b_flow_checkout_purchase:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            order:
+                type: Oro\Bundle\OrderBundle\Entity\Order
+            transactionOptions:
+                type: array
+                default: []
+        actions:
+            - '@assign_url':
+                attribute: $.successUrl
+                route: oro_checkout_frontend_checkout
+                route_parameters:
+                    id: $.checkout.id
+                    transition: 'finish_checkout'
+            - '@assign_url':
+                attribute: $.failureUrl
+                route: oro_checkout_frontend_checkout
+                route_parameters:
+                    id: $.checkout.id
+                    transition: 'payment_error'
+            - '@assign_url':
+                attribute: $.failedShippingAddressUrl
+                route: oro_checkout_frontend_checkout
+                route_parameters:
+                    id: $.checkout.id
+                    transition: 'payment_error'
+
+            - '@copy_values':
+                - $.paymentTransactionOptions
+                -   successUrl: $.successUrl
+                    failureUrl: $.failureUrl
+                    failedShippingAddressUrl: $.failedShippingAddressUrl
+                    checkoutId: $.checkout.id
+                - $.transactionOptions
+
+            - '@payment_purchase':
+                attribute: $.responseData
+                object: $.order
+                amount: $.order.total
+                currency: $.order.currency
+                paymentMethod: $.checkout.paymentMethod
+                transactionOptions: $.paymentTransactionOptions
+
+            - '@flash_message':
+                conditions:
+                    '@and':
+                        - '@equal':
+                            - false
+                            - $.responseData[purchaseSuccessful]
+                        - '@not_empty': $.responseData[message]
+                message: $.responseData[message]
+                type: 'warning'
+
+    b2b_flow_checkout_finish_checkout:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            order:
+                type: Oro\Bundle\OrderBundle\Entity\Order
+            auto_remove_source:
+                default: false
+            allow_manual_source_remove:
+                default: false
+            remove_source:
+                default: false
+        actions:
+            # Save billing address if required
+            - '@assign_constant_value': [$.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@equal': [$.checkout.saveBillingAddress, true]
+                        - '@empty': $.order.billingAddress.customerAddress
+                        - '@empty': $.order.billingAddress.customerUserAddress
+                        - '@acl_granted': 'oro_order_address_billing_allow_manual'
+                actions:
+                    - '@find_entity':
+                        class: Oro\Bundle\AddressBundle\Entity\AddressType
+                        attribute: $.typeBilling
+                        identifier: $.typeBillingName
+                    - '@create_entity':
+                        attribute: $.customerBillingAddress
+                        class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
+                        data:
+                            frontendOwner: $.checkout.customerUser
+                            owner: $.checkout.owner
+                            systemOrganization: $.checkout.organization
+                            label: $.order.billingAddress.label
+                            organization: $.order.billingAddress.organization
+                            street: $.order.billingAddress.street
+                            street2: $.order.billingAddress.street2
+                            city: $.order.billingAddress.city
+                            postalCode: $.order.billingAddress.postalCode
+                            country: $.order.billingAddress.country
+                            region: $.order.billingAddress.region
+                            regionText: $.order.billingAddress.regionText
+                            namePrefix: $.order.billingAddress.namePrefix
+                            firstName: $.order.billingAddress.firstName
+                            middleName: $.order.billingAddress.middleName
+                            lastName: $.order.billingAddress.lastName
+                            nameSuffix: $.order.billingAddress.nameSuffix
+                            phone: $.order.billingAddress.phone
+                    - '@call_method':
+                        object: $.customerBillingAddress
+                        method: addType
+                        method_parameters:
+                            - $.typeBilling
+                    - '@flush_entity':
+                        conditions:
+                            '@not_empty': $.customerBillingAddress
+                        parameters: [$.customerBillingAddress]
+
+            # Save shipping address if required
+            - '@assign_constant_value': [$.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@equal': [$.checkout.saveShippingAddress, true]
+                        - '@empty': $.order.shippingAddress.customerAddress
+                        - '@empty': $.order.shippingAddress.customerUserAddress
+                        - '@acl_granted': 'oro_order_address_shipping_allow_manual'
+                actions:
+                    - '@find_entity':
+                        class: Oro\Bundle\AddressBundle\Entity\AddressType
+                        attribute: $.typeShipping
+                        identifier: $.typeShippingName
+                    - '@tree':
+                        conditions:
+                            '@equal': [$.checkout.shipToBillingAddress, false]
+                        actions:
+                            - '@create_entity':
+                                attribute: $.customerShippingAddress
+                                class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
+                                data:
+                                    frontendOwner: $.checkout.customerUser
+                                    owner: $.checkout.owner
+                                    systemOrganization: $.checkout.organization
+                                    label: $.checkout.shippingAddress.label
+                                    organization: $.checkout.shippingAddress.organization
+                                    street: $.order.shippingAddress.street
+                                    street2: $.order.shippingAddress.street2
+                                    city: $.order.shippingAddress.city
+                                    postalCode: $.order.shippingAddress.postalCode
+                                    country: $.order.shippingAddress.country
+                                    region: $.order.shippingAddress.region
+                                    regionText: $.order.shippingAddress.regionText
+                                    namePrefix: $.order.shippingAddress.namePrefix
+                                    firstName: $.order.shippingAddress.firstName
+                                    middleName: $.order.shippingAddress.middleName
+                                    lastName: $.order.shippingAddress.lastName
+                                    nameSuffix: $.order.shippingAddress.nameSuffix
+                                    phone: $.order.shippingAddress.phone
+                            - '@call_method':
+                                object: $.customerShippingAddress
+                                method: addType
+                                method_parameters:
+                                    - $.typeShipping
+                    - '@call_method':
+                        conditions:
+                            '@equal': [$.checkout.shipToBillingAddress, true]
+                        parameters:
+                            object: $.customerBillingAddress
+                            method: addType
+                            method_parameters:
+                                - $.typeShipping
+                    - '@flush_entity':
+                        conditions:
+                            '@not_empty': $.customerShippingAddress
+                        parameters: [$.customerShippingAddress]
+
+            - '@send_email_template':
+                parameters:
+                    from: $.order.owner.email
+                    to: $.order.customerUser.email
+                    template: 'order_confirmation_email'
+                    entity: $.order
+
+            - '@assign_value': [$.checkout.completed, true]
+
+            - '@tree':
+                conditions:
+                    '@not_empty': $.order
+                actions:
+                    - '@count':
+                        value: $.order.lineItems
+                        attribute: $.checkout.completedData.itemsCount
+                    - '@assign_value': [$.orders, []]
+                    - '@get_class_name':
+                        object: $.order
+                        attribute: $.orderClassName
+                    - '@call_service_method':
+                        service: oro_entity.entity_alias_resolver
+                        method: getAlias
+                        method_parameters: [$.orderClassName]
+                        attribute: $.orders[0].entityAlias
+                    - '@call_service_method':
+                        service: oro_entity.doctrine_helper
+                        method: getEntityIdentifier
+                        method_parameters: [$.order]
+                        attribute: $.orders[0].entityId
+                    - '@assign_value': [$.checkout.completedData.orders, $.orders]
+            - '@assign_value': [$.sourceEntity, $.checkout.sourceEntity]
+            - '@tree':
+                conditions:
+                    '@not_empty': $.sourceEntity
+                actions:
+                    - '@assign_value':
+                        conditions:
+                            '@instanceof': [$.sourceEntity, Oro\Bundle\SaleBundle\Entity\QuoteDemand]
+                        parameters:
+                            attribute: $.sourceEntity
+                            value: $.sourceEntity.quote
+                    - '@call_service_method':
+                        service: oro_entity.entity_name_resolver
+                        method: getName
+                        method_parameters: [$.sourceEntity]
+                        attribute: $.checkout.completedData.startedFrom
+                    - '@assign_value':
+                        - [$.checkout.completedData.currency, $.order.currency]
+                        - [$.checkout.completedData.subtotal, $.order.subtotalObject.value]
+                        - [$.checkout.completedData.total, $.order.totalObject.value]
+
+            - '@remove_entity':
+                conditions:
+                    '@or':
+                        - '@equal': [$.auto_remove_source, true]
+                        - '@and':
+                            - '@equal': [$.allow_manual_source_remove, true]
+                            - '@equal': [$.remove_source, true]
+                parameters: [$.checkout.sourceEntity]

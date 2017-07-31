@@ -15,6 +15,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
@@ -67,6 +68,8 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $this->manager = $manager;
+        /* @var $owner User */
+        $owner = $manager->getRepository(User::class)->findOneBy([]);
         /* @var $workflowManager WorkflowManager */
         $workflowManager = $this->container->get('oro_workflow.manager');
         $this->clearPreconditions();
@@ -84,6 +87,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             $checkout->setCustomerUser($customerUser);
             $checkout->setOrganization($customerUser->getOrganization());
             $checkout->setWebsite($website);
+            $checkout->setOwner($owner);
             $source = new CheckoutSource();
             /** @var CheckoutSourceEntityInterface $sourceEntity */
             $sourceEntity = $this->getReference($checkoutData['source']);
@@ -101,6 +105,9 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
                 foreach ($checkoutData['completedData'] as $key => $value) {
                     $completedData->offsetSet($key, $value);
                 }
+            }
+            if (!empty($checkoutData['checkout']['currency'])) {
+                $checkout->setCurrency($checkoutData['checkout']['currency']);
             }
             $manager->persist($checkout);
             $manager->flush();
