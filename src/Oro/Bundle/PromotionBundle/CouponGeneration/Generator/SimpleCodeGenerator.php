@@ -50,6 +50,21 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function generateUnique(CodeGenerationOptions $options, $amount, array $excluded = [])
+    {
+        $codes = [];
+        while (count($codes) < $amount) {
+            do {
+                $code = $this->generate($options);
+            } while (array_key_exists($code, $excluded));
+            $codes[(string)$code] = $code;
+        }
+        return $codes;
+    }
+
+    /**
      * @param string $type
      * @return string
      */

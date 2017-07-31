@@ -14,4 +14,12 @@ interface CodeGeneratorInterface
      * @return string
      */
     public function generate(CodeGenerationOptions $options);
+
+    /**
+     * @param CodeGenerationOptions $options
+     * @param int $amount
+     * @param array $excluded
+     * @return array
+     */
+    public function generateUnique(CodeGenerationOptions $options, $amount, array $excluded = []);
 }

@@ -114,8 +114,8 @@ class CouponGenerationManager
                 ) VALUES
             ';
             $codeValues = [];
-            for ($i=0; $i < self::BULK_SIZE; $i++) {
-                $codeValues[] =  "
+            for ($i = 0; $i < self::BULK_SIZE; $i++) {
+                $codeValues[] = "
                     (
                       :organization_id,
                       :business_unit_owner_id,
@@ -134,33 +134,28 @@ class CouponGenerationManager
         return $this->insertStatement;
     }
 
+    /**
+     * @param CouponGenerationOptions $options
+     * @param int $amount
+     * @return array
+     */
     protected function getUniqueCodes(CouponGenerationOptions $options, $amount)
     {
-        $codes = [];
-        do {
-            do {
-                $code = $this->couponGenerator->generate($options);
-            } while (array_key_exists($code, $codes));
-            $codes[$code] = $code;
-        } while (count($codes) < $amount);
-
-        $newCodes = $codes;
-        do {
+        $result = [];
+        while (count($result) < $amount) {
+            $newCodes = $this->couponGenerator->generateUnique($options, $amount - count($result), $result);
             $select = $this->getConnection()
                 ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $newCodes) . "')");
             $select->execute();
 
-            $newCodes = [];
-            while ($duplicateCode = $select->fetchColumn(0)) {
-                do {
-                    $newCode = $this->couponGenerator->generate($options);
-                } while (array_key_exists($newCode, $codes));
-                unset($codes[$duplicateCode]);
-                $codes[$newCode] = $newCode;
-                $newCodes[] = $newCode;
+            while ($existingCode = $select->fetchColumn(0)) {
+                unset($newCodes[$existingCode]);
             }
-        } while ($newCodes);
+            foreach ($newCodes as $newCode) { //because array_merge doesnt work as needed in case of numeric keys
+                $result[$newCode] = $newCode;
+            }
+        }
 
-        return array_values($codes);
+        return array_values($result);
     }
 }
