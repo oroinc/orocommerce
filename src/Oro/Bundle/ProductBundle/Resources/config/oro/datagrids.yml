@@ -1,5 +1,5 @@
 datagrids:
-    products-select-grid-base:
+    products-select-grid-base-without-default-sorting:
         extended_entity_name: %oro_product.entity.product.class%
         options:
             entityHint:        products
@@ -75,8 +75,6 @@ datagrids:
                     data_name: product.createdAt
                 updatedAt:
                     data_name: product.updatedAt
-            default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 sku:
@@ -116,6 +114,12 @@ datagrids:
                 updatedAt:
                     type:      datetime
                     data_name: product.updatedAt
+
+    products-select-grid-base:
+        extends: products-select-grid-base-without-default-sorting
+        sorters:
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
 
     products-select-grid:
         extends: products-select-grid-base
@@ -626,7 +630,7 @@ datagrids:
                     excluded: '#productRemoveUpsell'
 
     products-related-items-select:
-        extends: products-select-grid-base
+        extends: products-select-grid-base-without-default-sorting
         options:
             entityHint: products
         source:

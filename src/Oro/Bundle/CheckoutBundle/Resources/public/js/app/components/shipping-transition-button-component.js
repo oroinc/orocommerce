@@ -13,11 +13,22 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            this.defaults.selectors.shippingForm = '[data-content="shipping_method_form"]';
-            this.defaults.selectors.shippingMethodTypeSelector = '[name$="shippingMethodType"]';
-            this.defaults.selectors.checkoutRequire = '[data-role="checkout-require"]';
-            this.defaults.selectors.shippingMethod = '[name$="[shipping_method]"]';
-            this.defaults.selectors.shippingMethodType = '[name$="[shipping_method_type]"]';
+            this.defaults = $.extend(
+                true,
+                {},
+                this.defaults,
+                {
+                    selectors: {
+                        shippingForm: '[data-content="shipping_method_form"]',
+                        shippingMethodTypeSelector: '[name$="shippingMethodType"]',
+                        shippingMethodTypeSelectorAbsolute: '[data-content="shipping_method_form"]' +
+                            ' [name$="shippingMethodType"]',
+                        checkoutRequire: '[data-role="checkout-require"]',
+                        shippingMethod: '[name$="[shipping_method]"]',
+                        shippingMethodType: '[name$="[shipping_method_type]"]'
+                    }
+                }
+            );
 
             ShippingTransitionButtonComponent.__super__.initialize.call(this, options);
 
@@ -25,7 +36,12 @@ define(function(require) {
         },
 
         onShippingMethodRendered: function() {
-            this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
+            this.getContent().on(
+                'change',
+                this.options.selectors.shippingMethodTypeSelectorAbsolute,
+                $.proxy(this.onShippingMethodTypeChange, this)
+            );
+
             this.initShippingMethod();
         },
 
@@ -35,7 +51,7 @@ define(function(require) {
             if (this.getShippingMethodTypeSelector().length && selectedTypeValue && selectedMethodValue) {
                 var selectedEl = this
                   .getShippingMethodTypeSelector()
-                  .filter('[value="' + selectedTypeValue + '"]')
+                  .filter('[data-shipping-type="' + selectedTypeValue + '"]')
                   .filter('[data-shipping-method="' + selectedMethodValue + '"]');
                 selectedEl.prop('checked', 'checked');
                 selectedEl.trigger('change');
@@ -43,7 +59,8 @@ define(function(require) {
                 var selectedType = this.getShippingMethodTypeSelector().filter(':checked');
                 if (selectedType.val()) {
                     var method = $(selectedType).data('shipping-method');
-                    this.setElementsValue(selectedType.val(), method);
+                    var type = $(selectedType).data('shipping-type');
+                    this.setElementsValue(type, method);
                 } else {
                     this.setElementsValue(null, null);
                 }
@@ -58,7 +75,7 @@ define(function(require) {
                 return;
             }
 
-            this.getShippingMethodTypeSelector().off('change', $.proxy(this.onShippingMethodTypeChange, this));
+            this.getContent().off('change', this.options.selectors.shippingMethodTypeSelectorAbsolute);
 
             ShippingTransitionButtonComponent.__super__.dispose.call(this);
         },
@@ -80,53 +97,36 @@ define(function(require) {
             mediator.trigger('checkout:shipping-method:changed');
             var methodType = $(event.target);
             var method = methodType.data('shipping-method');
-            this.setElementsValue(methodType.val(), method);
+            var type = methodType.data('shipping-type');
+            this.setElementsValue(type, method);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getContent: function() {
-            if (!this.hasOwnProperty('$content')) {
-                this.$content = $(this.options.selectors.checkoutContent);
-            }
-
-            return this.$content;
+            return $(this.options.selectors.checkoutContent);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getShippingForm: function() {
-            if (!this.hasOwnProperty('$shippingForm')) {
-                this.$shippingForm = $(this.options.selectors.shippingForm);
-            }
-
-            return this.$shippingForm;
+            return $(this.options.selectors.shippingForm);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getShippingMethodTypeSelector: function() {
-            if (!this.hasOwnProperty('$shippingMethodTypeSelector')) {
-                this.$shippingMethodTypeSelector = this.getShippingForm().find(
-                    this.options.selectors.shippingMethodTypeSelector
-                );
-            }
-
-            return this.$shippingMethodTypeSelector;
+            return this.getShippingForm().find(this.options.selectors.shippingMethodTypeSelector);
         },
 
         /**
          * @returns {jQuery|HTMLElement}
          */
         getShippingMethodTypeElement: function() {
-            if (!this.hasOwnProperty('$shippingMethodTypeElement')) {
-                this.$shippingMethodTypeElement = this.getContent().find(this.options.selectors.shippingMethodType);
-            }
-
-            return this.$shippingMethodTypeElement;
+            return this.getContent().find(this.options.selectors.shippingMethodType);
         },
 
         onFail: function() {
@@ -144,11 +144,7 @@ define(function(require) {
          * @returns {jQuery|HTMLElement}
          */
         getShippingMethodElement: function() {
-            if (!this.hasOwnProperty('$shippingMethodElement')) {
-                this.$shippingMethodElement = this.getContent().find(this.options.selectors.shippingMethod);
-            }
-
-            return this.$shippingMethodElement;
+            return this.getContent().find(this.options.selectors.shippingMethod);
         }
     });
 

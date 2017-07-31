@@ -1,0 +1,16 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRule2:
+        name: 'Rule Two'
+        enabled: true
+        sortOrder: 2
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    paymentMethodConfig2:
+        type: '<("payment_term_".@paymentTermIntegration2->id)>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    paymentMethodsConfigsRule2:
+        rule: '@paymentRule2'
+        methodConfigs: ['@paymentMethodConfig2']
+        currency: 'USD'
+        organization: '@organization'
