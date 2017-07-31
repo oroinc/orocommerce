@@ -5,7 +5,7 @@ config:
         'oroproduct/js/app/components/product-unit-component': 'bundles/oroproduct/js/app/components/product-unit-component.js'
         'oro/product-collection-popup-add-products-widget': 'bundles/oroproduct/js/app/widget/product-collection-popup-add-products-widget.js'
         'oroproduct/js/app/components/product-image-type-radio-control-component': 'bundles/oroproduct/js/app/components/product-image-type-radio-control-component.js'
-        'oroproduct/js/app/datagrid/listener/related-product-listener': 'bundles/oroproduct/js/app/datagrid/listener/related-product-listener.js'
+        'oroproduct/js/app/datagrid/listener/related-product-listener': 'bundles/oroproduct/js/app/datagrid/listener/related-items-listener.js'
         'oroproduct/js/app/components/product-name-popup-editor-component': 'bundles/oroproduct/js/app/components/product-name-popup-editor-component.js'
         'oroproduct/js/app/components/product-variant-field-component': 'bundles/oroproduct/js/app/components/product-variant-field-component.js'
         'oroproduct/js/app/components/product-collection-apply-query-component': 'bundles/oroproduct/js/app/components/product-collection-apply-query-component.js'

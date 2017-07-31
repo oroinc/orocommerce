@@ -37,6 +37,9 @@
         skipMaskView: skipMaskView,
         data: totals
     }%}
+    {% if selectors is defined %}
+        {% set options = options|merge({selectors: selectors}) %}
+    {% endif %}
     {% placeholder oro_pricing_totals_before %}
 
     {% set pageComponent = pageComponent|default('oropricing/js/app/components/totals-component') %}

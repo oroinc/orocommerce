@@ -22,47 +22,69 @@ class RelatedItemsProductEditListener
     private $translator;
 
     /** @var AbstractRelatedItemConfigProvider */
-    private $configProvider;
+    private $relatedProductsConfigProvider;
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
 
+    /** @var AbstractRelatedItemConfigProvider */
+    private $upsellProductsConfigProvider;
+
     /**
      * @param TranslatorInterface               $translator
-     * @param AbstractRelatedItemConfigProvider $configProvider
+     * @param AbstractRelatedItemConfigProvider $relatedProductsConfigProvider
+     * @param AbstractRelatedItemConfigProvider $upsellProductsConfigProvider
      * @param AuthorizationCheckerInterface     $authorizationChecker
      */
     public function __construct(
         TranslatorInterface $translator,
-        AbstractRelatedItemConfigProvider $configProvider,
+        AbstractRelatedItemConfigProvider $relatedProductsConfigProvider,
+        AbstractRelatedItemConfigProvider $upsellProductsConfigProvider,
         AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->translator = $translator;
-        $this->configProvider = $configProvider;
+        $this->relatedProductsConfigProvider = $relatedProductsConfigProvider;
         $this->authorizationChecker = $authorizationChecker;
+        $this->upsellProductsConfigProvider = $upsellProductsConfigProvider;
     }
+
 
     /**
      * @param BeforeListRenderEvent $event
      */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        if (!$this->configProvider->isEnabled()
-            || !$this->authorizationChecker->isGranted('oro_related_products_edit')
+        $twigEnv = $event->getEnvironment();
+        $tabs = [];
+        $grids = [];
+
+        if ($this->relatedProductsConfigProvider->isEnabled()
+            && $this->authorizationChecker->isGranted('oro_related_products_edit')
         ) {
-            return;
+            $tabs[] = [
+                'id' => 'related-products-block',
+                'label' => $this->translator->trans('oro.product.tabs.relatedProducts')
+            ];
+            $grids[] = $this->getRelatedProductsEditBlock($event, $twigEnv);
         }
 
-        $twigEnv = $event->getEnvironment();
-        $relatedProductsTemplate = $twigEnv->render(
-            '@OroProduct/Product/RelatedItems/relatedItems.html.twig',
-            [
-                'form' => $event->getFormView(),
-                'entity' => $event->getEntity(),
-                'relatedProductsLimit' => $this->configProvider->getLimit()
-            ]
-        );
-        $this->addEditPageBlock($event->getScrollData(), $relatedProductsTemplate);
+        if ($this->upsellProductsConfigProvider->isEnabled()
+            && $this->authorizationChecker->isGranted('oro_upsell_products_edit')
+        ) {
+            $tabs[] = [
+                'id' => 'upsell-products-block',
+                'label' => $this->translator->trans('oro.product.tabs.upsellProducts')
+            ];
+            $grids[] = $this->getUpsellProductsEdidBlock($event, $twigEnv);
+        }
+
+        if (count($tabs) > 1) {
+            $grids = array_merge([$this->renderTabs($twigEnv, $tabs)], $grids);
+        }
+
+        if (count($grids) > 0) {
+            $this->addEditPageBlock($event->getScrollData(), $grids);
+        }
     }
 
     /**
@@ -95,20 +117,101 @@ class RelatedItemsProductEditListener
             $event->getForm()->remove('appendRelated');
             $event->getForm()->remove('removeRelated');
         }
+
+        if ($this->authorizationChecker->isGranted('oro_upsell_products_edit')) {
+            $event->getForm()->add(
+                'appendUpsell',
+                'oro_entity_identifier',
+                [
+                    'class' => Product::class,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            );
+            $event->getForm()->add(
+                'removeUpsell',
+                'oro_entity_identifier',
+                [
+                    'class' => Product::class,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            );
+        } else {
+            $event->getForm()->remove('appendUpsell');
+            $event->getForm()->remove('removeUpsell');
+        }
     }
 
     /**
      * @param ScrollData $scrollData
-     * @param string $relatedProductsForm
+     * @param string[] $htmlBlocks
      */
-    private function addEditPageBlock(ScrollData $scrollData, $relatedProductsForm)
+    private function addEditPageBlock(ScrollData $scrollData, array $htmlBlocks)
     {
         $scrollData->addNamedBlock(
             self::RELATED_ITEMS_ID,
             $this->translator->trans('oro.product.sections.relatedItems'),
             self::BLOCK_PRIORITY
         );
+
         $subBlock = $scrollData->addSubBlock(self::RELATED_ITEMS_ID);
-        $scrollData->addSubBlockData(self::RELATED_ITEMS_ID, $subBlock, $relatedProductsForm, 'relatedItems');
+        $scrollData->addSubBlockData(
+            self::RELATED_ITEMS_ID,
+            $subBlock,
+            implode('', $htmlBlocks),
+            'relatedItems'
+        );
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param \Twig_Environment $twigEnv
+     * @return string
+     */
+    private function getRelatedProductsEditBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    {
+        return $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/relatedProducts.html.twig',
+            [
+                'form' => $event->getFormView(),
+                'entity' => $event->getEntity(),
+                'relatedProductsLimit' => $this->relatedProductsConfigProvider->getLimit()
+            ]
+        );
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param \Twig_Environment $twigEnv
+     * @return string
+     */
+    private function getUpsellProductsEdidBlock(BeforeListRenderEvent $event, \Twig_Environment $twigEnv)
+    {
+        return $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/upsellProducts.html.twig',
+            [
+                'form' => $event->getFormView(),
+                'entity' => $event->getEntity(),
+                'upsellProductsLimit' => $this->upsellProductsConfigProvider->getLimit(),
+            ]
+        );
+    }
+
+    /**
+     * @param \Twig_Environment $twigEnv
+     * @param array $tabs
+     * @return string
+     */
+    private function renderTabs(\Twig_Environment $twigEnv, array $tabs)
+    {
+        return $twigEnv->render(
+            '@OroProduct/Product/RelatedItems/tabs.html.twig',
+            [
+                'relatedItemsTabsItems' => $tabs
+            ]
+        );
     }
 }

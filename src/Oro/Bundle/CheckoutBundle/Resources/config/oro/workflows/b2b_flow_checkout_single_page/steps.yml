@@ -1,0 +1,15 @@
+workflows:
+    b2b_flow_checkout_single_page:
+        steps:
+            checkout:
+                order: 10
+                allowed_transitions:
+                    - save_state
+                    - create_order
+                    - finish_checkout
+
+            order_created:
+                order: 20
+                allowed_transitions:
+                    - payment_error
+                is_final: true
