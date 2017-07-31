@@ -31,11 +31,6 @@ class CouponGenerationManager
     protected $insertStatement;
 
     /**
-     * @var Statement|null
-     */
-    protected $selectStatement;
-
-    /**
      * @param CodeGeneratorInterface $couponGenerator
      * @param DoctrineHelper $doctrineHelper
      * @internal param CouponInserterInterface $couponInserter
