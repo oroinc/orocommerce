@@ -38,7 +38,7 @@ class CouponGenerationManagerTest extends WebTestCase
         $options->setExpirationDate(new \DateTime('01-01-2020 12:00:00'));
         $options->setPromotion($promotion);
 
-        $options->setCouponQuantity(10000);
+        $options->setCouponQuantity(55000);
         $options->setCodeLength(5);
         $options->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE);
 
@@ -56,7 +56,7 @@ class CouponGenerationManagerTest extends WebTestCase
         $stmnt->execute();
         fwrite(STDERR, print_r('Elapsed: '. $elapsed .PHP_EOL, true));
         fwrite(STDERR, print_r('Inserted: ' . ($inserted = $stmnt->fetchColumn(0)) . PHP_EOL, true));
-        $this->assertEquals(10000, $inserted);
+        $this->assertEquals(55000, $inserted);
     }
     /**
      * @return DoctrineHelper

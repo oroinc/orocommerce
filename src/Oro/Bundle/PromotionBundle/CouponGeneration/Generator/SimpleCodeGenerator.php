@@ -41,10 +41,10 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
             return '';
         }
         $template = $this->getTemplate($type);
-        $charactersLength = mb_strlen($template);
+        $max = mb_strlen($template) - 1;
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
-            $randomString .= $template[random_int(0, $charactersLength - 1)];
+            $randomString .= $template[random_int(0, $max)];
         }
         return $randomString;
     }

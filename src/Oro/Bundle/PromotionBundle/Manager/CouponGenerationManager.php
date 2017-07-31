@@ -4,10 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\CouponGeneratorInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
 /**
@@ -16,7 +15,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 class CouponGenerationManager
 {
     /**
-     * @var CouponGeneratorInterface
+     * @var CodeGeneratorInterface
      */
     protected $couponGenerator;
 
@@ -31,11 +30,11 @@ class CouponGenerationManager
     protected $insertStatement;
 
     /**
-     * @param CouponGeneratorInterface $couponGenerator
+     * @param CodeGeneratorInterface $couponGenerator
      * @param DoctrineHelper $doctrineHelper
      * @internal param CouponInserterInterface $couponInserter
      */
-    public function __construct(CouponGeneratorInterface $couponGenerator, DoctrineHelper $doctrineHelper)
+    public function __construct(CodeGeneratorInterface $couponGenerator, DoctrineHelper $doctrineHelper)
     {
         $this->couponGenerator = $couponGenerator;
         $this->doctrineHelper = $doctrineHelper;
@@ -49,40 +48,36 @@ class CouponGenerationManager
      */
     public function generateCoupons(CouponGenerationOptions $options)
     {
-        $this->getConnection()->transactional(function (Connection $conn) use ($options) {
+        $checkStatement = $this->getConnection()->prepare('SELECT 1 FROM oro_promotion_coupon WHERE code = :code');
 
-            $checkStatement = $conn->prepare('SELECT 1 FROM oro_promotion_coupon WHERE code = :code');
+        $statement = $this->getInsertStatement();
+        $statement->bindValue(
+            'organization_id',
+            $options->getOwner() ? $options->getOwner()->getOrganization()->getId() : null
+        );
+        $statement->bindValue(
+            'business_unit_owner_id',
+            $options->getOwner() ? $options->getOwner()->getId() : null
+        );
+        $statement->bindValue(
+            'promotion_id',
+            $options->getPromotion() ? $options->getPromotion()->getId() : null
+        );
+        $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon());
+        $statement->bindValue('uses_per_user', $options->getUsesPerUser());
+        $statement->bindValue('valid_until', $options->getExpirationDate()->format('Y-m-d H:i:s'));
+        $statement->bindValue('created_at', date('Y-m-d H:i:s'));
+        $statement->bindValue('updated_at', date('Y-m-d H:i:s'));
 
-            $statement = $this->getInsertStatement();
-            $statement->bindValue(
-                'organization_id',
-                $options->getOwner() ? $options->getOwner()->getOrganization()->getId() : null
-            );
-            $statement->bindValue(
-                'business_unit_owner_id',
-                $options->getOwner() ? $options->getOwner()->getId() : null
-            );
-            $statement->bindValue(
-                'promotion_id',
-                $options->getPromotion() ? $options->getPromotion()->getId() : null
-            );
-            $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon());
-            $statement->bindValue('uses_per_user', $options->getUsesPerUser());
-            $statement->bindValue('valid_until', $options->getExpirationDate()->format('Y-m-d H:i:s'));
-            $statement->bindValue('created_at', date('Y-m-d H:i:s'));
-            $statement->bindValue('updated_at', date('Y-m-d H:i:s'));
-
-            for ($i = 0; $i < $options->getCouponQuantity(); $i++) {
+        for ($i = 0; $i < $options->getCouponQuantity(); $i++) {
+            do {
                 $code = $this->couponGenerator->generate($options);
                 $checkStatement->execute(['code' => $code]);
-                if ($checkStatement->fetchColumn(0)) {
-                    $i--; //retry
-                } else {
-                    $statement->bindValue('code', $code);
-                    $statement->execute();
-                }
-            }
-        });
+            } while ($checkStatement->rowCount());
+
+            $statement->bindValue('code', $code);
+            $statement->execute();
+        }
     }
 
     /**
