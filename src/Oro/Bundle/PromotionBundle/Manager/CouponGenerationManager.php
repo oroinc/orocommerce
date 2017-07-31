@@ -108,9 +108,9 @@ class CouponGenerationManager
                   valid_until
                 ) VALUES
             ';
-            $codeValues = [];
+            $placeholders = [];
             for ($i = 0; $i < self::BULK_SIZE; $i++) {
-                $codeValues[] = "
+                $placeholders[] = "
                     (
                       :organization_id,
                       :business_unit_owner_id,
@@ -124,7 +124,7 @@ class CouponGenerationManager
                     )
                 ";
             }
-            $this->insertStatement = $this->getConnection()->prepare($sql . implode(',', $codeValues));
+            $this->insertStatement = $this->getConnection()->prepare($sql . implode(',', $placeholders));
         }
         return $this->insertStatement;
     }
