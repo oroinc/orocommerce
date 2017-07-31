@@ -2,14 +2,16 @@
 
 namespace Oro\Bundle\RFPBundle\Model;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class RequestManager
@@ -20,31 +22,75 @@ class RequestManager
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var GuestCustomerUserManager */
+    protected $guestCustomerUserManager;
+
     /**
      * @param TokenAccessorInterface $tokenAccessor
-     * @param DoctrineHelper         $doctrineHelper
+     * @param DoctrineHelper $doctrineHelper
+     * @param GuestCustomerUserManager $guestCustomerUserManager
      */
-    public function __construct(TokenAccessorInterface $tokenAccessor, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        TokenAccessorInterface $tokenAccessor,
+        DoctrineHelper $doctrineHelper,
+        GuestCustomerUserManager $guestCustomerUserManager
+    ) {
         $this->tokenAccessor = $tokenAccessor;
         $this->doctrineHelper = $doctrineHelper;
+        $this->guestCustomerUserManager = $guestCustomerUserManager;
     }
 
     /**
+     * @param Request $request
+     *
      * @return Request
      */
-    public function create()
+    public function appendUserData(Request $request)
     {
-        $request = new Request();
         $user = $this->tokenAccessor->getUser();
+        $token = $this->tokenAccessor->getToken();
+        if ($token instanceof AnonymousCustomerUserToken) {
+            $user = $token->getVisitor()->getCustomerUser();
+            if ($user === null) {
+                $user = $this->guestCustomerUserManager
+                    ->generateGuestCustomerUser($token->getVisitor(), [
+                        'email' => $request->getEmail(),
+                        'first_name' => $request->getFirstName(),
+                        'last_name' => $request->getLastName()
+                    ]);
+
+                $em = $this->doctrineHelper->getEntityManager(CustomerUser::class);
+
+                $em->persist($user);
+                $em->flush($user);
+
+                $token->getVisitor()->setCustomerUser($user);
+            }
+
+            # TODO remove after fix BB-9269
+            $request->setOrganization($user->getOrganization());
+        }
+
         if ($user instanceof CustomerUser) {
             $request
                 ->setCustomerUser($user)
-                ->setCustomer($user->getCustomer())
-                ->setFirstName($user->getFirstName())
-                ->setLastName($user->getLastName())
-                ->setCompany($user->getCustomer()->getName())
-                ->setEmail($user->getEmail());
+                ->setCustomer($user->getCustomer());
+
+            if (!$request->getEmail()) {
+                $request->setEmail($user->getEmail());
+            }
+
+            if (!$request->getFirstName()) {
+                $request->setFirstName($user->getFirstName());
+            }
+
+            if (!$request->getLastName()) {
+                $request->setLastName($user->getLastName());
+            }
+
+            if (!$request->getCompany()) {
+                $request->setCompany($user->getCustomer()->getName());
+            }
         }
 
         return $request;

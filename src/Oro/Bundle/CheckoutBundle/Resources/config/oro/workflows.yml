@@ -69,6 +69,10 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            visitor:
+                type: entity
+                options:
+                    class: Oro\Bundle\CustomerBundle\Entity\CustomerVisitor
             visitor_email:
                 type: string
         steps:
@@ -475,13 +479,20 @@ workflows:
                                 - '@not_empty': $visitor_email
                                 - '@empty': $checkout.customerUser
                         actions:
+                            - '@get_active_visitor': $visitor
                             - '@call_service_method':
                                 attribute: $checkout.customerUser
                                 service: 'oro_customer.manager.guest_customer_user'
-                                method: createFromAddress
+                                method: generateGuestCustomerUser
                                 method_parameters:
-                                    - $visitor_email
-                                    - $billing_address
+                                    - $visitor
+                                    -
+                                        email: $visitor_email
+                                        name_prefix: $billing_address.name_prefix
+                                        first_name: $billing_address.first_name
+                                        middle_name: $billing_address.middle_name
+                                        last_name: $billing_address.last_name
+                                        name_suffix: $billing_address.name_suffix
                             - '@flush_entity': $checkout.customerUser
                     - '@tree':
                         conditions:

@@ -82,7 +82,7 @@ class RequestController extends Controller
      */
     public function createAction(Request $request)
     {
-        $rfpRequest = $this->get('oro_rfp.request.manager')->create();
+        $rfpRequest = new RFPRequest();
         $this->addProductItemsToRfpRequest($rfpRequest, $request);
 
         $response = $this->update($rfpRequest);

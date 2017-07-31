@@ -50,6 +50,7 @@ services:
         arguments:
             - "@oro_config.manager"
             - "@doctrine"
+            - "@oro_rfp.request.manager"
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
         tags:

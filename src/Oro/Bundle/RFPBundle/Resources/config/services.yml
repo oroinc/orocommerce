@@ -92,6 +92,7 @@ services:
         arguments:
             - '@oro_security.token_accessor'
             - '@oro_entity.doctrine_helper'
+            - '@oro_customer.manager.guest_customer_user'
 
     oro_rfp.event_listener.customer_view:
         class: 'Oro\Bundle\RFPBundle\EventListener\CustomerViewListener'

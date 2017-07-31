@@ -3,14 +3,20 @@
 namespace Oro\Bundle\RFPBundle\Form\Type\Frontend;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\RFPBundle\Model\RequestManager;
 
 class RequestType extends AbstractType
 {
@@ -27,6 +33,11 @@ class RequestType extends AbstractType
     protected $registry;
 
     /**
+     * @var RequestManager
+     */
+    protected $requestManager;
+
+    /**
      * @var string
      */
     protected $dataClass;
@@ -34,11 +45,16 @@ class RequestType extends AbstractType
     /**
      * @param ConfigManager $configManager
      * @param ManagerRegistry $registry
+     * @param RequestManager $requestManager
      */
-    public function __construct(ConfigManager $configManager, ManagerRegistry $registry)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        ManagerRegistry $registry,
+        RequestManager $requestManager
+    ) {
         $this->configManager = $configManager;
         $this->registry = $registry;
+        $this->requestManager = $requestManager;
     }
 
     /**
@@ -55,31 +71,31 @@ class RequestType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName', 'text', [
+            ->add('firstName', TextType::class, [
                 'label' => 'oro.rfp.request.first_name.label'
             ])
-            ->add('lastName', 'text', [
+            ->add('lastName', TextType::class, [
                 'label' => 'oro.rfp.request.last_name.label'
             ])
-            ->add('email', 'text', [
+            ->add('email', TextType::class, [
                 'label' => 'oro.rfp.request.email.label'
             ])
-            ->add('phone', 'text', [
+            ->add('phone', TextType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.phone.label'
             ])
-            ->add('company', 'text', [
+            ->add('company', TextType::class, [
                 'label' => 'oro.rfp.request.company.label'
             ])
-            ->add('role', 'text', [
+            ->add('role', TextType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.role.label'
             ])
-            ->add('note', 'textarea', [
+            ->add('note', TextareaType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.note.label'
             ])
-            ->add('poNumber', 'text', [
+            ->add('poNumber', TextType::class, [
                 'required' => false,
                 'label' => 'oro.rfp.request.po_number.label'
             ])
@@ -96,6 +112,14 @@ class RequestType extends AbstractType
                 'label' => 'oro.frontend.rfp.request.assigned_customer_users.label',
             ])
         ;
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var Request $rfpRequest */
+            $rfpRequest = $event->getData();
+            if ($rfpRequest->getId() === null) {
+                $this->requestManager->appendUserData($rfpRequest);
+            }
+        });
     }
 
     /**
