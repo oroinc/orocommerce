@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\Model;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+
+/**
+ * @method AbstractEnumValue getInternalStatus()
+ */
 class ExtendOrder
 {
     /**

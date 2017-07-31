@@ -85,6 +85,8 @@ class Order extends ExtendOrder implements
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
 
+    const INTERNAL_STATUS_CODE = 'order_internal_status';
+
     /**
      * @var integer
      *
