@@ -70,6 +70,8 @@ workflows:
                         parameters_mapping:
                             checkout: $checkout
                             disallow_shipping_address_edit: $disallow_shipping_address_edit
+                            visitor_email: $visitor_email
+                            billing_address: $billing_address
                         results:
                             data.billing_address_has_shipping: $.billing_address_has_shipping
 

@@ -5,29 +5,31 @@ action_groups:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
             disallow_shipping_address_edit:
                 default: false
+            visitor_email: ~
+            billing_address: ~
         actions:
             - '@tree':
                 conditions:
                     '@and':
-                        - '@not_empty': $visitor_email
-                        - '@empty': $checkout.customerUser
+                        - '@not_empty': $.visitor_email
+                        - '@empty': $.checkout.customerUser
                 actions:
                     - '@call_service_method':
-                        attribute: $checkout.customerUser
+                        attribute: $.checkout.customerUser
                         service: 'oro_customer.manager.guest_customer_user'
                         method: createFromAddress
                         method_parameters:
-                            - $visitor_email
-                            - $billing_address
-                    - '@flush_entity': $checkout.customerUser
+                            - $.visitor_email
+                            - $.billing_address
+                    - '@flush_entity': $.checkout.customerUser
             - '@tree':
                 conditions:
                     '@and':
-                        - '@type': [$checkout.sourceEntity, Oro\Bundle\ShoppingListBundle\Entity\ShoppingList]
-                        - '@empty': $checkout.sourceEntity.customerUser
+                        - '@type': [$.checkout.sourceEntity, Oro\Bundle\ShoppingListBundle\Entity\ShoppingList]
+                        - '@empty': $.checkout.sourceEntity.customerUser
                 actions:
-                    - '@assign_value': [$checkout.sourceEntity.customerUser, $checkout.customerUser]
-                    - '@assign_value': [$checkout.sourceEntity.customer, $checkout.customerUser.customer]
+                    - '@assign_value': [$.checkout.sourceEntity.customerUser, $.checkout.customerUser]
+                    - '@assign_value': [$.checkout.sourceEntity.customer, $.checkout.customerUser.customer]
             - '@assign_constant_value': [$.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
             - '@call_method':
                 conditions:
