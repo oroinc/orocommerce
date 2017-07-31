@@ -14,14 +14,13 @@ define(function(require) {
         options: {
             routeName: 'oro_promotion_coupon_generation_preview',
             codePreviewSelector: '#coupon-code-preview',
-            codePreviewSelectors:
-            {
+            codePreviewSelectors: {
                 length: 'oro_action_operation[couponGenerationOptions][codeLength]',
                 codeType: 'oro_action_operation[couponGenerationOptions][codeType]',
                 codePrefix: 'oro_action_operation[couponGenerationOptions][codePrefix]',
                 codeSuffix: 'oro_action_operation[couponGenerationOptions][codeSuffix]',
                 dashesSequence: 'oro_action_operation[couponGenerationOptions][dashesSequence]'
-}
+            }
         },
 
         /**
@@ -38,9 +37,9 @@ define(function(require) {
             this.form.on('change',  _.bind(this.onCouponGenerationFormChange, this));
         },
 
-        onCouponGenerationFormChange: function (e) {
+        onCouponGenerationFormChange: function(e) {
             var self = this;
-            if(_.contains(this.options.codePreviewSelectors, e.target.name)){
+            if (_.contains(this.options.codePreviewSelectors, e.target.name)) {
                 $.ajax({
                     method: 'POST',
                     url: routing.generate(this.options.routeName, {'couponGenerationData': this.getFieldsData()}),
@@ -53,7 +52,7 @@ define(function(require) {
             }
         },
 
-        getFieldsData: function () {
+        getFieldsData: function() {
             return {
                 'codeLength': $('[name="' + this.options.codePreviewSelectors.length + '"]').val(),
                 'codeType': $('[name="' + this.options.codePreviewSelectors.codeType + '"]').val(),
