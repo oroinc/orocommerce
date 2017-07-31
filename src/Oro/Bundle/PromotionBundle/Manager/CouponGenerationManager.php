@@ -134,32 +134,33 @@ class CouponGenerationManager
         return $this->insertStatement;
     }
 
-    protected function getUniqueCodes(CouponGenerationOptions $options)
+    protected function getUniqueCodes(CouponGenerationOptions $options, $amount)
     {
         $codes = [];
-        $select = $this->getSelectStatement();
-        while (count($codes) < self::BULK_SIZE) {
+        do {
             do {
                 $code = $this->couponGenerator->generate($options);
-                if (array_key_exists($code, $codes)) {
-                    continue;
-                }
-                $select->execute(['code' => $code]);
-            } while ($select->rowCount());
+            } while (array_key_exists($code, $codes));
             $codes[$code] = $code;
-        }
-        return array_values($codes);
-    }
+        } while (count($codes) < $amount);
 
-    /**
-     * @return Statement
-     */
-    protected function getSelectStatement()
-    {
-        if (!$this->selectStatement) {
-            $this->selectStatement = $this->getConnection()
-                ->prepare('SELECT 1 FROM oro_promotion_coupon WHERE code = :code');
-        }
-        return $this->selectStatement;
+        $newCodes = $codes;
+        do {
+            $select = $this->getConnection()
+                ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $newCodes) . "')");
+            $select->execute();
+
+            $newCodes = [];
+            while ($duplicateCode = $select->fetchColumn(0)) {
+                do {
+                    $newCode = $this->couponGenerator->generate($options);
+                } while (array_key_exists($newCode, $codes));
+                unset($codes[$duplicateCode]);
+                $codes[$newCode] = $newCode;
+                $newCodes[] = $newCode;
+            }
+        } while ($newCodes);
+
+        return array_values($codes);
     }
 }
