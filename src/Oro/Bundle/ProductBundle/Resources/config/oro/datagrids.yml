@@ -560,11 +560,17 @@ datagrids:
             query:
                 where:
                     and:
-                        - 'product.id IN(:relatedProducts)'
+                        - 'product.id IN(:relatedItemsIds)'
             bind_parameters:
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
+
+    products-related-products-view:
+        extends: products-related-items-view
+
+    products-upsell-products-view:
+        extends: products-related-items-view
 
     products-related-items-edit:
         acl_resource: oro_product_update
@@ -573,21 +579,15 @@ datagrids:
             requireJSModules:
                 - orodatagrid/js/datagrid/listener/action-form-listener
                 - oroproduct/js/app/datagrid/listener/related-product-listener
-            rowSelection:
-                dataField: id
-                columnName: isRelated
-                selectors:
-                    included: '#productAppendRelated'
-                    excluded: '#productRemoveRelated'
         source:
             query:
                 where:
                     or:
-                        - 'product.id IN (:relatedProducts) AND product.id NOT IN (:data_not_in)'
+                        - 'product.id IN (:relatedItemsIds) AND product.id NOT IN (:data_not_in)'
                         - '(product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)'
             bind_parameters:
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
         actions:
             delete:
@@ -605,22 +605,36 @@ datagrids:
 #                configuration:
 #                    triggerAction: excludeRow
 
-    products-related-products-select:
-        extends: products-select-grid-base
+    products-related-products-edit:
+        extends: products-related-items-edit
         options:
-            entityHint: products
             rowSelection:
                 dataField: id
                 columnName: isRelated
                 selectors:
-                    included: '#productAppendRelatedSelect'
-                    excluded: '#productRemoveRelatedSelect'
+                    included: '#productAppendRelated'
+                    excluded: '#productRemoveRelated'
+
+    products-upsell-products-edit:
+        extends: products-related-items-edit
+        options:
+            rowSelection:
+                dataField: id
+                columnName: isRelated
+                selectors:
+                    included: '#productAppendUpsell'
+                    excluded: '#productRemoveUpsell'
+
+    products-related-items-select:
+        extends: products-select-grid-base
+        options:
+            entityHint: products
         source:
             query:
                 select:
                     - >
                       (
-                        CASE WHEN (product.id IN (:relatedProducts) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                        CASE WHEN (product.id IN (:relatedItemsIds) OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
                         THEN true ELSE false END
                       ) as isRelated
                 where:
@@ -629,7 +643,7 @@ datagrids:
             bind_parameters:
                 - productId
                 -
-                  name: relatedProducts
+                  name: relatedItemsIds
                   default: []
         columns:
             isRelated:
@@ -647,6 +661,26 @@ datagrids:
                 isRelated:
                     data_name: isRelated
             default: { isRelated: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC }
+
+    products-related-products-select:
+        extends: products-related-items-select
+        options:
+            rowSelection:
+                dataField: id
+                columnName: isRelated
+                selectors:
+                    included: '#productAppendRelatedSelect'
+                    excluded: '#productRemoveRelatedSelect'
+
+    products-upsell-products-select:
+        extends: products-related-items-select
+        options:
+            rowSelection:
+                dataField: id
+                columnName: isRelated
+                selectors:
+                    included: '#productAppendUpsellSelect'
+                    excluded: '#productRemoveUpsellSelect'
 
     frontend-product-search-grid:
         options:

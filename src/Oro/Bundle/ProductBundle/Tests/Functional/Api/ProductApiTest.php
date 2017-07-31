@@ -2,17 +2,21 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Tests\Functional\DataFixtures\LoadBusinessUnitData;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrganizations;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 class ProductApiTest extends RestJsonApiTestCase
@@ -24,12 +28,13 @@ class ProductApiTest extends RestJsonApiTestCase
     {
         parent::setUp();
         $this->loadFixtures([
-            LoadCategoryData::class,
-            LoadOrganizations::class,
-            LoadBusinessUnitData::class,
+            LoadProductUnits::class,
             LoadProductUnitPrecisions::class,
+            LoadBusinessUnitData::class,
+            LoadOrganizations::class,
             LoadProductTaxCodes::class,
-            LoadAttributeFamilyData::class
+            LoadAttributeFamilyData::class,
+            LoadCategoryData::class,
         ]);
     }
 
@@ -116,7 +121,7 @@ class ProductApiTest extends RestJsonApiTestCase
             $localization = $name->getLocalization() === null ?
                 'default'
                 : $name->getLocalization()->getFormattingCode();
-            $reference = LoadProductData::PRODUCT_1.'.names.'.$localization;
+            $reference = LoadProductData::PRODUCT_1 . '.names.' . $localization;
             if (!$referenceRepository->hasReference($reference)) {
                 $referenceRepository->addReference($reference, $name);
             }
@@ -134,12 +139,78 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->assertEquals('99', $bottlePrecision->getConversionRate());
 
         $referenceRepository->setReference(
-            'product_unit_precision.'.LoadProductData::PRODUCT_1.'.box',
+            'product_unit_precision.' . LoadProductData::PRODUCT_1 . '.box',
             $newUnitPrecision
         );
         $referenceRepository->setReference(LoadProductData::PRODUCT_1, $product);
 
         $this->assertResponseContains('patch_update_entity.yml', $response);
+    }
+
+    public function testProductPageTemplateScalarValue()
+    {
+        // pageTemplate = 'short'
+        $response = $this->post(
+            ['entity' => $this->getEntityType(Product::class)],
+            __DIR__ . '/requests/create_product_1.yml'
+        );
+
+        /** @var Product $product */
+        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-1']);
+
+        $pageTemplate = $product->getPageTemplate();
+        $this->assertInstanceOf(EntityFieldFallbackValue::class, $pageTemplate);
+        $this->assertArrayHasKey(ProductType::PAGE_TEMPLATE_ROUTE_NAME, $pageTemplate->getOwnValue());
+        $this->assertEquals('short', $pageTemplate->getArrayValue()[ProductType::PAGE_TEMPLATE_ROUTE_NAME]);
+        $this->assertNull($pageTemplate->getScalarValue());
+        $this->assertNull($pageTemplate->getFallback());
+    }
+
+    public function testProductPageTemplateFallbackValue()
+    {
+        // pageTemplate = 'systemConfig'
+        $response = $this->post(
+            ['entity' => $this->getEntityType(Product::class)],
+            __DIR__ . '/requests/create_product_2.yml'
+        );
+
+        /** @var Product $product */
+        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-2']);
+
+        $pageTemplate = $product->getPageTemplate();
+        $this->assertInstanceOf(EntityFieldFallbackValue::class, $pageTemplate);
+        $this->assertEquals('systemConfig', $pageTemplate->getFallback());
+        $this->assertNull($pageTemplate->getScalarValue());
+    }
+
+    public function testProductPageTemplateInvalidValue()
+    {
+        // pageTemplate = 'invalid-value'
+        $response = $this->request(
+            'POST',
+            $this->getUrl('oro_rest_api_post', ['entity' => $this->getEntityType(Product::class)]),
+            $this->getRequestData(__DIR__ . '/requests/create_product_3.yml')
+        );
+
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
+        $content = json_decode($response->getContent(), true);
+        $this->assertArrayHasKey('errors', $content);
+
+        $containsErrorMessage = false;
+
+        foreach ($content['errors'] as $error) {
+            if ($error['source']['pointer'] == "/data/relationships/pageTemplate/data"
+                && $error['detail'] == "The selected value is not valid."
+            ) {
+                $containsErrorMessage = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($containsErrorMessage);
+        /** @var Product $product */
+        $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-3']);
+        $this->assertNull($product);
     }
 
     /**
@@ -198,7 +269,7 @@ class ProductApiTest extends RestJsonApiTestCase
         $bottleUnit = $this->getReference(LoadProductUnits::BOTTLE);
         $literUnit = $this->getReference(LoadProductUnits::LITER);
         $milliliterUnit = $this->getReference(LoadProductUnits::MILLILITER);
-        $taxCodes = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX.'.'.LoadProductTaxCodes::TAX_3);
+        $taxCodes = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_3);
         $attributeFamily = $this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1);
 
         return [
@@ -326,7 +397,7 @@ class ProductApiTest extends RestJsonApiTestCase
                     "category" => [
                         "data" => [
                             "type" => "categories",
-                            "id" => (string) $category->getId()
+                            "id" => (string)$category->getId()
                         ]
                     ]
                 ]

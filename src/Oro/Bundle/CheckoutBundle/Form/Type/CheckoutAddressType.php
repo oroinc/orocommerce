@@ -64,13 +64,14 @@ class CheckoutAddressType extends AbstractOrderAddressType
         $isEditEnabled
     ) {
         if ($isEditEnabled) {
-            $addresses = $this->orderAddressManager->getGroupedAddresses($entity, $type);
-            $defaultKey = $this->getDefaultAddressKey($entity, $type, $addresses);
+            $addressCollection = $this->orderAddressManager->getGroupedAddresses($entity, $type);
+            $defaultKey = $addressCollection->getDefaultAddressKey();
             $selectedKey = $this->getSelectedAddress($entity, $type);
             if (null === $selectedKey) {
                 $selectedKey = $defaultKey;
             }
 
+            $addresses = $addressCollection->toArray();
             $action = count($addresses) ? 'select' : 'enter';
 
             $customerAddressOptions = [
