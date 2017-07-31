@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RelatedProductsRepositoryTest extends WebTestCase
@@ -22,7 +23,7 @@ class RelatedProductsRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
-            LoadProductData::class
+            LoadRelatedProductData::class
         ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
@@ -110,6 +111,19 @@ class RelatedProductsRepositoryTest extends WebTestCase
         $this->assertEquals($expectedRelatedProducts, $relatedProducts);
     }
 
+    public function testFindRelatedBidirectionalWithLimit()
+    {
+        /** @var Product $product */
+        $product = $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_4));
+        $expectedRelatedProducts = [
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_3)),
+            $this->getProductRepository()->findOneBySku(ucfirst(LoadProductData::PRODUCT_5)),
+        ];
+        $relatedProducts = $this->repository->findRelated($product->getId(), true, 2);
+
+        $this->assertEquals($expectedRelatedProducts, $relatedProducts);
+    }
+
     /**
      * @return array
      */
@@ -118,7 +132,7 @@ class RelatedProductsRepositoryTest extends WebTestCase
         return [
             ['product-1', 0],
             ['product-3', 2],
-            ['product-4', 1],
+            ['product-4', 2],
         ];
     }
 

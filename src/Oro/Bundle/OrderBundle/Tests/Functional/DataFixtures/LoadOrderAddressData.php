@@ -28,6 +28,8 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
             'region' => 'US-NY',
             'street' => '1215 Caldwell Road',
             'postalCode' => '14608',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
         ],
         self::ORDER_ADDRESS_2 => [
             'order' => LoadOrders::ORDER_1,
@@ -37,6 +39,8 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
             'region' => 'US-IN',
             'street' => '2413 Capitol Avenue',
             'postalCode' => '47981',
+            'firstName' => 'John',
+            'lastName' => 'Doe',
         ]
     ];
 
@@ -98,7 +102,9 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
             ->setCity($address['city'])
             ->setRegion($region)
             ->setStreet($address['street'])
-            ->setPostalCode($address['postalCode']);
+            ->setPostalCode($address['postalCode'])
+            ->setFirstName($address['firstName'])
+            ->setLastName($address['lastName']);
 
         $manager->persist($orderAddress);
         $this->addReference($name, $orderAddress);

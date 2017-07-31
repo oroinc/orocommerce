@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 
-class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
+class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface, ShippingAwareInterface
 {
     /**
      * @var DiscountLineItem[]
@@ -40,7 +41,7 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     /**
      * @var float
      */
-    protected $shippingCost;
+    protected $shippingCost = 0.0;
 
     /**
      * @return float
@@ -127,6 +128,21 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
     public function getSubtotalDiscounts(): array
     {
         return $this->subtotalDiscounts;
+    }
+
+    /**
+     * @return array|DiscountInterface[]
+     */
+    public function getLineItemDiscounts()
+    {
+        $discounts = [];
+        foreach ($this->lineItems as $lineItem) {
+            foreach ($lineItem->getDiscounts() as $discount) {
+                $discounts[spl_object_hash($discount)] = $discount;
+            }
+        }
+
+        return array_values($discounts);
     }
 
     /**
@@ -223,6 +239,22 @@ class DiscountContext implements SubtotalAwareInterface, LineItemsAwareInterface
         }
 
         return $value;
+    }
+
+    /**
+     * @param object $lineItem
+     * @return float
+     */
+    public function getDiscountByLineItem($lineItem): float
+    {
+        $amount = 0.0;
+        foreach ($this->getLineItems() as $discountLineItem) {
+            if ($discountLineItem->getSourceLineItem() === $lineItem) {
+                $amount += $discountLineItem->getDiscountTotal();
+            }
+        }
+
+        return $amount;
     }
 
     /**

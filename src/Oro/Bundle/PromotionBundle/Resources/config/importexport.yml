@@ -1,0 +1,59 @@
+services:
+    oro_promotion.importexport.data_converter.coupon:
+        parent: oro_importexport.data_converter.configurable
+        public: false
+
+    # Export processor
+    oro_promotion.importexport.processor.export.coupon:
+        parent: oro_importexport.processor.export_abstract
+        public: false
+        calls:
+             - [setDataConverter, ['@oro_promotion.importexport.data_converter.coupon']]
+        tags:
+            - name: oro_importexport.processor
+              type: export
+              entity: '%oro_promotion.entity.coupon.class%'
+              alias: oro_promotion_coupon_export
+
+    oro_promotion.importexport.strategy.add_or_replace.coupon:
+        parent: oro_importexport.strategy.configurable_add_or_replace
+        public: false
+
+    # Import processor
+    oro_promotion.importexport.processor.import.coupon:
+        parent: oro_importexport.processor.import_abstract
+        public: false
+        calls:
+             - [setDataConverter, ['@oro_promotion.importexport.data_converter.coupon']]
+             - [setStrategy, ['@oro_promotion.importexport.strategy.add_or_replace.coupon']]
+        tags:
+            - name: oro_importexport.processor
+              type: import
+              entity: '%oro_promotion.entity.coupon.class%'
+              alias: oro_promotion_coupon_import
+            - name: oro_importexport.processor
+              type: import_validation
+              entity: '%oro_promotion.entity.coupon.class%'
+              alias: oro_promotion_coupon_import
+
+    oro_promotion.importexport.template_fixture.coupon:
+        class: Oro\Bundle\PromotionBundle\ImportExport\TemplateFixture\CouponFixture
+        public: false
+        tags:
+            - { name: oro_importexport.template_fixture }
+
+    oro_promotion.importexport.fixtures.data_converter:
+        parent: oro_importexport.data_converter.template_fixture.configurable
+        public: false
+
+    # Template Export processor
+    oro_promotion.importexport.processor.export_template.coupon:
+        parent: oro_importexport.processor.export_abstract
+        public: false
+        calls:
+            - [setDataConverter, ['@oro_promotion.importexport.fixtures.data_converter']]
+        tags:
+            - name: oro_importexport.processor
+              type: export_template
+              entity: '%oro_promotion.entity.coupon.class%'
+              alias: oro_promotion_coupon_export_template

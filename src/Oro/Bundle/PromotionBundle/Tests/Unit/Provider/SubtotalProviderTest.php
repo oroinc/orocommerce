@@ -133,9 +133,9 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
 
         $expected = [
             SubtotalProvider::ORDER_DISCOUNT_SUBTOTAL =>
-                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 15.0, 'EUR'),
+                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 15.0, 'EUR', 100),
             SubtotalProvider::SHIPPING_DISCOUNT_SUBTOTAL =>
-                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 8.0, 'EUR')
+                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 8.0, 'EUR', 300)
         ];
         $this->assertEquals($expected, $this->provider->getSubtotal($entity));
     }
@@ -170,31 +170,46 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $order = $this->getEntity(Order::class, ['id' => 123]);
         $order->setCurrency('USD');
 
-        $this->translator->expects($this->once())
+        $this->translator->expects($this->any())
             ->method('trans')
-            ->willReturn('test label');
+            ->willReturnCallback(
+                function ($messageId) {
+                    return $messageId . ' TRANS';
+                }
+            );
 
         $this->appliedDiscountsProvider->expects($this->once())
             ->method('getDiscountsAmountByOrder')
             ->with($order)
             ->willReturn(45.67);
 
-        $this->rounding->expects($this->once())
+        $this->appliedDiscountsProvider->expects($this->once())
+            ->method('getShippingDiscountsAmountByOrder')
+            ->with($order)
+            ->willReturn(5.0);
+
+        $this->rounding->expects($this->any())
             ->method('round')
             ->willReturnArgument(0);
 
-        $expectedSubtotal = $this->createSubtotal('test label', 45.67, 'USD');
+        $expected = [
+            SubtotalProvider::ORDER_DISCOUNT_SUBTOTAL =>
+                $this->createSubtotal('oro.promotion.discount.subtotal.order.label TRANS', 45.67, 'USD', 100),
+            SubtotalProvider::SHIPPING_DISCOUNT_SUBTOTAL =>
+                $this->createSubtotal('oro.promotion.discount.subtotal.shipping.label TRANS', 5.0, 'USD', 300)
+        ];
 
-        $this->assertEquals($expectedSubtotal, $this->provider->getCachedSubtotal($order));
+        $this->assertEquals($expected, $this->provider->getCachedSubtotal($order));
     }
 
     /**
      * @param string $label
      * @param float $amount
      * @param string $currency
+     * @param int $order
      * @return Subtotal
      */
-    private function createSubtotal($label, $amount, $currency): Subtotal
+    private function createSubtotal($label, $amount, $currency, $order): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
@@ -202,6 +217,7 @@ class SubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $subtotal->setVisible(true);
         $subtotal->setAmount($amount);
         $subtotal->setCurrency($currency);
+        $subtotal->setSortOrder($order);
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
 
         return $subtotal;

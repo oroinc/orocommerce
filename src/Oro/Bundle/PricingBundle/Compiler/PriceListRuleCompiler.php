@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -175,8 +176,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
 
         $this->qbSelectPart = [
             'id' => 'UUID()',
-            'product' => $rootAlias.'.id',
-            'productSku' => $rootAlias.'.sku',
+            'product' => $rootAlias . '.id',
+            'productSku' => $rootAlias . '.sku',
             'priceList' => (string)$qb->expr()->literal($rule->getPriceList()->getId()),
             'unit' => $unitValue,
             'currency' => $currencyValue,
@@ -308,7 +309,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected function restrictBySupportedUnits(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         if ($rule->getProductUnitExpression()) {
-            $qb->join($rootAlias.'.unitPrecisions', '_allowedUnit')
+            $qb->join($rootAlias . '.unitPrecisions', '_allowedUnit')
                 ->andWhere(
                     $qb->expr()->eq(
                         '_allowedUnit.unit',
@@ -316,7 +317,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                     )
                 );
         } else {
-            $qb->join($rootAlias.'.unitPrecisions', '_allowedUnit')
+            $qb->join($rootAlias . '.unitPrecisions', '_allowedUnit')
                 ->andWhere($qb->expr()->eq('_allowedUnit.unit', ':requiredUnitUnit'))
                 ->setParameter('requiredUnitUnit', $rule->getProductUnit());
         }
@@ -376,7 +377,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      * Add additional unit, quantity and currency for price.
      *
      * Prices contains unit, quantity and currency. If not of them are mentioned in rule condition, then them are added
-     * automatically based on unit, quantity and currency selected in rule.
+     * automatically based on unit, quantity and currency selected in rule. For price attributes quantity is always
+     * added as 1.0
      *
      * @param PriceRule $rule
      * @return string
@@ -466,47 +468,47 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function getAdditionalCondition(PriceRule $rule, $root, $field, $relationField, $containerId = null)
     {
-        $conditionTemplate = '%1$s.%2$s.%3$s == ';
-        if ($containerId) {
-            $conditionTemplate = '%1$s[%5$d].%2$s.%3$s == ';
-        }
-        $conditionVariables = [$root, $field, $relationField];
+        $valueTemplate = '%s';
+        $value = null;
         switch ($relationField) {
             case 'currency':
-                $conditionTemplate .= '%4$s';
                 if ($rule->getCurrencyExpression()) {
-                    $conditionVariables[] = $rule->getCurrencyExpression();
+                    $value = $rule->getCurrencyExpression();
                 } else {
-                    $conditionVariables[] = sprintf("'%s'", $rule->getCurrency());
+                    $value = sprintf("'%s'", $rule->getCurrency());
                 }
                 break;
 
             case 'unit':
-                $conditionTemplate .= '%4$s';
                 if ($rule->getProductUnitExpression()) {
-                    $conditionVariables[] = $rule->getProductUnitExpression();
+                    $value = $rule->getProductUnitExpression();
                 } else {
-                    $conditionVariables[] = sprintf("'%s'", $rule->getProductUnit()->getCode());
+                    $value = sprintf("'%s'", $rule->getProductUnit()->getCode());
                 }
                 break;
 
             case 'quantity':
-                if ($rule->getQuantityExpression()) {
-                    $conditionTemplate .= '%4$s';
-                    $conditionVariables[] = $this->getBaseQuantityExpression($rule);
+                $namesMapping = $this->expressionParser->getNamesMapping();
+                $rootClass = $namesMapping[$root];
+                $relationClass = $this->fieldsProvider->getRealClassName($rootClass, $field);
+
+                if (is_a($relationClass, PriceAttributeProductPrice::class, true)) {
+                    $valueTemplate = '%f';
+                    $value = 1;
+                } elseif ($rule->getQuantityExpression()) {
+                    $value = $this->getBaseQuantityExpression($rule);
                 } else {
-                    $conditionTemplate .= '%4$f';
-                    $conditionVariables[] = $rule->getQuantity();
+                    $valueTemplate = '%f';
+                    $value = $rule->getQuantity();
                 }
                 break;
         }
 
-        array_unshift($conditionVariables, $conditionTemplate);
         if ($containerId) {
-            $conditionVariables[] = $containerId;
+            return sprintf('%s[%d].%s.%s == ' . $valueTemplate, $root, $containerId, $field, $relationField, $value);
         }
 
-        return call_user_func_array('sprintf', $conditionVariables);
+        return sprintf('%s.%s.%s == ' . $valueTemplate, $root, $field, $relationField, $value);
     }
 
     /**
@@ -529,16 +531,17 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                         $node->getField(),
                         $node->getRelationField()
                     );
-                } else {
-                    return sprintf(
-                        '%s.%s.%s',
-                        $nodeRoot,
-                        $node->getField(),
-                        $node->getRelationField()
-                    );
                 }
+
+                return sprintf(
+                    '%s.%s.%s',
+                    $nodeRoot,
+                    $node->getField(),
+                    $node->getRelationField()
+                );
             }
         }
+
         return '';
     }
 

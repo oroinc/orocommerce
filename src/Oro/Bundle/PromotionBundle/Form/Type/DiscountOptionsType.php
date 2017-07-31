@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
 
 class DiscountOptionsType extends AbstractType
 {
@@ -196,7 +197,7 @@ class DiscountOptionsType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'oro.discount_options.general.value.label',
-                    'constraints' => [new NotBlank()],
+                    'constraints' => [new NotBlank(), new Range(['min' => 0, 'max' => 100])],
                     'attr' => $percentFieldVisible ? [] : ['class' => 'hide'],
                 ]
             );

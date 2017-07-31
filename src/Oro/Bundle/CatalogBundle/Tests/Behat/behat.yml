@@ -19,3 +19,14 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//a[@title="Search"]'
+
+    VisibilityToAll:
+      selector: 'select[name="oro_catalog_category[visibility][all]"]'
+  suites:
+    OroCatalogBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+      paths:
+        - '@OroCatalogBundle/Tests/Behat/Features'

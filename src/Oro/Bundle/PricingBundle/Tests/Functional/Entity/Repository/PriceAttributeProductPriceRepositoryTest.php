@@ -43,7 +43,7 @@ class PriceAttributeProductPriceRepositoryTest extends WebTestCase
         $this->assertCount(4, $result);
     }
 
-    public function testRemoveByUnitProduct()
+    public function testDeleteByProductUnit()
     {
         /** @var Product $product1 */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -56,7 +56,8 @@ class PriceAttributeProductPriceRepositoryTest extends WebTestCase
         $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
         $this->assertCount(3, $result);
 
-        $repo->removeByUnitProduct($product, $productUnit);
+        $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+        $repo->deleteByProductUnit($shardManager, $product, $productUnit);
 
         $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
         $this->assertCount(0, $result);

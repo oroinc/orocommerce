@@ -23,11 +23,12 @@ class ArrayProductsGrouperTest extends \PHPUnit_Framework_TestCase
             $this->createProductRowArray('SKU2', 3, 'item'),
             $this->createProductRowArray('SKU1', 3, 'item'),
             $this->createProductRowArray('SKU1', 2, 'kg'),
+            $this->createProductRowArray('sku1', 1, 'item'),
             ['productQuantity' => 10],
         ];
 
         $expectedResult = [
-            $this->createProductRowArray('SKU1', 5, 'item'),
+            $this->createProductRowArray('SKU1', 6, 'item'),
             $this->createProductRowArray('SKU2', 3, 'item'),
             $this->createProductRowArray('SKU1', 2, 'kg'),
             ['productQuantity' => 10],

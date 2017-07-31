@@ -26,29 +26,18 @@ class ShardManagerTest extends WebTestCase
         $this->manager->setEnableSharding(true);
     }
 
-    /**
-     * @dataProvider getShardNameDataProvider
-     * @param array $attributes
-     */
-    public function testGetShardName(array $attributes)
+    public function testGetShardNameWithId()
     {
+        $attributes = ['priceList' => 1];
         $actual = $this->manager->getShardName(ProductPrice::class, $attributes);
         $this->assertSame('oro_price_product_1', $actual);
     }
 
-    /**
-     * @return array
-     */
-    public function getShardNameDataProvider()
+    public function testGetShardNameWithObject()
     {
-        return [
-            'object' => [
-                'attributes' => ['priceList' => $this->getEntity(PriceList::class, ['id' => 1])],
-            ],
-            'id' => [
-                'attributes' => ['priceList' => 1],
-            ],
-        ];
+        $attributes = ['priceList' => $this->getEntity(PriceList::class, ['id' => 1])];
+        $actual = $this->manager->getShardName(ProductPrice::class, $attributes);
+        $this->assertSame('oro_price_product_1', $actual);
     }
 
     /**
@@ -236,5 +225,14 @@ class ShardManagerTest extends WebTestCase
         /** @var Connection $connection */
         $connection = $this->getContainer()->get("doctrine")->getConnection();
         $connection->delete($table, ['id' => $id]);
+    }
+
+    public function testIsShardingEnabled()
+    {
+        $this->manager->setEnableSharding(false);
+        $this->assertFalse($this->manager->isShardingEnabled());
+
+        $this->manager->setEnableSharding(true);
+        $this->assertTrue($this->manager->isShardingEnabled());
     }
 }

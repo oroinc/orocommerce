@@ -15,6 +15,38 @@
             &-quantity__value {
                 margin-right: $two-columns-theme-product-view-quantity-value-margin-right-desktop;
             }
+
+            &__additional {
+                .embedded-products {
+                    .embedded-list__label {
+                        margin-top: 0;
+                    }
+
+                    // Slider mode
+                    .embedded-list-slider {
+                        display: block;
+
+                        .embedded-list {
+                            &__item {
+                                width: (100% / $two-columns-theme-embedded-related-products-item-count-desktop);
+                                margin-right: 0;
+                            }
+                        }
+                    }
+
+                    // Tiles mode
+                    .embedded-list {
+                        &__item {
+                            width: calc((100% / #{$two-columns-theme-embedded-related-products-item-count-desktop}) - #{$two-columns-theme-embedded-related-products-item-gap-desktop});
+                            margin-right: 0;
+
+                            &:not(:nth-child(#{$two-columns-theme-embedded-related-products-item-count-desktop}n)) {
+                                margin-right: $embedded-products-item-offset;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         .product-price {

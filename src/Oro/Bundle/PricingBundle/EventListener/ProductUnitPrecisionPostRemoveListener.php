@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributeProductPriceRepository;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 /**
@@ -12,6 +13,19 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  */
 class ProductUnitPrecisionPostRemoveListener
 {
+    /**
+     * @var ShardManager
+     */
+    private $shardManager;
+
+    /**
+     * @param ShardManager $shardManager
+     */
+    public function __construct(ShardManager $shardManager)
+    {
+        $this->shardManager = $shardManager;
+    }
+
     /**
      * @var string
      */
@@ -34,7 +48,7 @@ class ProductUnitPrecisionPostRemoveListener
 
             /** @var PriceAttributeProductPriceRepository $repository */
             $repository = $event->getEntityManager()->getRepository($this->priceAttributeClass);
-            $repository->removeByUnitProduct($product, $unit);
+            $repository->deleteByProductUnit($this->shardManager, $product, $unit);
         }
     }
 

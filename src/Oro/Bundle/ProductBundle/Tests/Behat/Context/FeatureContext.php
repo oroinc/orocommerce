@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkAwareContext;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
@@ -50,6 +51,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @var FormContext
      */
     private $formContext;
+
+    /**
+     * @var []
+     */
+    private $rememberedData;
 
     /**
      * @BeforeScenario
@@ -645,14 +651,21 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should see "([^"]*)" for "([^"]*)" product$/
+     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" product$/
      */
     public function shouldSeeForProduct($elementName, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem);
-        $element = $this->createElement($elementName, $productItem);
-        self::assertTrue($element->isValid());
+        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+
+        if ($this->isElementVisible($elementName, $productItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($productItem->getText(), $elementName),
+            sprintf('text or element "%s" for product with SKU "%s" is not present or not visible', $elementName, $SKU)
+        );
     }
 
     /**
@@ -661,20 +674,53 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function shouldNotSeeForProduct($elementName, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem);
-        $element = $this->createElement($elementName, $productItem);
-        self::assertFalse($element->isValid());
+        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)
+            || stripos($productItem->getText(), $elementName);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $elementName, $SKU)
+        );
     }
 
     /**
      * @Then /^(?:|I )click "([^"]*)" for "([^"]*)" product$/
      */
-    public function clickElementforSelectedProduct($elementName, $SKU)
+    public function clickElementForSelectedProduct($elementName, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
         self::assertNotNull($productItem);
         $element = $this->createElement($elementName, $productItem);
         $element->click();
+    }
+
+    /**
+     * @Given /^I should see "([^"]*)" in search results$/
+     */
+    public function iShouldSeeInSearchResults($productSku)
+    {
+        $this->oroMainContext
+            ->iShouldSeeStringInElementUnderElements($productSku, 'ProductFrontendRowSku', 'ProductFrontendRow');
+    }
+
+    /**
+     * @Then /^I should see "(?P<text>(?:[^"]|\\")*)" in related products$/
+     */
+    public function iShouldSeeInRelatedItems($string)
+    {
+        $this->oroMainContext
+            ->iShouldSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedItems');
+    }
+
+    /**
+     * @Then /^I should not see "(?P<text>(?:[^"]|\\")*)" in related products$/
+     */
+    public function iShouldNotSeeInRelatedItems($string)
+    {
+        $this->oroMainContext
+            ->iShouldNotSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedItems');
     }
 
     /**
@@ -761,5 +807,102 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $stickerElement = $this->createElement($sticker, $embeddedProduct);
             self::assertFalse($stickerElement->isIsset());
         }
+    }
+
+    /**
+     * Example: I remember "listed" image resized ID
+     *
+     * @Then /^I remember "(?P<imageType>[^"]*)" image resized ID$/
+     * @param string $imageType
+     */
+    public function iRememberResizedImageId($imageType)
+    {
+        $form = $this->createElement('OroForm');
+        // @codingStandardsIgnoreStart
+        $image = $form->find('xpath', sprintf(
+            '//input[@type="radio"][contains(@name, "images")][contains(@name, "%s")][@checked="checked"]/ancestor::tr/descendant::img',
+            $imageType
+        ));
+        // @codingStandardsIgnoreEnd
+        self::assertNotEmpty($image, sprintf('Image with type "%s" not found on page', $imageType));
+        $imageSrc = $image->getAttribute('src');
+        $matches = [];
+        preg_match('/\/media\/cache\/attachment\/resize\/\d+\/\d+\/\d+\/(.+)\.\w+/', $imageSrc, $matches);
+        self::assertNotEmpty($matches[1], sprintf('Image ID not found for "%s" imahe', $imageType));
+
+        $this->rememberedData[$imageType] = $matches[1];
+    }
+
+    /**
+     * Example: I should see remembered "listing" image in "Top Selling Items" section
+     *
+     * @Then /^I should see remembered "(?P<imageType>[^"]*)" image in "(?P<sectionName>[^"]*)" section$/
+     * @param string $imageType
+     * @param string $sectionName
+     */
+    public function iShouldSeeRememberImageId($imageType, $sectionName)
+    {
+        $section = $this->getSession()->getPage()->find(
+            'xpath',
+            sprintf('//h2[contains(.,"%s")]/..', $sectionName)
+        );
+        self::assertNotEmpty($section, sprintf('Section "%s" not found on page', $sectionName));
+
+        $rememberedImageId = isset($this->rememberedData[$imageType]) ? $this->rememberedData[$imageType] : '';
+        self::assertNotEmpty($rememberedImageId, sprintf(
+            'No remembered image ID for "%s" image type',
+            $imageType
+        ));
+
+        $image = $section->find(
+            'xpath',
+            sprintf(
+                '//a[contains(@class, "view-product")][contains(@style, "background-image")][contains(@style, "%s")]',
+                $rememberedImageId
+            )
+        );
+        self::assertNotEmpty($image, sprintf(
+            'No image with id "%s" found in section "%s"',
+            $rememberedImageId,
+            $sectionName
+        ));
+    }
+
+    /**
+     * Click on button in matrix order window
+     * Example: Given I click "Add to Shopping list" in matrix order window
+     * @When /^(?:|I )click "(?P<button>(?:[^"]|\\")*)" in matrix order window$/
+     */
+    public function pressButtonInModalWindow($button)
+    {
+        $modalWindow = $this->getPage()->findVisible('css', 'div.matrix-order-widget');
+        self::assertNotNull($modalWindow, 'There is no visible matrix order on page at this moment');
+        try {
+            $button = $this->fixStepArgument($button);
+            $modalWindow->pressButton($button);
+        } catch (ElementNotFoundException $e) {
+            if ($modalWindow->hasLink($button)) {
+                $modalWindow->clickLink($button);
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * @param string $elementName
+     * @param NodeElement $productItem
+     * @return bool
+     */
+    protected function isElementVisible($elementName, $productItem)
+    {
+        if ($this->hasElement($elementName)) {
+            $element = $this->createElement($elementName, $productItem);
+            if ($element->isValid() && $element->isVisible()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

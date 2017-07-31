@@ -13,8 +13,6 @@ use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
-use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy;
 
 class ProductUpdateHandler extends UpdateHandler
 {
@@ -29,8 +27,8 @@ class ProductUpdateHandler extends UpdateHandler
     /** @var SymfonyRouter */
     private $symfonyRouter;
 
-    /** @var AssignerStrategyInterface|AssignerDatabaseStrategy */
-    private $relatedProductAssigner;
+    /** @var RelatedItemsHandler */
+    private $relatedItemsHandler;
 
     /**
      * @param ActionGroupRegistry $actionGroupRegistry
@@ -57,11 +55,11 @@ class ProductUpdateHandler extends UpdateHandler
     }
 
     /**
-     * @param AssignerStrategyInterface $relatedProductAssigner
+     * @param RelatedItemsHandler $relatedItemsHandler
      */
-    public function setRelatedProductAssigner(AssignerStrategyInterface $relatedProductAssigner)
+    public function setRelatedItemsHandler(RelatedItemsHandler $relatedItemsHandler)
     {
-        $this->relatedProductAssigner = $relatedProductAssigner;
+        $this->relatedItemsHandler = $relatedItemsHandler;
     }
 
     /**
@@ -69,7 +67,7 @@ class ProductUpdateHandler extends UpdateHandler
      */
     protected function saveForm(FormInterface $form, $data)
     {
-        return parent::saveForm($form, $data) && $this->saveRelatedProducts($form, $data);
+        return parent::saveForm($form, $data) && $this->saveAllRelatedItems($form, $data);
     }
 
     /**
@@ -125,45 +123,71 @@ class ProductUpdateHandler extends UpdateHandler
 
     /**
      * @param FormInterface $form
-     * @param Product       $entity
+     * @param Product $entity
      * @return bool
      */
-    private function saveRelatedProducts(FormInterface $form, Product $entity)
+    private function saveAllRelatedItems(FormInterface $form, Product $entity)
     {
-        if (!$form->has('appendRelated') && !$form->has('removeRelated')) {
-            return true;
-        }
-
-        $appendRelatedFormItem = $form->get('appendRelated');
-        $removeRelatedFormItem = $form->get('removeRelated');
-        $appendRelated = $appendRelatedFormItem->getData();
-        $removeRelated = $removeRelatedFormItem->getData();
-
-        $this->relatedProductAssigner->removeRelations($entity, $removeRelated);
-
-        try {
-            $this->relatedProductAssigner->addRelations($entity, $appendRelated);
-        } catch (\InvalidArgumentException $e) {
-            $this->addFormError($appendRelatedFormItem, $e->getMessage());
-        } catch (\LogicException $e) {
-            $this->addFormError($appendRelatedFormItem, $e->getMessage());
-        } catch (\OverflowException $e) {
-            $this->addFormError($appendRelatedFormItem, $e->getMessage());
-        }
-
-        return $form->getErrors()->count() === 0;
+        return $this->saveRelatedProducts($form, $entity)
+            && $this->saveUpsellProducts($form, $entity);
     }
 
     /**
      * @param FormInterface $form
-     * @param string $message
+     * @param Product $entity
+     * @return bool
      */
-    private function addFormError(FormInterface $form, $message)
+    private function saveRelatedProducts(FormInterface $form, Product $entity)
     {
-        $form->addError(
-            new FormError(
-                $this->translator->trans($message, [], 'validators')
-            )
+        return $this->saveRelatedItems(
+            $form,
+            $entity,
+            RelatedItemsHandler::RELATED_PRODUCTS,
+            'appendRelated',
+            'removeRelated'
+        );
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Product $entity
+     * @return bool
+     */
+    private function saveUpsellProducts(FormInterface $form, Product $entity)
+    {
+        return $this->saveRelatedItems(
+            $form,
+            $entity,
+            RelatedItemsHandler::UPSELL_PRODUCTS,
+            'appendUpsell',
+            'removeUpsell'
+        );
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Product $entity
+     * @param string $assignerName
+     * @param string $appendItemsFieldName
+     * @param string $removeItemsFieldName
+     * @return bool
+     */
+    private function saveRelatedItems(
+        FormInterface $form,
+        Product $entity,
+        $assignerName,
+        $appendItemsFieldName,
+        $removeItemsFieldName
+    ) {
+        if (!$form->has($appendItemsFieldName) && !$form->has($removeItemsFieldName)) {
+            return true;
+        }
+
+        return $this->relatedItemsHandler->process(
+            $assignerName,
+            $entity,
+            $form->get($appendItemsFieldName),
+            $form->get($removeItemsFieldName)
         );
     }
 }

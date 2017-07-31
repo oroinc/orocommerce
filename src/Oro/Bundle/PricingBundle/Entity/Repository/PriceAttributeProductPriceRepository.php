@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -12,8 +13,8 @@ class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
      * Return product prices for specified price list and product IDs
      *
      * @param integer[] $priceAttributePriceListIds
-     * @param array $productIds
-     * @param array $orderBy
+     * @param array     $productIds
+     * @param array     $orderBy
      *
      * @return PriceAttributeProductPrice[]
      */
@@ -43,26 +44,18 @@ class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
-     * @param Product $product
-     * @param ProductUnit $unit
-     * @return mixed
+     * {@inheritDoc}
      */
-    public function removeByUnitProduct(Product $product, ProductUnit $unit)
+    protected function getPriceListIdsByProduct(Product $product)
     {
-        $qb = $this->createQueryBuilder('productPrice');
+        $qb = $this->createQueryBuilder('productToPriceList');
 
-        $qb->delete()
-            ->where(
-                $qb->expr()->andX(
-                    $qb->expr()->eq('productPrice.unit', ':unit'),
-                    $qb->expr()->eq('productPrice.product', ':product')
-                )
-            )
-            ->setParameters([
-                'unit' => $unit,
-                'product' => $product
-            ]);
+        $result = $qb->select('DISTINCT IDENTITY(productToPriceList.priceList) as priceListId')
+            ->where('productToPriceList.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->getScalarResult();
 
-        return $qb->getQuery()->execute();
+        return array_map('current', $result);
     }
 }

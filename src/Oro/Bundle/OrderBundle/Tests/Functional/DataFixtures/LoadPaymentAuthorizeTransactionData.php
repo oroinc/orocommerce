@@ -46,6 +46,8 @@ class LoadPaymentAuthorizeTransactionData extends AbstractFixture implements Dep
             'entity_reference' => LoadOrders::ORDER_1,
             'channel_reference' => 'paypal:channel_1',
             'method_prefix' => 'paypal_payflow_gateway_credit_card',
+            'active' => true,
+            'successful' => true,
         ],
     ];
 
@@ -73,6 +75,9 @@ class LoadPaymentAuthorizeTransactionData extends AbstractFixture implements Dep
             $order = $this->getReference($data['entity_reference']);
 
             $paymentTransaction->setEntityIdentifier($order->getId());
+
+            $paymentTransaction->setActive($data['active']);
+            $paymentTransaction->setSuccessful($data['successful']);
 
             $this->setReference($reference, $paymentTransaction);
 

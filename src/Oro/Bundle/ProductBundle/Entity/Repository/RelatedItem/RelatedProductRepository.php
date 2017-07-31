@@ -7,8 +7,9 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
+use Oro\Bundle\ProductBundle\RelatedItem\AbstractAssignerRepositoryInterface;
 
-class RelatedProductRepository extends EntityRepository
+class RelatedProductRepository extends EntityRepository implements AbstractAssignerRepositoryInterface
 {
     /**
      * @param Product|int $productFrom
@@ -17,7 +18,7 @@ class RelatedProductRepository extends EntityRepository
      */
     public function exists($productFrom, $productTo)
     {
-        return null !== $this->findOneBy(['product' => $productFrom, 'relatedProduct' => $productTo]);
+        return null !== $this->findOneBy(['product' => $productFrom, 'relatedItem' => $productTo]);
     }
 
     /**
@@ -45,10 +46,11 @@ class RelatedProductRepository extends EntityRepository
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->from('OroProductBundle:Product', 'p')
             ->select('p')
-            ->leftJoin(RelatedProduct::class, 'rp_r', Join::WITH, 'rp_r.relatedProduct = p.id')
+            ->leftJoin(RelatedProduct::class, 'rp_r', Join::WITH, 'rp_r.relatedItem = p.id')
             ->where('rp_r.product = :id')
             ->setParameter(':id', $id)
-            ->orderBy('p.id');
+            ->orderBy('p.id')
+            ->groupBy('p.id');
 
         if ($limit) {
             $qb->setMaxResults($limit);
@@ -56,7 +58,7 @@ class RelatedProductRepository extends EntityRepository
 
         if ($bidirectional) {
             $qb->leftJoin(RelatedProduct::class, 'rp_l', Join::WITH, 'rp_l.product = p.id')
-                ->orWhere('rp_l.relatedProduct = :id');
+                ->orWhere('rp_l.relatedItem = :id');
         }
 
         return $qb->getQuery()->execute();

@@ -8,6 +8,7 @@ use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\Filter\DefaultPriceListFilterType;
 use Oro\Bundle\PricingBundle\Provider\PriceListProvider;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
 {
@@ -17,6 +18,16 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     protected $provider;
 
     /**
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shardManager;
+
+    /**
+     * @var string
+     */
+    protected $priceListClass;
+
+    /**
      * @var DefaultPriceListFilterType
      */
     private $type;
@@ -24,10 +35,15 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     protected function setUp()
     {
         $translator = $this->createMockTranslator();
-        $this->provider = $this->getMockBuilder(PriceListProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->type = new DefaultPriceListFilterType($translator, $this->provider);
+        $this->shardManager = $this->createMock(ShardManager::class);
+        $this->provider = $this->createMock(PriceListProvider::class);
+        $this->priceListClass = 'Oro\Bundle\PricingBundle\Entity\PriceList';
+        $this->type = new DefaultPriceListFilterType(
+            $translator,
+            $this->provider,
+            $this->shardManager,
+            $this->priceListClass
+        );
 
         parent::setUp();
     }
@@ -51,50 +67,82 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
     }
 
     /**
+     * @dataProvider setDefaultOptionsDataProvider
+     *
+     * @param array $parentDefaultOptions
+     * @param array $requiredOptions
+     */
+    public function testSetDefaultOptions(array $parentDefaultOptions, array $requiredOptions = array())
+    {
+        $defaultOptions = [
+            'field_options' => [
+                'class' => $this->priceListClass,
+                'property' => 'name'
+            ],
+            'required' => true,
+        ];
+
+        $this->shardManager
+            ->expects($this->once())
+            ->method('isShardingEnabled')
+            ->willReturn(true);
+
+        $resolver = $this->createMockOptionsResolver();
+        $resolver
+            ->expects($this->exactly(2))
+            ->method('setDefaults')
+            ->withConsecutive([$parentDefaultOptions], [$defaultOptions])
+            ->willReturnSelf();
+
+        $this->getTestFormType()->setDefaultOptions($resolver);
+    }
+
+
+    /**
+     * @dataProvider setDefaultOptionsDataProvider
+     *
+     * @param array $parentDefaultOptions
+     */
+    public function testSetDefaultOptionsWhenEntityNotSharded(array $parentDefaultOptions)
+    {
+        $defaultOptions = [
+            'field_options' => [
+                'class' => $this->priceListClass,
+                'property' => 'name'
+            ],
+            'required' => false,
+        ];
+
+        $this->shardManager
+            ->expects($this->once())
+            ->method('isShardingEnabled')
+            ->willReturn(false);
+
+        $resolver = $this->createMockOptionsResolver();
+
+        $resolver
+            ->expects($this->exactly(2))
+            ->method('setDefaults')
+            ->withConsecutive([$parentDefaultOptions], [$defaultOptions])
+            ->willReturnSelf();
+
+        $this->getTestFormType()->setDefaultOptions($resolver);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function setDefaultOptionsDataProvider()
     {
         return [
             [
-                'defaultOptions' => [
+                'parentDefaultOptions' => [
                     'field_type' => 'entity',
                     'field_options' => [],
                     'translatable'  => false,
-                ]
-            ]
+                ],
+            ],
         ];
-    }
-
-    /**
-     * @dataProvider setDefaultOptionsDataProvider
-     * @param array $defaultOptions
-     * @param array $requiredOptions
-     */
-    public function testSetDefaultOptions(array $defaultOptions, array $requiredOptions = [])
-    {
-        $defaultPriceList = $this->createMock(PriceList::class);
-        $defaultPriceList->method('getName')->willReturn('Default Price List');
-        $this->provider->method('getDefaultPriceList')
-            ->willReturn($defaultPriceList);
-        $resolver = $this->createMockOptionsResolver();
-        if ($defaultOptions) {
-            $resolver->expects($this->exactly(2))
-                ->method('setDefaults')
-                ->willReturnMap(
-                    [
-                        [$defaultOptions, $this->returnSelf()],
-                        [['default_value' => 'Default Price List'], $this->returnSelf()]
-                    ]
-                )
-                ->will($this->returnSelf());
-        }
-
-        if ($requiredOptions) {
-            $resolver->expects($this->once())->method('setRequired')->with($requiredOptions)->will($this->returnSelf());
-        }
-
-        $this->getTestFormType()->setDefaultOptions($resolver);
     }
 
     /**

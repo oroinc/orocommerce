@@ -72,28 +72,18 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
                 max: 255
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    constraints:
+        - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
+        - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
     properties:
         street:
-            - NotBlank:
-                groups: [ Frontend ]
+            - NotBlank: ~
         city:
-            - NotBlank:
-                groups: [ Frontend ]
+            - NotBlank: ~
         postalCode:
-            - NotBlank:
-                groups: [ Frontend ]
+            - NotBlank: ~
         country:
-            - NotBlank:
-                groups: [ Frontend ]
-        region:
-            - NotBlank:
-                groups: [ Frontend ]
-        firstName:
-            - NotBlank:
-                groups: [ PersonInfo ]
-        lastName:
-            - NotBlank:
-                groups: [ PersonInfo ]
+            - NotBlank: ~
         phone:
             - Length:
                 max: 255
@@ -110,6 +100,7 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
                 min: -100
                 max: 100
         amount:
+            - NotBlank: ~
             - Type:
                 type: numeric
             - Range:

@@ -35,7 +35,7 @@ class QuickAddRowGrouper implements ProductsGrouperInterface
      */
     private function createIndex(QuickAddRow $productRow)
     {
-        return sprintf('%s_%s', $productRow->getSku(), $productRow->getUnit());
+        return sprintf('%s_%s', strtoupper($productRow->getSku()), $productRow->getUnit());
     }
 
     /**
