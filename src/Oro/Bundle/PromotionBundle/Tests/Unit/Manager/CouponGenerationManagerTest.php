@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Manager;
 
-use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\CouponGeneratorInterface;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Inserter\CouponInserterInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager;
@@ -10,7 +10,7 @@ use Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager;
 class CouponGenerationManagerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CouponGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CodeGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $couponGenerator;
 
@@ -26,7 +26,7 @@ class CouponGenerationManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->couponGenerator = $this->createMock(CouponGeneratorInterface::class);
+        $this->couponGenerator = $this->createMock(CodeGeneratorInterface::class);
         $this->couponInserter = $this->createMock(CouponInserterInterface::class);
         $this->couponGenerationManager = new CouponGenerationManager($this->couponGenerator, $this->couponInserter);
     }
