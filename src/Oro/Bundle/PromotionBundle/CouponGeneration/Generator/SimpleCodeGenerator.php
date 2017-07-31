@@ -11,6 +11,12 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
 {
     const DASHES_SYMBOL = '-';
 
+    const TEMPLATES = [
+        CodeGenerationOptions::NUMERIC_CODE_TYPE => self::NUMERIC_TEMPLATE,
+        CodeGenerationOptions::ALPHABETIC_CODE_TYPE => self::ALPHABETIC_TEMPLATE,
+        CodeGenerationOptions::ALPHANUMERIC_CODE_TYPE => self::ALPHANUMERIC_TEMPLATE,
+    ];
+
     const NUMERIC_TEMPLATE = '123456789';
 
     const ALPHABETIC_TEMPLATE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -70,17 +76,10 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
      */
     protected function getTemplate(string $type): string
     {
-        switch ($type) {
-            case CodeGenerationOptions::NUMERIC_CODE_TYPE:
-                return self::NUMERIC_TEMPLATE;
-                break;
-            case CodeGenerationOptions::ALPHABETIC_CODE_TYPE:
-                return self::ALPHABETIC_TEMPLATE;
-                break;
-            default:
-                $characters = self::ALPHANUMERIC_TEMPLATE;
+        if (!array_key_exists($type, self::TEMPLATES)) {
+            throw new \InvalidArgumentException('Unknown code type: ' . $type);
         }
-        return $characters;
+        return self::TEMPLATES[$type];
     }
 
     /**
