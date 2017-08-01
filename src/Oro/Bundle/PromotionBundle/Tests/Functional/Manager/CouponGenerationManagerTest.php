@@ -54,8 +54,9 @@ class CouponGenerationManagerTest extends WebTestCase
             ->getConnection()
             ->prepare('SELECT COUNT(*) FROM oro_promotion_coupon');
         $stmnt->execute();
+        $inserted = $stmnt->fetchColumn(0);
         fwrite(STDERR, print_r('Elapsed: '. $elapsed .PHP_EOL, true));
-        fwrite(STDERR, print_r('Inserted: ' . ($inserted = $stmnt->fetchColumn(0)) . PHP_EOL, true));
+        fwrite(STDERR, print_r('Inserted: ' . $inserted . PHP_EOL, true));
         $this->assertEquals(55000, $inserted);
     }
     /**

@@ -15,6 +15,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 class CouponGenerationManager
 {
     const BULK_SIZE = 500;
+
     /**
      * @var CodeGeneratorInterface
      */
@@ -24,11 +25,6 @@ class CouponGenerationManager
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
-
-    /**
-     * @var Statement|null
-     */
-    protected $insertStatement;
 
     /**
      * @param CodeGeneratorInterface $couponGenerator
@@ -49,7 +45,77 @@ class CouponGenerationManager
      */
     public function generateCoupons(CouponGenerationOptions $options)
     {
-        $statement = $this->getInsertStatement();
+        $inserted = 0;
+
+        while ($inserted < $options->getCouponQuantity()) {
+            $this->getConnection()->beginTransaction();
+            try {
+                $requiredAmount = $options->getCouponQuantity() - $inserted;
+                $bulkSize = $requiredAmount > self::BULK_SIZE ? self::BULK_SIZE : $requiredAmount;
+                $codes = $this->getUniqueCodes($options, $bulkSize);
+                if ($codes) {
+                    $insertStatement = $this->getInsertStatement(count($codes), $options);
+                    foreach ($codes as $key => $code) {
+                        $insertStatement->bindValue("code$key", $code);
+                        $inserted++;
+                    }
+                    $insertStatement->execute();
+                }
+                $this->getConnection()->commit();
+            } catch (\Exception $e) {
+                $this->getConnection()->rollBack();
+                throw $e;
+            }
+        }
+
+        $this->insertStatements = [];
+    }
+
+    /**
+     * @return \Doctrine\DBAL\Connection
+     */
+    protected function getConnection()
+    {
+        return $this->doctrineHelper->getEntityManager(Coupon::class)->getConnection();
+    }
+
+    /**
+     * @param $amount
+     * @return Statement
+     */
+    protected function getInsertStatement($amount, CouponGenerationOptions $options)
+    {
+        $sql = '
+            INSERT INTO oro_promotion_coupon (
+              organization_id,
+              business_unit_owner_id,
+              promotion_id,
+              code,
+              uses_per_coupon,
+              uses_per_user,
+              created_at,
+              updated_at,
+              valid_until
+            ) VALUES
+        ';
+        $placeholders = [];
+        for ($i = 0; $i < $amount; $i++) {
+            $placeholders[] = "
+                (
+                  :organization_id,
+                  :business_unit_owner_id,
+                  :promotion_id,
+                  :code$i,
+                  :uses_per_coupon,
+                  :uses_per_user,
+                  :created_at,
+                  :updated_at,
+                  :valid_until
+                )
+            ";
+        }
+        $statement = $this->getConnection()->prepare($sql . implode(',', $placeholders));
+
         $statement->bindValue(
             'organization_id',
             $options->getOwner() ? $options->getOwner()->getOrganization()->getId() : null
@@ -68,65 +134,7 @@ class CouponGenerationManager
         $statement->bindValue('created_at', date('Y-m-d H:i:s'));
         $statement->bindValue('updated_at', date('Y-m-d H:i:s'));
 
-        $inserted = 0;
-
-        while ($inserted < $options->getCouponQuantity()) {
-            $this->getConnection()->transactional(function ($conn) use ($statement, $options, &$inserted) {
-                foreach ($this->getUniqueCodes($options, self::BULK_SIZE) as $key => $code) {
-                    $statement->bindValue("code$key", $code);
-                    $inserted++;
-                }
-                $statement->execute();
-            });
-        }
-    }
-
-    /**
-     * @return \Doctrine\DBAL\Connection
-     */
-    protected function getConnection()
-    {
-        return $this->doctrineHelper->getEntityManager(Coupon::class)->getConnection();
-    }
-
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    protected function getInsertStatement()
-    {
-        if (!$this->insertStatement) {
-            $sql = '
-                INSERT INTO oro_promotion_coupon (
-                  organization_id,
-                  business_unit_owner_id,
-                  promotion_id,
-                  code,
-                  uses_per_coupon,
-                  uses_per_user,
-                  created_at,
-                  updated_at,
-                  valid_until
-                ) VALUES
-            ';
-            $placeholders = [];
-            for ($i = 0; $i < self::BULK_SIZE; $i++) {
-                $placeholders[] = "
-                    (
-                      :organization_id,
-                      :business_unit_owner_id,
-                      :promotion_id,
-                      :code$i,
-                      :uses_per_coupon,
-                      :uses_per_user,
-                      :created_at,
-                      :updated_at,
-                      :valid_until
-                    )
-                ";
-            }
-            $this->insertStatement = $this->getConnection()->prepare($sql . implode(',', $placeholders));
-        }
-        return $this->insertStatement;
+        return $statement;
     }
 
     /**
@@ -136,21 +144,14 @@ class CouponGenerationManager
      */
     protected function getUniqueCodes(CouponGenerationOptions $options, $amount)
     {
-        $result = [];
-        while (count($result) < $amount) {
-            $newCodes = $this->couponGenerator->generateUnique($options, $amount - count($result), $result);
-            $select = $this->getConnection()
-                ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $newCodes) . "')");
-            $select->execute();
+        $codes = $this->couponGenerator->generateUnique($options, $amount);
+        $select = $this->getConnection()
+            ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $codes) . "')");
+        $select->execute();
 
-            while ($existingCode = $select->fetchColumn(0)) {
-                unset($newCodes[$existingCode]);
-            }
-            foreach ($newCodes as $newCode) { //because array_merge doesnt work as needed in case of numeric keys
-                $result[$newCode] = $newCode;
-            }
+        while ($existingCode = $select->fetchColumn(0)) {
+            unset($codes[$existingCode]);
         }
-
-        return array_values($result);
+        return array_values($codes);
     }
 }

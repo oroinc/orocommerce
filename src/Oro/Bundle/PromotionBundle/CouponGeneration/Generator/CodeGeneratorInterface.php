@@ -19,7 +19,7 @@ interface CodeGeneratorInterface
      * @param CodeGenerationOptions $options
      * @param int $amount
      * @param array $excluded
-     * @return array
+     * @return array Indexed by code
      */
     public function generateUnique(CodeGenerationOptions $options, $amount, array $excluded = []);
 }
