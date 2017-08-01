@@ -12,6 +12,7 @@ define(function(require) {
         defaults: {
             transitionUrl: null,
             enabled: true,
+            enableOnLoad: true,
             hasForm: false,
             selectors: {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
@@ -37,7 +38,15 @@ define(function(require) {
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
             }
-            this.enableTransitionButton();
+
+            if (!this.options.transitionUrl) {
+                return;
+            }
+
+            if (this.options.enableOnLoad) {
+                this.enableTransitionButton();
+            }
+
             mediator.on('checkout:transition-button:enable', this.enableTransitionButton, this);
             mediator.on('checkout:transition-button:disable', this.disableTransitionButton, this);
         },
@@ -69,28 +78,45 @@ define(function(require) {
             }
         },
 
+        /**
+         * @param {Event} e
+         * @param {Object} data
+         */
         transit: function(e, data) {
             e.preventDefault();
-            if (!this.options.enabled || this.inProgress) {
+            if (!this.options.enabled || this.inProgress || !this.options.transitionUrl) {
                 return;
             }
 
             this.inProgress = true;
             mediator.execute('showLoading');
 
-            var url = this.options.transitionUrl;
-            var widgetParameters = '_widgetContainer=ajax&_wid=ajax_checkout';
-            url += (-1 !== _.indexOf(url, '?') ? '&' : '?') + widgetParameters;
-
-            data = data || {method: 'GET'};
-            data.url = url;
-            data.errorHandlerMessage = false;
-            if (this.$form) {
-                data.data = this.$form.serialize();
-            }
-            $.ajax(data)
+            $.ajax(this.prepareAjaxData(data, this.options.transitionUrl))
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this));
+        },
+
+        /**
+         * @param {Object} data
+         * @param {String} url
+         * @returns {Object}
+         */
+        prepareAjaxData: function(data, url) {
+            data = data || {method: 'GET'};
+            data.url = url + (-1 !== _.indexOf(url, '?') ? '&' : '?') + '_widgetContainer=ajax&_wid=ajax_checkout';
+            data.errorHandlerMessage = false;
+            if (this.$form) {
+                data.data = this.serializeForm();
+            }
+
+            return data;
+        },
+
+        /**
+         * @returns {String}
+         */
+        serializeForm: function() {
+            return this.$form.serialize();
         },
 
         onSuccess: function(response) {
@@ -161,8 +187,7 @@ define(function(require) {
             this.$el.off('click', $.proxy(this.transit, this));
             this.$transitionTriggers.off('click', $.proxy(this.transit, this));
 
-            mediator.off('checkout:transition-button:enable', this.enableTransitionButton, this);
-            mediator.off('checkout:transition-button:disable', this.disableTransitionButton, this);
+            mediator.off(null, null, this);
 
             TransitionButtonComponent.__super__.dispose.call(this);
         }

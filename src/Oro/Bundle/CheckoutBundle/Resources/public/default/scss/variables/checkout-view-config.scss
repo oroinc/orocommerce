@@ -1,0 +1,31 @@
+// theme: default;
+
+$checkout-view-position: relative !default;
+$checkout-view-display: flex !default;
+$checkout-view-margin: 20px 0 0 !default;
+$checkout-view-flex-direction: row !default;
+$checkout-view-flex-wrap: wrap !default;
+$checkout-view-justify-content: space-between !default;
+$checkout-view-align-items: flex-start !default;
+
+$checkout-view-column-width: 30% !default;
+$checkout-view-column-last-width: 40% !default;
+$checkout-view-column-margin: 0 0 10px !default;
+$checkout-view-column-padding: 0 25px !default;
+
+$checkout-view-column-inner-padding: 0 !default;
+
+$checkout-view-title-margin: 0 0 10px !default;
+$checkout-view-title-color: get-color('additional', 'dark') !default;
+$checkout-view-title-font-size: $base-font-size--m !default;
+$checkout-view-title-line-height: 1.65 !default;
+$checkout-view-title-font-weight: 400 !default;
+
+$checkout-view-badge-size: 33px !default;
+$checkout-view-badge-font-size: 18px !default;
+$checkout-view-badge-margin: 0 10px 0 0 !default;
+
+$checkout-view-column-pseudo-width: 1px !default;
+$checkout-view-column-pseudo-background: get-color('additional', 'light') !default;
+
+$checkout-view-shipping-methods-margin: 15px 0 0 !default;

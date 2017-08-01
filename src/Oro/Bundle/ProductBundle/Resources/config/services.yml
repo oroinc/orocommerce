@@ -207,6 +207,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: not_empty_configurable_attributes }
 
+    oro_product.validator.product_page_template:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplateValidator'
+        arguments:
+            - '@oro_layout.page_templates_manager'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_page_template_validator }
+
     oro_product.component_processor.filter:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false

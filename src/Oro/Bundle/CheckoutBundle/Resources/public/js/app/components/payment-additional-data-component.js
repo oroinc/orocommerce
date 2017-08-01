@@ -48,11 +48,7 @@ define(function(require) {
          * @returns {jQuery|HTMLElement}
          */
         getAdditionalDataElement: function() {
-            if (!this.hasOwnProperty('$additionalDataElement')) {
-                this.$additionalDataElement = this.$el.find(this.selectors.additionalData);
-            }
-
-            return this.$additionalDataElement;
+            return this.$el.find(this.selectors.additionalData);
         },
 
         /**
