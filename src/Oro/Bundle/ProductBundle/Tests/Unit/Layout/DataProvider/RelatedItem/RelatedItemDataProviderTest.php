@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\Restriction\RestrictedProductRepository;
-use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedProductDataProvider;
+use Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider;
 use Oro\Bundle\UIBundle\Tests\Unit\Provider\FakeUserAgentProvider;
@@ -15,7 +15,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
+class RelatedItemDataProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -31,7 +31,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var FakeUserAgentProvider */
     private $userAgentProvider;
 
-    /** @var RelatedProductDataProvider */
+    /** @var RelatedItemDataProvider */
     private $dataProvider;
 
     public function setUp()
@@ -45,7 +45,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->userAgentProvider = new FakeUserAgentProvider();
 
-        $this->dataProvider = new RelatedProductDataProvider(
+        $this->dataProvider = new RelatedItemDataProvider(
             $this->finder,
             $this->configProvider,
             $this->restrictedRepository,
@@ -61,7 +61,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
             $this->getEntity(Product::class, ['id' => 3]),
         ]));
 
-        $this->assertEmpty($this->dataProvider->getRelatedProducts(new Product()));
+        $this->assertEmpty($this->dataProvider->getRelatedItems(new Product()));
     }
 
     public function testReturnRelatedProducts()
@@ -77,7 +77,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $relatedProducts,
-            $this->dataProvider->getRelatedProducts(new Product())
+            $this->dataProvider->getRelatedItems(new Product())
         );
     }
 
@@ -91,7 +91,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->finderReturnsRelatedProducts($relatedProducts);
         $this->minimumRelatedProductsIs(3);
 
-        $this->assertEquals([], $this->dataProvider->getRelatedProducts(new Product()));
+        $this->assertEquals([], $this->dataProvider->getRelatedItems(new Product()));
     }
 
     public function testReturnRestrictedRelatedProducts()
@@ -108,7 +108,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $restrictedProducts,
-            $this->dataProvider->getRelatedProducts(new Product())
+            $this->dataProvider->getRelatedItems(new Product())
         );
     }
 
@@ -124,7 +124,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$product2],
-            $this->dataProvider->getRelatedProducts(new Product())
+            $this->dataProvider->getRelatedItems(new Product())
         );
     }
 
@@ -140,7 +140,7 @@ class RelatedProductDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->minimumRelatedProductsIs(3);
         $this->restrictionReturnsRelatedProducts($restrictedProducts);
 
-        $this->assertEquals([], $this->dataProvider->getRelatedProducts(new Product()));
+        $this->assertEquals([], $this->dataProvider->getRelatedItems(new Product()));
     }
 
     public function testSliderEnabledOnDesktop()

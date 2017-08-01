@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
 
-class RelatedProductDataProvider
+class RelatedItemDataProvider
 {
     /** @var FinderStrategyInterface */
     private $finderStrategy;
@@ -44,7 +44,7 @@ class RelatedProductDataProvider
      * @param Product $product
      * @return Product[]
      */
-    public function getRelatedProducts(Product $product)
+    public function getRelatedItems(Product $product)
     {
         /** @var Product[] $relatedProducts */
         $relatedProducts = $this->finderStrategy->find($product);

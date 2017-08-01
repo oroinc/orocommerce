@@ -10,11 +10,11 @@ layout:
         - '@setOption':
             id: two_column_related_products
             optionName: items
-            optionValue: '=data["oro_product_related_products"].getRelatedProducts(data["product"])'
+            optionValue: '=data["oro_product_related_products"].getRelatedItems(data["product"])'
         - '@setOption':
             id: two_column_related_products
             optionName: items_data.stickers
-            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["oro_product_related_products"].getRelatedProducts(data["product"]))'
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["oro_product_related_products"].getRelatedItems(data["product"]))'
         - '@setOption':
             id: two_column_related_products
             optionName: label
