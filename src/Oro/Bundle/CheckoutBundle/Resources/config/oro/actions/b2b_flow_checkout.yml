@@ -5,8 +5,10 @@ action_groups:
                 type: Oro\Bundle\CheckoutBundle\Entity\Checkout
             disallow_shipping_address_edit:
                 default: false
-            visitor_email: ~
-            billing_address: ~
+            visitor_email:
+                default: null
+            billing_address:
+                default: null
         actions:
             - '@tree':
                 conditions:
