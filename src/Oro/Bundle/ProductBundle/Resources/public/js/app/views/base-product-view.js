@@ -6,6 +6,7 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
     var mediator = require('oroui/js/mediator');
+    var tools = require('oroui/js/tools');
     var routing = require('routing');
     var $ = require('jquery');
     var _ = require('underscore');
@@ -60,6 +61,10 @@ define(function(require) {
             this.initializeSubviews({
                 productModel: this.model
             });
+
+            if (tools.isDesktop()) {
+                this.getElement('quantity').attr('type', 'text');
+            }
         },
 
         initModel: function(options) {
@@ -149,15 +154,16 @@ define(function(require) {
         },
 
         onKeypressForbid: function(event) {
-            var keyCode = event.keyCode;
-            if (keyCode === 46 && this._getUnitPrecision() > 0) {
-                event.target.value = event.target.valueAsNumber.toFixed(this._getUnitPrecision());
+            var keyCode = event.originalEvent.charCode;
+
+            if ((keyCode === 46 || keyCode === 44) && this._getUnitPrecision() > 0) {
+                event.target.value = parseInt(event.target.value).toFixed(this._getUnitPrecision());
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
             }
 
-            if (keyCode > 47 && keyCode < 58) {
+            if (keyCode > 47 && keyCode < 58 || event.originalEvent.key === 'Backspace') {
                 return true;
             }
 
