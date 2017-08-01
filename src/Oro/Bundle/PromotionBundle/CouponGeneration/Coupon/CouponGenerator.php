@@ -163,12 +163,14 @@ class CouponGenerator implements CouponGeneratorInterface
     protected function getUniqueCodes(CouponGenerationOptions $options, int $amount): array
     {
         $codes = $this->couponGenerator->generateUnique($options, $amount);
-        $statement = $this->getConnection()
-            ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $codes) . "')");
-        $statement->execute();
+        if ($codes) {
+            $statement = $this->getConnection()
+                ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $codes) . "')");
+            $statement->execute();
 
-        while ($existingCode = $statement->fetchColumn(0)) {
-            unset($codes[$existingCode]);
+            while ($existingCode = $statement->fetchColumn(0)) {
+                unset($codes[$existingCode]);
+            }
         }
         return array_values($codes);
     }

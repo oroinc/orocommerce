@@ -28,6 +28,20 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertRegExp($expectedPattern, $this->generator->generate($options));
     }
 
+    public function testGenerateUnique()
+    {
+        $options = (new CodeGenerationOptions())
+            ->setCodePrefix('Hello')
+            ->setCodeSuffix('World')
+            ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE)
+            ->setCodeLength(1);
+        $codes = $this->generator->generateUnique($options, 1000);
+        $this->assertTrue(count($codes) <= 10);
+        foreach ($codes as $code) {
+            $this->assertRegExp('/^Hello[0-9]World$/', $code);
+        }
+    }
+
     public function generateDataProvider()
     {
         return [

@@ -23,6 +23,8 @@ class CodeGenerator implements CodeGeneratorInterface
 
     const ALPHANUMERIC_TEMPLATE = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+    const ATTEMPTS_LIMIT_MULTIPLIER = 5;
+
     /**
      * {@inheritdoc}
      */
@@ -41,10 +43,14 @@ class CodeGenerator implements CodeGeneratorInterface
      */
     public function generateUnique(CodeGenerationOptions $options, int $amount): array
     {
+        $attemptsLimit = $amount * self::ATTEMPTS_LIMIT_MULTIPLIER;
+        $attempts = 0;
         $codes = [];
-        while (count($codes) < $amount) {
+
+        while (count($codes) < $amount && $attempts < $attemptsLimit) {
             $code = $this->generate($options);
             $codes[$code] = $code;
+            $attempts++;
         }
         return $codes;
     }
