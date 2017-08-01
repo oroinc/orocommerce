@@ -1,0 +1,50 @@
+layout:
+    imports:
+        -
+            id: oro_product_list
+            root: two_column_upsell_container
+            namespace: two_column_upsell
+    actions:
+        - '@setBlockTheme':
+            themes: 'upsell_products.html.twig'
+        - '@setOption':
+            id: two_column_upsell_products
+            optionName: items
+            optionValue: '=data["oro_product_upsell_products"].getRelatedItems(data["product"])'
+        - '@setOption':
+            id: two_column_upsell_products
+            optionName: items_data.stickers
+            optionValue: '=data["oro_product_stickers"].getStickersForProducts(data["oro_product_upsell_products"].getRelatedItems(data["product"]))'
+        - '@setOption':
+            id: two_column_upsell_products
+            optionName: label
+            optionValue: oro.product.upsell_products.label
+        - '@setOption':
+            id: two_column_upsell_product_line_item_form_fields
+            optionName: instance_name
+            optionValue: two_column_upsell_products
+        - '@setOption':
+            id: two_column_upsell_product_line_item_form_start
+            optionName: instance_name
+            optionValue: two_column_upsell_products
+        - '@setOption':
+            id: two_column_upsell_product_line_item_form_end
+            optionName: instance_name
+            optionValue: two_column_upsell_products
+        - '@setOption':
+            id: two_column_upsell_product_line_item_form
+            optionName: visible
+            optionValue: '=data["oro_product_upsell_products"].isAddButtonVisible()'
+        - '@setOption':
+            id: two_column_upsell_products
+            optionName: use_slider
+            optionValue: false
+        - '@setOption':
+            id: two_column_upsell_product_image_holder
+            optionName: product_image_size
+            optionValue: 'product_extra_large'
+        - '@add':
+            id: two_column_upsell_container
+            parentId: product_view_attributes_rest
+            blockType: container
+            prepend: false

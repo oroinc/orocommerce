@@ -177,6 +177,9 @@ oro:
         related_products:
             label: Related Products
 
+        upsell_products:
+            label: Up-sell Products
+
         lineitem:
             unit.label: Unit
             quantity:
