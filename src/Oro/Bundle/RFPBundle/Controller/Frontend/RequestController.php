@@ -20,6 +20,8 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
 {
+    const LAST_SUCCESS_RFQ_SESSION_NAME = 'last_success_rfq_id';
+
     /**
      * @Route("/view/{id}", name="oro_rfp_frontend_request_view", requirements={"id"="\d+"})
      * @Layout
@@ -122,6 +124,35 @@ class RequestController extends Controller
     }
 
     /**
+     * @AclAncestor("oro_rfp_frontend_request_create")
+     * @Route("/success", name="oro_rfp_frontend_request_success")
+     * @Layout
+     *
+     * @return array
+     *
+     * @TODO functional test should be added in BB-10798
+     */
+    public function successAction()
+    {
+        $rfqID = $this->get('session')->get(self::LAST_SUCCESS_RFQ_SESSION_NAME);
+        if ($rfqID !== null) {
+            $repository = $this->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(RFPRequest::class);
+            $rfpRequest = $repository->find($rfqID);
+            if ($rfpRequest) {
+                $this->assertValidInternalStatus($rfpRequest);
+
+                return [
+                    'data' => [
+                        'entity' => $rfpRequest,
+                    ]
+                ];
+            }
+        }
+
+        throw $this->createNotFoundException();
+    }
+
+    /**
      * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
@@ -129,6 +160,7 @@ class RequestController extends Controller
     {
         /* @var $handler RequestUpdateHandler */
         $handler = $this->get('oro_rfp.service.request_update_handler');
+        $showSuccessPage = !$rfpRequest->getId();
 
         return $handler->handleUpdate(
             $rfpRequest,
@@ -150,7 +182,16 @@ class RequestController extends Controller
                     'parameters' => [],
                 ];
             },
-            function (RFPRequest $rfpRequest) {
+            function (RFPRequest $rfpRequest) use ($showSuccessPage) {
+                if ($showSuccessPage) {
+                    $this->get('session')->set(self::LAST_SUCCESS_RFQ_SESSION_NAME, $rfpRequest->getId());
+
+                    return [
+                        'route' => 'oro_rfp_frontend_request_success',
+                        'parameters' => [],
+                    ];
+                }
+
                 if ($this->isGranted('VIEW', $rfpRequest)) {
                     return [
                         'route' => 'oro_rfp_frontend_request_view',
