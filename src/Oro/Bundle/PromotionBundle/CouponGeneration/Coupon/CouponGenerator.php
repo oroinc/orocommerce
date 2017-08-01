@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\CouponGeneration\Coupon;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
@@ -50,9 +51,10 @@ class CouponGenerator implements CouponGeneratorInterface
         $fails = 0;
         $inserted = 0;
         $statistic = [];
+        $connection = $this->getConnection();
 
         while ($inserted < $options->getCouponQuantity()) {
-            $this->getConnection()->beginTransaction();
+            $connection->beginTransaction();
             try {
                 $requiredAmount = $options->getCouponQuantity() - $inserted;
                 $bulkSize = $requiredAmount > self::BULK_SIZE ? self::BULK_SIZE : $requiredAmount;
@@ -78,9 +80,9 @@ class CouponGenerator implements CouponGeneratorInterface
                     $fails = 0;
                 }
 
-                $this->getConnection()->commit();
+                $connection->commit();
             } catch (\Exception $e) {
-                $this->getConnection()->rollBack();
+                $connection->rollBack();
                 throw $e;
             }
         }
@@ -132,7 +134,8 @@ class CouponGenerator implements CouponGeneratorInterface
                 )
             ";
         }
-        $statement = $this->getConnection()->prepare($sql . implode(',', $placeholders));
+        $connection = $this->getConnection();
+        $statement = $connection->prepare($sql . implode(',', $placeholders));
 
         $statement->bindValue(
             'organization_id',
@@ -148,9 +151,18 @@ class CouponGenerator implements CouponGeneratorInterface
         );
         $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon());
         $statement->bindValue('uses_per_user', $options->getUsesPerUser());
-        $statement->bindValue('valid_until', $options->getExpirationDate()->format('Y-m-d H:i:s'));
-        $statement->bindValue('created_at', date('Y-m-d H:i:s'));
-        $statement->bindValue('updated_at', date('Y-m-d H:i:s'));
+        $statement->bindValue(
+            'valid_until',
+            $connection->convertToDatabaseValue($options->getExpirationDate(), Type::DATETIME)
+        );
+        $statement->bindValue(
+            'created_at',
+            $connection->convertToDatabaseValue(new \DateTime(), Type::DATETIME)
+        );
+        $statement->bindValue(
+            'updated_at',
+            $connection->convertToDatabaseValue(new \DateTime(), Type::DATETIME)
+        );
 
         return $statement;
     }
