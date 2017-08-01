@@ -108,7 +108,6 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU4 |
-      | QTY1 | 1     |
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
