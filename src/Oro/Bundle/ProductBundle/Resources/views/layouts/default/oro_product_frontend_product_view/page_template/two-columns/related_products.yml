@@ -40,7 +40,7 @@ layout:
             optionName: use_slider
             optionValue: false
         - '@setOption':
-            id: two_column_related_product_image_holder
+            id: two_column_related_product_view_image
             optionName: product_image_size
             optionValue: 'product_extra_large'
         - '@add':
