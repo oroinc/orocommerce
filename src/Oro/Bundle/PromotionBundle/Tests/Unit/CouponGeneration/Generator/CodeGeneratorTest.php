@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\CouponGeneration\Generator;
 
-use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\SimpleCodeGenerator;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
-class SimpleCodeGeneratorTest extends \PHPUnit_Framework_TestCase
+class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SimpleCodeGenerator
+     * @var CodeGenerator
      */
     protected $generator;
 
     public function setUp()
     {
-        $this->generator = new SimpleCodeGenerator();
+        $this->generator = new CodeGenerator();
     }
 
     /**

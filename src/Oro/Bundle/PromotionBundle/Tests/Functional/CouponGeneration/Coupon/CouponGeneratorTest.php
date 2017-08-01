@@ -5,15 +5,15 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Manager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGenerator;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
-use Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-class CouponGenerationManagerTest extends WebTestCase
+class CouponGeneratorTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -24,7 +24,7 @@ class CouponGenerationManagerTest extends WebTestCase
         ]);
     }
 
-    public function testGenerateCoupons()
+    public function testGenerateAndSave()
     {
         /** @var Promotion $promotion */
         $promotion = $this->getReference(LoadPromotionData::ORDER_AMOUNT_PROMOTION);
@@ -42,11 +42,11 @@ class CouponGenerationManagerTest extends WebTestCase
         $options->setCodeLength(5);
         $options->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE);
 
-        /** @var CouponGenerationManager $manager */
-        $manager = $this->getContainer()->get('oro_promotion.coupon_generation.manager');
+        /** @var CouponGenerator $generator */
+        $generator = $this->getContainer()->get('oro_promotion.coupon_generation.coupon');
 
         $start = microtime(true);
-        $manager->generateCoupons($options);
+        $generator->generateAndSave($options);
         $elapsed = round(microtime(true) - $start, 4);
 
         $stmnt = $this->getDoctrineHelper()

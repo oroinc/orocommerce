@@ -1,20 +1,25 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Manager;
+namespace Oro\Bundle\PromotionBundle\CouponGeneration\Coupon;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Statement;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Generator\CodeGeneratorInterface;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
 /**
- * Manage Coupon Generation Services architecture and functional
+ * Coupon codes mass generator
  */
-class CouponGenerationManager
+class CouponGenerator implements CouponGeneratorInterface
 {
-    const BULK_SIZE = 500;
+    const BULK_SIZE = 1000;
+
+    const LENGTH_SWITCH_THRESHOLD = 0.3;
+
+    const LENGTH_SWITCH_MAX_FAILS = 10;
 
     /**
      * @var CodeGeneratorInterface
@@ -29,7 +34,6 @@ class CouponGenerationManager
     /**
      * @param CodeGeneratorInterface $couponGenerator
      * @param DoctrineHelper $doctrineHelper
-     * @internal param CouponInserterInterface $couponInserter
      */
     public function __construct(CodeGeneratorInterface $couponGenerator, DoctrineHelper $doctrineHelper)
     {
@@ -38,14 +42,14 @@ class CouponGenerationManager
     }
 
     /**
-     * Generate set of coupons based on user defined generation parameters
-     *
-     * @param CouponGenerationOptions $options
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    public function generateCoupons(CouponGenerationOptions $options)
+    public function generateAndSave(CouponGenerationOptions $options)
     {
+        $options = clone $options;
+        $fails = 0;
         $inserted = 0;
+        $statistic = [];
 
         while ($inserted < $options->getCouponQuantity()) {
             $this->getConnection()->beginTransaction();
@@ -54,13 +58,26 @@ class CouponGenerationManager
                 $bulkSize = $requiredAmount > self::BULK_SIZE ? self::BULK_SIZE : $requiredAmount;
                 $codes = $this->getUniqueCodes($options, $bulkSize);
                 if ($codes) {
-                    $insertStatement = $this->getInsertStatement(count($codes), $options);
+                    $statement = $this->getInsertStatement($options, count($codes));
                     foreach ($codes as $key => $code) {
-                        $insertStatement->bindValue("code$key", $code);
-                        $inserted++;
+                        $statement->bindValue("code$key", $code);
                     }
-                    $insertStatement->execute();
+                    $statement->execute();
+                    $inserted += count($codes);
                 }
+
+                array_key_exists($options->getCodeLength(), $statistic) ?
+                    $statistic[$options->getCodeLength()] += count($codes) :
+                    $statistic[$options->getCodeLength()] = count($codes);
+
+                if (count($codes) / self::BULK_SIZE < self::LENGTH_SWITCH_THRESHOLD) {
+                    $fails++;
+                }
+                if ($fails > self::LENGTH_SWITCH_MAX_FAILS) {
+                    $options->setCodeLength($options->getCodeLength() + 1);
+                    $fails = 0;
+                }
+
                 $this->getConnection()->commit();
             } catch (\Exception $e) {
                 $this->getConnection()->rollBack();
@@ -68,11 +85,11 @@ class CouponGenerationManager
             }
         }
 
-        $this->insertStatements = [];
+        return $statistic;
     }
 
     /**
-     * @return \Doctrine\DBAL\Connection
+     * @return Connection
      */
     protected function getConnection()
     {
@@ -80,10 +97,11 @@ class CouponGenerationManager
     }
 
     /**
-     * @param $amount
+     * @param CouponGenerationOptions $options
+     * @param int $amount
      * @return Statement
      */
-    protected function getInsertStatement($amount, CouponGenerationOptions $options)
+    protected function getInsertStatement(CouponGenerationOptions $options, int $amount): Statement
     {
         $sql = '
             INSERT INTO oro_promotion_coupon (
@@ -142,14 +160,14 @@ class CouponGenerationManager
      * @param int $amount
      * @return array
      */
-    protected function getUniqueCodes(CouponGenerationOptions $options, $amount)
+    protected function getUniqueCodes(CouponGenerationOptions $options, int $amount): array
     {
         $codes = $this->couponGenerator->generateUnique($options, $amount);
-        $select = $this->getConnection()
+        $statement = $this->getConnection()
             ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $codes) . "')");
-        $select->execute();
+        $statement->execute();
 
-        while ($existingCode = $select->fetchColumn(0)) {
+        while ($existingCode = $statement->fetchColumn(0)) {
             unset($codes[$existingCode]);
         }
         return array_values($codes);

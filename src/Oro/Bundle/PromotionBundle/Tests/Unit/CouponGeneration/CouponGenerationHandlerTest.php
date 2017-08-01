@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\CouponGeneration;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGeneratorInterface;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
-use Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager;
 use Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler;
 
 use Symfony\Component\Form\FormInterface;
@@ -12,9 +12,9 @@ use Symfony\Component\Form\FormInterface;
 class CouponGenerationHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CouponGenerationManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var CouponGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $couponGenerationManager;
+    protected $couponGenerator;
 
     /**
      * @var CouponGenerationHandler
@@ -23,10 +23,8 @@ class CouponGenerationHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->couponGenerationManager = $this->getMockBuilder(CouponGenerationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->couponGenerationHandler = new CouponGenerationHandler($this->couponGenerationManager);
+        $this->couponGenerator = $this->createMock(CouponGeneratorInterface::class);
+        $this->couponGenerationHandler = new CouponGenerationHandler($this->couponGenerator);
     }
 
     public function testProcess()
@@ -47,9 +45,9 @@ class CouponGenerationHandlerTest extends \PHPUnit_Framework_TestCase
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())->method('getData')->willReturn($actionData);
 
-        $this->couponGenerationManager
+        $this->couponGenerator
             ->expects($this->once())
-            ->method('generateCoupons')
+            ->method('generateAndSave')
             ->with($this->identicalTo($couponGenerationOptions))
         ;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\CouponGeneration\Generator;
+namespace Oro\Bundle\PromotionBundle\CouponGeneration\Code;
 
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
@@ -13,13 +13,12 @@ interface CodeGeneratorInterface
      * @param CodeGenerationOptions $options
      * @return string
      */
-    public function generate(CodeGenerationOptions $options);
+    public function generate(CodeGenerationOptions $options): string;
 
     /**
      * @param CodeGenerationOptions $options
      * @param int $amount
-     * @param array $excluded
      * @return array Indexed by code
      */
-    public function generateUnique(CodeGenerationOptions $options, $amount, array $excluded = []);
+    public function generateUnique(CodeGenerationOptions $options, int $amount): array;
 }

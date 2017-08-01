@@ -500,20 +500,14 @@ services:
     oro_promotion.coupon_generation.handler:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler'
         arguments:
-            - '@oro_promotion.coupon_generation.manager'
+            - 'oro_promotion.coupon_generation.coupon'
 
-    oro_promotion.coupon_generation.manager:
-        class: 'Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager'
+    oro_promotion.coupon_generation.code:
+        class: Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator
+        public: false
+
+    oro_promotion.coupon_generation.coupon:
+        class: Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGenerator
         arguments:
-            - '@oro_promotion.coupon_generation.generator'
+            - '@oro_promotion.coupon_generation.code'
             - '@oro_entity.doctrine_helper'
-
-    oro_promotion.coupon_generation.generator:
-        class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Generator\SimpleCodeGenerator'
-        public: false
-
-    oro_promotion.coupon_generation.inserter:
-        class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Inserter\SimpleCouponInserter'
-        public: false
-
-

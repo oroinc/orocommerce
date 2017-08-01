@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\CouponGeneration;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
-use Oro\Bundle\PromotionBundle\Manager\CouponGenerationManager;
 use Symfony\Component\Form\FormInterface;
+
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGeneratorInterface;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 
 /**
  * Service that handles Coupon Generation operation request
@@ -15,16 +16,13 @@ use Symfony\Component\Form\FormInterface;
 class CouponGenerationHandler
 {
     /**
-     * @var CouponGenerationManager
+     * @var CouponGeneratorInterface
      */
-    protected $couponGenerationManager;
+    protected $generator;
 
-    /**
-     * @param CouponGenerationManager $couponGenerationManager
-     */
-    public function __construct(CouponGenerationManager $couponGenerationManager)
+    public function __construct(CouponGeneratorInterface $generator)
     {
-        $this->couponGenerationManager = $couponGenerationManager;
+        $this->generator = $generator;
     }
 
     /**
@@ -36,8 +34,8 @@ class CouponGenerationHandler
     {
         /** @var ActionData $actionData */
         $actionData = $form->getData();
-        /** @var CouponGenerationOptions $couponGenerationOptions */
-        $couponGenerationOptions = $actionData->get('couponGenerationOptions');
-        $this->couponGenerationManager->generateCoupons($couponGenerationOptions);
+        /** @var CouponGenerationOptions $options */
+        $options = $actionData->get('couponGenerationOptions');
+        $this->generator->generateAndSave($options);
     }
 }

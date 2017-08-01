@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\CouponGeneration\Generator;
+namespace Oro\Bundle\PromotionBundle\CouponGeneration\Code;
 
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
 /**
  * This class is used for generating Coupon code by given options.
  */
-class SimpleCodeGenerator implements CodeGeneratorInterface
+class CodeGenerator implements CodeGeneratorInterface
 {
     const DASHES_SYMBOL = '-';
 
@@ -26,7 +26,7 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generate(CodeGenerationOptions $options)
+    public function generate(CodeGenerationOptions $options): string
     {
         $string = $this->generateRandomString($options->getCodeLength(), $options->getCodeType());
         $string = $options->getCodePrefix() . $string . $options->getCodeSuffix();
@@ -39,14 +39,12 @@ class SimpleCodeGenerator implements CodeGeneratorInterface
     /**
      * {@inheritdoc}
      */
-    public function generateUnique(CodeGenerationOptions $options, $amount, array $excluded = [])
+    public function generateUnique(CodeGenerationOptions $options, int $amount): array
     {
         $codes = [];
         while (count($codes) < $amount) {
-            do {
-                $code = $this->generate($options);
-            } while (array_key_exists($code, $excluded));
-            $codes[(string)$code] = $code;
+            $code = $this->generate($options);
+            $codes[$code] = $code;
         }
         return $codes;
     }
