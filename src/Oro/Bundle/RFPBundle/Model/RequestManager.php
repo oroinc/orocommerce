@@ -50,10 +50,11 @@ class RequestManager
         $user = $this->tokenAccessor->getUser();
         $token = $this->tokenAccessor->getToken();
         if ($token instanceof AnonymousCustomerUserToken) {
-            $user = $token->getVisitor()->getCustomerUser();
+            $visitor = $token->getVisitor();
+            $user = $visitor->getCustomerUser();
             if ($user === null) {
                 $user = $this->guestCustomerUserManager
-                    ->generateGuestCustomerUser($token->getVisitor(), [
+                    ->generateGuestCustomerUser([
                         'email' => $request->getEmail(),
                         'first_name' => $request->getFirstName(),
                         'last_name' => $request->getLastName()
@@ -64,7 +65,7 @@ class RequestManager
                 $em->persist($user);
                 $em->flush($user);
 
-                $token->getVisitor()->setCustomerUser($user);
+                $visitor->setCustomerUser($user);
             }
 
             # TODO remove after fix BB-9269

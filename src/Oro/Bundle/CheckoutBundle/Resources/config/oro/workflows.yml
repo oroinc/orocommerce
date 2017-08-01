@@ -494,6 +494,7 @@ workflows:
                                         last_name: $billing_address.last_name
                                         name_suffix: $billing_address.name_suffix
                             - '@flush_entity': $checkout.customerUser
+                            - '@assign_value': [$visitor.customerUser, $checkout.customerUser]
                     - '@tree':
                         conditions:
                             '@and':

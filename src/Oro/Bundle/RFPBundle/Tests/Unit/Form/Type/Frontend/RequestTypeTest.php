@@ -27,6 +27,7 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
+use Oro\Bundle\RFPBundle\Model\RequestManager;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 
 class RequestTypeTest extends AbstractTest
@@ -55,7 +56,9 @@ class RequestTypeTest extends AbstractTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new RequestType($configManager, $registry);
+        $requestManager = $this->createMock(RequestManager::class);
+
+        $this->formType = new RequestType($configManager, $registry, $requestManager);
         $this->formType->setDataClass(self::DATA_CLASS);
 
         parent::setUp();
