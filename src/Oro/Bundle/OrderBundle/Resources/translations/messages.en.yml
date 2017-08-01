@@ -276,6 +276,10 @@ oro:
                     archive.success: 'Order #%id% has been archived'
                     mark_as_shipped.success: 'Order #%id% marked as shipped'
 
+        datagrid:
+            view:
+                open_orders: 'Open Orders'
+
     frontend:
         order:
             entity_plural_label: Orders

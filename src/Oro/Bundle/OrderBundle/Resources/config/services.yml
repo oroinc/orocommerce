@@ -379,3 +379,8 @@ services:
           public: false
           tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_order.datagrid.orders_view_list:
+        class: Oro\Bundle\OrderBundle\Datagrid\OrdersViewList
+        arguments:
+            - @translator

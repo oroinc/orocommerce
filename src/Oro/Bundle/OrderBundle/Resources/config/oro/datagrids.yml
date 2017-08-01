@@ -352,6 +352,8 @@ datagrids:
             view:
                 acl_resource:  oro_order_view
 
+        views_list: '@oro_order.datagrid.orders_view_list'
+
     embed-orders-grid:
         acl_resource: oro_order_view
         extended_entity_name: %oro_order.entity.order.class%
