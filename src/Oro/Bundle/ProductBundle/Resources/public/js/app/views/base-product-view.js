@@ -155,8 +155,9 @@ define(function(require) {
 
         onKeypressForbid: function(event) {
             var keyCode = event.originalEvent.charCode;
+            var targetKeyCodes = [44, 46, 188, 190];
 
-            if ((keyCode === 46 || keyCode === 44) && this._getUnitPrecision() > 0) {
+            if (_.contains(targetKeyCodes, keyCode) && this._getUnitPrecision() > 0) {
                 event.target.value = parseInt(event.target.value).toFixed(this._getUnitPrecision());
                 event.stopPropagation();
                 event.preventDefault();
