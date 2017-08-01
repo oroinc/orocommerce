@@ -46,7 +46,7 @@
             {% endif %}
             {{ UI.renderHtmlProperty('oro.order.customer_user.label'|trans, customerUserView) }}
 
-            {{ UI.renderProperty('oro.order.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
+            {{ UI.renderProperty('oro.order.internal_status.label'|trans, order.internalStatus.name|default('')) }}
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
             {{ UI.renderHtmlProperty('oro.order.source_document.label'|trans, sourceEntityBlock) }}
         </div>
