@@ -25,6 +25,7 @@ class SimpleCodeGeneratorMock extends SimpleCodeGenerator
             default:
                 $string = self::ALPHANUMERIC_CODE_MOCK;
         }
+
         return substr($string, 0, $length);
     }
 }

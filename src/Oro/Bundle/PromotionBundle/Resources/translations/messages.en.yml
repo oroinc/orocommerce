@@ -196,7 +196,7 @@ oro:
                     uses_per_user: 'Limits how many times the coupon may be used by the same customer user'
                     uses_per_coupon: 'Limits how many times the coupon may be used'
             generation:
-                label: Generate Coupon
+                label: Generate Coupons
                 action:
                     generate: Generate
                 couponQuantity.label: Coupon Quantity
@@ -213,7 +213,7 @@ oro:
                     prefix.label: Add Dashes Every
                     suffix.label: Symbols
                 message:
-                    save_success: Generation of Coupon was successful
+                    save_success: Generation of Coupons was successful
 
     applied_discount:
         name: Name
