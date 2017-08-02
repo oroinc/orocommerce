@@ -55,8 +55,7 @@ class CouponGenerator implements CouponGeneratorInterface
             $fails = 0;
             $inserted = 0;
             while ($inserted < $options->getCouponQuantity()) {
-                $requiredAmount = $options->getCouponQuantity() - $inserted;
-                $bulkSize = $requiredAmount > self::BULK_SIZE ? self::BULK_SIZE : $requiredAmount;
+                $bulkSize = min(self::BULK_SIZE, $options->getCouponQuantity() - $inserted);
                 $codes = $this->couponGenerator->generateUnique($options, $bulkSize);
                 $generatedAmount = count($codes);
                 if ($generatedAmount < $bulkSize) {
