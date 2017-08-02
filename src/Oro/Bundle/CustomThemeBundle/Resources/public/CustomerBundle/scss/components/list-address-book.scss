@@ -1,0 +1,29 @@
+.list-address-book {
+    &__head {
+        display: inline-flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: baseline;
+    }
+
+    .address-list {
+        margin-left: 0;
+        margin-bottom: 20px;
+    }
+}
+
+@include breakpoint('mobile') {
+    .list-address-book {
+        display: flex;
+        flex-direction: column;
+
+        &__head {
+            display: block;
+
+            .btn--info {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+        }
+    }
+}

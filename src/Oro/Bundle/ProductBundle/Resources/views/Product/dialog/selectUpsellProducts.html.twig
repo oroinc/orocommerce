@@ -1,0 +1,26 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+<div class="widget-content">
+    <input
+        type="hidden"
+        data-role="related-items-appended-ids"
+        name="productAppendUpsellSelect"
+        id="productAppendUpsellSelect"
+        value="{{ app.request.get('addedProductRelatedItems')|join(',') }}"
+    />
+    <input
+        type="hidden"
+        data-role="related-items-removed-ids"
+        name="productRemoveUpsellSelect"
+        id="productRemoveUpsellSelect"
+        value="{{ app.request.get('removedProductRelatedItems')|join(',') }}"
+    />
+
+    {{ dataGrid.renderGrid('products-upsell-products-select', {'productId': product.id, 'relatedItemsIds': get_upsell_products_ids(product)}) }}
+
+    <div class="widget-actions form-actions">
+        <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+        <button class="btn btn-primary" data-role="related-items-submit-button" type="button">
+            {{ 'oro.product.widgets.select_products'|trans }}
+        </button>
+    </div>
+</div>

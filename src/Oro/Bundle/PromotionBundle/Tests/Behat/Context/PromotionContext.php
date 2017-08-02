@@ -106,6 +106,8 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {
+        // discount update request is executed after 1.5 sec timeout
+        $this->getSession()->wait(1600);
         $this->waitForAjax();
         /** @var PromotionBackendOrder $order */
         $order = $this->createElement('PromotionBackendOrder');

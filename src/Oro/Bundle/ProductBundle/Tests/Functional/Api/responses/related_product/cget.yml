@@ -1,0 +1,61 @@
+data:
+    -
+        type: relatedproducts
+        id: '<toString(@related-product-product-3-product-1->id)>'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            relatedItem:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+    -
+        type: relatedproducts
+        id: '<toString(@related-product-product-3-product-2->id)>'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            relatedItem:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+    -
+        type: relatedproducts
+        id: '<toString(@related-product-product-4-product-3->id)>'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            relatedItem:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+    -
+        type: relatedproducts
+        id: '<toString(@related-product-product-4-product-5->id)>'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            relatedItem:
+                data:
+                    type: products
+                    id: '<toString(@product-5->id)>'
+    -
+        type: relatedproducts
+        id: '<toString(@related-product-product-5-product-4->id)>'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-5->id)>'
+            relatedItem:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'

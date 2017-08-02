@@ -48,6 +48,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         slugPrototypes:
             - Valid: ~
+        pageTemplate:
+            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplate:
+                route: 'oro_product_frontend_product_view'
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:

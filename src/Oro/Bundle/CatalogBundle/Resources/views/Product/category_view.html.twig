@@ -1,10 +1,10 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set categoryTitle  = oro_product_category_title(entity) %}
 
 {%- if entity and is_granted('EDIT', entity) -%}
-    {% set category = UI.renderUrl(path('oro_catalog_category_update', {'id': entity.id}), entity.defaultTitle) %}
-{%- elseif entity -%}
-    {% set category = entity ? entity.defaultTitle : '' %}
+    {% set categoryFullPath  = oro_product_category_full_path(entity) %}
+    {% set category = UI.renderUrl(path('oro_catalog_category_update', {'id': entity.id}), categoryTitle, null, categoryFullPath) %}
 {%- else -%}
-    {% set category = '' %}
+    {% set category = categoryTitle %}
 {%- endif -%}
 {{ UI.renderHtmlProperty('oro.catalog.category.entity_label'|trans, category) }}
