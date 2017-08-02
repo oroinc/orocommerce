@@ -8,6 +8,7 @@ use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\WrongAmountCodeGeneratorException;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
@@ -56,7 +57,13 @@ class CouponGenerator implements CouponGeneratorInterface
             while ($inserted < $options->getCouponQuantity()) {
                 $requiredAmount = $options->getCouponQuantity() - $inserted;
                 $bulkSize = $requiredAmount > self::BULK_SIZE ? self::BULK_SIZE : $requiredAmount;
-                $codes = $this->getUniqueCodes($options, $bulkSize);
+                try {
+                    $codes = $this->getUniqueCodes($options, $bulkSize);
+                } catch (WrongAmountCodeGeneratorException $e) {
+                    $options->setCodeLength($options->getCodeLength() + 1);
+                    $fails = 0;
+                    continue;
+                }
 
                 if ($codes) {
                     $statement = $this->getInsertStatement($options, count($codes));

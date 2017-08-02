@@ -17,11 +17,11 @@ class CodeGenerator implements CodeGeneratorInterface
         CodeGenerationOptions::ALPHANUMERIC_CODE_TYPE => self::ALPHANUMERIC_TEMPLATE,
     ];
 
-    const NUMERIC_TEMPLATE = '123456789';
+    const NUMERIC_TEMPLATE = '0123456789';
 
     const ALPHABETIC_TEMPLATE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    const ALPHANUMERIC_TEMPLATE = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const ALPHANUMERIC_TEMPLATE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     const ATTEMPTS_LIMIT_MULTIPLIER = 5;
 
@@ -43,14 +43,12 @@ class CodeGenerator implements CodeGeneratorInterface
      */
     public function generateUnique(CodeGenerationOptions $options, int $amount): array
     {
-        $attemptsLimit = $amount * self::ATTEMPTS_LIMIT_MULTIPLIER;
-        $attempts = 0;
+        $this->validate($options, $amount);
         $codes = [];
 
-        while (count($codes) < $amount && $attempts < $attemptsLimit) {
+        while (count($codes) < $amount) {
             $code = $this->generate($options);
             $codes[$code] = $code;
-            $attempts++;
         }
         return $codes;
     }
@@ -99,5 +97,21 @@ class CodeGenerator implements CodeGeneratorInterface
             $parts[] = mb_substr($string, $i, $interval);
         }
         return $parts;
+    }
+
+    /**
+     * @param CodeGenerationOptions $options
+     * @param int $amount
+     * @throws WrongAmountCodeGeneratorException
+     */
+    protected function validate(CodeGenerationOptions $options, int $amount)
+    {
+        $variantsNumber = mb_strlen($this->getTemplate($options->getCodeType()));
+        $maxCombinations = pow($variantsNumber, $options->getCodeLength());
+        if ($maxCombinations < $amount) {
+            throw new WrongAmountCodeGeneratorException(
+                "Cant generate $amount of codes. Only $maxCombinations combinations available for given options"
+            );
+        }
     }
 }
