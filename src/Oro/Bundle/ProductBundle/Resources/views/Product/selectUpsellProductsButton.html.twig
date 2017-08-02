@@ -1,0 +1,13 @@
+{% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedItemsUI %}
+
+<div class="related-items-widget">
+    {{ relatedItemsUI.renderRelatedItemButton(
+        path('oro_product_possible_products_for_upsell_products', {'id': entity.id}),
+        'oro.product.widgets.select_upsell_products.label'|trans,
+        'oro.product.widgets.select_upsell_products.title'|trans({'{{ sku }}': entity.sku, '{{ name }}': entity.name}),
+        upsellProductsLimit,
+        '#productAppendUpsell',
+        '#productRemoveUpsell',
+        gridName
+    ) }}
+</div>

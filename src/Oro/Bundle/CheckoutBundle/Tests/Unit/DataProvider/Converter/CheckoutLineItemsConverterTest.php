@@ -61,17 +61,17 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
 
         return [
-            [
+            'empty data' => [
                 'data' => [],
                 'expected' => new ArrayCollection([])
             ],
-            [
+            'data with empty item' => [
                 'data' => [[]],
                 'expected' => new ArrayCollection([
                     (new OrderLineItem())
                 ])
             ],
-            [
+            'normal data' => [
                 'data' => [
                     [
                         'product' => $product1,
@@ -117,6 +117,15 @@ class CheckoutLineItemsConverterTest extends \PHPUnit_Framework_TestCase
                         ->setFromExternalSource(true)
                         ->setComment('Comment')
                 ])
+            ],
+            'data with non-existent property' => [
+                'data' => [[
+                    'nonExistentProperty' => 'sampleValue',
+                    'comment' => 'Comment',
+                ]],
+                'expected' => new ArrayCollection([
+                    (new OrderLineItem())->setComment('Comment'),
+                ]),
             ],
         ];
     }

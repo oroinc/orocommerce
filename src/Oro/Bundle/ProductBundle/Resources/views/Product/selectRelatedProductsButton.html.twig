@@ -1,25 +1,13 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedItemsUI %}
 
-<div class="related-products-widget">
-    {{ UI.clientLink({
-        'dataUrl': path('oro_product_possible_products_for_related_products', {'id': entity.id}),
-        'aCss': 'btn no-hash related-products-widget__button',
-        'label' : 'oro.product.widgets.select_related_products.label'|trans,
-        'widget' : {
-            'type' : 'related-items',
-            'options' : {
-                'dialogOptions' : {
-                    'title': 'oro.product.widgets.select_related_products.title'|trans({'{{ sku }}': entity.sku, '{{ name }}': entity.name}),
-                    'modal': true,
-                    'resizable': false,
-                    'width': 820,
-                    'height': '80vh',
-                    'autoResize': true,
-                },
-                'itemsLimit': relatedProductsLimit,
-                'itemsIdsToAdd': '#productAppendRelated',
-                'itemsIdsToRemove': '#productRemoveRelated',
-            }
-        }
-    }) }}
+<div class="related-items-widget">
+    {{ relatedItemsUI.renderRelatedItemButton(
+        path('oro_product_possible_products_for_related_products', {'id': entity.id}),
+        'oro.product.widgets.select_related_products.label'|trans,
+        'oro.product.widgets.select_related_products.title'|trans({'{{ sku }}': entity.sku, '{{ name }}': entity.name}),
+        relatedProductsLimit,
+        '#productAppendRelated',
+        '#productRemoveRelated',
+        gridName
+    ) }}
 </div>
