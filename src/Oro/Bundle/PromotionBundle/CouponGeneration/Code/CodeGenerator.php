@@ -23,8 +23,6 @@ class CodeGenerator implements CodeGeneratorInterface
 
     const ALPHANUMERIC_TEMPLATE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    const ATTEMPTS_LIMIT_MULTIPLIER = 5;
-
     /**
      * {@inheritdoc}
      */
