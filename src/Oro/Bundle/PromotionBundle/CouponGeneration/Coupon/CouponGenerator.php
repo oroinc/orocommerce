@@ -57,13 +57,12 @@ class CouponGenerator implements CouponGeneratorInterface
             while ($inserted < $options->getCouponQuantity()) {
                 $requiredAmount = $options->getCouponQuantity() - $inserted;
                 $bulkSize = $requiredAmount > self::BULK_SIZE ? self::BULK_SIZE : $requiredAmount;
-                try {
-                    $codes = $this->getUniqueCodes($options, $bulkSize);
-                } catch (WrongAmountCodeGeneratorException $e) {
-                    $options->setCodeLength($options->getCodeLength() + 1);
-                    $fails = 0;
-                    continue;
+                $codes = $this->couponGenerator->generateUnique($options, $bulkSize);
+                $generatedAmount = count($codes);
+                if ($generatedAmount < $bulkSize) {
+                    $fails = self::LENGTH_SWITCH_MAX_FAILS + 1; // switch immediatly to next length after insert
                 }
+                $codes = $this->filter($codes);
 
                 if ($codes) {
                     $statement = $this->getInsertStatement($options, count($codes));
@@ -78,7 +77,7 @@ class CouponGenerator implements CouponGeneratorInterface
                     $statistic[$options->getCodeLength()] += count($codes) :
                     $statistic[$options->getCodeLength()] = count($codes);
 
-                if (count($codes) / self::BULK_SIZE < self::LENGTH_SWITCH_THRESHOLD) {
+                if (count($codes) / $generatedAmount < self::LENGTH_SWITCH_THRESHOLD) {
                     $fails++;
                 }
                 if ($fails > self::LENGTH_SWITCH_MAX_FAILS) {
@@ -169,13 +168,11 @@ class CouponGenerator implements CouponGeneratorInterface
     }
 
     /**
-     * @param CouponGenerationOptions $options
-     * @param int $amount
+     * @param array $codes
      * @return array
      */
-    protected function getUniqueCodes(CouponGenerationOptions $options, int $amount): array
+    protected function filter(array $codes): array
     {
-        $codes = $this->couponGenerator->generateUnique($options, $amount);
         if ($codes) {
             $statement = $this->getConnection()
                 ->prepare("SELECT code FROM oro_promotion_coupon WHERE code IN ('" . implode("','", $codes) . "')");

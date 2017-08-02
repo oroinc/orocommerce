@@ -41,8 +41,8 @@ class CodeGenerator implements CodeGeneratorInterface
      */
     public function generateUnique(CodeGenerationOptions $options, int $amount): array
     {
-        $this->validate($options, $amount);
         $codes = [];
+        $amount = min($amount, $this->getMaxAmount($options));
 
         while (count($codes) < $amount) {
             $code = $this->generate($options);
@@ -99,17 +99,11 @@ class CodeGenerator implements CodeGeneratorInterface
 
     /**
      * @param CodeGenerationOptions $options
-     * @param int $amount
-     * @throws WrongAmountCodeGeneratorException
+     * @return int
      */
-    protected function validate(CodeGenerationOptions $options, int $amount)
+    protected function getMaxAmount(CodeGenerationOptions $options)
     {
         $variantsNumber = mb_strlen($this->getTemplate($options->getCodeType()));
-        $maxCombinations = pow($variantsNumber, $options->getCodeLength());
-        if ($maxCombinations < $amount) {
-            throw new WrongAmountCodeGeneratorException(
-                "Cant generate $amount of codes. Only $maxCombinations combinations available for given options"
-            );
-        }
+        return pow($variantsNumber, $options->getCodeLength());
     }
 }

@@ -37,28 +37,34 @@ class CouponGeneratorTest extends WebTestCase
         $options->setOwner($businessUnit);
         $options->setExpirationDate(new \DateTime('01-01-2020 12:00:00'));
         $options->setPromotion($promotion);
+        $options->setUsesPerCoupon(22);
+        $options->setUsesPerUser(null);
 
-        $options->setCouponQuantity(55000);
-        $options->setCodeLength(5);
+        $options->setCouponQuantity(200);
+        $options->setCodeLength(1);
         $options->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE);
 
         /** @var CouponGenerator $generator */
         $generator = $this->getContainer()->get('oro_promotion.coupon_generation.coupon');
+        $statistic = $generator->generateAndSave($options);
 
-        $start = microtime(true);
-        $generator->generateAndSave($options);
-        $elapsed = round(microtime(true) - $start, 4);
+        $this->assertEquals([1 => 10, 2 => 100, 3 => 90], $statistic);
+        $this->assertEquals(200, $this->getDoctrineHelper()->getEntityManager(Coupon::class)->createQuery(
+            'SELECT COUNT(coupon) FROM Oro\Bundle\PromotionBundle\Entity\Coupon AS coupon'
+        )->getSingleScalarResult());
 
-        $stmnt = $this->getDoctrineHelper()
-            ->getEntityManager(Coupon::class)
-            ->getConnection()
-            ->prepare('SELECT COUNT(*) FROM oro_promotion_coupon');
-        $stmnt->execute();
-        $inserted = $stmnt->fetchColumn(0);
-        fwrite(STDERR, print_r('Elapsed: '. $elapsed .PHP_EOL, true));
-        fwrite(STDERR, print_r('Inserted: ' . $inserted . PHP_EOL, true));
-        $this->assertEquals(55000, $inserted);
+        /** @var Coupon $coupon */
+        $coupon = $this->getDoctrineHelper()->getEntityRepository(Coupon::class)->findOneBy([]);
+        $this->assertRegExp('/^[0-9]{1,3}$/', $coupon->getCode());
+        $this->assertEquals($options->getOwner()->getId(), $coupon->getOwner()->getId());
+        $this->assertEquals($options->getPromotion()->getId(), $coupon->getPromotion()->getId());
+        $this->assertEquals($options->getUsesPerCoupon(), $coupon->getUsesPerCoupon());
+        $this->assertEquals($options->getUsesPerUser(), $coupon->getUsesPerUser());
+        $this->assertEquals($options->getExpirationDate(), $coupon->getValidUntil());
+        $this->assertInstanceOf(\DateTime::class, $coupon->getCreatedAt());
+        $this->assertInstanceOf(\DateTime::class, $coupon->getUpdatedAt());
     }
+
     /**
      * @return DoctrineHelper
      */

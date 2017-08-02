@@ -32,31 +32,24 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
     public function testGenerateUnique()
     {
         $options = (new CodeGenerationOptions())
-            ->setCodePrefix('Hello')
-            ->setCodeSuffix('World')
-            ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE)
-            ->setCodeLength(1);
-        $codes = $this->generator->generateUnique($options, 5);
-        $this->assertCount(5, $codes);
+            ->setCodeType(CodeGenerationOptions::ALPHABETIC_CODE_TYPE)
+            ->setCodeLength(5);
+        $codes = $this->generator->generateUnique($options, 20);
+        $this->assertCount(20, $codes);
         foreach ($codes as $index => $code) {
             $this->assertEquals($index, $code);
-            $this->assertRegExp('/^Hello[0-9]World$/', $code);
+            $this->assertRegExp('/^[a-zA-Z]{5}$/', $code);
         }
-    }
 
-    /**
-     * @dataProvider exceptionDataProvider
-     *
-     * @param CodeGenerationOptions $options
-     * @param int $amount
-     * @param string $expectedMessage
-     */
-    public function testGenerateUniqueException(CodeGenerationOptions $options, $amount, $expectedMessage)
-    {
-        $this->expectException(WrongAmountCodeGeneratorException::class);
-        $this->expectExceptionMessage($expectedMessage);
-
-        $this->generator->generateUnique($options, $amount);
+        $options = (new CodeGenerationOptions())
+            ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE)
+            ->setCodeLength(1);
+        $codes = $this->generator->generateUnique($options, 100000);
+        $this->assertCount(10, $codes);
+        foreach ($codes as $index => $code) {
+            $this->assertEquals($index, $code);
+            $this->assertRegExp('/^[0-9]{1}$/', $code);
+        }
     }
 
     public function generateDataProvider()
@@ -113,32 +106,6 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
                     ->setDashesSequence(2),
                 'expected' => '/^Пр-ив-ет-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]М-ед-ве-д$/',
             ]
-        ];
-    }
-
-    public function exceptionDataProvider()
-    {
-        return [
-            [
-                'options' => (new CodeGenerationOptions())
-                    ->setCodeLength(2)
-                    ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE),
-                'amount' => 1234,
-                'expectedMessage' => 'Cant generate 1234 of codes. Only 100 combinations available for given options',
-            ],
-            [
-                'options' => (new CodeGenerationOptions())
-                    ->setCodeLength(2)
-                    ->setCodeType(CodeGenerationOptions::ALPHABETIC_CODE_TYPE),
-                'amount' => 12345,
-                'expectedMessage' => 'Cant generate 12345 of codes. Only 2704 combinations available for given options',
-            ],
-            [
-                'options' => (new CodeGenerationOptions())
-                    ->setCodeLength(2),
-                'amount' => 12345,
-                'expectedMessage' => 'Cant generate 12345 of codes. Only 3844 combinations available for given options',
-            ],
         ];
     }
 }
