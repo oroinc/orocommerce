@@ -367,6 +367,7 @@ services:
             - '@oro_shopping_list.manager.guest_shopping_list_migration'
             - '@logger'
             - '@oro_config.manager'
+            - '@oro_dataaudit.listener.send_changed_entities_to_message_queue'
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
 
