@@ -39,7 +39,7 @@ class CouponGeneratorTest extends WebTestCase
         $options->setPromotion($promotion);
 
         $options->setCouponQuantity(55000);
-        $options->setCodeLength(2);
+        $options->setCodeLength(5);
         $options->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE);
 
         /** @var CouponGenerator $generator */

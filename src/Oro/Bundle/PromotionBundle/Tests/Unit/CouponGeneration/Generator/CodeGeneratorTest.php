@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\CouponGeneration\Generator;
 
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\WrongAmountCodeGeneratorException;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
 class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -35,11 +36,27 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
             ->setCodeSuffix('World')
             ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE)
             ->setCodeLength(1);
-        $codes = $this->generator->generateUnique($options, 1000);
-        $this->assertTrue(count($codes) <= 10);
-        foreach ($codes as $code) {
+        $codes = $this->generator->generateUnique($options, 5);
+        $this->assertCount(5, $codes);
+        foreach ($codes as $index => $code) {
+            $this->assertEquals($index, $code);
             $this->assertRegExp('/^Hello[0-9]World$/', $code);
         }
+    }
+
+    /**
+     * @dataProvider exceptionDataProvider
+     *
+     * @param CodeGenerationOptions $options
+     * @param int $amount
+     * @param string $expectedMessage
+     */
+    public function testGenerateUniqueException(CodeGenerationOptions $options, $amount, $expectedMessage)
+    {
+        $this->expectException(WrongAmountCodeGeneratorException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $this->generator->generateUnique($options, $amount);
     }
 
     public function generateDataProvider()
@@ -96,6 +113,32 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
                     ->setDashesSequence(2),
                 'expected' => '/^Пр-ив-ет-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]М-ед-ве-д$/',
             ]
+        ];
+    }
+
+    public function exceptionDataProvider()
+    {
+        return [
+            [
+                'options' => (new CodeGenerationOptions())
+                    ->setCodeLength(2)
+                    ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE),
+                'amount' => 1234,
+                'expectedMessage' => 'Cant generate 1234 of codes. Only 100 combinations available for given options',
+            ],
+            [
+                'options' => (new CodeGenerationOptions())
+                    ->setCodeLength(2)
+                    ->setCodeType(CodeGenerationOptions::ALPHABETIC_CODE_TYPE),
+                'amount' => 12345,
+                'expectedMessage' => 'Cant generate 12345 of codes. Only 2704 combinations available for given options',
+            ],
+            [
+                'options' => (new CodeGenerationOptions())
+                    ->setCodeLength(2),
+                'amount' => 12345,
+                'expectedMessage' => 'Cant generate 12345 of codes. Only 3844 combinations available for given options',
+            ],
         ];
     }
 }
