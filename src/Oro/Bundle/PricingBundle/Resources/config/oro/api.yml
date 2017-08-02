@@ -51,3 +51,34 @@ api:
                 priceList:
                     actions:
                         update_relationship: false
+
+        Oro\Bundle\PricingBundle\Entity\ProductPrice:
+            filters:
+                fields:
+                    priceList:
+                        operators: ['=']
+            fields:
+                # this is added in order to properly handle "price" parameter that is created out of these values
+                value:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                currency:
+                    form_options:
+                        mapped: false
+                        constraints:
+                          - NotBlank: ~
+                productSku:
+                    exclude: true
+            actions:
+                update_relationship:
+                    exclude: true
+                get_subresource:
+                    exclude: true
+                get_relationship:
+                    exclude: true
+                delete_relationship:
+                    exclude: true
+                add_relationship:
+                    exclude: true

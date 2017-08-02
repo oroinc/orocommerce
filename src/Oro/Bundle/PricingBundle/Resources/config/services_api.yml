@@ -91,3 +91,9 @@ services:
         arguments:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
             - '@oro_pricing.api.build_combined_price_list_on_schedule_delete.inner'
+
+    oro_pricing.api.set_price_by_value_and_currency:
+        class: 'Oro\Bundle\CurrencyBundle\Processor\SetPriceByValueAndCurrencyProcessor'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_pricing.entity.product_price.class%' }
