@@ -5,6 +5,7 @@ namespace Oro\Bundle\FlatRateShippingBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
@@ -20,6 +21,7 @@ use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -29,6 +31,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
      * @internal
      */
     const PREVIOUS_CLASS_NAME = 'Oro\Bundle\FlatRateBundle\Migrations\Data\ORM\LoadFlatRateIntegration';
+    const MAIN_USER_ID = 1;
 
     /**
      * @var ContainerInterface
@@ -111,6 +114,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
             ->setName('Flat Rate')
             ->setEnabled(true)
             ->setOrganization($this->getOrganization($manager))
+            ->setDefaultUserOwner($this->getMainUser($manager))
             ->setTransport($transport);
 
         $manager->persist($channel);
@@ -165,6 +169,24 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
         }
 
         return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return User
+     *
+     * @throws EntityNotFoundException
+     */
+    public function getMainUser(ObjectManager $manager)
+    {
+        /** @var User $entity */
+        $entity = $manager->getRepository(User::class)->find(self::MAIN_USER_ID);
+        if (!$entity) {
+            throw new EntityNotFoundException('Main user does not exist.');
+        }
+
+        return $entity;
     }
 
     /**
