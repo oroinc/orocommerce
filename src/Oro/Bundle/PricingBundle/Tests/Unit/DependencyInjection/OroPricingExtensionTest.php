@@ -35,6 +35,7 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.api.on_schedule_delete_list_processor',
             'oro_pricing.api_form_subscriber.add_schdules_to_price_list',
             'oro_pricing.api.set_price_by_value_and_currency',
+            'oro_pricing.entity_listener.product_price.reset_price_rule',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

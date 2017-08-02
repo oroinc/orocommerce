@@ -1103,3 +1103,9 @@ services:
         arguments:
             - '@oro_pricing.provider.price_list_provider'
             - '@oro_pricing.shard_manager'
+
+    oro_pricing.entity_listener.product_price.reset_price_rule:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPrice\ResetPriceRuleFieldProductPriceEntityListener'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: preUpdate }
