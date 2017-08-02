@@ -58,9 +58,6 @@ class CouponGenerator implements CouponGeneratorInterface
                 $bulkSize = min(self::BULK_SIZE, $options->getCouponQuantity() - $inserted);
                 $codes = $this->couponGenerator->generateUnique($options, $bulkSize);
                 $generatedAmount = count($codes);
-                if ($generatedAmount < $bulkSize) {
-                    $fails = self::LENGTH_SWITCH_MAX_FAILS + 1; // switch immediatly to next length after insert
-                }
                 $codes = $this->filter($codes);
 
                 if ($codes) {
@@ -79,7 +76,7 @@ class CouponGenerator implements CouponGeneratorInterface
                 if (count($codes) / $generatedAmount < self::LENGTH_SWITCH_THRESHOLD) {
                     $fails++;
                 }
-                if ($fails > self::LENGTH_SWITCH_MAX_FAILS) {
+                if ($fails > self::LENGTH_SWITCH_MAX_FAILS || $generatedAmount < $bulkSize) {
                     $options->setCodeLength($options->getCodeLength() + 1);
                     $fails = 0;
                 }
