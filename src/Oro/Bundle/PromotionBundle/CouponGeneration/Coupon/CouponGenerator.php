@@ -19,7 +19,7 @@ class CouponGenerator implements CouponGeneratorInterface
 {
     const BULK_SIZE = 1000;
 
-    const LENGTH_SWITCH_THRESHOLD = 0.3;
+    const LENGTH_SWITCH_THRESHOLD = 0.25;
 
     const LENGTH_SWITCH_MAX_FAILS = 10;
 
