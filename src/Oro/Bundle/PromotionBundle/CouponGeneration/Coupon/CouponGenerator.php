@@ -48,17 +48,16 @@ class CouponGenerator implements CouponGeneratorInterface
     public function generateAndSave(CouponGenerationOptions $options)
     {
         $options = clone $options;
-        $fails = 0;
-        $inserted = 0;
         $statistic = [];
-        $connection = $this->getConnection();
 
-        while ($inserted < $options->getCouponQuantity()) {
-            $connection->beginTransaction();
-            try {
+        $this->getConnection()->transactional(function (Connection $conn) use (&$statistic, $options) {
+            $fails = 0;
+            $inserted = 0;
+            while ($inserted < $options->getCouponQuantity()) {
                 $requiredAmount = $options->getCouponQuantity() - $inserted;
                 $bulkSize = $requiredAmount > self::BULK_SIZE ? self::BULK_SIZE : $requiredAmount;
                 $codes = $this->getUniqueCodes($options, $bulkSize);
+
                 if ($codes) {
                     $statement = $this->getInsertStatement($options, count($codes));
                     foreach ($codes as $key => $code) {
@@ -79,13 +78,8 @@ class CouponGenerator implements CouponGeneratorInterface
                     $options->setCodeLength($options->getCodeLength() + 1);
                     $fails = 0;
                 }
-
-                $connection->commit();
-            } catch (\Exception $e) {
-                $connection->rollBack();
-                throw $e;
             }
-        }
+        });
 
         return $statistic;
     }
