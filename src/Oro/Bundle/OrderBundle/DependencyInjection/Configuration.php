@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\DependencyInjection;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -33,7 +34,19 @@ class Configuration implements ConfigurationInterface
                         Product::INVENTORY_STATUS_IN_STOCK,
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
                     ]
-                ]
+                ],
+                'order_automation_enable_cancellation' => [
+                    'value' => true,
+                ],
+                'order_automation_applicable_statuses' => [
+                    'value' => [Order::INTERNAL_STATUS_OPEN]
+                ],
+                'order_automation_target_status' => [
+                    'value' => Order::INTERNAL_STATUS_CANCELLED
+                ],
+                'order_creation_new_internal_order_status' => [
+                    'value' => Order::INTERNAL_STATUS_OPEN
+                ],
             ]
         );
 

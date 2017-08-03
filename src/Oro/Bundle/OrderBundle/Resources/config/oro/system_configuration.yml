@@ -2,6 +2,10 @@ system_configuration:
     groups:
         orders:
             title: oro.order.system_configuration.groups.orders.title
+        order_automation:
+            title: oro.order.system_configuration.groups.order_automation.title
+        order_creation:
+            title: oro.order.system_configuration.groups.order_creation.title
     fields:
         oro_order.backend_product_visibility:
             data_type: array
@@ -13,6 +17,48 @@ system_configuration:
             type: oro_product_inventory_status_select
             options:
                 label: oro.order.system_configuration.fields.frontend_product_visibility.title
+        oro_order.order_automation_enable_cancellation:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: oro.order.system_configuration.fields.order_automation_enable_cancellation.title
+                tooltip: oro.order.system_configuration.fields.order_automation_enable_cancellation.tooltip
+                attr:
+                    'data-dependee-id': 'order_automation_enable_cancellation'
+        oro_order.order_automation_applicable_statuses:
+            data_type: array
+            type: oro_enum_id_choice
+            options:
+                label: oro.order.system_configuration.fields.order_automation_applicable_statuses.title
+                tooltip: oro.order.system_configuration.fields.order_automation_applicable_statuses.tooltip
+                enum_code: order_internal_status
+                multiple: true
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'order_automation_enable_cancellation'
+                    'data-show-if': 'checked'
+        oro_order.order_automation_target_status:
+            data_type: string
+            type: oro_enum_id_choice
+            options:
+                label: oro.order.system_configuration.fields.order_automation_target_status.title
+                tooltip: oro.order.system_configuration.fields.order_automation_target_status.tooltip
+                enum_code: order_internal_status
+                multiple: false
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'order_automation_enable_cancellation'
+                    'data-show-if': 'checked'
+        oro_order.order_creation_new_internal_order_status:
+            data_type: string
+            type: oro_enum_id_choice
+            options:
+                label: oro.order.system_configuration.fields.order_creation_new_internal_order_status.title
+                tooltip: oro.order.system_configuration.fields.order_creation_new_internal_order_status.tooltip
+                enum_code: order_internal_status
+                multiple: false
+
     tree:
         system_configuration:
             commerce:
@@ -27,3 +73,18 @@ system_configuration:
                                     backend_inventory_statuses_visibility:
                                         children:
                                             - oro_order.backend_product_visibility
+                    orders:
+                        children:
+                            order_automation:
+                                children:
+                                    orders_history_open_orders:
+                                        children:
+                                            - oro_order.order_automation_enable_cancellation
+                                            - oro_order.order_automation_applicable_statuses
+                                            - oro_order.order_automation_target_status
+                            order_creation:
+                                children:
+                                    orders_history_open_orders:
+                                        children:
+                                            - oro_order.order_creation_new_internal_order_status
+
