@@ -29,28 +29,14 @@ class CouponGenerationHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        /** @var CouponGenerationOptions|\PHPUnit_Framework_MockObject_MockObject $couponGenerationOptions */
-        $couponGenerationOptions = $this->createMock(CouponGenerationOptions::class);
-
-        /** @var ActionData|\PHPUnit_Framework_MockObject_MockObject $actionData */
-        $actionData = $this->createMock(ActionData::class);
-        $actionData
-            ->expects($this->once())
-            ->method('get')
-            ->with($this->equalTo('couponGenerationOptions'))
-            ->willReturn($couponGenerationOptions)
-        ;
-
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form **/
-        $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('getData')->willReturn($actionData);
+        $options = new CouponGenerationOptions();
 
         $this->couponGenerator
             ->expects($this->once())
             ->method('generateAndSave')
-            ->with($this->identicalTo($couponGenerationOptions))
+            ->with($this->identicalTo($options))
         ;
 
-        $this->couponGenerationHandler->process($form);
+        $this->couponGenerationHandler->process($options);
     }
 }

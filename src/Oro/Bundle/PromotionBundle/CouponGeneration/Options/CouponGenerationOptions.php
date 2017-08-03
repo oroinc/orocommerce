@@ -33,7 +33,7 @@ class CouponGenerationOptions extends CodeGenerationOptions
     /**
      * @var \DateTime
      */
-    protected $expirationDate;
+    protected $validUntil;
 
     /**
      * @var BusinessUnit
@@ -107,17 +107,17 @@ class CouponGenerationOptions extends CodeGenerationOptions
     /**
      * @return \DateTime
      */
-    public function getExpirationDate()
+    public function getValidUntil()
     {
-        return $this->expirationDate;
+        return $this->validUntil;
     }
 
     /**
-     * @param \DateTime $expirationDate
+     * @param \DateTime $validUntil
      */
-    public function setExpirationDate($expirationDate)
+    public function setValidUntil($validUntil)
     {
-        $this->expirationDate = $expirationDate;
+        $this->validUntil = $validUntil;
     }
 
     /**

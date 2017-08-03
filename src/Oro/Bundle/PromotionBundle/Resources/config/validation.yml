@@ -57,8 +57,10 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
     properties:
         owner:
             - NotBlank:
+                groups: ['generation']
         couponQuantity:
             - NotBlank:
+                groups: ['generation']
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
                 min: 0
@@ -79,15 +81,9 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
             - Range:
                 min: 0
                 max: 255
-
-Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions:
-    properties:
-        codeLength:
-            - NotBlank: ~
+        validUntil:
+            - DateTime: ~
+        dashesSequence:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
-                min: 0
-                max: 255
-        codeType:
-            - NotBlank: ~
-
+                min: 1

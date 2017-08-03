@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Controller;
 
-use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\BaseCouponType;
-use Oro\Bundle\PromotionBundle\Form\Type\CouponCodePreviewType;
+use Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -127,27 +127,23 @@ class CouponController extends Controller
     }
 
     /**
-     * @Route("/coupon-generation-preview", name="oro_promotion_coupon_generation_preview")
+     * @Route("/coupon-generation-preview", name="oro_promotion_coupon_generation_preview", methods={"POST"})
      * @AclAncestor("oro_promotion_coupon_view")
      * @param Request $request
      * @return JsonResponse
      */
     public function couponGenerationPreview(Request $request)
     {
-        $responseData = [];
-        $formData = $request->get('couponGenerationData');
-        if ($formData) {
-            $form = $this->createForm(CouponCodePreviewType::class, new CodeGenerationOptions());
-            $form->submit($formData);
-            if ($form->isValid()) {
-                $codeGenerationOptions = $form->getData();
-                $couponCodeGenerator = $this->get('oro_promotion.coupon_generation.code');
-                $codePreview = $couponCodeGenerator->generate($codeGenerationOptions);
-                $responseData['codePreview'] = $codePreview;
-            }
+        $options = new CouponGenerationOptions();
+        $form = $this->createForm(CouponGenerationType::class, $options, ['csrf_protection' => false]);
+        if (!empty($request->get('oro_action_operation')['couponGenerationOptions'])) {
+            $form->submit($request->get('oro_action_operation')['couponGenerationOptions']);
         }
-
-        return new JsonResponse($responseData);
+        if (!$form->isValid()) {
+            return new JsonResponse(['error' => (string)$form->getErrors(true, false)]);
+        }
+        $generator = $this->get('oro_promotion.coupon_generation.code');
+        return new JsonResponse(['error' => false, 'code' => $generator->generate($options)]);
     }
 
     /**

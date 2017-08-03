@@ -201,7 +201,6 @@ oro:
                     generate: Generate
                 couponQuantity.label: Coupon Quantity
                 codeLength.label: Code Length
-                expirationDate.label: Valid Until
                 codeType:
                     label: Code Type
                     numeric.label: Numeric

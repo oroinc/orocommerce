@@ -44,7 +44,7 @@ class CouponGenerationType extends AbstractType
                 'owner',
                 BusinessUnitSelectAutocomplete::NAME,
                 [
-                    'required' => false,
+                    'required' => true,
                     'label' => 'oro.user.owner.label',
                     'data' => $this->getCurrentBusinessUnit(),
                     'autocomplete_alias' => 'business_units_owner_search_handler',
@@ -65,13 +65,18 @@ class CouponGenerationType extends AbstractType
             ->add(
                 'promotion',
                 PromotionSelectType::NAME,
-                ['required' => false, 'label' => 'oro.promotion.coupon.promotion.label',]
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.promotion.label',
+                    'autocomplete_alias' => 'oro_promotion_use_coupons',
+                ]
             )
             ->add(
                 'usesPerCoupon',
                 IntegerType::class,
                 [
                     'required' => false,
+                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_coupon',
                     'label' => 'oro.promotion.coupon.uses_per_coupon.label',
                     'data' => 1
                 ]
@@ -81,14 +86,18 @@ class CouponGenerationType extends AbstractType
                 IntegerType::class,
                 [
                     'required' => false,
+                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_user',
                     'label' => 'oro.promotion.coupon.uses_per_user.label',
                     'data' => 1
                 ]
             )
             ->add(
-                'expirationDate',
+                'validUntil',
                 OroDateTimeType::NAME,
-                ['label' => 'oro.promotion.coupon.generation.expirationDate.label', 'required' => false]
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.valid_until.label',
+                ]
             )
             ->add(
                 'codeLength',
@@ -96,7 +105,8 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'oro.promotion.coupon.generation.codeLength.label',
-                    'data' => 12
+                    'data' => 12,
+                    'attr' => ['class' => 'promotion-coupon-generation-preview']
                 ]
             )->add(
                 'codeType',
@@ -110,22 +120,31 @@ class CouponGenerationType extends AbstractType
                         CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.alphabetic.label',
                     ],
+                    'attr' => ['class' => 'promotion-coupon-generation-preview']
                 ]
             )->add(
                 'codePrefix',
                 TextType::class,
-                ['required' => false, 'label' => 'oro.promotion.coupon.generation.codePrefix.label',]
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.generation.codePrefix.label',
+                    'attr' => ['class' => 'promotion-coupon-generation-preview']
+                ]
             )->add(
                 'codeSuffix',
                 TextType::class,
-                ['required' => false, 'label' => 'oro.promotion.coupon.generation.codeSuffix.label',]
+                [
+                    'required' => false,
+                    'label' => 'oro.promotion.coupon.generation.codeSuffix.label',
+                    'attr' => ['class' => 'promotion-coupon-generation-preview']
+                ]
             )->add(
                 'dashesSequence',
                 DashesSequenceType::class,
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.generation.dashesSequence.prefix.label',
-                    'attr' => ['class' => 'input-small'],
+                    'attr' => ['class' => 'input-small promotion-coupon-generation-preview'],
                 ]
             );
     }
