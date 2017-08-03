@@ -1,0 +1,23 @@
+// @theme: blank;
+
+.product-view-media-container {
+    position: $product-view-media-container-position;
+    z-index: z('base');
+
+    float: $product-view-media-container-float;
+
+    width: $product-view-media-container-width;
+    margin-bottom: $product-view-media-container-margin-bottom;
+
+    @include clearfix();
+}
+
+@include breakpoint('tablet') {
+    .product-view-media-container {
+        float: $product-view-media-container-tablet-float;
+
+        width: $product-view-media-container-tablet-width;
+        max-width: $product-view-media-container-tablet-max-width;
+        margin: $product-view-media-container-tablet-offset;
+    }
+}

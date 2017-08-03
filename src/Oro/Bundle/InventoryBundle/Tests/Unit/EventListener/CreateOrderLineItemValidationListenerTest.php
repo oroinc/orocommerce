@@ -65,9 +65,13 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
         );
     }
 
-    public function testOnLineItemValidate()
+    /**
+     * @param string $stepName
+     * @dataProvider onLineItemValidateProvider
+     */
+    public function testOnLineItemValidate($stepName)
     {
-        $event = $this->prepareEvent();
+        $event = $this->prepareEvent($stepName);
 
         $inventoryLevel = $this->createMock(InventoryLevel::class);
         $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
@@ -90,6 +94,21 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
             ->willReturn(true);
 
         $this->createOrderLineItemValidationListener->onLineItemValidate($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function onLineItemValidateProvider()
+    {
+        return [
+            [
+                'step' => 'order_review',
+            ],
+            [
+                'step' => 'checkout',
+            ],
+        ];
     }
 
     public function testWrongContext()
@@ -133,7 +152,11 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
         $this->createOrderLineItemValidationListener->onLineItemValidate($event);
     }
 
-    protected function prepareEvent()
+    /**
+     * @param string $stepName
+     * @return LineItemValidateEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareEvent($stepName = 'order_review')
     {
         $event = $this->getMockBuilder(LineItemValidateEvent::class)->disableOriginalConstructor()->getMock();
 
@@ -159,7 +182,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
         $workflowItem->expects($this->any())->method('getEntity')->willReturn($checkout);
 
         $workflowStep = $this->createMock(WorkflowStep::class);
-        $workflowStep->expects($this->once())->method('getName')->willReturn('order_review');
+        $workflowStep->expects($this->once())->method('getName')->willReturn($stepName);
 
         $workflowItem->expects($this->once())->method('getCurrentStep')->willReturn($workflowStep);
 

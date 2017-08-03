@@ -71,3 +71,9 @@ acls:
         label: oro.product.acl.related_products.edit.label
         group_name: ""
         category: "catalog"
+
+    oro_upsell_products_edit:
+        type: action
+        label: oro.product.acl.upsell_products.edit.label
+        group_name: ""
+        category: "catalog"

@@ -14,11 +14,8 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
-use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 
 class QuoteAddressType extends AbstractType
 {
@@ -72,7 +69,8 @@ class QuoteAddressType extends AbstractType
             function (FormEvent $event) use ($quote, $type, $isManualEditGranted) {
                 $form = $event->getForm();
 
-                $addresses = $this->quoteAddressManager->getGroupedAddresses($quote, $type);
+                $addressCollection = $this->quoteAddressManager->getGroupedAddresses($quote, $type);
+                $addresses = $addressCollection->toArray();
 
                 $customerAddressOptions = [
                     'label' => false,
@@ -82,7 +80,7 @@ class QuoteAddressType extends AbstractType
                     'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
                     'attr' => [
                         'data-addresses' => json_encode($this->getPlainData($addresses)),
-                        'data-default' => $this->getDefaultAddressKey($quote, $type, $addresses),
+                        'data-default' => $addressCollection->getDefaultAddressKey(),
                     ],
                 ];
 
@@ -223,38 +221,6 @@ class QuoteAddressType extends AbstractType
         );
 
         return $addresses;
-    }
-
-    /**
-     * @param Quote $quote
-     * @param string $type
-     * @param array $addresses
-     *
-     * @return null|string
-     */
-    protected function getDefaultAddressKey(Quote $quote, $type, array $addresses)
-    {
-        if (!$addresses) {
-            return null;
-        }
-
-        $addresses = call_user_func_array('array_merge', array_values($addresses));
-        $customerUser = $quote->getCustomerUser();
-        $addressKey = null;
-
-        /** @var AbstractDefaultTypedAddress $address */
-        foreach ($addresses as $key => $address) {
-            if ($address->hasDefault($type)) {
-                $addressKey = $key;
-                if ($address instanceof CustomerUserAddress &&
-                    $address->getFrontendOwner()->getId() === $customerUser->getId()
-                ) {
-                    break;
-                }
-            }
-        }
-
-        return $addressKey;
     }
 
     /**

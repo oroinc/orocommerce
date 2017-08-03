@@ -394,17 +394,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @param string $transitionName
-     * @return Crawler
-     */
-    protected function getTransitionPage($transitionName)
-    {
-        $crawler = $this->client->request('GET', sprintf('%s?transition=%s', self::$checkoutUrl, $transitionName));
-
-        return $crawler;
-    }
-
-    /**
      * @return ShoppingList|object
      */
     protected function getSourceEntity()
