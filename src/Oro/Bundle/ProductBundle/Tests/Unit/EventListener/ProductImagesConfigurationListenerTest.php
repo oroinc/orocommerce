@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener;
 use Prophecy\Argument;
-
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener;
-
 class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
 {
     const MESSAGE = 'message';
+
+    /**
+     * @internal
+     */
+    const SCOPE_APP = 'app';
 
     /**
      * @var TranslatorInterface
@@ -47,10 +49,10 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
         $this->translator->trans(Argument::type('string'))->willReturn(self::MESSAGE);
         $this->session->getFlashBag()->willReturn($this->prepareFlashBag()->reveal());
 
-        $this->listener->beforeSave($this->prepareEvent([
-            'oro_product.product_image_watermark_size' => 20,
-            'oro_product.product_image_watermark_position' => 'center',
-            'oro_product.product_image_watermark_file' => 'file'
+        $this->listener->afterUpdate($this->prepareEvent([
+            'oro_product.product_image_watermark_size' => ['old' => 20, 'new' => 21],
+            'oro_product.product_image_watermark_position' => ['old' => 'center', 'new' => 'top_left'],
+            'oro_product.product_image_watermark_file' => ['old' => 'file1', 'new' => 'file2']
         ]));
     }
 
@@ -58,20 +60,19 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator->trans(Argument::type('string'))->shouldNotBeCalled();
 
-        $this->listener->beforeSave($this->prepareEvent([
-            'oro_product.product_unit' => 'something',
+        $this->listener->afterUpdate($this->prepareEvent([
+            'oro_product.product_unit' => ['old' => 'something', 'new' => 'saomething2'],
         ]));
     }
 
     /**
      * @param array $settings
-     * @return ConfigSettingsUpdateEvent
+     *
+     * @return ConfigUpdateEvent
      */
     protected function prepareEvent(array $settings)
     {
-        $configManager = $this->prophesize(ConfigManager::class);
-
-        return new ConfigSettingsUpdateEvent($configManager->reveal(), $settings);
+        return new ConfigUpdateEvent($settings, self::SCOPE_APP, null);
     }
 
     /**
@@ -83,7 +84,7 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
         $flashBag
             ->add(
                 ProductImagesConfigurationListener::MESSAGE_TYPE,
-                self::MESSAGE.' <code>'.ProductImagesConfigurationListener::COMMAND.'</code>'
+                self::MESSAGE . ' <code>' . ProductImagesConfigurationListener::COMMAND . '</code>'
             )->shouldBeCalledTimes(1);
 
         return $flashBag;
