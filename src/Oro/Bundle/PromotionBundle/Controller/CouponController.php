@@ -141,7 +141,7 @@ class CouponController extends Controller
             $form->submit($formData);
             if ($form->isValid()) {
                 $codeGenerationOptions = $form->getData();
-                $couponCodeGenerator = $this->get('oro_promotion.coupon_generation.generator');
+                $couponCodeGenerator = $this->get('oro_promotion.coupon_generation.code');
                 $codePreview = $couponCodeGenerator->generate($codeGenerationOptions);
                 $responseData['codePreview'] = $codePreview;
             }

@@ -500,11 +500,10 @@ services:
     oro_promotion.coupon_generation.handler:
         class: 'Oro\Bundle\PromotionBundle\CouponGeneration\CouponGenerationHandler'
         arguments:
-            - 'oro_promotion.coupon_generation.coupon'
+            - '@oro_promotion.coupon_generation.coupon'
 
     oro_promotion.coupon_generation.code:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator
-        public: false
 
     oro_promotion.coupon_generation.coupon:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGenerator

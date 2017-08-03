@@ -84,7 +84,7 @@ operations:
             - '@call_service_method':
                 service: oro_promotion.coupon_generation.handler
                 method: process
-                method_parameters: [$.data, $.form]
+                method_parameters: [$.couponGenerationOptions]
             - '@flash_message':
                 message: oro_promotion.coupon.generation.message.save_success
                 type: 'success'

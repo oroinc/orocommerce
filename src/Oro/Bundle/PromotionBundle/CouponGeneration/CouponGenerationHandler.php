@@ -27,15 +27,10 @@ class CouponGenerationHandler
 
     /**
      * Process Coupon Generation operation request
-     *
-     * @param FormInterface $form
+     * @param CouponGenerationOptions $options
      */
-    public function process(FormInterface $form)
+    public function process(CouponGenerationOptions $options)
     {
-        /** @var ActionData $actionData */
-        $actionData = $form->getData();
-        /** @var CouponGenerationOptions $options */
-        $options = $actionData->get('couponGenerationOptions');
         $this->generator->generateAndSave($options);
     }
 }
