@@ -156,9 +156,16 @@ define(function(require) {
         onKeypressForbid: function(event) {
             var keyCode = event.originalEvent.charCode;
             var targetKeyCodes = [44, 46, 188, 190];
+            var precision = this._getUnitPrecision();
 
-            if (_.contains(targetKeyCodes, keyCode) && this._getUnitPrecision() > 0) {
-                event.target.value = parseInt(event.target.value).toFixed(this._getUnitPrecision());
+            if (_.contains(targetKeyCodes, keyCode) && precision > 0) {
+                event.target.value = parseInt(event.target.value).toFixed(precision);
+
+                if (!_.isUndefined(event.target.selectionStart)) {
+                    event.target.selectionEnd = event.target.value.length;
+                    event.target.selectionStart = event.target.value.length - precision;
+                }
+
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
