@@ -21,7 +21,9 @@ define(
                             'savedId': options.savedId,
                             'shoppingListCreateEnabled': options.shoppingListCreateEnabled
                         });
-                        widget.remove();
+                        if (!widget.disposed) {
+                            widget.remove();
+                        }
                     }
                 );
             }

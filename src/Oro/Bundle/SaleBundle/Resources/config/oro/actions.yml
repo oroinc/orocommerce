@@ -292,22 +292,32 @@ action_groups:
                     - '@assign_value':
                         parameters: [$.disallow_shipping_address_edit, false]
             - '@assign_value':
-                parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
+                conditions:
+                      '@not_empty': $.orderAddress
+                parameters: [$.checkoutData.shippingAddress, $.orderAddress]
             - '@assign_value':
-                parameters: [$.shippingMethod, $.data.quote.shippingMethod]
+                conditions:
+                      '@not_empty': $.data.quote.shippingEstimate
+                parameters: [$.checkoutData.shippingCost, $.data.quote.shippingEstimate]
             - '@assign_value':
-                parameters: [$.shippingMethodType, $.data.quote.shippingMethodType]
+                conditions:
+                      '@not_empty': $.data.quote.shippingMethod
+                parameters: [$.checkoutData.shippingMethod, $.data.quote.shippingMethod]
+            - '@assign_value':
+                conditions:
+                      '@not_empty': $.data.quote.shippingMethodType
+                parameters: [$.checkoutData.shippingMethodType, $.data.quote.shippingMethodType]
+            - '@assign_value':
+                conditions:
+                      '@empty': $.checkoutData
+                parameters: [$.checkoutData, []]
             - '@run_action_group':
                 action_group: start_checkout
                 parameters_mapping:
                     sourceCriteria:
                         quoteDemand: $.data
                     force: true
-                    data:
-                        shippingAddress: $.orderAddress
-                        shippingCost: $.shippingEstimate
-                        shippingMethod: $.shippingMethod
-                        shippingMethodType: $.shippingMethodType
+                    data: $.checkoutData
                     settings:
                         allow_manual_source_remove: false
                         auto_remove_source: false

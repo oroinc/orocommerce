@@ -9,4 +9,9 @@ api:
                     exclude: true
                 updatedAt:
                     exclude: true
+        Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/related_product.md'
+            actions:
+                update:
+                    exclude: true
         Oro\Bundle\ProductBundle\Entity\Brand: ~

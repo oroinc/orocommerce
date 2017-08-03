@@ -20,7 +20,6 @@ class BrandSelectType extends AbstractType
             [
                 'autocomplete_alias' => 'oro_product_brand',
                 'create_form_route' => 'oro_product_brand_create',
-                'create_enabled' => false,
                 'configs' => [
                     'placeholder' => 'oro.product.brand.form.choose'
                 ]

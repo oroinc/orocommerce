@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Twig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryExtension extends \Twig_Extension
 {
@@ -44,6 +45,8 @@ class CategoryExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('oro_category_list', [$this, 'getCategoryList']),
+            new \Twig_SimpleFunction('oro_product_category_full_path', [$this, 'getProductCategoryPath']),
+            new \Twig_SimpleFunction('oro_product_category_title', [$this, 'getProductCategoryTitle'])
         ];
     }
 
@@ -60,5 +63,49 @@ class CategoryExtension extends \Twig_Extension
         }
 
         return $tree;
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return string
+     */
+    public function getProductCategoryPath(Category $category): string
+    {
+        return implode(' / ', $this->getCategoriesTitles($category));
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return string
+     */
+    public function getProductCategoryTitle(Category $category): string
+    {
+        $categoriesTitles = $this->getCategoriesTitles($category);
+        return count($categoriesTitles) <= 2
+            ? implode(' / ', $categoriesTitles)
+            : reset($categoriesTitles) . ' /.../ ' . end($categoriesTitles);
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return array
+     */
+    protected function getCategoriesTitles(Category $category): array
+    {
+        $title = $category->getDefaultTitle();
+        if (!$title) {
+            return [];
+        }
+
+        $categoriesTitles = [$title];
+        while ($category->getParentCategory() && $category->getParentCategory()->getDefaultTitle()) {
+            $category = $category->getParentCategory();
+            $categoriesTitles[] = $category->getDefaultTitle();
+        }
+
+        return array_reverse($categoriesTitles);
     }
 }
