@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor;
 
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class BuildCombinedPriceListOnScheduleDeleteProcessor implements ProcessorInterface
+class BuildCombinedPriceListOnScheduleSaveProcessor implements ProcessorInterface
 {
     /**
      * @var CombinedPriceListActivationPlanBuilder
@@ -15,20 +15,11 @@ class BuildCombinedPriceListOnScheduleDeleteProcessor implements ProcessorInterf
     private $combinedPriceListBuilder;
 
     /**
-     * @var ProcessorInterface
-     */
-    private $deleteHandler;
-
-    /**
      * @param CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder
-     * @param ProcessorInterface                     $deleteHandler
      */
-    public function __construct(
-        CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder,
-        ProcessorInterface $deleteHandler
-    ) {
+    public function __construct(CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder)
+    {
         $this->combinedPriceListBuilder = $combinedPriceListBuilder;
-        $this->deleteHandler = $deleteHandler;
     }
 
     /**
@@ -37,9 +28,6 @@ class BuildCombinedPriceListOnScheduleDeleteProcessor implements ProcessorInterf
     public function process(ContextInterface $context)
     {
         $schedule = $context->getResult();
-
-        $this->deleteHandler->process($context);
-
         if (!$schedule instanceof PriceListSchedule) {
             return;
         }

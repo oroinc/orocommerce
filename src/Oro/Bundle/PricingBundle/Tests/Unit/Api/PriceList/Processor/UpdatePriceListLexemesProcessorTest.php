@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceList\Processor;
 
-use Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemesProcessor;
+use Oro\Bundle\PricingBundle\Api\PriceList\Processor\UpdatePriceListLexemesProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 use Oro\Component\ChainProcessor\ContextInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Api\Form;
+namespace Oro\Bundle\PricingBundle\Api\PriceListSchedule\Form;
 
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

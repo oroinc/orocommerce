@@ -1,18 +1,19 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor;
 
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class BuildCombinedPriceListOnScheduleDeleteListProcessor implements ProcessorInterface
+class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor implements ProcessorInterface
 {
     /**
-     * @var CombinedPriceListActivationPlanBuilder
+     * @var DoctrineHelper
      */
-    private $combinedPriceListBuilder;
+    private $doctrineHelper;
 
     /**
      * @var ProcessorInterface
@@ -20,14 +21,12 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessor implements ProcessorIn
     private $deleteHandler;
 
     /**
-     * @param CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder
-     * @param ProcessorInterface                     $deleteHandler
+     * @param DoctrineHelper     $doctrineHelper
+     * @param ProcessorInterface $deleteHandler
      */
-    public function __construct(
-        CombinedPriceListActivationPlanBuilder $combinedPriceListBuilder,
-        ProcessorInterface $deleteHandler
-    ) {
-        $this->combinedPriceListBuilder = $combinedPriceListBuilder;
+    public function __construct(DoctrineHelper $doctrineHelper, ProcessorInterface $deleteHandler)
+    {
+        $this->doctrineHelper = $doctrineHelper;
         $this->deleteHandler = $deleteHandler;
     }
 
@@ -40,7 +39,10 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessor implements ProcessorIn
 
         $this->deleteHandler->process($context);
 
-        $processed = [];
+        if ([] === $schedules) {
+            return;
+        }
+
         foreach ($schedules as $schedule) {
             if (!$schedule instanceof PriceListSchedule) {
                 continue;
@@ -50,15 +52,10 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessor implements ProcessorIn
                 continue;
             }
 
-            $priceList = $schedule->getPriceList();
-
-            if (in_array($priceList->getId(), $processed, true)) {
-                continue;
-            }
-
-            $this->combinedPriceListBuilder->buildByPriceList($priceList);
-            $processed[] = $priceList->getId();
+            $schedule->getPriceList()->refreshContainSchedule();
         }
+
+        $this->doctrineHelper->getEntityManager(PriceList::class)->flush();
     }
 
     /**

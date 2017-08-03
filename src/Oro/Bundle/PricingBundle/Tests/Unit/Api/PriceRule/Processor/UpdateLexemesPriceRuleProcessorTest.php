@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceRule\Processor;
 
-use Oro\Bundle\PricingBundle\Api\Processor\UpdateLexemesPriceRuleProcessor;
+use Oro\Bundle\PricingBundle\Api\PriceRule\Processor\UpdateLexemesPriceRuleProcessor;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 
 class UpdateLexemesPriceRuleProcessorTest extends AbstractUpdateLexemesTest

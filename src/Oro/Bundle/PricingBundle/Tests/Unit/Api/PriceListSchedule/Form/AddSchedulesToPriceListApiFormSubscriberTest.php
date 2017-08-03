@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Form;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceListSchedule\Form;
 
-use Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber;
+use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Form\AddSchedulesToPriceListApiFormSubscriber;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Symfony\Component\Form\FormEvent;

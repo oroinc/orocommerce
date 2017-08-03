@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceRule\Processor;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;

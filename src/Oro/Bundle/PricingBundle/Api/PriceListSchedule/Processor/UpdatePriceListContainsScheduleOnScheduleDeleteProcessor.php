@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceList;

@@ -1,15 +1,17 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceListSchedule\Processor;
 
+//@codingStandardsIgnoreStart
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor;
+use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use PHPUnit\Framework\TestCase;
+//@codingStandardsIgnoreEnd
 
 class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends TestCase
 {

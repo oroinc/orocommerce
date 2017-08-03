@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Api\Processor;
+namespace Oro\Bundle\PricingBundle\Api\PriceRule\Processor;
 
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
@@ -8,10 +8,9 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * This processor uses default delete processor to delete a PriceRule, but saves it in a variable to have
- * access to it after context is removed in order to update lexemes by related price list.
+ * This processor updates lexemes on PriceRule change.
  */
-class UpdateLexemesOnPriceRuleDeleteProcessor implements ProcessorInterface
+class UpdateLexemesPriceRuleProcessor implements ProcessorInterface
 {
     /**
      * @var PriceRuleLexemeHandler
@@ -19,18 +18,11 @@ class UpdateLexemesOnPriceRuleDeleteProcessor implements ProcessorInterface
     private $priceRuleLexemeHandler;
 
     /**
-     * @var ProcessorInterface
-     */
-    private $deleteProcessor;
-
-    /**
      * @param PriceRuleLexemeHandler $priceRuleLexemeHandler
-     * @param ProcessorInterface $deleteProcessor
      */
-    public function __construct(PriceRuleLexemeHandler $priceRuleLexemeHandler, ProcessorInterface $deleteProcessor)
+    public function __construct(PriceRuleLexemeHandler $priceRuleLexemeHandler)
     {
         $this->priceRuleLexemeHandler = $priceRuleLexemeHandler;
-        $this->deleteProcessor = $deleteProcessor;
     }
 
     /**
@@ -39,8 +31,6 @@ class UpdateLexemesOnPriceRuleDeleteProcessor implements ProcessorInterface
     public function process(ContextInterface $context)
     {
         $priceRule = $context->getResult();
-
-        $this->deleteProcessor->process($context);
 
         if (!$priceRule instanceof PriceRule) {
             return;
