@@ -76,7 +76,7 @@ operations:
                 couponGenerationOptions:
                     form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType
                     options:
-                        validation_groups: ['generation']
+                        validation_groups: ['generation', 'Default']
             attribute_default_values:
                 couponGenerationOptions:
                     $.couponGenerationOptions
