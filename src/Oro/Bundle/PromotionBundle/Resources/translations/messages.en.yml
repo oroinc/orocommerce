@@ -195,6 +195,25 @@ oro:
                     coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
                     uses_per_user: 'Limits how many times the coupon may be used by the same customer user'
                     uses_per_coupon: 'Limits how many times the coupon may be used'
+            generation:
+                label: Generate Coupons
+                action:
+                    generate: Generate
+                couponQuantity.label: Coupon Quantity
+                codeLength.label: Code Length
+                expirationDate.label: Valid Until
+                codeType:
+                    label: Code Type
+                    numeric.label: Numeric
+                    alphanumeric.label: Alphanumeric
+                    alphabetic.label: Alphabetic
+                codePrefix.label: Code Prefix
+                codeSuffix.label: Code Suffix
+                dashesSequence:
+                    prefix.label: Add Dashes Every
+                    suffix.label: Symbols
+                message:
+                    save_success: Generation of Coupons was successful
 
     applied_discount:
         name: Name
@@ -213,7 +232,7 @@ oro:
                 name: Name
                 amount: Amount
             nav_button:
-                information_notice: Promotion discounts will be recalculated after order saving
+                information_notice: Promotion discounts will be recalculated after saving the order
                 important: Important
                 save_without_discounts_recalculation: Save Without Discounts Recalculation
 

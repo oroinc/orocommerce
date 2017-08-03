@@ -41,6 +41,7 @@ class OroProductBundleInstaller implements
     const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'oro_product_short_desc';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
     const RELATED_PRODUCTS_TABLE_NAME = 'oro_product_related_products';
+    const UPSELL_PRODUCTS_TABLE_NAME = 'oro_product_upsell_product';
 
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
@@ -88,7 +89,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_15';
+        return 'v1_13';
     }
 
     /**
@@ -108,6 +109,8 @@ class OroProductBundleInstaller implements
         $this->createOroProductSlugTable($schema);
         $this->createOroProductSlugPrototypeTable($schema);
         $this->createRelatedProductsTable($schema);
+        $this->createUpsellProductTable($schema);
+
         $this->createOroBrandTable($schema);
         $this->createOroBrandDescriptionTable($schema);
         $this->createOroBrandNameTable($schema);
@@ -628,11 +631,11 @@ class OroProductBundleInstaller implements
         $table = $schema->createTable(self::RELATED_PRODUCTS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
-        $table->addColumn('related_product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('related_item_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['product_id'], 'idx_oro_product_related_products_product_id', []);
-        $table->addIndex(['related_product_id'], 'idx_oro_product_related_products_related_product_id', []);
-        $table->addUniqueIndex(['product_id', 'related_product_id'], 'idx_oro_product_related_products_unique');
+        $table->addIndex(['related_item_id'], 'idx_oro_product_related_products_related_item_id', []);
+        $table->addUniqueIndex(['product_id', 'related_item_id'], 'idx_oro_product_related_products_unique');
 
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),
@@ -642,7 +645,32 @@ class OroProductBundleInstaller implements
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product'),
-            ['related_product_id'],
+            ['related_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    private function createUpsellProductTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::UPSELL_PRODUCTS_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('related_item_id', 'integer', ['notnull' => true]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['product_id'], 'idx_oro_product_upsell_product_product_id', []);
+        $table->addIndex(['related_item_id'], 'idx_oro_product_upsell_product_related_item_id', []);
+        $table->addUniqueIndex(['product_id', 'related_item_id'], 'idx_oro_product_upsell_product_unique');
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['related_item_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

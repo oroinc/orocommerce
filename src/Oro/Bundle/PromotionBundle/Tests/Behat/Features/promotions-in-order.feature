@@ -1,4 +1,3 @@
-@selenium-incompatible
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions.yml
@@ -31,7 +30,7 @@ Feature: Promotions in Order page
       | order Discount Promotion     |
     When I go to Sales / Orders
     And I click "edit" on first row in grid
-    Then I should see "Promotion discounts will be recalculated after order saving"
+    Then I should see "Promotion discounts will be recalculated after saving the order"
     And I should see "line Item Discount Promotion" in "Order Promotions Grid" with following data:
       | Amount  | $5.00 |
     And I should see "order Discount Promotion" in "Order Promotions Grid" with following data:
@@ -73,6 +72,7 @@ Feature: Promotions in Order page
 
   Scenario: Change product's quantity and check that after saving without discount recalculation discount amount hasn't changed
     Given I operate as the Admin
+    And I click "Line Items"
     When I fill "Promotion Order Form" with:
       | SKU2ProductQuantity | 3 |
     Then I see next line item discounts for backoffice order:

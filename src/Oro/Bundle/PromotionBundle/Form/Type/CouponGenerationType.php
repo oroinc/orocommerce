@@ -24,7 +24,9 @@ class CouponGenerationType extends AbstractType
 {
     const NAME = 'oro_promotion_coupon_generation_type';
 
-    /** @var TokenAccessorInterface */
+    /**
+     * @var TokenAccessorInterface
+     */
     protected $tokenAccessor;
 
     public function __construct(TokenAccessorInterface $tokenAccessor)
