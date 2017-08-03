@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 84 84">
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 84 84">
   <defs>
     <style>.star {fill-rule:evenodd;fill:#cc5c28;filter:url(#shadow);}.label{fill-rule:evenodd;fill:#fff;}</style>
-    <filter id="shadow">
+    <filter id="shadow" filterRes="1500">
       <feOffset result="offOut" in="SourceAlpha" dy="2"/>
       <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1"/>
       <feBlend in="SourceGraphic" in2="blurOut"/>
