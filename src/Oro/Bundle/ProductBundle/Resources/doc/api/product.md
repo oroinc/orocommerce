@@ -816,3 +816,25 @@ Example:
 {@inheritdoc}
 
 Specify the category of the product
+
+### pageTemplate
+
+### create, update, get, get_list
+
+Specify the page template for the product
+
+## SUBRESOURCES
+
+### pageTemplate
+
+#### get_subresource
+
+Get the related pageTemplate entity for a specific product
+
+#### get_relationship
+
+Retrieve the ID of the pageTemplate for a specific product
+
+#### update_relationship
+
+Replace the pageTemplate for a specific product
