@@ -75,14 +75,16 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
             - Range:
                 min: 0
                 max: 2147483647
+        validUntil:
+            - DateTime: ~
         codeLength:
             - NotBlank: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
                 min: 1
                 max: 255
-        validUntil:
-            - DateTime: ~
+        codeType:
+            - NotBlank: ~
         dashesSequence:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
