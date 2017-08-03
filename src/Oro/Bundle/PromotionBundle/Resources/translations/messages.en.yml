@@ -213,7 +213,7 @@ oro:
                 name: Name
                 amount: Amount
             nav_button:
-                information_notice: Promotion discounts will be recalculated after order saving
+                information_notice: Promotion discounts will be recalculated after saving the order
                 important: Important
                 save_without_discounts_recalculation: Save Without Discounts Recalculation
 
