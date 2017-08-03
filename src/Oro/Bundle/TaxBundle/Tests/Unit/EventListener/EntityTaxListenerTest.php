@@ -16,6 +16,9 @@ use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
@@ -34,15 +37,10 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxManager = $this->getMockBuilder('Oro\Bundle\TaxBundle\Manager\TaxManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->taxManager = $this->createMock('Oro\Bundle\TaxBundle\Manager\TaxManager');
+        $this->entityManager = $this->createMock('Doctrine\ORM\EntityManager');
         $this->metadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+
         $this->entityManager->expects($this->any())->method('getClassMetadata')->willReturn($this->metadata);
 
         $this->listener = new EntityTaxListener($this->taxManager);
@@ -53,114 +51,156 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->listener, $this->taxManager, $this->entityManager, $this->metadata);
     }
 
-    public function testPrePersist()
+    /**
+     * @return \Generator
+     */
+    public function stateProvider()
     {
+        yield 'default' => ['state' => null, 'expected' => true];
+        yield 'enabled' => ['state' => true, 'expected' => true];
+        yield 'disabled' => ['state' => true, 'expected' => true];
+    }
+
+    /**
+     * @param null|bool $state
+     * @param bool $expected
+     *
+     * @dataProvider stateProvider
+     */
+    public function testPrePersist($state, $expected)
+    {
+        if (null !== $state) {
+            $this->listener->setEnabled($state);
+        }
+
         $order = new Order();
         $taxValue = new TaxValue();
-        $taxValue
-            ->setEntityClass(ClassUtils::getRealClass($order));
+        $taxValue->setEntityClass(ClassUtils::getRealClass($order));
 
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->taxManager->expects($this->once())
+        $this->taxManager->expects($this->exactly((int) $expected))
             ->method('createTaxValue')
             ->with($order)
             ->willReturn($taxValue);
 
-        $this->entityManager
-            ->expects($this->once())
-            ->method('persist')
-            ->with($taxValue);
+        $this->entityManager->expects($this->exactly((int) $expected))->method('persist')->with($taxValue);
 
-        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([]);
+        $this->metadata->expects($this->exactly((int) $expected))->method('getIdentifierValues')->willReturn([]);
 
         $this->listener->prePersist($order, $event);
 
         $this->assertEquals(0, $taxValue->getEntityId());
     }
 
-    public function testPrePersistWithId()
+    /**
+     * @param null|bool $state
+     * @param bool $expected
+     *
+     * @dataProvider stateProvider
+     */
+    public function testPrePersistWithId($state, $expected)
     {
+        if (null !== $state) {
+            $this->listener->setEnabled($state);
+        }
+
         $order = new Order();
         $taxValue = new TaxValue();
-        $taxValue
-            ->setEntityClass(ClassUtils::getRealClass($order));
+        $taxValue->setEntityClass(ClassUtils::getRealClass($order));
 
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
         $this->taxManager->expects($this->never())->method('createTaxValue');
-
-        $this->metadata->expects($this->any())->method('getIdentifierValues')->willReturn([1]);
+        $this->metadata->expects($this->exactly((int) $expected))->method('getIdentifierValues')->willReturn([1]);
 
         $this->listener->prePersist($order, $event);
 
         $this->assertEquals(0, $taxValue->getEntityId());
     }
 
-    public function testPreRemove()
+    /**
+     * @param null|bool $state
+     * @param bool $expected
+     *
+     * @dataProvider stateProvider
+     */
+    public function testPreRemove($state, $expected)
     {
-        $order = new Order();
+        if (null !== $state) {
+            $this->listener->setEnabled($state);
+        }
 
-        $this->taxManager
-            ->expects($this->once())
-            ->method('removeTax')
-            ->with($order);
+        $order = new Order();
+        $this->taxManager->expects($this->exactly((int) $expected))->method('removeTax')->with($order);
 
         $this->listener->preRemove($order);
     }
 
-    public function testPostPersistWithoutTaxValue()
+    /**
+     * @param null|bool $state
+     *
+     * @dataProvider stateProvider
+     */
+    public function testPostPersistWithoutTaxValue($state)
     {
+        if (null !== $state) {
+            $this->listener->setEnabled($state);
+        }
+
         $order = new Order();
         $event = new LifecycleEventArgs($order, $this->entityManager);
 
-        $this->entityManager->expects($this->never())
-            ->method('getUnitOfWork');
+        $this->entityManager->expects($this->never())->method('getUnitOfWork');
 
         $this->listener->postPersist($order, $event);
     }
 
-    public function testPostPersist()
+    /**
+     * @param Order $order
+     * @param TaxValue $taxValue
+     */
+    protected function setUpPrePersist(Order $order, TaxValue $taxValue)
     {
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $entityManager = $this->createMock('Doctrine\ORM\EntityManager');
 
         /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
-        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadata = $this->createMock('Doctrine\ORM\Mapping\ClassMetadata');
 
         $entityManager->expects($this->any())->method('getClassMetadata')->willReturn($metadata);
 
+        $event = new LifecycleEventArgs($order, $entityManager);
+
+        $this->taxManager->expects($this->once())->method('createTaxValue')->with($order)->willReturn($taxValue);
+
+        $entityManager->expects($this->once())->method('persist')->with($taxValue);
+
+        $this->listener->prePersist($order, $event);
+    }
+
+    public function testPostPersist()
+    {
         // Prepare listener state
         $order = new Order();
         $taxValue = new TaxValue();
-        $taxValue
-            ->setEntityClass(ClassUtils::getRealClass($order));
+        $taxValue->setEntityClass(ClassUtils::getRealClass($order));
 
-        $event = new LifecycleEventArgs($order, $entityManager);
-
-        $this->taxManager->expects($this->once())
-            ->method('createTaxValue')
-            ->with($order)
-            ->willReturn($taxValue);
-
-        $entityManager
-            ->expects($this->once())
-            ->method('persist')
-            ->with($taxValue);
-
-        $this->listener->prePersist($order, $event);
+        $this->setUpPrePersist($order, $taxValue);
 
         $orderId = 1;
         $this->setValue($order, 'id', $orderId);
 
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
+        $entityManager = $this->createMock('Doctrine\ORM\EntityManager');
+
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        $metadata = $this->createMock('Doctrine\ORM\Mapping\ClassMetadata');
+
+        $entityManager->expects($this->any())->method('getClassMetadata')->willReturn($metadata);
+
         // Test
-        $uow = $this->getMockBuilder('\Doctrine\ORM\UnitOfWork')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $uow = $this->createMock('Doctrine\ORM\UnitOfWork');
 
         $uow->expects($this->once())
             ->method('propertyChanged')
@@ -180,9 +220,47 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
         $metadata->expects($this->any())->method('getIdentifierValues')->willReturn([$orderId]);
 
+        $event = new LifecycleEventArgs($order, $entityManager);
         $this->listener->postPersist($order, $event);
 
         $this->assertEquals($orderId, $taxValue->getEntityId());
+    }
+
+    public function testPostPersistWithDisabledState()
+    {
+        $order = new Order();
+        $taxValue = new TaxValue();
+        $taxValue->setEntityClass(ClassUtils::getRealClass($order));
+
+        $this->listener->setEnabled(true);
+        $this->setUpPrePersist($order, $taxValue);
+
+        $this->listener->setEnabled(false);
+        $event = new LifecycleEventArgs($order, $this->entityManager);
+        $this->entityManager->expects($this->never())->method('getClassMetadata');
+        $this->entityManager->expects($this->never())->method('getUnitOfWork');
+
+        $this->listener->postPersist($order, $event);
+    }
+
+    public function testPreFlushWithDisabledState()
+    {
+        $order = new Order();
+        $taxValue = new TaxValue();
+        $taxValue->setEntityClass(ClassUtils::getRealClass($order));
+        $event = new PreFlushEventArgs($this->entityManager);
+
+        $this->listener->setEnabled(false);
+
+        $this->entityManager->expects($this->never())->method('getClassMetadata');
+        $this->entityManager->expects($this->never())->method('getUnitOfWork');
+        $this->taxManager->expects($this->never())->method('getTaxValue');
+        $this->taxManager->expects($this->never())->method('loadTax');
+        $this->taxManager->expects($this->never())->method('getTax');
+        $this->taxManager->expects($this->never())->method('saveTax');
+        $this->metadata->expects($this->never())->method('getIdentifierValues');
+
+        $this->listener->preFlush($taxValue, $event);
     }
 
     public function testPreFlushOnEntityWithoutSavedTaxValue()

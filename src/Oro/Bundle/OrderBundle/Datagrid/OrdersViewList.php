@@ -16,9 +16,9 @@ class OrdersViewList extends AbstractViewsList
         $view = new View(
             'oro_order.open_orders',
             [
-                'internalStatusId' => [
-                    'type'  => EnumFilterType::EQUAL,
-                    'value' => 'open'
+                'internalStatusName' => [
+                    'type'  => EnumFilterType::TYPE_IN,
+                    'value' => ['open']
                 ]
             ]
         );

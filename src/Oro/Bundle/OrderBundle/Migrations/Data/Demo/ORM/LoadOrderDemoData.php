@@ -8,19 +8,27 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
+use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
+use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -53,12 +61,12 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData',
-            'Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
-            'Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData',
-            'Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData',
+            LoadCustomerDemoData::class,
+            LoadCustomerUserDemoData::class,
+            LoadPaymentTermDemoData::class,
+            LoadPriceListDemoData::class,
+            LoadShoppingListDemoData::class,
+            LoadTaxConfigurationDemoData::class,
         ];
     }
 
@@ -88,7 +96,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         /** @var User $user */
         $user = $userRepository->findOneBy([]);
 
-        $customerUser = $this->getCustomerUser($manager);
+        $customerUser = $this->getCustomerUser();
 
         $rateConverter = $this->container->get('oro_currency.converter.rate');
 
@@ -140,7 +148,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
                 ->setTotalObject($total)
-                ->setSubtotalObject($subtotal);
+                ->setSubtotalObject($subtotal)
+                ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager));
 
             $paymentTermAccessor->setPaymentTerm($order, $this->getPaymentTerm($manager, $row['paymentTerm']));
 
@@ -186,12 +195,26 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     }
 
     /**
+     * @param string $name
      * @param ObjectManager $manager
-     * @return CustomerUser|null
+     *
+     * @return AbstractEnumValue|null|object
      */
-    protected function getCustomerUser(ObjectManager $manager)
+    protected function getOrderInternalStatusByName($name, ObjectManager $manager)
     {
-        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy([]);
+        return $manager
+            ->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
+            ->findOneBy(['id' => $name,]);
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return null|CustomerUser|object
+     */
+    protected function getCustomerUser($email = 'AmandaRCole@example.org')
+    {
+        return $this->getReference(LoadCustomerUserDemoData::ACCOUNT_USERS_REFERENCE_PREFIX . $email);
     }
 
     /**

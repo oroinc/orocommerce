@@ -5,32 +5,25 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentRuleIntegrationData;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    use ContainerAwareTrait;
 
-    /**
-     * Sets the container.
-     *
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    /** @var array */
+    protected $listenersToExclude = [];
 
     /**
      * {@inheritDoc}
@@ -40,11 +33,13 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
         return [
             LoadPaymentRuleIntegrationData::class,
             LoadPaymentTermDemoData::class,
-            LoadOrderDemoData::class,
+            LoadOrderLineItemDemoData::class,
+            LoadCustomerOrderLineItemsDemoData::class,
         ];
     }
 
     /**
+     * @param EntityManager $manager
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
@@ -52,6 +47,16 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
         $paymentTransactionProvider = $this->container->get('oro_payment.provider.payment_transaction');
 
         $orders = $this->container->get('doctrine')->getRepository('OroOrderBundle:Order')->findAll();
+
+        $orderTaxListener = $this->container->get('oro_tax.event_listener.order_tax');
+        $orderLineItemTaxListener = $this->container->get('oro_tax.event_listener.order_line_item_tax');
+
+        /**
+         * Listeners should be disable because of BB-11299
+         * TODO: Remove code after BB-11299
+         */
+        $orderTaxListener->setEnabled(false);
+        $orderLineItemTaxListener->setEnabled(false);
 
         /** @var Order[] $orders */
         foreach ($orders as $order) {
@@ -71,6 +76,11 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
 
             $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
         }
+
+        $manager->flush();
+
+        $orderTaxListener->setEnabled(true);
+        $orderLineItemTaxListener->setEnabled(true);
     }
 
     /**
