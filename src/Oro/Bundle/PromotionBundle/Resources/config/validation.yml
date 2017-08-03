@@ -63,7 +63,7 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
                 groups: ['generation']
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
-                min: 0
+                min: 1
                 max: 2147483647
         usesPerCoupon:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
@@ -79,7 +79,7 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
             - NotBlank: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
-                min: 0
+                min: 1
                 max: 255
         validUntil:
             - DateTime: ~
