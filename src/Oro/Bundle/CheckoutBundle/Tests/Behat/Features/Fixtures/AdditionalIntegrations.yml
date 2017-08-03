@@ -1,0 +1,28 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    flatRateLabel2:
+        string: 'Flat Rate Two'
+    paymentTermLabel2:
+        string: 'Payment Term Two'
+
+Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings:
+    flatRateSettings2:
+        addLabel: ['@flatRateLabel2']
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
+    paymentTermSettings2:
+        addLabel: ['@paymentTermLabel2']
+        addShortLabel: ['@paymentTermLabel2']
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    flatRateIntegration2:
+        type: '<{flat_rate_type}>'
+        name: 'Flat Rate Two'
+        enabled: true
+        organization: '@organization'
+        transport: '@flatRateSettings2'
+    paymentTermIntegration2:
+        type: '<{payment_term_type}>'
+        name: 'Payment Term Two'
+        enabled: true
+        organization: '@organization'
+        transport: '@paymentTermSettings2'

@@ -18,11 +18,11 @@ Feature: Promotions in Shopping List
     When I open page with shopping list List 1
     Then I see next line item discounts for shopping list "List 1":
       | SKU              | Discount |
-      | SKU2             | $5.00    |
       | SKU1             |          |
+      | SKU2             | $5.00    |
     And I see next subtotals for "Shopping List":
-      | Subtotal | Amount |
-      | Discount | $12.50 |
+      | Subtotal | Amount  |
+      | Discount | -$12.50 |
 
   Scenario: Prepare configurable product
     Given I proceed as the Admin
@@ -79,4 +79,4 @@ Feature: Promotions in Shopping List
       | SKU_CONFIGURABLE | $5.00    |
     And I see next subtotals for "Shopping List":
       | Subtotal | Amount |
-      | Discount | $7.50 |
+      | Discount | -$7.50 |

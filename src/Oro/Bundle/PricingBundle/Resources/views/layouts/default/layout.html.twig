@@ -32,15 +32,14 @@
     {% set options = {
         route: route,
         events: events|default({}),
-        selectors: {
-            subtotalTemplate: '#frontend-subtotals-template',
-            template: '#frontend-totals-template',
-        }|merge(selectors|default({})),
         entityClassName: oro_url_class_name(entityClassName),
         entityId: entityId,
         skipMaskView: skipMaskView,
         data: totals
     }%}
+    {% if selectors is defined %}
+        {% set options = options|merge({selectors: selectors}) %}
+    {% endif %}
     {% placeholder oro_pricing_totals_before %}
 
     {% set pageComponent = pageComponent|default('oropricing/js/app/components/totals-component') %}

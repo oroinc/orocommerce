@@ -1,0 +1,8 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div {{ UI.renderPageComponentAttributes({
+    module: 'oroproduct/js/app/components/related-items-tabs-component',
+    options: {
+        'data': relatedItemsTabsItems
+    }
+}) }}></div>

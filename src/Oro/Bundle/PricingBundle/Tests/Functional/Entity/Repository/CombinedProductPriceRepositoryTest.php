@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
@@ -12,6 +13,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -346,6 +348,26 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ->getQuery()
             ->getArrayResult();
         $this->assertEquals($expectedPrices, $prices);
+    }
+
+    public function testDeleteByProductUnit()
+    {
+        /** @var Product $product1 */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $productUnit = $this->getReference(LoadProductUnits::LITER);
+
+        $repo = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository(CombinedProductPrice::class);
+
+        $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
+        $this->assertCount(6, $result);
+
+        $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+        $repo->deleteByProductUnit($shardManager, $product, $productUnit);
+
+        $result = $repo->findBy(['product' => $product, 'unit' => $productUnit]);
+        $this->assertCount(0, $result);
     }
 
     /**

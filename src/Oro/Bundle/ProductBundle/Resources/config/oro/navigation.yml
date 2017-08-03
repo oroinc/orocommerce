@@ -53,9 +53,9 @@ navigation:
                     routes: ['oro_attribute_family_*']
             brand_list:
                 label: 'oro.product.brand.menu.entity_plural_label'
-                route: 'oro_brand_index'
+                route: 'oro_product_brand_index'
                 extras:
-                    routes: ['oro_brand_*']
+                    routes: ['oro_product_brand_*']
                     description: 'oro.product.brand.menu.description'
 
         tree:
@@ -83,6 +83,6 @@ navigation:
         oro_product_frontend_product_index: ~
         oro_product_frontend_product_view: '%name%'
         oro_product_frontend_quick_add: 'oro.product.frontend.quick_add.title'
-        oro_brand_index: ~
-        oro_brand_view: "%subject%"
-        oro_brand_edit: "%subject% - edit"
+        oro_product_brand_index: ~
+        oro_product_brand_view: "%subject%"
+        oro_product_brand_edit: "%subject% - edit"

@@ -16,10 +16,6 @@ oro:
         quantity.label: Qty
         quantity.placeholder: "Qty #"
         variant_fields.label: Configurable Attributes
-        unit.label: Unit
-        price.label: Price
-        has_variants.label: Has Variants
-        variant_fields.label: Variant Fields
         inventory_status:
             label: Inventory Status
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
@@ -178,6 +174,9 @@ oro:
                 additional.label: Additional
                 listing.label: Listing
 
+        related_products:
+            label: Related Products
+
         lineitem:
             unit.label: Unit
             quantity:
@@ -202,6 +201,8 @@ oro:
                 remove.label: '[Product Attribute] Remove attribute'
             related_products:
                 edit.label: '[Related Products] Edit related products'
+            upsell_products:
+                edit.label: '[Up-sell Products] Edit up-sell products'
 
         rounding:
             type:
@@ -221,6 +222,11 @@ oro:
             images: Images
             design: Design
             relatedItems: Related Items
+            upsellItems: Up-sell items
+
+        tabs:
+            relatedProducts: Related Products
+            upsellProducts: Up-sell Products
 
         widgets:
             product_information: Product Information
@@ -229,6 +235,10 @@ oro:
               label: Select related products
               limit_has_been_reached: Limit of related products has been reached
             select_products: Select products
+            select_upsell_products:
+              title: Select up-sell products for {{ sku }} - {{ name }}
+              label: Select up-sell products
+              limit_has_been_reached: Limit of up-sell products has been reached
 
         controller:
             product.saved.message: Product has been saved
@@ -247,6 +257,7 @@ oro:
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
                 related_items.title: 'Related Items'
+                upsell_products.title: 'Up-sell Products'
                 related_products.title: 'Related Products'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
@@ -259,6 +270,7 @@ oro:
                 new_product_icons.title: New Product Icons
                 product_promotions.title: Promotions
                 new_arrivals.title: New Arrivals
+                image_gallery.title: 'Image Gallery Options'
             fields:
                 enable_related_products.label: 'Enable Related Products'
                 related_products_bidirectional:
@@ -267,6 +279,22 @@ oro:
                 max_number_of_related_products:
                     label: 'Maximum Number of Assigned Items'
                     tooltip: 'You may use this option to set the limit on the number of related products that the catalog managers can link.'
+                enable_upsell_products.label: 'Enable Up-sell Products'
+                max_number_of_upsell_products:
+                    label: 'Maximum Number of Assigned Items'
+                    tooltip: 'You may use this option to set the limit on the number of up-sell items that the catalog managers can link.'
+                related_products_max_items:
+                    label: 'Maximum Items'
+                    tooltip: 'Show not more than the specified number of items (applied after filtering out the products that are not visible to the current user).'
+                related_products_min_items:
+                    label: 'Minimum Items'
+                    tooltip: 'Hide the "Related Items" block completely if the number of items is less than the specified value.'
+                related_products_show_add_button:
+                    label: 'Show Add Button'
+                    tooltip: 'When "Add To..." button is disabled the users will need to go the related product view page in order to add it to a shopping list.'
+                related_products_use_slider_on_mobile:
+                    label: 'Use Slider On Mobile'
+                    tooltip: 'When slider is enabled, the "Related Items" block will occupy less screen space, while showing larger product images.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
@@ -333,6 +361,9 @@ oro:
                 new_arrivals_use_slider_on_mobile:
                     label: Use Slider On Mobile
                     tooltip: When slider is enabled, the "New Arrivals" block will occupy less screen space, while showing larger product images.
+                popup_gallery_on_product_view:
+                    label: 'Popup Gallery on Product View'
+                    tooltip: 'Inline gallery view may work better for some product templates.'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

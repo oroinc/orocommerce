@@ -44,10 +44,16 @@ placeholders:
             applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_taxes_totals_template:
             template: OroTaxBundle:Js:totals.html.twig
-            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable:
+                - "@oro_tax.provider.taxation_settings_provider->isEnabled()"
+                - "@oro_layout.helper->isTemplateRequest()"
         order_taxes_item_taxes_template:
             template: OroTaxBundle:Js:item_taxes.html.twig
-            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable:
+                - "@oro_tax.provider.taxation_settings_provider->isEnabled()"
+                - "@oro_layout.helper->isTemplateRequest()"
         order_taxes_item_items_template:
             template: OroTaxBundle:Js:item_items.html.twig
-            applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
+            applicable:
+                - "@oro_tax.provider.taxation_settings_provider->isEnabled()"
+                - "@oro_layout.helper->isTemplateRequest()"

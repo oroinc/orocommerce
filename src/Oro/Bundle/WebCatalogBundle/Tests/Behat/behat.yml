@@ -15,6 +15,11 @@ oro_behat_extension:
                 type: xpath
                 locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]/parent::li/ul//li[contains(@class, "jstree-node")]/a[contains(., "By Brand")]'
 
+        Default Web Catalog:
+            selector:
+                type: xpath
+                locator: '//li[contains(@class, "jstree-node")]/a[contains(., "Default Web Catalog")]'
+
         Content Node:
             selector: 'form[name="oro_web_catalog_content_node"]'
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

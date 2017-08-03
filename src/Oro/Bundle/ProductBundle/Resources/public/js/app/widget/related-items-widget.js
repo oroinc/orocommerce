@@ -39,7 +39,7 @@ define(function(require) {
         },
 
         setSelectedCount: function(grid) {
-            var selectedCount = grid.metadata.options.urlParams.relatedProducts;
+            var selectedCount = grid.metadata.options.urlParams.relatedItemsIds;
             this.selectedCount = selectedCount !== 'undefined' ? selectedCount.length : 0;
         },
 
@@ -54,13 +54,13 @@ define(function(require) {
         },
 
         prepareContentRequestOptions: function(data, method, url) {
-            var addedProductRelatedIds = $(this.options.itemsIdsToAdd).val();
-            var removedProductRelatedIds = $(this.options.itemsIdsToRemove).val();
+            var addedProductRelatedItemsIds = $(this.options.itemsIdsToAdd).val();
+            var removedProductRelatedItemsIds = $(this.options.itemsIdsToRemove).val();
 
             var options = RelatedItemsWidget.__super__.prepareContentRequestOptions.apply(this, arguments);
             options.data += '&' + $.param({
-                addedProductRelated: addedProductRelatedIds,
-                removedProductRelated: removedProductRelatedIds
+                addedProductRelatedItems: addedProductRelatedItemsIds,
+                removedProductRelatedItems: removedProductRelatedItemsIds
             });
 
             return options;
@@ -71,7 +71,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.trigger('product:save-related-items', this.getAppendedIds(), this.getRemovedIds());
+            mediator.trigger('change:' + this.options.gridName, this.getAppendedIds(), this.getRemovedIds());
             this.remove();
         },
 
@@ -120,7 +120,7 @@ define(function(require) {
 
             $(this.elements.widgetActions).prepend(this.options.limitErrorTemplate({
                 dataAttr: this.elements.limitError.replace(new RegExp(/\[|]/g), ''),
-                msg: __('oro.product.widgets.select_related_products.limit_has_been_reached')
+                msg: __('oro.product.widgets.select_related_items.limit_has_been_reached')
             }));
         },
 

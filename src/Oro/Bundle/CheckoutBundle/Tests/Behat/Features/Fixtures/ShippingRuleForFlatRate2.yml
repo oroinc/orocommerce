@@ -1,0 +1,26 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    shippingRuleForFlatRate2:
+        name: 'Flat Rate 2$'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeForFlatRate2Config:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1
+            type: 'per_order'
+            handling_fee: 1
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfigForFlatRate2:
+        method: '<("flat_rate_".@flatRate2Integration->id)>'
+        typeConfigs: ['@shippingMethodTypeForFlatRate2Config']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRuleForFlatRate2:
+        rule: '@shippingRuleForFlatRate2'
+        methodConfigs: ['@shippingMethodConfigForFlatRate2']
+        currency: 'USD'
+        organization: '@organization'

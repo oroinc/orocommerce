@@ -1,5 +1,6 @@
 datagrids:
     pricing-price-list-select-grid:
+        extended_entity_name: '%oro_pricing.entity.price_list.class%'
         acl_resource:      oro_pricing_price_list_view
         options:
             entityHint:        price lists
@@ -583,12 +584,6 @@ datagrids:
                 priceListName:
                     type:      price_list
                     data_name: priceList.id
-                    options:
-                        field_type: entity
-                        field_options:
-                            class:    %oro_pricing.entity.price_list.class%
-                            property: name
-                            required: true
                 quantity:
                     type:      number
                     data_name: productPrice.quantity
@@ -607,7 +602,7 @@ datagrids:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
             default:
-                priceListName: { value: "@oro_pricing.provider.price_list_provider->getDefaultPriceListId" }
+                priceListName: { value: "@oro_pricing.provider.price_list_default_value->getDefaultPriceListId" }
         properties:
             priceListId: ~
             view_price_list_link:

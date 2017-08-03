@@ -121,7 +121,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1880, 'current');
+        $this->getSession()->resizeWindow(1920, 1080, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
@@ -159,7 +159,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1880, 'current');
+        $this->getSession()->resizeWindow(1920, 1080, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();

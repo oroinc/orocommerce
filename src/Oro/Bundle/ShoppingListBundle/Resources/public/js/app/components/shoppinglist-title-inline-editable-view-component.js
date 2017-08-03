@@ -32,6 +32,16 @@ define(function(require) {
             }).bind(this));
         },
 
+        getViewOptions: function() {
+            var options = ShoppingListTitleInlineEditableViewComponent.__super__.getViewOptions.apply(this);
+
+            if (!this.inlineEditingOptions.enable) {
+                options.autoRender = false;
+            }
+
+            return options;
+        },
+
         /**
          *
          * @param data

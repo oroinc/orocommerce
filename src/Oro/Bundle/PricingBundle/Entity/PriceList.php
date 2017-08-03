@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\PricingBundle\Model\ExtendPriceList;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -35,7 +36,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class PriceList extends BasePriceList implements ScheduleIntervalsAwareInterface
+class PriceList extends ExtendPriceList implements ScheduleIntervalsAwareInterface
 {
     /**
      * @var bool
@@ -124,9 +125,10 @@ class PriceList extends BasePriceList implements ScheduleIntervalsAwareInterface
      */
     public function __construct()
     {
-        parent::__construct();
         $this->schedules = new ArrayCollection();
         $this->priceRules = new ArrayCollection();
+
+        parent::__construct();
     }
 
     /**

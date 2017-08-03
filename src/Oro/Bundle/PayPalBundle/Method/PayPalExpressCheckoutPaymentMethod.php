@@ -248,7 +248,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $sourcePaymentTransaction->setActive(!$paymentTransaction->isSuccessful());
 
         return [
-            'message' => $response->getMessage(),
+            'message' => $response->getMessage() ?: $response->getErrorMessage(),
             'successful' => $response->isSuccessful(),
         ];
     }
@@ -269,7 +269,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $data = $response->getData();
 
         if (!isset($data[ECOption\Token::TOKEN])) {
-            $paymentTransaction->setAction(false);
+            $paymentTransaction->setActive(false);
 
             return;
         }
