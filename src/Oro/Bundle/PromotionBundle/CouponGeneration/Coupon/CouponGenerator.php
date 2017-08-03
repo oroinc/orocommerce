@@ -8,7 +8,6 @@ use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGeneratorInterface;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Code\WrongAmountCodeGeneratorException;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 
