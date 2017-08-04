@@ -45,6 +45,7 @@ layout:
             optionValue: 'product_extra_large'
         - '@add':
             id: two_column_related_container
-            parentId: product_view_attributes_rest
+            parentId: product_view_related_items_container
             blockType: container
             prepend: false
+    conditions: '!context["is_mobile"]'
