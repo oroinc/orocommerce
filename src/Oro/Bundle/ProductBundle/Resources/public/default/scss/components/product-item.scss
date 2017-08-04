@@ -89,7 +89,7 @@
     &__image-holder {
         @include aspect-ratio();
 
-        &:hover {
+        @include element-state('hover') {
             .product-item__quick-view-btn {
                 visibility: visible;
 
