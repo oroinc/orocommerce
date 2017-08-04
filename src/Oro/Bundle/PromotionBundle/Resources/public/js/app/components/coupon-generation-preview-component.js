@@ -57,7 +57,7 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
-            this.form.find(this.options.codePreviewFieldsSelector).off('change', this.bindedOnFormFieldChange);
+            this.form.off('change', this.options.codePreviewFieldsSelector, this.bindedOnFormFieldChange);
             CouponGenerationPreviewComponent.__super__.dispose.call(this);
         }
     });
