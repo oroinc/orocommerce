@@ -13,21 +13,6 @@ action_groups:
             - '@tree':
                 conditions:
                     '@and':
-                        - '@not_empty': $.visitor_email
-                        - '@not_empty': $.billing_address
-                        - '@empty': $.checkout.customerUser
-                actions:
-                    - '@call_service_method':
-                        attribute: $.checkout.customerUser
-                        service: 'oro_customer.manager.guest_customer_user'
-                        method: createFromAddress
-                        method_parameters:
-                            - $.visitor_email
-                            - $.billing_address
-                    - '@flush_entity': $.checkout.customerUser
-            - '@tree':
-                conditions:
-                    '@and':
                         - '@type': [$.checkout.sourceEntity, Oro\Bundle\ShoppingListBundle\Entity\ShoppingList]
                         - '@empty': $.checkout.sourceEntity.customerUser
                 actions:
@@ -431,3 +416,53 @@ action_groups:
                             - '@equal': [$.allow_manual_source_remove, true]
                             - '@equal': [$.remove_source, true]
                 parameters: [$.checkout.sourceEntity]
+
+    b2b_flow_checkout_create_guest_customer_user:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            visitor_email:
+                default: null
+            billing_address:
+                default: null
+        actions:
+            - '@tree':
+                conditions:
+                    '@empty': $.checkout.customerUser
+                actions:
+                    - '@call_service_method':
+                        attribute: $.checkout.customerUser
+                        service: 'oro_customer.manager.guest_customer_user'
+                        method: createFromAddress
+                        method_parameters:
+                            - $.visitor_email
+                            - $.billing_address
+                    - '@flush_entity': $.checkout.customerUser
+
+
+    b2b_flow_checkout_update_guest_customer_user:
+        parameters:
+            checkout:
+                type: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            visitor_email:
+                default: null
+            billing_address:
+                default: null
+        actions:
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@not_empty': $.visitor_email
+                        - '@not_empty': $.billing_address
+                        - '@not_empty': $.checkout.customerUser
+                        - '@empty': $.checkout.customerUser.firstName
+                actions:
+                    - '@call_service_method':
+                        attribute: $.checkout.customerUser
+                        service: 'oro_customer.manager.guest_customer_user'
+                        method: updateFromAddress
+                        method_parameters:
+                            - $.checkout.customerUser
+                            - $.visitor_email
+                            - $.billing_address
+                    - '@flush_entity': $.checkout.customerUser
