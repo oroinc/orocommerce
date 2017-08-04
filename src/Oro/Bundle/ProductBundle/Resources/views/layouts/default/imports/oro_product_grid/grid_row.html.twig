@@ -54,11 +54,20 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_view_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__preview'
     }) %}
+
+    {% set isNoImage = false %}
     
-    {% if popup_gallery %}
+    {% if product.image is defined %}
+        {% set isNoImage = (product.image|trim) == (Image.url(null, 'product_large')|e|trim) %}
+    {% else %}
+        {% set isNoImage = true %}
+    {% endif %}
+    
+    {% if popup_gallery and not isNoImage %}
         {% set options = {
             ajaxMode: true,
             ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
@@ -78,16 +87,48 @@
     </a>
 {% endblock %}
 
-{% block __oro_product_list_item__product_view_image_widget %}
+{% block __oro_product_list_item__product_popup_gallery_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
+    {% set isNoImage = false %}
+    
+    {% if product.image is defined %}
+        {% set isNoImage = (product.image|trim|split('/')|last) == (Image.url(null, 'product_large')|e|trim|split('/')|last) %}
+    {% else %}
+        {% set isNoImage = true %}
+    {% endif %}
+
+    {% if not isNoImage %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' view-product-gallery',
+            'data-trigger-gallery-open': true
+        }) %}
+
+        <div {{ block('block_attributes') }}></div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_list_item__product_view_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__preview-image'
+        '~class': ' product-item__preview-picture',
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'orofrontend/js/app/views/object-fit-polyfill-view'
+        }
     }) %}
+
+    {% set attrImage = {
+        'class': ' product-item__preview-image'
+    } %}
 
     {% set image = product.image is defined ? product.image : Image.url(null, 'product_large') %}
 
-    <img src="{{ image }}" {{ block('block_attributes') }} alt="{{ product.name }}">
+    <picture {{ block('block_attributes') }}>
+        <img src="{{ image }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
+    </picture>
 {% endblock %}
 
 {% block __oro_product_grid__product_title_widget %}

@@ -22,8 +22,30 @@
 
     @include fa-icon($view-product-gallery-icon);
 
-    &:hover {
+    @include element-state('hover') {
         font-size: $view-product-gallery-hover-icon-size;
         opacity: $view-product-gallery-hover-opacity;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .view-product-gallery {
+        top: $view-product-gallery-tablet-small-top;
+        left: $view-product-gallery-tablet-small-left;
+
+        width: $view-product-gallery-tablet-small-width;
+        height: $view-product-gallery-tablet-small-height;
+
+        font-size: $view-product-gallery-icon-tablet-small-size;
+        border-radius: $view-product-gallery-tablet-small-border-radius;
+        opacity: $view-product-gallery-tablet-small-opacity;
+
+        @include element-state('hover') {
+            font-size: $view-product-gallery-icon-tablet-small-size;
+        }
+
+        &:before {
+            margin: $view-product-gallery-icon-tablet-small-offset;
+        }
     }
 }

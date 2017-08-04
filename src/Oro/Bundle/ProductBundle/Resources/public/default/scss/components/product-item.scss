@@ -150,9 +150,23 @@
         right: 0;
     }
 
+    &__preview-picture {
+        display: block;
+        width: 100%;
+        height: 100%;
+
+        /* For IE/EDGE object-fit polyfill */
+        background-size: contain;
+        background-position: 50%;
+        background-repeat: no-repeat;
+    }
+
     &__preview-image {
         display: block;
         width: 100%;
+        height: 100%;
+
+        object-fit: contain;
     }
 
     &__primary-content {
