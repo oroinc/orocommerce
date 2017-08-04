@@ -3,13 +3,7 @@
         '~class': " sidebar__menu sidebar__menu--collapsible customer-menu"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="collapse-view expanded"
-             data-page-component-module="oroui/js/app/components/jquery-widget-component"
-             data-page-component-options="{{ {
-                 widgetModule: 'oroui/js/widget/collapse-widget',
-                 storageKey: id
-             }|json_encode() }}"
-        >
+        <div class="collapse-view expanded" data-page-component-shortcut-collapse="{{ { storageKey: id }|json_encode() }}">
             <a href="#" class="main-menu__link main-menu__link--is-trigger" data-collapse-trigger>
                 <span class="badge customer-menu__badge">
                     <i class="fa-cogs"></i>

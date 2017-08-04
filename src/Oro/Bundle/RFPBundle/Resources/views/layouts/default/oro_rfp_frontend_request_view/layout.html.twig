@@ -131,13 +131,7 @@
             class: attr.class|default('') ~ " notes collapse-view expanded"
         }) %}
 
-        <div {{ block('block_attributes') }}
-            data-page-component-module="oroui/js/app/components/jquery-widget-component"
-            data-page-component-options="{{ {
-                widgetModule: 'oroui/js/widget/collapse-widget',
-                storageKey: id
-            }|json_encode() }}"
-        >
+        <div {{ block('block_attributes') }} data-page-component-shortcut-collapse="{{ { storageKey: id }|json_encode() }}">
             <h3 class="section-title section-title--size-m">
                 {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
                 <span class="notes__count">({{ requestAdditionalNotes|length }})</span>

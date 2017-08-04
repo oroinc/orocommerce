@@ -48,11 +48,7 @@
 
     {% set advancedConditions %}
         <div class="collapse-view"
-             data-page-component-module="oroui/js/app/components/jquery-widget-component"
-             data-page-component-options="{{ {
-                 widgetModule: 'oroui/js/widget/collapse-widget',
-                 open: form.rule.expression.vars.value is not empty
-             }|json_encode() }}"
+             data-page-component-shortcut-collapse="{{ { open: form.rule.expression.vars.value is not empty }|json_encode() }}"
         >
             <div class="control-group">
                 <div class="control-label wrap">
