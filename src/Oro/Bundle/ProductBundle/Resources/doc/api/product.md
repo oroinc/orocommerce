@@ -178,6 +178,12 @@ Example:
           "id": "out_of_stock"
         }
       },
+      "pageTemplate": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "1xyz"
+        }
+      },
       "manageInventory": {
         "data": {
           "type": "entityfieldfallbackvalues",
@@ -223,6 +229,15 @@ Example:
     }
   },
   "included":[
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "1xyz",
+      "attributes": {
+        "fallback": null,
+        "scalarValue": "short",
+        "arrayValue": null
+      }
+    },
     {
       "type": "entityfieldfallbackvalues",
       "id": "1abcd",

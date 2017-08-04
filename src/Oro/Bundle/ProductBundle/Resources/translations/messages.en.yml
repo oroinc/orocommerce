@@ -20,6 +20,8 @@ oro:
         variant_fields:
             label: Configurable Attributes
             description: Configurable Attributes
+            yes.label: Yes
+            no.label: No
         unit.label: Unit
         price.label: Price
         has_variants.label: Has Variants
