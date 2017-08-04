@@ -585,6 +585,12 @@ Example:
           "id": "in_stock"
         }
       },
+      "pageTempalte": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "355"
+        }
+      },
       "manageInventory": {
         "data": {
           "type": "entityfieldfallbackvalues",
