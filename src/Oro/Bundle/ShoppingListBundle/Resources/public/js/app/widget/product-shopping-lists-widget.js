@@ -148,7 +148,7 @@ define(function(require) {
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
                 shoppingListsCollection: this.shoppingListCollection,
-                productUnits: this.model.get('product_units'),
+                productUnits: _.keys(this.model.get('product_units')),
                 unit: this.model.get('unit'),
                 singleUnitMode: this.options.singleUnitMode,
                 singleUnitModeCodeVisible: this.options.singleUnitModeCodeVisible,
