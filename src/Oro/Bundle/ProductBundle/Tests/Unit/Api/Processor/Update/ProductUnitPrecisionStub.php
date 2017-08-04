@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Update;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Update;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 

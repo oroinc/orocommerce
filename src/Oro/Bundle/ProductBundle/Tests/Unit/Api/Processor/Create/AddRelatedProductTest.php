@@ -1,19 +1,17 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Create;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Create;
 
 use Oro\Bundle\ApiBundle\Model\Error;
-use Oro\Bundle\ApiBundle\Processor\Create\CreateContext;
-use Oro\Bundle\ApiBundle\Provider\ConfigProvider;
-use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Create\CreateProcessorTestCase;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
-use Oro\Bundle\ProductBundle\Processor\Create\AddRelatedProduct;
+use Oro\Bundle\ProductBundle\Api\Processor\Create\AddRelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\FakeAssignerStrategy;
 
-class AddRelatedProductTest extends \PHPUnit_Framework_TestCase
+class AddRelatedProductTest extends CreateProcessorTestCase
 {
     /** @var RelatedProductRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $relatedProductsRepository;
@@ -21,41 +19,25 @@ class AddRelatedProductTest extends \PHPUnit_Framework_TestCase
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $doctrineHelper;
 
-    /** @var MetadataProvider|\PHPUnit_Framework_MockObject_MockObject */
-    private $metadataProvider;
-
     /** @var FakeAssignerStrategy */
     private $assignerStrategy;
-
-    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
-    private $configProvider;
 
     /** @var AddRelatedProduct */
     private $processor;
 
     protected function setUp()
     {
-        $this->relatedProductsRepository = $this->getMockBuilder(RelatedProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
 
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->relatedProductsRepository = $this->createMock(RelatedProductRepository::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->assignerStrategy = new FakeAssignerStrategy();
 
-        $this->doctrineHelper
-            ->expects($this->any())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->with(RelatedProduct::class)
             ->willReturn($this->relatedProductsRepository);
 
-        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->metadataProvider = $this->getMockBuilder(MetadataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->assignerStrategy = new FakeAssignerStrategy();
         $this->processor = new AddRelatedProduct($this->assignerStrategy, $this->doctrineHelper);
     }
 
@@ -65,52 +47,50 @@ class AddRelatedProductTest extends \PHPUnit_Framework_TestCase
             ->method('findOneBy')
             ->willReturn(new RelatedProduct());
 
-        $context = $this->prepareContext();
+        $this->prepareContext();
+        $this->processor->process($this->context);
 
-        $this->assertFalse($context->hasErrors());
-        $this->processor->process($context);
-        $this->assertFalse($context->hasErrors());
+        $this->assertFalse($this->context->hasErrors());
     }
 
     public function testErrorIsAddedToContextWhenRelatedItemsFunctionalityIsDisabled()
     {
         $this->assignerStrategy->functionalityEnabled = false;
-        $context = $this->prepareContext();
 
-        $this->assertFalse($context->hasErrors());
-        $this->processor->process($context);
-        $this->assertCount(1, $context->getErrors());
+        $this->prepareContext();
+        $this->processor->process($this->context);
+
+        $this->assertCount(1, $this->context->getErrors());
     }
 
     public function testErrorIsAddedToContextWhenUserTriesToAddRelatedProductToItself()
     {
         $this->assignerStrategy->addRelatedProductToItself = true;
-        $context = $this->prepareContext();
 
-        $this->assertFalse($context->hasErrors());
-        $this->processor->process($context);
-        $this->assertCount(1, $context->getErrors());
+        $this->prepareContext();
+        $this->processor->process($this->context);
+
+        $this->assertCount(1, $this->context->getErrors());
     }
 
     public function testErrorIsAddedToContextWhenUserTriesToAddMoreProductsThanLimitAllows()
     {
         $this->assignerStrategy->exceedLimit = true;
-        $context = $this->prepareContext();
 
-        $this->assertFalse($context->hasErrors());
-        $this->processor->process($context);
-        $this->assertCount(1, $context->getErrors());
+        $this->prepareContext();
+        $this->processor->process($this->context);
+
+        $this->assertCount(1, $this->context->getErrors());
     }
 
     public function testErrorIsAddedToContextWhenUserTriesToAddAlreadyExistingRelation()
     {
         $this->relationExistsInDatabase();
-        $context = $this->prepareContext();
 
-        $this->assertFalse($context->hasErrors());
-        $this->processor->process($context);
+        $this->prepareContext();
+        $this->processor->process($this->context);
 
-        $errors = $context->getErrors();
+        $errors = $this->context->getErrors();
         $this->assertCount(1, $errors);
         /** @var Error $error */
         $error = reset($errors);
@@ -118,18 +98,11 @@ class AddRelatedProductTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expectedErrorMessage, (string) $error->getDetail()->getName());
     }
 
-    /**
-     * @return CreateContext
-     */
     private function prepareContext()
     {
-        $context = new CreateContext($this->configProvider, $this->metadataProvider);
-
         $relatedProduct = new RelatedProduct();
         $relatedProduct->setProduct(new Product())->setRelatedProduct(new Product());
-        $context->setResult($relatedProduct);
-
-        return $context;
+        $this->context->setResult($relatedProduct);
     }
 
     private function relationExistsInDatabase()

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\ErrorSource;
+use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Request\RequestType;
@@ -62,6 +63,8 @@ class RemoveCategoryFromProductRequest implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
+        /** @var FormContext $context*/
+
         $requestData = $context->getRequestData();
 
         if (!isset($requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS])) {
