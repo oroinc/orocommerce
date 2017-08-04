@@ -156,10 +156,15 @@ define(function(require) {
         onKeypressForbid: function(event) {
             var keyCode = event.originalEvent.charCode;
             var targetKeyCodes = [44, 46, 188, 190];
+            var commaKayCodes = [44, 188];
             var precision = this._getUnitPrecision();
 
-            if (_.contains(targetKeyCodes, keyCode) && precision > 0) {
+            if (event.target.value.length && precision > 0 && _.contains(targetKeyCodes, keyCode)) {
                 event.target.value = parseInt(event.target.value).toFixed(precision);
+
+                if (_.contains(commaKayCodes, keyCode)) {
+                    event.target.value = event.target.value.replace('.', ',');
+                }
 
                 if (!_.isUndefined(event.target.selectionStart)) {
                     event.target.selectionEnd = event.target.value.length;
@@ -184,7 +189,7 @@ define(function(require) {
             var regExpString = '^([0-9]*)';
             var precision = this._getUnitPrecision();
             if (precision > 0) {
-                regExpString += '(\\.{1})?([0-9]{1,' + precision + '})?';
+                regExpString += '(\.|,{1})?([0-9]{1,' + precision + '})?';
             }
             var regExp = new RegExp(regExpString, 'g');
             var substitution = event.target.value.replace(regExp, '');
