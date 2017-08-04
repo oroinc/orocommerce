@@ -50,8 +50,6 @@ layout:
                 shipping_methods:
                     blockType: shipping_methods
                     options:
-                        attr:
-                            class: 'checkout-view__shipping-methods'
                         class_prefix: 'checkout'
                         methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
                         currentShippingMethod: '=data["checkout"].getShippingMethod()'
@@ -79,7 +77,7 @@ layout:
                     blockType: payment_methods
                     options:
                         attr:
-                            class: 'checkout-payment-methods checkout-view__payment-methods'
+                            class: 'checkout-payment-methods'
                         class_prefix: 'checkout'
                         views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                         currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
@@ -92,7 +90,7 @@ layout:
                             views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                             block_prefix: "order_review"
 
-                additional_options:
+                shipping_date:
                     blockType: checkout_form_fields
                     options:
                         checkout: '=data["checkout"]'
@@ -115,25 +113,47 @@ layout:
                                 shipping_methods:
                                     shipping_methods_template:
                                         shipping_methods_template_methods: ~
-                        checkout_summary:
-                            additional_options: ~
+                            shipping_date: ~
+                        checkout_summary: ~
 
         - '@move':
             id: checkout_order_summary
             parentId: checkout_summary
-            siblingId: additional_options
+
+        - '@add':
+            id: checkout_summary_additional_options
+            blockType: checkout_form_fields
+            parentId: checkout_order_summary_content
+            siblingId: checkout_order_summary_line_items_container
+            options:
+                checkout: '=data["checkout"]'
+                form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                workflowItem: '=data["workflowItem"]'
 
         - '@add':
             id: checkout_button_continue_right
             blockType: checkout_transition_continue
-            parentId: checkout_summary
-            siblingId: checkout_order_summary
+            parentId: checkout_order_summary_content
+            siblingId: checkout_order_summary_totals
             options:
                 transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
                 checkout: '=data["checkout"]'
+        - '@add':
+            id: checkout_summary_badge
+            blockType: container
+            parentId: checkout_order_summary_title
+            prepend: true
+        - '@add':
+            id: sticky_single_page_titles
+            blockType: container
+            parentId: top_sticky_panel_content
 
         - '@remove':
             id: checkout_sidebar
+        - '@remove':
+            id: checkout_information_head
+        - '@remove':
+            id: checkout_order_summary_container
         - '@remove':
             id: checkout_button_continue
         - '@remove':

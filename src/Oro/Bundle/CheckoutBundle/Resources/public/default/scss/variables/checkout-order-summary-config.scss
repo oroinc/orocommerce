@@ -1,0 +1,50 @@
+// @theme: default;
+
+$checkout-order-summary-header-position: relative !default;
+$checkout-order-summary-header-margin: 0 0 $offset-y !default;
+
+$checkout-order-summary-title-text-font-size: $base-font-size--m !default;
+$checkout-order-summary-title-text-font-weight: 400 !default;
+$checkout-order-summary-title-text-line-height: 1.69 !default;
+
+$checkout-order-summary-edit-link-position: absolute !default;
+$checkout-order-summary-edit-link-font-size: $base-font-size !default;
+$checkout-order-summary-edit-icon-margin: 0 !default;
+$checkout-order-summary-edit-text-display: none !default;
+
+$checkout-order-summary-content-position: relative !default;
+
+$checkout-order-summary-collapse-position: relative !default;
+
+$checkout-order-summary-collapse-container-position: relative !default;
+$checkout-order-summary-collapse-container-margin: 0 0 $offset-y !default;
+
+$checkout-order-summary-collapse-container-shadow-position: absolute !default;
+$checkout-order-summary-collapse-container-shadow-width: 100% !default;
+$checkout-order-summary-collapse-container-shadow-height: 50px !default;
+$checkout-order-summary-collapse-container-shadow-background: linear-gradient(to bottom, rgba(245,245,245,0) 0%, rgba(245,245,245,1) 100%) !default;
+
+$checkout-order-summary-collapse-trigger-display: none !default;
+$checkout-order-summary-collapse-trigger-float: right !default;
+$checkout-order-summary-collapse-trigger-color: get-color('ui', 'normal') !default;
+$checkout-order-summary-collapse-trigger-line-height: 1.4 !default;
+
+$checkout-order-summary-grid-width: 100% !default;
+
+$checkout-order-summary-grid-th-offset: $offset-y-s $offset-x !default;
+$checkout-order-summary-grid-th-border-top: 1px solid get-color('additional', 'middle') !default;
+$checkout-order-summary-grid-th-border-bottom: 1px solid get-color('additional', 'middle') !default;
+$checkout-order-summary-grid-th-background-color: get-color('additional', 'light') !default;
+$checkout-order-summary-grid-th-text-align: left !default;
+
+$checkout-order-summary-grid-last-row-td-border-bottom: 0 !default;
+
+$checkout-order-summary-grid-td-offset: $offset-y-m $offset-x !default;
+$checkout-order-summary-grid-td-border-bottom: 1px solid get-color('additional', 'middle') !default;
+
+$checkout-order-summary-totals-margin: ($offset-y + $offset-y-m) 0 0 !default;
+$checkout-order-summary-totals-offset: ($offset-y + $offset-y-m) 0 0 !default;
+$checkout-order-summary-totals-border-top: 1px solid get-color('additional', 'middle') !default;
+$checkout-order-summary-totals-clear: both !default;
+
+$checkout-order-summary-totals-order-checkout-widget-min-width: 200px !default;

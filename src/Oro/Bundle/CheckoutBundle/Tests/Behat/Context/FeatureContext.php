@@ -28,7 +28,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
         'Value'=> 'paymentMethod',
-        'Delete the shopping list' => 'oro_workflow_transition[remove_source]'
+        'Delete this Shopping List after Submitting Order' => 'oro_workflow_transition[remove_source]'
     ];
 
     /**

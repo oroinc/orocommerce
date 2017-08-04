@@ -33,7 +33,7 @@ Feature: Alternative Checkout workflow threshold
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    And I check "Delete the shopping list" on the "Order Review" checkout step and press Request Approval
+    And I check "Delete this Shopping List after Submitting Order" on the "Order Review" checkout step and press Request Approval
     Then I should see "You exceeded the allowable amount of $5000."
     When I press "Request Approval"
     Then I should see "Pending approval"

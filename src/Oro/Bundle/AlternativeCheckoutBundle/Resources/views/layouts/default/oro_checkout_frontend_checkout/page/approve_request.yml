@@ -6,21 +6,12 @@ layout:
             themes:
                 - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/right_buttons.html.twig'
                 - '../templates/approve_request.html.twig'
+
         - '@setOption':
-            id: checkout_information
+            id: checkout_information_title
             optionName: stepOrder
             optionValue: 7
-        - '@move':
-            id: checkout_order_summary_table
-            parentId: checkout_form_fields
-        - '@move':
-            id: checkout_form_buttons
-            siblingId: checkout_form_fields
-            prepend: false
-        - '@remove':
-            id: checkout_button_continue
-        - '@remove':
-            id: checkout_button_back
+
         - '@add':
             id: payment_additional_data
             parentId: checkout_information
@@ -29,6 +20,7 @@ layout:
                 block_name: '=data["oro_payment_method_widget_provider"].getPaymentMethodWidgetName(data["checkout"], "order_review")'
                 options:
                     payment_method: '=data["checkout"].getPaymentMethod()'
+
         - '@addTree':
             items:
                 checkout_button_continue_right:
@@ -45,5 +37,30 @@ layout:
                 checkout_form_buttons:
                     checkout_button_continue_right: ~
                     checkout_button_back_right: ~
+
+        - '@move':
+            id: checkout_order_summary_subtitle
+            parentId: checkout_information_title
+        - '@move':
+            id: checkout_order_summary_edit_link
+            parentId: checkout_information_head
+            siblingId: checkout_information_title
+        - '@move':
+            id: checkout_order_summary_content
+            parentId: checkout_form_fields
+            prepend: true
+        - '@move':
+            id: checkout_order_summary_totals
+            parentId: checkout_form_fields
+            siblingId: checkout_additional_options
+        - '@move':
+            id: checkout_form_buttons
+            siblingId: checkout_form_fields
+            prepend: false
+
+        - '@remove':
+            id: checkout_button_continue
+        - '@remove':
+            id: checkout_button_back
 
     conditions: 'context["workflowStepName"]=="approve_request" && context["workflowName"]=="b2b_flow_alternative_checkout" && !context["widget_container"]'

@@ -95,14 +95,16 @@ oro:
             edit_order: Edit Order
             item: Item
             sku: SKU
-            quantity : Quantity
-            price : Price
+            quantity: Quantity
+            quantity_short: Qty
+            price: Price
             total_qty: Total QTY
 
         title:
             step.label: '%step_label%'
 
         workflow:
+            order_options.label: Order options
             view_options.label: View Options for this Order
             unavailable_transition.message: 'This action is not available, reason:'
 

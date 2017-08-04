@@ -1,0 +1,42 @@
+// @theme: default;
+
+$checkout-form-select-container-display: flex !default;
+$checkout-form-select-container-flex-direction: row;
+$checkout-form-select-container-justify-content: space-between !default;
+$checkout-form-select-container-align-items: center !default;
+
+$checkout-form-select-exp-month-width: 60% !default;
+$checkout-form-select-exp-year-width: 40% !default;
+
+$checkout-form-submit-min-width: 200px !default;
+
+$checkout-form-payment-label-margin: 0 0 $offset-y-s !default;
+$checkout-form-payment-label-font-weight: 400 !default;
+
+$checkout-form-payment-container-margin: $offset-y-m 0 $offset-x !default;
+
+$checkout-form-payment-methods-padding: 24px $offset-x !default;
+$checkout-form-payment-methods-background-color: get-color('additional', 'ultra') !default;
+$checkout-form-payment-methods-border-radius: 5px !default;
+
+$checkout-form-payment-methods-authorized-card-margin: 0 0 $offset-y-m !default;
+
+$checkout-form-payment-methods-item-float: left !default;
+$checkout-form-payment-methods-item-margin: 0 $offset-x-m 0 0 !default;
+
+$checkout-form-payment-methods-form-margin: $offset-y 0 0 !default;
+
+$checkout-form-req-text-margin: $offset-y 0 0 !default;
+$checkout-form-req-text-color: get-color('primary', 'dark') !default;
+
+$checkout-form-back-padding: 0 $offset-x-m !default;
+
+// Tablet
+$checkout-form-submit-tablet-min-width: inherit !default;
+$checkout-form-submit-tablet-width: 100% !default;
+
+$checkout-form-req-text-tablet-position: static !default;
+$checkout-form-req-text-tablet-margin: 0 0 $offset-y $offset-x-s !default;
+
+//Mobile
+

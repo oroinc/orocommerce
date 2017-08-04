@@ -1,0 +1,13 @@
+// @theme: default;
+
+.sticky-single-page-checkout-titles {
+    display: $sticky-single-page-checkout-titles-display;
+
+    max-width: $sticky-single-page-checkout-titles-max-width;
+    padding: $sticky-single-page-checkout-titles-offset;
+    margin: $sticky-single-page-checkout-titles-margin;
+
+    flex-direction: $sticky-single-page-checkout-titles-flex-direction;
+    justify-content: $sticky-single-page-checkout-titles-justify-content;
+    align-items: $sticky-single-page-checkout-titles-align-items;
+}
