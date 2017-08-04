@@ -42,6 +42,7 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.api.set_price_list_in_context_by_product_price_processor',
             'oro_pricing.update.load_normalized_entity',
             'oro_pricing.api.set_price_list_in_context_by_filter',
+            'oro_pricing.entity_listener.product_price.reset_price_rule',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
