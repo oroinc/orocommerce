@@ -2,12 +2,11 @@
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:line_items_promotions.yml
 @fixture-OroPromotionBundle:shopping_list.yml
-Feature: Several promotions in Shopping List
-  In order to find out applied discounts in shopping list
-  As a site user
-  I need to have ability to see applied discounts at shopping list on front-end
+Feature: Delete promo product from shopping list
+  As a Customer User
+  I need to have ability to delete promo product from shopping list
 
-  Scenario: Check line item and subtotal discount in Shopping List with simple products
+  Scenario: Check subtotal recalculation after delete promo product
     Given I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     Then I see next line item discounts for shopping list "List 1":

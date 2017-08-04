@@ -848,6 +848,12 @@ Specify the category of the product
 
 {@inheritdoc}
 
+### pageTemplate
+
+### create, update, get, get_list
+
+Specify the page template for the product
+
 ## SUBRESOURCES
 
 ### attributeFamily
@@ -1235,3 +1241,17 @@ Retrieve the ID of the test_variant_field of a specific product record.
 #### update_relationship
 
 Replace the test_variant_field for a specific product.
+
+### pageTemplate
+
+#### get_subresource
+
+Get the related pageTemplate entity for a specific product
+
+#### get_relationship
+
+Retrieve the ID of the pageTemplate for a specific product
+
+#### update_relationship
+
+Replace the pageTemplate for a specific product
