@@ -540,6 +540,17 @@ oro_behat_extension:
     RequestAQuoteProductLineUnit:
       selector: '.request-form-product__item--quantity .request-form-quantity__units'
 
+    ProductQuantityField:
+      selector: '.product-item__qty__current-grid input'
+
+    ProductLineItemForm:
+      selector: '[name="oro_product_frontend_line_item"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
     New Arrivals Block:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector:
