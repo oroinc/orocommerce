@@ -35,6 +35,8 @@ class CouponGenerationType extends AbstractType
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -108,7 +110,8 @@ class CouponGenerationType extends AbstractType
                     'data' => 12,
                     'attr' => ['class' => 'promotion-coupon-generation-preview']
                 ]
-            )->add(
+            )
+            ->add(
                 'codeType',
                 ChoiceType::class,
                 [
@@ -122,7 +125,8 @@ class CouponGenerationType extends AbstractType
                     ],
                     'attr' => ['class' => 'promotion-coupon-generation-preview']
                 ]
-            )->add(
+            )
+            ->add(
                 'codePrefix',
                 TextType::class,
                 [
@@ -130,7 +134,8 @@ class CouponGenerationType extends AbstractType
                     'label' => 'oro.promotion.coupon.generation.codePrefix.label',
                     'attr' => ['class' => 'promotion-coupon-generation-preview']
                 ]
-            )->add(
+            )
+            ->add(
                 'codeSuffix',
                 TextType::class,
                 [
@@ -138,7 +143,8 @@ class CouponGenerationType extends AbstractType
                     'label' => 'oro.promotion.coupon.generation.codeSuffix.label',
                     'attr' => ['class' => 'promotion-coupon-generation-preview']
                 ]
-            )->add(
+            )
+            ->add(
                 'dashesSequence',
                 DashesSequenceType::class,
                 [
