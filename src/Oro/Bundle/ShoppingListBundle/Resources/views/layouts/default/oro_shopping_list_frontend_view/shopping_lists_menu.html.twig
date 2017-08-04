@@ -42,12 +42,9 @@
                         <i class="fa-shopping-cart"></i>
                     </span>
                     <span class="shopping-list__text">
-                        <span data-shopping-list-id="{{ shoppingList.id }}"
+                        <span data-page-component-shortcut-line-clamp
+                              data-shopping-list-id="{{ shoppingList.id }}"
                               data-role="shopping-list-title"
-                              data-page-component-module="oroui/js/app/components/jquery-widget-component"
-                              data-page-component-options="{{ {
-                                  widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
-                              }|json_encode }}"
                         >{{ shoppingList.label }}</span>
                     </span>
                 </span>
