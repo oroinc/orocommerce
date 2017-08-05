@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:quick_order_product.yml
 Feature: I need to make sure that "+Add' button" is not present on edit product page after adding all types of units and reopening the page
   In order to prevent to the "+Add' button from appearing for Additional Units if all type of units are added
