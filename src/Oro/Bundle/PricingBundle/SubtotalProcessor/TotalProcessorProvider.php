@@ -116,20 +116,24 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
      */
     public function getSubtotals($entity)
     {
-        $subtotalCollection = new ArrayCollection();
         if (!is_object($entity)) {
             throw new \InvalidArgumentException('Function parameter "entity" should be object.');
         }
 
+        $subtotals = [];
         foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
-            $subtotals = $this->getEntitySubtotal($provider, $entity);
-            $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
-            foreach ($subtotals as $subtotal) {
-                $subtotalCollection->add($subtotal);
+            $entitySubtotals = $this->getEntitySubtotal($provider, $entity);
+            $entitySubtotals = is_object($entitySubtotals) ? [$entitySubtotals] : (array) $entitySubtotals;
+            foreach ($entitySubtotals as $subtotal) {
+                $subtotals[] = $subtotal;
             }
         }
 
-        return $subtotalCollection;
+        usort($subtotals, function (Subtotal $leftSubtotal, Subtotal $rightSubtotal) {
+            return $leftSubtotal->getSortOrder() - $rightSubtotal->getSortOrder();
+        });
+
+        return new ArrayCollection($subtotals);
     }
 
     /**
@@ -143,7 +147,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
             return $provider->getSubtotal($entity);
         }
 
-        if ($provider instanceof CacheAwareInterface) {
+        if ($provider instanceof CacheAwareInterface && $provider->supportsCachedSubtotal($entity)) {
             return $provider->getCachedSubtotal($entity);
         }
 

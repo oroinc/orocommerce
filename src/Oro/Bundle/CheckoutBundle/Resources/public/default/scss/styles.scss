@@ -3,7 +3,9 @@
 @import './components/form_theme';
 @import './components/submit';
 @import './components/main';
-@import './components/checkout-order-summary/checkout-order-summary.scss';
 @import './components/icons';
 @import './components/order-checkout-widget';
 @import './components/order-review-options';
+
+@import './components/checkout-order-summary/checkout-order-summary';
+@import './components/checkout-view/checkout-view';

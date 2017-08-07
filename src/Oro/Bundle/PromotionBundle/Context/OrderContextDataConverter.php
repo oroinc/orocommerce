@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Context;
 
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
@@ -14,19 +12,14 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 class OrderContextDataConverter implements ContextDataConverterInterface
 {
     /**
-     * @var CustomerUserRelationsProvider
+     * @var CriteriaDataProvider
      */
-    protected $relationsProvider;
+    protected $criteriaDataProvider;
 
     /**
      * @var OrderLineItemsToDiscountLineItemsConverter
      */
     protected $lineItemsConverter;
-
-    /**
-     * @var UserCurrencyManager
-     */
-    protected $userCurrencyManager;
 
     /**
      * @var ScopeManager
@@ -39,22 +32,19 @@ class OrderContextDataConverter implements ContextDataConverterInterface
     protected $lineItemSubtotalProvider;
 
     /**
-     * @param CustomerUserRelationsProvider $relationsProvider
+     * @param CriteriaDataProvider $criteriaDataProvider
      * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
-     * @param UserCurrencyManager $userCurrencyManager
      * @param ScopeManager $scopeManager
      * @param SubtotalProviderInterface $lineItemSubtotalProvider
      */
     public function __construct(
-        CustomerUserRelationsProvider $relationsProvider,
+        CriteriaDataProvider $criteriaDataProvider,
         OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter,
-        UserCurrencyManager $userCurrencyManager,
         ScopeManager $scopeManager,
         SubtotalProviderInterface $lineItemSubtotalProvider
     ) {
-        $this->relationsProvider = $relationsProvider;
+        $this->criteriaDataProvider = $criteriaDataProvider;
         $this->lineItemsConverter = $lineItemsConverter;
-        $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeManager = $scopeManager;
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
     }
@@ -71,26 +61,31 @@ class OrderContextDataConverter implements ContextDataConverterInterface
             );
         }
 
-        $customerUser = $entity->getCustomerUser();
-        $customer = $this->relationsProvider->getCustomer($customerUser);
-        $customerGroup = $this->relationsProvider->getCustomerGroup($customerUser);
-        if (!$customerGroup && $entity->getCustomer()) {
-            $customerGroup = $entity->getCustomer()->getGroup();
-        }
+        $customerUser = $this->criteriaDataProvider->getCustomerUser($entity);
+        $customer = $this->criteriaDataProvider->getCustomer($entity);
+        $customerGroup = $this->criteriaDataProvider->getCustomerGroup($entity);
+
+        $scopeContext = [
+            'customer' => $customer,
+            'customerGroup' => $customerGroup,
+            'website' => $this->criteriaDataProvider->getWebsite($entity)
+        ];
+
         $subtotal = $this->lineItemSubtotalProvider->getSubtotal($entity);
 
         return [
-            self::CUSTOMER_USER => $entity->getCustomerUser(),
-            self::CUSTOMER => $customer ?: $entity->getCustomer(),
+            self::CUSTOMER_USER => $customerUser,
+            self::CUSTOMER => $customer,
             self::CUSTOMER_GROUP => $customerGroup,
             self::LINE_ITEMS => $this->getLineItems($entity),
             self::SUBTOTAL => $subtotal->getAmount(),
-            self::CURRENCY => $this->userCurrencyManager->getUserCurrency(),
-            self::CRITERIA => $this->scopeManager->getCriteria('promotion'),
+            self::CURRENCY => $entity->getCurrency(),
+            self::CRITERIA => $this->scopeManager->getCriteria('promotion', $scopeContext),
             self::BILLING_ADDRESS => $entity->getBillingAddress(),
             self::SHIPPING_ADDRESS => $entity->getShippingAddress(),
             self::SHIPPING_COST => $entity->getShippingCost(),
             self::SHIPPING_METHOD => $entity->getShippingMethod(),
+            self::SHIPPING_METHOD_TYPE => $entity->getShippingMethodType()
         ];
     }
 

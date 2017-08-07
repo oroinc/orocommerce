@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Reflection\StaticReflectionParser;
 use Doctrine\Common\Reflection\StaticReflectionProperty;
@@ -12,11 +11,11 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntityValidator;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -95,7 +94,8 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateWithAllowedPrice()
     {
-        $priceList = new PriceList();
+        $priceList = static::createMock(PriceList::class);
+        $priceList->method('getId')->willReturn(1);
         $productPrice = new ProductPrice();
         $productPrice->setPriceList($priceList);
 
@@ -140,6 +140,17 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects(self::once())->method('getManager')
             ->will($this->returnValue($em));
 
+        $this->context->expects(static::never())->method('buildViolation');
+        $this->validator->validate($productPrice, $this->constraint);
+    }
+
+    public function testValidateWithoutPriceList()
+    {
+        $productPrice = new ProductPrice();
+        $product = static::createMock(Product::class);
+        $product->method('getId')->willReturn(1);
+        $productPrice->setProduct($product);
+        $this->context->expects(static::never())->method('buildViolation');
         $this->validator->validate($productPrice, $this->constraint);
     }
 }

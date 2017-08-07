@@ -254,7 +254,41 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
 
         $subtotalProvider
             ->expects($this->once())
+            ->method('supportsCachedSubtotal')
+            ->willReturn(true);
+
+        $subtotalProvider
+            ->expects($this->once())
             ->method('getCachedSubtotal')
+            ->willReturn($subtotal);
+
+        $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
+    }
+
+    public function testRecalculationIsDisabledAndProviderIsCacheAwareButNotSupported()
+    {
+        /** @var SubtotalProviderInterface|\PHPUnit_Framework_MockObject_MockObject $subtotalProvider */
+        $subtotalProvider = $this->getMockBuilder('Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->setProviderToRegistry($subtotalProvider);
+
+        $subtotal = new Subtotal();
+        $expected = new ArrayCollection([$subtotal]);
+
+        $subtotalProvider
+            ->expects($this->once())
+            ->method('supportsCachedSubtotal')
+            ->willReturn(false);
+
+        $subtotalProvider
+            ->expects($this->never())
+            ->method('getCachedSubtotal');
+
+        $subtotalProvider
+            ->expects($this->once())
+            ->method('getSubtotal')
             ->willReturn($subtotal);
 
         $this->assertEquals($expected, $this->provider->disableRecalculation()->getSubtotals(new SubtotalEntityStub()));
@@ -397,6 +431,45 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(0.0, $total->getAmount());
     }
 
+    public function testSubtotalsOrdering()
+    {
+        /** @var LineItemSubtotalProvider $subtotalProvider */
+        $firstSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+
+        /** @var LineItemSubtotalProvider $subtotalProvider */
+        $secondSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
+
+        $this->subtotalProviderRegistry
+            ->expects($this->any())
+            ->method('getSupportedProviders')
+            ->willReturn([$firstSubtotalProvider, $secondSubtotalProvider]);
+
+        $subtotal1 = (new Subtotal())->setSortOrder(1);
+        $subtotal2 = (new Subtotal())->setSortOrder(2);
+        $subtotal3 = (new Subtotal())->setSortOrder(3);
+        $subtotal4 = (new Subtotal())->setSortOrder(4);
+        $subtotal5 = (new Subtotal())->setSortOrder(5);
+        $notOrderedSubtotal1 = new Subtotal();
+        $notOrderedSubtotal2 = new Subtotal();
+
+        $firstSubtotalProvider
+            ->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([$subtotal2, $notOrderedSubtotal1, $subtotal5, $subtotal1]);
+
+        $secondSubtotalProvider
+            ->expects($this->any())
+            ->method('getSubtotal')
+            ->willReturn([$subtotal4, $subtotal3, $notOrderedSubtotal2]);
+
+        $this->assertEquals(
+            new ArrayCollection([
+                $notOrderedSubtotal1, $notOrderedSubtotal2, $subtotal1, $subtotal2, $subtotal3, $subtotal4, $subtotal5
+            ]),
+            $this->provider->enableRecalculation()->getSubtotals(new EntityStub())
+        );
+    }
+
     /**
      * @param EntityStub|EntityWithoutCurrencyStub $entity
      * @param int $runCount
@@ -474,6 +547,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
                 'type' => 'total',
                 'label' => 'Total',
                 'amount' => 182.0,
+                'signedAmount' => 182.0,
                 'currency' => 'USD',
                 'visible' => null,
                 'data' => null,
@@ -487,6 +561,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
                     'type' => 'subtotal',
                     'label' => 'Total',
                     'amount' => 142.0,
+                    'signedAmount' => 142.0,
                     'currency' => 'USD',
                     'visible' => null,
                     'data' => null,
@@ -495,6 +570,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
                     'type' => 'subtotal',
                     'label' => 'Total',
                     'amount' => 40.0,
+                    'signedAmount' => 40.0,
                     'currency' => 'USD',
                     'visible' => null,
                     'data' => null,

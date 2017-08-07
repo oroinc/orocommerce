@@ -123,6 +123,12 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->provider->isSupported(new \stdClass()));
     }
 
+    public function testSupportsCachedSubtotal()
+    {
+        $this->taxFactory->expects($this->once())->method('supports')->willReturn(true);
+        $this->assertTrue($this->provider->supportsCachedSubtotal(new \stdClass()));
+    }
+
     /**
      * @param Subtotal $subtotal
      * @param ResultElement $total
@@ -134,6 +140,7 @@ class TaxSubtotalProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Oro.tax.subtotals.' . TaxSubtotalProvider::TYPE, $subtotal->getLabel());
         $this->assertEquals($total->getCurrency(), $subtotal->getCurrency());
         $this->assertEquals($total->getTaxAmount(), $subtotal->getAmount());
+        $this->assertEquals(500, $subtotal->getSortOrder());
         $this->assertTrue($subtotal->isVisible());
     }
 

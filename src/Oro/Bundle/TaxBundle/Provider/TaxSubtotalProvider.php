@@ -16,6 +16,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
 {
     const TYPE = 'tax';
     const NAME = 'oro_tax.subtotal_tax';
+    const SUBTOTAL_ORDER = 500;
 
     /**
      * @var TranslatorInterface
@@ -94,6 +95,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
         $label = 'oro.tax.subtotals.' . self::TYPE;
         $subtotal->setLabel($this->translator->trans($label));
         $subtotal->setVisible(false);
+        $subtotal->setSortOrder(self::SUBTOTAL_ORDER);
 
         return $subtotal;
     }
@@ -115,6 +117,14 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
 
     /** {@inheritdoc} */
     public function isSupported($entity)
+    {
+        return $this->taxFactory->supports($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsCachedSubtotal($entity)
     {
         return $this->taxFactory->supports($entity);
     }

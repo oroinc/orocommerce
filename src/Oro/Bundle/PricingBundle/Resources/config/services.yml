@@ -62,6 +62,8 @@ services:
     oro_pricing.listener.product_unit_precision_on_post_remove:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener'
         public: false
+        arguments:
+            - '@oro_pricing.shard_manager'
         calls:
             - [setPriceAttributeClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
         tags:
@@ -289,6 +291,7 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_list_trigger_factory:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
@@ -302,6 +305,7 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_rule_lexeme_trigger_handler:
         class: Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler
@@ -1093,3 +1097,9 @@ services:
         class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister
         arguments:
             - '@oro_config.manager'
+
+    oro_pricing.provider.price_list_default_value:
+        class: 'Oro\Bundle\PricingBundle\Provider\PriceListDefaultValueProvider'
+        arguments:
+            - '@oro_pricing.provider.price_list_provider'
+            - '@oro_pricing.shard_manager'

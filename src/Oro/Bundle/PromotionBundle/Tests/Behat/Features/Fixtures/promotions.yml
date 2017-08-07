@@ -7,6 +7,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Order Discount Promotion'
     orderDiscountPromotionDesc:
         string: 'Order Discount Promotion Description'
+    shippingDiscountPromotionLabel:
+        string: 'Shipping Discount Promotion'
+    shippingDiscountPromotionDesc:
+        string: 'Shipping Discount Promotion Description'
 
 Oro\Bundle\SegmentBundle\Entity\Segment:
     lineItemDiscountPromotionSegment:
@@ -37,16 +41,29 @@ Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
         options:
             discount_type: 'percent'
             discount_value: 0.5
+    shippingDiscountPromotionDiscountConfiguration:
+        type: 'shipping'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+            shipping_options:
+                shipping_method: 'flat_rate_1'
+                shipping_method_type: 'primary'
 
 Oro\Bundle\RuleBundle\Entity\Rule:
     lineItemDiscountPromotionRule:
         enabled: true
         sortOrder: 1
-        name: 'lineItemDiscountPromotionRule'
+        name: 'line Item Discount Promotion'
     orderDiscountPromotionRule:
         enabled: true
         sortOrder: 1
-        name: 'orderDiscountPromotionRule'
+        name: 'order Discount Promotion'
+    shippingDiscountPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'shipping Discount Promotion'
 
 Oro\Bundle\PromotionBundle\Entity\Promotion:
     lineItemDiscountPromotion:
@@ -58,6 +75,7 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
         organization: '@organization'
         owner: '@admin'
+        useCoupons: true
     orderDiscountPromotion:
         addLabel: ['@orderDiscountPromotionLabel']
         addDescription: ['@orderDiscountPromotionDesc']
@@ -67,3 +85,14 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         discountConfiguration: '@orderDiscountPromotionDiscountConfiguration'
         organization: '@organization'
         owner: '@admin'
+        useCoupons: true
+    shippingDiscountPromotion:
+        addLabel: ['@shippingDiscountPromotionLabel']
+        addDescription: ['@shippingDiscountPromotionDesc']
+        addScope: [1]
+        productsSegment: '@orderDiscountPromotionSegment'
+        rule: '@shippingDiscountPromotionRule'
+        discountConfiguration: '@shippingDiscountPromotionDiscountConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false

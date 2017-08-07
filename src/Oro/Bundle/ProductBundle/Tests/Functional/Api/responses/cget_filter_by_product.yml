@@ -6,9 +6,8 @@ data:
             sku: product-1
             status: enabled
             variantFields: {  }
-            createdAt: '@product-1->createdAt->format("Y-m-d\TH:i:s\Z")'
-            updatedAt: '@product-1->updatedAt->format("Y-m-d\TH:i:s\Z")'
             productType: simple
+            newArrival: false
         relationships:
             owner:
                 data:
@@ -33,6 +32,46 @@ data:
                 data:
                     type: productunitprecisions
                     id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+            names:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.names.default->id)>'
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.names.en_US->id)>'
+            descriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.descriptions.default->id)>'
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.descriptions.en_US->id)>'
+            shortDescriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.shortDescriptions.default->id)>'
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.shortDescriptions.en_US->id)>'
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.slugPrototypes.default->id)>'
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-1.slugPrototypes.en_US->id)>'
+            taxCode:
+                data:
+                    type: producttaxcodes
+                    id: '<toString(@product_tax_code.TAX1->id)>'
+            manageInventory:
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product-1.manageInventory->id)>'
             inventory_status:
                 data:
                     type: prodinventorystatuses

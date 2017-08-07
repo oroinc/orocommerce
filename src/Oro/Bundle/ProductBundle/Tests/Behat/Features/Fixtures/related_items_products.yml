@@ -11,22 +11,16 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision4:
         unit: '@item'
         precision: '1'
+    precision5:
+        unit: '@item'
+        precision: '1'
 
 Oro\Bundle\ProductBundle\Entity\Product:
-    product4:
-        sku: 'PSKU4'
-        primaryUnitPrecision: '@precision4'
+    product1:
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@precision1'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue4']
-        inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
-        organization: '@organization'
-        owner: '@business_unit'
-    product3:
-        sku: 'PSKU3'
-        primaryUnitPrecision: '@precision3'
-        attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
+        addName: ['@locvalue1']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
         organization: '@organization'
@@ -40,13 +34,31 @@ Oro\Bundle\ProductBundle\Entity\Product:
         status: 'enabled'
         organization: '@organization'
         owner: '@business_unit'
-    product1:
-        sku: 'PSKU1'
-        primaryUnitPrecision: '@precision1'
+    product3:
+        sku: 'PSKU3'
+        primaryUnitPrecision: '@precision3'
         attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue1']
+        addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product4:
+        sku: 'PSKU4'
+        primaryUnitPrecision: '@precision4'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue4']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        owner: '@business_unit'
+    product5:
+        sku: 'PSKU5'
+        primaryUnitPrecision: '@precision5'
+        attributeFamily: '@defaultProductFamily'
+        addName: ['@locvalue5']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'disabled'
         organization: '@organization'
         owner: '@business_unit'
 
@@ -59,3 +71,5 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
         string: 'Product 3'
     locvalue4:
         string: 'Product 4'
+    locvalue5:
+        string: 'Product5(disabled)'

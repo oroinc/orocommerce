@@ -35,7 +35,7 @@ class ProductRowsGrouper implements ProductsGrouperInterface
      */
     private function createIndex(ProductRow $productRow)
     {
-        return sprintf('%s_%s', $productRow->productSku, $productRow->productUnit);
+        return sprintf('%s_%s', strtoupper($productRow->productSku), $productRow->productUnit);
     }
 
     /**

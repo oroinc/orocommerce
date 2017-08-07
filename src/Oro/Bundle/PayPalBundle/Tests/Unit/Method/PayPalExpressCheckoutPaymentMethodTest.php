@@ -106,7 +106,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
                     $this->getAdditionalOptions()
                 )
             )
-            ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0']));
+            ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0', 'TOKEN' => 'TOKEN']));
 
         $this->gateway->expects($this->exactly(1))
             ->method('setTestMode')
@@ -114,6 +114,30 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
         $this->assertTrue($transaction->isActive());
+        $this->assertFalse($transaction->isSuccessful());
+    }
+
+    public function testExecuteWithoutPNREF()
+    {
+        $transaction = $this->createTransaction(PaymentMethodInterface::CHARGE);
+
+        $this->gateway->expects($this->any())
+            ->method('request')
+            ->with(
+                'S',
+                array_merge(
+                    ['ACTION' => 'S'],
+                    $this->getAdditionalOptions()
+                )
+            )
+            ->willReturn(new Response(['RESPMSG' => 'Error', 'RESULT' => '1']));
+
+        $this->gateway->expects($this->exactly(1))
+            ->method('setTestMode')
+            ->with(false);
+
+        $this->expressCheckout->execute($transaction->getAction(), $transaction);
+        $this->assertFalse($transaction->isActive());
         $this->assertFalse($transaction->isSuccessful());
     }
 
@@ -697,6 +721,64 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('Approved', $result['message']);
         $this->assertArrayHasKey('successful', $result);
         $this->assertTrue($result['successful']);
+    }
+
+    /**
+     * @dataProvider responseWithErrorDataProvider
+     *
+     * @param string $responseMessage
+     * @param string $expectedMessage
+     */
+    public function testCaptureError($responseMessage, $expectedMessage)
+    {
+        $this->configCredentials();
+
+        $transaction = $this->createTransaction(PaymentMethodInterface::CAPTURE);
+        $sourceTransaction = new PaymentTransaction();
+        $sourceTransaction->setReference('referenceId');
+
+        $transaction->setSourcePaymentTransaction($sourceTransaction);
+
+        $requestOptions = array_merge(
+            $this->getCredentials(),
+            $this->getAdditionalOptions(),
+            $this->getDelayedCaptureOptions()
+        );
+
+        $this->gateway->expects($this->once())
+                      ->method('request')
+                      ->with('D', $requestOptions)
+                      ->willReturn(
+                          new Response(['RESULT' => '-1', 'RESPMSG' => $responseMessage])
+                      );
+
+        $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
+
+        $this->assertFalse($transaction->isSuccessful());
+        $this->assertFalse($transaction->isActive());
+        $this->assertTrue($sourceTransaction->isActive());
+
+        $this->assertArrayHasKey('message', $result);
+        $this->assertSame($expectedMessage, $result['message']);
+        $this->assertArrayHasKey('successful', $result);
+        $this->assertFalse($result['successful']);
+    }
+
+    /**
+     * @return array
+     */
+    public function responseWithErrorDataProvider()
+    {
+        return [
+            'RESPMSG is filled' => [
+                'responseMessage' => 'Error message',
+                'expectedMessage' => 'Error message',
+            ],
+            'RESPMSG is not filled, message is translated from response code' => [
+                'responseMessage' => '',
+                'expectedMessage' => 'Failed to connect to host',
+            ],
+        ];
     }
 
     /**

@@ -23,7 +23,6 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
      */
     private $configProvider;
 
-
     /**
      * @param DoctrineHelper                    $doctrineHelper
      * @param AbstractRelatedItemConfigProvider $configProvider

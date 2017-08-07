@@ -67,6 +67,7 @@ define(function(require) {
 
             var changeCallback = _.bind(function(e) {
                 if (this.timeoutId || $(e.target).is('select')) {
+                    mediator.trigger(this.options.events.before);
                     callback.call(this);
                 }
 
@@ -76,6 +77,7 @@ define(function(require) {
             var keyUpCallback = _.bind(function() {
                 this.clearTimeout();
 
+                mediator.trigger(this.options.events.before);
                 this.timeoutId = setTimeout(_.bind(callback, this), this.options.triggerTimeout);
             }, this);
 
@@ -96,7 +98,6 @@ define(function(require) {
             var self = this;
 
             this.listenerOff();
-            mediator.trigger(self.options.events.before);
 
             $.ajax({
                 url: routing.generate(this.options.route, this.options.routeParams),

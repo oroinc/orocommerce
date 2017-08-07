@@ -12,6 +12,8 @@ system_configuration:
             icon: 'fa-cog'
         related_products:
             title: oro.product.system_configuration.groups.related_products.title
+        upsell_products:
+            title: oro.product.system_configuration.groups.upsell_products.title
         product_unit:
             title: oro.product.system_configuration.groups.product_unit.title
             icon: 'fa-briefcase'
@@ -53,19 +55,21 @@ system_configuration:
             title: oro.product.system_configuration.groups.new_product_icons.title
         new_arrivals:
             title: oro.product.system_configuration.groups.new_arrivals.title
+        image_gallery:
+            title: oro.product.system_configuration.groups.image_gallery.title
 
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
             type: oro_config_checkbox
-            priority: 30
+            priority: 100
             options:
                 label: oro.product.system_configuration.fields.enable_related_products.label
 
         oro_product.related_products_bidirectional:
             data_type: boolean
             type: oro_config_checkbox
-            priority: 20
+            priority: 90
             options:
                 label: oro.product.system_configuration.fields.related_products_bidirectional.label
                 tooltip: oro.product.system_configuration.fields.related_products_bidirectional.tooltip
@@ -73,7 +77,7 @@ system_configuration:
         oro_product.max_number_of_related_products:
             data_type: integer
             type: integer
-            priority: 10
+            priority: 80
             options:
                 label: oro.product.system_configuration.fields.max_number_of_related_products.label
                 tooltip: oro.product.system_configuration.fields.max_number_of_related_products.tooltip
@@ -81,6 +85,65 @@ system_configuration:
                     - NotBlank: ~
                     - Range:
                         min: 1
+
+        oro_product.upsell_products_enabled:
+                data_type: boolean
+                type: oro_config_checkbox
+                priority: 30
+                options:
+                    label: oro.product.system_configuration.fields.enable_upsell_products.label
+
+        oro_product.max_number_of_upsell_products:
+            data_type: integer
+            type: integer
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.max_number_of_upsell_products.label
+                tooltip: oro.product.system_configuration.fields.max_number_of_upsell_products.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+
+        oro_product.related_products_max_items:
+            data_type: integer
+            type: integer
+            priority: 70
+            options:
+                label: oro.product.system_configuration.fields.related_products_max_items.label
+                tooltip: oro.product.system_configuration.fields.related_products_max_items.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+
+        oro_product.related_products_min_items:
+            data_type: integer
+            type: integer
+            priority: 60
+            options:
+                label: oro.product.system_configuration.fields.related_products_min_items.label
+                tooltip: oro.product.system_configuration.fields.related_products_min_items.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+
+        oro_product.related_products_show_add_button:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 50
+            options:
+                label: oro.product.system_configuration.fields.related_products_show_add_button.label
+                tooltip: oro.product.system_configuration.fields.related_products_show_add_button.tooltip
+
+        oro_product.related_products_use_slider_on_mobile:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 40
+            options:
+                label: oro.product.system_configuration.fields.related_products_use_slider_on_mobile.label
+                tooltip: oro.product.system_configuration.fields.related_products_use_slider_on_mobile.tooltip
 
         oro_product.unit_rounding_type:
             data_type: string
@@ -295,6 +358,14 @@ system_configuration:
                 label: oro.product.system_configuration.fields.new_arrivals_use_slider_on_mobile.label
                 tooltip: oro.product.system_configuration.fields.new_arrivals_use_slider_on_mobile.tooltip
 
+        oro_product.popup_gallery_on_product_view:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.popup_gallery_on_product_view.label
+                tooltip: oro.product.system_configuration.fields.popup_gallery_on_product_view.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -319,6 +390,14 @@ system_configuration:
                                             - oro_product.related_products_enabled
                                             - oro_product.related_products_bidirectional
                                             - oro_product.max_number_of_related_products
+                                            - oro_product.related_products_max_items
+                                            - oro_product.related_products_min_items
+                                            - oro_product.related_products_show_add_button
+                                            - oro_product.related_products_use_slider_on_mobile
+                                    upsell_products:
+                                        children:
+                                            - oro_product.upsell_products_enabled
+                                            - oro_product.max_number_of_upsell_products
                     product:
                         priority: 700
                         children:
@@ -344,6 +423,9 @@ system_configuration:
                                             - oro_product.product_image_watermark_file
                                             - oro_product.product_image_watermark_size
                                             - oro_product.product_image_watermark_position
+                                    image_gallery:
+                                        children:
+                                            - oro_product.popup_gallery_on_product_view
                             featured_products:
                                 priority: 100
                                 children:
@@ -399,4 +481,11 @@ system_configuration:
                                             - oro_product.related_products_enabled
                                             - oro_product.related_products_bidirectional
                                             - oro_product.max_number_of_related_products
-
+                                            - oro_product.related_products_max_items
+                                            - oro_product.related_products_min_items
+                                            - oro_product.related_products_show_add_button
+                                            - oro_product.related_products_use_slider_on_mobile
+                                    upsell_products:
+                                        children:
+                                            - oro_product.upsell_products_enabled
+                                            - oro_product.max_number_of_upsell_products

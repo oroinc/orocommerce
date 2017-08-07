@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Context;
 
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
 use Oro\Bundle\PromotionBundle\Discount\Converter\LineItemsToDiscountLineItemsConverter;
@@ -14,9 +13,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class ShoppingListContextDataConverter implements ContextDataConverterInterface
 {
     /**
-     * @var CustomerUserRelationsProvider
+     * @var CriteriaDataProvider
      */
-    protected $relationsProvider;
+    protected $criteriaDataProvider;
 
     /**
      * @var LineItemsToDiscountLineItemsConverter
@@ -39,20 +38,20 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
     protected $lineItemNotPricedSubtotalProvider;
 
     /**
-     * @param CustomerUserRelationsProvider $relationsProvider
+     * @param CriteriaDataProvider $criteriaDataProvider
      * @param LineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param UserCurrencyManager $userCurrencyManager
      * @param ScopeManager $scopeManager
      * @param LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
      */
     public function __construct(
-        CustomerUserRelationsProvider $relationsProvider,
+        CriteriaDataProvider $criteriaDataProvider,
         LineItemsToDiscountLineItemsConverter $lineItemsConverter,
         UserCurrencyManager $userCurrencyManager,
         ScopeManager $scopeManager,
         LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider
     ) {
-        $this->relationsProvider = $relationsProvider;
+        $this->criteriaDataProvider = $criteriaDataProvider;
         $this->lineItemsConverter = $lineItemsConverter;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->scopeManager = $scopeManager;
@@ -71,23 +70,27 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
             );
         }
 
-        $customerUser = $entity->getCustomerUser();
-        $customer = $this->relationsProvider->getCustomer($customerUser);
-        $customerGroup = $this->relationsProvider->getCustomerGroup($customerUser);
-        if (!$customerGroup && $entity->getCustomer()) {
-            $customerGroup = $entity->getCustomer()->getGroup();
-        }
+        $customerUser = $this->criteriaDataProvider->getCustomerUser($entity);
+        $customer = $this->criteriaDataProvider->getCustomer($entity);
+        $customerGroup = $this->criteriaDataProvider->getCustomerGroup($entity);
+
+        $scopeContext = [
+            'customer' => $customer,
+            'customerGroup' => $customerGroup,
+            'website' => $this->criteriaDataProvider->getWebsite($entity)
+        ];
+
         $currency = $this->userCurrencyManager->getUserCurrency();
         $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($entity, $currency);
 
         return [
-            self::CUSTOMER_USER => $entity->getCustomerUser(),
-            self::CUSTOMER => $customer ?: $entity->getCustomer(),
+            self::CUSTOMER_USER => $customerUser,
+            self::CUSTOMER => $customer,
             self::CUSTOMER_GROUP => $customerGroup,
             self::LINE_ITEMS => $this->getLineItems($entity),
             self::SUBTOTAL => $subtotal->getAmount(),
             self::CURRENCY => $currency,
-            self::CRITERIA => $this->scopeManager->getCriteria('promotion'),
+            self::CRITERIA => $this->scopeManager->getCriteria('promotion', $scopeContext),
         ];
     }
 

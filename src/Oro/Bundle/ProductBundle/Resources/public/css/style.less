@@ -1,3 +1,11 @@
+.product-inventory-status-in_stock {
+  color: #008000;
+}
+
+.product-inventory-status-out_of_stock {
+  color: #FF0000;
+}
+
 .float-holder {
   tr {
     vertical-align: top;
@@ -8,6 +16,12 @@
   margin-top: -3px;
   height: 13px;
   font-size: 13px;
+}
+
+.mobile-version {
+  .quick-editable {
+    margin-top: 2px;
+  }
 }
 
 .oro-item-collection {
@@ -277,14 +291,15 @@ table.unit-table {
   }
 }
 
-.related-products-widget {
+.related-items-widget {
+  margin-top: 7px;
   overflow: hidden;
 
   &__button {
     float: right;
   }
 
-  ~ div .grid-views {
+  ~ div .grid-views {
     margin-top: -28px;
   }
 }

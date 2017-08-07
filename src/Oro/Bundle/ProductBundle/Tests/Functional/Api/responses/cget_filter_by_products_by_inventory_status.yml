@@ -6,8 +6,6 @@ data:
             sku: product-2
             status: enabled
             variantFields: {  }
-            createdAt: '@product-2->createdAt->format("Y-m-d\TH:i:s\Z")'
-            updatedAt: '@product-2->updatedAt->format("Y-m-d\TH:i:s\Z")'
             productType: simple
         relationships:
             owner:
@@ -36,6 +34,34 @@ data:
                 data:
                     type: productunitprecisions
                     id: '<toString(@product_unit_precision.product-2.milliliter->id)>'
+            names:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-2.names.default->id)>'
+            descriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-2.descriptions.default->id)>'
+            shortDescriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-2.shortDescriptions.default->id)>'
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-2.slugPrototypes.default->id)>'
+            taxCode:
+                data:
+                    type: producttaxcodes
+                    id: '<toString(@product_tax_code.TAX1->id)>'
+            manageInventory:
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product-2.manageInventory->id)>'
             inventory_status:
                 data:
                     type: prodinventorystatuses
@@ -47,8 +73,6 @@ data:
             sku: product-3
             status: enabled
             variantFields: {  }
-            createdAt: '@product-3->createdAt->format("Y-m-d\TH:i:s\Z")'
-            updatedAt: '@product-3->updatedAt->format("Y-m-d\TH:i:s\Z")'
             productType: simple
         relationships:
             owner:
@@ -71,6 +95,34 @@ data:
                 data:
                     type: productunitprecisions
                     id: '<toString(@product_unit_precision.product-3.milliliter->id)>'
+            names:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-3.names.default->id)>'
+            descriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-3.descriptions.default->id)>'
+            shortDescriptions:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-3.shortDescriptions.default->id)>'
+            slugPrototypes:
+                data:
+                    -
+                        type: localizedfallbackvalues
+                        id: '<toString(@product-3.slugPrototypes.default->id)>'
+            taxCode:
+                data:
+                    type: producttaxcodes
+                    id: '<toString(@product_tax_code.TAX2->id)>'
+            manageInventory:
+                data:
+                    type: entityfieldfallbackvalues
+                    id: '<toString(@product-3.manageInventory->id)>'
             inventory_status:
                 data:
                     type: prodinventorystatuses

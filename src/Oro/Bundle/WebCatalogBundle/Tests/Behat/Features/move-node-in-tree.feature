@@ -28,3 +28,7 @@ Feature: Move node in tree
 
     When I click "Save"
     Then I should see "By Brand" after "New Arrivals" in tree
+
+  Scenario: Move node as new root
+    When I drag and drop "By Brand" before "Default Web Catalog"
+    Then I should see "You can not create new root content node."

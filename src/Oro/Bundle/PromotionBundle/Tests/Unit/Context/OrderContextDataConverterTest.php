@@ -7,37 +7,32 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
+use Oro\Bundle\PromotionBundle\Context\CriteriaDataProvider;
 use Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter;
 use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CustomerUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CriteriaDataProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $relationsProvider;
+    private $criteriaDataProvider;
 
     /**
      * @var OrderLineItemsToDiscountLineItemsConverter|\PHPUnit_Framework_MockObject_MockObject
      */
     private $lineItemsConverter;
-
-    /**
-     * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $userCurrencyManager;
 
     /**
      * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
@@ -56,16 +51,14 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->relationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
+        $this->criteriaDataProvider = $this->createMock(CriteriaDataProvider::class);
         $this->lineItemsConverter = $this->createMock(OrderLineItemsToDiscountLineItemsConverter::class);
-        $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->lineItemSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
 
         $this->converter = new OrderContextDataConverter(
-            $this->relationsProvider,
+            $this->criteriaDataProvider,
             $this->lineItemsConverter,
-            $this->userCurrencyManager,
             $this->scopeManager,
             $this->lineItemSubtotalProvider
         );
@@ -103,7 +96,9 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $customerUser = new CustomerUser();
         $billingAddress = new OrderAddress();
         $shippingAddress = new OrderAddress();
+        $website = new Website();
         $shippingMethod = 'some shipping method';
+        $shippingMethodType = 'some shipping method type';
 
         $entity = new Order();
         $entity->setCustomerUser($customerUser);
@@ -112,19 +107,27 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $entity->setEstimatedShippingCostAmount(10.0);
         $entity->setCurrency('USD');
         $entity->setShippingMethod($shippingMethod);
+        $entity->setShippingMethodType($shippingMethodType);
 
-        $this->relationsProvider->expects($this->once())
+        $this->criteriaDataProvider->expects($this->once())
+            ->method('getCustomerUser')
+            ->with($entity)
+            ->willReturn($customerUser);
+        $this->criteriaDataProvider->expects($this->once())
             ->method('getCustomer')
-            ->with($customerUser)
+            ->with($entity)
             ->willReturn($customer);
-        $this->relationsProvider->expects($this->once())
+        $this->criteriaDataProvider->expects($this->once())
             ->method('getCustomerGroup')
-            ->with($customerUser)
+            ->with($entity)
             ->willReturn($customerGroup);
+        $this->criteriaDataProvider->expects($this->once())
+            ->method('getWebsite')
+            ->with($entity)
+            ->willReturn($website);
 
         $discountLineItems = $this->getDiscountLineItems($entity);
-        $currency = $this->getCurrency();
-        $scopeCriteria = $this->getScopeCriteria();
+        $scopeCriteria = $this->getScopeCriteria($customer, $customerGroup, $website);
         $subtotalAmount = $this->getSubtotalAmount($entity);
 
         $this->assertEquals([
@@ -133,53 +136,13 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
             ContextDataConverterInterface::CUSTOMER_GROUP => $customerGroup,
             ContextDataConverterInterface::LINE_ITEMS => $discountLineItems,
             ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
-            ContextDataConverterInterface::CURRENCY => $currency,
+            ContextDataConverterInterface::CURRENCY => $entity->getCurrency(),
             ContextDataConverterInterface::CRITERIA => $scopeCriteria,
             ContextDataConverterInterface::BILLING_ADDRESS => $billingAddress,
             ContextDataConverterInterface::SHIPPING_ADDRESS => $shippingAddress,
             ContextDataConverterInterface::SHIPPING_COST => Price::create(10.0, 'USD'),
             ContextDataConverterInterface::SHIPPING_METHOD => $shippingMethod,
-        ], $this->converter->getContextData($entity));
-    }
-
-    public function testGetContextDataWhenCustomerGroupWasNotFound()
-    {
-        $customerGroup = new CustomerGroup();
-        $customer = new Customer();
-        $customer->setGroup($customerGroup);
-        $customerUser = new CustomerUser();
-
-        $entity = new Order();
-        $entity->setCustomerUser($customerUser);
-        $entity->setCustomer($customer);
-        $entity->setCurrency('USD');
-
-        $discountLineItems = $this->getDiscountLineItems($entity);
-        $currency = $this->getCurrency();
-        $scopeCriteria = $this->getScopeCriteria();
-        $subtotalAmount = $this->getSubtotalAmount($entity);
-
-        $this->relationsProvider->expects($this->once())
-            ->method('getCustomer')
-            ->with($customerUser)
-            ->willReturn($customer);
-        $this->relationsProvider->expects($this->once())
-            ->method('getCustomerGroup')
-            ->with($customerUser)
-            ->willReturn(null);
-
-        $this->assertEquals([
-            ContextDataConverterInterface::CUSTOMER_USER => $customerUser,
-            ContextDataConverterInterface::CUSTOMER => $customer,
-            ContextDataConverterInterface::CUSTOMER_GROUP => $customerGroup,
-            ContextDataConverterInterface::LINE_ITEMS => $discountLineItems,
-            ContextDataConverterInterface::SUBTOTAL => $subtotalAmount,
-            ContextDataConverterInterface::CURRENCY => $currency,
-            ContextDataConverterInterface::CRITERIA => $scopeCriteria,
-            ContextDataConverterInterface::BILLING_ADDRESS => null,
-            ContextDataConverterInterface::SHIPPING_ADDRESS => null,
-            ContextDataConverterInterface::SHIPPING_COST => null,
-            ContextDataConverterInterface::SHIPPING_METHOD => null,
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => $shippingMethodType,
         ], $this->converter->getContextData($entity));
     }
 
@@ -201,27 +164,22 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return string
-     */
-    private function getCurrency(): string
-    {
-        $currency = 'USD';
-        $this->userCurrencyManager->expects($this->once())
-            ->method('getUserCurrency')
-            ->willReturn($currency);
-
-        return $currency;
-    }
-
-    /**
+     * @param Customer $customer
+     * @param CustomerGroup $customerGroup
+     * @param Website $website
      * @return ScopeCriteria
      */
-    private function getScopeCriteria(): ScopeCriteria
+    private function getScopeCriteria(Customer $customer, CustomerGroup $customerGroup, Website $website): ScopeCriteria
     {
+        $scopeContext = [
+            'customer' => $customer,
+            'customerGroup' => $customerGroup,
+            'website' => $website
+        ];
         $scopeCriteria = new ScopeCriteria([], []);
         $this->scopeManager->expects($this->once())
             ->method('getCriteria')
-            ->with('promotion')
+            ->with('promotion', $scopeContext)
             ->willReturn($scopeCriteria);
 
         return $scopeCriteria;

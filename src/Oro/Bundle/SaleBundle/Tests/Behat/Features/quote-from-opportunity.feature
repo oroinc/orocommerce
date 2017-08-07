@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-9611
 @ticket-BB-9613
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
@@ -38,8 +39,9 @@ Feature: Quote from Opportunity Default
   Scenario: Create new Quote
     Given I press "Create quote"
     And I fill "Quote Form" with:
-      | LineItemProduct | SKU123 |
-      | LineItemPrice   | 1      |
+      | Assigned Customer Users | Amanda Cole |
+      | LineItemProduct         | SKU123      |
+      | LineItemPrice           | 1           |
     When I save and close form
     And I click "Save" in modal window
     Then I should see "Quote has been saved" flash message

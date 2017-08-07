@@ -10,7 +10,15 @@ interface CacheAwareInterface
 {
     /**
      * @param object $entity
-     * @return Subtotal
+     * @return Subtotal|Subtotal[]
      */
     public function getCachedSubtotal($entity);
+
+    /**
+     * Checks that provider supports entity
+     *
+     * @param object $entity
+     * @return bool
+     */
+    public function supportsCachedSubtotal($entity);
 }

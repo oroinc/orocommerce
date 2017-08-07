@@ -6,37 +6,44 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Oro\Bundle\UIBundle\Route\Router;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
+use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
+use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
 
 class OrderTypeExtension extends AbstractTypeExtension
 {
     const ON_SUBMIT_LISTENER_PRIORITY = 10;
-    const SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION = 'save_without_discounts_recalculation';
 
     /**
-     * @var RequestStack
+     * @var DiscountRecalculationProvider
      */
-    private $requestStack;
+    protected $discountRecalculationProvider;
 
     /**
      * @var AppliedDiscountManager
      */
-    private $appliedDiscountManager;
+    protected $appliedDiscountManager;
 
     /**
-     * @param RequestStack $requestStack
+     * @var DiscountsProvider
+     */
+    protected $discountsProvider;
+
+    /**
+     * @param DiscountRecalculationProvider $discountRecalculationProvider
      * @param AppliedDiscountManager $appliedDiscountManager
+     * @param DiscountsProvider $discountsProvider
      */
     public function __construct(
-        RequestStack $requestStack,
-        AppliedDiscountManager $appliedDiscountManager
+        DiscountRecalculationProvider $discountRecalculationProvider,
+        AppliedDiscountManager $appliedDiscountManager,
+        DiscountsProvider $discountsProvider
     ) {
-        $this->requestStack = $requestStack;
+        $this->discountRecalculationProvider = $discountRecalculationProvider;
         $this->appliedDiscountManager = $appliedDiscountManager;
+        $this->discountsProvider = $discountsProvider;
     }
 
     /**
@@ -58,15 +65,11 @@ class OrderTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request &&
-            $request->get(Router::ACTION_PARAMETER) === self::SAVE_WITHOUT_DISCOUNTS_RECALCULATION_INPUT_ACTION
-        ) {
-            return;
+        if ($this->discountRecalculationProvider->isRecalculationRequired()) {
+            $this->discountsProvider->enableRecalculation();
+            $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
+            $this->appliedDiscountManager->saveAppliedDiscounts($order);
         }
-
-        $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
-        $this->appliedDiscountManager->saveAppliedDiscounts($order);
     }
 
     /**

@@ -18,6 +18,8 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     const NAME = 'oro_promotion.subtotal_discount';
     const ORDER_DISCOUNT_SUBTOTAL = 'order_discount_subtotal';
     const SHIPPING_DISCOUNT_SUBTOTAL = 'shipping_discount_subtotal';
+    const ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER = 100;
+    const SHIPPING_DISCOUNT_SUBTOTAL_SORT_ORDER = 300;
 
     /**
      * @var PromotionExecutor
@@ -40,24 +42,32 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     private $translator;
 
     /**
+     * @var DiscountRecalculationProvider
+     */
+    private $discountRecalculationProvider;
+
+    /**
      * @param UserCurrencyManager $currencyManager
      * @param PromotionExecutor $promotionExecutor
      * @param AppliedDiscountsProvider $appliedDiscountsProvider
      * @param RoundingServiceInterface $roundingService
      * @param TranslatorInterface $translator
+     * @param DiscountRecalculationProvider $discountRecalculationProvider
      */
     public function __construct(
         UserCurrencyManager $currencyManager,
         PromotionExecutor $promotionExecutor,
         AppliedDiscountsProvider $appliedDiscountsProvider,
         RoundingServiceInterface $roundingService,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        DiscountRecalculationProvider $discountRecalculationProvider
     ) {
         parent::__construct($currencyManager);
         $this->promotionExecutor = $promotionExecutor;
         $this->appliedDiscountsProvider = $appliedDiscountsProvider;
         $this->rounding = $roundingService;
         $this->translator = $translator;
+        $this->discountRecalculationProvider = $discountRecalculationProvider;
     }
 
     /**
@@ -73,24 +83,17 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     public function getSubtotal($entity)
     {
+        if (!$this->discountRecalculationProvider->isRecalculationRequired()) {
+            return $this->getCachedSubtotal($entity);
+        }
+
         $discountContext = $this->promotionExecutor->execute($entity);
-        $currency = $this->getBaseCurrency($entity);
 
-        $orderDiscountSubtotal = $this->createSubtotal(
+        return $this->createOrderAndShippingSubtotals(
+            $entity,
             $discountContext->getTotalLineItemsDiscount() + $discountContext->getSubtotalDiscountTotal(),
-            $currency,
-            $this->translator->trans('oro.promotion.discount.subtotal.order.label')
+            $discountContext->getShippingDiscountTotal()
         );
-        $shippingDiscountSubtotal = $this->createSubtotal(
-            $discountContext->getShippingDiscountTotal(),
-            $currency,
-            $this->translator->trans('oro.promotion.discount.subtotal.shipping.label')
-        );
-
-        return [
-            self::ORDER_DISCOUNT_SUBTOTAL => $orderDiscountSubtotal,
-            self::SHIPPING_DISCOUNT_SUBTOTAL => $shippingDiscountSubtotal
-        ];
     }
 
     /**
@@ -99,15 +102,17 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
      */
     public function getCachedSubtotal($entity)
     {
-        if (!$entity instanceof Order || !$entity->getId()) {
-            return $this->getSubtotal($entity);
+        if (!$this->supportsCachedSubtotal($entity)) {
+            throw new \RuntimeException(sprintf(
+                'Can not get cached subtotals for entity "%s" because provider doesn\'t support it',
+                get_class($entity)
+            ));
         }
 
-        $label = $this->translator->trans('oro.promotion.discount.subtotal.order.label');
-        $amount = $this->appliedDiscountsProvider->getDiscountsAmountByOrder($entity);
-        $currency = $this->getBaseCurrency($entity);
+        $orderAmount = $this->appliedDiscountsProvider->getDiscountsAmountByOrder($entity);
+        $shippingAmount = $this->appliedDiscountsProvider->getShippingDiscountsAmountByOrder($entity);
 
-        return $this->createSubtotal($amount, $currency, $label);
+        return $this->createOrderAndShippingSubtotals($entity, $orderAmount, $shippingAmount);
     }
 
     /**
@@ -119,12 +124,21 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function supportsCachedSubtotal($entity)
+    {
+        return $entity instanceof Order && $entity->getId();
+    }
+
+    /**
      * @param float $amount
      * @param string $currency
      * @param string $label
+     * @param int $sortOrder
      * @return Subtotal
      */
-    private function createSubtotal($amount, $currency, $label): Subtotal
+    private function createSubtotal($amount, $currency, $label, $sortOrder): Subtotal
     {
         $subtotal = new Subtotal();
         $subtotal->setLabel($label);
@@ -133,7 +147,36 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $subtotal->setAmount($this->rounding->round($amount));
         $subtotal->setCurrency($currency);
         $subtotal->setOperation(Subtotal::OPERATION_SUBTRACTION);
+        $subtotal->setSortOrder($sortOrder);
 
         return $subtotal;
+    }
+
+    /**
+     * @param object $entity
+     * @param float $orderAmount
+     * @param float $shippingAmount
+     * @return array
+     */
+    private function createOrderAndShippingSubtotals($entity, float $orderAmount, float $shippingAmount)
+    {
+        $currency = $this->getBaseCurrency($entity);
+        $orderDiscountSubtotal = $this->createSubtotal(
+            $orderAmount,
+            $currency,
+            $this->translator->trans('oro.promotion.discount.subtotal.order.label'),
+            self::ORDER_DISCOUNT_SUBTOTAL_SORT_ORDER
+        );
+        $shippingDiscountSubtotal = $this->createSubtotal(
+            $shippingAmount,
+            $currency,
+            $this->translator->trans('oro.promotion.discount.subtotal.shipping.label'),
+            self::SHIPPING_DISCOUNT_SUBTOTAL_SORT_ORDER
+        );
+
+        return [
+            self::ORDER_DISCOUNT_SUBTOTAL => $orderDiscountSubtotal,
+            self::SHIPPING_DISCOUNT_SUBTOTAL => $shippingDiscountSubtotal,
+        ];
     }
 }
