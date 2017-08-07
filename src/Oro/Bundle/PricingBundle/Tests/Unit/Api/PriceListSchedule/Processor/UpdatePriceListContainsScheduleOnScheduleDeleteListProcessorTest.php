@@ -10,7 +10,7 @@ use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\UpdatePriceListCont
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use PHPUnit\Framework\TestCase;
+
 //@codingStandardsIgnoreEnd
 
 class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends DeleteListProcessorTestCase
