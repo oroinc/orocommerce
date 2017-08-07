@@ -133,3 +133,30 @@ oro_behat_extension:
 
     PaymentMethodPaymentTerm30:
       selector: 'div[data-content="payment_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Payment Term 30")'
+
+    Billing Information Form:
+      selector: 'form[name="oro_workflow_transition"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          First Name: 'oro_workflow_transition[billing_address][firstName]'
+          Last Name: 'oro_workflow_transition[billing_address][lastName]'
+          Email: 'oro_workflow_transition[visitor_email]'
+          Street: 'oro_workflow_transition[billing_address][street]'
+          City: 'oro_workflow_transition[billing_address][city]'
+          Country: 'oro_workflow_transition[billing_address][country]'
+          State: 'oro_workflow_transition[billing_address][region]'
+          Zip/Postal Code: 'oro_workflow_transition[billing_address][postalCode]'
+
+    Shipping Information Form:
+      selector: 'form[name="oro_workflow_transition"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          First Name: 'oro_workflow_transition[shipping_address][firstName]'
+          Last Name: 'oro_workflow_transition[shipping_address][lastName]'
+          Street: 'oro_workflow_transition[shipping_address][street]'
+          City: 'oro_workflow_transition[shipping_address][city]'
+          Country: 'oro_workflow_transition[shipping_address][country]'
+          State: 'oro_workflow_transition[shipping_address][region]'
+          Zip/Postal Code: 'oro_workflow_transition[shipping_address][postalCode]'
