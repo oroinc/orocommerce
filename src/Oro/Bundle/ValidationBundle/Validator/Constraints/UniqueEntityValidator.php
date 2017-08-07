@@ -48,7 +48,7 @@ class UniqueEntityValidator extends ConstraintValidator
         }
 
         if (!$constraint->buildViolationAtEntityLevel) {
-            $this->buildViolationAtPath($constraint);
+            $this->buildViolationAtPath($constraint, $criteria);
 
             return;
         }
@@ -59,7 +59,7 @@ class UniqueEntityValidator extends ConstraintValidator
     /**
      * @param UniqueEntity $constraint
      */
-    protected function buildViolationAtPath(UniqueEntity $constraint)
+    protected function buildViolationAtPath(UniqueEntity $constraint, $criteria)
     {
         $fields = (array)$constraint->fields;
 
