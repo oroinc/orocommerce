@@ -120,20 +120,8 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
-    public function testValidateViolationsAtEntityLevel()
+    protected function validate($constraint, $context)
     {
-        $constraint = new UniqueEntity(
-            [
-                'message' => 'myMessage',
-                'fields' => ['name'],
-                'em' => 'foo',
-                'buildViolationAtEntityLevel' => true,
-            ]
-        );
-
-        $context = $this->createContext($constraint);
-
         $entity1 = new SingleIntIdEntity(1, 'Foo');
         $entity2 = new SingleIntIdEntity(2, 'Foo');
 
@@ -158,6 +146,22 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->validator->validate($entity2, $constraint);
+    }
+
+    public function testValidateViolationsAtEntityLevel()
+    {
+        $constraint = new UniqueEntity(
+            [
+                'message' => 'myMessage',
+                'fields' => ['name'],
+                'em' => 'foo',
+                'buildViolationAtEntityLevel' => true,
+            ]
+        );
+
+        $context = $this->createContext($constraint);
+
+        $this->validate($constraint, $context);
 
         $expectedViolation = $this->createViolation(
             'myMessage',
@@ -174,8 +178,8 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(
             1,
             $context->getViolations(),
-            sprintf('1 violation expected. Got %u.', $violationsCount)
-        );
+            sprintf('1 violation expected. Got %u.', count($context->getViolations())
+        ));
 
         $violation = $context->getViolations()->get(0);
 
@@ -195,30 +199,7 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
 
         $context = $this->createContext($constraint);
 
-        $entity1 = new SingleIntIdEntity(1, 'Foo');
-        $entity2 = new SingleIntIdEntity(2, 'Foo');
-
-        $this->validator->validate($entity1, $constraint);
-
-        $this->assertSame(
-            0,
-            $violationsCount = count($context->getViolations()),
-            sprintf('0 violation expected. Got %u.', $violationsCount)
-        );
-
-        $this->em->persist($entity1);
-        $this->em->flush();
-
-        $this->validator->initialize($context);
-        $this->validator->validate($entity1, $constraint);
-
-        $this->assertSame(
-            0,
-            $violationsCount = count($context->getViolations()),
-            sprintf('0 violation expected. Got %u.', $violationsCount)
-        );
-
-        $this->validator->validate($entity2, $constraint);
+        $this->validate($constraint, $context);
 
         $expectedViolation = $this->createViolation(
             'myMessage',
@@ -232,8 +213,8 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(
             1,
             $context->getViolations(),
-            sprintf('1 violation expected. Got %u.', $violationsCount)
-        );
+            sprintf('1 violation expected. Got %u.', count($context->getViolations())
+        ));
 
         $violation = $context->getViolations()->get(0);
 
