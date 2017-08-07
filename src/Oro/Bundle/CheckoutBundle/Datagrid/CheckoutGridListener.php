@@ -3,13 +3,16 @@
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
@@ -119,6 +122,23 @@ class CheckoutGridListener
                       ->set(self::USER_CURRENCY_PARAMETER, $this->currencyManager->getUserCurrency());
             }
         }
+    }
+
+    /**
+     * @param BuildAfter $event
+     */
+    public function onBuildAfter(BuildAfter $event)
+    {
+        $dataSource = $event->getDatagrid()->getDatasource();
+        if (!$dataSource instanceof OrmDatasource) {
+            return;
+        }
+
+        $dataGridQueryBuilder = $dataSource->getQueryBuilder();
+        $aliases = $dataGridQueryBuilder->getRootAliases();
+        $alias = reset($aliases);
+        $dataGridQueryBuilder->andWhere($dataGridQueryBuilder->expr()->eq($alias . '.completed', ':completed'));
+        $dataGridQueryBuilder->setParameter('completed', false, Type::BOOLEAN);
     }
 
     /**
