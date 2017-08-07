@@ -1,4 +1,4 @@
-@selenium-incompatible
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroShippingBundle:ShippingMethodsConfigsRule.yml
 Feature: Applying shipping rules

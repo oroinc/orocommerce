@@ -1,7 +1,9 @@
+@regression
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @feature-BB-8377
 
+@skip
 Feature: Editing related products
   In order to propose my customer some other products
   As admin

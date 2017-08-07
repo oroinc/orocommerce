@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-10412
 @automatically-ticket-tagged
 Feature: Pricing configuration validation
