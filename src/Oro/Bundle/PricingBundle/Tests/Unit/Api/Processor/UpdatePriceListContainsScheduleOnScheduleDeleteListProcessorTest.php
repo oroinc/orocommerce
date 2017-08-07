@@ -3,15 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\DeleteList\DeleteListProcessorTestCase;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListContainsScheduleOnScheduleDeleteListProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use PHPUnit\Framework\TestCase;
 
-class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends TestCase
+class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends DeleteListProcessorTestCase
 {
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -30,6 +29,8 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends T
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->deleteHandler = $this->createMock(ProcessorInterface::class);
 
@@ -47,7 +48,7 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends T
         $this->deleteHandler->expects(static::once())
             ->method('process');
 
-        $this->processor->process($this->createMock(ContextInterface::class));
+        $this->processor->process($this->context);
     }
 
     public function testProcess()
@@ -59,16 +60,6 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends T
         $priceListWithSchedule->addSchedule(new PriceListSchedule());
         $priceListWithSchedule->setContainSchedule(false);
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
-            ->method('getResult')
-            ->willReturn([
-                (new PriceListSchedule())->setPriceList($priceList),
-                (new PriceListSchedule())->setPriceList($priceListWithSchedule),
-                new \StdClass(),
-                new PriceListSchedule(),
-            ]);
-
         $this->deleteHandler->expects(static::once())
             ->method('process');
 
@@ -76,7 +67,13 @@ class UpdatePriceListContainsScheduleOnScheduleDeleteListProcessorTest extends T
             ->method('getEntityManager')
             ->willReturn($this->createMock(EntityManager::class));
 
-        $this->processor->process($context);
+        $this->context->setResult([
+            (new PriceListSchedule())->setPriceList($priceList),
+            (new PriceListSchedule())->setPriceList($priceListWithSchedule),
+            new \StdClass(),
+            new PriceListSchedule(),
+        ]);
+        $this->processor->process($this->context);
 
         static::assertTrue($priceListWithSchedule->isContainSchedule());
         static::assertFalse($priceList->isContainSchedule());

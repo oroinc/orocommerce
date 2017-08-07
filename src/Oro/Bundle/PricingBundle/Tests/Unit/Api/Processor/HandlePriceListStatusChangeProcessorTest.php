@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Update\UpdateProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChangeProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
-use Oro\Component\ChainProcessor\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class HandlePriceListStatusChangeProcessorTest extends TestCase
+class HandlePriceListStatusChangeProcessorTest extends UpdateProcessorTestCase
 {
     /**
      * @var PriceListRelationTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
@@ -22,6 +21,8 @@ class HandlePriceListStatusChangeProcessorTest extends TestCase
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->priceListChangesHandler = $this->createMock(PriceListRelationTriggerHandler::class);
 
         $this->processor = new HandlePriceListStatusChangeProcessor($this->priceListChangesHandler);
@@ -33,9 +34,7 @@ class HandlePriceListStatusChangeProcessorTest extends TestCase
             ->expects(static::never())
             ->method('handlePriceListStatusChange');
 
-        $context = $this->createMock(ContextInterface::class);
-
-        $this->processor->process($context);
+        $this->processor->process($this->context);
     }
 
     public function testProcessStatusNotChanged()
@@ -47,13 +46,9 @@ class HandlePriceListStatusChangeProcessorTest extends TestCase
         $priceList = new PriceList();
         $priceList->setActive(true);
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::any())
-            ->method('getResult')
-            ->willReturn($priceList);
-
-        $this->processor->process($context);
-        $this->processor->process($context);
+        $this->context->setResult($priceList);
+        $this->processor->process($this->context);
+        $this->processor->process($this->context);
     }
 
     public function testProcessStatusChanged()
@@ -69,16 +64,10 @@ class HandlePriceListStatusChangeProcessorTest extends TestCase
             ->method('handlePriceListStatusChange')
             ->with($newPriceList);
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::at(0))
-            ->method('getResult')
-            ->willReturn($oldPriceList);
+        $this->context->setResult($oldPriceList);
+        $this->processor->process($this->context);
 
-        $context->expects(static::at(1))
-            ->method('getResult')
-            ->willReturn($newPriceList);
-
-        $this->processor->process($context);
-        $this->processor->process($context);
+        $this->context->setResult($newPriceList);
+        $this->processor->process($this->context);
     }
 }

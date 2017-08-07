@@ -44,6 +44,5 @@ Feature: Default Checkout From Quote
   Scenario: Checking Order History grid with Open Orders
     Given I open Order History page on the store frontend
     And there is no records in "OpenOrdersGrid"
-    When I reset "Completed" filter on grid "OpenOrdersGrid"
-    And I click View Order on Quote#1 in grid "OpenOrdersGrid"
+    And I click "View" on row "1" in grid "PastOrdersGrid"
     Then I should be on Order Frontend View page
