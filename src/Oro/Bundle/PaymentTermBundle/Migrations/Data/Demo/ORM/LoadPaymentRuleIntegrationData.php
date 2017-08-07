@@ -130,7 +130,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
     public function getMainUser(ObjectManager $manager)
     {
         /** @var User $entity */
-        $entity = $manager->getRepository(User::class)->find(self::MAIN_USER_ID);
+        $entity = $manager->getRepository(User::class)->findOneBy([], ['id' => 'ASC']);
         if (!$entity) {
             throw new EntityNotFoundException('Main user does not exist.');
         }

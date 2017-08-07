@@ -22,6 +22,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -52,7 +53,8 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData',
+            LoadOrganizationAndBusinessUnitData::class,
+            LoadAdminUserData::class,
         ];
     }
 
@@ -181,7 +183,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
     public function getMainUser(ObjectManager $manager)
     {
         /** @var User $entity */
-        $entity = $manager->getRepository(User::class)->find(self::MAIN_USER_ID);
+        $entity = $manager->getRepository(User::class)->findOneBy([], ['id' => 'ASC']);
         if (!$entity) {
             throw new EntityNotFoundException('Main user does not exist.');
         }
