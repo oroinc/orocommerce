@@ -43,6 +43,10 @@ layout:
             id: upsell_product_price
             optionName: visible
             optionValue: '=data["oro_product_upsell_products"].isAddButtonVisible()'
+        - '@setOption':
+            id: product_view_upsell_products_container
+            optionName: visible
+            optionValue: '=data["oro_product_upsell_products"].getRelatedItems(data["product"])'
         - '@add':
             id: product_view_upsell_products_container
             parentId: product_view_container
