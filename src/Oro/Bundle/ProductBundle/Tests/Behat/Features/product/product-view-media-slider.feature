@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_listing_images.yml
 
 Feature: Gallery as slider

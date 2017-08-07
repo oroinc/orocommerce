@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceListSchedule\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Delete\DeleteProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceListOnScheduleDeleteProcessor;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use PHPUnit\Framework\TestCase;
 
-class BuildCombinedPriceListOnScheduleDeleteProcessorTest extends TestCase
+class BuildCombinedPriceListOnScheduleDeleteProcessorTest extends DeleteProcessorTestCase
 {
     /**
      * @var CombinedPriceListActivationPlanBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -29,6 +28,8 @@ class BuildCombinedPriceListOnScheduleDeleteProcessorTest extends TestCase
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->combinedPriceListBuilder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
         $this->deleteHandler = $this->createMock(ProcessorInterface::class);
 
@@ -46,17 +47,12 @@ class BuildCombinedPriceListOnScheduleDeleteProcessorTest extends TestCase
         $this->deleteHandler->expects(static::once())
             ->method('process');
 
-        $this->processor->process($this->createMock(ContextInterface::class));
+        $this->processor->process($this->context);
     }
 
     public function testProcess()
     {
         $priceList = new PriceList();
-
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
-            ->method('getResult')
-            ->willReturn((new PriceListSchedule())->setPriceList($priceList));
 
         $this->deleteHandler->expects(static::once())
             ->method('process');
@@ -65,6 +61,7 @@ class BuildCombinedPriceListOnScheduleDeleteProcessorTest extends TestCase
             ->method('buildByPriceList')
             ->with($priceList);
 
-        $this->processor->process($context);
+        $this->context->setResult((new PriceListSchedule())->setPriceList($priceList));
+        $this->processor->process($this->context);
     }
 }

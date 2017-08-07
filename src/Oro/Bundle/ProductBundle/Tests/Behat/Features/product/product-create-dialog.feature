@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-7756
 @automatically-ticket-tagged
 @fixture-OroWebCatalogBundle:web_catalog.yml
