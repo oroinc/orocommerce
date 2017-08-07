@@ -93,7 +93,7 @@ oro_behat_extension:
           Size: 'oro_product[Size]'
 
     RelatedProductsConfig:
-      selector: 'div#container'
+      selector: 'form[name="related_items"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
