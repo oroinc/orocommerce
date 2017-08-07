@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Api;
 
-use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -40,17 +38,35 @@ class ProductApiTest extends RestJsonApiTestCase
 
     public function testCreateProduct()
     {
-        $data = $this->getCreateProductRequest();
         $response = $this->post(
             ['entity' => 'products'],
-            $data
+            'create_product.yml'
         );
 
         $responseContent = json_decode($response->getContent());
         /** @var Product $product */
         $product = $this->getEntityManager()->find(Product::class, $responseContent->data->id);
 
-        $this->assertProductFields($product);
+        $localizations = $this->getContainer()
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityRepositoryForClass(Localization::class)
+            ->findAll();
+
+        // + 1 because we also have the default one without localization
+        $localizationsNumber = count($localizations) + 1;
+        $this->assertCount($localizationsNumber, $product->getNames());
+        $this->assertCount($localizationsNumber, $product->getDescriptions());
+        $this->assertCount($localizationsNumber, $product->getShortDescriptions());
+        $this->assertCount($localizationsNumber, $product->getMetaDescriptions());
+        $this->assertCount($localizationsNumber, $product->getMetaKeywords());
+        $this->assertCount($localizationsNumber, $product->getMetaTitles());
+        $this->assertCount($localizationsNumber, $product->getNames());
+
+        $this->assertEquals('test-api-2', $product->getSku());
+        $this->assertEquals('enabled', $product->getStatus());
+        $this->assertEquals('simple', $product->getType());
+        $this->assertEquals(true, $product->getFeatured());
+        $this->assertEquals(false, $product->isNewArrival());
     }
 
     /**
@@ -110,7 +126,7 @@ class ProductApiTest extends RestJsonApiTestCase
 
         $response = $this->patch(
             ['entity' => 'products', 'id' => (string)$product->getId()],
-            $this->createUpdateRequest($product)
+            'update_product.yml'
         );
 
         /** @var Product $product */
@@ -192,569 +208,220 @@ class ProductApiTest extends RestJsonApiTestCase
             $this->getRequestData(__DIR__ . '/requests/create_product_3.yml')
         );
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $response->getStatusCode());
-        $content = json_decode($response->getContent(), true);
-        $this->assertArrayHasKey('errors', $content);
+        $this->assertResponseValidationError(
+            [
+                'title' => 'product page template constraint',
+                'detail' => 'The selected value is not valid.',
+                'source' => ['pointer' => '/data/relationships/pageTemplate/data']
+            ],
+            $response
+        );
 
-        $containsErrorMessage = false;
-
-        foreach ($content['errors'] as $error) {
-            if ($error['source']['pointer'] == "/data/relationships/pageTemplate/data"
-                && $error['detail'] == "The selected value is not valid."
-            ) {
-                $containsErrorMessage = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($containsErrorMessage);
         /** @var Product $product */
         $product = $this->getEntityManager()->getRepository(Product::class)->findOneBy(['sku' => 'sku-test-api-3']);
         $this->assertNull($product);
     }
 
-    /**
-     * @param Product $product
-     */
-    protected function assertProductFields(Product $product)
+    public function testCreateProductWithEmptyNames()
     {
-        $this->assertProductLocalizedValues($product);
-        $this->assertProductAttributes($product);
-    }
+        $response = $this->post(
+            ['entity' => 'products'],
+            'create_product_empty_names.yml',
+            [],
+            false
+        );
 
-    /**
-     * @param Product $product
-     */
-    private function assertProductLocalizedValues(Product $product)
-    {
-        $localizations = $this->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityRepositoryForClass(Localization::class)
-            ->findAll();
-
-        // + 1 because we also have the default one without localization
-        $localizationsNumber = count($localizations) + 1;
-        $this->assertCount($localizationsNumber, $product->getNames());
-        $this->assertCount($localizationsNumber, $product->getDescriptions());
-        $this->assertCount($localizationsNumber, $product->getShortDescriptions());
-        $this->assertCount($localizationsNumber, $product->getMetaDescriptions());
-        $this->assertCount($localizationsNumber, $product->getMetaKeywords());
-        $this->assertCount($localizationsNumber, $product->getMetaTitles());
-        $this->assertCount($localizationsNumber, $product->getNames());
-    }
-
-    /**
-     * @param Product $product
-     */
-    private function assertProductAttributes(Product $product)
-    {
-        $this->assertEquals('test-api-2', $product->getSku());
-        $this->assertEquals('enabled', $product->getStatus());
-        $this->assertEquals('simple', $product->getType());
-        $this->assertEquals(true, $product->getFeatured());
-        $this->assertEquals(false, $product->isNewArrival());
-    }
-
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    private function getCreateProductRequest()
-    {
-        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
-        $businessUnit = $this->getReference('TestBusinessUnit');
-        $organization = $businessUnit->getOrganization();
-        $localization = $this->getReference('es');
-        $bottleUnit = $this->getReference(LoadProductUnits::BOTTLE);
-        $literUnit = $this->getReference(LoadProductUnits::LITER);
-        $milliliterUnit = $this->getReference(LoadProductUnits::MILLILITER);
-        $taxCodes = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_3);
-        $attributeFamily = $this->getReference(LoadAttributeFamilyData::ATTRIBUTE_FAMILY_1);
-
-        return [
-            "data" => [
-                "type" => "products",
-                "attributes" => [
-                    "sku" => "test-api-2",
-                    "status" => "enabled",
-                    "variantFields" => [],
-                    "productType" => "simple",
-                    "featured" => true,
-                    "newArrival" => false
-                ],
-                "relationships" => [
-                    "owner" => [
-                        "data" => [
-                            "type" => "businessunits",
-                            "id" => (string)$businessUnit->getId()
-                        ]
-                    ],
-                    "organization" => [
-                        "data" => [
-                            "type" => "organizations",
-                            "id" => (string)$organization->getId()
-                        ]
-                    ],
-                    "names" => [
-                        "data" => [
-                            0 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => "names-1"
-                            ],
-                            1 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => "names-2"
-                            ]
-                        ]
-                    ],
-                    "slugPrototypes" => [
-                        "data" => [
-                            0 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => "slug-id-1"
-                            ]
-                        ]
-                    ],
-                    "taxCode" => [
-                        "data" => [
-                            "type" => "producttaxcodes",
-                            "id" => (string)$taxCodes->getId()
-                        ]
-                    ],
-                    "attributeFamily" => [
-                        "data" => [
-                            "type" => "attributefamilies",
-                            "id" => (string)$attributeFamily->getId()
-                        ]
-                    ],
-                    "primaryUnitPrecision" => [
-                        "data" => [
-                            "type" => "productunitprecisions",
-                            "id" => "product-unit-precision-id-3"
-                        ]
-                    ],
-                    "unitPrecisions" => [
-                        "data" => [
-                            0 => [
-                                "type" => "productunitprecisions",
-                                "id" => "product-unit-precision-id-1"
-                            ],
-                            1 => [
-                                "type" => "productunitprecisions",
-                                "id" => "product-unit-precision-id-2"
-                            ],
-                        ]
-                    ],
-                    "inventory_status" => [
-                        "data" => [
-                            "type" => "prodinventorystatuses",
-                            "id" => "out_of_stock"
-                        ]
-                    ],
-                    "manageInventory" => [
-                        "data" => [
-                            "type" => "entityfieldfallbackvalues",
-                            "id" => "1abcd"
-                        ]
-                    ],
-                    "pageTemplate" => [
-                        "data" => [
-                            "type" => "entityfieldfallbackvalues",
-                            "id" => "page-template"
-                        ]
-                    ],
-                    "inventoryThreshold" => [
-                        "data" => [
-                            "type" => "entityfieldfallbackvalues",
-                            "id" => "2abcd"
-                        ]
-                    ],
-                    "minimumQuantityToOrder" => [
-                        "data" => [
-                            "type" => "entityfieldfallbackvalues",
-                            "id" => "3abcd"
-                        ]
-                    ],
-                    "maximumQuantityToOrder" => [
-                        "data" => [
-                            "type" => "entityfieldfallbackvalues",
-                            "id" => "4abcd"
-                        ]
-                    ],
-                    "decrementQuantity" => [
-                        "data" => [
-                            "type" => "entityfieldfallbackvalues",
-                            "id" => "5abcd"
-                        ]
-                    ],
-                    "backOrder" => [
-                        "data" => [
-                            "type" => "entityfieldfallbackvalues",
-                            "id" => "6abcd"
-                        ]
-                    ],
-                    "category" => [
-                        "data" => [
-                            "type" => "categories",
-                            "id" => (string)$category->getId()
-                        ]
-                    ]
-                ]
+        $this->assertResponseValidationError(
+            [
+                'title' => 'count constraint',
+                'detail' => 'This collection should contain 1 element or more.',
+                'source' => ['pointer' => '/data/relationships/names/data']
             ],
-            "included" => [
-                0 => [
-                    "type" => "entityfieldfallbackvalues",
-                    "id" => "1abcd",
-                    "attributes" => [
-                        "fallback" => "systemConfig",
-                        "scalarValue" => null,
-                        "arrayValue" => null
-                    ]
-                ],
-                1 => [
-                    "type" => "entityfieldfallbackvalues",
-                    "id" => "page-template",
-                    "attributes" => [
-                        "fallback" => null,
-                        "scalarValue" => null,
-                        "arrayValue" => "short"
-                    ]
-                ],
-                2 => [
-                    "type" => "entityfieldfallbackvalues",
-                    "id" => "2abcd",
-                    "attributes" => [
-                        "fallback" => null,
-                        "scalarValue" => "31",
-                        "arrayValue" => null
-                    ]
-                ],
-                3 => [
-                    "type" => "entityfieldfallbackvalues",
-                    "id" => "3abcd",
-                    "attributes" => [
-                        "fallback" => "systemConfig",
-                        "scalarValue" => null,
-                        "arrayValue" => null
-                    ]
-                ],
-                4 => [
-                    "type" => "entityfieldfallbackvalues",
-                    "id" => "4abcd",
-                    "attributes" => [
-                        "fallback" => null,
-                        "scalarValue" => "12",
-                        "arrayValue" => null
-                    ]
-                ],
-                5 => [
-                    "type" => "entityfieldfallbackvalues",
-                    "id" => "5abcd",
-                    "attributes" => [
-                        "fallback" => null,
-                        "scalarValue" => "1",
-                        "arrayValue" => null
-                    ]
-                ],
-                6 => [
-                    "type" => "entityfieldfallbackvalues",
-                    "id" => "6abcd",
-                    "attributes" => [
-                        "fallback" => null,
-                        "scalarValue" => "0",
-                        "arrayValue" => null
-                    ]
-                ],
-                7 => [
-                    "type" => "localizedfallbackvalues",
-                    "id" => "names-1",
-                    "attributes" => [
-                        "fallback" => null,
-                        "string" => "Test product",
-                        "text" => null
-                    ],
-                    "relationships" => ["localization" => ["data" => null]]
-                ],
-                8 => [
-                    "type" => "localizedfallbackvalues",
-                    "id" => "names-2",
-                    "attributes" => [
-                        "fallback" => null,
-                        "string" => "Product in spanish",
-                        "text" => null
-                    ],
-                    "relationships" => [
-                        "localization" => [
-                            "data" => [
-                                "type" => "localizations",
-                                "id" => (string)$localization->getId()
-                            ]
-                        ]
-                    ]
-                ],
-                9 => [
-                    "type" => "localizedfallbackvalues",
-                    "id" => "slug-id-1",
-                    "attributes" => [
-                        "fallback" => null,
-                        "string" => "test-prod-slug",
-                        "text" => null
-                    ],
-                    "relationships" => ["localization" => ["data" => null]]
-                ],
-                10 => [
-                    "type" => "productunitprecisions",
-                    "id" => "product-unit-precision-id-1",
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "5",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => $bottleUnit->getCode()
-                            ]
-                        ]
-                    ]
-                ],
-                11 => [
-                    "type" => "productunitprecisions",
-                    "id" => "product-unit-precision-id-2",
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "10",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => $literUnit->getCode()
-                            ]
-                        ]
-                    ]
-                ],
-                12 => [
-                    "type" => "productunitprecisions",
-                    "id" => "product-unit-precision-id-3",
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "2",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => $milliliterUnit->getCode()
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
+            $response
+        );
     }
 
-    /**
-     * @param Product $product
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
-    private function createUpdateRequest(Product $product)
+    public function testCreateProductWithInvalidProductUnit()
     {
-        $productNameDefault = $this->getReference('product-1.names.default');
-        $productNameEn = $this->getReference('product-1.names.en_US');
-        $productSlugPrototypeDefault = $this->getReference('product-1.slugPrototypes.default');
-        $productSlugPrototypeEn = $this->getReference('product-1.slugPrototypes.en_US');
-        $productDescDefault = $this->getReference('product-1.descriptions.default');
-        $productDescEn = $this->getReference('product-1.descriptions.en_US');
-        $productShortDescDefault = $this->getReference('product-1.shortDescriptions.default');
-        $productShortDescEn = $this->getReference('product-1.shortDescriptions.en_US');
-        $productUnitPrecision1 = $this->getReference('product_unit_precision.product-1.bottle');
-        $productUnitPrecision2 = $this->getReference('product_unit_precision.product-1.liter');
-        $productUnitPrecision3 = $this->getReference('product_unit_precision.product-1.milliliter');
-        $newProductUnit = $this->getReference(LoadProductUnits::BOX);
-        $localization = $this->getReference('es');
+        $response = $this->post(
+            ['entity' => 'products'],
+            'create_product_invalid_product_unit.yml',
+            [],
+            false
+        );
 
-        return [
-            'data' => [
-                'type' => 'products',
-                'id' => (string)$product->getId(),
-                "attributes" => [
-                    "sku" => "new-sku",
-                    "status" => "disabled",
-                    "variantFields" => [],
-                    "productType" => "simple",
-                    "featured" => true,
-                    "newArrival" => true
-                ],
-                'relationships' => [
-                    "names" => [
-                        "data" => [
-                            0 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productNameDefault->getId()
-                            ],
-                            1 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productNameEn->getId()
-                            ],
-                            2 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => "names-new"
-                            ]
-                        ]
-                    ],
-                    "slugPrototypes" => [
-                        "data" => [
-                            0 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productSlugPrototypeDefault->getId(),
-                            ],
-                            1 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productSlugPrototypeEn->getId(),
-                            ]
-                        ]
-                    ],
-                    "descriptions" => [
-                        "data" => [
-                            0 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productDescDefault->getId(),
-                            ],
-                            1 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productDescEn->getId()
-                            ]
-                        ]
-                    ],
-                    "shortDescriptions" => [
-                        "data" => [
-                            0 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productShortDescDefault->getId()
-                            ],
-                            1 => [
-                                "type" => "localizedfallbackvalues",
-                                "id" => (string)$productShortDescEn->getId()
-                            ]
-                        ]
-                    ],
-                    "unitPrecisions" => [
-                        "data" => [
-                            0 => [
-                                "type" => "productunitprecisions",
-                                "id" => (string)$productUnitPrecision1->getId()
-                            ],
-                            1 => [
-                                "type" => "productunitprecisions",
-                                "id" => (string)$productUnitPrecision2->getId()
-                            ],
-                            2 => [
-                                "type" => "productunitprecisions",
-                                "id" => (string)$productUnitPrecision3->getId()
-                            ],
-                            3 => [
-                                "type" => "productunitprecisions",
-                                "id" => "new-product-unit-precision"
-                            ],
-                        ]
-                    ],
-                    'inventory_status' => [
-                        'data' => [
-                            'type' => 'prodinventorystatuses',
-                            'id' => 'out_of_stock',
-                        ],
-                    ],
-                ],
+        $this->assertResponseValidationError(
+            [
+                'title' => 'form constraint',
+                'detail' => 'This value is not valid.',
+                'source' => ['pointer' => '/included/1/relationships/unit/data']
             ],
-            "included" => [
-                0 => [
-                    "meta" => [
-                        "update" => true,
-                    ],
-                    "type" => "localizedfallbackvalues",
-                    "id" => (string)$productDescDefault->getId(),
-                    "attributes" => [
-                        "fallback" => null,
-                        "string" => null,
-                        "text" => "<b>Description Bold</b>"
-                    ],
-                    "relationships" => ["localization" => ["data" => null]]
-                ],
-                1 => [
-                    "meta" => [
-                        "update" => true,
-                    ],
-                    "type" => "localizedfallbackvalues",
-                    "id" => (string)$productNameDefault->getId(),
-                    "attributes" => [
-                        "fallback" => null,
-                        "string" => "Test product changed",
-                        "text" => null
-                    ],
-                    "relationships" => ["localization" => ["data" => null]]
-                ],
-                2 => [
-                    "meta" => [
-                        "update" => true,
-                    ],
-                    "type" => "productunitprecisions",
-                    "id" => (string)$productUnitPrecision1->getId(),
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "99",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => $productUnitPrecision1->getUnit()->getCode()
-                            ]
-                        ]
-                    ]
-                ],
-                3 => [
-                    "type" => "localizedfallbackvalues",
-                    "id" => "names-new",
-                    "attributes" => [
-                        "fallback" => null,
-                        "string" => "Product in spanish",
-                        "text" => null
-                    ],
-                    "relationships" => [
-                        "localization" => [
-                            "data" => [
-                                "type" => "localizations",
-                                "id" => (string)$localization->getId()
-                            ]
-                        ]
-                    ]
-                ],
-                4 => [
-                    "type" => "productunitprecisions",
-                    "id" => "new-product-unit-precision",
-                    "attributes" => [
-                        "precision" => "0",
-                        "conversionRate" => "15",
-                        "sell" => "1"
-                    ],
-                    "relationships" => [
-                        "unit" => [
-                            "data" => [
-                                "type" => "productunits",
-                                "id" => $newProductUnit->getCode()
-                            ]
-                        ]
-                    ]
-                ],
-            ]
-        ];
+            $response
+        );
+    }
+
+    public function testCreateProductWithDuplicateUnitPrecision()
+    {
+        $response = $this->post(
+            ['entity' => 'products'],
+            'create_product_duplicate_unit_precision.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'form constraint',
+                'detail' => 'Unit precision "bottle" already exists for this product.',
+                'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateProductWithInvalidProductUnit()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => (string)$product->getId()],
+            'update_product_invalid_product_unit.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'form constraint',
+                'detail' => 'This value is not valid.',
+                'source' => ['pointer' => '/included/0/relationships/unit/data']
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateProductWhenUnitForNewunitPrecisionIsNotProvided()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => (string)$product->getId()],
+            'update_product_no_product_unit.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'not blank constraint',
+                'detail' => 'Unit should not be blank.',
+                'source' => ['pointer' => '/included/0/relationships/unit/data']
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateProductWithDuplicateUnitPrecision()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => (string)$product->getId()],
+            'update_product_duplicate_unit_precision.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'form constraint',
+                'detail' => 'Unit precision "bottle" already exists for this product.',
+                'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateProductWithDuplicateExistingUnitPrecision()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => (string)$product->getId()],
+            'update_product_duplicate_existing_unit_precision.yml',
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'form constraint',
+                'detail' => 'Unit precision "liter" already exists for this product.',
+                'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
+            ],
+            $response
+        );
+    }
+
+    public function testUpdateProductWithSetUnitForExistingUnitPrecisionThatDuplicatesAnotherUnitPrecision()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_4);
+
+        // guard
+        self::assertNotEquals('liter', $product->getPrimaryUnitPrecision()->getUnit()->getCode());
+
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => (string)$product->getId()],
+            'update_product_duplicate_existing_unit_precision_update.yml'
+        );
+
+        $responseContent = self::jsonToArray($response->getContent());
+        self::assertArrayHasKey('included', $responseContent, '"included" section exists');
+        self::assertCount(1, $responseContent['included'], '"included" section contains only one element');
+        $updatedUnitPrecisionData = $responseContent['included'][0];
+        self::assertEquals(
+            'productunitprecisions',
+            $updatedUnitPrecisionData['type'],
+            'updated unit precision should be returned in "included" section'
+        );
+        self::assertEquals(
+            'liter',
+            $updatedUnitPrecisionData['relationships']['unit']['data']['id'],
+            'update unit code for unit precision'
+        );
+    }
+
+    public function testUpdateProductWithSetAttributeForExistingUnitPrecision()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_4);
+
+        // guard
+        self::assertNotEquals(5, $product->getPrimaryUnitPrecision()->getPrecision());
+
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => (string)$product->getId()],
+            'update_product_update_existing_unit_precision.yml'
+        );
+
+        $responseContent = self::jsonToArray($response->getContent());
+        self::assertArrayHasKey('included', $responseContent, '"included" section exists');
+        self::assertCount(1, $responseContent['included'], '"included" section contains only one element');
+        $updatedUnitPrecisionData = $responseContent['included'][0];
+        self::assertEquals(
+            'productunitprecisions',
+            $updatedUnitPrecisionData['type'],
+            'updated unit precision should be returned in "included" section'
+        );
+        self::assertEquals(
+            5,
+            $updatedUnitPrecisionData['attributes']['precision'],
+            'update attribute for unit precision'
+        );
     }
 }

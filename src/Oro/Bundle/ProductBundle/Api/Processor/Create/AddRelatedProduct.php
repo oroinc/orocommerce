@@ -8,7 +8,7 @@ use Oro\Bundle\ApiBundle\Model\Error;
 use Oro\Bundle\ApiBundle\Model\Label;
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
@@ -16,16 +16,15 @@ use Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
+/**
+ * Saves a relation between two products into the database.
+ */
 class AddRelatedProduct implements ProcessorInterface
 {
-    /**
-     * @var AssignerStrategyInterface
-     */
+    /** @var AssignerStrategyInterface */
     private $assignerStrategy;
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     private $doctrineHelper;
 
     /**
@@ -49,18 +48,7 @@ class AddRelatedProduct implements ProcessorInterface
         $productFrom = $relatedProduct->getProduct();
         $productTo = $relatedProduct->getRelatedItem();
 
-        if ($this->relationAlreadyExists($productFrom, $productTo)) {
-            $context->addError(Error::createValidationError(
-                Constraint::VALUE,
-                new Label('oro.product.related_items.related_product.relation_already_exists', 'validators')
-            ));
-
-            return;
-        }
-
-        try {
-            $this->assignerStrategy->addRelations($productFrom, [$productTo]);
-
+        if ($this->addRelation($productFrom, $productTo, $context)) {
             $relatedProduct = $this->getRelatedProductsRepository()->findOneBy([
                 'product' => $productFrom,
                 'relatedItem' => $productTo
@@ -69,15 +57,6 @@ class AddRelatedProduct implements ProcessorInterface
             $context->setResult($relatedProduct);
             $context->setId($relatedProduct->getId());
             $context->skipGroup('save_data');
-        } catch (\InvalidArgumentException $e) {
-            $errorDetail = (new Label($e->getMessage(), 'validators'))->setTranslateDirectly(true);
-            $context->addError(Error::createValidationError(Constraint::VALUE, $errorDetail));
-        } catch (\LogicException $e) {
-            $errorDetail = (new Label($e->getMessage(), 'validators'))->setTranslateDirectly(true);
-            $context->addError(Error::createValidationError(Constraint::VALUE, $errorDetail));
-        } catch (\OverflowException $e) {
-            $errorDetail = (new Label($e->getMessage(), 'validators'))->setTranslateDirectly(true);
-            $context->addError(Error::createValidationError(Constraint::VALUE, $errorDetail));
         }
     }
 
@@ -97,5 +76,42 @@ class AddRelatedProduct implements ProcessorInterface
     private function relationAlreadyExists(Product $productFrom, Product $productTo)
     {
         return $this->getRelatedProductsRepository()->exists($productFrom, $productTo);
+    }
+
+    /**
+     * @param Product $productFrom
+     * @param Product $productTo
+     * @param SingleItemContext $context
+     * @return bool
+     */
+    private function addRelation(Product $productFrom, Product $productTo, SingleItemContext $context)
+    {
+        if ($this->relationAlreadyExists($productFrom, $productTo)) {
+            $context->addError($this->createValueValidationError(
+                new Label('oro.product.related_items.related_product.relation_already_exists', 'validators')
+            ));
+        } else {
+            try {
+                $this->assignerStrategy->addRelations($productFrom, [$productTo]);
+            } catch (\InvalidArgumentException $e) {
+                $context->addError($this->createValueValidationError($e->getMessage()));
+            } catch (\LogicException $e) {
+                $context->addError($this->createValueValidationError($e->getMessage()));
+            } catch (\OverflowException $e) {
+                $context->addError($this->createValueValidationError($e->getMessage()));
+            }
+        }
+
+        return !$context->hasErrors();
+    }
+
+    /**
+     * @param Label|string $detail
+     *
+     * @return Error
+     */
+    private function createValueValidationError($detail)
+    {
+        return Error::createValidationError(Constraint::VALUE, $detail);
     }
 }

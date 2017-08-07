@@ -12,11 +12,6 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadRelatedProductData;
 use Oro\Bundle\UserBundle\Tests\Functional\API\DataFixtures\LoadUserData;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- */
 class RelatedProductApiTest extends RestJsonApiTestCase
 {
     protected function setUp()
@@ -93,7 +88,13 @@ class RelatedProductApiTest extends RestJsonApiTestCase
 
         $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post.yml', [], false);
 
-        $this->assertValidationErrorMessage($response, 'Related Items functionality is disabled.');
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'value constraint',
+                'detail' => 'Related Items functionality is disabled.'
+            ],
+            $response
+        );
     }
 
     public function testValidationErrorOnPostInCaseUserTriesToAddProductToItself()
@@ -107,9 +108,12 @@ class RelatedProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertValidationErrorMessage(
-            $response,
-            'It is not possible to create relations from product to itself.'
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'value constraint',
+                'detail' => 'It is not possible to create relations from product to itself.'
+            ],
+            $response
         );
     }
 
@@ -117,7 +121,13 @@ class RelatedProductApiTest extends RestJsonApiTestCase
     {
         $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post_relation_exists.yml', [], false);
 
-        $this->assertValidationErrorMessage($response, 'Relation between products already exists.');
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'value constraint',
+                'detail' => 'Relation between products already exists.'
+            ],
+            $response
+        );
     }
 
     public function testValidationErrorOnPostInCaseLimitExceeded()
@@ -126,9 +136,12 @@ class RelatedProductApiTest extends RestJsonApiTestCase
 
         $response = $this->post(['entity' => 'relatedproducts'], 'related_product/post_limit.yml', [], false);
 
-        $this->assertValidationErrorMessage(
-            $response,
-            'It is not possible to add more related items, because of the limit of relations.'
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'value constraint',
+                'detail' => 'It is not possible to add more related items, because of the limit of relations.'
+            ],
+            $response
         );
     }
 
@@ -143,9 +156,20 @@ class RelatedProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertValidationErrorMessage(
-            $response,
-            "The 'relationships' property is required"
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title'  => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/data/relationships/product/data']
+                ],
+                [
+                    'title'  => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/data/relationships/relatedItem/data']
+                ]
+            ],
+            $response
         );
     }
 
@@ -158,9 +182,13 @@ class RelatedProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertValidationErrorMessage(
-            $response,
-            "The 'product' property is required"
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/relationships/product/data']
+            ],
+            $response
         );
     }
 
@@ -173,9 +201,13 @@ class RelatedProductApiTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertValidationErrorMessage(
-            $response,
-            "The 'relatedItem' property is required"
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/relationships/relatedItem/data']
+            ],
+            $response
         );
     }
 
@@ -253,26 +285,6 @@ class RelatedProductApiTest extends RestJsonApiTestCase
         $name = sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MAX_NUMBER_OF_RELATED_PRODUCTS);
         $configManager->set($name, $limit);
         $configManager->flush();
-    }
-
-    /**
-     * @param Response $response
-     * @param string   $message
-     * @param int      $statusCode
-     */
-    private function assertValidationErrorMessage(
-        Response $response,
-        $message,
-        $statusCode = Response::HTTP_BAD_REQUEST
-    ) {
-        $this->assertResponseStatusCodeEquals($response, $statusCode);
-        $expectedResponse = [
-            'errors' => [
-                ['detail' => $message]
-            ]
-        ];
-
-        $this->assertResponseContains($expectedResponse, $response);
     }
 
     /**
