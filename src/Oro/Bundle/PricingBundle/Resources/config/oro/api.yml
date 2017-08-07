@@ -78,3 +78,5 @@ api:
                     exclude: true
                 delete:
                     exclude: true
+                delete_list:
+                    exclude: true
