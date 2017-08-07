@@ -171,15 +171,18 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
             UniqueEntity::NOT_UNIQUE_ERROR,
             $constraint,
             [
-                'unique_key' => 'name'
+                'unique_key' => 'name',
             ]
         );
 
         $this->assertCount(
             1,
             $context->getViolations(),
-            sprintf('1 violation expected. Got %u.', count($context->getViolations())
-        ));
+            sprintf(
+                '1 violation expected. Got %u.',
+                count($context->getViolations())
+            )
+        );
 
         $violation = $context->getViolations()->get(0);
 
@@ -213,8 +216,11 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(
             1,
             $context->getViolations(),
-            sprintf('1 violation expected. Got %u.', count($context->getViolations())
-        ));
+            sprintf(
+                '1 violation expected. Got %u.',
+                count($context->getViolations())
+            )
+        );
 
         $violation = $context->getViolations()->get(0);
 
