@@ -71,6 +71,9 @@ api:
                             - NotBlank: ~
                 # end
         Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+            fields:
+                prices:
+                    exclude: true
             actions:
                 create:
                     exclude: true
