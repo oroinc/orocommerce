@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Processor\Create;
+namespace Oro\Bundle\ProductBundle\Api\Processor\Create;
 
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
@@ -9,8 +9,6 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Get's the created formBuilder and adds necessary data transformers
- *
- * @package Oro\Bundle\ProductBundle\Processor\Create
  */
 class AddProductTypeDataTransformers implements ProcessorInterface
 {

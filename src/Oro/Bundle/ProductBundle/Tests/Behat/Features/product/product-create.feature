@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-9207
 @automatically-ticket-tagged
 Feature: Create product

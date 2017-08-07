@@ -1,25 +1,20 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Update;
-
-use Doctrine\ORM\EntityManager;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Update;
 
 use Oro\Bundle\ApiBundle\Processor\SingleItemContext;
-use Oro\Bundle\ApiBundle\Provider\ConfigProvider;
-use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormContextStub;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Update\UpdateProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitPrecisionRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Processor\Shared\ProcessUnitPrecisions;
-use Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared\ProcessUnitPrecisionsTestHelper;
-use Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared\UpdateContextStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared\ProcessUnitPrecisionsTestHelper;
 
-class ProcessUnitPrecisionsUpdateTest extends \PHPUnit_Framework_TestCase
+class ProcessUnitPrecisionsUpdateTest extends UpdateProcessorTestCase
 {
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -28,27 +23,22 @@ class ProcessUnitPrecisionsUpdateTest extends \PHPUnit_Framework_TestCase
 
     /** @var SingleItemContext|FormContextStub|\PHPUnit_Framework_MockObject_MockObject */
     protected $context;
+
     /**
      * @var ProcessUnitPrecisionsUpdateStub
      */
-    protected $processUnitPrecisionsUpdate;
+    protected $processor;
 
     /**
      * @inheritdoc
      */
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configProvider = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadataProvider = $this->getMockBuilder(MetadataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context = new UpdateContextStub($configProvider, $metadataProvider);
-        $this->processUnitPrecisionsUpdate = new ProcessUnitPrecisionsUpdateStub($this->doctrineHelper);
+        parent::setUp();
+
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $this->processor = new ProcessUnitPrecisionsUpdateStub($this->doctrineHelper);
     }
 
     /**
@@ -61,15 +51,11 @@ class ProcessUnitPrecisionsUpdateTest extends \PHPUnit_Framework_TestCase
         $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
         $productUnitPrecisions = $this->getProductUnitPrecisions(['item', 'set', 'each']);
         $requestData = ProcessUnitPrecisionsTestHelper::createUpdateRequestData();
-        $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productUnitRepo = $this->createMock(ProductUnitRepository::class);
         $productUnitRepo->expects($this->once())
             ->method('getAllUnitCodes')
             ->willReturn($unitCodes);
-        $productUnitPrecisionRepo = $this->getMockBuilder(ProductUnitPrecisionRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productUnitPrecisionRepo = $this->createMock(ProductUnitPrecisionRepository::class);
         $productUnitPrecisionRepo->expects($this->once())
             ->method('getProductUnitPrecisionsByProductId')
             ->willReturn($productUnitPrecisions);
@@ -78,8 +64,8 @@ class ProcessUnitPrecisionsUpdateTest extends \PHPUnit_Framework_TestCase
             ->withConsecutive([ProductUnit::class], [ProductUnitPrecision::class])
             ->willReturnOnConsecutiveCalls($productUnitRepo, $productUnitPrecisionRepo);
         $pointer = '/' . JsonApi::INCLUDED;
-        $this->processUnitPrecisionsUpdate->setContext($this->context);
-        $result = $this->processUnitPrecisionsUpdate->validateUnitPrecisions(
+        $this->processor->setContext($this->context);
+        $result = $this->processor->validateUnitPrecisions(
             $requestData[JsonApi::INCLUDED],
             $pointer
         );

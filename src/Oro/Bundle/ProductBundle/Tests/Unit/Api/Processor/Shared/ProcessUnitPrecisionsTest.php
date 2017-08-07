@@ -1,16 +1,14 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 
-use Oro\Bundle\ApiBundle\Provider\ConfigProvider;
-use Oro\Bundle\ApiBundle\Provider\MetadataProvider;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Processor\Shared\ProcessUnitPrecisions;
 
-class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
+class ProcessUnitPrecisionsTest extends FormProcessorTestCase
 {
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -18,42 +16,26 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var CreateContextStub|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProcessUnitPrecisionsStub
      */
-    protected $context;
-
-    /**
-     * @var ProcessUnitPrecisions
-     */
-    protected $processUnitPrecisions;
+    protected $processor;
 
     /**
      * @inheritdoc
      */
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $configProvider   = $this->getMockBuilder(ConfigProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadataProvider = $this->getMockBuilder(MetadataProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context = new CreateContextStub($configProvider, $metadataProvider);
+        parent::setUp();
 
-        $this->processUnitPrecisions = new ProcessUnitPrecisionsStub($this->doctrineHelper);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $this->processor = new ProcessUnitPrecisionsStub($this->doctrineHelper);
     }
 
     public function testProcess()
     {
-        $this->context->setRequestData(ProcessUnitPrecisionsTestHelper::createRequestData());
-
         $unitCodes = ['each', 'item', 'piece', 'set', 'kilogram', 'hour'];
-        $productUnitRepo = $this->getMockBuilder(ProductUnitRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $productUnitRepo = $this->createMock(ProductUnitRepository::class);
         $productUnitRepo->expects($this->once())
             ->method('getAllUnitCodes')
             ->willReturn($unitCodes);
@@ -62,7 +44,8 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
             ->with(ProductUnit::class)
             ->willReturn($productUnitRepo);
 
-        $this->processUnitPrecisions->process($this->context);
+        $this->context->setRequestData(ProcessUnitPrecisionsTestHelper::createRequestData());
+        $this->processor->process($this->context);
 
         $this->assertFalse($this->context->hasErrors());
     }
@@ -71,8 +54,10 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
     {
         $requestData = ProcessUnitPrecisionsTestHelper::createRequestData();
         unset($requestData[JsonApi::INCLUDED]);
+
         $this->context->setRequestData($requestData);
-        $this->processUnitPrecisions->process($this->context);
+        $this->processor->process($this->context);
+
         $this->assertSame($requestData, $this->context->getRequestData());
     }
 
@@ -96,8 +81,9 @@ class ProcessUnitPrecisionsTest extends \PHPUnit_Framework_TestCase
             ->with(ProductUnit::class)
             ->willReturn($productUnitRepo);
         $pointer = '/' . JsonApi::INCLUDED;
-        $this->processUnitPrecisions->setContext($this->context);
-        $result = $this->processUnitPrecisions->validateUnitPrecisions(
+
+        $this->processor->setContext($this->context);
+        $result = $this->processor->validateUnitPrecisions(
             $requestData[JsonApi::INCLUDED],
             $pointer
         );

@@ -1,5 +1,5 @@
 @fixture-OroShoppingListBundle:ShoppingListRule.yml
-Feature: Check shipping list popup
+Feature: Check shopping list popup
 
   Scenario: Change shipping list units in popup
     Given I signed in as AmandaRCole@example.org on the store frontend
