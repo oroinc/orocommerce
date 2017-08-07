@@ -1,3 +1,0 @@
-config:
-    paths:
-        'oropaypal/js/app/components/payflow-express-checkout-component': 'bundles/oropaypal/js/app/components/payflow-express-checkout-component.js'

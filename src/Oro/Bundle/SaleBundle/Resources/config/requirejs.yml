@@ -3,7 +3,6 @@ config:
         'orosale/js/app/views/line-item-view': 'bundles/orosale/js/app/views/line-item-view.js'
         'orosale/js/app/views/line-item-offer-view': 'bundles/orosale/js/app/views/line-item-offer-view.js'
         'orosale/js/app/views/line-items-view': 'bundles/orosale/js/app/views/line-items-view.js'
-        'orosale/js/app/components/quote-product-to-order-component': 'bundles/orosale/js/app/components/quote-product-to-order-component.js'
         'orosale/js/app/views/quote-possible-shipping-methods-view': 'bundles/orosale/js/app/views/quote-possible-shipping-methods-view.js'
         'orosale/js/validator/quote-product-offer-quantity': 'bundles/orosale/js/validator/quote-product-offer-quantity.js'
         'orosale/js/app/views/address-view': 'bundles/orosale/js/app/views/address-view.js'
