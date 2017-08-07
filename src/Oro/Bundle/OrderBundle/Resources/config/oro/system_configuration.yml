@@ -46,6 +46,7 @@ system_configuration:
                 tooltip: oro.order.system_configuration.fields.order_automation_target_status.tooltip
                 enum_code: order_internal_status
                 multiple: false
+                empty_value: false
                 attr:
                     'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
                     'data-depend-on': 'order_automation_enable_cancellation'
@@ -58,6 +59,7 @@ system_configuration:
                 tooltip: oro.order.system_configuration.fields.order_creation_new_internal_order_status.tooltip
                 enum_code: order_internal_status
                 multiple: false
+                empty_value: false
 
     tree:
         system_configuration:
