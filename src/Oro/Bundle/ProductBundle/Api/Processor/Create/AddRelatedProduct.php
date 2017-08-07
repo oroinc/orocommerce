@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Processor\Create;
+namespace Oro\Bundle\ProductBundle\Api\Processor\Create;
 
 use Doctrine\ORM\EntityRepository;
 

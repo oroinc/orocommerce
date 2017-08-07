@@ -1,3 +1,4 @@
+@regression
 @fixture-OroSaleBundle:sales-representative-info.yml
 Feature: Sales Representative Info
   In order to provide the customer with the contact information of his primary assigned sales representative

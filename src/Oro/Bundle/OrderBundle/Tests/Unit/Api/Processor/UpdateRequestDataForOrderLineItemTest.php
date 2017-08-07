@@ -96,21 +96,6 @@ class UpdateRequestDataForOrderLineItemTest extends \PHPUnit_Framework_TestCase
         $this->testedProcessor->process($contextMock);
     }
 
-    public function testWrongContext()
-    {
-        $contextMock = $this->createMock(ContextInterface::class);
-
-        $contextMock
-            ->expects(static::never())
-            ->method('getResult');
-
-        $this->skuCachedProductProviderMock
-            ->expects(static::never())
-            ->method('getBySku');
-
-        $this->testedProcessor->process($contextMock);
-    }
-
     public function testNoRequestData()
     {
         $contextMock = $this->createContextMock();

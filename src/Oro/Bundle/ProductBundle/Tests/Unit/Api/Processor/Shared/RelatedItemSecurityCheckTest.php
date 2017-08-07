@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Oro\Bundle\ProductBundle\Processor\Shared\RelatedItemSecurityCheck;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Get\GetProcessorTestCase;
+use Oro\Bundle\ProductBundle\Api\Processor\Shared\RelatedItemSecurityCheck;
 use Oro\Bundle\SecurityBundle\Tests\Unit\Authorization\FakeAuthorizationChecker;
-use Oro\Component\ChainProcessor\ContextInterface;
 
-class RelatedItemSecurityCheckTest extends \PHPUnit_Framework_TestCase
+class RelatedItemSecurityCheckTest extends GetProcessorTestCase
 {
     /**
      * @dataProvider withoutProperCapabilitiesDataProvider
@@ -17,11 +17,11 @@ class RelatedItemSecurityCheckTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessIsDeniedWhenUserDoesNotHaveProperCapability(array $capabilities, array $isGrantedMapping)
     {
-        $securityCheck = $this->getSecurityCheck($capabilities, [], $isGrantedMapping);
+        $processor = $this->getSecurityCheck($capabilities, [], $isGrantedMapping);
 
         $this->expectException(AccessDeniedException::class);
 
-        $securityCheck->process($this->getContext());
+        $processor->process($this->context);
     }
 
     /**
@@ -31,23 +31,19 @@ class RelatedItemSecurityCheckTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessIsDeniedWhenUserDoesNotHaveProperPermissions(array $permissions, array $isGrantedMapping)
     {
-        $securityCheck = $this->getSecurityCheck([], $permissions, $isGrantedMapping);
+        $processor = $this->getSecurityCheck([], $permissions, $isGrantedMapping);
 
         $this->expectException(AccessDeniedException::class);
 
-        $securityCheck->process($this->getContext());
+        $processor->process($this->context);
     }
 
     public function testAccessGrantedAndSecurityCheckGroupSkippedWhenEmptyArrayPassed()
     {
-        $securityCheck = $this->getSecurityCheck([], [], []);
+        $processor = $this->getSecurityCheck([], [], []);
 
-        $context = $this->getContext();
-        $context->expects($this->once())
-            ->method('skipGroup')
-            ->with('security_check');
-
-        $securityCheck->process($context);
+        $processor->process($this->context);
+        self::assertEquals(['security_check'], $this->context->getSkippedGroups());
     }
 
     /**
@@ -88,13 +84,5 @@ class RelatedItemSecurityCheckTest extends \PHPUnit_Framework_TestCase
         $authChecker->isGrantedMapping = $isGrantedMapping;
 
         return new RelatedItemSecurityCheck($authChecker, $permissions, $capabilities);
-    }
-
-    /**
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getContext()
-    {
-        return $this->createMock(ContextInterface::class);
     }
 }

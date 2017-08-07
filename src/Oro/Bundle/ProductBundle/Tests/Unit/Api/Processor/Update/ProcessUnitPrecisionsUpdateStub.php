@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Processor\Update;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Update;
 
-use Oro\Bundle\ProductBundle\Processor\Update\ProcessUnitPrecisionsUpdate;
+use Oro\Bundle\ProductBundle\Api\Processor\Update\ProcessUnitPrecisionsUpdate;
 
 class ProcessUnitPrecisionsUpdateStub extends ProcessUnitPrecisionsUpdate
 {

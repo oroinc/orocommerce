@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Processor\Create;
+namespace Oro\Bundle\ProductBundle\Api\Processor\Create;
 
 use Oro\Bundle\ApiBundle\Processor\Create\JsonApi\ValidateRequestData;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;

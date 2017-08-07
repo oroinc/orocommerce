@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\DeleteList\DeleteListProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\Processor\UpdateLexemesOnPriceRuleDeleteListProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class UpdateLexemesOnPriceRuleDeleteListProcessorTest extends \PHPUnit_Framework_TestCase
+class UpdateLexemesOnPriceRuleDeleteListProcessorTest extends DeleteListProcessorTestCase
 {
     /**
      * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
@@ -24,25 +24,19 @@ class UpdateLexemesOnPriceRuleDeleteListProcessorTest extends \PHPUnit_Framework
     /**
      * @var UpdateLexemesOnPriceRuleDeleteListProcessor
      */
-    private $testedProcessor;
+    private $processor;
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->priceRuleLexemesHandlerMock = $this->createMock(PriceRuleLexemeHandler::class);
         $this->deleteListProcessorMock = $this->createMock(ProcessorInterface::class);
 
-        $this->testedProcessor = new UpdateLexemesOnPriceRuleDeleteListProcessor(
+        $this->processor = new UpdateLexemesOnPriceRuleDeleteListProcessor(
             $this->priceRuleLexemesHandlerMock,
             $this->deleteListProcessorMock
         );
-    }
-
-    /**
-     * @return ContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(ContextInterface::class);
     }
 
     /**
@@ -89,8 +83,6 @@ class UpdateLexemesOnPriceRuleDeleteListProcessorTest extends \PHPUnit_Framework
 
     public function testProcess()
     {
-        $contextMock = $this->createContextMock();
-
         $priceLists = [
             $this->createPriceListMock(1),
             $this->createPriceListMock(2),
@@ -105,54 +97,42 @@ class UpdateLexemesOnPriceRuleDeleteListProcessorTest extends \PHPUnit_Framework
             $this->createPriceRuleMock($priceLists[3]),
         ];
 
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($priceRulesMocks);
-
         $this->deleteListProcessorMock
             ->expects(static::once())
             ->method('process')
-            ->with($contextMock);
+            ->with($this->context);
 
         $this->priceRuleLexemesHandlerMock
             ->expects(static::exactly(3))
             ->method('updateLexemes')
             ->withConsecutive([$priceLists[0]], [$priceLists[1]], [$priceLists[3]]);
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($priceRulesMocks);
+        $this->processor->process($this->context);
     }
 
     public function testProcessWithWrongEntities()
     {
-        $contextMock = $this->createContextMock();
-
         $priceRulesMocks = [
             new \stdClass(),
             new \stdClass()
         ];
 
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($priceRulesMocks);
-
         $this->deleteListProcessorMock
             ->expects(static::once())
             ->method('process')
-            ->with($contextMock);
+            ->with($this->context);
 
         $this->priceRuleLexemesHandlerMock
             ->expects(static::never())
             ->method('updateLexemes');
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($priceRulesMocks);
+        $this->processor->process($this->context);
     }
 
     public function testProcessWithNullPriceList()
     {
-        $contextMock = $this->createContextMock();
-
         $priceRulesMocks = [
             $this->createPriceRuleMock(),
             $this->createPriceRuleMock(),
@@ -160,41 +140,31 @@ class UpdateLexemesOnPriceRuleDeleteListProcessorTest extends \PHPUnit_Framework
             $this->createPriceRuleMock(),
         ];
 
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($priceRulesMocks);
-
         $this->deleteListProcessorMock
             ->expects(static::once())
             ->method('process')
-            ->with($contextMock);
+            ->with($this->context);
 
         $this->priceRuleLexemesHandlerMock
             ->expects(static::never())
             ->method('updateLexemes');
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($priceRulesMocks);
+        $this->processor->process($this->context);
     }
 
     public function testProcessWithResultNonArray()
     {
-        $contextMock = $this->createContextMock();
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn(new \stdClass());
-
         $this->deleteListProcessorMock
             ->expects(static::once())
             ->method('process')
-            ->with($contextMock);
+            ->with($this->context);
 
         $this->priceRuleLexemesHandlerMock
             ->expects(static::never())
             ->method('updateLexemes');
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult(new \stdClass());
+        $this->processor->process($this->context);
     }
 }

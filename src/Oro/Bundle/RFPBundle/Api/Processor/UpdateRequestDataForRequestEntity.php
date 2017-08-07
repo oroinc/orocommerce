@@ -13,9 +13,7 @@ class UpdateRequestDataForRequestEntity implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        if (!$context instanceof FormContext) {
-            return;
-        }
+        /** @var FormContext $context */
 
         $requestData = $context->getRequestData();
 

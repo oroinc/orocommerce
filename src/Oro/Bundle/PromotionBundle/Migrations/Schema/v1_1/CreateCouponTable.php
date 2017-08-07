@@ -32,8 +32,8 @@ class CreateCouponTable implements Migration
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('total_uses', 'integer', ['default' => '0']);
-        $table->addColumn('uses_per_coupon', 'integer', ['notnull' => false]);
-        $table->addColumn('uses_per_user', 'integer', ['notnull' => false]);
+        $table->addColumn('uses_per_coupon', 'integer', ['notnull' => false, 'default' => '1']);
+        $table->addColumn('uses_per_user', 'integer', ['notnull' => false, 'default' => '1']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);

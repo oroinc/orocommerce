@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collection_shopping_list.yml
 Feature:
   In order to edit content node
