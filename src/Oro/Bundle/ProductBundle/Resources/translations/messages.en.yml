@@ -4,18 +4,27 @@ oro:
         entity_plural_label: Products
         entity_description: Represents product information
         id.label: Id
-        sku_uppercase.label: SKU
+        sku_uppercase:
+            label: SKU
+            description: The uppercase version of the SKU
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
         sku:
-          label: SKU
-          placeholder: "Enter Product Name or Item Number"
-          not_found: Item Number Cannot Be Found
-          description: The code of the product
+            label: SKU
+            placeholder: "Enter Product Name or Item Number"
+            not_found: Item Number Cannot Be Found
+            description: The code of the product
         quantity.label: Qty
         quantity.placeholder: "Qty #"
-        variant_fields.label: Configurable Attributes
+        variant_fields:
+            label: Configurable Attributes
+            description: Configurable Attributes
+            yes.label: Yes
+            no.label: No
+        unit.label: Unit
+        price.label: Price
+        has_variants.label: Has Variants
         inventory_status:
             label: Inventory Status
             description: The status of the inventory of this product, in stock if there is a minimum quantity that can be ordered
@@ -32,7 +41,9 @@ oro:
             description: The primary unit of quantity for the product
         primary_unit_precision_id.label: Primary Unit Precision Id
         additional_unit_precisions.label: Additional Units
-        unit_precisions.label: Unit Precisions
+        unit_precisions:
+            label: Unit Precisions
+            description: Collection of configured product unit precisions for this product
         image.label: Image
         names:
             label: Name
@@ -66,7 +77,9 @@ oro:
             yes: Yes
             no: No
         time_period.label: Time Period
-        page_template.label: Page Template
+        page_template:
+            label: Page Template
+            description: Page Template style used for displaying product in frontend store
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
@@ -137,6 +150,7 @@ oro:
         productunitprecision:
             entity_label: Product Unit Precision
             entity_plural_label: Product Unit Precisions
+            id.label: Id
             product.label: Product
             unit.label: Unit
             precision.label: Precision
@@ -460,35 +474,46 @@ oro:
             owner:
                 label: Owner
             label:                Brand
+            description:          Brand of the product
             entity_label:         Brand
             entity_plural_label:  Brands
 
             descriptions:
                 label:    Description
+                description: The descriptions for the brand
             id:
                 label:    Id
             meta_titles:
                 label:    Meta title
+                description: The meta title of the brand
             meta_descriptions:
                 label:    Meta description
+                description: The meta description for the brand
             meta_keywords:
                 label:    Meta keyword
+                description: The meta kewords for the brand
             names:
                 label:    Name
+                description: The name of the brand
             short_descriptions:
                 label:    Short description
+                description: The short description of the brand
             slug_prototypes:
                 label:    Slug prototype
+                description: The slug prototype of the brand
             slugs:
                 label:    Slug
+                description: The slug of the brand
             organization:
                 label:    Organization
             owner:
                 label:    Owner
+                description: The owner of the brand
             status:
                 label:    Status
                 disabled: Disabled
                 enabled:  Enabled
+                description: The status for the brand
 
             menu:
                 entity_plural_label:  Product Brands

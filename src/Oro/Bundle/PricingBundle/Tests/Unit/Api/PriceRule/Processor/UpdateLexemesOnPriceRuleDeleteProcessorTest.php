@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceRule\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Delete\DeleteProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\PriceRule\Processor\UpdateLexemesOnPriceRuleDeleteProcessor;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class UpdateLexemesOnPriceRuleDeleteProcessorTest extends AbstractUpdateLexemesTest
+class UpdateLexemesOnPriceRuleDeleteProcessorTest extends DeleteProcessorTestCase
 {
     /**
      * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
@@ -21,14 +24,16 @@ class UpdateLexemesOnPriceRuleDeleteProcessorTest extends AbstractUpdateLexemesT
     /**
      * @var UpdateLexemesOnPriceRuleDeleteProcessor
      */
-    protected $testedProcessor;
+    protected $processor;
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->priceRuleLexemesHandlerMock = $this->createMock(PriceRuleLexemeHandler::class);
         $this->deleteProcessorMock = $this->createMock(ProcessorInterface::class);
 
-        $this->testedProcessor = new UpdateLexemesOnPriceRuleDeleteProcessor(
+        $this->processor = new UpdateLexemesOnPriceRuleDeleteProcessor(
             $this->priceRuleLexemesHandlerMock,
             $this->deleteProcessorMock
         );
@@ -38,25 +43,23 @@ class UpdateLexemesOnPriceRuleDeleteProcessorTest extends AbstractUpdateLexemesT
     {
         $priceListMock = $this->createPriceListMock();
         $priceRuleMock = $this->createPriceRuleMock($priceListMock);
-        $contextMock = $this->createContextMock($priceRuleMock);
 
         $this->deleteProcessorMock
             ->expects(static::once())
             ->method('process')
-            ->with($contextMock);
+            ->with($this->context);
 
         $this->priceRuleLexemesHandlerMock
             ->expects(static::once())
             ->method('updateLexemes')
             ->with($priceListMock);
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($priceRuleMock);
+        $this->processor->process($this->context);
     }
 
     public function testProcessWithNullResult()
     {
-        $contextMock = $this->createContextMock();
-
         $this->priceRuleLexemesHandlerMock
             ->expects(static::never())
             ->method('updateLexemes');
@@ -64,30 +67,54 @@ class UpdateLexemesOnPriceRuleDeleteProcessorTest extends AbstractUpdateLexemesT
         $this->deleteProcessorMock
             ->expects(static::once())
             ->method('process')
-            ->with($contextMock);
+            ->with($this->context);
 
-        $this->testedProcessor->process($contextMock);
+        $this->processor->process($this->context);
     }
 
     public function testProcessWithNullPriceList()
     {
         $priceRuleMock = $this->createPriceRuleMock();
-        $contextMock = $this->createContextMock($priceRuleMock);
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($priceRuleMock);
 
         $this->deleteProcessorMock
             ->expects(static::once())
             ->method('process')
-            ->with($contextMock);
+            ->with($this->context);
 
         $this->priceRuleLexemesHandlerMock
             ->expects(static::never())
             ->method('updateLexemes');
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($priceRuleMock);
+        $this->processor->process($this->context);
+    }
+
+    /**
+     * @param PriceList|null $priceList
+     *
+     * @return PriceRule|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createPriceRuleMock(PriceList $priceList = null)
+    {
+        $priceRuleMock = $this->createMock(PriceRule::class);
+
+        if (null === $priceList) {
+            return $priceRuleMock;
+        }
+
+        $priceRuleMock
+            ->expects(static::any())
+            ->method('getPriceList')
+            ->willReturn($priceList);
+
+        return $priceRuleMock;
+    }
+
+    /**
+     * @return PriceList|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createPriceListMock()
+    {
+        return $this->createMock(PriceList::class);
     }
 }

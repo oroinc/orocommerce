@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceListSchedule\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\DeleteList\DeleteListProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceListOnScheduleDeleteListProcessor;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use PHPUnit\Framework\TestCase;
 
-class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
+class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends DeleteListProcessorTestCase
 {
     /**
      * @var CombinedPriceListActivationPlanBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -29,6 +28,8 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->combinedPriceListBuilder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
         $this->deleteHandler = $this->createMock(ProcessorInterface::class);
 
@@ -46,7 +47,7 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
         $this->deleteHandler->expects(static::once())
             ->method('process');
 
-        $this->processor->process($this->createMock(ContextInterface::class));
+        $this->processor->process($this->context);
     }
 
     public function testProcess()
@@ -62,11 +63,6 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
             (new PriceListSchedule())->setPriceList($priceLists[2]),
         ];
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
-            ->method('getResult')
-            ->willReturn($schedules);
-
         $this->deleteHandler->expects(static::once())
             ->method('process');
 
@@ -77,7 +73,8 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
                 [$priceLists[2]]
             );
 
-        $this->processor->process($context);
+        $this->context->setResult($schedules);
+        $this->processor->process($this->context);
     }
 
     public function testProcessWrongType()
@@ -87,18 +84,14 @@ class BuildCombinedPriceListOnScheduleDeleteListProcessorTest extends TestCase
             new PriceListSchedule(),
         ];
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
-            ->method('getResult')
-            ->willReturn($schedules);
-
         $this->deleteHandler->expects(static::once())
             ->method('process');
 
         $this->combinedPriceListBuilder->expects(static::never())
             ->method('buildByPriceList');
 
-        $this->processor->process($context);
+        $this->context->setResult($schedules);
+        $this->processor->process($this->context);
     }
 
     /**

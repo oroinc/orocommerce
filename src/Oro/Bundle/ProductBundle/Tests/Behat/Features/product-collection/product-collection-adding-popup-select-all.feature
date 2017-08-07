@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collections_individual_products.yml
 Feature:
   In order to be able to add, to the Product Collection, bunch of products that is available in adding popup grid

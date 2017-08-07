@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\PriceListSchedule\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\PriceListSchedule\Processor\BuildCombinedPriceListOnScheduleSaveProcessor;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListActivationPlanBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
-use Oro\Component\ChainProcessor\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class BuildCombinedPriceListOnScheduleSaveProcessorTest extends TestCase
+class BuildCombinedPriceListOnScheduleSaveProcessorTest extends FormProcessorTestCase
 {
     /**
      * @var CombinedPriceListActivationPlanBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -23,6 +22,8 @@ class BuildCombinedPriceListOnScheduleSaveProcessorTest extends TestCase
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->combinedPriceListBuilder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);
 
         $this->processor = new BuildCombinedPriceListOnScheduleSaveProcessor(
@@ -35,22 +36,18 @@ class BuildCombinedPriceListOnScheduleSaveProcessorTest extends TestCase
         $this->combinedPriceListBuilder->expects(static::never())
             ->method('buildByPriceList');
 
-        $this->processor->process($this->createMock(ContextInterface::class));
+        $this->processor->process($this->context);
     }
 
     public function testProcess()
     {
         $priceList = new PriceList();
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
-            ->method('getResult')
-            ->willReturn((new PriceListSchedule())->setPriceList($priceList));
-
         $this->combinedPriceListBuilder->expects(static::once())
             ->method('buildByPriceList')
             ->with($priceList);
 
-        $this->processor->process($context);
+        $this->context->setResult((new PriceListSchedule())->setPriceList($priceList));
+        $this->processor->process($this->context);
     }
 }

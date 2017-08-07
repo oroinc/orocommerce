@@ -1,5 +1,5 @@
+@regression
 @ticket-BB-7664
-@selenium-incompatible
 @automatically-ticket-tagged
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroShippingBundle:ShippingMethodsConfigsRule.yml
@@ -29,7 +29,6 @@ Feature: Shipping Method Configurations disappear when removing integration
       |Sort Order|1                |
       |Currency  |$                |
       |Method    |Flat Rate New    |
-    And I press "Add" in "Shipping Method Configurations" section
     And I fill "Shipping Rule" with:
       |Price     |25               |
     And I save and close form
