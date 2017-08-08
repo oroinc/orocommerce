@@ -44,6 +44,7 @@ class Order extends EntityPage implements LineItemsAwareInterface, SubtotalAware
         if ($rowElement->getCellByNumber(1)->getText() === Form::normalizeValue($value)) {
             return;
         }
+
         self::fail(sprintf('Found "%s" label, but it doesn\'t have "%s" value', $label, $value));
     }
 }

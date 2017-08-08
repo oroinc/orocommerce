@@ -1,4 +1,5 @@
 @fixture-OroPricingBundle:ProductPricesManagement.yml
+@skip
 Feature: Product prices management
   In order to have flexibility of configuring product prices
   As admin
