@@ -736,6 +736,8 @@ Example:
 
 ### skuUppercase
 
+Product SKU in uppercase
+
 #### create, get, get_list, update
 
 {@inheritdoc}
@@ -781,6 +783,8 @@ Example:
 **Required field**
 
 ### backOrder
+
+Backorder.
 
 #### create, get, get_list, update
 
@@ -837,6 +841,8 @@ Example:
 Specify the category of the product
 
 ### taxCode
+
+Specify a tax code
 
 #### create, get, get_list, update
 
