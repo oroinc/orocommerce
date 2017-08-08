@@ -10,6 +10,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
@@ -35,6 +36,9 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
     /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
     protected $serializer;
 
+    /** @var TypedOrderAddressCollection|\PHPUnit_Framework_MockObject_MockObject */
+    protected $addressCollection;
+
     protected function setUp()
     {
         parent::setUp();
@@ -48,9 +52,12 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->quoteAddressManager = $this->getMockBuilder('Oro\Bundle\SaleBundle\Model\QuoteAddressManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->addressCollection = $this->createMock(TypedOrderAddressCollection::class);
+
+        $this->quoteAddressManager = $this->createMock(QuoteAddressManager::class);
+        $this->quoteAddressManager->expects($this->any())
+            ->method('getGroupedAddresses')
+            ->willReturn($this->addressCollection);
 
         $this->serializer = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Serializer\Serializer')
             ->disableOriginalConstructor()
@@ -114,7 +121,11 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         array $formErrors = []
     ) {
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-        $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
+            ->willReturn([]);
+
         $this->quoteAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
         $this->quoteAddressManager->expects($this->any())->method('updateFromAbstract')
@@ -233,8 +244,11 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         array $groupedAddresses = []
     ) {
         $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
-        $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')
+
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
             ->willReturn($groupedAddresses);
+
         $this->quoteAddressManager->expects($this->any())->method('getEntityByIdentifier')
             ->will(
                 $this->returnCallback(
@@ -333,7 +347,10 @@ class QuoteAddressTypeTest extends AbstractAddressTypeTest
         $view = new FormView();
         $view->children = ['country' => new FormView(), 'city' => new FormView(), 'customerAddress' => new FormView()];
 
-        $this->quoteAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+        $this->addressCollection->expects($this->once())
+            ->method('toArray')
+            ->willReturn([]);
+
         $this->quoteAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
             ->willReturn(false);
 

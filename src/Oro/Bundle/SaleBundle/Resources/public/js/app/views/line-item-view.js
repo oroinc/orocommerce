@@ -52,8 +52,14 @@ define(function(require) {
             sellerNotesContainer: '.quote-lineitem-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, an unexpected error has occurred.',
+            submitButton: 'button#save-and-transit',
             allUnits: {},
-            units: {}
+            units: {},
+            events: {
+                before: 'entry-point:quote:load:before',
+                after: 'entry-point:quote:load:after',
+                trigger: 'entry-point:quote:trigger',
+            }
         },
 
         /**
@@ -175,6 +181,9 @@ define(function(require) {
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
 
+            this.listenTo(mediator, this.options.events.before, this.disableSubmit);
+            this.listenTo(mediator, this.options.events.after, this.enableSubmit);
+
             this.$typeSelect.trigger('change');
 
             this.$form = this.$el.closest('form');
@@ -203,6 +212,14 @@ define(function(require) {
             }
 
             this.updateValidation();
+        },
+
+        disableSubmit: function() {
+            $(this.options.submitButton).prop('disabled', true);
+        },
+
+        enableSubmit: function() {
+            $(this.options.submitButton).prop('disabled', false);
         },
 
         /**
@@ -234,14 +251,14 @@ define(function(require) {
         },
 
         removeOfferRow: function() {
-            mediator.trigger('entry-point:quote:trigger');
+            mediator.trigger(this.options.events.trigger);
         },
 
         removeRow: function() {
             this.$el.trigger('content:remove');
             this.remove();
 
-            mediator.trigger('entry-point:quote:trigger');
+            mediator.trigger(this.options.events.trigger);
         },
 
         /**
@@ -278,7 +295,7 @@ define(function(require) {
             var $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
             $quantitySelector.trigger('change');
 
-            mediator.trigger('entry-point:quote:trigger');
+            mediator.trigger(this.options.events.trigger);
         },
 
         /**
@@ -377,6 +394,10 @@ define(function(require) {
                     $(select).val(firstValue);
                 }
                 $(select).addClass(self.options.syncClass);
+
+                if (currentValue !== $(select).val()) {
+                    $(select).change();
+                }
 
                 if (!force) {
                     $(widget).find('select').inputWidget('refresh');

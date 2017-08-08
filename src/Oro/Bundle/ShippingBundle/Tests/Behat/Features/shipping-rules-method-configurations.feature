@@ -1,3 +1,4 @@
+@regression
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 Feature: Applying shipping rules
   Scenario: Create one more Flat Rate integration

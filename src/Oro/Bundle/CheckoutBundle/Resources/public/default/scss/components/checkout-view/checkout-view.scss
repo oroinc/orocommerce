@@ -1,0 +1,138 @@
+// theme: default;
+
+.checkout-view {
+    position: $checkout-view-position;
+
+    display: $checkout-view-display;
+    margin: $checkout-view-margin;
+
+    flex-direction: $checkout-view-flex-direction;
+    flex-wrap: $checkout-view-flex-wrap;
+    justify-content: $checkout-view-justify-content;
+    align-items: $checkout-view-align-items;
+
+    &__column {
+        width: $checkout-view-column-width;
+        margin: $checkout-view-column-margin;
+        padding: $checkout-view-column-padding;
+
+        &-inner {
+            padding: $checkout-view-column-inner-padding;
+        }
+
+        &:first-child {
+            &::after {
+                left: $checkout-view-column-width;
+
+                content: "";
+            }
+        }
+
+        &:last-child {
+            width: $checkout-view-column-last-width;
+            padding-right: 0;
+            margin-bottom: 0;
+
+            &::after {
+                right: $checkout-view-column-last-width;
+
+                content: "";
+            }
+        }
+
+        &::after {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+
+            width: $checkout-view-column-pseudo-width;
+
+            background: $checkout-view-column-pseudo-background;
+        }
+    }
+
+    &__title {
+        margin: $checkout-view-title-margin;
+
+        color: $checkout-view-title-color;
+
+        font-size: $checkout-view-title-font-size;
+        line-height: $checkout-view-title-line-height;
+        font-weight: $checkout-view-title-font-weight;
+    }
+
+    &__badge {
+        @include badge($checkout-view-badge-size, $checkout-view-badge-font-size, get-color('primary', 'base'), 50%);
+
+        margin: $checkout-view-badge-margin;
+    }
+
+    &__shipping-methods {
+        margin: $checkout-view-shipping-methods-margin;
+    }
+
+    &__shipping-methods,
+    &__payment-methods {
+        > .label {
+            text-transform: uppercase;
+        }
+
+        .checkout__form__radio {
+            padding-bottom: 5px;
+        }
+    }
+
+    .checkout-order-summary {
+        margin-top: 5px;
+    }
+
+    .checkout__form__payment-methods {
+        padding: 0 0 0 20px;
+    }
+
+    .order-checkout-widget__container {
+        width: 100%;
+        padding: 15px 0;
+    }
+
+    img {
+        max-width: 100%;
+    }
+}
+
+@include breakpoint('tablet') {
+    .checkout-view {
+        &__column {
+            &:not(:last-child) {
+                width: 50%;
+                padding-right: 0;
+            }
+
+            &:first-child,
+            &:last-child {
+                padding-left: 0;
+
+                &::after {
+                    content: none;
+                }
+            }
+
+            &:last-child {
+                width: 100%;
+                padding: 0;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .checkout-view {
+        &__column {
+            padding: 0;
+            
+            &:not(:last-child) {
+                width: 100%;
+            }
+        }
+    }
+}

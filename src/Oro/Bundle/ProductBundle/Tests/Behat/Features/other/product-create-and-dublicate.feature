@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-10111
 @fixture-OroProductBundle:ProductDuplicateFixture.yml
 Feature: Duplicate product

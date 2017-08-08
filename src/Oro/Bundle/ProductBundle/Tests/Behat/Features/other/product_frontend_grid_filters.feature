@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-4867
 @fixture-OroProductBundle:product_frontend.yml
 Feature: Check filter values for product grid on front store

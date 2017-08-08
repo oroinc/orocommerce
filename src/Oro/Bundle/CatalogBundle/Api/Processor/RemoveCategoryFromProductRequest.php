@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Api\Processor;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApi;
 use Oro\Bundle\ApiBundle\Request\RequestType;
 use Oro\Bundle\ApiBundle\Request\ValueNormalizer;
@@ -62,6 +63,7 @@ class RemoveCategoryFromProductRequest implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
+        /** @var FormContext $context*/
         $requestData = $context->getRequestData();
 
         if (!isset($requestData[JsonApi::DATA][JsonApi::RELATIONSHIPS])) {

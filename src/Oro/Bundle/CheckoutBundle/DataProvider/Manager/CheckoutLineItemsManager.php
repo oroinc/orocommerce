@@ -4,12 +4,13 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManager
@@ -76,21 +77,12 @@ class CheckoutLineItemsManager
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
                 if (!$disablePriceFilter) {
                     $lineItems = $lineItems->filter(
-                        function (OrderLineItem $lineItem) use ($currency, $supportedStatuses) {
-                            $allowedProduct = true;
-
-                            $product = $lineItem->getProduct();
-                            if ($product) {
-                                $allowedProduct = false;
-                                if ($product->getInventoryStatus()) {
-                                    $statusId = $product->getInventoryStatus()->getId();
-                                    $allowedProduct = !empty($supportedStatuses[$statusId]);
-                                }
-                            }
-
-                            return $allowedProduct
-                                && (bool)$lineItem->getPrice()
-                                && $lineItem->getPrice()->getCurrency() === $currency;
+                        function ($lineItem) use ($currency, $supportedStatuses) {
+                            return $this->isLineItemHasCurrencyAndSupportedStatus(
+                                $lineItem,
+                                $currency,
+                                $supportedStatuses
+                            );
                         }
                     );
                 }
@@ -114,5 +106,36 @@ class CheckoutLineItemsManager
         }
 
         return $supportedStatuses;
+    }
+
+    /**
+     * @param object $lineItem
+     * @param string $currency
+     * @param array  $supportedStatuses
+     * @return bool
+     */
+    protected function isLineItemHasCurrencyAndSupportedStatus($lineItem, $currency, array $supportedStatuses)
+    {
+        $allowedProduct = true;
+
+        if ($lineItem instanceof ProductHolderInterface) {
+            $product = $lineItem->getProduct();
+            if ($product) {
+                $allowedProduct = false;
+                if ($product->getInventoryStatus()) {
+                    $statusId = $product->getInventoryStatus()->getId();
+                    $allowedProduct = !empty($supportedStatuses[$statusId]);
+                }
+            }
+        }
+
+        $lineItemPrice = null;
+        if ($lineItem instanceof PriceAwareInterface) {
+            $lineItemPrice = $lineItem->getPrice();
+        }
+
+        return $allowedProduct
+            && (bool)$lineItemPrice
+            && $lineItemPrice->getCurrency() === $currency;
     }
 }

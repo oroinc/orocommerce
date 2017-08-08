@@ -3,6 +3,7 @@
 {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroUIBundle::macros.html.twig' as UII %}
+{% import 'OroProductBundle:Product/RelatedItems:macros.html.twig' as relatedProductsDataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
 
@@ -176,22 +177,62 @@
         }
     }) %}
 
+    {% set relatedItemsTabsItems = [] %}
+    {% set relatedItemsSubblocks = [] %}
+
     {% if relatedProductsEnabled and resource_granted('oro_related_products_edit') %}
+        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{
+            'id': 'products-related-products-view',
+            'label': 'oro.product.tabs.relatedProducts'|trans}
+        ]) %}
+        {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
+            relatedProductsDataGrid.renderGrid('products-related-products-view', {'relatedItemsIds': get_related_products_ids(entity)}),
+            placeholder('oro_product_related_items_view', {'entity':  entity}),
+        ]) %}
+    {% endif %}
+
+    {% if upsellProductsEnabled and resource_granted('oro_upsell_products_edit') %}
+        {% set relatedItemsTabsItems = relatedItemsTabsItems|merge([{
+            'id': 'products-upsell-products-view',
+            'label': 'oro.product.tabs.upsellProducts'|trans
+        }]) %}
+        {% set relatedItemsSubblocks = relatedItemsSubblocks|merge([
+            relatedProductsDataGrid.renderGrid('products-upsell-products-view', {'relatedItemsIds': get_upsell_products_ids(entity)}),
+            placeholder('oro_product_upsell_products_view', {'entity':  entity})
+        ]) %}
+    {% endif %}
+
+    {% if relatedItemsSubblocks|length %}
+        {% set headerLinkContent = '' %}
+        {% if resource_granted('oro_product_update') %}
+            {% set headerLinkContent = UII.link({
+                path: path('oro_product_related_items_update', {id: entity.id}),
+                label: 'oro.product.quick_edit.label'|trans,
+                iCss: 'fa-edit',
+                class: 'quick-editable pull-right'
+            }) %}
+        {% endif %}
+
+        {% if relatedItemsTabsItems|length == 1 %}
+            {% set relatedItemsTabs = '' %}
+        {% else %}
+            {% set relatedItemsTabs %}
+                <div {{ UI.renderPageComponentAttributes({
+                    module: 'oroproduct/js/app/components/related-items-tabs-component',
+                    options: {
+                        'data': relatedItemsTabsItems
+                    }
+                }) }}></div>
+            {% endset %}
+        {% endif %}
+
         {% set dataBlocks = dataBlocks|merge({
             'relatedItems': {
                 'title': 'oro.product.sections.relatedItems'|trans,
-                'headerLinkContent': UII.link({
-                        path: path('oro_product_related_items_update', {id: entity.id}),
-                        label: 'oro.product.quick_edit.label'|trans,
-                        iCss: 'fa-edit',
-                        class: 'quick-editable pull-right'
-                    }),
+                'headerLinkContent': headerLinkContent,
                 'priority': 450,
                 'subblocks': [{
-                    'data': [
-                        dataGrid.renderGrid('products-related-items-view', {'relatedProducts': get_related_products_ids(entity)}),
-                        placeholder('oro_product_related_items_view', {'entity':  entity})
-                    ]
+                    'data': [relatedItemsTabs]|merge(relatedItemsSubblocks)
                 }]
             }
         }) %}

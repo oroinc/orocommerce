@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -14,7 +15,7 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * @ORM\MappedSuperclass()
  * @ORM\HasLifecycleCallbacks()
  */
-class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInterface
+class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInterface, SettablePriceAwareInterface
 {
     /**
      * @var integer
