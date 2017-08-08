@@ -53,6 +53,7 @@ api:
                         update_relationship: false
 
         Oro\Bundle\PricingBundle\Entity\ProductPrice:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/product_price.md'
             filters:
                 fields:
                     priceList:
