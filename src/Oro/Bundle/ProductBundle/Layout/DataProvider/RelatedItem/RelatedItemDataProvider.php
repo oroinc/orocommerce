@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Oro\Bundle\UIBundle\Provider\UserAgentProviderInterface;
 
-class RelatedItemDataProvider
+class RelatedItemDataProvider implements RelatedItemDataProviderInterface
 {
     /** @var FinderStrategyInterface */
     private $finderStrategy;
@@ -26,7 +26,7 @@ class RelatedItemDataProvider
      * @param FinderStrategyInterface           $finderStrategy
      * @param AbstractRelatedItemConfigProvider $configProvider
      * @param RestrictedProductRepository       $restrictedProductRepository
-     * @param UserAgentProviderInterface                 $userAgentProvider
+     * @param UserAgentProviderInterface        $userAgentProvider
      */
     public function __construct(
         FinderStrategyInterface $finderStrategy,
@@ -41,8 +41,7 @@ class RelatedItemDataProvider
     }
 
     /**
-     * @param Product $product
-     * @return Product[]
+     * {@inheritdoc}
      */
     public function getRelatedItems(Product $product)
     {
@@ -71,7 +70,7 @@ class RelatedItemDataProvider
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isSliderEnabled()
     {
@@ -79,7 +78,7 @@ class RelatedItemDataProvider
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isAddButtonVisible()
     {
