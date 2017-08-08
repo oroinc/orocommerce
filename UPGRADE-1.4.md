@@ -32,7 +32,7 @@ in `get_list` action `priceList` filter is required and in all actions ID of ent
     - Class `Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\StorePriceListInContextByProductPriceProcessor` was added to save priceListId from ProductPrice entity to context
     - Interface `Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByContextNormalizerInterface` was added to abstract the way of normalizing product price ids
     - Class `Oro\Component\ChainProcessor\ContextInterface\ProductPriceIDByPriceListIDNormalizer` was added to transform product price id to `ProductPriceID-PriceListID` format
-    - Class `Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPrice\ResetPriceRuleFieldProductPriceEntityListener` was added to reset product price rule when one of the fields: `value`, `quantity`, `unit`, `currency` changes
+    - Class `Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleFieldOnUpdateProcessor` was added to reset product price rule when one of the fields: `value`, `quantity`, `unit`, `currency` changes
 
 PayPalBundle
 ------------

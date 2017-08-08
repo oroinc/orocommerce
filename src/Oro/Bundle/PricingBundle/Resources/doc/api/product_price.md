@@ -136,10 +136,6 @@ Price list related to a product price
 
 **The required field**
 
-### priceRule
-
-Price rule related to a product price
-
 ### product
 
 The product of a product price
