@@ -79,6 +79,9 @@ class CheckoutShippingContextFactory
             ->setSubTotal($subtotal)
             ->setCurrency($checkout->getCurrency());
 
+        $shippingContextBuilder
+            ->setWebsite($checkout->getWebsite());
+
         if (null !== $checkout->getShippingAddress()) {
             $shippingContextBuilder->setShippingAddress($checkout->getShippingAddress());
         }

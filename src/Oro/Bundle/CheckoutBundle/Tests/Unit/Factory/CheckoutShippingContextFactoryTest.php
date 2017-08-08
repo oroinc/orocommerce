@@ -19,41 +19,46 @@ use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFact
 use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $factory;
 
-    /** @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $checkoutLineItemsManager;
 
-    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $totalProcessorProvider;
 
-    /** @var OrderShippingLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var OrderShippingLineItemConverterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $shippingLineItemConverter;
 
-    /** @var ShippingContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ShippingContextBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $contextBuilderMock;
 
-    /** @var ShippingContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ShippingContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $shippingContextBuilderFactoryMock;
 
     protected function setUp()
     {
-        $this->checkoutLineItemsManager = $this->getMockBuilder(CheckoutLineItemsManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->totalProcessorProvider = $this->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);
+        $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);
         $this->contextBuilderMock = $this->createMock(ShippingContextBuilderInterface::class);
-
         $this->shippingLineItemConverter = $this->createMock(OrderShippingLineItemConverterInterface::class);
-
         $this->shippingContextBuilderFactoryMock = $this->createMock(ShippingContextBuilderFactoryInterface::class);
 
         $this->factory = new CheckoutShippingContextFactory(
@@ -61,18 +66,6 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             $this->totalProcessorProvider,
             $this->shippingLineItemConverter,
             $this->shippingContextBuilderFactoryMock
-        );
-    }
-
-    protected function tearDown()
-    {
-        unset(
-            $this->factory,
-            $this->shippingContextBuilderFactoryMock,
-            $this->shippingLineItemConverter,
-            $this->contextBuilderMock,
-            $this->totalProcessorProvider,
-            $this->checkoutLineItemsManager
         );
     }
 
@@ -125,9 +118,8 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $amount = 100;
         $customer = new Customer();
         $customerUser = new CustomerUser();
-        $checkoutLineItems = new ArrayCollection([
-            new OrderLineItem()
-        ]);
+        $checkoutLineItems = new ArrayCollection([new OrderLineItem()]);
+        $websiteMock = $this->createMock(Website::class);
 
         $subtotal = (new Subtotal())
             ->setAmount($amount)
@@ -139,7 +131,8 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setCurrency($currency)
             ->setPaymentMethod($paymentMethod)
             ->setCustomer($customer)
-            ->setCustomerUser($customerUser);
+            ->setCustomerUser($customerUser)
+            ->setWebsite($websiteMock);
 
         $this->contextBuilderMock
             ->method('setShippingAddress')
@@ -178,6 +171,11 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('setCurrency')
             ->with($checkout->getCurrency());
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setWebsite')
+            ->with($checkout->getWebsite());
 
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())

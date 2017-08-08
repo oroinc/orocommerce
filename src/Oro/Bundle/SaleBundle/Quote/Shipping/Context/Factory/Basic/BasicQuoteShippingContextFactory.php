@@ -74,6 +74,9 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
             ->setSubTotal($subtotal)
             ->setCurrency($quote->getCurrency());
 
+        $shippingContextBuilder
+            ->setWebsite($quote->getWebsite());
+
         if (null !== $quote->getShippingAddress()) {
             $shippingContextBuilder
                 ->setShippingAddress($quote->getShippingAddress());

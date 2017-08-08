@@ -16,6 +16,7 @@ use Oro\Bundle\ShippingBundle\Context\Builder\ShippingContextBuilderInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -87,6 +88,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         );
         $quoteMock = $this->getQuoteMock();
+        $websiteMock = $this->createMock(Website::class);
         $shippingContextMock = $this->getShippingContextMock();
         $builder = $this->getShippingContextBuilderMock();
 
@@ -133,6 +135,11 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrency')
             ->willReturn($currency);
 
+        $quoteMock
+            ->expects($this->once())
+            ->method('getWebsite')
+            ->willReturn($websiteMock);
+
         $builder
             ->expects($this->once())
             ->method('setShippingAddress')
@@ -158,6 +165,11 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('setCurrency')
             ->with($currency);
+
+        $builder
+            ->expects($this->once())
+            ->method('setWebsite')
+            ->with($websiteMock);
 
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())

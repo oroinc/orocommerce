@@ -69,6 +69,9 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
             ->setSubTotal($subtotal)
             ->setCurrency($order->getCurrency());
 
+        $shippingContextBuilder
+            ->setWebsite($order->getWebsite());
+
         $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
 
         if (null !== $order->getShippingAddress()) {
