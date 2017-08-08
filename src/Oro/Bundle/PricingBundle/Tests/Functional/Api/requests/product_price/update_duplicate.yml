@@ -6,10 +6,6 @@ data:
         value: '150.0000'
         currency: 'EUR'
     relationships:
-        priceRule:
-            data:
-                type: 'pricerules'
-                id: '<toString(@price_list_1_price_rule_2->id)>'
         product:
             data:
                 type: 'products'

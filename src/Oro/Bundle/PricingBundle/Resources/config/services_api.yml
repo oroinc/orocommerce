@@ -183,3 +183,9 @@ services:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Delete\PriceManagerDeleteHandler'
         arguments:
             - '@oro_pricing.manager.price_manager'
+
+    oro_pricing.api.reset_price_rule_field_on_update:
+        class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\ResetPriceRuleFieldOnUpdateProcessor'
+        tags:
+            - { name: oro.api.processor, action: update, priority: -45, group: load_data, class: '%oro_pricing.entity.product_price.class%' }
+            - { name: oro.api.processor, action: update, priority: 0, group: save_data, class: '%oro_pricing.entity.product_price.class%' }

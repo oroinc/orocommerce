@@ -46,7 +46,7 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.api.enable_price_sharding_on_config',
             'oro_pricing.api.save_product_price',
             'oro_pricing.api.price_manager_delete_handler',
-            'oro_pricing.entity_listener.product_price.reset_price_rule',
+            'oro_pricing.api.reset_price_rule_field_on_update',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

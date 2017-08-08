@@ -41,7 +41,7 @@ class ProductPriceTest extends RestJsonApiTestCase
             'filter' => [
                 'priceList' => ['@price_list_1->id'],
             ],
-            'sort' => 'priceRule',
+            'sort' => 'product',
         ];
         $response = $this->cget(['entity' => $this->getEntityName()], $parameters);
 
@@ -379,14 +379,12 @@ class ProductPriceTest extends RestJsonApiTestCase
             ->andWhere('price.value = :value')
             ->andWhere('price.currency = :currency')
             ->andWhere('price.priceList = :priceList')
-            ->andWhere('price.priceRule = :priceRule')
             ->andWhere('price.product = :product')
             ->andWhere('price.unit = :unit')
             ->setParameter('quantity', 250)
             ->setParameter('value', 150)
             ->setParameter('currency', 'CAD')
             ->setParameter('priceList', $this->getReference('price_list_3'))
-            ->setParameter('priceRule', $this->getReference('price_list_1_price_rule_3'))
             ->setParameter('product', $this->getReference('product-5'))
             ->setParameter('unit', $this->getReference('product_unit.milliliter'));
 

@@ -71,6 +71,8 @@ api:
                           - NotBlank: ~
                 productSku:
                     exclude: true
+                priceRule:
+                    exclude: true
             actions:
                 update_relationship:
                     exclude: true
