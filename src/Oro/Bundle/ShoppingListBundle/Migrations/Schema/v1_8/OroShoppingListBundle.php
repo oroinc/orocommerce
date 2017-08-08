@@ -4,14 +4,25 @@ namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroShoppingListBundle implements Migration, ExtendExtensionAwareInterface
+class OroShoppingListBundle implements
+    Migration,
+    ExtendExtensionAwareInterface,
+    ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /** @var ExtendExtension */
     protected $extendExtension;
 
@@ -28,13 +39,14 @@ class OroShoppingListBundle implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addShoppingListCustomerVisitorInverseRelation($schema);
+        $this->addShoppingListCustomerVisitorInverseRelation($schema, $queries);
     }
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    private function addShoppingListCustomerVisitorInverseRelation(Schema $schema)
+    private function addShoppingListCustomerVisitorInverseRelation(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_customer_visitor');
         $targetTable = $schema->getTable('oro_shopping_list');
@@ -63,5 +75,44 @@ class OroShoppingListBundle implements Migration, ExtendExtensionAwareInterface
                 'dataaudit' => ['auditable' => false]
             ]
         );
+
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $fieldConfig = $configManager->getFieldConfig('extend', CustomerVisitor::class, 'shoppingLists');
+        $entityConfig = $configManager->getEntityConfig('extend', CustomerVisitor::class);
+
+        $relationKey = $fieldConfig->get('relation_key');
+        $relations = $entityConfig->get('relation', false, []);
+        if (isset($relations[$relationKey])) {
+            unset($relations[$relationKey]);
+
+            $queries->addPostQuery(
+                new UpdateEntityConfigEntityValueQuery(
+                    CustomerVisitor::class,
+                    'extend',
+                    'relation',
+                    $relations
+                )
+            );
+
+            $queries->addPostQuery(
+                new UpdateEntityConfigFieldValueQuery(
+                    CustomerVisitor::class,
+                    'shoppingLists',
+                    'extend',
+                    'state',
+                    ExtendScope::STATE_UPDATE
+                )
+            );
+
+            $queries->addPostQuery(
+                new UpdateEntityConfigFieldValueQuery(
+                    CustomerVisitor::class,
+                    'shoppingLists',
+                    'extend',
+                    'bidirectional',
+                    true
+                )
+            );
+        }
     }
 }
