@@ -60,6 +60,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->addOroPromotionAppliedDiscountForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
+        $this->modifyAppliedDiscount($schema);
     }
 
     /**
@@ -389,5 +390,17 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     protected function addActivityAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_promotion');
+    }
+
+    /**
+     * Add fields to applied discount.
+     *
+     * @param Schema $schema
+     */
+    protected function modifyAppliedDiscount(Schema $schema)
+    {
+        $table = $schema->getTable('oro_promotion_applied_discount');
+        $table->addColumn('enabled', 'boolean', ['default' => true]);
+        $table->addColumn('coupon_code', 'string', ['notnull' => false, 'length' => 255]);
     }
 }

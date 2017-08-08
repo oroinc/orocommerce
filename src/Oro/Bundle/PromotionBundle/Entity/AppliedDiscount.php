@@ -27,6 +27,20 @@ class AppliedDiscount implements DatesAwareInterface
     protected $id;
 
     /**
+     * @ORM\Column(type="boolean", name="enabled", options={"default"=true})
+     *
+     * @var bool
+     */
+    protected $enabled = true;
+
+    /**
+     * @ORM\Column(name="coupon_code", type="string", length=255, nullable=true)
+     *
+     * @var string|null
+     */
+    protected $couponCode;
+
+    /**
      * @ORM\Column(name="type", type="string", length=255)
      *
      * @var string
@@ -91,6 +105,44 @@ class AppliedDiscount implements DatesAwareInterface
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return (bool)$this->enabled;
+    }
+
+    /**
+     * @param bool $enabled
+     * @return $this
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCouponCode()
+    {
+        return $this->couponCode;
+    }
+
+    /**
+     * @param string|null $couponCode
+     * @return $this
+     */
+    public function setCouponCode($couponCode)
+    {
+        $this->couponCode = $couponCode;
+
+        return $this;
     }
 
     /**

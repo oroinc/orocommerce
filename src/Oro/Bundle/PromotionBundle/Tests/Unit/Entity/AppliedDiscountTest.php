@@ -24,6 +24,8 @@ class AppliedDiscountTest extends \PHPUnit_Framework_TestCase
             ['promotionName', 'test-promotion', false],
             ['configOptions', [1, 2, 3]],
             ['lineItem', new OrderLineItem(), false],
+            ['enabled', false, true],
+            ['couponCode', 'newCode', null],
         ];
 
         $this->assertPropertyAccessors(new AppliedDiscount(), $properties);
