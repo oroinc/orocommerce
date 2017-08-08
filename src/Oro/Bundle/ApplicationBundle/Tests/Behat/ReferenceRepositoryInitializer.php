@@ -8,6 +8,7 @@ use Oro\Bundle\AddressBundle\Entity\Repository\AddressTypeRepository;
 use Oro\Bundle\DPDBundle\Entity\ShippingService as DPDShippingService;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\ReferenceRepositoryInitializer as BaseInitializer;
@@ -23,6 +24,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 class ReferenceRepositoryInitializer extends BaseInitializer
 {
@@ -113,10 +115,25 @@ class ReferenceRepositoryInitializer extends BaseInitializer
     protected function configureDictionaries()
     {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        /** @var AbstractEnumValue[] $enumInventoryStatuses */
         $enumInventoryStatuses = $this->getEntityManager()
             ->getRepository($inventoryStatusClassName)
-            ->findOneBy(['id' => 'in_stock']);
-        $this->referenceRepository->set('enumInventoryStatuses', $enumInventoryStatuses);
+            ->findAll();
+
+        $inventoryStatuses = [];
+        foreach ($enumInventoryStatuses as $inventoryStatus) {
+            $inventoryStatuses[$inventoryStatus->getId()] = $inventoryStatus;
+        }
+
+        $this->referenceRepository->set(
+            'enumInventoryStatuses',
+            $inventoryStatuses[Product::INVENTORY_STATUS_IN_STOCK]
+        );
+
+        $this->referenceRepository->set(
+            'enumInventoryStatusOutOfStock',
+            $inventoryStatuses[Product::INVENTORY_STATUS_OUT_OF_STOCK]
+        );
 
         // move to DPDBundle after https://magecore.atlassian.net/browse/BAP-15050 will be done
         /** @var EntityRepository $repository */

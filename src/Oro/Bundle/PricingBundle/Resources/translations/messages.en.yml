@@ -1,15 +1,25 @@
 oro.pricing:
     priceattributeproductprice:
-        entity_label: Price Attribute Product Price
-        entity_plural_label: Price Attribute Product Prices
-        id.label: Id
-        currency.label: Currency
-        product_sku.label: Product SKU
-        quantity.label: Quantity
-        value.label: Value
-        price_list.label: Price List
-        product.label: Product
-        unit.label: Unit
+        entity_label: 'Price Attribute Product Price'
+        entity_plural_label: 'Price Attribute Product Prices'
+        id.label: 'Id'
+        currency:
+            label: 'Currency'
+            description: 'The currency of a product price attribute value'
+        product_sku.label: 'Product SKU'
+        quantity.label: 'Quantity'
+        value:
+            label: 'Value'
+            description: 'Product price attribute value'
+        price_list:
+            label: 'Price List'
+            description: 'Product price attribute related to a product price attribute value'
+        product:
+            label: 'Product'
+            description: 'Product related to a product price attribute value'
+        unit:
+            label: 'Unit'
+            description: 'Unit related to a product price attribute value'
 
         export:
             button.label: 'Export Price Attribute Data'
@@ -94,11 +104,17 @@ oro.pricing:
     priceattributepricelist:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
-        name.label: Price Attribute
-        field_name.label: Field Name
+        name:
+            label: 'Price Attribute'
+            description: 'Price attribute name'
+        field_name:
+            label: 'Field Name'
+            description: 'Price attribute expression field name'
         id.label: Id
         currencies.label: Currencies
-        prices.label: Price Attribute Product Prices
+        prices:
+            label: 'Price Attribute Product Prices'
+            description: 'Product price attribute values'
 
     pricerule:
         entity_label: Price Calculation Rule

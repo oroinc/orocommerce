@@ -651,14 +651,21 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then /^(?:|I )should see "([^"]*)" for "([^"]*)" product$/
+     * @Then /^(?:|I )should see "(?P<elementName>[^"]*)" for "(?P<SKU>[^"]*)" product$/
      */
     public function shouldSeeForProduct($elementName, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem);
-        $element = $this->createElement($elementName, $productItem);
-        self::assertTrue($element->isValid());
+        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+
+        if ($this->isElementVisible($elementName, $productItem)) {
+            return;
+        }
+
+        self::assertNotFalse(
+            stripos($productItem->getText(), $elementName),
+            sprintf('text or element "%s" for product with SKU "%s" is not present or not visible', $elementName, $SKU)
+        );
     }
 
     /**
@@ -667,9 +674,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function shouldNotSeeForProduct($elementName, $SKU)
     {
         $productItem = $this->findElementContains('ProductItem', $SKU);
-        self::assertNotNull($productItem);
-        $element = $this->createElement($elementName, $productItem);
-        self::assertFalse($element->isValid());
+        self::assertNotNull($productItem, sprintf('product with SKU "%s" not found', $SKU));
+
+        $textAndElementPresentedOnPage = $this->isElementVisible($elementName, $productItem)
+            || stripos($productItem->getText(), $elementName);
+
+        self::assertFalse(
+            $textAndElementPresentedOnPage,
+            sprintf('text or element "%s" for product with SKU "%s" is present or visible', $elementName, $SKU)
+        );
     }
 
     /**
@@ -874,5 +887,22 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 throw $e;
             }
         }
+    }
+
+    /**
+     * @param string $elementName
+     * @param NodeElement $productItem
+     * @return bool
+     */
+    protected function isElementVisible($elementName, $productItem)
+    {
+        if ($this->hasElement($elementName)) {
+            $element = $this->createElement($elementName, $productItem);
+            if ($element->isValid() && $element->isVisible()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

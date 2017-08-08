@@ -1,4 +1,3 @@
-@selenium-incompatible
 @fixture-OroDPDBundle:DPDIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroOrderBundle:OrderShippingMethod.yml
@@ -12,8 +11,6 @@ Feature: Select shipping method for Order on backoffice
     And go to Sales/ Orders
     And click "Create Order"
     And click "Add Product"
-    # Two line items was added on previous step, phantomjs issue. Remove this line after resolving of BB-11025
-    And click "Duplicated Line Item Remove Button"
     And fill "Order Form" with:
       | Customer         | Company A                                                           |
       | Customer User    | Amanda Cole                                                         |

@@ -20,6 +20,21 @@ oro_behat_extension:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
+    SelectBillingAddress:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
+    SelectShippingAddress:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+
+    Checkout Shipping Method:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-content="shipping_method_form"] .checkout__form__radio label'
+
+    Checkout Payment Method:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[data-content="payment_method_form"] .checkout__form__radio label'
+
     CheckoutStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'div[data-role="checkout-content"]'
@@ -45,7 +60,11 @@ oro_behat_extension:
 
     Checkout Order Review Notes:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-      selector: 'input[id="addNote"]'
+      selector: 'input[id="addNote"]+.custom-checkbox__icon'
+
+    Checkout Totals:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
+      selector: '.totals-container'
 
     OpenOrdersGrid:
       selector: 'div[data-page-component-name="frontend-checkouts-grid"]'

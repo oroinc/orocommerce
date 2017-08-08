@@ -48,6 +48,11 @@ class LoadRelatedProductData extends AbstractFixture implements DependentFixture
                 $productRelation->setProduct($product)->setRelatedProduct($relatedProduct);
 
                 $manager->persist($productRelation);
+
+                $this->addReference(
+                    sprintf('related-product-%s-%s', $product->getSku(), $relatedProduct->getSku()),
+                    $productRelation
+                );
             }
         }
         $manager->flush();

@@ -51,14 +51,15 @@ class TransitionProviderTest extends \PHPUnit_Framework_TestCase
 
         $transitionWithoutForm = $this->createTransition('transition1');
 
+        $hiddenTransition = $this->createTransition('transition2')
+            ->setFrontendOptions(['is_checkout_continue' => true])
+            ->setHidden(true);
+
         $continueTransition = $this->createTransition('transition3')
             ->setFrontendOptions(['is_checkout_continue' => true])
             ->setFormType('transition_type');
 
-        $transitions = [
-            $transitionWithoutForm,
-            $continueTransition
-        ];
+        $transitions = new ArrayCollection([$transitionWithoutForm, $hiddenTransition, $continueTransition]);
 
         $this->workflowManager->expects($this->any())
             ->method('isTransitionAvailable')
@@ -91,11 +92,7 @@ class TransitionProviderTest extends \PHPUnit_Framework_TestCase
             ->setFormType('transition_type')
             ->setUnavailableHidden(true);
 
-        $transitions = [
-            $transitionWithoutForm,
-            $continueTransition1,
-            $continueTransition2,
-        ];
+        $transitions = new ArrayCollection([$transitionWithoutForm, $continueTransition1, $continueTransition2]);
 
         $this->workflowManager->expects($this->exactly(2))
             ->method('getTransitionsByWorkflowItem')
@@ -141,12 +138,10 @@ class TransitionProviderTest extends \PHPUnit_Framework_TestCase
         $step = new WorkflowStep();
         $workflowItem->setCurrentStep($step);
 
-        $transitions = [];
-
         $this->workflowManager->expects($this->once())
             ->method('getTransitionsByWorkflowItem')
             ->with($workflowItem)
-            ->will($this->returnValue($transitions));
+            ->willReturn(new ArrayCollection());
 
         $this->assertNull($this->provider->getBackTransition($workflowItem));
     }
@@ -173,10 +168,7 @@ class TransitionProviderTest extends \PHPUnit_Framework_TestCase
             ->setFrontendOptions(['is_checkout_back' => true])
             ->setStepTo($step);
 
-        $transitions = [
-            $transition,
-            $backTransition
-        ];
+        $transitions = new ArrayCollection([$transition, $backTransition]);
 
         $this->workflowManager->expects($this->once())
             ->method('getTransitionsByWorkflowItem')

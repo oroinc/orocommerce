@@ -42,4 +42,9 @@ class PriceAttributeProductPrice extends BaseProductPrice
      * )
      **/
     protected $priceList;
+
+    public function __construct()
+    {
+        $this->setQuantity(1);
+    }
 }

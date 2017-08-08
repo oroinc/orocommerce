@@ -11,14 +11,16 @@
             data-page-component-options="{{ {
                 view: 'oroui/js/app/views/layout-subtree-view',
                 blockId : block.vars.id,
-                reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure']
+                reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
             }|json_encode }}"
             data-layout="separate">
-        {{ block_widget(block) }}
-    </div>
+           {{ block_widget(block) }}
+       </div>
     {% if not app.user %}
         <div class="notification-flash notification-flash--warning">
-            {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans }}
+            <div class="notification-flash__text">
+                {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans({'%url%': path('oro_customer_customer_user_security_login')})|raw }}
+            </div>
         </div>
     {% endif %}
 {% endblock %}

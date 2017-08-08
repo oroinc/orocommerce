@@ -1,4 +1,3 @@
-@selenium-incompatible
 @fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
 @regression
 Feature: Inline Editing in Products Grids
@@ -35,7 +34,7 @@ Feature: Inline Editing in Products Grids
     And I press "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product2 |
 
@@ -83,7 +82,7 @@ Feature: Inline Editing in Products Grids
     And I click on empty space
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product1 |
 
@@ -102,14 +101,14 @@ Feature: Inline Editing in Products Grids
     And I press "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product2 |
 
   Scenario Outline: Inline editing of Product fields using double click
     When I edit "Product2" <field> as "<value>" by double click
     And I press "Save changes"
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | <value> |
     Examples:
@@ -138,7 +137,7 @@ Feature: Inline Editing in Products Grids
     And I press "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product3 |
 
@@ -155,7 +154,7 @@ Feature: Inline Editing in Products Grids
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I uncheck "Create 301 Redirect from old to new URLs"
     Then I click "Apply" in modal window
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product4 |
 
@@ -180,7 +179,7 @@ Feature: Inline Editing in Products Grids
     When I edit "Product4" Name as "Product5" without saving
     And I press "Save changes"
     Then I should not see "Changing Page URLs"
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product5 |
 
@@ -202,7 +201,7 @@ Feature: Inline Editing in Products Grids
     When I edit "Product5" Name as "Product6" without saving
     And I press "Save changes"
     Then I should not see "Changing Page URLs"
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product6 |
 
@@ -225,14 +224,14 @@ Feature: Inline Editing in Products Grids
     And I press "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product10 |
     When I edit "Product6" Name as "Product10" without saving
     And I press "Save changes"
     Then I should see "Changing Page URLs" in the "UiWindow Title" element
     Then I click "Apply" in modal window
-    Then I should see "Record has been succesfully updated" flash message
+    Then I should see "Record has been successfully updated" flash message
     Then I should see following records in grid:
       | Product10 |
 

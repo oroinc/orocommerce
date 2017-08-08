@@ -94,8 +94,9 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
 
         $this->executeDbQuery($repository, $insert, $delete, $update, $where);
 
-        $this->visibilityChangeCategorySubtreeCacheBuilder->resolveVisibilitySettings($category, $visibility);
-        $this->triggerCategoryReindexation($category);
+        $categories = $this->visibilityChangeCategorySubtreeCacheBuilder
+            ->resolveVisibilitySettings($category, $visibility);
+        $this->triggerCategoriesReindexation($categories);
     }
 
     /**
@@ -111,8 +112,8 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
      */
     public function categoryPositionChanged(Category $category)
     {
-        $this->positionChangeCategorySubtreeCacheBuilder->categoryPositionChanged($category);
-        $this->triggerCategoryReindexation($category);
+        $categories = $this->positionChangeCategorySubtreeCacheBuilder->categoryPositionChanged($category);
+        $this->triggerCategoriesReindexation($categories);
     }
 
     /**

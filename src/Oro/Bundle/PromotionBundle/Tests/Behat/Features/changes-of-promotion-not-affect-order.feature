@@ -1,4 +1,3 @@
-@selenium-incompatible
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-OroPromotionBundle:promotions.yml
@@ -27,8 +26,8 @@ Feature: Changes of Promotion not affect Order
       And I show column "Row Total (After Discount Excluding Tax)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
       | Product                | RTDA  | RTADIT | RTADET |
-      | Product 2 Item #: SKU2 | $5.00 | $5.00  | $5.00  |
       | Product 1 Item #: SKU1 | $0.00 | $10.00 | $10.00 |
+      | Product 2 Item #: SKU2 | $5.00 | $5.00  | $5.00  |
 
   Scenario: Check that promotion change not affect past orders
     Given I operate as the Admin
@@ -53,5 +52,5 @@ Feature: Changes of Promotion not affect Order
       And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
         | Product                | RTDA  |
-        | Product 2 Item #: SKU2 | $5.00 |
         | Product 1 Item #: SKU1 | $0.00 |
+        | Product 2 Item #: SKU2 | $5.00 |

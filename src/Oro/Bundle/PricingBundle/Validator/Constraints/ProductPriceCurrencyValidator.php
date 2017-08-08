@@ -10,7 +10,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 class ProductPriceCurrencyValidator extends ConstraintValidator
 {
     /**
-     * @param BaseProductPrice     $value
+     * @param BaseProductPrice|object $value
      * @param ProductPriceCurrency $constraint
      *
      * {@inheritdoc}
@@ -31,8 +31,7 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
         if (!$price) {
             return;
         }
-
-        if (!$value->getPriceList()) {
+        if ($value->getPriceList() === null) {
             return;
         }
 
