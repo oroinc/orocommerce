@@ -1,4 +1,8 @@
 config:
+    map:
+        '*':
+            'oropricing/templates/order/subtotals.html': 'oropricing/templates/order/frontend/subtotals.html'
+            'oropricing/templates/order/totals.html': 'oropricing/templates/order/frontend/totals.html'
     paths:
         'oropricing/js/app/components/products-prices-component': 'bundles/oropricing/js/app/components/products-prices-component.js'
         'oropricing/js/app/components/totals-component': 'bundles/oropricing/js/app/components/totals-component.js'
