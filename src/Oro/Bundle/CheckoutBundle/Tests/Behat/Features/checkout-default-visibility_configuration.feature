@@ -13,7 +13,7 @@ Feature: Checkout from Shopping List with different Inventory configuration
     And I click "Commerce" on configuration sidebar
     And I click "Inventory" on configuration sidebar
     And I click "Allowed Statuses" on configuration sidebar
-    And uncheck Use Default for "Can Be Added to Orders" field
+    And uncheck "Use default" for "Can Be Added to Orders" field
     And I fill form with:
       | Can Be Added to Orders | Out of Stock |
     And I click "Save settings"
@@ -33,7 +33,7 @@ Feature: Checkout from Shopping List with different Inventory configuration
     And I click "Commerce" on configuration sidebar
     And I click "Inventory" on configuration sidebar
     And I click "Allowed Statuses" on configuration sidebar
-    And uncheck Use Default for "Can Be Added to RFQs" field
+    And uncheck "Use default" for "Can Be Added to RFQs" field
     And I fill form with:
       | Can Be Added to RFQs | Out of Stock |
     And I click "Save settings"
