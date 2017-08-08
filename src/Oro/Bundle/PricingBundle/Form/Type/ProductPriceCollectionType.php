@@ -14,6 +14,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 class ProductPriceCollectionType extends AbstractType
 {
     const NAME = 'oro_pricing_product_price_collection';
+    const VALIDATION_GROUP = 'ProductPriceCollection';
 
     /**
      * @var ManagerRegistry
@@ -55,7 +56,8 @@ class ProductPriceCollectionType extends AbstractType
             [
                 'type' => ProductPriceType::NAME,
                 'show_form_when_empty' => false,
-                'options' => ['data_class' => $this->dataClass]
+                'options' => ['data_class' => $this->dataClass],
+                'validation_groups' => [self::VALIDATION_GROUP]
             ]
         );
     }
