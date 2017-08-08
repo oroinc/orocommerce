@@ -83,7 +83,7 @@ class ProductApiTest extends RestJsonApiTestCase
                         'category' => [
                             'data' => [
                                 'type' => 'categories',
-                                'id' => "$categoryId",
+                                'id' => (string)$categoryId,
                             ],
                         ],
                     ],

@@ -74,4 +74,4 @@ data:
             category:
                 data:
                     type: categories
-                    id: '@category_1_2_3->id'
+                    id: '<toString(@category_1_2_3->id)>'
