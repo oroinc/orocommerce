@@ -13,3 +13,9 @@ api:
                     target_type: to-one
                     form_options:
                         mapped: false
+            subresources:
+                category:
+                    actions:
+                        get_subresource: false
+                        get_relationship: false
+                        update_relationship: false

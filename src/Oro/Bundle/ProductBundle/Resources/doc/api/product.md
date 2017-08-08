@@ -830,7 +830,7 @@ Example:
 
 ### category
 
-#### create, get, get_list
+#### create, get, get_list, update
 
 {@inheritdoc}
 
