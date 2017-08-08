@@ -17,11 +17,16 @@ oro.tax:
     producttaxcode:
         entity_label: 'Product Tax Code'
         entity_plural_label: 'Product Tax Codes'
-        description: 'List of Product Tax Codes'
+        list:
+            description: 'List of Product Tax Codes'
         products.label: 'Products'
         id.label: 'ID'
-        code.label: 'Code'
-        description.label: 'Description'
+        code:
+            label: 'Code'
+            description: The code of the tax
+        description:
+            label: 'Description'
+            description: The description of the tax
 
     customertaxcode:
         entity_label: 'Customer Tax Code'
@@ -173,3 +178,5 @@ oro.tax:
 
     import_export:
         tax_code_doesnt_exist: Unable to find related tax code for customer "%customer_name%".
+
+oro.product.taxcode.description: Tax code

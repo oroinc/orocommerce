@@ -51,7 +51,7 @@ class CommerceMainContext extends OroFeatureContext implements
     /**
      * This step used for login bayer from frontend of commerce with given session alias to able to switch to later
      *
-     * Example: Given I login as AmandaRCole@example.org the "Buyer" at "other_session"
+     * Example: Given I login as AmandaRCole@example.org the "Buyer" at "other_session" session
      *
      * @Given /^(?:|I )login as (?P<email>\S+) the "(?P<sessionAlias>[^"]*)" at "(?P<sessionName>\w+)" session$/
      *
