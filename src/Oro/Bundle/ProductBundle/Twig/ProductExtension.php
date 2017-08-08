@@ -63,19 +63,24 @@ class ProductExtension extends \Twig_Extension
 
     /**
      * @param FormView $form
-     * @param Product|array|null $product
+     * @param Product|array $product
      */
-    public function setUniqueLineItemFormId($form, $product = null)
+    public function setUniqueLineItemFormId($form, $product = [])
     {
-        if (!$product) {
-            return;
-        }
         if (!isset($form->vars['_notUniqueId'])) {
             $form->vars['_notUniqueId'] = $form->vars['id'];
         }
 
-        $productId = is_array($product) ? $product['id'] : $product->getId();
-        $form->vars['id'] = $form->vars['_notUniqueId'] . '-product-id-' . $productId;
+        $productId = null;
+        if ($product) {
+            $productId  = is_array($product) ? $product['id'] : $product->getId();
+        }
+        if ($productId) {
+            $form->vars['id'] = sprintf('%s-product-id-%s', $form->vars['_notUniqueId'], $productId);
+        } else {
+            $form->vars['id'] = $form->vars['_notUniqueId'];
+        }
+
         $form->vars['attr']['id'] = $form->vars['id'];
     }
 
