@@ -102,12 +102,12 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'options' => (new CodeGenerationOptions())
-                    ->setCodePrefix('Привет')
-                    ->setCodeSuffix('Медвед')
+                    ->setCodePrefix('Hello')
+                    ->setCodeSuffix('World')
                     ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE)
                     ->setCodeLength(7)
                     ->setDashesSequence(2),
-                'expected' => '/^Пр-ив-ет-[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]М-ед-ве-д$/',
+                'expected' => '/^Hello[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]World$/',
             ]
         ];
     }

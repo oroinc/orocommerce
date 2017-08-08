@@ -27,13 +27,12 @@ class CodeGenerator implements CodeGeneratorInterface
     public function generateOne(CodeGenerationOptions $options): string
     {
         $string = $this->generateRandomString($options->getCodeLength(), $options->getCodeType());
-        $string = $options->getCodePrefix() . $string . $options->getCodeSuffix();
 
-        if (!$options->getDashesSequence()) {
-            return $string;
+        if ($options->getDashesSequence()) {
+            $string = implode(static::DASH_SYMBOL, str_split($string, $options->getDashesSequence()));
         }
 
-        return implode(static::DASH_SYMBOL, $this->splitString($string, $options->getDashesSequence()));
+        return $options->getCodePrefix() . $string . $options->getCodeSuffix();
     }
 
     /**
@@ -83,22 +82,6 @@ class CodeGenerator implements CodeGeneratorInterface
         }
 
         return self::TEMPLATES[$type];
-    }
-
-    /**
-     * @param string $string
-     * @param int $interval
-     * @return array
-     */
-    protected function splitString(string $string, int $interval): array
-    {
-        $parts = [];
-        $stringLength = mb_strlen($string, 'UTF-8');
-        for ($i = 0; $i < $stringLength; $i += $interval) {
-            $parts[] = mb_substr($string, $i, $interval);
-        }
-
-        return $parts;
     }
 
     /**

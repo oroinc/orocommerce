@@ -66,7 +66,7 @@ class CouponGeneratorTest extends WebTestCase
         $this->assertEquals([1 => 10, 2 => 100, 3 => 90], $statistic);
 
         /** @var Coupon $coupon */
-        $coupon = $this->getDoctrineHelper()->getEntityRepository(Coupon::class)->findOneBy([]);
+        $coupon = reset($generatedCoupons);
         $this->assertRegExp('/^[0-9]{1,3}$/', $coupon->getCode());
         $this->assertEquals($options->getOwner(), $coupon->getOwner());
         $this->assertEquals($options->getPromotion(), $coupon->getPromotion());
