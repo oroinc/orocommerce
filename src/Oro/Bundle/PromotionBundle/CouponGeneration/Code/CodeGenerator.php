@@ -9,7 +9,7 @@ use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
  */
 class CodeGenerator implements CodeGeneratorInterface
 {
-    const DASHES_SYMBOL = '-';
+    const DASH_SYMBOL = '-';
 
     const TEMPLATES = [
         CodeGenerationOptions::NUMERIC_CODE_TYPE => self::NUMERIC_TEMPLATE,
@@ -18,37 +18,38 @@ class CodeGenerator implements CodeGeneratorInterface
     ];
 
     const NUMERIC_TEMPLATE = '0123456789';
-
     const ALPHABETIC_TEMPLATE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
     const ALPHANUMERIC_TEMPLATE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     /**
      * {@inheritdoc}
      */
-    public function generate(CodeGenerationOptions $options): string
+    public function generateOne(CodeGenerationOptions $options): string
     {
         $string = $this->generateRandomString($options->getCodeLength(), $options->getCodeType());
         $string = $options->getCodePrefix() . $string . $options->getCodeSuffix();
+
         if (!$options->getDashesSequence()) {
             return $string;
         }
-        return implode(static::DASHES_SYMBOL, $this->splitString($string, $options->getDashesSequence()));
+
+        return implode(static::DASH_SYMBOL, $this->splitString($string, $options->getDashesSequence()));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function generateUnique(CodeGenerationOptions $options, int $amount): array
+    public function generateUnique(CodeGenerationOptions $options, int $count): array
     {
         $codes = [];
-        $amount = min($amount, $this->getMaxAmount($options));
+        $count = min($count, $this->getMaxPossibleNumber($options));
 
-        while (count($codes) < $amount) {
-            $code = $this->generate($options);
+        while (count($codes) < $count) {
+            $code = $this->generateOne($options);
             $codes[$code] = $code;
         }
-        return $codes;
+
+        return array_values($codes);
     }
 
     /**
@@ -67,6 +68,7 @@ class CodeGenerator implements CodeGeneratorInterface
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $template[random_int(0, $max)];
         }
+
         return $randomString;
     }
 
@@ -79,6 +81,7 @@ class CodeGenerator implements CodeGeneratorInterface
         if (!array_key_exists($type, self::TEMPLATES)) {
             throw new \InvalidArgumentException('Unknown code type: ' . $type);
         }
+
         return self::TEMPLATES[$type];
     }
 
@@ -94,6 +97,7 @@ class CodeGenerator implements CodeGeneratorInterface
         for ($i = 0; $i < $stringLength; $i += $interval) {
             $parts[] = mb_substr($string, $i, $interval);
         }
+
         return $parts;
     }
 
@@ -101,9 +105,10 @@ class CodeGenerator implements CodeGeneratorInterface
      * @param CodeGenerationOptions $options
      * @return int
      */
-    protected function getMaxAmount(CodeGenerationOptions $options)
+    protected function getMaxPossibleNumber(CodeGenerationOptions $options)
     {
         $variantsNumber = mb_strlen($this->getTemplate($options->getCodeType()));
-        return pow($variantsNumber, $options->getCodeLength());
+
+        return $variantsNumber ** $options->getCodeLength();
     }
 }

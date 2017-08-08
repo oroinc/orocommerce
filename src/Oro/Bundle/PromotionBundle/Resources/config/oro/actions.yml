@@ -52,7 +52,7 @@ operations:
         label: oro.promotion.coupon.generation.label
         routes:
             - oro_promotion_coupon_index
-        acl_resource: [CREATE, entity:Oro\Bundle\PromotionBundle\Entity\Coupon]
+        acl_resource: [CREATE, 'entity:Oro\Bundle\PromotionBundle\Entity\Coupon']
         button_options:
             icon: fa-list-alt
         frontend_options:
@@ -70,16 +70,15 @@ operations:
                 label: ' '
                 type: object
                 options:
-                    class: Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions
+                    class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions'
         form_options:
             attribute_fields:
                 couponGenerationOptions:
-                    form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType
+                    form_type: 'Oro\Bundle\PromotionBundle\Form\Type\CouponGenerationType'
                     options:
                         validation_groups: ['generation', 'Default']
             attribute_default_values:
-                couponGenerationOptions:
-                    $.couponGenerationOptions
+                couponGenerationOptions: $.couponGenerationOptions
         form_init:
             - '@assign_value': [$.couponGenerationOptions, $.data.couponGenerationOptions]
         actions:

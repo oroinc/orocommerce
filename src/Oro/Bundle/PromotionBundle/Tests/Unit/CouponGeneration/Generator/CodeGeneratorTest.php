@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\CouponGeneration\Generator;
 
 use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
-use Oro\Bundle\PromotionBundle\CouponGeneration\Code\WrongAmountCodeGeneratorException;
 use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 
 class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
@@ -19,14 +18,14 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider generateDataProvider
+     * @dataProvider generateOneDataProvider
      *
      * @param CodeGenerationOptions $options
-     * @param $expectedPattern
+     * @param string $expectedPattern
      */
-    public function testGenerate(CodeGenerationOptions $options, string $expectedPattern)
+    public function testGenerateOne(CodeGenerationOptions $options, string $expectedPattern)
     {
-        $this->assertRegExp($expectedPattern, $this->generator->generate($options));
+        $this->assertRegExp($expectedPattern, $this->generator->generateOne($options));
     }
 
     public function testGenerateUnique()
@@ -34,25 +33,29 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
         $options = (new CodeGenerationOptions())
             ->setCodeType(CodeGenerationOptions::ALPHABETIC_CODE_TYPE)
             ->setCodeLength(5);
+
         $codes = $this->generator->generateUnique($options, 20);
         $this->assertCount(20, $codes);
         foreach ($codes as $index => $code) {
-            $this->assertEquals($index, $code);
             $this->assertRegExp('/^[a-zA-Z]{5}$/', $code);
         }
 
         $options = (new CodeGenerationOptions())
             ->setCodeType(CodeGenerationOptions::NUMERIC_CODE_TYPE)
-            ->setCodeLength(1);
+            ->setCodeLength(2);
+
         $codes = $this->generator->generateUnique($options, 100000);
-        $this->assertCount(10, $codes);
+        $this->assertCount(100, $codes);
+
         foreach ($codes as $index => $code) {
-            $this->assertEquals($index, $code);
-            $this->assertRegExp('/^[0-9]{1}$/', $code);
+            $this->assertRegExp('/^[0-9]{2}$/', $code);
         }
     }
 
-    public function generateDataProvider()
+    /**
+     * @return array
+     */
+    public function generateOneDataProvider()
     {
         return [
             [

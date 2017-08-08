@@ -46,12 +46,24 @@ class CouponGeneratorTest extends WebTestCase
 
         /** @var CouponGenerator $generator */
         $generator = $this->getContainer()->get('oro_promotion.coupon_generation.coupon');
-        $statistic = $generator->generateAndSave($options);
+        $generator->generateAndSave($options);
+
+        $generatedCoupons = $this->getDoctrineHelper()->getEntityRepository(Coupon::class)->findAll();
+        $this->assertCount(200, $generatedCoupons);
+
+        $statistic = [];
+        /** @var Coupon $coupon */
+        foreach ($generatedCoupons as $coupon) {
+            $codeLength = strlen($coupon->getCode());
+
+            if (!isset($statistic[$codeLength])) {
+                $statistic[$codeLength] = 0;
+            }
+
+            $statistic[$codeLength]++;
+        }
 
         $this->assertEquals([1 => 10, 2 => 100, 3 => 90], $statistic);
-        $this->assertEquals(200, $this->getDoctrineHelper()->getEntityManager(Coupon::class)->createQuery(
-            'SELECT COUNT(coupon) FROM Oro\Bundle\PromotionBundle\Entity\Coupon AS coupon'
-        )->getSingleScalarResult());
 
         /** @var Coupon $coupon */
         $coupon = $this->getDoctrineHelper()->getEntityRepository(Coupon::class)->findOneBy([]);

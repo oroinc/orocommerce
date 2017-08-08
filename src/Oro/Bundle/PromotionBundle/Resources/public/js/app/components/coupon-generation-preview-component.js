@@ -22,16 +22,14 @@ define(function(require) {
          */
         $form: null,
 
-        bindedOnFormFieldChange: null,
-
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
+            // TODO:  this.options._sourceElement is a form already
             this.form = this.options._sourceElement.closest('form');
-            this.bindedOnFormFieldChange = _.bind(this.onFormFieldChange, this);
-            this.form.on('change', this.options.codePreviewFieldsSelector, this.bindedOnFormFieldChange);
+            this.form.on('change', this.options.codePreviewFieldsSelector, $.proxy(this.onFormFieldChange, this));
         },
 
         onFormFieldChange: function(e) {
@@ -57,7 +55,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
-            this.form.off('change', this.options.codePreviewFieldsSelector, this.bindedOnFormFieldChange);
+
+            this.form.off('change', this.options.codePreviewFieldsSelector, $.proxy(this.onFormFieldChange, this));
             CouponGenerationPreviewComponent.__super__.dispose.call(this);
         }
     });

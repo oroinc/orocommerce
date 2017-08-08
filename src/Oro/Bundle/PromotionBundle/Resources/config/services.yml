@@ -510,3 +510,6 @@ services:
         arguments:
             - '@oro_promotion.coupon_generation.code'
             - '@oro_entity.doctrine_helper'
+            - '@logger'
+        tags:
+            - { name: monolog.logger, channel: oro_promotion }

@@ -34,7 +34,7 @@ class CouponController extends Controller
     {
         return [
             'entity_class' => Coupon::class,
-            'gridName' => self::COUPONS_GRID
+            'gridName' => self::COUPONS_GRID,
         ];
     }
 
@@ -135,15 +135,23 @@ class CouponController extends Controller
     public function couponGenerationPreview(Request $request)
     {
         $options = new CouponGenerationOptions();
+
         $form = $this->createForm(CouponGenerationType::class, $options, ['csrf_protection' => false]);
-        if (!empty($request->get('oro_action_operation')['couponGenerationOptions'])) {
-            $form->submit($request->get('oro_action_operation')['couponGenerationOptions']);
+
+        $oroActionOperationData = $request->get('oro_action_operation', []);
+        $couponGenerationOptions = $oroActionOperationData['couponGenerationOptions'] ?? [];
+
+        if ($couponGenerationOptions) {
+            $form->submit($couponGenerationOptions);
         }
+
         if (!$form->isValid()) {
             return new JsonResponse(['error' => (string)$form->getErrors(true, false)]);
         }
+
         $generator = $this->get('oro_promotion.coupon_generation.code');
-        return new JsonResponse(['error' => false, 'code' => $generator->generate($options)]);
+
+        return new JsonResponse(['error' => false, 'code' => $generator->generateOne($options)]);
     }
 
     /**
@@ -154,6 +162,7 @@ class CouponController extends Controller
     protected function update(Coupon $coupon, Request $request)
     {
         $handler = $this->get('oro_form.update_handler');
+
         return $handler->update(
             $coupon,
             CouponType::class,

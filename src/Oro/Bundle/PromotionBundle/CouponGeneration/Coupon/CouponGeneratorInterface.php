@@ -11,6 +11,7 @@ interface CouponGeneratorInterface
 {
     /**
      * Generate and insert into database set of coupons based on user defined generation parameters
+     *
      * @param CouponGenerationOptions $options
      */
     public function generateAndSave(CouponGenerationOptions $options);
