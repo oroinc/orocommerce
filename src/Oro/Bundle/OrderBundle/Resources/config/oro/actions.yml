@@ -162,7 +162,7 @@ operations:
         routes:
             - oro_order_view
         button_options:
-            icon: fa-close
+            icon: fa-window-close-o
         preconditions:
             @or:
                 - '@equal': [$internalStatus.id, 'open']

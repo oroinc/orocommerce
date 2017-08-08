@@ -4,8 +4,10 @@ system_configuration:
             title: oro.order.system_configuration.groups.orders.title
         order_automation:
             title: oro.order.system_configuration.groups.order_automation.title
+            icon: fa-android
         order_creation:
             title: oro.order.system_configuration.groups.order_creation.title
+            icon: fa-first-order
     fields:
         oro_order.backend_product_visibility:
             data_type: array
