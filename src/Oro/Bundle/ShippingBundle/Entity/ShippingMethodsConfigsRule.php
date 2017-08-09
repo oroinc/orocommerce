@@ -8,10 +8,11 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository")
@@ -127,6 +128,22 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     private $organization;
 
     /**
+     * @var Website[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinTable(
+     *      name="oro_ship_mtds_rule_website",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="oro_ship_mtds_cfgs_rl_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     */
+    protected $websites;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -135,6 +152,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
 
         $this->destinations = new ArrayCollection();
         $this->methodConfigs = new ArrayCollection();
+        $this->websites = new ArrayCollection();
     }
 
     /**
@@ -286,5 +304,41 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function addWebsite(Website $website)
+    {
+        if (!$this->websites->contains($website)) {
+            $this->websites->add($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function removeWebsite(Website $website)
+    {
+        if ($this->websites->contains($website)) {
+            $this->websites->removeElement($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Website[]
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
     }
 }
