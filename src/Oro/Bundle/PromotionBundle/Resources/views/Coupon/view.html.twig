@@ -1,5 +1,5 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
-{% oro_title_set({params : {"%entityName%": 'oro.promotion.coupon.entity_label'|trans}}) %}
+{% oro_title_set({params : {"%code%": entity.code}}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {

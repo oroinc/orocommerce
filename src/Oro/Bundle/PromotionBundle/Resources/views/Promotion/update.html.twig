@@ -4,7 +4,7 @@
 {% set entityId = entity.id %}
 
 {% if entityId %}
-    {% oro_title_set({params : {"%title%": entity.rule.name} }) %}
+    {% oro_title_set({params : {"%name%": entity.rule.name} }) %}
 {% endif %}
 
 {% set formAction = entityId ? path('oro_promotion_update', { 'id': entityId }) : path('oro_promotion_create')  %}
