@@ -191,6 +191,9 @@ oro:
         related_products:
             label: Related Products
 
+        upsell_products:
+            label: Up-sell Products
+
         lineitem:
             unit.label: Unit
             quantity:
@@ -302,13 +305,25 @@ oro:
                     tooltip: 'Show not more than the specified number of items (applied after filtering out the products that are not visible to the current user).'
                 related_products_min_items:
                     label: 'Minimum Items'
-                    tooltip: 'Hide the "Related Items" block completely if the number of items is less than the specified value.'
+                    tooltip: 'Hide the "Related Products" block completely if the number of items is less than the specified value.'
                 related_products_show_add_button:
                     label: 'Show Add Button'
                     tooltip: 'When "Add To..." button is disabled the users will need to go the related product view page in order to add it to a shopping list.'
                 related_products_use_slider_on_mobile:
                     label: 'Use Slider On Mobile'
-                    tooltip: 'When slider is enabled, the "Related Items" block will occupy less screen space, while showing larger product images.'
+                    tooltip: 'When slider is enabled, the "Related Products" block will occupy less screen space, while showing larger product images.'
+                upsell_products_max_items:
+                    label: 'Maximum Items'
+                    tooltip: 'Show not more than the specified number of items (applied after filtering out the products that are not visible to the current user).'
+                upsell_products_min_items:
+                    label: 'Minimum Items'
+                    tooltip: 'Hide the "Up-sell Products" block completely if the number of items is less than the specified value.'
+                upsell_products_show_add_button:
+                    label: 'Show Add Button'
+                    tooltip: 'When "Add To..." button is disabled the users will need to go the up-sell product view page in order to add it to a shopping list.'
+                upsell_products_use_slider_on_mobile:
+                    label: 'Use Slider On Mobile'
+                    tooltip: 'When slider is enabled, the "Up-sell Products" block will occupy less screen space, while showing larger product images.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
