@@ -76,43 +76,33 @@ class OroShoppingListBundle implements
             ]
         );
 
-        $configManager = $this->container->get('oro_entity_config.config_manager');
-        $fieldConfig = $configManager->getFieldConfig('extend', CustomerVisitor::class, 'shoppingLists');
-        $entityConfig = $configManager->getEntityConfig('extend', CustomerVisitor::class);
+        $queries->addPostQuery(
+            new UpdateEntityConfigEntityValueQuery(
+                CustomerVisitor::class,
+                'extend',
+                'relation',
+                []
+            )
+        );
 
-        $relationKey = $fieldConfig->get('relation_key');
-        $relations = $entityConfig->get('relation', false, []);
-        if (isset($relations[$relationKey])) {
-            unset($relations[$relationKey]);
+        $queries->addPostQuery(
+            new UpdateEntityConfigFieldValueQuery(
+                CustomerVisitor::class,
+                'shoppingLists',
+                'extend',
+                'state',
+                ExtendScope::STATE_UPDATE
+            )
+        );
 
-            $queries->addPostQuery(
-                new UpdateEntityConfigEntityValueQuery(
-                    CustomerVisitor::class,
-                    'extend',
-                    'relation',
-                    $relations
-                )
-            );
-
-            $queries->addPostQuery(
-                new UpdateEntityConfigFieldValueQuery(
-                    CustomerVisitor::class,
-                    'shoppingLists',
-                    'extend',
-                    'state',
-                    ExtendScope::STATE_UPDATE
-                )
-            );
-
-            $queries->addPostQuery(
-                new UpdateEntityConfigFieldValueQuery(
-                    CustomerVisitor::class,
-                    'shoppingLists',
-                    'extend',
-                    'bidirectional',
-                    true
-                )
-            );
-        }
+        $queries->addPostQuery(
+            new UpdateEntityConfigFieldValueQuery(
+                CustomerVisitor::class,
+                'shoppingLists',
+                'extend',
+                'bidirectional',
+                true
+            )
+        );
     }
 }
