@@ -136,7 +136,6 @@ class PriceAttributesProductFormExtension extends AbstractTypeExtension
             ->setUnit($newInstanceData['unit'])
             ->setProduct($product)
             ->setPrice(Price::create(null, $newInstanceData['currency']))
-            ->setQuantity(1)
             ->setPriceList($newInstanceData['attribute']);
     }
 

@@ -25,8 +25,6 @@ layout:
                     blockType: container
                 product_view_aside_container:
                     blockType: container
-                product_view_gallery_container:
-                    blockType: container
                 product_sticker_new:
                     blockType: product_sticker
                     options:
@@ -53,16 +51,6 @@ layout:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
                         group: 'general'
-                product_view_attribute_group_images:
-                    blockType: attribute_group
-                    options:
-                        entity: '=data["product"]'
-                        attribute_family: '=context["attribute_family"]'
-                        group: 'images'
-                product_media_popup:
-                    blockType: product_image
-                    options:
-                        product: '=data["product"]'
                 product_view_main_attributes_container:
                     blockType: container
             tree:
@@ -71,10 +59,7 @@ layout:
                         product_view_primary_wrapper:
                             product_view_primary_container:
                                 product_sticker_new: ~
-                            product_view_aside_container:
-                                product_view_gallery_container:
-                                    product_view_attribute_group_images: ~
-                                product_media_popup: ~
+                            product_view_aside_container: ~
                         product_view_main_container:
                             product_view_content_container:
                                 product_view_specification_container: ~
@@ -102,6 +87,13 @@ layout:
             id: product_view_attribute_group_general_attribute_localized_fallback_names
             parentId: product_view_primary_container
             prepend: true
+        - '@move':
+            id: product_view_attribute_group_general_attribute_product_images_images
+            parentId: product_view_media_container
+        - '@setOption':
+            id: product_view_attribute_group_general_attribute_product_images_images
+            optionName: popup_gallery
+            optionValue: '=data["system_config_provider"].getValue("oro_product.popup_gallery_on_product_view")'
         - '@add':
             id: product_require_js_config
             parentId: require_js

@@ -30,7 +30,7 @@ Feature: Promotions in Order page
       | order Discount Promotion     |
     When I go to Sales / Orders
     And I click "edit" on first row in grid
-    Then I should see "Promotion discounts will be recalculated after order saving"
+    Then I should see "Promotion discounts will be recalculated after saving the order"
     And I should see "line Item Discount Promotion" in "Order Promotions Grid" with following data:
       | Amount  | $5.00 |
     And I should see "order Discount Promotion" in "Order Promotions Grid" with following data:

@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemesProcessor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use Oro\Component\ChainProcessor\ContextInterface;
-use PHPUnit\Framework\TestCase;
 
-class UpdatePriceListLexemesProcessorTest extends TestCase
+class UpdatePriceListLexemesProcessorTest extends FormProcessorTestCase
 {
     /**
      * @var PriceRuleLexemeHandler|\PHPUnit_Framework_MockObject_MockObject
@@ -22,6 +21,8 @@ class UpdatePriceListLexemesProcessorTest extends TestCase
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->priceRuleLexemeHandler = $this->createMock(PriceRuleLexemeHandler::class);
 
         $this->processor = new UpdatePriceListLexemesProcessor($this->priceRuleLexemeHandler);
@@ -33,9 +34,7 @@ class UpdatePriceListLexemesProcessorTest extends TestCase
             ->expects(static::never())
             ->method('updateLexemes');
 
-        $context = $this->createMock(ContextInterface::class);
-
-        $this->processor->process($context);
+        $this->processor->process($this->context);
     }
 
     public function testProcess()
@@ -45,13 +44,9 @@ class UpdatePriceListLexemesProcessorTest extends TestCase
         $this->priceRuleLexemeHandler
             ->expects(static::once())
             ->method('updateLexemes')
-        ->with($priceList);
+            ->with($priceList);
 
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects(static::once())
-            ->method('getResult')
-            ->willReturn($priceList);
-
-        $this->processor->process($context);
+        $this->context->setResult($priceList);
+        $this->processor->process($this->context);
     }
 }

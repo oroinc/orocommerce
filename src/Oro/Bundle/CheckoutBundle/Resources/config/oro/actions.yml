@@ -1,3 +1,6 @@
+imports:
+    - { resource: 'actions/b2b_flow_checkout.yml' }
+
 operations:
     UPDATE:
         exclude_datagrids:

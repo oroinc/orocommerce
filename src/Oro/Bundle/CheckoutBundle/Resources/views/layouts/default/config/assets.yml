@@ -1,3 +1,4 @@
 styles:
     inputs:
+        - 'bundles/orocheckout/default/scss/variables/checkout-view-config.scss'
         - 'bundles/orocheckout/default/scss/styles.scss'

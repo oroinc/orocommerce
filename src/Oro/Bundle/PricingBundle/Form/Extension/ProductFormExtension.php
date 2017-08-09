@@ -61,7 +61,9 @@ class ProductFormExtension extends AbstractTypeExtension
                 'label' => 'oro.pricing.productprice.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
-                'constraints' => [new UniqueProductPrices()],
+                'constraints' => [
+                    new UniqueProductPrices(['groups' => [ProductPriceCollectionType::VALIDATION_GROUP]])
+                ],
                 'options' => [
                     'product' => $product,
                 ],
@@ -98,30 +100,14 @@ class ProductFormExtension extends AbstractTypeExtension
 
         /** @var Product|null $product */
         $product = $form->getData();
-        if (!$product) {
+        if (!$product || !$product->getId()) {
             return;
         }
 
         $submittedData = $event->getData();
 
         if (array_key_exists('prices', $submittedData)) {
-            $submittedPrices = $submittedData['prices'];
-
-            if ($product->getId()) {
-                $replacedPrices = [];
-                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $product);
-                foreach ($submittedPrices as $key => $submittedPrice) {
-                    foreach ($existingPrices as $k => $existingPrice) {
-                        if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
-                            $replacedPrices[$k] = $submittedPrice;
-                            break;
-                        }
-                    }
-                }
-                $correctPrices = array_replace($submittedPrices, $replacedPrices);
-                $submittedData['prices'] = $correctPrices;
-                $event->setData($submittedData);
-            }
+            $event->setData($this->getReplacedPricesByUniqueAttributes($product, $submittedData));
         }
     }
 
@@ -219,5 +205,39 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         return true;
+    }
+
+    /**
+     * @param Product $product
+     * @param array $submittedData
+     * @return array
+     */
+    private function getReplacedPricesByUniqueAttributes(Product $product, array $submittedData)
+    {
+        $submittedPrices = $submittedData['prices'];
+        $submittedPricesKeys = array_keys($submittedPrices);
+
+        $replacedPrices = [];
+        $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $product);
+
+        foreach ($existingPrices as $key => $price) {
+            if (!in_array($key, $submittedPricesKeys)) {
+                unset($existingPrices[$key]);
+            }
+        }
+
+        foreach ($submittedPrices as $key => $submittedPrice) {
+            foreach ($existingPrices as $k => $existingPrice) {
+                if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
+                    $replacedPrices[$k] = $submittedPrice;
+                    break;
+                }
+            }
+        }
+
+        $correctPrices = array_replace($submittedPrices, $replacedPrices);
+        $submittedData['prices'] = $correctPrices;
+
+        return $submittedData;
     }
 }

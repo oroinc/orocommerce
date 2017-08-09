@@ -27,8 +27,9 @@ class UniqueEntityValidator extends ConstraintValidator
 
     /**
      * UniqueEntityValidator constructor.
+     *
      * @param ManagerRegistry $registry
-     * @param ShardManager $shardManager
+     * @param ShardManager    $shardManager
      */
     public function __construct(ManagerRegistry $registry, ShardManager $shardManager)
     {
@@ -51,8 +52,7 @@ class UniqueEntityValidator extends ConstraintValidator
                 )
             );
         }
-        if ($entity->getProduct() && null === $entity->getProduct()->getId()) {
-            // for new product prices can't exist in db
+        if (!$this->isObjectCanBeValidated($entity)) {
             return;
         }
         /** @var EntityManager $em */
@@ -80,11 +80,11 @@ class UniqueEntityValidator extends ConstraintValidator
 
     /**
      * @param EntityManager $em
-     * @param ProductPrice $entity
-     * @param array $criteria
-     * @param $fields
+     * @param ProductPrice  $entity
+     * @param array         $criteria
+     * @param array         $fields
      */
-    private function getCriteria(EntityManager $em, ProductPrice $entity, array &$criteria, $fields)
+    private function getCriteria(EntityManager $em, ProductPrice $entity, array &$criteria, array $fields)
     {
         /* @var ClassMetadata $class */
         $class = $em->getClassMetadata(ProductPrice::class);
@@ -106,5 +106,23 @@ class UniqueEntityValidator extends ConstraintValidator
                 $em->initializeObject($criteria[$fieldName]);
             }
         }
+    }
+
+    /**
+     * @param ProductPrice $entity
+     *
+     * @return bool
+     */
+    private function isObjectCanBeValidated(ProductPrice $entity)
+    {
+        if ($entity->getProduct() && null === $entity->getProduct()->getId()) {
+            // for new product prices can't exist in db
+            return false;
+        }
+        if ($entity->getPriceList() === null || $entity->getPriceList()->getId() === null) {
+            return false;
+        }
+
+        return true;
     }
 }

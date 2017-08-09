@@ -4,26 +4,25 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\Common\Util\ClassUtils;
 
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceCurrencyValidator extends ConstraintValidator
 {
     /**
-     * @param ProductPrice|object $value
+     * @param BaseProductPrice|object $value
      * @param ProductPriceCurrency $constraint
      *
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof ProductPrice) {
+        if (!$value instanceof BaseProductPrice) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Value must be instance of "%s", "%s" given',
-                    'Oro\Bundle\PricingBundle\Entity\ProductPrice',
+                    BaseProductPrice::class,
                     is_object($value) ? ClassUtils::getClass($value) : gettype($value)
                 )
             );
@@ -31,6 +30,9 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
 
         $price = $value->getPrice();
         if (!$price) {
+            return;
+        }
+        if ($value->getPriceList() === null) {
             return;
         }
 

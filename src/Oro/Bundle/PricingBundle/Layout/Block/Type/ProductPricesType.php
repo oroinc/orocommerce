@@ -3,8 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Layout\Block\Type;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityConfigBundle\Layout\AttributeGroupRenderRegistry;
-
+use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
+use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\Block\Type\AbstractContainerType;
 use Oro\Component\Layout\Block\Type\Options;
@@ -17,17 +18,40 @@ class ProductPricesType extends AbstractContainerType
 {
     const NAME = 'product_prices';
 
-    const PRICES_GROUP_CODE = 'prices';
+    /** @var AttributeRenderRegistry */
+    private $attributeRenderRegistry;
 
-    /** @var AttributeGroupRenderRegistry */
-    protected $groupRenderRegistry;
+    /** @var AttributeManager */
+    private $attributeManager;
+
+    /** @var array */
+    private $fetchedAttributes = [];
 
     /**
-     * @param AttributeGroupRenderRegistry $groupRenderRegistry
+     * @param AttributeRenderRegistry $attributeRenderRegistry
+     * @param AttributeManager $attributeManager
      */
-    public function __construct(AttributeGroupRenderRegistry $groupRenderRegistry)
+    public function __construct(AttributeRenderRegistry $attributeRenderRegistry, AttributeManager $attributeManager)
     {
-        $this->groupRenderRegistry = $groupRenderRegistry;
+        $this->attributeRenderRegistry = $attributeRenderRegistry;
+        $this->attributeManager = $attributeManager;
+    }
+
+    /**
+     * @param AttributeFamily $attributeFamily
+     * @return mixed
+     */
+    private function getAttribute(AttributeFamily $attributeFamily)
+    {
+        $attributeName = PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES;
+        $code = $attributeFamily->getCode();
+        if (!isset($this->fetchedAttributes[$code][$attributeName])) {
+            $attribute = $this->attributeManager->getAttributeByFamilyAndName($attributeFamily, $attributeName);
+
+            $this->fetchedAttributes[$code][$attributeName] = $attribute;
+        }
+
+        return $this->fetchedAttributes[$code][$attributeName];
     }
 
     /**
@@ -41,12 +65,18 @@ class ProductPricesType extends AbstractContainerType
 
         /** @var AttributeFamily $attributeFamily */
         $attributeFamily = $options->get('attributeFamily');
-        if (!$attributeFamily->getAttributeGroups()->containsKey(self::PRICES_GROUP_CODE)) {
+
+        $attribute = $this->getAttribute($attributeFamily);
+
+        if (!$attribute) {
             return;
         }
 
-        $attributeGroup = $attributeFamily->getAttributeGroup(self::PRICES_GROUP_CODE);
-        $this->groupRenderRegistry->setRendered($attributeFamily, $attributeGroup);
+        $attributeOptions = $attribute->toArray('attribute');
+        $visibility = isset($attributeOptions['visible']) ? $attributeOptions['visible'] : true;
+        $options->setMultiple(['visible' => $visibility]);
+
+        $this->attributeRenderRegistry->setAttributeRendered($attributeFamily, $attribute->getFieldName());
     }
 
     /**

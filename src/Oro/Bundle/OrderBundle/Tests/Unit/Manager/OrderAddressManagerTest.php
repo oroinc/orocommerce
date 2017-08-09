@@ -15,6 +15,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
 class OrderAddressManagerTest extends AbstractAddressManagerTest
@@ -173,7 +174,10 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
         $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
 
-        $this->assertEquals($expected, $this->manager->getGroupedAddresses($order, AddressType::TYPE_BILLING));
+        $result = $this->manager->getGroupedAddresses($order, AddressType::TYPE_BILLING);
+
+        $this->assertInstanceOf(TypedOrderAddressCollection::class, $result);
+        $this->assertEquals($expected, $result->toArray());
     }
 
     /**

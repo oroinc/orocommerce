@@ -40,13 +40,14 @@ class ProductController extends Controller
         $pageTemplate = $this->get('oro_product.provider.page_template_provider')
             ->getPageTemplate($product, 'oro_product_frontend_product_view');
 
-        $relatedProductsEnabled = $this->get('oro_product.related_item.related_product.config_provider')->isEnabled();
-
         return [
             'entity' => $product,
             'imageTypes' => $this->get('oro_layout.provider.image_type')->getImageTypes(),
             'pageTemplate' => $pageTemplate,
-            'relatedProductsEnabled' => $relatedProductsEnabled,
+            'upsellProductsEnabled' => $this->get('oro_product.related_item.upsell_product.config_provider')
+                ->isEnabled(),
+            'relatedProductsEnabled' => $this->get('oro_product.related_item.related_product.config_provider')
+                ->isEnabled(),
         ];
     }
 
@@ -170,7 +171,7 @@ class ProductController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        if (!$this->get('oro_product.related_item.related_product.config_provider')->isEnabled()) {
+        if (!$this->get('oro_product.related_item.helper.config_helper')->isAnyEnabled()) {
             throw $this->createNotFoundException();
         }
 
@@ -246,28 +247,12 @@ class ProductController extends Controller
                 'entity' => $product,
                 'isWidgetContext' => (bool)$request->get('_wid', false)
             ];
-        } else {
-            $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
-            $form->submit($request->request->get(ProductType::NAME));
         }
 
-        return $this->get('oro_product.service.product_update_handler')->handleUpdate(
-            $product,
-            $this->createForm(ProductType::NAME, $product),
-            function (Product $product) {
-                return [
-                    'route' => 'oro_product_update',
-                    'parameters' => ['id' => $product->getId()]
-                ];
-            },
-            function (Product $product) {
-                return [
-                    'route' => 'oro_product_view',
-                    'parameters' => ['id' => $product->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.product.controller.product.saved.message')
-        );
+        $form = $this->createForm(ProductStepOneType::NAME, $product, ['validation_groups'=> false]);
+        $form->submit($request->request->get(ProductType::NAME));
+
+        return $this->update($product);
     }
 
     /**
@@ -331,6 +316,22 @@ class ProductController extends Controller
     }
 
     /**
+     * @Route(
+     *     "/get-possible-products-for-upsell-products/{id}",
+     *     name="oro_product_possible_products_for_upsell_products",
+     *     requirements={"id"="\d+"}
+     * )
+     * @Template(template="OroProductBundle:Product:selectUpsellProducts.html.twig")
+     *
+     * @param Product $product
+     * @return array
+     */
+    public function getPossibleProductsForUpsellProductsAction(Product $product)
+    {
+        return ['product' => $product];
+    }
+
+    /**
      * @Route("/add-products-widget/{gridName}", name="oro_add_products_widget")
      * @AclAncestor("oro_product_view")
      * @Template
@@ -352,6 +353,7 @@ class ProductController extends Controller
      */
     private function relatedItemsIsGranted()
     {
-        return $this->isGranted('oro_related_products_edit');
+        return $this->isGranted('oro_related_products_edit')
+            || $this->isGranted('oro_upsell_products_edit');
     }
 }

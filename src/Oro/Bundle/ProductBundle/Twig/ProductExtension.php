@@ -49,6 +49,10 @@ class ProductExtension extends \Twig_Extension
                 [$this, 'isConfigurableType']
             ),
             new \Twig_SimpleFunction(
+                'get_upsell_products_ids',
+                [$this, 'getUpsellProductsIds']
+            ),
+            new \Twig_SimpleFunction(
                 'get_related_products_ids',
                 [$this, 'getRelatedProductsIds']
             ),
@@ -58,21 +62,14 @@ class ProductExtension extends \Twig_Extension
     /**
      * @param Product $product
      *
-     * @return Product[]
+     * @return int[]
      */
     public function getRelatedProductsIds(Product $product)
     {
-        /** @var FinderStrategyInterface $finderStrategy */
-        $finderStrategy = $this->container->get('oro_product.related_item.related_product.finder_strategy');
-        /** @var Product[] $related */
-        $related = $finderStrategy->find($product, false, false);
-        $ids = [];
-
-        foreach ($related as $relatedProduct) {
-            $ids[] = $relatedProduct->getId();
-        }
-
-        return $ids;
+        return $this->getRelatedItemsIds(
+            $product,
+            $this->container->get('oro_product.related_item.related_product.finder_strategy')
+        );
     }
 
     /**
@@ -97,10 +94,51 @@ class ProductExtension extends \Twig_Extension
     }
 
     /**
+     * @param Product $product
+     *
+     * @return int[]
+     */
+    public function getUpsellProductsIds(Product $product)
+    {
+        return $this->getRelatedItemsIds(
+            $product,
+            $this->container->get('oro_product.related_item.upsell_product.finder_strategy')
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param Product $product
+     * @param FinderStrategyInterface $finderStrategy
+     * @return \int[]
+     */
+    private function getRelatedItemsIds(Product $product, FinderStrategyInterface $finderStrategy)
+    {
+        /** @var Product[] $related */
+        $related = $finderStrategy->find($product, false, false);
+
+        return $this->getIdsFromProducts($related);
+    }
+
+    /**
+     * @param Product[] $products
+     * @return int[]
+     */
+    private function getIdsFromProducts(array $products)
+    {
+        $ids = [];
+
+        foreach ($products as $product) {
+            $ids[] = $product->getId();
+        }
+
+        return $ids;
     }
 }
