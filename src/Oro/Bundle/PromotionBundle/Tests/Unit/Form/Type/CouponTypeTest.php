@@ -53,6 +53,7 @@ class CouponTypeTest extends FormIntegrationTestCase
             PromotionSelectType::NAME,
             [
                 'autocomplete_alias' => 'oro_promotion',
+                'grid_name' => 'promotion-for-coupons-select-grid',
             ]
         );
 

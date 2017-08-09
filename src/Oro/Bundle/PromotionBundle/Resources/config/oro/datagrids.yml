@@ -86,6 +86,14 @@ datagrids:
                 acl_resource:  oro_promotion_view
                 rowAction:     true
 
+    promotion-for-coupons-select-grid:
+        extends: promotion-select-grid
+        source:
+            query:
+                where:
+                    and:
+                      - promotion.useCoupons = true
+
     promotion-products-collection-grid:
         extends: products-select-grid-base
         options:

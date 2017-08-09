@@ -71,6 +71,7 @@ class CouponGenerationType extends AbstractType
                     'required' => false,
                     'label' => 'oro.promotion.coupon.promotion.label',
                     'autocomplete_alias' => 'oro_promotion_use_coupons',
+                    'grid_name' => 'promotion-for-coupons-select-grid',
                 ]
             )
             ->add(
