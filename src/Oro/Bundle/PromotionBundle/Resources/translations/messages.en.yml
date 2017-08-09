@@ -44,6 +44,8 @@ oro:
         shipping_type:
             shipping_method:
                 label: Shipping Method
+    order:
+        applied_coupons.label: Applied Coupons
     promotion:
         entity_label: Promotion
         entity_plural_label: Promotions

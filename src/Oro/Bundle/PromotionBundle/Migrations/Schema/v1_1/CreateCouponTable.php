@@ -4,11 +4,29 @@ namespace Oro\Bundle\PromotionBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class CreateCouponTable implements Migration
+class CreateCouponTable implements Migration, ExtendExtensionAwareInterface
 {
+    const ORDER_COUPONS_RELATION_NAME = 'appliedCoupons';
+
+    /**
+     * @var ExtendExtension
+     */
+    private $extendExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -16,6 +34,7 @@ class CreateCouponTable implements Migration
     {
         $this->createOroPromotionCouponTable($schema);
         $this->addOroPromotionCouponForeignKeys($schema);
+        $this->addCouponsRelationToOrders($schema);
     }
 
     /**
@@ -68,6 +87,34 @@ class CreateCouponTable implements Migration
             ['promotion_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addCouponsRelationToOrders(Schema $schema)
+    {
+        $targetTable = $schema->getTable('oro_order');
+        $couponTable = $schema->getTable('oro_promotion_coupon');
+        $targetTitleColumnNames = $targetTable->getPrimaryKeyColumns();
+
+        $this->extendExtension->addManyToManyRelation(
+            $schema,
+            $targetTable,
+            CreateCouponTable::ORDER_COUPONS_RELATION_NAME,
+            $couponTable,
+            $targetTitleColumnNames,
+            $targetTitleColumnNames,
+            $targetTitleColumnNames,
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                    'without_default' => true
+                ],
+            ]
         );
     }
 }

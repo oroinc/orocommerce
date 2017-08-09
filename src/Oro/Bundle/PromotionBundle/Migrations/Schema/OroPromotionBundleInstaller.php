@@ -5,19 +5,39 @@ namespace Oro\Bundle\PromotionBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\PromotionBundle\Migrations\Schema\v1_1\CreateCouponTable;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwareInterface
+class OroPromotionBundleInstaller implements
+    Installation,
+    ActivityExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
     /**
      * @var ActivityExtension
      */
     private $activityExtension;
+
+    /**
+     * @var ExtendExtension
+     */
+    private $extendExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -60,6 +80,7 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
         $this->addOroPromotionAppliedDiscountForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
+        $this->addCouponsRelationToOrders($schema);
         $this->modifyAppliedDiscount($schema);
     }
 
@@ -390,6 +411,36 @@ class OroPromotionBundleInstaller implements Installation, ActivityExtensionAwar
     protected function addActivityAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_promotion');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addCouponsRelationToOrders(Schema $schema)
+    {
+        $targetTable = $schema->getTable('oro_order');
+        $couponTable = $schema->getTable('oro_promotion_coupon');
+        $targetTitleColumnNames = $targetTable->getPrimaryKeyColumns();
+
+        $this->extendExtension->addManyToManyRelation(
+            $schema,
+            $targetTable,
+            CreateCouponTable::ORDER_COUPONS_RELATION_NAME,
+            $couponTable,
+            $targetTitleColumnNames,
+            $targetTitleColumnNames,
+            $targetTitleColumnNames,
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                    'without_default' => true
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
+            ]
+        );
     }
 
     /**
