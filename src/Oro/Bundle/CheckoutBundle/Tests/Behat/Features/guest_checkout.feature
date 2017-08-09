@@ -125,7 +125,6 @@ Feature: Guest Checkout
       | Zip/Postal Code      | 10115           |
     And I click "Ship to This Address"
     And I press "Continue"
-    And I press "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     When I press "Submit Order"
