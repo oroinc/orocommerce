@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-8594
 @automatically-ticket-tagged
 @fixture-OroPricingBundle:ProductPrices.yml

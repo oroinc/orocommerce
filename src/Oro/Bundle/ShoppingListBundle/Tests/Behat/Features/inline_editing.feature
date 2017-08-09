@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:ShoppingListFixture.yml
 Feature: Inline Editing
   As Administrator I have a possibility to restrict inline editing for shopping list

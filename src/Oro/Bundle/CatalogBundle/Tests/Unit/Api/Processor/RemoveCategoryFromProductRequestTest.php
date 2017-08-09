@@ -6,14 +6,15 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ApiBundle\Model\Error;
-use Oro\Bundle\ApiBundle\Processor\Create\CreateContext;
+use Oro\Bundle\ApiBundle\Model\ErrorSource;
+use Oro\Bundle\ApiBundle\Request\Constraint;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ApiBundle\Request\ValueNormalizer;
 use Oro\Bundle\CatalogBundle\Api\Processor\RemoveCategoryFromProductRequest;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Component\ChainProcessor\ContextInterface;
 
-class RemoveCategoryFromProductRequestTest extends \PHPUnit_Framework_TestCase
+class RemoveCategoryFromProductRequestTest extends FormProcessorTestCase
 {
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -28,7 +29,7 @@ class RemoveCategoryFromProductRequestTest extends \PHPUnit_Framework_TestCase
     /**
      * @var RemoveCategoryFromProductRequest
      */
-    protected $removeCategoryFromProductRequest;
+    protected $processor;
 
     /**
      * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject|
@@ -42,25 +43,21 @@ class RemoveCategoryFromProductRequestTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repo = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
+
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->em = $this->createMock(EntityManager::class);
+        $this->repo = $this->createMock(EntityRepository::class);
+        $this->valueNormalizer = $this->createMock(ValueNormalizer::class);
+
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->repo);
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->willReturn($this->em);
-        $this->valueNormalizer = $this->getMockBuilder(ValueNormalizer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->removeCategoryFromProductRequest = new RemoveCategoryFromProductRequest(
+
+        $this->processor = new RemoveCategoryFromProductRequest(
             $this->doctrineHelper,
             $this->valueNormalizer
         );
@@ -68,81 +65,65 @@ class RemoveCategoryFromProductRequestTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessShouldBeIgnored()
     {
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context * */
-        $context = $this->createMock(CreateContext::class);
-        $context->expects($this->once())
-            ->method('getRequestData');
-        $context->expects($this->never())
-            ->method('setRequestData');
+        $productRequest = [];
 
-        $this->removeCategoryFromProductRequest->process($context);
+        $this->context->setRequestData($productRequest);
+        $this->processor->process($this->context);
+
+        self::assertEquals($productRequest, $this->context->getRequestData());
     }
 
     public function testProcessShouldBeIgnoredIfNoCategoryDefined()
     {
-        $context = $this->createMock(CreateContext::class);
-
-        $productRequest = $this->loadProduckMockJson();
+        $productRequest = $this->loadProductMockJson();
         unset($productRequest['data']['relationships']['category']);
 
-        $context->expects($this->once())
-            ->method('getRequestData')
-            ->willReturn($productRequest);
-        $context->expects($this->never())
-            ->method('setRequestData');
+        $this->context->setRequestData($productRequest);
+        $this->processor->process($this->context);
 
-        $this->removeCategoryFromProductRequest->process($context);
+        self::assertEquals($productRequest, $this->context->getRequestData());
     }
 
     public function testProcessShouldSetCategoryToContextAndRemoveFromRequest()
     {
-        $context = $this->createMock(CreateContext::class);
+        $productRequest = $this->loadProductMockJson();
+        $modifiedProductRequest = $productRequest;
+        unset($modifiedProductRequest['data']['relationships']['category']);
 
-        $productRequest = $this->loadProduckMockJson();
         $category = new Category();
         $this->repo->expects($this->once())
             ->method('findOneBy')
             ->willReturn($category);
 
-        $context->expects($this->once())
-            ->method('getRequestData')
-            ->willReturn($productRequest);
-        $modifiedProductRequest = $productRequest;
-        unset($modifiedProductRequest['data']['relationships']['category']);
-        $context->expects($this->once())
-            ->method('setRequestData')
-            ->with($modifiedProductRequest);
-        $context->expects($this->once())
-            ->method('set')
-            ->with('category', $category);
         $this->valueNormalizer->expects($this->once())
             ->method('normalizeValue')
             ->willReturn('categories');
 
-        $this->removeCategoryFromProductRequest->process($context);
+        $this->context->setRequestData($productRequest);
+        $this->processor->process($this->context);
+
+        self::assertSame($category, $this->context->get('category'));
+        self::assertEquals($modifiedProductRequest, $this->context->getRequestData());
     }
 
     public function testProcessGeneratesErrorIfCategoryValidationFailed()
     {
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context * */
-        $context = $this->createMock(CreateContext::class);
-        $context->expects($this->never())
-            ->method('setRequestData');
-        $productRequest = $this->loadProduckMockJson();
+        $productRequest = $this->loadProductMockJson();
         unset($productRequest['data']['relationships']['category']['data']);
-        $context->expects($this->once())
-            ->method('getRequestData')
-            ->willReturn($productRequest);
-        $context->expects($this->once())
-            ->method('addError')
-            ->willReturnCallback(
-                function ($error) {
-                    $this->assertInstanceOf(Error::class, $error);
-                    $this->assertEquals('Category definition must have a \'data\' key', $error->getDetail());
-                }
-            );
 
-        $this->removeCategoryFromProductRequest->process($context);
+        $this->context->setRequestData($productRequest);
+        $this->processor->process($this->context);
+
+        self::assertEquals($productRequest, $this->context->getRequestData());
+        self::assertEquals(
+            [
+                Error::createValidationError(
+                    Constraint::REQUEST_DATA,
+                    'Category definition must have a \'data\' key'
+                )->setSource(ErrorSource::createByPointer('/data/relationships/category'))
+            ],
+            $this->context->getErrors()
+        );
     }
 
     /**
@@ -150,28 +131,26 @@ class RemoveCategoryFromProductRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessGeneratesErrorIfCategorInfoValidationFailed($categoryInfo)
     {
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context * */
-        $context = $this->createMock(CreateContext::class);
-        $context->expects($this->never())
-            ->method('setRequestData');
-        $productRequest = $this->loadProduckMockJson();
+        $productRequest = $this->loadProductMockJson();
         $productRequest['data']['relationships']['category']['data'] = $categoryInfo;
+
         $this->valueNormalizer->expects($this->once())
             ->method('normalizeValue')
             ->willReturn('categories');
-        $context->expects($this->once())
-            ->method('getRequestData')
-            ->willReturn($productRequest);
-        $context->expects($this->once())
-            ->method('addError')
-            ->willReturnCallback(
-                function ($error) {
-                    $this->assertInstanceOf(Error::class, $error);
-                    $this->assertEquals('Category definition must have a valid id and type', $error->getDetail());
-                }
-            );
 
-        $this->removeCategoryFromProductRequest->process($context);
+        $this->context->setRequestData($productRequest);
+        $this->processor->process($this->context);
+
+        self::assertEquals($productRequest, $this->context->getRequestData());
+        self::assertEquals(
+            [
+                Error::createValidationError(
+                    Constraint::REQUEST_DATA,
+                    'Category definition must have a valid id and type'
+                )->setSource(ErrorSource::createByPointer('/data/relationships/category/data'))
+            ],
+            $this->context->getErrors()
+        );
     }
 
     /**
@@ -189,33 +168,31 @@ class RemoveCategoryFromProductRequestTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessGeneratesErrorIfCategoryNotFound()
     {
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context * */
-        $context = $this->createMock(CreateContext::class);
-        $context->expects($this->never())
-            ->method('setRequestData');
-        $productRequest = $this->loadProduckMockJson();
+        $productRequest = $this->loadProductMockJson();
+
         $this->valueNormalizer->expects($this->once())
             ->method('normalizeValue')
             ->willReturn('categories');
-        $context->expects($this->once())
-            ->method('getRequestData')
-            ->willReturn($productRequest);
-        $context->expects($this->once())
-            ->method('addError')
-            ->willReturnCallback(
-                function ($error) {
-                    $this->assertInstanceOf(Error::class, $error);
-                    $this->assertEquals('Category id 1 is not valid', $error->getDetail());
-                }
-            );
 
-        $this->removeCategoryFromProductRequest->process($context);
+        $this->context->setRequestData($productRequest);
+        $this->processor->process($this->context);
+
+        self::assertEquals($productRequest, $this->context->getRequestData());
+        self::assertEquals(
+            [
+                Error::createValidationError(
+                    Constraint::REQUEST_DATA,
+                    'Category id 1 is not valid'
+                )->setSource(ErrorSource::createByPointer('/data/relationships/category/data/id'))
+            ],
+            $this->context->getErrors()
+        );
     }
 
     /**
-     * @return bool|string
+     * @return array
      */
-    protected function loadProduckMockJson()
+    protected function loadProductMockJson()
     {
         return json_decode(file_get_contents(__DIR__ . '/product_mock.json'), true);
     }

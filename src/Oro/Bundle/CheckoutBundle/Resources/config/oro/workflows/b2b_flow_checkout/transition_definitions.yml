@@ -82,13 +82,21 @@ workflows:
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
 
+                    - '@tree':
+                        conditions:
+                            '@equal': [true, $ship_to_billing_address]
+                        actions:
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.initCheckoutState
+
+                            - '@transit_workflow':
+                                entity: $checkout
+                                transition: continue_to_shipping_method
+                                workflow: 'b2b_flow_checkout'
+
             continue_to_shipping_method_definition:
                 preactions:
-                     - '@call_service_method':
-                         service: oro_checkout.action.default_shipping_method_setter
-                         method: setDefaultShippingMethod
-                         method_parameters: [$checkout]
-
                      - '@generate_checkout_state_snapshot':
                          entity: $checkout
                          attribute: $.result.currentCheckoutState

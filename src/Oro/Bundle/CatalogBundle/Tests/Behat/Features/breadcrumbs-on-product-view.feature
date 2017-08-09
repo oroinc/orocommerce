@@ -1,3 +1,4 @@
+@regression
 @fixture-OroCatalogBundle:category_for_breadcrumbs.yml
 Feature: Product view page breadcrumbs
 
