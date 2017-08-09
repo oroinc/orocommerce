@@ -39,9 +39,9 @@ data:
                 type: prodinventorystatuses
                 id: out_of_stock
         category:
-          data:
-            type: categories
-            id: '<toString(@category_1->id)>'
+            data:
+                type: categories
+                id: '<toString(@category_1->id)>'
 included:
     -
         type: localizedfallbackvalues

@@ -728,6 +728,13 @@ services:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_customer_type, method: onPostSubmit }
             - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_change, method: onCustomerGroupChange }
 
+    oro_pricing.entity_listener.product_form:
+        class: 'Oro\Bundle\PricingBundle\EventListener\ProductFormListener'
+        arguments:
+            - '@oro_pricing.manager.price_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_product, method: onBeforeFlush }
+
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'
         arguments:
