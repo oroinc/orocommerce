@@ -1,0 +1,18 @@
+data:
+    type: 'priceattributeproductprices'
+    attributes:
+        value: 24.57
+        currency: 'USD'
+    relationships:
+        priceList:
+            data:
+                id: '<toString(@price_attribute_price_list_2->id)>'
+                type: 'priceattributepricelists'
+        product:
+            data:
+                id: '<toString(@product-3->id)>'
+                type: 'products'
+        unit:
+            data:
+                id: '<toString(@product_unit.liter->code)>'
+                type: 'productunits'
