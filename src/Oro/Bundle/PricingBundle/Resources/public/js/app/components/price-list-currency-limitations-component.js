@@ -52,7 +52,7 @@ define(function(require) {
             this.currencies = this.$elem.closest(options.container).data('currencies');
             this.$priceListSelect = this.$elem.find(options.priceListSelector);
             this.$currencySelect = this.$elem.find(options.currencySelector);
-            this.$currencySelect.find('option').clone().each(
+            this.$currencySelect.find('option').each(
                 _.bind(
                     function(idx, option) {
                         this.systemSupportedCurrencyOptions[option.value] = option;
@@ -123,14 +123,15 @@ define(function(require) {
                 priceListCurrencies.unshift('');
             }
 
-            var newOptions = _.filter(
-                this.systemSupportedCurrencyOptions,
-                function(option, key) {
-                    return _.indexOf(priceListCurrencies, key) !== -1;
+            var newOptions = [];
+            _.each(priceListCurrencies, _.bind(function(currency) {
+                if (this.systemSupportedCurrencyOptions[currency] !== undefined) {
+                    newOptions.push($(this.systemSupportedCurrencyOptions[currency]).clone());
                 }
-            );
+            }, this));
 
             this.$currencySelect.html(newOptions);
+
             this.$currencySelect.find('option[value=""]').hide();
             this.$currencySelect.removeAttr('disabled');
 
