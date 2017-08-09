@@ -16,6 +16,7 @@ config:
         'oroproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-display-options-builder.js'
         'oroproduct/js/app/views/base-product-view': 'bundles/oroproduct/js/app/views/base-product-view.js'
         'oroproduct/js/app/views/base-product-variants-view': 'bundles/oroproduct/js/app/views/base-product-variants-view.js'
+        'oroproduct/js/app/components/product-variant-field-component': 'bundles/oroproduct/js/app/components/product-variant-field-component.js'
         'oroproduct/js/app/views/line-item-product-view': 'bundles/oroproduct/js/app/views/line-item-product-view.js'
         'oroproduct/js/app/views/quick-add-view': 'bundles/oroproduct/js/app/views/quick-add-view.js'
         'oroproduct/js/app/views/quick-add-item-view': 'bundles/oroproduct/js/app/views/quick-add-item-view.js'
