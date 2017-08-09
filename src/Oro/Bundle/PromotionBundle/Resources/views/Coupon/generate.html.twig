@@ -6,7 +6,10 @@
     <div class="widget-content">
         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
               method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-              data-page-component-module="oropromotion/js/app/components/coupon-generation-preview-component"
+              data-page-component-module="oroui/js/app/components/view-component"
+              data-page-component-options="{{ {
+                  view: 'oropromotion/js/app/views/coupon-generation-preview-view'
+              }|json_encode }}"
         >
             <fieldset class="form-horizontal">
                 {{ form_widget(form.couponGenerationOptions) }}
