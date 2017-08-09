@@ -4,6 +4,7 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexIntegrationSettingsType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -11,14 +12,21 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /**
      * @var FedexIntegrationSettingsType
      */
@@ -42,12 +50,32 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             ->method('encryptData')
             ->willReturn('encrypted');
 
+        $entityType = new EntityTypeStub([
+            1 => $this->getEntity(
+                ShippingService::class,
+                [
+                    'id' => 1,
+                    'code' => '01',
+                    'description' => 'UPS Next Day Air',
+                ]
+            ),
+            2 => $this->getEntity(
+                ShippingService::class,
+                [
+                    'id' => 2,
+                    'code' => '03',
+                    'description' => 'UPS Ground',
+                ]
+            ),
+        ]);
+
         return [
             new PreloadedExtension(
                 [
                     new LocalizedPropertyType(),
                     new LocalizationCollectionTypeStub(),
                     new LocalizedFallbackValueCollectionType($this->createMock(ManagerRegistry::class)),
+                    'entity' => $entityType,
                     new OroEncodedPlaceholderPasswordType($crypter),
                 ],
                 []
@@ -56,7 +84,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSubmitValid()
+    public function testSubmit()
     {
         $submitData = [
             'key' => 'key2',
@@ -68,6 +96,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             'labels' => [
                 'values' => ['default' => 'first label'],
             ],
+            'shippingServices' => [1, 2],
         ];
 
         $settings = new FedexIntegrationSettings();
@@ -78,7 +107,8 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
             ->setMeterNumber('meter')
             ->setPickupType('pickup')
             ->setUnitOfWeight('unit')
-            ->addLabel((new LocalizedFallbackValue())->setString('label'));
+            ->addLabel((new LocalizedFallbackValue())->setString('label'))
+            ->addShippingService(new ShippingService());
 
         $form = $this->factory->create($this->formType, $settings);
 

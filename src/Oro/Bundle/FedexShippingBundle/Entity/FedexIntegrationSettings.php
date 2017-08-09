@@ -66,6 +66,25 @@ class FedexIntegrationSettings extends Transport
     private $unitOfWeight;
 
     /**
+     * @var Collection|ShippingService[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="ShippingService",
+     *      fetch="EAGER"
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_fedex_transp_ship_service",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="ship_service_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     */
+    private $shippingServices;
+
+    /**
      * @var Collection|LocalizedFallbackValue[]
      *
      * @ORM\ManyToMany(
@@ -87,6 +106,7 @@ class FedexIntegrationSettings extends Transport
 
     public function __construct()
     {
+        $this->shippingServices = new ArrayCollection();
         $this->labels = new ArrayCollection();
     }
 
@@ -213,7 +233,7 @@ class FedexIntegrationSettings extends Transport
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
-    public function getLabels()
+    public function getLabels(): Collection
     {
         return $this->labels;
     }
@@ -241,6 +261,42 @@ class FedexIntegrationSettings extends Transport
     {
         if ($this->labels->contains($label)) {
             $this->labels->removeElement($label);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ShippingService[]
+     */
+    public function getShippingServices(): Collection
+    {
+        return $this->shippingServices;
+    }
+
+    /**
+     * @param ShippingService $service
+     *
+     * @return self
+     */
+    public function addShippingService(ShippingService $service): self
+    {
+        if (!$this->shippingServices->contains($service)) {
+            $this->shippingServices->add($service);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ShippingService $service
+     *
+     * @return self
+     */
+    public function removeShippingService(ShippingService $service): self
+    {
+        if ($this->shippingServices->contains($service)) {
+            $this->shippingServices->removeElement($service);
         }
 
         return $this;
