@@ -150,7 +150,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $this->waitForAjax();
         $this->configContext->clickLinkOnConfigurationSidebar('Product Options');
         $this->waitForAjax();
-        $this->formContext->uncheckUseDefaultForField("Decrement Inventory");
+        $this->formContext->uncheckUseDefaultForField('Decrement Inventory', 'Use default');
         $this->oroMainContext->fillField("Decrement Inventory", 0);
         $this->oroMainContext->pressButton('Save settings');
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
