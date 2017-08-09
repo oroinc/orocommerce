@@ -4,13 +4,14 @@
         'credit-card-expiration-date': {'message': 'oro.payment.validation.month', 'payload': null}
     }
     %}
-
-    <div class="{{ class_prefix }}-form__select-container" {{ block('widget_attributes') }} data-validation="{{ validation|json_encode }}">
-        <div class="{{ class_prefix }}-form__select {{ class_prefix }}-form__select--exp-month">
-            {{ form_widget(form.month, {'attr': {'data-expiration-date-month': true}}) }}
-        </div>
-        <div class="{{ class_prefix }}-form__select {{ class_prefix }}-form__select--exp-year">
-            {{ form_widget(form.year, {'attr': {'data-expiration-date-year': true}}) }}
+    <div {{ block('widget_attributes') }} data-validation="{{ validation|json_encode }}">
+        <div class="{{ class_prefix }}-form__select-container">
+            <div class="{{ class_prefix }}-form__select {{ class_prefix }}-form__select--exp-month">
+                {{ form_widget(form.month, {'attr': {'data-expiration-date-month': true}}) }}
+            </div>
+            <div class="{{ class_prefix }}-form__select {{ class_prefix }}-form__select--exp-year">
+                {{ form_widget(form.year, {'attr': {'data-expiration-date-year': true}}) }}
+            </div>
         </div>
     </div>
 {%- endblock %}
