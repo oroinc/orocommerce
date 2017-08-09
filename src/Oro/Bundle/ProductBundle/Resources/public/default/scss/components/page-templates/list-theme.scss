@@ -34,6 +34,12 @@
                 float: right;
                 width: $list-theme-product-view-aside-width;
             }
+
+            &__related-items {
+                &:not(:last-child) {
+                    margin-bottom: $list-theme-product-view-related-items-offset-y;
+                }
+            }
         }
 
         .line-item-form {

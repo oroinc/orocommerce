@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:DuplicateList.yml
 Feature: Duplicate Lists
   In order to create multiple similar orders

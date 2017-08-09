@@ -102,7 +102,7 @@ class ProductExtension extends \Twig_Extension
     {
         return $this->getRelatedItemsIds(
             $product,
-            $this->container->get('oro.product.related_item.upsell_product.finder_strategy')
+            $this->container->get('oro_product.related_item.upsell_product.finder_strategy')
         );
     }
 

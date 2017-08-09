@@ -21,7 +21,7 @@ Oro\Bundle\PromotionBundle\Entity\PromotionSchedule:
         - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection: ~
         - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
             chain:
-                activeAt: 'Active At'
+                activeAt: 'Activate At'
                 deactivateAt: 'Deactivate At'
 
 Oro\Bundle\PromotionBundle\Entity\Coupon:

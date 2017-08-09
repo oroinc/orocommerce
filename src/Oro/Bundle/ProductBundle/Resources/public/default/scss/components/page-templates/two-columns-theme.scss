@@ -44,6 +44,10 @@
                                 margin-right: $embedded-products-item-offset;
                             }
                         }
+
+                        .product-price {
+                            max-width: $product-view-related-items-product-price-width;
+                        }
                     }
                 }
             }

@@ -11,11 +11,11 @@
             data-page-component-options="{{ {
                 view: 'oroui/js/app/views/layout-subtree-view',
                 blockId : block.vars.id,
-                reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure']
+                reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
             }|json_encode }}"
             data-layout="separate">
-        {{ block_widget(block) }}
-    </div>
+           {{ block_widget(block) }}
+       </div>
     {% if not app.user %}
         <div class="notification-flash notification-flash--warning">
             <div class="notification-flash__text">
