@@ -1,6 +1,6 @@
 services:
     oro_product.api.add_validate_unit_precisions_duplicate_form_listener:
-        class: \Oro\Bundle\ProductBundle\Api\Processor\AddValidateUnitPrecisionsDuplicateFormListener
+        class: Oro\Bundle\ProductBundle\Api\Processor\AddValidateUnitPrecisionsDuplicateFormListener
         tags:
             - { name: oro.api.processor, action: create, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }
             - { name: oro.api.processor, action: update, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }

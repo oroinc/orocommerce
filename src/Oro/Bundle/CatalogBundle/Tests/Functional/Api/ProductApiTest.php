@@ -10,6 +10,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductApiTest extends RestJsonApiTestCase
 {
     /**
@@ -21,51 +24,75 @@ class ProductApiTest extends RestJsonApiTestCase
         $this->loadFixtures([LoadProductUnitPrecisions::class, LoadCategoryProductData::class]);
     }
 
-    /**
-     * @param array $parameters
-     * @param string $expectedDataFileName
-     *
-     * @dataProvider getListDataProvider
-     */
-    public function testGetList(array $parameters, $expectedDataFileName)
-    {
-        $response = $this->cget(['entity' => 'products'], $parameters);
-
-        $this->assertResponseContains($expectedDataFileName, $response);
-    }
-
-    /**
-     * @return array
-     */
-    public function getListDataProvider()
-    {
-        return [
-            'filter by Product' => [
-                'parameters' => [
-                    'filter' => [
-                        'sku' => '@product-1->sku',
-                    ],
-                ],
-                'expectedDataFileName' => 'cget_filter_by_product.yml',
-            ],
-            'filter by Products with different inventory status' => [
-                'parameters' => [
-                    'filter' => [
-                        'sku' => ['@product-2->sku', '@product-3->sku'],
-                    ],
-                ],
-                'expectedDataFileName' => 'cget_filter_by_products_by_inventory_status.yml',
-            ],
-        ];
-    }
-
-    public function testUpdateEntity()
+    public function testGetShouldReturnCategoryField()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
+
+        $response = $this->get(
+            ['entity' => 'products', 'id' => $product->getId()]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'products',
+                    'id' => '<toString(@product-1->id)>',
+                    'relationships' => [
+                        'category' => [
+                            'data' => [
+                                'type' => 'categories',
+                                'id' => '<toString(@category_1->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetListShouldReturnCategoryField()
+    {
+        $response = $this->cget(
+            ['entity' => 'products'],
+            ['filter' => ['sku' => '@product-1->sku']]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'products',
+                        'id' => '<toString(@product-1->id)>',
+                        'relationships' => [
+                            'category' => [
+                                'data' => [
+                                    'type' => 'categories',
+                                    'id' => '<toString(@category_1->id)>'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testShouldChangeProductCategory()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $categoryId = $category->getId();
+
+        /**
+         * It's a workaround for doctrine2 bug
+         * @see https://github.com/doctrine/doctrine2/issues/6186
+         * @todo remove this in https://magecore.atlassian.net/browse/BB-11411
+         */
+        $this->getEntityManager()->clear();
 
         $response = $this->patch(
             ['entity' => 'products', 'id' => (string)$product->getId()],
@@ -74,16 +101,10 @@ class ProductApiTest extends RestJsonApiTestCase
                     'type' => 'products',
                     'id' => (string)$product->getId(),
                     'relationships' => [
-                        'inventory_status' => [
-                            'data' => [
-                                'type' => 'prodinventorystatuses',
-                                'id' => 'out_of_stock',
-                            ],
-                        ],
                         'category' => [
                             'data' => [
                                 'type' => 'categories',
-                                'id' => (string)$categoryId,
+                                'id' => (string)$category->getId(),
                             ],
                         ],
                     ],
@@ -91,31 +112,117 @@ class ProductApiTest extends RestJsonApiTestCase
             ]
         );
 
-        /** @var Product $product */
-        $product = $this->getEntityManager()->find(Product::class, $product->getId());
-        $this->getReferenceRepository()->setReference(LoadProductData::PRODUCT_1, $product);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'products',
+                    'id' => '<toString(@product-1->id)>',
+                    'relationships' => [
+                        'category' => [
+                            'data' => [
+                                'type' => 'categories',
+                                'id' => '<toString(@category_1_2->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
 
-        $this->assertResponseContains('patch_update_entity.yml', $response);
+        $this->getEntityManager()->clear();
+        $updatedCategory = $this->getEntityManager()
+            ->getRepository(Category::class)
+            ->findOneByProductSku($product->getSku());
+        self::assertEquals($category->getId(), $updatedCategory->getId());
     }
 
-    public function testCreateProduct()
+    public function testShouldSetProductCategoryToNull()
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
 
-        $response = $this->post(['entity' => 'products'], 'post_product.yml');
+        $response = $this->patch(
+            ['entity' => 'products', 'id' => (string)$product->getId()],
+            [
+                'data' => [
+                    'type' => 'products',
+                    'id' => (string)$product->getId(),
+                    'relationships' => [
+                        'category' => [
+                            'data' => null
+                        ],
+                    ],
+                ],
+            ]
+        );
 
-        $this->assertResponseContains('post_product.yml', $response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'products',
+                    'id' => '<toString(@product-1->id)>',
+                    'relationships' => [
+                        'category' => [
+                            'data' => null
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        $this->getEntityManager()->clear();
+        self::assertNull(
+            $this->getEntityManager()->getRepository(Category::class)->findOneByProductSku($product->getSku())
+        );
     }
 
-    public function testDeleteProduct()
+    public function testShouldSetCategoryForNewProduct()
     {
+        $response = $this->post(
+            ['entity' => 'products'],
+            'product_create.yml'
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'products',
+                    'relationships' => [
+                        'category' => [
+                            'data' => [
+                                'type' => 'categories',
+                                'id' => '<toString(@category_1->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        $this->getEntityManager()->clear();
+        $product = $this->getEntityManager()->getReference(Product::class, $this->getResourceId($response));
+        $category = $this->getEntityManager()->getRepository(Category::class)->findOneByProduct($product);
+        self::assertEquals(
+            $this->getReferenceRepository()->getReference('category_1')->getId(),
+            $category->getId()
+        );
+    }
+
+    public function testShouldDeleteProductFromCategoryWhenProductIsDeleted()
+    {
+        /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $categoryRepo = $category = $this->getContainer()->get('oro_api.doctrine_helper')
-            ->getEntityRepository(Category::class);
+        $categoryRepo = $this->getEntityManager()->getRepository(Category::class);
+
+        // guard - the deleting product should be assigned to a category
         $this->assertInstanceOf(Category::class, $categoryRepo->findOneByProductSku($product->getSku()));
+
         $this->delete(['entity' => 'products', 'id' => $product->getId()]);
+
+        $this->getEntityManager()->clear();
         $this->assertNull($categoryRepo->findOneByProductSku($product->getSku()));
     }
 }
