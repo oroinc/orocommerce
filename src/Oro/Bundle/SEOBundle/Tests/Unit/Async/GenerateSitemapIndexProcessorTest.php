@@ -78,7 +78,6 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
                 'Queue Message is invalid',
                 [
                     'exception' => $exception,
-                    'message' => JSON::encode($data),
                 ]
             );
 
@@ -121,7 +120,6 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $exception,
-                    'message' => JSON::encode($data),
                     'topic' => Topics::GENERATE_SITEMAP_INDEX_BY_WEBSITE,
                 ]
             );
