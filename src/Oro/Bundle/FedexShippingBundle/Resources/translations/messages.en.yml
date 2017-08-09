@@ -1,4 +1,21 @@
 oro:
     fedex:
         integration:
-            channel.label: FedEx
+            channel.label: 'FedEx'
+            settings:
+                key.label: 'User Credential Key'
+                password.label: 'User Credential Password'
+                account_number.label: 'Shipping Account Number'
+                meter_number.label: 'Meter Number'
+                pickup_type:
+                    label: 'Pickup Type'
+                    regular.label: 'Regular Pickup'
+                    request_courier.label: 'Request Courier'
+                    drop_box.label: 'Drop Box'
+                    business_service_center.label: 'Business Service Center'
+                    station: 'Station'
+                unit_of_weight:
+                    label: 'Unit Of Weight'
+                    kg.label: 'Kilogram'
+                    lb.label: 'Pound'
+                labels.label: 'Label'

@@ -1,22 +1,14 @@
 <?php
 
-namespace Oro\Bundle\FedexShippingBundle\Migrations\Schema;
+namespace Oro\Bundle\FedexShippingBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
-use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroFedexShippingBundleInstaller implements Installation
+class AddIntegrationSettingsMigration implements Migration
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_0';
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -24,23 +16,8 @@ class OroFedexShippingBundleInstaller implements Installation
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createShippingServiceTable($schema);
         $this->createOroFlatRateTransportLabelTable($schema);
         $this->updateOroIntegrationTransportTable($schema);
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function createShippingServiceTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_fedex_shipping_service');
-
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('code', 'string', ['notnull' => true, 'length' => 200]);
-        $table->addColumn('description', 'string', ['notnull' => true, 'length' => 200]);
-
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -82,7 +59,7 @@ class OroFedexShippingBundleInstaller implements Installation
     private function updateOroIntegrationTransportTable(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
-
+        
         $table->addColumn('fedex_key', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_password', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_account_number', 'string', ['notnull' => false, 'length' => 100]);
