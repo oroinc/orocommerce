@@ -23,12 +23,14 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_fedex_shipping.integration.channel',
+            'oro_fedex_shipping.integration.transport',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
         $expectedParameters = [
             'oro_fedex_shipping.integration.channel.type',
+            'oro_fedex_shipping.integration.transport.type',
         ];
 
         $this->assertParametersLoaded($expectedParameters);

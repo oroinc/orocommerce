@@ -1,5 +1,6 @@
 parameters:
     oro_fedex_shipping.integration.channel.type: 'fedex'
+    oro_fedex_shipping.integration.transport.type: 'fedex'
 
 services:
     oro_fedex_shipping.integration.channel:
@@ -7,3 +8,9 @@ services:
         public: false
         tags:
             - { name: oro_integration.channel, type: '%oro_fedex_shipping.integration.channel.type%' }
+
+    oro_fedex_shipping.integration.transport:
+        class: 'Oro\Bundle\FedexShippingBundle\Integration\FedexTransport'
+        public: false
+        tags:
+            - { name: oro_integration.transport, type: '%oro_fedex_shipping.integration.transport.type%', channel_type: '%oro_fedex_shipping.integration.channel.type%' }

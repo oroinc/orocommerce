@@ -3,6 +3,7 @@ oro:
         integration:
             channel.label: 'FedEx'
             settings:
+                label: 'FedEx Transport Settings'
                 key.label: 'User Credential Key'
                 password.label: 'User Credential Password'
                 account_number.label: 'Shipping Account Number'
