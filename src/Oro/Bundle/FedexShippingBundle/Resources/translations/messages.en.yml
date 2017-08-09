@@ -1,0 +1,4 @@
+oro:
+    fedex:
+        integration:
+            channel.label: FedEx
