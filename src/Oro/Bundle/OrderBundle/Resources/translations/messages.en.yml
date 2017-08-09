@@ -249,7 +249,7 @@ oro:
                 order_automation_target_status.title: 'Target Status'
                 order_automation_target_status.tooltip: 'You may modify the default behavior of changing order status to "Cancelled".'
                 order_creation_new_internal_order_status.title: 'New Internal Order Status'
-                order_creation_new_internal_order_status.tooltip: 'The specified status will be assigned to new orders upon their creation.'
+                order_creation_new_internal_order_status.tooltip: 'The selected status will be assigned to new orders upon creation.'
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
@@ -284,7 +284,7 @@ oro:
                     cancel.success: 'Order #%id% has been cancelled'
                     close.success: 'Order #%id% has been closed'
                     archive.success: 'Order #%id% has been archived'
-                    mark_as_shipped.success: 'Order #%id% marked as shipped'
+                    mark_as_shipped.success: 'Order #%id% has been marked as shipped.'
 
         datagrid:
             view:

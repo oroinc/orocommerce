@@ -81,14 +81,14 @@ system_configuration:
                         children:
                             order_automation:
                                 children:
-                                    orders_history_open_orders:
+                                    order_automation:
                                         children:
                                             - oro_order.order_automation_enable_cancellation
                                             - oro_order.order_automation_applicable_statuses
                                             - oro_order.order_automation_target_status
                             order_creation:
                                 children:
-                                    orders_history_open_orders:
+                                    order_creation:
                                         children:
                                             - oro_order.order_creation_new_internal_order_status
 
