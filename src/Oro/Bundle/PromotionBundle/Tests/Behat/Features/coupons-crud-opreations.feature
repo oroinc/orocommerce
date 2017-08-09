@@ -17,14 +17,14 @@ Feature: CRUD operations for Coupons codes
       |Promotion            | order Discount Promotion         |
       |Uses per Coupon      | 1                                |
       |Valid Until          | <DateTime:Jul 1, 2018, 12:00 AM> |
-    And I type "1" in "Uses per Customer"
+    And I type "1" in "Uses per Person"
     And I save and close form
     Then I should see "Coupon has been saved" flash message
     And I should see "12345" in grid with following data:
       |Coupon Code          | 12345                    |
       |Promotion            | order Discount Promotion |
       |Uses per Coupon      | 1                        |
-      |Uses per Customer    | 1                        |
+      |Uses per Person      | 1                        |
       |Used                 | 0                        |
       |Valid Until          | Jul 1, 2018, 12:00 AM    |
 
@@ -35,7 +35,7 @@ Feature: CRUD operations for Coupons codes
       |Coupon Code       | 12345                    |
       |Promotion         | order Discount Promotion |
       |Uses per Coupon   | 1                        |
-      |Uses per Customer | 1                        |
+      |Uses per Person   | 1                        |
       |Valid Until       | Jul 1, 2018, 12:00 AM    |
 
   Scenario: Edit existing coupon
@@ -44,7 +44,7 @@ Feature: CRUD operations for Coupons codes
     And fill form with:
       |Coupon Code       | 12345    |
       |Uses per Coupon   | 10       |
-    And I type "1" in "Uses per Customer"
+    And I type "1" in "Uses per Person"
     And I clear "Promotion" field
     When I save and close form
     Then I should see "Coupon has been saved" flash message
@@ -52,7 +52,7 @@ Feature: CRUD operations for Coupons codes
       |Coupon Code       | 12345                 |
       |Promotion         | N/A                   |
       |Uses per Coupon   | 10                    |
-      |Uses per Customer | 1                     |
+      |Uses per Person   | 1                     |
       |Valid Until       | Jul 1, 2018, 12:00 AM |
 
   Scenario: View edited coupon
@@ -61,7 +61,7 @@ Feature: CRUD operations for Coupons codes
       |Code              | 12345                 |
       |Promotion         | N/A                   |
       |Uses per Coupon   | 10                    |
-      |Uses per Customer | 1                     |
+      |Uses per Person   | 1                     |
       |Valid Until       | Jul 1, 2018, 12:00 AM |
 
   Scenario: Create second coupon
@@ -70,21 +70,21 @@ Feature: CRUD operations for Coupons codes
     And I fill form with:
       |Code              | 54321    |
       |Uses per Coupon   | 10       |
-    And I type "10" in "Uses per Customer"
+    And I type "10" in "Uses per Person"
     When I save and close form
     Then I should see "Coupon has been saved" flash message
     And I should see "54321" in grid with following data:
       |Coupon Code       | 54321    |
       |Promotion         | N/A      |
       |Uses per Coupon   | 10       |
-      |Uses per Customer | 10       |
+      |Uses per Person   | 10       |
       |Used              | 0        |
       |Valid Until       |          |
     And I should see "12345" in grid with following data:
       |Coupon Code       | 12345                 |
       |Promotion         | N/A                   |
       |Uses per Coupon   | 10                    |
-      |Uses per Customer | 1                     |
+      |Uses per Person   | 1                     |
       |Used              | 0                     |
       |Valid Until       | Jul 1, 2018, 12:00 AM |
 
@@ -99,7 +99,7 @@ Feature: CRUD operations for Coupons codes
       |Coupon Code       | 12345                        |
       |Promotion         | line Item Discount Promotion |
       |Uses per Coupon   | 10                           |
-      |Uses per Customer | 1                            |
+      |Uses per Person   | 1                            |
       |Valid Until       | Jul 1, 2018, 12:00 AM        |
 
   Scenario: Delete existing coupon
@@ -110,7 +110,7 @@ Feature: CRUD operations for Coupons codes
       |Coupon Code       | 54321    |
       |Promotion         | N/A      |
       |Uses per Coupon   | 10       |
-      |Uses per Customer | 10       |
+      |Uses per Person   | 10       |
       |Used              | 0        |
       |Valid Until       |          |
     And I should not see "12345"
@@ -130,12 +130,12 @@ Feature: CRUD operations for Coupons codes
     And I fill form with:
       |Coupon Code       | 22222   |
       |Uses per Coupon   |         |
-    And I type "" in "Uses per Customer"
+    And I type "" in "Uses per Person"
     When I save and close form
     Then I should see "Coupon has been saved" flash message
     And I should see "22222" in grid with following data:
       |Uses per Coupon   |         |
-      |Uses per Customer |         |
+      |Uses per Person   |         |
 
   Scenario: Save coupon without required data
     Given I go to Marketing/Promotions/Coupons

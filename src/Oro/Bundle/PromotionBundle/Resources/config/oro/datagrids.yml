@@ -163,7 +163,7 @@ datagrids:
                     - coupon.updatedAt
                     - coupon.totalUses
                     - coupon.usesPerCoupon
-                    - coupon.usesPerUser
+                    - coupon.usesPerPerson
                     - coupon.validUntil
                 from:
                     - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
@@ -181,8 +181,8 @@ datagrids:
                 template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
             usesPerCoupon:
                 label:         oro.promotion.coupon.uses_per_coupon.label
-            usesPerUser:
-                label:         oro.promotion.coupon.uses_per_user.label
+            usesPerPerson:
+                label:         oro.promotion.coupon.uses_per_person.label
             totalUses:
                 label:         oro.promotion.coupon.total_uses.label
             validUntil:
@@ -204,8 +204,8 @@ datagrids:
                     data_name: coupon.totalUses
                 usesPerCoupon:
                     data_name: coupon.usesPerCoupon
-                usesPerUser:
-                    data_name: coupon.usesPerUser
+                usesPerPerson:
+                    data_name: coupon.usesPerPerson
                 validUntil:
                     data_name: coupon.validUntil
                 createdAt:
@@ -225,9 +225,9 @@ datagrids:
                 usesPerCoupon:
                     type:      number
                     data_name: coupon.usesPerCoupon
-                usesPerUser:
+                usesPerPerson:
                     type:      number
-                    data_name: coupon.usesPerUser
+                    data_name: coupon.usesPerPerson
                 totalUses:
                     type:      number
                     data_name: coupon.totalUses

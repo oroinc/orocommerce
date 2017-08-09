@@ -38,7 +38,7 @@ class CouponGeneratorTest extends WebTestCase
         $options->setValidUntil(new \DateTime('01-01-2020 12:00:00'));
         $options->setPromotion($promotion);
         $options->setUsesPerCoupon(22);
-        $options->setUsesPerUser(null);
+        $options->setUsesPerPerson(null);
 
         $options->setCouponQuantity(200);
         $options->setCodeLength(1);
@@ -71,7 +71,7 @@ class CouponGeneratorTest extends WebTestCase
         $this->assertEquals($options->getOwner(), $coupon->getOwner());
         $this->assertEquals($options->getPromotion(), $coupon->getPromotion());
         $this->assertEquals($options->getUsesPerCoupon(), $coupon->getUsesPerCoupon());
-        $this->assertEquals($options->getUsesPerUser(), $coupon->getUsesPerUser());
+        $this->assertEquals($options->getUsesPerPerson(), $coupon->getUsesPerPerson());
         $this->assertEquals($options->getValidUntil(), $coupon->getValidUntil());
         $this->assertInstanceOf(\DateTime::class, $coupon->getCreatedAt());
         $this->assertInstanceOf(\DateTime::class, $coupon->getUpdatedAt());

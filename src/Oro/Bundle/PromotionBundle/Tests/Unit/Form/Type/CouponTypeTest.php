@@ -95,7 +95,7 @@ class CouponTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('code'));
         $this->assertTrue($form->has('promotion'));
-        $this->assertTrue($form->has('usesPerUser'));
+        $this->assertTrue($form->has('usesPerPerson'));
         $this->assertTrue($form->has('usesPerCoupon'));
         $this->assertTrue($form->has('validUntil'));
     }
@@ -113,7 +113,7 @@ class CouponTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'code' => 'test1234',
                     'promotion' => 'promotion2',
-                    'usesPerUser' => 2,
+                    'usesPerPerson' => 2,
                     'usesPerCoupon' => 3,
                     'validUntil' => $validUntilDate,
                 ],
@@ -123,7 +123,7 @@ class CouponTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'code' => 'test1234',
                     'promotion' => null,
-                    'usesPerUser' => 2,
+                    'usesPerPerson' => 2,
                     'usesPerCoupon' => 3,
                     'validUntil' => null,
                 ],
@@ -134,7 +134,7 @@ class CouponTypeTest extends FormIntegrationTestCase
 
     /**
      * @param string $couponCode
-     * @param int|null $usesPerUser
+     * @param int|null $usesPerPerson
      * @param int|null $usesPerCoupon
      * @param Promotion|null $promotion
      * @param \DateTime|null $validUntil
@@ -142,14 +142,14 @@ class CouponTypeTest extends FormIntegrationTestCase
      */
     public function createCoupon(
         $couponCode,
-        $usesPerUser = null,
+        $usesPerPerson = null,
         $usesPerCoupon = null,
         $promotion = null,
         \DateTime $validUntil = null
     ) {
         return (new Coupon())
             ->setCode($couponCode)
-            ->setUsesPerUser($usesPerUser)
+            ->setUsesPerPerson($usesPerPerson)
             ->setUsesPerCoupon($usesPerCoupon)
             ->setPromotion($promotion)
             ->setValidUntil($validUntil);

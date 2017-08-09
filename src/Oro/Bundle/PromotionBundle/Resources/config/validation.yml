@@ -47,7 +47,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
             - Range:
                 min: 0
                 max: 2147483647
-        usesPerUser:
+        usesPerPerson:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
                 min: 0
@@ -70,7 +70,7 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
             - Range:
                 min: 0
                 max: 2147483647
-        usesPerUser:
+        usesPerPerson:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
                 min: 0

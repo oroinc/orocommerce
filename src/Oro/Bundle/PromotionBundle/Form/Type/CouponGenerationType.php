@@ -84,12 +84,12 @@ class CouponGenerationType extends AbstractType
                 ]
             )
             ->add(
-                'usesPerUser',
+                'usesPerPerson',
                 IntegerType::class,
                 [
                     'required' => false,
-                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_user',
-                    'label' => 'oro.promotion.coupon.uses_per_user.label',
+                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_person',
+                    'label' => 'oro.promotion.coupon.uses_per_person.label',
                     'data' => 1
                 ]
             )
@@ -115,6 +115,7 @@ class CouponGenerationType extends AbstractType
                 'codeType',
                 ChoiceType::class,
                 [
+                    'label' => 'oro.promotion.coupon.generation.codeType.label',
                     'choices' => [
                         CouponGenerationOptions::NUMERIC_CODE_TYPE =>
                             'oro.promotion.coupon.generation.codeType.numeric.label',

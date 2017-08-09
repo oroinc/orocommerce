@@ -17,7 +17,7 @@ class CouponGenerationOptionsTest extends \PHPUnit_Framework_TestCase
             ['couponQuantity', 42],
             ['promotion', new Promotion()],
             ['usesPerCoupon', 42],
-            ['usesPerUser', 42],
+            ['usesPerPerson', 42],
             ['validUntil', new \DateTime()],
             ['codeLength', 42],
             ['codeType', 'some string'],

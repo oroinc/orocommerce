@@ -28,7 +28,7 @@ class CouponGenerationOptions extends CodeGenerationOptions
     /**
      * @var int
      */
-    protected $usesPerUser = 1;
+    protected $usesPerPerson = 1;
 
     /**
      * @var \DateTime
@@ -91,17 +91,17 @@ class CouponGenerationOptions extends CodeGenerationOptions
     /**
      * @return int
      */
-    public function getUsesPerUser()
+    public function getUsesPerPerson()
     {
-        return $this->usesPerUser;
+        return $this->usesPerPerson;
     }
 
     /**
      * @param int $usersPerUser
      */
-    public function setUsesPerUser($usersPerUser)
+    public function setUsesPerPerson($usersPerUser)
     {
-        $this->usesPerUser = $usersPerUser;
+        $this->usesPerPerson = $usersPerUser;
     }
 
     /**

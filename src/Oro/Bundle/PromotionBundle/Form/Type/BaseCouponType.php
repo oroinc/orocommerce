@@ -39,12 +39,12 @@ class BaseCouponType extends AbstractType
                 ]
             )
             ->add(
-                'usesPerUser',
+                'usesPerPerson',
                 IntegerType::class,
                 [
                     'required' => false,
-                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_user',
-                    'label' => 'oro.promotion.coupon.uses_per_user.label',
+                    'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_person',
+                    'label' => 'oro.promotion.coupon.uses_per_person.label',
                 ]
             )
             ->add(

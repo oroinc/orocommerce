@@ -14,18 +14,18 @@ Feature: Mass edit of Coupons codes
     When I fill form with:
       |Promotion         | order Discount Promotion |
       |Uses per Coupon   |77                        |
-      |Uses per Customer |88                        |
+      |Uses per Person   |88                        |
     And I press "Today"
     And I click "Apply"
     Then I should see "2 entities were edited" flash message
     And I filter Uses per Coupon as = "77"
-    And I filter Uses per Customer as = "88"
+    And I filter Uses per Person as = "88"
     And I filter Promotion as contains "order Discount Promotion"
     And there are 2 records in grid
 
   Scenario: Mass edit of all visible
     Given I reset "Uses per Coupon" filter
-    Given I reset "Uses per Customer" filter
+    Given I reset "Uses per Person" filter
     Given I reset "Promotion" filter
     When I select 10 from per page list dropdown
     And I check All Visible records in grid
@@ -33,18 +33,18 @@ Feature: Mass edit of Coupons codes
     Then I should see "Mass Coupon Edit"
     When I fill form with:
       |Uses per Coupon   |88        |
-      |Uses per Customer |99        |
+      |Uses per Person   |99        |
     And I press "Today"
     And I click "Apply"
     Then I should see "10 entities were edited" flash message
     And I filter Uses per Coupon as = "88"
-    And I filter Uses per Customer as = "99"
+    And I filter Uses per Person as = "99"
     And I filter Promotion as is empty
     And there are 10 records in grid
 
   Scenario: Mass edit of all
     Given I reset "Uses per Coupon" filter
-    Given I reset "Uses per Customer" filter
+    Given I reset "Uses per Person" filter
     Given I reset "Promotion" filter
     When I select 25 from per page list dropdown
     And I check all records in grid
@@ -52,13 +52,13 @@ Feature: Mass edit of Coupons codes
     Then I should see "Mass Coupon Edit"
     When I fill form with:
       |Uses per Coupon   |99        |
-      |Uses per Customer |100       |
+      |Uses per Person   |100       |
     And I press "Today"
     And I fill form with:
       |Valid Until       | <DateTime:Jul 10, 2010, 10:00 AM> |
     And I click "Apply"
     Then I should see "100 entities were edited" flash message
     And I filter Uses per Coupon as = "99"
-    And I filter Uses per Customer as = "100"
+    And I filter Uses per Person as = "100"
     And there are 100 records in grid
     And I should see "Jul 10, 2010, 10:00 AM" in grid
