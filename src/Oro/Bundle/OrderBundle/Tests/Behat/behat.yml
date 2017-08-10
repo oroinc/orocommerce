@@ -40,13 +40,6 @@ oro_behat_extension:
       selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    # Remove this mapping after resolving of BB-11025
-    Duplicated Line Item Remove Button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector:
-        type: xpath
-        locator: '//tr[contains(@data-content, "oro_order_type[lineItems][1]")]//button[contains(@class, "removeLineItem")]'
-
     Calculate Shipping Button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'span[id="possible_shipping_methods_btn"]'

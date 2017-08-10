@@ -1,7 +1,9 @@
+@regression
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @feature-BB-8377
-
+@skip
+  
 Feature: Manage up-sell products
   In order to be able to offer the customer to buy some products instead of the one that he is looking at
   As an Administrator

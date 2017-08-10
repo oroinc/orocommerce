@@ -50,7 +50,6 @@ Feature: Promotions at Checkout
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$12.50 |
-      | Shipping Discount | -$1.00  |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Payment Checkout's step

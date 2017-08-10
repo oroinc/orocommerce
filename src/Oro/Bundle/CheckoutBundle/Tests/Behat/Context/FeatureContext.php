@@ -25,6 +25,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /** @var array */
     protected static $valueMapping = [
+        'Ship to this address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
         'Value'=> 'paymentMethod',

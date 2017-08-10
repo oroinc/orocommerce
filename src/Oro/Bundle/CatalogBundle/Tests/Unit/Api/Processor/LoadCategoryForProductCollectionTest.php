@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\GetList\GetListProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ApiBundle\Request\ValueNormalizer;
 use Oro\Bundle\CatalogBundle\Api\Processor\LoadCategoryForProductCollection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Component\ChainProcessor\ContextInterface;
 
-class LoadCategoryForProductCollectionTest extends \PHPUnit_Framework_TestCase
+class LoadCategoryForProductCollectionTest extends GetListProcessorTestCase
 {
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -24,7 +24,7 @@ class LoadCategoryForProductCollectionTest extends \PHPUnit_Framework_TestCase
     /**
      * @var LoadCategoryForProductCollection
      */
-    protected $loadCategoryForProductCollection;
+    protected $processor;
 
     /**
      * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -33,19 +33,17 @@ class LoadCategoryForProductCollectionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->valueNormalizer = $this->getMockBuilder(ValueNormalizer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->repo = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
+
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->valueNormalizer = $this->createMock(ValueNormalizer::class);
+        $this->repo = $this->createMock(CategoryRepository::class);
+
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->repo);
-        $this->loadCategoryForProductCollection = new LoadCategoryForProductCollection(
+
+        $this->processor = new LoadCategoryForProductCollection(
             $this->doctrineHelper,
             $this->valueNormalizer
         );
@@ -53,16 +51,12 @@ class LoadCategoryForProductCollectionTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context * */
-        $context = $this->createMock(ContextInterface::class);
-        $resultInput = $this->loadProduckMockJson();
+        $resultInput = $this->loadProductMockJson();
         $expectedResult = $resultInput;
         foreach ($resultInput['data'] as &$product) {
             unset($product['relationships']['category']);
         }
-        $context->expects($this->once())
-            ->method('getResult')
-            ->willReturn($resultInput);
+
         $index = 1;
         $this->repo->expects($this->exactly(5))
             ->method('findOneByProductSku')
@@ -80,20 +74,16 @@ class LoadCategoryForProductCollectionTest extends \PHPUnit_Framework_TestCase
             ->method('normalizeValue')
             ->willReturn('categories');
 
-        $context->expects($this->once())
-            ->method('setResult')
-            ->willReturnCallback(
-                function ($result) use ($expectedResult) {
-                    $this->assertTrue($result === $expectedResult);
-                }
-            );
-        $this->loadCategoryForProductCollection->process($context);
+        $this->context->setResult($resultInput);
+        $this->processor->process($this->context);
+
+        self::assertEquals($expectedResult, $this->context->getResult());
     }
 
     /**
-     * @return bool|string
+     * @return array
      */
-    protected function loadProduckMockJson()
+    protected function loadProductMockJson()
     {
         return json_decode(file_get_contents(__DIR__ . '/product_collection_mock.json'), true);
     }

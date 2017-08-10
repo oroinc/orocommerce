@@ -34,4 +34,9 @@ class PriceAttributeProductPrice extends BaseProductPrice
      * @ORM\JoinColumn(name="price_attribute_pl_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      **/
     protected $priceList;
+
+    public function __construct()
+    {
+        $this->setQuantity(1);
+    }
 }

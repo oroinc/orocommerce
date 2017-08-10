@@ -101,7 +101,6 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
                 'Queue Message does not contain correct jobId',
                 [
                     'exception' => $exception,
-                    'message' => JSON::encode($messageBody),
                 ]
             );
 
@@ -144,7 +143,6 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
                 'Queue Message is invalid',
                 [
                     'exception' => $exception,
-                    'message' => JSON::encode($messageBody),
                 ]
             );
 
@@ -184,7 +182,6 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $exception,
-                    'message' => JSON::encode($messageBody),
                     'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE,
                 ]
             );

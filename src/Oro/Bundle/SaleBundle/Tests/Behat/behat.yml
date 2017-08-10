@@ -43,12 +43,30 @@ oro_behat_extension:
               type: 'css'
               locator: 'input[name="oro_sale_quote[quoteProducts][0][product]"]'
               element: Select2Entity
+          LineItemFreeFormSku: 'oro_sale_quote[quoteProducts][0][productSku]'
+          LineItemFreeFormProduct: 'oro_sale_quote[quoteProducts][0][freeFormProduct]'
           LineItemPrice: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
           LineItemQuantity: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][quantity]'
           Overridden shipping cost amount: 'oro_sale_quote[overriddenShippingCostAmount][value]'
           Shipping Address:
             locator: '//h4[text()="Shipping Address"]/../..//div[contains(@id,"s2id_oro_sale_quote-uid")]/input'
             type: xpath
+
+    LineItemPrice:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'input[name="oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]"]'
+
+    Tier prices button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.product-tier-prices'
+
+    Disabled price overridden button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.product-tier-prices.disabled'
+
+    Price overridden button:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '.product-price-overridden'
 
     Sales Representative Info:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
@@ -63,8 +81,6 @@ oro_behat_extension:
     First Product Quantity on Quote:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'input[name="oro_sale_quote_demand[demandProducts][0][quantity]"]'
-
-
 
     Quote Flat Rate:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

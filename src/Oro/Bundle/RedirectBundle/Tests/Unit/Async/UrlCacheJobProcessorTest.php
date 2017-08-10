@@ -124,7 +124,6 @@ class UrlCacheJobProcessorTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('error')
             ->with('Unexpected exception occurred during queue message processing', [
-                'message' => json_encode($data),
                 'topic' => Topics::PROCESS_CALCULATE_URL_CACHE,
                 'exception' => $exception
             ]);

@@ -19,6 +19,7 @@ services:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator'
         public: false
         decorates: oro_rule.rule_filtration.service
+        decoration_priority: 0
         arguments:
             - '@oro_rule.rule_filtration.enabled_decorator.inner'
 
@@ -26,6 +27,7 @@ services:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\StopProcessingRuleFiltrationServiceDecorator'
         public: false
         decorates: oro_rule.rule_filtration.service
+        decoration_priority: 500
         arguments:
             - '@oro_rule.rule_filtration.stop_processing_decorator.inner'
 
@@ -33,6 +35,7 @@ services:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\ExpressionLanguageRuleFiltrationServiceDecorator'
         public: false
         decorates: oro_rule.rule_filtration.service
+        decoration_priority: 250
         arguments:
             - '@oro_rule.expression_language'
             - '@oro_rule.rule_filtration.expression_language_decorator.inner'

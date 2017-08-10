@@ -102,10 +102,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             }
             $this->logger->error(
                 'Queue Message is invalid',
-                [
-                    'exception' => $e,
-                    'message' => $message->getBody()
-                ]
+                ['exception' => $e]
             );
 
             return self::REJECT;

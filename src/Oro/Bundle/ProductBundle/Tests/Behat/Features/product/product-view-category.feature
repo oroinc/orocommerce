@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-9199
 @fixture-OroProductBundle:product_check_category.yml
 Feature: Product admin view page category displaying
