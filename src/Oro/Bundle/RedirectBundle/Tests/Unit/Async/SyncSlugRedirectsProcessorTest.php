@@ -70,7 +70,7 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->logger->expects($this->once())
             ->method('critical')
-            ->with('Message is invalid. Key "slugId" is missing from message data.', ['message' => $message]);
+            ->with('Message is invalid. Key "slugId" is missing from message data.');
 
         $this->assertEquals(
             MessageProcessorInterface::REJECT,
