@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\ApiBundle\Collection\Criteria;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Result;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxProductController extends Controller
 {
@@ -50,6 +49,39 @@ class AjaxProductController extends Controller
         $names = $this->prepareNamesData($products);
 
         return new JsonResponse($names);
+    }
+
+    /**
+     * @Route(
+     *      "/images-by-id/{id}",
+     *      name="oro_product_frontend_ajax_images_by_id",
+     *      requirements={"id"="\d+"}
+     * )
+     * @Method("GET")
+     * @AclAncestor("oro_product_frontend_view")
+     *
+     * @param Request $request
+     * @param integer $id
+     *
+     * @return JsonResponse
+     */
+    public function productImagesByIdAction(Request $request, $id)
+    {
+        $productImagesURLsProvider = $this->get('oro_product.provider.product_images_urls');
+        $filtersNames = $this->getFiltersNames($request);
+        $images = $productImagesURLsProvider->getFilteredImagesByProductId($id, $filtersNames);
+
+        return new JsonResponse($images);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function getFiltersNames(Request $request)
+    {
+        return (array)$request->get('filters');
     }
 
     /**

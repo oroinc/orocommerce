@@ -17,7 +17,7 @@ Feature: Shopping list limit
     And click "Search Button"
     And type "PSKU1" in "search"
     And I click "Search Button"
-    And I click "Product1"
+    And I click "View Details" for "PSKU1" product
     And I should see "Add to Shoppin..."
     And I click "Add to Shoppin..."
     And I should see "Product has been added to" flash message
