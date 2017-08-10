@@ -1,3 +1,0 @@
-services:
-    oro_promotion.coupon_generation.generator:
-        class: 'Oro\Bundle\PromotionBundle\Tests\Behat\Mock\CouponGeneration\Generator\SimpleCodeGeneratorMock'

@@ -99,14 +99,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="promotion-order-applied-discount-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    Coupon Generation Form:
-      selector: 'form[name="oro_action_operation"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Coupon Quantity: 'oro_action_operation[couponGenerationOptions][couponQuantity]'
-          Code Length: 'oro_action_operation[couponGenerationOptions][codeLength]'
-          Code Type: 'oro_action_operation[couponGenerationOptions][codeType]'
-          Code Prefix: 'oro_action_operation[couponGenerationOptions][codePrefix]'
-          Code Suffix: 'oro_action_operation[couponGenerationOptions][codeSuffix]'
-          Dashes Sequence: 'oro_action_operation[couponGenerationOptions][dashesSequence]'
+    CouponCodePreview:
+      selector: 'div#coupon-code-preview'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Promotions Grid Button:
+      selector: '.entity-select-btn'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
