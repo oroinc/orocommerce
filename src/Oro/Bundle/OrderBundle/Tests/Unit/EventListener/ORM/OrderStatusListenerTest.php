@@ -15,6 +15,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\ORM\OrderStatusListener;
 use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
@@ -33,9 +34,6 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
     /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $entityRepository;
 
-    /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject */
-    protected $uow;
-
     /** @var OrderStatusListener */
     protected $listener;
 
@@ -45,7 +43,6 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->entityRepository = $this->createMock(EntityRepository::class);
-        $this->uow = $this->createMock(UnitOfWork::class);
         $this->entityManager = $this->createMock(EntityManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
 
@@ -77,31 +74,29 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testPrePersist($expected, Order $order)
     {
-        $lifecycleEventArgs = $this->createMock(LifecycleEventArgs::class);
-        $lifecycleEventArgs->expects($this->exactly((int) $expected))
-            ->method('getEntityManager')
-            ->willReturn($this->entityManager);
-        $this->entityManager->expects($this->exactly((int) $expected))
-            ->method('getUnitOfWork')
-            ->willReturn($this->uow);
-        $this->entityManager->expects($this->exactly((int) $expected))
+        $orderStatus = $order->getInternalStatus();
+        $this->entityManager->expects($this->exactly((int)$expected))
             ->method('getRepository')
             ->with(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
             ->willReturn($this->entityRepository);
-        $this->configManager->expects($this->exactly((int) $expected))
+        $this->configManager->expects($this->exactly((int)$expected))
             ->method('get')
             ->with('oro_order.order_creation_new_internal_order_status')
             ->willReturn(Order::INTERNAL_STATUS_OPEN);
-        $status = $this->createMock(AbstractEnumValue::class);
-        $this->entityRepository->expects($this->exactly((int) $expected))
+        $status = new StubEnumValue('open', 'open');
+        $this->entityRepository->expects($this->exactly((int)$expected))
             ->method('find')
             ->with(Order::INTERNAL_STATUS_OPEN)
             ->willReturn($status);
-        $this->uow->expects($this->exactly((int) $expected))
-            ->method('scheduleExtraUpdate')
-            ->with($order, ['internal_status' => [null, $status]]);
 
-        $this->listener->prePersist($order, $lifecycleEventArgs);
+        $this->listener->prePersist($order);
+        if ($expected) {
+            $this->assertEquals($status, $order->getInternalStatus());
+            $this->assertNotEquals($orderStatus, $order->getInternalStatus());
+        } else {
+            $this->assertSame($orderStatus, $order->getInternalStatus());
+            $this->assertNotEquals($status, $order->getInternalStatus());
+        }
     }
 
     /**
@@ -113,7 +108,7 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
             'expected' => false,
             'order' => $this->getEntity(
                 OrderStub::class,
-                ['internalStatus' => $this->createMock(AbstractEnumValue::class)]
+                ['internalStatus' => new StubEnumValue(1, '')]
             ),
         ];
 

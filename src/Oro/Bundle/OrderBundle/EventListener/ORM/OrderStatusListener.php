@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -30,16 +29,11 @@ class OrderStatusListener
 
     /**
      * @param Order $entity
-     * @param LifecycleEventArgs $args
      */
-    public function prePersist(Order $entity, LifecycleEventArgs $args)
+    public function prePersist(Order $entity)
     {
         if (!$entity->getInternalStatus()) {
-            $changeSet = [
-                'internal_status' => [null, $this->getDefaultStatus()],
-            ];
-
-            $args->getEntityManager()->getUnitOfWork()->scheduleExtraUpdate($entity, $changeSet);
+            $entity->setInternalStatus($this->getDefaultStatus());
         }
     }
 
