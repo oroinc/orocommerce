@@ -79,9 +79,8 @@ abstract class AbstractPriceProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with(
                 sprintf(
-                    'Message is invalid: %s. Original message: "%s"',
-                    'Test message',
-                    $body
+                    'Message is invalid: %s',
+                    'Test message'
                 )
             );
 
