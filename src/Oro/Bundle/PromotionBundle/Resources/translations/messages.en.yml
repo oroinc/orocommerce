@@ -167,6 +167,21 @@ oro:
             conditions.label: Conditions
             matching_items.label: Matching Items
 
+        applieddiscount:
+            entity_label: Applied Discount
+            entity_plural_label: Applied Discounts
+            amount.label: Amount
+            config_options.label: Options
+            coupon_code.label: Coupon Code
+            currency.label: Currency
+            enabled.label: Enabled
+            id.label: Id
+            promotion_name.label: Promotion Name
+            type.label: Type
+            line_item.label: Line Item
+            order.label: Order
+            promotion.label: Promotion
+
         coupon:
             entity_label: Coupon
             entity_plural_label: Coupons
@@ -209,6 +224,7 @@ oro:
                 discount.label: 'Row Discount:'
     order:
         applied_coupons.label: Applied Coupons
+        applied_discounts.label: Applied Discounts
         promotions:
             applied_discount:
                 name: Name

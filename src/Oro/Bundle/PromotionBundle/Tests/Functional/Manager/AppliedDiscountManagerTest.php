@@ -4,8 +4,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Manager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItems;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
@@ -23,22 +21,6 @@ class AppliedDiscountManagerTest extends WebTestCase
             LoadAppliedDiscountData::class,
             LoadPromotionData::class,
         ]);
-    }
-
-    public function testRemoveAppliedDiscountByOrderLineItem()
-    {
-        $appliedDiscountManager = $this->getAppliedDiscountManager();
-
-        /** @var OrderLineItem $orderLineItem */
-        $orderLineItem = $this->getReference(LoadOrderLineItems::ITEM_1);
-
-        $appliedDiscounts = $this->getAppliedDiscountRepository()->findByLineItem($orderLineItem);
-        $this->assertNotEmpty($appliedDiscounts);
-
-        $appliedDiscountManager->removeAppliedDiscountByOrderLineItem($orderLineItem, true);
-
-        $appliedDiscountsAfterRemove = $this->getAppliedDiscountRepository()->findByLineItem($orderLineItem);
-        $this->assertEmpty($appliedDiscountsAfterRemove);
     }
 
     public function testRemoveAppliedDiscountByOrder()

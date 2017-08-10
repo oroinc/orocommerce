@@ -65,25 +65,6 @@ class AppliedDiscountManager
     }
 
     /**
-     * Remove applied discounts by order line item
-     *
-     * @param OrderLineItem $orderLineItem
-     * @param bool $flush
-     */
-    public function removeAppliedDiscountByOrderLineItem(OrderLineItem $orderLineItem, $flush = false)
-    {
-        $appliedDiscounts = $this->getAppliedDiscountRepository()->findByLineItem($orderLineItem);
-
-        foreach ($appliedDiscounts as $appliedDiscount) {
-            $this->removeAppliendDiscount($appliedDiscount);
-        }
-
-        if ($flush) {
-            $this->getAppliedDiscountManager()->flush($appliedDiscounts);
-        }
-    }
-
-    /**
      * Remove applied discounts by order
      *
      * @param Order $order

@@ -30,12 +30,4 @@ class OrderEntityListener
     {
         $this->appliedDiscountManager->saveAppliedDiscounts($order);
     }
-
-    /**
-     * @param Order $order
-     */
-    public function preRemove(Order $order)
-    {
-        $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
-    }
 }

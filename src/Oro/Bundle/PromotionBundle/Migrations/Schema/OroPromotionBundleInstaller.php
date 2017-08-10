@@ -34,9 +34,9 @@ class OroPromotionBundleInstaller implements
     /**
      * {@inheritdoc}
      */
-    public function setExtendExtension(ExtendExtension $extendExtension)
+    public function getMigrationVersion()
     {
-        $this->extendExtension = $extendExtension;
+        return 'v1_1';
     }
 
     /**
@@ -50,9 +50,9 @@ class OroPromotionBundleInstaller implements
     /**
      * {@inheritdoc}
      */
-    public function getMigrationVersion()
+    public function setExtendExtension(ExtendExtension $extendExtension)
     {
-        return 'v1_1';
+        $this->extendExtension = $extendExtension;
     }
 
     /**
@@ -80,6 +80,7 @@ class OroPromotionBundleInstaller implements
         $this->addOroPromotionAppliedDiscountForeignKeys($schema);
 
         $this->addActivityAssociations($schema);
+        $this->addAppliedDiscountToOrder($schema);
         $this->addCouponsRelationToOrders($schema);
         $this->modifyAppliedDiscount($schema);
     }
@@ -212,7 +213,6 @@ class OroPromotionBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('line_item_id', 'integer', ['notnull' => false]);
-        $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('amount', 'money_value', [
             'precision' => 19,
             'scale' => 4,
@@ -397,12 +397,6 @@ class OroPromotionBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_order'),
-            ['order_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
     }
 
     /**
@@ -411,6 +405,47 @@ class OroPromotionBundleInstaller implements
     protected function addActivityAssociations(Schema $schema)
     {
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_promotion');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addAppliedDiscountToOrder(Schema $schema)
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            'oro_promotion_applied_discount',
+            'order',
+            'oro_order',
+            'identifier',
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE',
+                ]
+            ]
+        );
+
+        $this->extendExtension->addManyToOneInverseRelation(
+            $schema,
+            'oro_promotion_applied_discount',
+            'order',
+            'oro_order',
+            'appliedDiscounts',
+            ['promotion_name'],
+            ['promotion_name'],
+            ['promotion_name'],
+            [
+                'extend' => [
+                    'is_extend' => true,
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'without_default' => true,
+                    'on_delete' => 'CASCADE'
+                ]
+            ]
+        );
     }
 
     /**

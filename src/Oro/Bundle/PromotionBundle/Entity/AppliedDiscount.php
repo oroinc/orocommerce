@@ -3,17 +3,19 @@
 namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PromotionBundle\Model\ExtendAppliedDiscount;
 
 /**
+ * @Config()
  * @ORM\Table(name="oro_promotion_applied_discount")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository")
  */
-class AppliedDiscount implements DatesAwareInterface
+class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
@@ -60,14 +62,6 @@ class AppliedDiscount implements DatesAwareInterface
      * @var string
      */
     protected $currency;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\Order")
-     * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE")
-     *
-     * @var Order
-     */
-    protected $order;
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion")
@@ -179,25 +173,6 @@ class AppliedDiscount implements DatesAwareInterface
     public function setAmount(float $amount)
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    /**
-     * @return Order
-     */
-    public function getOrder()
-    {
-        return $this->order;
-    }
-
-    /**
-     * @param Order $order
-     * @return $this
-     */
-    public function setOrder(Order $order)
-    {
-        $this->order = $order;
 
         return $this;
     }
