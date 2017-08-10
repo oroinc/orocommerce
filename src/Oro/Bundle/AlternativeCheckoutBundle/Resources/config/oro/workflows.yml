@@ -94,6 +94,8 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            visitor_email:
+                type: string
         steps:
             enter_billing_address:
                 order: 10
@@ -230,6 +232,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        visitor_email:
+                            form_type: oro_customer_visitor_email_address
             continue_to_shipping_method:
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition

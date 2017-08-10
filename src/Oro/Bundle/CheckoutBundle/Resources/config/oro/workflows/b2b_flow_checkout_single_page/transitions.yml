@@ -38,7 +38,8 @@ workflows:
                                 required: true
                                 translation_domain: messages
                                 disabled: $disallow_billing_address_edit
-                        save_billing_address: ~
+                        save_billing_address:
+                            form_type: oro_save_address
                         shipping_address:
                             form_type: oro_checkout_address
                             options:
@@ -48,7 +49,8 @@ workflows:
                                 required: true
                                 translation_domain: messages
                                 disabled: $disallow_shipping_address_edit
-                        save_shipping_address: ~
+                        save_shipping_address:
+                            form_type: oro_save_address
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
                         shipping_method: ~
@@ -69,6 +71,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        visitor_email:
+                            form_type: oro_customer_visitor_email_address
 
             create_order:
                 step_to: checkout
@@ -101,7 +105,8 @@ workflows:
                                     - Valid: ~
                                     - NotBlank: ~
                                 disabled: $disallow_billing_address_edit
-                        save_billing_address: ~
+                        save_billing_address:
+                            form_type: oro_save_address
                         shipping_address:
                             form_type: oro_checkout_address
                             options:
@@ -114,7 +119,8 @@ workflows:
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
-                        save_shipping_address: ~
+                        save_shipping_address:
+                            form_type: oro_save_address
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
                         shipping_method:
@@ -141,3 +147,5 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        visitor_email:
+                            form_type: oro_customer_visitor_email_address

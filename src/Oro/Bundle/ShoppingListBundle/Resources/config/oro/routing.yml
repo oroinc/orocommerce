@@ -10,13 +10,6 @@ oro_shopping_list_frontend:
     options:
         frontend: true
 
-oro_shopping_list_ajax_entity_totals_frontend:
-    resource: "@OroShoppingListBundle/Controller/Frontend/AjaxEntityTotalsController.php"
-    type:     annotation
-    prefix:   /shoppinglist
-    options:
-        frontend: true
-
 oro_shopping_list_matrix_grid_order_frontend:
     resource: "@OroShoppingListBundle/Controller/Frontend/MatrixGridOrderController.php"
     type:     annotation

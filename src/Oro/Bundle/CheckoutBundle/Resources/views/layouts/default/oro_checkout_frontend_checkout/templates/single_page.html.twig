@@ -211,6 +211,8 @@
 
                 {{ form_row(form.billing_address.customerAddress) }}
 
+                {{ form_row(form.visitor_email, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.visitor.email'|trans}}) }}
+
                 {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, compact) }}
                 {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
                     <label for="checkout_ship_to_billing_address_checkbox" id="checkout_ship_to_billing_address_label" class="custom-checkbox input-widget">
