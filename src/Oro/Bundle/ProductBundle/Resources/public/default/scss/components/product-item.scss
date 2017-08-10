@@ -87,7 +87,9 @@
     }
 
     &__image-holder {
-        @include aspect-ratio();
+        &:not(.product-item__image-holder_in-cart) {
+            @include aspect-ratio();
+        }
 
         @include element-state('hover') {
             .product-item__quick-view-btn {
