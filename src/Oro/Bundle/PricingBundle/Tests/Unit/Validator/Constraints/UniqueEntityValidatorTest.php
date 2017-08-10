@@ -40,7 +40,7 @@ class UniqueEntityValidatorTest extends \PHPUnit_Framework_TestCase
     protected $shardManager;
 
     /**
-     * @var Registry
+     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
 

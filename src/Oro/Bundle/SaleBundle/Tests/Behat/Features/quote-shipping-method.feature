@@ -1,3 +1,4 @@
+@regression
 @fixture-OroDPDBundle:DPDIntegration.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroOrderBundle:OrderShippingMethod.yml
@@ -43,7 +44,6 @@ Feature: Select shipping method for Quote on backoffice
     When I press "Submit"
     And I select "Amanda Cole, ORO, VOTUM GmbH Ohlauer Str. 43, 10999 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And click "Continue"
-    Then should see "Shipping $20.00"
     And should see "Flat Rate: $50.00"
     And should see "DPD Classic: $20.00"
 
@@ -112,7 +112,6 @@ Feature: Select shipping method for Quote on backoffice
     When I press "Submit"
     And I select "Amanda Cole, ORO, VOTUM GmbH Ohlauer Str. 43, 10999 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And click "Continue"
-    Then should see "Shipping $50.00"
     And should see "Flat Rate: $50.00"
     And should not see "DPD Classic"
 
@@ -146,6 +145,5 @@ Feature: Select shipping method for Quote on backoffice
     When I press "Submit"
     And I select "Amanda Cole, ORO, VOTUM GmbH Ohlauer Str. 43, 10999 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And click "Continue"
-    Then should see "Shipping $50.00"
     And should see "Flat Rate: $50.00"
     And should see "DPD Classic: $20.00"

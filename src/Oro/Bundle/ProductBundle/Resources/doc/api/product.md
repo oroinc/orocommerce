@@ -178,6 +178,12 @@ Example:
           "id": "out_of_stock"
         }
       },
+      "pageTemplate": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "1xyz"
+        }
+      },
       "manageInventory": {
         "data": {
           "type": "entityfieldfallbackvalues",
@@ -223,6 +229,15 @@ Example:
     }
   },
   "included":[
+    {
+      "type": "entityfieldfallbackvalues",
+      "id": "1xyz",
+      "attributes": {
+        "fallback": null,
+        "scalarValue": "short",
+        "arrayValue": null
+      }
+    },
     {
       "type": "entityfieldfallbackvalues",
       "id": "1abcd",
@@ -570,6 +585,12 @@ Example:
           "id": "in_stock"
         }
       },
+      "pageTempalte": {
+        "data": {
+          "type": "entityfieldfallbackvalues",
+          "id": "355"
+        }
+      },
       "manageInventory": {
         "data": {
           "type": "entityfieldfallbackvalues",
@@ -707,15 +728,23 @@ Example:
 
 ### sku
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
 **Required field**
 
+### skuUppercase
+
+Product SKU in uppercase
+
+#### create, get, get_list, update
+
+{@inheritdoc}
+
 ### names
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -723,7 +752,7 @@ Example:
 
 ### decrementQuantity
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -731,7 +760,7 @@ Example:
 
 ### inventoryThreshold
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -739,7 +768,7 @@ Example:
 
 ### inventory_status
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -747,7 +776,7 @@ Example:
 
 ### manageInventory
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -755,7 +784,9 @@ Example:
 
 ### backOrder
 
-#### create
+Backorder.
+
+#### create, get, get_list, update
 
 {@inheritdoc}
 
@@ -763,7 +794,7 @@ Example:
 
 ### status
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -771,7 +802,7 @@ Example:
 
 ### featured
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -779,7 +810,7 @@ Example:
 
 ### newArrival
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -787,7 +818,7 @@ Example:
 
 ### productType
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -795,15 +826,7 @@ Example:
 
 ### attributeFamily
 
-#### create
-
-{@inheritdoc}
-
-**Required field**
-
-### attributeFamily
-
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
@@ -811,11 +834,25 @@ Example:
 
 ### category
 
-#### create
+#### create, get, get_list
 
 {@inheritdoc}
 
 Specify the category of the product
+
+### taxCode
+
+Specify a tax code
+
+#### create, get, get_list, update
+
+{@inheritdoc}
+
+### test_variant_field
+
+#### create, get, get_list, update
+
+{@inheritdoc}
 
 ### pageTemplate
 
@@ -824,6 +861,392 @@ Specify the category of the product
 Specify the page template for the product
 
 ## SUBRESOURCES
+
+### attributeFamily
+
+#### get_subresource
+
+Retrieve the attribute family configured for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the attribute family that a specific product record belongs to.
+
+#### update_relationship
+
+Replace the attributeFamily for a specific product record.
+
+### backOrder
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for backOrder for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the backOrder flag
+
+#### update_relationship
+
+Replace the backOrder entity fallback value for a specific product record.
+
+### brand
+
+#### get_subresource
+
+Retrieve the brand for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the brand of the product
+
+#### update_relationship
+
+Replace the brand for a specific product record.
+
+### decrementQuantity
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for decrementQuantity flag for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the decrementQuantity flag for a specific product
+
+#### update_relationship
+
+Replace the decrementQuantity entity fallback value for a specific product record.
+
+### inventoryThreshold
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for inventoryThreshold for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the inventoryThreshold for a specific product
+
+#### update_relationship
+
+Replace the inventoryThreshold entity fallback value for a specific product record.
+
+### inventory_status
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for inventory_status flag for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the inventory_status flag for a specific product
+
+#### update_relationship
+
+Replace the inventory_status for a specific product record.
+
+### manageInventory
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for manageInventory flag for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the manageInventory flag for a specific product
+
+#### update_relationship
+
+Replace the manageInventory entity fallback value for a specific product record.
+
+### maximumQuantityToOrder
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for maximumQuantityToOrder for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the maximumQuantityToOrder for a specific product
+
+#### update_relationship
+
+Replace the maximumQuantityToOrder entity fallback value for a specific product record.
+
+### minimumQuantityToOrder
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for minimumQuantityToOrder for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the minimumQuantityToOrder for a specific product
+
+#### update_relationship
+
+Replace the minimumQuantityToOrder entity fallback value for a specific product record.
+
+### pageTemplate
+
+#### get_subresource
+
+Retrieve the record of the fallback entity value for pageTemplate for a specific product
+
+#### get_relationship
+
+Retrieve an ID of the pageTemplate value used for a specific product
+
+#### update_relationship
+
+Replace the backOrder entity fallback value for a specific product record.
+
+### owner
+
+#### get_subresource
+
+Retrieve the records of the product which is the owner of a specific product record.
+
+#### get_relationship
+
+Retrieve an ID of the user who is the owner of a specific product record.
+
+#### update_relationship
+
+Replace the owner of a specific product record.
+
+### organization
+
+#### get_subresource
+
+Retrieve the record of the organization a specific product record belongs to.
+
+#### get_relationship
+
+Retrieve the ID of the organization record which a specific product record belongs to.
+
+#### update_relationship
+
+Replace the organization that a specific product belongs to.
+
+### names
+
+#### get_subresource
+
+Retrieve the records for the names of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the names of a specific product record.
+
+#### add_relationship
+
+Set the names of a specific product record
+
+#### update_relationship
+
+Replace the names for a specific product.
+
+#### delete_relationship
+
+Remove the names of a specific product record.
+
+### descriptions
+
+#### get_subresource
+
+Retrieve the records for the descriptions of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the descriptions of a specific product record.
+
+#### add_relationship
+
+Set the descriptions of a specific product record
+
+#### update_relationship
+
+Replace the descriptions for a specific product.
+
+#### delete_relationship
+
+Remove the descriptions of a specific product record.
+
+### metaDescriptions
+
+#### get_subresource
+
+Retrieve the records for the metaDescriptions of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the metaDescriptions of a specific product record.
+
+#### add_relationship
+
+Set the metaDescriptions of a specific product record
+
+#### update_relationship
+
+Replace the metaDescriptions for a specific product.
+
+#### delete_relationship
+
+Remove the metaDescriptions of a specific product record.
+
+### metaKeywords
+
+#### get_subresource
+
+Retrieve the records for the metaKeywords of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the metaKeywords of a specific product record.
+
+#### add_relationship
+
+Set the metaKeywords of a specific product record
+
+#### update_relationship
+
+Replace the metaKeywords for a specific product.
+
+#### delete_relationship
+
+Remove the metaKeywords of a specific product record.
+
+### metaTitles
+
+#### get_subresource
+
+Retrieve the records for the metaTitles of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the metaTitles of a specific product record.
+
+#### add_relationship
+
+Set the metaTitles of a specific product record
+
+#### update_relationship
+
+Replace the metaTitles for a specific product.
+
+#### delete_relationship
+
+Remove the metaTitles of a specific product record.
+
+### shortDescriptions
+
+#### get_subresource
+
+Retrieve the records for the shortDescriptions of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the shortDescriptions of a specific product record.
+
+#### add_relationship
+
+Set the shortDescriptions of a specific product record
+
+#### update_relationship
+
+Replace the shortDescriptions for a specific product.
+
+#### delete_relationship
+
+Remove the shortDescriptions of a specific product record.
+
+### slugPrototypes
+
+#### get_subresource
+
+Retrieve the records for the slugPrototypes of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the slugPrototypes of a specific product record.
+
+#### add_relationship
+
+Set the slugPrototypes of a specific product record
+
+#### update_relationship
+
+Replace the slugPrototypes for a specific product.
+
+#### delete_relationship
+
+Remove the slugPrototypes of a specific product record.
+
+### primaryUnitPrecision
+
+#### get_subresource
+
+Retrieve the record for the primary unit precision of a specific product record
+
+#### get_relationship
+
+Retrieve the ID of the primaryUnitPrecision of a specific product record.
+
+#### update_relationship
+
+Replace the primaryUnitPrecision for a specific product.
+
+### taxCode
+
+#### get_subresource
+
+Retrieve the record for the taxCode of a specific product record
+
+#### get_relationship
+
+Retrieve the ID of the taxCode of a specific product record.
+
+#### update_relationship
+
+Replace the taxCode for a specific product.
+
+### unitPrecisions
+
+#### get_subresource
+
+Retrieve the records for the unitPrecisions of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the unitPrecisions of a specific product record.
+
+#### add_relationship
+
+Set the unitPrecisions of a specific product record
+
+#### update_relationship
+
+Replace the unitPrecisions for a specific product.
+
+#### delete_relationship
+
+Remove the unit precisions of a specific product record.
+
+### test_variant_field
+
+#### get_subresource
+
+Retrieve the record for the test_variant_field of a specific product record
+
+#### get_relationship
+
+Retrieve the ID of the test_variant_field of a specific product record.
+
+#### update_relationship
+
+Replace the test_variant_field for a specific product.
 
 ### pageTemplate
 

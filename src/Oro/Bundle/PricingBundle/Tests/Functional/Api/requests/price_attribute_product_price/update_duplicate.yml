@@ -1,0 +1,6 @@
+data:
+    id: '<toString(@price_attribute_product_price.1->id)>'
+    type: 'priceattributeproductprices'
+    attributes:
+        value: 78.95
+        currency: 'EUR'

@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:related_items_products.yml
 @fixture-OroProductBundle:related_items_system_users.yml
 @feature-BB-8377

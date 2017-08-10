@@ -1,3 +1,4 @@
+@regression
 @ticket-BAP-14671
 @fixture-OroFrontendLocalizationBundle:frontstore-customer.yml
 Feature: FrontStore language switcher

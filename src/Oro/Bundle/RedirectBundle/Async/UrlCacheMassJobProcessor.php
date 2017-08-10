@@ -111,7 +111,6 @@ class UrlCacheMassJobProcessor implements MessageProcessorInterface, TopicSubscr
             $this->logger->error(
                 'Unexpected exception occurred during queue message processing',
                 [
-                    'message' => $message->getBody(),
                     'topic' => Topics::CALCULATE_URL_CACHE_MASS,
                     'exception' => $e
                 ]
