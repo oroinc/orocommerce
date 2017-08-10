@@ -23,6 +23,7 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_fedex_shipping.integration.channel',
+            'oro_fedex_shipping.integration.identifier_generator',
             'oro_fedex_shipping.integration.transport',
         ];
 
