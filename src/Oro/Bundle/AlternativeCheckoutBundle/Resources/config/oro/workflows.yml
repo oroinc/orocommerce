@@ -697,6 +697,7 @@ workflows:
                             - '@generate_checkout_state_snapshot':
                                 entity: $checkout
                                 attribute: $.result.initCheckoutState
+                            - '@assign_value': [$.result.savedCheckoutState, $.result.initCheckoutState]
 
                             - '@transit_workflow':
                                 entity: $checkout
