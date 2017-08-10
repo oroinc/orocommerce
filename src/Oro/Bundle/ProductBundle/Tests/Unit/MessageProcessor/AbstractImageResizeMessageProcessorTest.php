@@ -14,6 +14,7 @@ use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
@@ -134,7 +135,10 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit_Framewor
 
         $productImage = $this->prophesize(StubProductImage::class);
         $productImage->getImage()->willReturn($image->reveal());
-        $productImage->getTypes()->willReturn(['main', 'listing']);
+        $productImage->getTypes()->willReturn([
+            'main' => new ProductImageType('main'),
+            'listing' => new ProductImageType('listing'),
+        ]);
         $productImage->getId()->willReturn(self::PRODUCT_IMAGE_ID);
 
         $this->imageTypeProvider->getImageTypes()->willReturn([

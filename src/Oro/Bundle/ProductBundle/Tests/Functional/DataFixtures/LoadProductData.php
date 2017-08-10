@@ -20,6 +20,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
+use Oro\Bundle\AttachmentBundle\Entity\File;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -208,5 +211,31 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 $product->addShortDescription($this->createValue($slugPrototype));
             }
         }
+
+        if (!empty($item['images'])) {
+            foreach ($item['images'] as $image) {
+                $product->addImage($this->createProductImage($image, $item['productCode']));
+            }
+        }
+    }
+
+    /**
+     * @param $image
+     * @param $sku
+     * @return ProductImage
+     */
+    public function createProductImage($image, $sku)
+    {
+        $imageFile = new File();
+        $imageFile->setFilename($sku);
+        $this->setReference($image['reference'] . '.' . $sku, $imageFile);
+
+        $productImage = new ProductImage();
+        $productImage->setImage($imageFile);
+
+        $productType = isset($image['type']) ? $image['type'] : ProductImageType::TYPE_LISTING;
+        $productImage->addType($productType);
+
+        return $productImage;
     }
 }
