@@ -94,7 +94,7 @@ class ProductApiTest extends RestJsonApiTestCase
             ['entity' => 'products', 'id' => (string) $product->getId()]);
 
         $this->assertNull(
-            $this->getEntityManager()->find(Product::class,$product->getId() )
+            $this->getEntityManager()->find(Product::class,$product->getId())
         );
     }
 }

@@ -59,7 +59,7 @@ class ProductImageApiTest extends RestJsonApiTestCase
             ['entity' => 'productimages', 'id' => $firstProductImageId]);
 
         $this->assertNull(
-            $this->getEntityManager()->find(ProductImage::class ,$firstProductImageId )
+            $this->getEntityManager()->find(ProductImage::class ,$firstProductImageId)
         );
     }
 }

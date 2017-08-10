@@ -233,7 +233,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $productImage = new ProductImage();
         $productImage->setImage($imageFile);
 
-        $productType = isset($image['type']) ? $image['type'] : ProductImageType::TYPE_LISTING;
+        $productType = $image['type'] ?? ProductImageType::TYPE_LISTING;
         $productImage->addType($productType);
 
         return $productImage;
