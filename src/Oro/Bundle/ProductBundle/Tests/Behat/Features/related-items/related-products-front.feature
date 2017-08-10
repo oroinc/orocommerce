@@ -23,7 +23,7 @@ Feature: Showing related products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" in search results
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should not see "Related Products"
 
   Scenario: Minimum Items restriction
@@ -49,7 +49,7 @@ Feature: Showing related products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" in search results
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should not see "Related Products"
 
   Scenario: Maximum Items restriction
@@ -66,7 +66,7 @@ Feature: Showing related products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" in search results
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
     And I should see "PSKU2"
     And I should see "PSKU3"
@@ -86,7 +86,7 @@ Feature: Showing related products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" in search results
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
     And I should see "PSKU2"
     And I should see "PSKU3"
@@ -115,7 +115,7 @@ Feature: Showing related products
     And type "PSKU3" in "search"
     And click "Search Button"
     And I should see "PSKU3" in search results
-    And I click "Product 3"
+    And I click "View Details" for "PSKU3" product
     Then I should see "Related Products"
     And I should see "PSKU2"
     And I should see "PSKU4"
@@ -142,10 +142,10 @@ Feature: Showing related products
       And type "PSKU1" in "search"
       And click "Search Button"
       And I should see "PSKU1" in search results
-      And I click "Product 1"
+      And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
       And I should see "PSKU2"
-      And I click "Product 2"
+      And I click "View Details" for "PSKU2" product
       Then I should see "Related Products"
       And I should see "PSKU1"
 
@@ -154,7 +154,7 @@ Feature: Showing related products
       And type "PSKU1" in "search"
       And click "Search Button"
       And I should see "PSKU1" in search results
-      And I click "Product 1"
+      And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
       And I should see "Add to Shopping List" in related products
       And I proceed as the Admin
@@ -168,7 +168,7 @@ Feature: Showing related products
       And type "PSKU1" in "search"
       And click "Search Button"
       And I should see "PSKU1" in search results
-      And I click "Product 1"
+      And I click "View Details" for "PSKU1" product
       And I should see "Related Products"
       Then I should not see "Add to Shopping List" in related products
 
@@ -215,7 +215,7 @@ Feature: Showing related products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" in search results
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
 
   Scenario: Verify that "Related Products" block is displayed in "Two columns page" layout view
@@ -230,7 +230,7 @@ Feature: Showing related products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" in search results
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
 
   Scenario: Verify that "Related Products" block is displayed in "List page" layout view
@@ -245,5 +245,5 @@ Feature: Showing related products
     And type "PSKU1" in "search"
     And click "Search Button"
     And I should see "PSKU1" in search results
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     Then I should see "Related Products"
