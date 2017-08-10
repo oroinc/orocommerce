@@ -84,7 +84,6 @@
 
 {% block _quote_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set expandTextOptions = { maxLength: 80 }|json_encode() %}
     <!-- START ITEMS ORDERED DESKTOP -->
     <div class="customer-oq-container hidden-sm hidden-xs">
         <div class="customer-oq__item customer-oq__item_full">
@@ -140,7 +139,7 @@
                             <tr class="borderless">
                                 <td colspan="4">
                                     <div class="customer-oq__order-item-more">
-                                         <div class="expand-text" data-page-component-shortcut-expand-text="{{ expandTextOptions }}">
+                                         <div class="expand-text" data-page-component-expand-text="80">
                                             {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
                                         </div>
                                     </div>
@@ -152,7 +151,7 @@
                             <tr class="borderless">
                                 <td colspan="4">
                                     <div class="customer-oq__order-item-more">
-                                        <div class="expand-text" data-page-component-shortcut-expand-text="{{ expandTextOptions }}">
+                                        <div class="expand-text" data-page-component-expand-text="80">
                                             {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                                         </div>
                                     </div>
@@ -182,7 +181,6 @@
 
 {% block _quote_view_line_items_mobile_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set expandTextOptions = { maxLength: 100 }|json_encode() %}
     <!-- START ITEMS ORDERED MOBILE -->
     <div class="customer-oq-container hidden-lg hidden-md">
         <div class="customer-oq__item customer-oq__item_full">
@@ -231,7 +229,7 @@
                                             <tr class="borderless t_paddingless">
                                                 <td colspan="2">
                                                     <div class="customer-oq__order-item-more">
-                                                        <div class="expand-text" data-page-component-shortcut-expand-text="{{ expandTextOptions }}">
+                                                        <div class="expand-text" data-page-component-expand-text="100">
                                                             {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
                                                         </div>
                                                     </div>
@@ -243,7 +241,7 @@
                                             <tr class="borderless t_paddingless">
                                                 <td colspan="2">
                                                     <div class="customer-oq__order-item-more">
-                                                        <div class="expand-text" data-page-component-shortcut-expand-text="{{ expandTextOptions }}">
+                                                        <div class="expand-text" data-page-component-expand-text="100">
                                                             {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                                                         </div>
                                                     </div>

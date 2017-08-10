@@ -1,5 +1,4 @@
 {% block oro_sale_quote_product_demand_widget %}
-    {% set expandTextOptions = { maxLength: 60 }|json_encode() %}
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set isQuantityValid = form.quantity.vars.valid %}
     {% set selectedOffer = form.quoteProductOffer.vars.data %}
@@ -69,7 +68,7 @@
         <tr class="borderless">
             <td colspan="4">
                 <div class="customer-oq__order-item-more">
-                    <span class="expand-text" data-page-component-shortcut-expand-text="{{ expandTextOptions }}">
+                    <span class="expand-text" data-page-component-expand-text="60">
                          {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
                     </span>
                 </div>
@@ -81,7 +80,7 @@
         <tr class="borderless">
             <td colspan="4">
                 <div class="customer-oq__order-item-more">
-                    <span class="expand-text" data-page-component-shortcut-expand-text="{{ expandTextOptions }}">
+                    <span class="expand-text" data-page-component-expand-text="60">
                         {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                     </span>
                 </div>
