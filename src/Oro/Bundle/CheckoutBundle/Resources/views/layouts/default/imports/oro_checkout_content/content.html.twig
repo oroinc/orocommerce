@@ -157,7 +157,7 @@
                  keepState: keepState,
                  visibleRows: visibleLineItemsCount,
                  rowsCount: lineItemsWithTotals|length
-             }|json_encode(),
+             }|json_encode,
             '~class': " checkout-order-summary__collapse collapse-view expanded"
         }) %}
         <div {{ block('block_attributes') }}>
@@ -226,7 +226,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_info_column_widget %}
     <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--info"
-        data-checkout-order-summary-line-item-info_{{ productSku }}
+        data-checkout-order-summary-line-item-info_{{ productSku|lower }}
     >{% spaceless %}{{ block('container_widget') }}{% endspaceless %}</td>
 {% endblock %}
 
@@ -251,10 +251,10 @@
                     viewport: {
                     maxScreenType: 'mobile-landscape'
                     },
-                    moveTo: '[data-checkout-order-summary-line-item-info_' ~ productSku ~ ']'
+                    moveTo: '[data-checkout-order-summary-line-item-info_' ~ productSku|lower ~ ']'
                 }
             ]
-        }|json_encode(),
+        }|json_encode,
         '~class': " checkout-order-summary__sku"
     }) %}
     <div {{ block('block_attributes') }}>{{ productSku }}</div>
@@ -289,7 +289,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_line_item_price_per_item_column_widget %}
     <td class="checkout-order-summary__grid-td checkout-order-summary__grid-td--price"
-        data-checkout-order-summary-line-item-price_{{ productSku }}
+        data-checkout-order-summary-line-item-price_{{ productSku|lower }}
     >{% spaceless %}{{ block('container_widget') }}{% endspaceless %}</td>
 {% endblock %}
 
@@ -313,10 +313,10 @@
                     viewport: {
                     maxScreenType: 'mobile-landscape'
                     },
-                    moveTo: '[data-checkout-order-summary-line-item-price_' ~ productSku ~ ']'
+                    moveTo: '[data-checkout-order-summary-line-item-price_' ~ productSku|lower ~ ']'
                 }
             ]
-        }|json_encode(),
+        }|json_encode,
         '~class': " checkout-order-summary__lineitem-total"
     }) %}
     <div {{ block('block_attributes') }}>{{ lineItemInfo.total|oro_format_price }}</div>
@@ -335,10 +335,17 @@
                 });
             </script>
             <tr>
-                <td id="product-error-{{ lineItem.productSku }}" colspan="3"></td>
+                <td id="product-error-{{ lineItem.productSku }}" colspan="5"></td>
             </tr>
         {% endfor %}
     {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_totals_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' checkout-order-summary__totals-container'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_totals_widget -%}

@@ -52,7 +52,7 @@ layout:
             parentId: checkout_form_fields
             prepend: true
         - '@move':
-            id: checkout_order_summary_totals
+            id: checkout_order_summary_totals_container
             parentId: checkout_form_fields
             siblingId: checkout_additional_options
 

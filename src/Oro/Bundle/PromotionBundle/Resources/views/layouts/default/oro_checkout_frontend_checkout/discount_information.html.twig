@@ -7,10 +7,10 @@
                     viewport: {
                         maxScreenType: 'mobile-landscape'
                     },
-                    moveTo: '[data-checkout-order-summary-line-item-price_' ~ productSku ~ ']'
+                    moveTo: '[data-checkout-order-summary-line-item-price_' ~ productSku|lower ~ ']'
                 }
             ]
-        }|json_encode(),
+        }|json_encode,
         '~class': " checkout-order-summary__lineitem-total"
     }) %}
     {% set matchedDiscount = parent.lineItemDiscounts.contains(lineItem) ? parent.lineItemDiscounts.get(lineItem) : null %}

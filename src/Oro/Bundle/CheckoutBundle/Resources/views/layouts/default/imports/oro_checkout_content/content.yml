@@ -105,6 +105,8 @@ layout:
                 __checkout_order_summary_line_item_errors:
                     blockType: block
 
+                __checkout_order_summary_totals_container:
+                    blockType: container
                 __checkout_order_summary_totals:
                     blockType: price_totals
                     options:
@@ -165,4 +167,5 @@ layout:
                                                 __checkout_order_summary_line_item_price_total_column:
                                                     __checkout_order_summary_line_item_price_total: ~
                                             __checkout_order_summary_line_item_errors: ~
-                                    __checkout_order_summary_totals: ~
+                                    __checkout_order_summary_totals_container:
+                                        __checkout_order_summary_totals: ~

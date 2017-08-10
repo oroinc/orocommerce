@@ -10,6 +10,10 @@
             width: $checkout-view-column-extended-width;
             padding: 0 0 0 $checkout-view-column-gap;
             margin: 0;
+
+            .checkout-order-summary__subtitle {
+                color: get-color('additional', 'middle');
+            }
         }
     }
 
@@ -136,11 +140,6 @@
     }
 
     &__totals {
-        margin: $checkout-order-summary-totals-margin;
-        padding: $checkout-order-summary-totals-offset;
-
-        border-top: $checkout-order-summary-totals-border-top;
-
         clear: $checkout-order-summary-totals-clear;
 
         @include clearfix();
@@ -150,6 +149,21 @@
             padding: 0 $offset-x 0 0;
 
             background: none;
+        }
+    }
+
+    &__totals-container {
+        margin: $checkout-order-summary-totals-container-margin;
+        padding: $checkout-order-summary-totals-container-offset;
+
+        border-top: $checkout-order-summary-totals-container-border-top;
+
+        &.in-sticky {
+            width: calc(#{$checkout-view-column-extra-width} - #{$offset-x-m});
+            margin: $checkout-order-summary-totals-container-in-sticky-margin;
+            padding: $checkout-order-summary-totals-container-in-sticky-offset;
+
+            background-color: $checkout-order-summary-totals-container-in-sticky-background-color;
         }
     }
 

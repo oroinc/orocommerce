@@ -43,9 +43,15 @@ $checkout-order-summary-grid-last-row-td-border-bottom: 0 !default;
 $checkout-order-summary-grid-td-offset: $offset-y-m $offset-x !default;
 $checkout-order-summary-grid-td-border-bottom: 1px solid get-color('additional', 'middle') !default;
 
-$checkout-order-summary-totals-margin: ($offset-y + $offset-y-m) 0 0 !default;
-$checkout-order-summary-totals-offset: ($offset-y + $offset-y-m) 0 0 !default;
-$checkout-order-summary-totals-border-top: 1px solid get-color('additional', 'middle') !default;
 $checkout-order-summary-totals-clear: both !default;
+
+$checkout-order-summary-totals-container-margin: ($offset-y + $offset-y-m) 0 0 !default;
+$checkout-order-summary-totals-container-offset: ($offset-y + $offset-y-m) 0 0 !default;
+$checkout-order-summary-totals-container-border-top: 1px solid get-color('additional', 'middle') !default;
+
+$checkout-order-summary-totals-container-in-sticky-float: right !default;
+$checkout-order-summary-totals-container-in-sticky-margin: 0 $offset-x-m 0 0 !default;
+$checkout-order-summary-totals-container-in-sticky-offset: $offset-y-m 0 0 !default;
+$checkout-order-summary-totals-container-in-sticky-background-color: get-color('additional', 'ultra') !default;
 
 $checkout-order-summary-totals-order-checkout-widget-min-width: 200px !default;

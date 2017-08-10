@@ -26,6 +26,20 @@ $checkout-view-title-font-size: $base-font-size--m !default;
 $checkout-view-title-line-height: 1.65 !default;
 $checkout-view-title-font-weight: 400 !default;
 
+$checkout-view-sticky-titles-display: flex !default;
+$checkout-view-sticky-titles-max-width: $site-width !default;
+$checkout-view-sticky-titles-offset: $offset-y-m $offset-x-m !default;
+$checkout-view-sticky-titles-margin: 0 auto !default;
+$checkout-view-sticky-titles-flex-direction: row !default;
+$checkout-view-sticky-titles-justify-content: space-between !default;
+$checkout-view-sticky-titles-align-items: center !default;
+$checkout-view-sticky-titles-background: get-color('additional', 'ultra') !default;
+
+$checkout-view-sticky-totals-display: flex !default;
+$checkout-view-sticky-totals-max-width: $site-width !default;
+$checkout-view-sticky-totals-margin: 0 auto !default;
+$checkout-view-sticky-totals-justify-content: flex-end !default;
+
 $checkout-view-badge-size: 32px !default;
 $checkout-view-badge-font-size: 18px !default;
 $checkout-view-badge-margin: 0 $offset-x-m 0 0 !default;
@@ -39,7 +53,6 @@ $checkout-view-shipping-methods-datepicker-box-max-width: 256px !default;
 $checkout-view-payment-methods-image-max-width: 100% !default;
 
 $checkout-view-summary-grid-container-shadow-background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%) !default;
-
 
 // tablet-small
 $checkout-view-column-tablet-width: 50% !default;

@@ -133,7 +133,7 @@ layout:
         - '@add':
             id: checkout_button_continue_right
             blockType: checkout_transition_continue
-            parentId: checkout_order_summary_content
+            parentId: checkout_order_summary_totals_container
             siblingId: checkout_order_summary_totals
             options:
                 transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
@@ -144,9 +144,17 @@ layout:
             parentId: checkout_order_summary_title
             prepend: true
         - '@add':
-            id: sticky_single_page_titles
+            id: single_page_checkout_sticky_panel
             blockType: container
             parentId: top_sticky_panel_content
+        - '@add':
+            id: single_page_checkout_sticky_titles
+            blockType: container
+            parentId: single_page_checkout_sticky_panel
+        - '@add':
+            id: single_page_checkout_sticky_totals
+            blockType: container
+            parentId: single_page_checkout_sticky_panel
 
         - '@remove':
             id: checkout_sidebar

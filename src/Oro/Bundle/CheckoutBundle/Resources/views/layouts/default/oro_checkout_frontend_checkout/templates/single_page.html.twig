@@ -29,15 +29,36 @@
     </div>
 {% endblock %}
 
-{% block _sticky_single_page_titles_widget %}
-    {% set attr = attr|merge({
-        id: 'sticky-single-page-checkout-titles',
-        class: attr.class|default('') ~ " sticky-single-page-checkout-titles"
+{% block _top_sticky_panel_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' sticky-panel--background-less',
     }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
 
+{% block _single_page_checkout_sticky_panel_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        id: 'single-page-checkout-sticky'
+    }) %}
     <div {{ block('block_attributes') }}>
-        {% spaceless %}{{ block_widget(block) }}{% endspaceless %}
+        {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _single_page_checkout_sticky_titles_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        id: 'single-page-checkout-sticky-titles',
+        '~class': ' single-page-checkout-view__sticky-titles'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _single_page_checkout_sticky_totals_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        id: 'single-page-checkout-sticky-totals',
+        '~class': ' single-page-checkout-view__sticky-totals'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _checkout_billing_information_widget %}
@@ -49,7 +70,8 @@
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
-                placeholderId: 'sticky-single-page-checkout-titles',
+                autoWidth: true,
+                placeholderId: 'single-page-checkout-sticky-titles',
                 viewport: {
                     minScreenType: 'desktop'
                 }
@@ -85,7 +107,8 @@
             data-sticky-target="top-sticky-panel"
             data-sticky="{{ {
                 isSticky: true,
-                placeholderId: 'sticky-single-page-checkout-titles',
+                autoWidth: true,
+                placeholderId: 'single-page-checkout-sticky-titles',
                 viewport: {
                     minScreenType: 'desktop'
                 }
@@ -105,7 +128,8 @@
         'data-sticky-target': 'top-sticky-panel',
         'data-sticky': {
             isSticky: true,
-            placeholderId: 'sticky-single-page-checkout-titles',
+            autoWidth: true,
+            placeholderId: 'single-page-checkout-sticky-titles',
             viewport: {
                 minScreenType: 'desktop'
             }
@@ -310,6 +334,22 @@
         </div>
     </div>
 {%- endblock %}
+
+{% block _checkout_order_summary_totals_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-sticky-target': 'top-sticky-panel',
+        'data-sticky': {
+            isSticky: true,
+            autoWidth: true,
+            ignoreWhenBelowViewport: true,
+            placeholderId: 'single-page-checkout-sticky-totals',
+            viewport: {
+                minScreenType: 'desktop'
+            }
+        }
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
 
 {% block _checkout_button_continue_right_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}

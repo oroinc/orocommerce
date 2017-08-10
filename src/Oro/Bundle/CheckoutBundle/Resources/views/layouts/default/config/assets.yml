@@ -5,5 +5,4 @@ styles:
         - 'bundles/orocheckout/default/scss/variables/checkout-order-summary-config.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-order-summary-container-config.scss'
         - 'bundles/orocheckout/default/scss/variables/single-page-checkout-view-config.scss'
-        - 'bundles/orocheckout/default/scss/variables/sticky-single-page-checkout-titles-config.scss'
         - 'bundles/orocheckout/default/scss/styles.scss'

@@ -96,6 +96,30 @@
         }
     }
 
+    &__sticky-titles {
+        display: $checkout-view-sticky-titles-display;
+
+        max-width: $checkout-view-sticky-titles-max-width;
+        padding: $checkout-view-sticky-titles-offset;
+        margin: $checkout-view-sticky-titles-margin;
+
+        flex-direction: $checkout-view-sticky-titles-flex-direction;
+        justify-content: $checkout-view-sticky-titles-justify-content;
+        align-items: $checkout-view-sticky-titles-align-items;
+
+        &:not(:empty) {
+            background: $checkout-view-sticky-titles-background;
+        }
+    }
+
+    &__sticky-totals {
+        display: $checkout-view-sticky-totals-display;
+        max-width: $checkout-view-sticky-totals-max-width;
+        margin: $checkout-view-sticky-totals-margin;
+
+        justify-content: $checkout-view-sticky-totals-justify-content;
+    }
+
     .checkout-form__payment-methods {
         max-width: 300px;
         padding: 0 0 0 ($offset-x-m + 2);

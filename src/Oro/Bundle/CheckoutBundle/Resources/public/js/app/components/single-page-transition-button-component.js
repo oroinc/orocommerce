@@ -21,12 +21,31 @@ define(function(require) {
          */
         initialize: function(options) {
             SinglePageTransitionButtonComponent.__super__.initialize.call(this, options);
-
             if (this.options.saveStateUrl || false) {
-                this.$form.on('change', _.debounce($.proxy(this.onFormChange, this), this.options.changeTimeout));
-            }
+                var delayCallback = _.debounce(_.bind(this.onFormChange, this), this.options.changeTimeout);
 
+                this.$form.on('change', _.bind(function(e) {
+                    var selectors = _.keys(this.options.targetEvents);
+
+                    if (Boolean(e.originalEvent) && $(e.target).closest(selectors.join(',')).length) {
+                        mediator.trigger('checkout:transition-button:disable');
+                    }
+
+                    delayCallback.apply(this, arguments);
+                }, this));
+            }
+            if (this.$form) {
+                this.$el.on('click', _.bind(this.submit, this));
+            }
             this.createAjaxData();
+        },
+
+        /**
+         * @param {jQuery.Event} e
+         */
+        submit: function(e) {
+            e.preventDefault();
+            this.$form.trigger('submit');
         },
 
         /**
@@ -75,6 +94,21 @@ define(function(require) {
 
             $.ajax(ajaxData)
                 .done(_.bind(this.afterSaveState, this, $target));
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            if (this.$form) {
+                this.$el.off('click', _.bind(this.submit, this));
+            }
+
+            SinglePageTransitionButtonComponent.__super__.dispose.call(this);
         },
 
         /**
