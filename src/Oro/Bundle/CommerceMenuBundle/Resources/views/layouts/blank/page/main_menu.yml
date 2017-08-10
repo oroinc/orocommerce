@@ -19,7 +19,7 @@ layout:
                 main_menu:
                     blockType: menu
                     options:
-                        item: '=data["menu"].getMenu("commerce_main_menu")'
+                        item: '=data["menu"].getMenu("commerce_main_menu", {"check_access_not_logged_in": true})'
                         depth: 1
             tree:
                 page_header:

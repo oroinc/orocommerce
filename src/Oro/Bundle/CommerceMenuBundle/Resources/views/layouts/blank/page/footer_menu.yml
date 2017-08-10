@@ -10,7 +10,7 @@ layout:
                 footer_menu:
                     blockType: menu
                     options:
-                        item: '=data["menu"].getMenu("commerce_footer_links")'
+                        item: '=data["menu"].getMenu("commerce_footer_links", {"check_access_not_logged_in": true})'
                         depth: 2
             tree:
                 page_footer:
