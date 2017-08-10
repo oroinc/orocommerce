@@ -6,9 +6,7 @@ Feature: Shopping list limit
   Scenario: Unlimited shopping list default configuration check
     Given I login as administrator
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
+    And I follow Commerce/Sales/Shopping List on configuration sidebar
     Then the "Use default" checkbox should be checked
 
   Scenario: Unlimited shopping list on frontend
@@ -39,9 +37,7 @@ Feature: Shopping list limit
   Scenario: Set limit to One shopping list in configuration
     Given I login as administrator
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
+    And I follow Commerce/Sales/Shopping List on configuration sidebar
     And uncheck Use Default for "Shopping List Limit" field
     And I fill in "Shopping List Limit" with "1"
     And I save setting
