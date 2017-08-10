@@ -114,7 +114,7 @@ Feature: Guest Shopping Lists
     And I click "Search Button"
     Then I should see "Product1"
     And I should see "Add to Shopping list"
-    When I click "Product1"
+    When I click "View Details" for "PSKU1" product
     Then I should see "Add to Shopping list"
     When I click "Add to Shopping list"
     Then I should see "Product has been added to" flash message

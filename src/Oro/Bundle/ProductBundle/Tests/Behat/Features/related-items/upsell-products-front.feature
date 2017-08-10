@@ -2,6 +2,7 @@
 @fixture-OroProductBundle:related_items_system_users.yml
 @fixture-OroProductBundle:related_items_customer_users.yml
 @feature-BB-8715
+@skip
 
 Feature: Showing upsell products
   In order to be offer the customer to buy some products in addition to the one that he is looking at

@@ -390,6 +390,9 @@ oro:
                 new_arrivals_use_slider_on_mobile:
                     label: Use Slider On Mobile
                     tooltip: When slider is enabled, the "New Arrivals" block will occupy less screen space, while showing larger product images.
+                image_preview_on_product_listing_enabled:
+                    label: 'Enable Image Preview on Product Listing'
+                    tooltip: 'If enabled, the customers will see product image gallery instead of going to the product view page when they click on a product image in the product listing.'
                 popup_gallery_on_product_view:
                     label: 'Popup Gallery on Product View'
                     tooltip: 'Inline gallery view may work better for some product templates.'

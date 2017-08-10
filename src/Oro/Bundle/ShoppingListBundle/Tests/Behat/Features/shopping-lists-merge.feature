@@ -29,7 +29,7 @@ Feature: Guest shopping list merging functionality
     And I click "Search Button"
     And I should see "Product1"
     And I should see "Add to Shopping list"
-    And I click "Product1"
+    And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping list"
     And I click "Add to Shopping list"
     And I should see "Product has been added to" flash message

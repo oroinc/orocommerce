@@ -321,7 +321,7 @@
                     {% endif %}
                 </select>
             {% else %}
-                <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" />
+                <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" data-name="field__unit" />
                 {% if isLineItemUnitVisible %}
                     {{ lineItem.unit.code|oro_format_product_unit_label}}
                 {% endif %}
