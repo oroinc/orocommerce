@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oroorder/js/app/components/totals-component': 'bundles/oroorder/js/app/components/totals-component.js'
