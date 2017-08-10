@@ -19,6 +19,8 @@ Feature: Single Page Guest Checkout From Shopping List
     Given I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
+    And I click "Commerce" on configuration sidebar
+    And I click "Sales" on configuration sidebar
     And I click "Shopping List" on configuration sidebar
     And uncheck Use Default for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
