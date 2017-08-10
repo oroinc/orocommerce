@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener\Order;
+namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;

@@ -16,3 +16,17 @@ search:
                         name: name
                         target_type: text
                         target_fields: [ruleName]
+
+    Oro\Bundle\PromotionBundle\Entity\Coupon:
+        alias:                          oro_coupon
+        title_fields:                   [code]
+        route:
+            name:                       oro_coupon_view
+            parameters:
+                id:                     id
+        search_template:                OroPromotionBundle:Coupon:searchResult.html.twig
+        fields:
+            -
+                name:                   code
+                target_type:            text
+                target_fields:          [code]

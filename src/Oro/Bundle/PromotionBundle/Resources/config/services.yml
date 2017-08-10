@@ -487,3 +487,25 @@ services:
             - '@assets.packages'
         tags:
             - { name: form.type, alias: oro_promotion_shipping_methods }
+
+    oro_promotion.model.coupon_applicability_query_builder_modifier:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Model\CouponApplicabilityQueryBuilderModifier
+
+    oro_promotion.autocomplete.coupon_search_handler:
+        parent: oro_form.autocomplete.search_handler
+        class: Oro\Bundle\PromotionBundle\Autocomplete\CouponSearchHandler
+        arguments:
+            - '%oro_promotion.entity.coupon.class%'
+            - ['code', 'promotion.rule.name']
+        calls:
+            - [setCouponApplicabilityQueryBuilderModifier, ['@oro_promotion.model.coupon_applicability_query_builder_modifier']]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: 'oro_coupon', acl_resource: 'oro_promotion_coupon_view' }
+
+    oro_promotion.event_listener.select_coupon_grid_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\SelectCouponGridListener
+        arguments:
+            - '@oro_promotion.model.coupon_applicability_query_builder_modifier'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.promotion-coupons-select-grid, method: onBuildAfter }

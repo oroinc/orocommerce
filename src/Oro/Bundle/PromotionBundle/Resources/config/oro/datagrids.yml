@@ -256,3 +256,70 @@ datagrids:
                         modal: false
                         allowMaximize: false
                         allowMinimize: false
+
+    promotion-coupons-select-grid:
+        extended_entity_name: '%oro_promotion.entity.coupon.class%'
+        options:
+            entityHint: coupon
+        source:
+            type: orm
+            query:
+                select:
+                    - coupon.id
+                    - coupon.code
+                    - rule.name as promotionName
+                    - coupon.usesPerCoupon
+                    - coupon.usesPerUser
+                    - coupon.validUntil
+                from:
+                    - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
+                join:
+                    left:
+                        - { join: coupon.promotion, alias: promotion }
+                        - { join: promotion.rule, alias: rule }
+        columns:
+            id:
+                label:         oro.promotion.coupon.id.label
+            code:
+                label:         oro.promotion.coupon.code.label
+            promotionName:
+                label:         oro.promotion.coupon.promotion.label
+                frontend_type: html
+                type:          twig
+                template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
+            usesPerCoupon:
+                label:         oro.promotion.coupon.uses_per_coupon.label
+            usesPerUser:
+                label:         oro.promotion.coupon.uses_per_user.label
+            validUntil:
+                label:         oro.promotion.coupon.valid_until.label
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: coupon.code
+                promotionName:
+                    data_name: rule.name
+                usesPerCoupon:
+                    data_name: coupon.usesPerCoupon
+                usesPerUser:
+                    data_name: coupon.usesPerUser
+                validUntil:
+                    data_name: coupon.validUntil
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: coupon.code
+                promotionName:
+                    type:      string
+                    data_name: rule.name
+                usesPerCoupon:
+                    type:      number
+                    data_name: coupon.usesPerCoupon
+                usesPerUser:
+                    type:      number
+                    data_name: coupon.usesPerUser
+                validUntil:
+                    type:      datetime
+                    data_name: coupon.validUntil
