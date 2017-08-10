@@ -5,8 +5,8 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var ProductHelper = require('oroproduct/js/app/product-helper');
     var mediator = require('oroui/js/mediator');
-    var tools = require('oroui/js/tools');
     var routing = require('routing');
     var $ = require('jquery');
     var _ = require('underscore');
@@ -20,8 +20,7 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'quantity': ['input', 'onQuantityChange'],
-            'quantity onKeypressForbid': ['keypress', 'onKeypressForbid']
+            'quantity': ['input', 'onQuantityChange']
         },
 
         modelElements: {
@@ -33,11 +32,7 @@ define(function(require) {
             id: 0,
             quantity: 0,
             unit: '',
-            line_item_form_enable: true,
-            precision: {
-                'item': 5,
-                'set': 3
-            }
+            line_item_form_enable: true
         },
 
         modelEvents: {
@@ -62,9 +57,7 @@ define(function(require) {
                 productModel: this.model
             });
 
-            if (tools.isDesktop()) {
-                this.getElement('quantity').attr('type', 'text');
-            }
+            ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
         },
 
         initModel: function(options) {
@@ -98,12 +91,11 @@ define(function(require) {
 
         onUnitChange: function() {
             var $quantity = this.getElement('quantity');
+            ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
             $quantity.trigger('input');
-            $quantity.attr('pattern', this._getUnitPrecision() === 0 ? '[0-9]*' : '');
         },
 
         onQuantityChange: function(e) {
-            this.forbidQuantityField(e);
             this.setModelValueFromElement(e, 'quantity', 'quantity');
         },
 
@@ -151,54 +143,6 @@ define(function(require) {
         disableLineItemForm: function() {
             this.getElement('lineItemFields').prop('disabled', true).inputWidget('refresh');
             this.getElement('lineItem').addClass('disabled');
-        },
-
-        onKeypressForbid: function(event) {
-            var keyCode = event.originalEvent.charCode;
-            var targetKeyCodes = [44, 46, 188, 190];
-            var commaKayCodes = [44, 188];
-            var precision = this._getUnitPrecision();
-
-            if (event.target.value.length && precision > 0 && _.contains(targetKeyCodes, keyCode)) {
-                event.target.value = parseInt(event.target.value).toFixed(precision);
-
-                if (_.contains(commaKayCodes, keyCode)) {
-                    event.target.value = event.target.value.replace('.', ',');
-                }
-
-                if (!_.isUndefined(event.target.selectionStart)) {
-                    event.target.selectionEnd = event.target.value.length;
-                    event.target.selectionStart = event.target.value.length - precision;
-                }
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-            }
-
-            if (keyCode > 47 && keyCode < 58 || event.originalEvent.key === 'Backspace') {
-                return true;
-            }
-
-            event.stopPropagation();
-            event.preventDefault();
-            return false;
-        },
-
-        forbidQuantityField: function(event) {
-            var regExpString = '^([0-9]*)';
-            var precision = this._getUnitPrecision();
-            if (precision > 0) {
-                regExpString += '(\.|,{1})?([0-9]{1,' + precision + '})?';
-            }
-            var regExp = new RegExp(regExpString, 'g');
-            var substitution = event.target.value.replace(regExp, '');
-
-            if (!regExp.test(event.target.value) || substitution.length > 0) {
-                event.target.value = event.target.value.match(regExp).join('');
-                event.preventDefault();
-                return false;
-            }
         },
 
         _getUnitPrecision: function() {
