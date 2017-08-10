@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
@@ -34,6 +36,8 @@ class CategoryControllerTest extends WebTestCase
     const UPDATED_DEFAULT_CATEGORY_UNIT_PRECISION = 3;
     const LARGE_IMAGE_NAME = 'large_image.png';
     const SMALL_IMAGE_NAME = 'small_image.png';
+    const LARGE_SVG_IMAGE_NAME = 'large_svg_image.svg';
+    const SMALL_SVG_IMAGE_NAME = 'small_svg_image.svg';
 
     /**
      * @var Localization[]
@@ -320,6 +324,69 @@ class CategoryControllerTest extends WebTestCase
             ->getRepository('OroCatalogBundle:Category');
         $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
         $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
+    }
+
+    public function testUploadSVGImages()
+    {
+
+
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_catalog_category_create', ['id' => $category->getId()])
+        );
+
+        $fileLocator = $this->getContainer()->get('file_locator');
+        $smallImageName = self::SMALL_SVG_IMAGE_NAME;
+        $smallImageFile = $fileLocator->locate(
+            '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
+        );
+        $largeImageName = self::LARGE_SVG_IMAGE_NAME;
+        $largeImageFile = $fileLocator->locate(
+            '@OroCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
+        );
+        $smallImage = new UploadedFile($smallImageFile, $smallImageName, 'image/svg+xml');
+        $largeImage = new UploadedFile($largeImageFile, $largeImageName, 'image/svg+xml');
+
+        $title = 'Category with SVG images';
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save')->form();
+        $form['oro_catalog_category[titles][values][default]'] = $title;
+        $form['oro_catalog_category[smallImage][file]'] = $smallImage;
+        $form['oro_catalog_category[largeImage][file]'] = $largeImage;
+        $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = 0;
+
+        $form->setValues(['input_action' => 'save_and_stay']);
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $html = $crawler->html();
+
+        $this->assertContains('Category has been saved', $html);
+        $this->assertContains($title, $html);
+        $this->assertContains(self::SMALL_SVG_IMAGE_NAME, $html);
+        $this->assertContains(self::LARGE_SVG_IMAGE_NAME, $html);
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+        );
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $attachments = $em->getRepository(File::class)->findBy(['extension' => 'svg']);
+        foreach ($attachments as $attachmentFile) {
+            $url = $this->getContainer()->get('oro_attachment.manager')
+                ->getFilteredImageUrl($attachmentFile, 'category_medium');
+            $this->client->request(
+                'GET',
+                $url
+            );
+            $result = $this->client->getResponse();
+            $this->assertResponseStatusCodeEquals($result, 200);
+            $this->assertResponseContentTypeEquals($result, 'image/svg+xml');
+
+        }
     }
 
     public function testValidationForLocalizedFallbackValues()
