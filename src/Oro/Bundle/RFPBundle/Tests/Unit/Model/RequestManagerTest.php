@@ -142,7 +142,6 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
         $customerUser->setEmail('test@example.com');
-        // TODO can be removed in BB-9269
         $customerUser->setOrganization(new Organization());
 
         $visitor = new CustomerVisitor();
@@ -170,7 +169,6 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
     {
         $customerUser = new CustomerUser();
         $customerUser->setCustomer(new Customer());
-        // TODO can be removed in BB-9269
         $customerUser->setOrganization(new Organization());
 
         $visitor = new CustomerVisitor();

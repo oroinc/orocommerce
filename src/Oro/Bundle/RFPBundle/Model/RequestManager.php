@@ -67,9 +67,6 @@ class RequestManager
 
                 $visitor->setCustomerUser($user);
             }
-
-            # TODO remove after fix BB-9269
-            $request->setOrganization($user->getOrganization());
         }
 
         if ($user instanceof CustomerUser) {
