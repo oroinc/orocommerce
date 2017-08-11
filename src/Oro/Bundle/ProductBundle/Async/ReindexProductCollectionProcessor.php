@@ -121,10 +121,7 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',
-                [
-                    'exception' => $e,
-                    'message' => $message->getBody()
-                ]
+                ['exception' => $e]
             );
 
             return self::REJECT;
@@ -132,7 +129,6 @@ class ReindexProductCollectionProcessor implements MessageProcessorInterface, To
             $this->logger->error(
                 'Unexpected exception occurred during segment product collection reindexation',
                 [
-                    'message' => $message->getBody(),
                     'topic' => Topics::REINDEX_PRODUCT_COLLECTION_BY_SEGMENT,
                     'exception' => $e
                 ]

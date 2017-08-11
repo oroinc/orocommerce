@@ -97,7 +97,9 @@ services:
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_pricing.entity.product_price.class%' }
             - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_pricing.entity.product_price.class%' }
-            
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_pricing.entity.price_attribute_product_price.class%' }
+            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_pricing.entity.price_attribute_product_price.class%' }
+
     oro_pricing.api.normalize_product_price_id:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeInputProductPriceIdProcessor'
         arguments:
@@ -111,12 +113,12 @@ services:
 
     oro_pricing.api.price_list_id_in_context_storage:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\PriceListIDInContextStorage'
-        
+
     oro_pricing.api.product_price_id_by_price_list_id_normalizer:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\ProductPriceIDByPriceListIDNormalizer'
         arguments:
             - '@oro_pricing.api.price_list_id_in_context_storage'
-    
+
     oro_pricing.api.normalize_product_price:
         class: 'Oro\Bundle\PricingBundle\Api\ProductPrice\Processor\NormalizeOutputProductPriceIdProcessor'
         arguments:

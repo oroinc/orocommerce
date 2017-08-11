@@ -51,6 +51,38 @@ api:
                 priceList:
                     actions:
                         update_relationship: false
+        Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/price_attribute_product_price.md'
+            fields:
+                productSku:
+                    exclude: true
+                quantity:
+                    exclude: true
+                # start: this is added in order to properly handle "price" object that is created out of currency and value
+                value:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                currency:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                # end
+        Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+            fields:
+                prices:
+                    exclude: true
+            actions:
+                create:
+                    exclude: true
+                update:
+                    exclude: true
+                delete:
+                    exclude: true
+                delete_list:
+                    exclude: true
 
         Oro\Bundle\PricingBundle\Entity\ProductPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/product_price.md'
