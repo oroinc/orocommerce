@@ -19,9 +19,7 @@ Feature: Quote from Opportunity Default
 
   Scenario: Setup system configuration of Warehouses
     Given I go to System/Configuration
-    When I click "Commerce" on configuration sidebar
-    And I click "Inventory" on configuration sidebar
-    And I click "Warehouses" on configuration sidebar
+    When I follow "Commerce/Inventory/Warehouses" on configuration sidebar
     And I choose Warehouse "Test Warehouse" in 1 row
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
