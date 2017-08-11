@@ -1,10 +1,6 @@
 {% block _checkout_additional_options_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/jquery-widget-component',
-        'data-page-component-options': {
-            widgetModule: 'oroui/js/widget/collapse-widget',
-            storageKey: id
-        }|json_encode,
+        'data-page-component-collapse': { storageKey: id }|json_encode,
         '~class': " collapse-view order-review-options__wrapper"
     }) %}
     <div {{ block('block_attributes') }}>
