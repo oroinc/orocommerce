@@ -5,7 +5,6 @@
 ### get
 
 Get details of the product price by its ID. <br />
-**Note:** In API the ID has format: `ProductPriceID-PriceListID`
 
 ### get_list
 
@@ -60,8 +59,6 @@ Example:
 ### update
 
 Update product price identified by ID. <br />
-**Note:** In API the ID has format: `ProductPriceID-PriceListID`. <br />
-**Note:** When `priceList` field is updated, ID of an entity changes.
 
 {@request:json_api}
 Example:
@@ -106,7 +103,6 @@ Example:
 ### delete
 
 Delete a product price identified by ID. <br />
-**Note:** In API the ID has format: `ProductPriceID-PriceListID`
 
 ### delete_list
 
