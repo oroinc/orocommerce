@@ -25,6 +25,12 @@ class Configuration implements ConfigurationInterface
     const RELATED_PRODUCTS_MIN_ITEMS_COUNT = 3;
     const RELATED_PRODUCTS_SHOW_ADD_BUTTON = 'related_products_show_add_button';
     const RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE = 'related_products_use_slider_on_mobile';
+    const UPSELL_PRODUCTS_MAX_ITEMS = 'upsell_products_max_items';
+    const UPSELL_PRODUCTS_MAX_ITEMS_COUNT = 4;
+    const UPSELL_PRODUCTS_MIN_ITEMS = 'upsell_products_min_items';
+    const UPSELL_PRODUCTS_MIN_ITEMS_COUNT = 3;
+    const UPSELL_PRODUCTS_SHOW_ADD_BUTTON = 'upsell_products_show_add_button';
+    const UPSELL_PRODUCTS_USE_SLIDER_ON_MOBILE = 'upsell_products_use_slider_on_mobile';
     const SINGLE_UNIT_MODE = 'single_unit_mode';
     const SINGLE_UNIT_MODE_SHOW_CODE = 'single_unit_mode_show_code';
     const DEFAULT_UNIT = 'default_unit';
@@ -43,6 +49,7 @@ class Configuration implements ConfigurationInterface
     const NEW_ARRIVALS_MAX_ITEMS = 'new_arrivals_max_items';
     const NEW_ARRIVALS_MIN_ITEMS = 'new_arrivals_min_items';
     const NEW_ARRIVALS_USE_SLIDER_ON_MOBILE = 'new_arrivals_use_slider_on_mobile';
+    const IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED = 'image_preview_on_product_listing_enabled';
     const POPUP_GALLERY_ON_PRODUCT_VIEW = 'popup_gallery_on_product_view';
 
     /**
@@ -66,14 +73,22 @@ class Configuration implements ConfigurationInterface
                 static::MAX_NUMBER_OF_UPSELL_PRODUCTS => [
                     'value' => static::MAX_NUMBER_OF_UPSELL_PRODUCTS_COUNT
                 ],
-                self::RELATED_PRODUCTS_MAX_ITEMS => [
-                    'value' => self::RELATED_PRODUCTS_MAX_ITEMS_COUNT,
+                static::RELATED_PRODUCTS_MAX_ITEMS => [
+                    'value' => static::RELATED_PRODUCTS_MAX_ITEMS_COUNT,
                 ],
-                self::RELATED_PRODUCTS_MIN_ITEMS => [
-                    'value' => self::RELATED_PRODUCTS_MIN_ITEMS_COUNT,
+                static::RELATED_PRODUCTS_MIN_ITEMS => [
+                    'value' => static::RELATED_PRODUCTS_MIN_ITEMS_COUNT,
                 ],
-                self::RELATED_PRODUCTS_SHOW_ADD_BUTTON => ['value' => true],
-                self::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE => ['value' => false],
+                static::RELATED_PRODUCTS_SHOW_ADD_BUTTON => ['value' => true],
+                static::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE => ['value' => false],
+                static::UPSELL_PRODUCTS_MAX_ITEMS => [
+                    'value' => static::UPSELL_PRODUCTS_MAX_ITEMS_COUNT,
+                ],
+                static::UPSELL_PRODUCTS_MIN_ITEMS => [
+                    'value' => static::UPSELL_PRODUCTS_MIN_ITEMS_COUNT,
+                ],
+                static::UPSELL_PRODUCTS_SHOW_ADD_BUTTON => ['value' => true],
+                static::UPSELL_PRODUCTS_USE_SLIDER_ON_MOBILE => ['value' => false],
                 'unit_rounding_type' => ['value' => RoundingServiceInterface::ROUND_HALF_UP],
                 static::SINGLE_UNIT_MODE => ['value' => false, 'type' => 'boolean'],
                 static::SINGLE_UNIT_MODE_SHOW_CODE => ['value' => false, 'type' => 'boolean'],
@@ -103,7 +118,8 @@ class Configuration implements ConfigurationInterface
                 static::NEW_ARRIVALS_MAX_ITEMS => ['type' => 'integer', 'value' => 4],
                 static::NEW_ARRIVALS_MIN_ITEMS => ['type' => 'integer', 'value' => 3],
                 static::NEW_ARRIVALS_USE_SLIDER_ON_MOBILE => ['type' => 'boolean', 'value' => false],
-                self::POPUP_GALLERY_ON_PRODUCT_VIEW => ['type' => 'boolean', 'value' => true],
+                static::IMAGE_PREVIEW_ON_PRODUCT_LISTING_ENABLED => ['type' => 'boolean', 'value' => true],
+                static::POPUP_GALLERY_ON_PRODUCT_VIEW => ['type' => 'boolean', 'value' => true],
             ]
         );
 

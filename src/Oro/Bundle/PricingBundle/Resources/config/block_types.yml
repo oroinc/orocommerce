@@ -2,7 +2,8 @@ services:
     oro_pricing.layout.type.product_prices:
         class: 'Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType'
         arguments:
-            - '@oro_entity_config.attribute_group_rendrer_registry'
+            - '@oro_entity_config.attribute_render_registry'
+            - '@oro_entity_config.manager.attribute_manager'
         tags:
              - { name: layout.block_type, alias: product_prices }
 

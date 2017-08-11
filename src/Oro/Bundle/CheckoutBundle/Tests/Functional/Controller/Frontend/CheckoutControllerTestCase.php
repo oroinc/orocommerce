@@ -11,6 +11,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
@@ -82,6 +83,12 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShippingMethodsConfigsRulesWithConfigs::class,
         ], $paymentFixtures, $inventoryFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
+        $this->simulateAuthentication(
+            TestCustomerUserData::AUTH_USER,
+            TestCustomerUserData::AUTH_PW,
+            'customer_identity',
+            CustomerUser::class
+        );
     }
 
     /**
