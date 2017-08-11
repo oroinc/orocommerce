@@ -46,7 +46,7 @@ Feature: Gallery as slider
   Scenario: Check gallery as slider is present on front store
     Given I login as administrator
     And go to System / Configuration
-    And I follow Commerce/Product/Product Images on configuration sidebar
+    And I follow "Commerce/Product/Product Images" on configuration sidebar
     And fill "Product Images Form" with:
       | Popup Gallery Default         | false |
       | Popup Gallery On Product View | false |

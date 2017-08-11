@@ -17,7 +17,7 @@ Feature: Guest Checkout
     Given I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
-    When I follow Commerce/Sales/Shopping List on configuration sidebar
+    When I follow "Commerce/Sales/Shopping List" on configuration sidebar
     Then the "Enable guest shopping list" checkbox should not be checked
     When uncheck Use Default for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
@@ -39,7 +39,7 @@ Feature: Guest Checkout
   Scenario: Disable guest checkout setting
     Given I proceed as the Admin
     And go to System/ Configuration
-    When I follow Commerce/Sales/Checkout on configuration sidebar
+    When I follow "Commerce/Sales/Checkout" on configuration sidebar
     Then the "Enable Guest Checkout" checkbox should not be checked
 
   Scenario: Create Shopping List as unauthorized user from product view page with disabled guest checkout
