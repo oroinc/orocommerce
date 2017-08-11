@@ -84,4 +84,8 @@ api:
                     exclude: true
                 add_relationship:
                     exclude: true
+                update:
+                    fields:
+                        priceList:
+                            exclude: true
             delete_handler: 'oro_pricing.api.price_manager_delete_handler'
