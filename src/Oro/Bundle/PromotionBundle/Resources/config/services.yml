@@ -514,3 +514,8 @@ services:
             - '@oro_promotion.model.coupon_applicability_query_builder_modifier'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.promotion-coupons-select-grid, method: onBuildAfter }
+
+    oro_promotion.validation_service.coupon_validation:
+        class: Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService
+        arguments:
+            - '@oro_promotion.coupon_usage_manager'

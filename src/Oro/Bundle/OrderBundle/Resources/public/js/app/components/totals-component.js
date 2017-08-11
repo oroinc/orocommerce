@@ -43,7 +43,7 @@ define(function(require) {
             this.setTotals(options);
         },
 
-        _getDefaultTotals: function () {
+        _getDefaultTotals: function() {
             return {totals: {total: {}, subtotals: {}}};
         },
 
