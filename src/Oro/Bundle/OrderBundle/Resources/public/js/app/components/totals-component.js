@@ -51,7 +51,7 @@ define(function(require) {
          * @param {Object} data
          */
         getCurrentTotals: function(data) {
-            data['result'] = this.currentTotals;
+            data.result = this.currentTotals;
         },
 
         /**

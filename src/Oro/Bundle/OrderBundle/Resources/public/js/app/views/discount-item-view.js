@@ -111,7 +111,7 @@ define(function(require) {
             var totalsData = {};
             mediator.trigger('order:totals:get:current', totalsData);
 
-            var totals = totalsData['result'];
+            var totals = totalsData.result;
             var total = 0;
             var amount = 0;
             var percent = 0;
