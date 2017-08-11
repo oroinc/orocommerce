@@ -23,7 +23,7 @@ Feature: Guest shopping list merging functionality
     And click "Sign Out"
 
   Scenario: Create shopping list as a guest
-    And I visit store frontend as guest
+    Given I am on homepage
     And I should see "Shopping list"
     And type "PSKU1" in "search"
     And I click "Search Button"
@@ -44,7 +44,7 @@ Feature: Guest shopping list merging functionality
     And click "Sign Out"
 
   Scenario: Create other shopping List as a guest
-    And I visit store frontend as guest
+    Given I am on homepage
     And I should see "Shopping list"
     And type "CONTROL1" in "search"
     And I click "Search Button"

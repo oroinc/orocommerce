@@ -54,9 +54,7 @@
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-order-summary"}) %}
     <div{{ block('block_attributes') }}>
         <div class="checkout-order-summary__tab collapse-view {% if app.request.cookies.has('order-tab:state') %}expanded{% endif %}"
-             data-page-component-module="oroui/js/app/components/jquery-widget-component"
-             data-page-component-options="{{ {
-                 widgetModule: 'oroui/js/widget/collapse-widget',
+             data-page-component-collapse="{{ {
                  storageKey: id,
                  animationSpeed: 0,
                  forcedState: (false == isLineItemListValid) ? true : null

@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
@@ -148,7 +149,9 @@ class OrderAddressSecurityProvider
      */
     protected function getPermission($permission)
     {
-        if (!$this->tokenAccessor->getUser() instanceof CustomerUser) {
+        if (!$this->tokenAccessor->getUser() instanceof CustomerUser &&
+            !$this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken
+        ) {
             $permission .= OrderAddressProvider::ADMIN_ACL_POSTFIX;
         }
 
