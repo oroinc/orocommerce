@@ -103,6 +103,6 @@ class OroFedexShippingBundleInstaller implements Installation
         $table->addColumn('ship_service_id', 'integer', []);
 
         $table->setPrimaryKey(['transport_id', 'ship_service_id']);
-        $table->addIndex(['ship_service_id'], 'IDX_1554DDE37CA9B1D', []);
+        $table->addIndex(['ship_service_id'], 'oro_fedex_transp_ship_service_id');
     }
 }
