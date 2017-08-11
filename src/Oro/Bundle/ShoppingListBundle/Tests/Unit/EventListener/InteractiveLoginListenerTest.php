@@ -11,6 +11,7 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorManager;
 use Oro\Bundle\CustomerBundle\Security\Firewall\AnonymousCustomerUserAuthenticationListener;
+use Oro\Bundle\DataAuditBundle\EventListener\SendChangedEntitiesToMessageQueueListener;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\EventListener\InteractiveLoginListener;
@@ -57,15 +58,22 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
     private $logger;
 
     /**
+     * @var SendChangedEntitiesToMessageQueueListener|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $sendChangedEntitiesToMessageQueueListener;
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->guestShoppingListMigrationManager = $this->createMock(GuestShoppingListMigrationManager::class);
-        $this->visitorManager                    = $this->createMock(CustomerVisitorManager::class);
-        $this->logger                            = $this->createMock(LoggerInterface::class);
-        $this->request                           = new Request();
-        $this->configManager                     = $this->createMock(ConfigManager::class);
+        $this->guestShoppingListMigrationManager         = $this->createMock(GuestShoppingListMigrationManager::class);
+        $this->visitorManager                            = $this->createMock(CustomerVisitorManager::class);
+        $this->logger                                    = $this->createMock(LoggerInterface::class);
+        $this->request                                   = new Request();
+        $this->configManager                             = $this->createMock(ConfigManager::class);
+        $this->sendChangedEntitiesToMessageQueueListener = $this->createMock(
+            SendChangedEntitiesToMessageQueueListener::class
+        );
         $this->event                             = $this->getMockBuilder(InteractiveLoginEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -73,7 +81,8 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             $this->visitorManager,
             $this->guestShoppingListMigrationManager,
             $this->logger,
-            $this->configManager
+            $this->configManager,
+            $this->sendChangedEntitiesToMessageQueueListener
         );
     }
 
@@ -113,6 +122,11 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
         $this->visitorManager->expects($this->once())
             ->method('find')
             ->willReturn(null);
+
+        $this->sendChangedEntitiesToMessageQueueListener->expects($this->once())
+            ->method('setEnabled')
+            ->with();
+
         $this->guestShoppingListMigrationManager->expects($this->never())
             ->method('migrateGuestShoppingList');
 
@@ -141,6 +155,10 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
             ->willReturn($visitor);
+
+        $this->sendChangedEntitiesToMessageQueueListener->expects($this->exactly(2))
+            ->method('setEnabled')
+            ->withConsecutive([false], []);
 
         $this->guestShoppingListMigrationManager->expects($this->never())
             ->method('migrateGuestShoppingList');
@@ -172,6 +190,10 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
             ->willReturn($visitor);
 
+        $this->sendChangedEntitiesToMessageQueueListener->expects($this->exactly(2))
+            ->method('setEnabled')
+            ->withConsecutive([false], []);
+
         $this->guestShoppingListMigrationManager->expects($this->never())
             ->method('migrateGuestShoppingList');
 
@@ -202,6 +224,10 @@ class InteractiveLoginListenerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
             ->willReturn($visitor);
+
+        $this->sendChangedEntitiesToMessageQueueListener->expects($this->exactly(2))
+            ->method('setEnabled')
+            ->withConsecutive([false], []);
 
         $this->guestShoppingListMigrationManager->expects($this->once())
             ->method('migrateGuestShoppingList')

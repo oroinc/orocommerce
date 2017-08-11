@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-8491
 @automatically-ticket-tagged
 Feature: About page availability

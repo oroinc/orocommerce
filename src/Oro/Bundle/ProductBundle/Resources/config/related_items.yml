@@ -5,24 +5,41 @@ services:
         class: Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider
         arguments: ['@oro_config.manager']
 
+    oro_product.related_item.helper.config_helper:
+        class: Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper
+        calls:
+            - [addConfigProvider, ['related_product', '@oro_product.related_item.related_product.config_provider']]
+            - [addConfigProvider, ['upsell_product', '@oro_product.related_item.upsell_product.config_provider']]
+
+    oro_product.related_item.data_provider.abstract_cache_decorator:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderCacheDecorator
+        abstract: true
+
+    # RELATED PRODUCTS
     oro_product.related_item.related_product.config_provider:
         parent: oro_product.related_item.abstract_config_provider
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\RelatedProductsConfigProvider
 
+    oro_product.related_item.related_product.assigner_database_strategy_abstract:
+      abstract: true
+      public: false
+      class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy
+      arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']
+
     oro_product.related_item.related_product.assigner_strategy:
-        public: false
-        class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy
-        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.related_product.config_provider']
+      parent: oro_product.related_item.related_product.assigner_database_strategy_abstract
+
+    oro_product.related_item.related_product.assigner_database_strategy:
+      parent: oro_product.related_item.related_product.assigner_database_strategy_abstract
 
     oro_product.related_item.related_product.finder_strategy:
         class: Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\FinderDatabaseStrategy
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_product.related_item.related_product.config_provider'
-            - '@oro_frontend.request.frontend_helper'
 
     oro_product.related_item.related_product.data_provider:
-        class: Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedProductDataProvider
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProvider
         arguments:
             - '@oro_product.related_item.related_product.finder_strategy'
             - '@oro_product.related_item.related_product.config_provider'
@@ -30,3 +47,48 @@ services:
             - '@oro_ui.user_agent_provider'
         tags:
             - { name: layout.data_provider, alias: oro_product_related_products }
+
+    oro_product.related_item.related_product.data_provider.cache_decorator:
+        parent: oro_product.related_item.data_provider.abstract_cache_decorator
+        decorates: oro_product.related_item.related_product.data_provider
+        decoration_priority: 10
+        arguments:
+            - '@oro_product.related_item.related_product.data_provider.cache_decorator.inner'
+            - '@oro.cache.memory_cache_chain'
+            - 'related_item.related_product.%d'
+
+    # UPSELL PRODUCTS
+    oro_product.related_item.upsell_product.config_provider:
+        parent: oro_product.related_item.abstract_config_provider
+        public: true
+        class: Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\UpsellProductConfigProvider
+
+    oro_product.related_item.upsell_product.assigner_strategy:
+        public: false
+        class: Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\AssignerDatabaseStrategy
+        arguments: ['@oro_entity.doctrine_helper', '@oro_product.related_item.upsell_product.config_provider']
+
+    oro_product.related_item.upsell_product.finder_strategy:
+        class: Oro\Bundle\ProductBundle\RelatedItem\UpsellProduct\FinderDatabaseStrategy
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_product.related_item.upsell_product.config_provider'
+
+    oro_product.related_item.upsell_product.data_provider:
+        class: Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProvider
+        arguments:
+            - '@oro_product.related_item.upsell_product.finder_strategy'
+            - '@oro_product.related_item.upsell_product.config_provider'
+            - '@oro_product.restricted_repository.product'
+            - '@oro_ui.user_agent_provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_upsell_products }
+
+    oro_product.related_item.upsell_product.data_provider.cache_decorator:
+        parent: oro_product.related_item.data_provider.abstract_cache_decorator
+        decorates: oro_product.related_item.upsell_product.data_provider
+        decoration_priority: 10
+        arguments:
+            - '@oro_product.related_item.upsell_product.data_provider.cache_decorator.inner'
+            - '@oro.cache.memory_cache_chain'
+            - 'related_item.upsell_product.%d'

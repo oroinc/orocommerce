@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
+use Symfony\Component\Form\FormView;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
@@ -92,6 +94,34 @@ class ProductExtensionTest extends \PHPUnit_Framework_TestCase
                 $this->getEntity(Product::class, ['id' => 4]),
             ], [2, 3, 4]],
             [[],[]]
+        ];
+    }
+
+    /**
+     * @dataProvider dataSetUniqueLineItemFormId
+     * @param FormView $formView
+     * @param Product $product
+     * @param string $expectedId
+     */
+    public function testSetUniqueLineItemFormId($formView, $product, $expectedId)
+    {
+        self::callTwigFunction($this->extension, 'set_unique_line_item_form_id', [$formView, $product]);
+        $this->assertEquals($expectedId, $formView->vars['id']);
+        $this->assertEquals($expectedId, $formView->vars['attr']['id']);
+    }
+
+    public function dataSetUniqueLineItemFormId()
+    {
+        $formView = new FormView();
+        $formView->vars['id'] = 'product_form';
+        return [
+            [$formView, $this->getEntity(Product::class, ['id' => 1]), 'product_form-product-id-1'],
+            [$formView, $this->getEntity(Product::class, ['id' => null]), 'product_form'],
+            [$formView, $this->getEntity(Product::class), 'product_form'],
+            [$formView, ['id' => 1], 'product_form-product-id-1'],
+            [$formView, ['id' => null], 'product_form'],
+            [$formView, [], 'product_form'],
+            [$formView, null, 'product_form'],
         ];
     }
 }

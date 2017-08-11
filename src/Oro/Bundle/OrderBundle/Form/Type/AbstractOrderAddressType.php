@@ -15,14 +15,11 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
-use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 abstract class AbstractOrderAddressType extends AbstractType
 {
-
     /** @var string */
     protected $dataClass;
 
@@ -161,38 +158,6 @@ abstract class AbstractOrderAddressType extends AbstractType
         );
 
         return $addresses;
-    }
-
-    /**
-     * @param CustomerOwnerAwareInterface $entity
-     * @param string $type
-     * @param array $addresses
-     *
-     * @return null|string
-     */
-    protected function getDefaultAddressKey(CustomerOwnerAwareInterface $entity, $type, array $addresses)
-    {
-        if (!$addresses) {
-            return null;
-        }
-
-        $addresses = call_user_func_array('array_merge', array_values($addresses));
-        $customerUser = $entity->getCustomerUser();
-        $addressKey = null;
-
-        /** @var AbstractDefaultTypedAddress $address */
-        foreach ($addresses as $key => $address) {
-            if ($address->hasDefault($type)) {
-                $addressKey = $key;
-                if ($address instanceof CustomerUserAddress &&
-                    $address->getFrontendOwner()->getId() === $customerUser->getId()
-                ) {
-                    break;
-                }
-            }
-        }
-
-        return $addressKey;
     }
 
     /**

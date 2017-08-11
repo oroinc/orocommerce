@@ -226,4 +226,13 @@ class ShardManagerTest extends WebTestCase
         $connection = $this->getContainer()->get("doctrine")->getConnection();
         $connection->delete($table, ['id' => $id]);
     }
+
+    public function testIsShardingEnabled()
+    {
+        $this->manager->setEnableSharding(false);
+        $this->assertFalse($this->manager->isShardingEnabled());
+
+        $this->manager->setEnableSharding(true);
+        $this->assertTrue($this->manager->isShardingEnabled());
+    }
 }

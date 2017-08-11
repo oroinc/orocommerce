@@ -132,7 +132,7 @@
 {% macro render_form_sections(sections, form, overrides) %}
     {% if sections is defined and not sections.isEmpty %}
         {% for sectionName, sections in form.vars.sections %}
-            <td class="{{ 'order-line-item-%s'|format(sectionName) }}">
+            <td class="{{ 'order-line-item-%s'|format(sectionName) }} {{ 'line-item-%s'|format(sectionName) }}">
                 {% placeholder 'order_edit_section_' ~ sectionName ~ '_before' with {form: form} %}
 
                 {% if overrides[sectionName] is defined %}

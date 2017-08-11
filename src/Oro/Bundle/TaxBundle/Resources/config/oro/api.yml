@@ -8,4 +8,5 @@ api:
                 update: false
             fields:
                 taxCode:
-                    data_type: association:multipleManyToOne
+                    description: Tax code
+                    data_type: association:manyToOne

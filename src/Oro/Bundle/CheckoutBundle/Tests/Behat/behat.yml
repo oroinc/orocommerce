@@ -3,8 +3,8 @@ oro_behat_extension:
     OroCheckoutBundle:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
-        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - OroFormBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
         - OroFormBundle::FormContext
         - OroDataGridBundle::GridContext
         - OroApplicationBundle::CommerceMainContext
@@ -13,13 +13,31 @@ oro_behat_extension:
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
         - OroCheckoutBundle::FeatureContext
-        - OroSaleBundle::FeatureContext
+        - OroSalesBundle::FeatureContext
         - OroOrderBundle::OrderContext
         - OroCustomerBundle::ACLContext
+        - OroProductBundle::FeatureContext
+        - OroWarehouseBundle::FeatureContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
+    SelectBillingAddress:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
+    SelectShippingAddress:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
+
+    Edit Billing Information:
+      selector: '[data-title="Edit Billing Information"]'
+
+    Checkout Shipping Method:
+      selector: '[data-content="shipping_method_form"] .checkout__form__radio label'
+
+    Checkout Payment Method:
+      selector: '[data-content="payment_method_form"] .checkout__form__radio label'
+
     CheckoutStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
       selector: 'div[data-role="checkout-content"]'
@@ -45,7 +63,11 @@ oro_behat_extension:
 
     Checkout Order Review Notes:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-      selector: 'input[id="addNote"]'
+      selector: 'input[id="addNote"]+.custom-checkbox__icon'
+
+    Checkout Totals:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
+      selector: '.totals-container'
 
     OpenOrdersGrid:
       selector: 'div[data-page-component-name="frontend-checkouts-grid"]'
@@ -83,6 +105,12 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: 'div:contains("Item #:") > span'
 
+    Ship to This Address:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Checkbox
+      selector:
+        type: xpath
+        locator: '//span[contains(., "Ship to this address")]'
+
     Order Summary Products Grid:
       selector: '.checkout-order-summary__table'
 
@@ -106,3 +134,30 @@ oro_behat_extension:
 
     PaymentMethodPaymentTerm30:
       selector: 'div[data-content="payment_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Payment Term 30")'
+
+    Billing Information Form:
+      selector: 'form[name="oro_workflow_transition"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          First Name: 'oro_workflow_transition[billing_address][firstName]'
+          Last Name: 'oro_workflow_transition[billing_address][lastName]'
+          Email: 'oro_workflow_transition[visitor_email]'
+          Street: 'oro_workflow_transition[billing_address][street]'
+          City: 'oro_workflow_transition[billing_address][city]'
+          Country: 'oro_workflow_transition[billing_address][country]'
+          State: 'oro_workflow_transition[billing_address][region]'
+          Zip/Postal Code: 'oro_workflow_transition[billing_address][postalCode]'
+
+    Shipping Information Form:
+      selector: 'form[name="oro_workflow_transition"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          First Name: 'oro_workflow_transition[shipping_address][firstName]'
+          Last Name: 'oro_workflow_transition[shipping_address][lastName]'
+          Street: 'oro_workflow_transition[shipping_address][street]'
+          City: 'oro_workflow_transition[shipping_address][city]'
+          Country: 'oro_workflow_transition[shipping_address][country]'
+          State: 'oro_workflow_transition[shipping_address][region]'
+          Zip/Postal Code: 'oro_workflow_transition[shipping_address][postalCode]'

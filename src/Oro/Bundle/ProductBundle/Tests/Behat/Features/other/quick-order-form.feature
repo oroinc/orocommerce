@@ -27,6 +27,8 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU1 |
+    And I wait for products to load
+    When I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And "PSKU1" product should has "$45.00" value in price field
     And I wait for products to load
@@ -108,7 +110,6 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU4 |
-      | QTY1 | 1     |
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
@@ -120,6 +121,8 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU4 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     When I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items with price" flash message
@@ -140,18 +143,24 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Get Quote"
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Create Order"
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click on "Shopping List Dropdown"
     And I click "Add to List 2"
@@ -201,7 +210,6 @@ Feature: Quick order form
     Then I should see that "Quick Add Copy Paste Validation" contains "Some of the products SKUs or units you have provided were not found. Correct them and try again."
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU1 test item |
-    And I click "Verify Order"
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test 5 item |
@@ -209,11 +217,9 @@ Feature: Quick order form
     Then I should see that "Quick Add Copy Paste Validation" contains "Some of the products SKUs or units you have provided were not found. Correct them and try again."
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test |
-    And I click "Verify Order"
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | test test test |
-    And I click "Verify Order"
     Then I should see that "Quick Add Copy Paste Validation" contains "Invalid format"
 
   Scenario: Check copy paste validation if use semicolons or commas

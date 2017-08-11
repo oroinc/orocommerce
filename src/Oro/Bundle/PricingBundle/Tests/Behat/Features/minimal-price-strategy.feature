@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-8594
 @automatically-ticket-tagged
 @fixture-OroPricingBundle:ProductPrices.yml
@@ -38,7 +39,7 @@ Feature: Minimum Price Selection Strategies
     When I continue as the Buyer
     And I am on the homepage
     And I click "NewCategory"
-    And I click "product2"
+    And I click "View Details" for "product2" product
     And I should see "$1.00"
 
   Scenario: Add new price to product price
@@ -56,7 +57,7 @@ Feature: Minimum Price Selection Strategies
     When I continue as the Buyer
     And I am on the homepage
     And I click "NewCategory"
-    And I click "Product 1"
+    And I click "View Details" for "PSKU1" product
     And I should see "$7.00"
 
   Scenario: Price for Customer

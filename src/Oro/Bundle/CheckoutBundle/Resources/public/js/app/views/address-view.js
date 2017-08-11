@@ -3,21 +3,33 @@ define(function(require) {
 
     var AddressView;
     var _ = require('underscore');
+    var $ = require('jquery');
     var BaseComponent = require('oroui/js/app/views/base/view');
 
     AddressView = BaseComponent.extend({
+        options: {
+            selectors: {
+                address: null,
+                fieldsContainer: null,
+                region: null
+            },
+            hideInputOnShipTo: false
+        },
+
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.$addressSelector = this.$el.find(options.selectors.address);
-            this.$fieldsContainer = this.$el.find(options.selectors.fieldsContainer);
-            this.$regionSelector = this.$el.find(options.selectors.region);
+            this.options = $.extend(true, {}, this.options, options);
 
-            this.needCheckAddressTypes = options.selectors.hasOwnProperty('shipToBillingCheckbox');
+            this.$addressSelector = this.$el.find(this.options.selectors.address);
+            this.$fieldsContainer = this.$el.find(this.options.selectors.fieldsContainer);
+            this.$regionSelector = this.$el.find(this.options.selectors.region);
+
+            this.needCheckAddressTypes = this.options.selectors.hasOwnProperty('shipToBillingCheckbox');
             if (this.needCheckAddressTypes) {
                 this.typesMapping = this.$addressSelector.data('addresses-types');
-                this.$shipToBillingCheckbox = this.$el.find(options.selectors.shipToBillingCheckbox);
+                this.$shipToBillingCheckbox = this.$el.find(this.options.selectors.shipToBillingCheckbox);
                 this.$shipToBillingCheckbox.on('change', _.bind(this._handleShipToBillingAddressCheckbox, this));
                 this.shipToBillingContainer = this.$shipToBillingCheckbox.closest('fieldset');
             }
@@ -35,7 +47,7 @@ define(function(require) {
 
         _handleShipToBillingAddressCheckbox: function(e) {
             var isOneOption = this.$addressSelector[0].length === 1;
-            var disabled = Boolean(this.$shipToBillingCheckbox.attr('checked'));
+            var disabled = this.needCheckAddressTypes ? this.$shipToBillingCheckbox.prop('checked') : false;
             if (!disabled && this._isFormVisible()) {
                 this._showForm();
             } else {
@@ -47,6 +59,12 @@ define(function(require) {
                 this.$addressSelector.inputWidget('dispose');
                 this.$addressSelector.hide();
             }
+
+            if (!this.options.hideInputOnShipTo) {
+                return;
+            }
+
+            this.$addressSelector.siblings('.select2-container').toggle(!disabled);
         },
 
         _onAddressChanged: function(e) {

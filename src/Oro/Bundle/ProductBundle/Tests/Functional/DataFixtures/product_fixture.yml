@@ -21,6 +21,11 @@ product1:
     images:
         - { reference: img, type: listing }
     featured: true
+    manageInventory:
+        reference: product-1.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
 product2:
     productCode: product-2
     inventoryStatus: in_stock
@@ -40,6 +45,11 @@ product2:
     images:
         - { reference: img, type: main }
     featured: true
+    manageInventory:
+        reference: product-2.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
 product3:
     productCode: product-3
     inventoryStatus: out_of_stock
@@ -57,6 +67,13 @@ product3:
     shortDescriptions:
         - { reference: product-3.shortDescriptions.default, text: product-3.shortDescriptions.default }
     featured: true
+    related_products: [product-1, product-2]
+    manageInventory:
+        reference: product-3.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+
 product4:
     productCode: product-4
     inventoryStatus: discontinued
@@ -73,7 +90,13 @@ product4:
         - { reference: product-4.descriptions.default, text: product-4.descriptions.default }
     shortDescriptions:
         - { reference: product-4.shortDescriptions.default, text: product-4.shortDescriptions.default }
-    featured: true
+    featured: true,
+    related_products: [product-3]
+    manageInventory:
+        reference: product-4.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
 product5:
     productCode: product-5
     inventoryStatus: in_stock
@@ -91,6 +114,11 @@ product5:
     shortDescriptions:
         - { reference: product-5.shortDescriptions.default, text: product-5.shortDescriptions.default }
     featured: false
+    manageInventory:
+        reference: product-5.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
 product6:
     productCode: product-6
     inventoryStatus: in_stock
@@ -108,6 +136,11 @@ product6:
     shortDescriptions:
         - { reference: product-6.shortDescriptions.default, text: product-6.shortDescriptions.default }
     featured: false
+    manageInventory:
+        reference: product-6.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
 product7:
     productCode: product-7
     inventoryStatus: in_stock
@@ -125,6 +158,11 @@ product7:
     shortDescriptions:
         - { reference: product-7.shortDescriptions.default, text: product-7.shortDescriptions.default }
     featured: false
+    manageInventory:
+        reference: product-7.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
 product8:
     productCode: product-8
     inventoryStatus: in_stock
@@ -142,3 +180,8 @@ product8:
     shortDescriptions:
         - { reference: product-8.shortDescriptions.default, text: product-8.shortDescriptions.default }
     featured: false
+    manageInventory:
+        reference: product-8.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null

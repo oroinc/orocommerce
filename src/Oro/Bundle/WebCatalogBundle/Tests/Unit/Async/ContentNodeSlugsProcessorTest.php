@@ -152,7 +152,7 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->exactly(2))
+        $message->expects($this->once())
             ->method('getBody')
             ->willReturn(JSON::encode($body));
 
@@ -187,7 +187,7 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->exactly(2))
+        $message->expects($this->once())
             ->method('getBody')
             ->willReturn(JSON::encode($body));
 

@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
@@ -22,6 +23,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
+use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
@@ -112,6 +114,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 ->setFeatured($item['featured']);
 
             $this->addAdvancedValue($item, $product);
+            $this->addEntityFieldFallbackValue($item, $product);
 
             $manager->persist($product);
             $this->addReference($product->getSku(), $product);
@@ -149,6 +152,28 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
         return $value;
     }
+
+    /**
+     * @param array $name
+     * @return EntityFieldFallbackValue
+     */
+    protected function createFieldFallbackValue(array $name)
+    {
+        $value = new EntityFieldFallbackValue();
+        if (array_key_exists('fallback', $name)) {
+            $value->setFallback($name['fallback']);
+        }
+        if (array_key_exists('scalarValue', $name)) {
+            $value->setScalarValue($name['scalarValue']);
+        }
+        if (array_key_exists('arrayValue', $name)) {
+            $value->setArrayValue($name['arrayValue']);
+        }
+        $this->setReference($name['reference'], $value);
+
+        return $value;
+    }
+
 
     /**
      * @param EntityManager $manager
@@ -237,5 +262,36 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
         $productImage->addType($productType);
 
         return $productImage;
+    }
+
+    /**
+     * @param array $item
+     * @param Product $product
+     */
+    private function addEntityFieldFallbackValue(array $item, Product $product)
+    {
+        if (!empty($item['manageInventory'])) {
+            $product->setManageInventory($this->createFieldFallbackValue($item['manageInventory']));
+        }
+
+        if (!empty($item['inventoryThreshold'])) {
+            $product->setInventoryThreshold($this->createFieldFallbackValue($item['inventoryThreshold']));
+        }
+
+        if (!empty($item['minimumQuantityToOrder'])) {
+            $product->setMinimumQuantityToOrder($this->createFieldFallbackValue($item['minimumQuantityToOrder']));
+        }
+
+        if (!empty($item['maximumQuantityToOrder'])) {
+            $product->setMaximumQuantityToOrder($this->createFieldFallbackValue($item['maximumQuantityToOrder']));
+        }
+
+        if (!empty($item['decrementQuantity'])) {
+            $product->setDecrementQuantity($this->createFieldFallbackValue($item['decrementQuantity']));
+        }
+
+        if (!empty($item['backOrder'])) {
+            $product->setBackOrder($this->createFieldFallbackValue($item['backOrder']));
+        }
     }
 }

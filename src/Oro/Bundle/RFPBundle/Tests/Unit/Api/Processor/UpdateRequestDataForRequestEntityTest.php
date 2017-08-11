@@ -19,15 +19,6 @@ class UpdateRequestDataForRequestEntityTest extends \PHPUnit_Framework_TestCase
         $this->processor = new UpdateRequestDataForRequestEntity();
     }
 
-    public function testProcessWithNotFormContext()
-    {
-        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $context = $this->createMock(ContextInterface::class);
-        $context->expects($this->never())->method($this->anything());
-
-        $this->processor->process($context);
-    }
-
     public function testProcessWithoutRequestData()
     {
         /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */

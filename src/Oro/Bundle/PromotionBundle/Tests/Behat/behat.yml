@@ -13,6 +13,9 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroOrderBundle::OrderContext
         - OroSalesBundle::FeatureContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
       paths:
         - '@OroPromotionBundle/Tests/Behat/Features'
 
@@ -36,7 +39,7 @@ oro_behat_extension:
           Name: 'oro_promotion[rule][name]'
           Discount Value: 'oro_promotion[discountConfiguration][options][amount_discount_value][value]'
           Discount Value (%): 'oro_promotion[discountConfiguration][options][percent_discount_value]'
-          Active At (first):
+          Activate At (first):
             type: 'css'
             locator: '.schedule-intervals [name$="[activeAt]"]:first-child'
           Deactivate At (first):
