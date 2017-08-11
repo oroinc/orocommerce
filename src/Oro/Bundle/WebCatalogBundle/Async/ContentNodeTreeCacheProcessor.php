@@ -84,7 +84,6 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
             $this->logger->error(
                 'Unexpected exception occurred during queue message processing',
                 [
-                    'message' => $message->getBody(),
                     'topic' => Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
                     'exception' => $e
                 ]

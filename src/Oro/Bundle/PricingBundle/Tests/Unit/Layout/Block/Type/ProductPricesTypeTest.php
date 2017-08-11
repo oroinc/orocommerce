@@ -8,25 +8,35 @@ use Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
-use Oro\Bundle\EntityConfigBundle\Layout\AttributeGroupRenderRegistry;
+use Oro\Bundle\EntityConfigBundle\Layout\AttributeRenderRegistry;
 use Oro\Bundle\LayoutBundle\Tests\Unit\BlockTypeTestCase;
+use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 
 use Oro\Component\Layout\Block\Type\ContainerType;
 use Oro\Component\Layout\LayoutFactoryBuilderInterface;
 
 class ProductPricesTypeTest extends BlockTypeTestCase
 {
-    /** @var AttributeGroupRenderRegistry */
-    protected $attributeGroupRenderRegistry;
+    /** @var AttributeRenderRegistry */
+    protected $attributeRenderRegistry;
+
+    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $attributeManager;
 
     /**
      * @param LayoutFactoryBuilderInterface $layoutFactoryBuilder
      */
     protected function initializeLayoutFactoryBuilder(LayoutFactoryBuilderInterface $layoutFactoryBuilder)
     {
-        $this->attributeGroupRenderRegistry = new AttributeGroupRenderRegistry();
+        $this->attributeRenderRegistry = new AttributeRenderRegistry();
 
-        $ProductPricesType = new ProductPricesType($this->attributeGroupRenderRegistry);
+        $this->attributeManager = $this->getMockBuilder(AttributeManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $ProductPricesType = new ProductPricesType($this->attributeRenderRegistry, $this->attributeManager);
 
         $layoutFactoryBuilder
             ->addType($ProductPricesType);
@@ -43,10 +53,17 @@ class ProductPricesTypeTest extends BlockTypeTestCase
         $attributeFamily->setCode('family_code');
         $attributeFamily->addAttributeGroup($attributeGroup);
 
+        $attribute = new FieldConfigModel('attribute');
+
         $product = new Product();
         $pricesExpression = new Expression('context["productPrices"]');
 
-        $this->assertFalse($this->attributeGroupRenderRegistry->isRendered($attributeFamily, $attributeGroup));
+        $this->assertFalse($this->attributeRenderRegistry->isAttributeRendered($attributeFamily, 'attribute'));
+
+        $this->attributeManager->expects($this->once())
+            ->method('getAttributeByFamilyAndName')
+            ->with($attributeFamily, PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES)
+            ->willReturn($attribute);
 
         $view = $this->getBlockView(
             ProductPricesType::NAME,
@@ -54,15 +71,15 @@ class ProductPricesTypeTest extends BlockTypeTestCase
                 'productPrices' => $pricesExpression,
                 'attributeFamily' => $attributeFamily,
                 'product' => $product,
-                'productUnitSelectionVisible' => false
+                'isPriceUnitsVisible' => false
             ]
         );
 
         $this->assertEquals($pricesExpression, $view->vars['productPrices']);
-        $this->assertFalse($view->vars['productUnitSelectionVisible']);
+        $this->assertFalse($view->vars['isPriceUnitsVisible']);
         $this->assertEquals($product, $view->vars['product']);
 
-        $this->assertTrue($this->attributeGroupRenderRegistry->isRendered($attributeFamily, $attributeGroup));
+        $this->assertTrue($this->attributeRenderRegistry->isAttributeRendered($attributeFamily, 'attribute'));
     }
 
     public function testGetBlockViewWithoutAttributeFamily()
@@ -73,12 +90,12 @@ class ProductPricesTypeTest extends BlockTypeTestCase
             ProductPricesType::NAME,
             [
                 'productPrices' => $pricesExpression,
-                'productUnitSelectionVisible' => false
+                'isPriceUnitsVisible' => false
             ]
         );
 
         $this->assertEquals($pricesExpression, $view->vars['productPrices']);
-        $this->assertFalse($view->vars['productUnitSelectionVisible']);
+        $this->assertFalse($view->vars['isPriceUnitsVisible']);
         $this->assertNull($view->vars['product']);
     }
 

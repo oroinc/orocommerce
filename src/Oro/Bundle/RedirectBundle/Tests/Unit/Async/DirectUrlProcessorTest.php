@@ -93,8 +93,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'Queue Message is invalid',
                 [
-                    'exception' => $exception,
-                    'message' => $message->getBody()
+                    'exception' => $exception
                 ]
             );
 
@@ -116,7 +115,6 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
                 'Queue Message is invalid',
                 [
                     'exception' => $exception,
-                    'message' => $message->getBody(),
                 ]
             );
 

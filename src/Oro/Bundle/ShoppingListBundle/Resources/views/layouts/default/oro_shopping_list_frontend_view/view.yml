@@ -110,7 +110,6 @@ layout:
                 shopping_list_totals:
                     blockType: price_totals
                     options:
-                        route: oro_shopping_list_pricing_frontend_entity_totals
                         visible: '=data["entity"]!=null'
                         totals: '=data["totals"]'
                         events:
@@ -126,6 +125,10 @@ layout:
                         buttons: '=data["buttons"].getAll(data["entity"])'
                 shopping_list_view_container_content:
                     blockType: container
+                shopping_list_view_container_checkout_message:
+                    blockType: block
+                    options:
+                        visible: '=!data["feature"].isFeatureEnabled("guest_checkout") && !context["is_logged_in"]'
             tree:
                 page_content:
                     shopping_list_view_container:
@@ -160,3 +163,4 @@ layout:
                                     shopping_list_delete_button: ~
                                 shopping_list_totals: ~
                                 shopping_list_combined_button: ~
+                    shopping_list_view_container_checkout_message: ~

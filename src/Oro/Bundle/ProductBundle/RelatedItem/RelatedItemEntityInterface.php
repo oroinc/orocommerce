@@ -18,7 +18,7 @@ interface RelatedItemEntityInterface
 
     /**
      * @param Product $product
-     * @return $this
+     * @return RelatedItemEntityInterface
      */
     public function setProduct(Product $product);
 
@@ -29,7 +29,7 @@ interface RelatedItemEntityInterface
 
     /**
      * @param Product $product
-     * @return $this
+     * @return RelatedItemEntityInterface
      */
     public function setRelatedItem(Product $product);
 }

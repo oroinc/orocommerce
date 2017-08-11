@@ -7,9 +7,7 @@ Feature: Guest shopping list merging functionality
   Scenario: Set limit to One shopping list in configuration
     Given I login as administrator
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck Use Default for "Shopping List Limit" field
     And I fill in "Shopping List Limit" with "1"
     And uncheck Use Default for "Enable guest shopping list" field
@@ -23,13 +21,13 @@ Feature: Guest shopping list merging functionality
     And click "Sign Out"
 
   Scenario: Create shopping list as a guest
-    And I visit store frontend as guest
+    Given I am on homepage
     And I should see "Shopping list"
     And type "PSKU1" in "search"
     And I click "Search Button"
     And I should see "Product1"
     And I should see "Add to Shopping list"
-    And I click "Product1"
+    And I click "View Details" for "PSKU1" product
     And I should see "Add to Shopping list"
     And I click "Add to Shopping list"
     And I should see "Product has been added to" flash message
@@ -44,7 +42,7 @@ Feature: Guest shopping list merging functionality
     And click "Sign Out"
 
   Scenario: Create other shopping List as a guest
-    And I visit store frontend as guest
+    Given I am on homepage
     And I should see "Shopping list"
     And type "CONTROL1" in "search"
     And I click "Search Button"

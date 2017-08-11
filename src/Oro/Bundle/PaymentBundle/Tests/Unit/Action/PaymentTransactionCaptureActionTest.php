@@ -88,8 +88,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             'default' => [
                 'data' => [
                     'capturePaymentTransaction' => $paymentTransaction
-                        ->setAction(PaymentMethodInterface::CAPTURE)
-                        ->setEntityIdentifier(10),
+                        ->setAction(PaymentMethodInterface::CAPTURE),
                     'options' => [
                         'paymentTransaction' => $paymentTransaction,
                         'attribute' => new PropertyPath('test'),
@@ -100,7 +99,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
                     'response' => ['testResponse' => 'testResponse'],
                 ],
                 'expected' => [
-                    'transaction' => 10,
+                    'transaction' => null,
                     'successful' => false,
                     'message' => 'oro.payment.message.error',
                     'testOption' => 'testOption',
@@ -110,8 +109,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
             'throw exception' => [
                 'data' => [
                     'capturePaymentTransaction' => $paymentTransaction
-                        ->setAction(PaymentMethodInterface::CAPTURE)
-                        ->setEntityIdentifier(10),
+                        ->setAction(PaymentMethodInterface::CAPTURE),
                     'options' => [
                         'paymentTransaction' => $paymentTransaction,
                         'attribute' => new PropertyPath('test'),
@@ -122,7 +120,7 @@ class PaymentTransactionCaptureActionTest extends AbstractActionTest
                     'response' => new \Exception(),
                 ],
                 'expected' => [
-                    'transaction' => 10,
+                    'transaction' => null,
                     'successful' => false,
                     'message' => 'oro.payment.message.error',
                     'testOption' => 'testOption',

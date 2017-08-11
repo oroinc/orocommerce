@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxProductControllerTest extends WebTestCase
 {
@@ -17,7 +19,8 @@ class AjaxProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            LoadFrontendProductData::class
+            LoadFrontendProductData::class,
+            LoadProductImageData::class,
         ]);
     }
 
@@ -69,5 +72,93 @@ class AjaxProductControllerTest extends WebTestCase
                 ],
             ],
         ];
+    }
+
+    public function testProductImagesById()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_product_frontend_ajax_images_by_id',
+                [
+                    'id' => $product->getId(),
+                    'filters' => ['product_gallery_popup'],
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+
+        $this->assertNotEmpty($data);
+        $this->assertArrayHasKey(0, $data);
+        $this->assertArrayHasKey('product_gallery_popup', $data[0]);
+        $this->assertStringMatchesFormat(
+            '/media/cache/attachment/%s/%s/product_gallery_popup/product-1',
+            $data[0]['product_gallery_popup']
+        );
+    }
+
+    public function testProductImagesByIdWhenProductHasNoImages()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_3);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_product_frontend_ajax_images_by_id',
+                [
+                    'id' => $product->getId(),
+                    'filters' => ['product_gallery_popup'],
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertSame([], $data);
+    }
+
+    public function testProductImagesByIdWhenProductIsMissing()
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_product_frontend_ajax_images_by_id',
+                [
+                    'id' => 123456,
+                    'filters' => ['product_gallery_popup'],
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertEquals([], $data);
+    }
+
+    public function testProductImagesByIdWhenFiltersNamesAreMissing()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_product_frontend_ajax_images_by_id',
+                [
+                    'id' => $product->getId(),
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertEquals([], $data);
     }
 }

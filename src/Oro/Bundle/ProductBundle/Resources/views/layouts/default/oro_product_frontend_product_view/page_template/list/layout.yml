@@ -38,5 +38,12 @@ layout:
             id: related_products
             optionName: use_slider
             optionValue: false
+        - '@move':
+            id: product_view_upsell_products_container
+            parentId: product_aside_container
+        - '@setOption':
+            id: upsell_products
+            optionName: use_slider
+            optionValue: false
 
     conditions: '!context["is_mobile"]'
