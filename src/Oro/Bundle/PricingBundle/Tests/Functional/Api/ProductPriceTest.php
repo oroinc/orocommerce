@@ -289,6 +289,35 @@ class ProductPriceTest extends RestJsonApiTestCase
         $this->assertMessagesSentForCreateRequest();
     }
 
+    public function testUpdateWithPriceList()
+    {
+        $routeParameters = self::processTemplateData([
+            'entity' => $this->getEntityName(),
+            'id' => $this->getFirstProductPriceApiId(),
+        ]);
+
+        $parameters = $this->getRequestData($this->getAliceFolderName() . '/update_with_price_list.yml');
+
+        $response = $this->request(
+            'PATCH',
+            $this->getUrl(
+                'oro_rest_api_patch',
+                $routeParameters
+            ),
+            $parameters
+        );
+
+        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
+        static::assertContains(
+            'extra fields constraint',
+            $response->getContent()
+        );
+        static::assertContains(
+            'This form should not contain extra fields: \"priceList\"',
+            $response->getContent()
+        );
+    }
+
     public function testUpdateDuplicate()
     {
         $routeParameters = self::processTemplateData([
