@@ -1,0 +1,83 @@
+// @theme: blank;
+
+.product-view-media-gallery {
+    max-height: $product-view-media-gallery-max-height;
+
+    border: $product-view-media-gallery-border;
+
+    overflow: hidden;
+
+    &.slick-initialized {
+        overflow: visible;
+
+        .product-view-media-gallery__image-item {
+            //Should for reset slick display value
+            display: flex;
+        }
+    }
+
+    &__image {
+        max-width: 100%;
+        max-height: $product-view-media-gallery-image-max-height;
+    }
+
+    &__image-item {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+
+        height: 378px;
+    }
+
+    &__nav {
+        position: relative;
+
+        max-height: $product-view-media-gallery-nav-max-height;
+        margin: $product-view-media-gallery-nav-offset;
+
+        opacity: 0;
+        transition: all .4s;
+        visibility: hidden;
+
+        &.slick-initialized {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        &__item {
+            display: block;
+            float: left;
+            padding: $product-view-media-gallery-nav-item-offset-inner;
+
+            &.slick-current img {
+                border-color: $product-view-media-gallery-nav-image-current-border-color;
+            }
+        }
+
+        &__image {
+            width: 100%;
+            max-height: $product-view-media-gallery-nav-max-height;
+
+            border: $product-view-media-gallery-nav-image-border-color;
+            transition: border-color .5s;
+        }
+
+        @include slick-arrow(
+            $slick-arrow-top: 0,
+            $slick-arrow-transform: null,
+            $slick-arrow-z-index: z('base') + 1,
+            $slick-arrow-width: $product-view-media-gallery-nav-arrow-width,
+            $slick-arrow-height: $product-view-media-gallery-nav-arrow-height,
+            $slick-arrow-color: null,
+            $slick-arrow-background: $product-view-media-gallery-nav-arrow-bg,
+            $slick-arrow-border: $product-view-media-gallery-nav-arrow-border,
+            $slick-arrow-icon-size: $product-view-media-gallery-nav-arrow-icon-size,
+            $slick-arrow-icon-color: null,
+            $slick-arrow-prev-icon: $product-view-media-gallery-nav-arrow-icon-prev,
+            $slick-arrow-next-icon: $product-view-media-gallery-nav-arrow-icon-next,
+            $slick-arrow-next-right: $product-view-media-gallery-nav-arrow-side-position,
+            $slick-arrow-prev-left: $product-view-media-gallery-nav-arrow-side-position,
+        );
+    }
+}

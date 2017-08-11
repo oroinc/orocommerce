@@ -20,6 +20,13 @@ class ShoppingListController extends Controller
     /**
      * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @Layout
+     * @Acl(
+     *      id="oro_shopping_list_frontend_view",
+     *      type="entity",
+     *      class="OroShoppingListBundle:ShoppingList",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
      *
      * @param ShoppingList $shoppingList
      * @return array
@@ -29,10 +36,6 @@ class ShoppingListController extends Controller
     {
         if (!$shoppingList) {
             $shoppingList = $this->get('oro_shopping_list.shopping_list.manager')->getCurrent();
-        }
-
-        if (!$this->get('oro_shopping_list.customer_visitor.authorization_checker')->isGranted('VIEW', $shoppingList)) {
-            throw $this->createAccessDeniedException();
         }
 
         if ($shoppingList) {

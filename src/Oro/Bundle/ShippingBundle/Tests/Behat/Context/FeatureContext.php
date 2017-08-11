@@ -121,7 +121,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1880, 'current');
+        $this->getSession()->resizeWindow(1920, 1080, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
@@ -159,7 +159,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1880, 'current');
+        $this->getSession()->resizeWindow(1920, 1080, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
@@ -175,19 +175,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
-
-        // Add method type config
-        $method = array_search('Method', $table->getColumn(0), true);
-        if ($method !== false) {
-            $form->fill(new TableNode([['Method', $table->getRow($method)[1]]]));
-            $shippingMethodConfigAdd = $form->find('css', '.add-method');
-            $shippingMethodConfigAdd->click();
-            $this->waitForAjax();
-
-            $rows = $table->getRows();
-            unset($rows[$method]);
-            $table = new TableNode($rows);
-        }
 
         foreach ($table->getColumn(0) as $columnItem) {
             if (false !== strpos($columnItem, 'Country')) {

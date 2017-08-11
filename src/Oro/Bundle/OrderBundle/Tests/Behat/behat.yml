@@ -34,15 +34,42 @@ oro_behat_extension:
       selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
-    Add Discount:
-      selector: '.oro-discount-collection .add-list-item'
+    Calculate Shipping Button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'span[id="possible_shipping_methods_btn"]'
+
+    Order Flat Rate:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//label[contains(text(),"Flat Rate")]'
+        type: xpath
+
+    Order DPD Classic:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//td[contains(text(),"DPD Classic")]/../td/label[contains(text(),"DPD")]'
+        type: xpath
 
     Order Form:
-      selector: 'form[name="oro_order_type"]'
+      selector: '[id^="oro_order_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Billing Address:
+            locator: '//h4[text()="Billing Address"]/..//div[contains(@id,"s2id_oro_order_type-uid")]/input'
+            type: xpath
+          Shipping Address:
+            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_order_type-uid")]/input'
+            type: xpath
+          Product:
+            locator: '//div[contains(@id,"s2id_oro_order_type_lineItems_0_product-uid")]/input'
+            type: xpath
+          Quantity:
+            locator: '//input[@name="oro_order_type[lineItems][0][quantity]"]'
+            type: xpath
+          PO Number:
+            locator: '//input[contains(@id,"oro_order_type_poNumber-uid")]'
+            type: xpath
           Discount Value (first):
             locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__value"]'
             type: 'css'
@@ -50,7 +77,31 @@ oro_behat_extension:
             locator: '.oro-discount-collection .order-discount-item:first-child [data-name="field__type"]'
             type: 'css'
 
+    Overridden Shipping Cost Amount:
+      selector:
+        locator: '//input[contains(@id,"oro_order_type_overriddenShippingCostAmount_value-uid")]'
+        type: xpath
+
+    Add Discount:
+      selector: '.oro-discount-collection .add-list-item'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
       route: oro_order_frontend_view
+
+  suites:
+    OroOrderBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroApplicationBundle::CommerceMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+        - OroCustomerBundle::CustomerUserContext
+        - OroCheckoutBundle::FeatureContext
+      paths:
+        - '@OroOrderBundle/Tests/Behat/Features'

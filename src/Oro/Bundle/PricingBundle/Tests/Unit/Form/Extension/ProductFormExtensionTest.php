@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -16,7 +17,9 @@ use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -24,9 +27,12 @@ use Symfony\Component\Form\FormInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var UnitOfWork
      */
@@ -87,6 +93,194 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new ProductFormExtension($registry, $this->shardManager, $this->priceManager);
     }
 
+    /**
+     * @dataProvider badProductDataProvider
+     * @param Product|null $product
+     */
+    public function testOnPreSubmitBadProduct(Product $product = null)
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn($product);
+
+        $this->priceRepository
+            ->expects($this->never())
+            ->method('getPricesByProduct');
+
+        $event = new FormEvent($form, []);
+
+        $this->extension->onPreSubmit($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function badProductDataProvider()
+    {
+        return [
+            'no product' => [
+                'product' => null,
+            ],
+            'new product' => [
+                'product' => new Product(),
+            ]
+        ];
+    }
+
+    public function testOnPreSubmitNoPrices()
+    {
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn($product);
+
+        $this->priceRepository
+            ->expects($this->never())
+            ->method('getPricesByProduct');
+
+        $event = new FormEvent($form, ['title' => 'Title']);
+
+        $this->extension->onPreSubmit($event);
+    }
+
+    /**
+     * @dataProvider preSubmitPricesDataProvider
+     * @param array $existingPrices
+     * @param array $submittedPrices
+     * @param array $expectedPrices
+     */
+    public function testOnPreSubmitWithPrices(array $existingPrices, array $submittedPrices, array $expectedPrices)
+    {
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $form
+            ->expects($this->once())
+            ->method('getData')
+            ->willReturn($product);
+
+        $this->priceRepository
+            ->expects($this->once())
+            ->method('getPricesByProduct')
+            ->with($this->shardManager, $product)
+            ->willReturn($existingPrices);
+
+        $event = new FormEvent($form, ['prices' => $submittedPrices]);
+        $this->extension->onPreSubmit($event);
+
+        $this->assertEquals($expectedPrices, $event->getData()['prices']);
+    }
+
+    /**
+     * @return array
+     */
+    public function preSubmitPricesDataProvider()
+    {
+        $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList2 = $this->getEntity(PriceList::class, ['id' => 2]);
+
+        $price1 = $this->getEntity(ProductPrice::class, [
+            'priceList' => $priceList1,
+            'price' => Price::create(10, 'USD'),
+            'unit' => $this->getEntity(ProductUnit::class, ['code' => 'kg']),
+            'quantity' => 1
+        ]);
+
+        $price2 = $this->getEntity(ProductPrice::class, [
+            'priceList' => $priceList2,
+            'price' => Price::create(11, 'USD'),
+            'unit' => $this->getEntity(ProductUnit::class, ['code' => 'kg']),
+            'quantity' => 2
+        ]);
+
+        $price3 = $this->getEntity(ProductPrice::class, [
+            'priceList' => $priceList2,
+            'price' => Price::create(12, 'USD'),
+            'unit' => $this->getEntity(ProductUnit::class, ['code' => 'kg']),
+            'quantity' => 3
+        ]);
+
+        return [
+            'if existing prices are missing in submitted prices they are not added to prices collection' => [
+                'existingPrices' => [
+                    0 => $price1,
+                    1 => $price2
+                ],
+                'submittedPrices' => [
+                    1 => [
+                        'priceList' => $priceList2,
+                        'price' => ['currency' => 'USD', 'value' => 11],
+                        'quantity' => 2,
+                        'unit' => 'kg'
+                    ]
+                ],
+                'expectedPrices' => [
+                    1 => [
+                        'priceList' => $priceList2,
+                        'price' => ['currency' => 'USD', 'value' => 11],
+                        'quantity' => 2,
+                        'unit' => 'kg'
+                    ]
+                ],
+            ],
+            'prices replaced by their unique attributes (when quantities were swapped)' => [
+                'existingPrices' => [
+                    0 => $price1,
+                    1 => $price2,
+                    2 => $price3
+                ],
+                'submittedPrices' => [
+                    0 => [
+                        'priceList' => $priceList1,
+                        'price' => ['currency' => 'USD', 'value' => 11],
+                        'quantity' => 1,
+                        'unit' => 'kg'
+                    ],
+                    1 => [
+                        'priceList' => $priceList2,
+                        'price' => ['currency' => 'USD', 'value' => 12],
+                        'quantity' => 3, // note that this quantity was swapped with next price quantity
+                        'unit' => 'kg'
+                    ],
+                    2 => [
+                        'priceList' => $priceList2,
+                        'price' => ['currency' => 'USD', 'value' => 13],
+                        'quantity' => 2, // note that this quantity was swapped with previous price quantity
+                        'unit' => 'kg'
+                    ]
+                ],
+                'expectedPrices' => [
+                    0 => [
+                        'priceList' => $priceList1,
+                        'price' => ['currency' => 'USD', 'value' => 11],
+                        'quantity' => 1,
+                        'unit' => 'kg'
+                    ],
+                    1 => [
+                        'priceList' => $priceList2,
+                        'price' => ['currency' => 'USD', 'value' => 12],
+                        'quantity' => 3, // note that this quantity was swapped with next price quantity
+                        'unit' => 'kg'
+                    ],
+                    2 => [
+                        'priceList' => $priceList2,
+                        'price' => ['currency' => 'USD', 'value' => 13],
+                        'quantity' => 2, // note that this quantity was swapped with previous price quantity
+                        'unit' => 'kg'
+                    ]
+                ],
+            ]
+        ];
+    }
+
     public function testGetExtendedType()
     {
         $this->assertEquals(ProductType::NAME, $this->extension->getExtendedType());
@@ -105,7 +299,9 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'label' => 'oro.pricing.productprice.entity_plural_label',
                     'required' => false,
                     'mapped' => false,
-                    'constraints' => [new UniqueProductPrices()],
+                    'constraints' => [
+                        new UniqueProductPrices(['groups' => ProductPriceCollectionType::VALIDATION_GROUP])
+                    ],
                     'options' => [
                         'product' => null,
                     ],

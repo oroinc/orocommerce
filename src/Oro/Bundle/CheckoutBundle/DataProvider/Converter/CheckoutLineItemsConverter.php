@@ -34,7 +34,9 @@ class CheckoutLineItemsConverter
         foreach ($data as $item) {
             $orderLineItem = new OrderLineItem();
             foreach ($item as $property => $value) {
-                $this->propertyAccessor->setValue($orderLineItem, $property, $value);
+                if ($this->propertyAccessor->isWritable($orderLineItem, $property)) {
+                    $this->propertyAccessor->setValue($orderLineItem, $property, $value);
+                }
             }
 
             $result->add($orderLineItem);

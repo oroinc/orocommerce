@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
@@ -24,6 +25,7 @@ class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterf
             'currency' => 'USD',
             'quantity' => 1,
             'productUnit' => 'product_unit.box',
+            'product' => 'product-1',
         ],
         self::QUOTE_PRODUCT_OFFER_2 => [
             'allowIncrements' => true,
@@ -31,6 +33,7 @@ class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterf
             'currency' => 'USD',
             'quantity' => 10,
             'productUnit' => 'product_unit.box',
+            'product' => 'product-2',
         ],
     ];
 
@@ -57,6 +60,12 @@ class LoadQuoteProductOfferData extends AbstractFixture implements FixtureInterf
             $offer->setPrice(Price::create($item['amount'], $item['currency']));
             $offer->setQuantity($item['quantity']);
             $offer->setProductUnit($this->getReference($item['productUnit']));
+
+            $quoteProduct = new QuoteProduct();
+            $quoteProduct->setProduct($this->getReference($item['product']));
+            $quoteProduct->addQuoteProductOffer($offer);
+            $manager->persist($quoteProduct);
+
             $manager->persist($offer);
             $this->setReference($key, $offer);
         }

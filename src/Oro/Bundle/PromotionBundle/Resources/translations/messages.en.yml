@@ -49,6 +49,7 @@ oro:
         entity_plural_label: Promotions
         entity_description: Represents promotion information
         id.label: ID
+        coupons.label: Coupons
         descriptions.label: Descriptions
         descriptions.tooltip: This description will be displayed to user
         discount_configuration.label: Discount Configuration
@@ -128,7 +129,7 @@ oro:
             entity_plural_label: Promotion Schedules
             id.label: ID
             promotion.label: Promotion
-            active_at.label: Active At
+            active_at.label: Activate At
             deactivate_at.label: Deactivate At
 
             was_activated: Was activated on %date%.
@@ -166,6 +167,35 @@ oro:
             conditions.label: Conditions
             matching_items.label: Matching Items
 
+        coupon:
+            entity_label: Coupon
+            entity_plural_label: Coupons
+            organization.label: Organization
+            owner.label: Owner
+            id.label: Id
+            code.label: Coupon Code
+            promotion.label: Promotion
+            total_uses.label: Used
+            uses_per_coupon.label: Uses per Coupon
+            uses_per_user.label: Uses per Customer
+            valid_until.label: Valid Until
+            menu:
+                coupon_list.description: List of existing coupons
+                shortcut_new_coupon.label: Create new coupon
+                shortcut_new_coupon.description: Create new coupon
+            sections:
+                general: General
+                additional: Additional
+            form:
+                title:
+                    mass_edit: Mass Coupon Edit
+                message:
+                    saved: 'Coupon has been saved'
+                tooltip:
+                    coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
+                    uses_per_user: 'Limits how many times the coupon may be used by the same customer user'
+                    uses_per_coupon: 'Limits how many times the coupon may be used'
+
     applied_discount:
         name: Name
         amount: Amount
@@ -183,7 +213,7 @@ oro:
                 name: Name
                 amount: Amount
             nav_button:
-                information_notice: Promotion discounts will be recalculated after order saving
+                information_notice: Promotion discounts will be recalculated after saving the order
                 important: Important
                 save_without_discounts_recalculation: Save Without Discounts Recalculation
 

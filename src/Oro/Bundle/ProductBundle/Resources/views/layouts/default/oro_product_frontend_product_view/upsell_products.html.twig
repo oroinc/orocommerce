@@ -1,0 +1,9 @@
+{% block _product_view_upsell_products_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__related-items product-view__upsell-products'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

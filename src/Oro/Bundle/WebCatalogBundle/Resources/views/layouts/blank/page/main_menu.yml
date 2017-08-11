@@ -60,4 +60,6 @@ layout:
                                 web_catalog_menu_second_level_sale_mega: ~
         - '@remove':
             id: 'categories_main_menu_list'
+        - '@remove':
+            id: 'categories_main_menu'
     conditions: 'context["web_catalog_id"] !== null'

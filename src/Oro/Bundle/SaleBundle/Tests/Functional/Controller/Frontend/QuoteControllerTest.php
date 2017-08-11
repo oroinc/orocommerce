@@ -458,7 +458,7 @@ class QuoteControllerTest extends WebTestCase
                     'password' => LoadUserData::PARENT_ACCOUNT_USER1,
                 ],
                 'expected' => [
-                    'createOrderButton' => false,
+                    'createOrderButton' => true,
                     'columns' => [
                         [
                             'label' => 'oro.frontend.sale.quote.qid.label',

@@ -125,6 +125,14 @@ services:
         calls:
             - [setSkuIncrementor,  ["@oro_product.service.sku_incrementor"]]
 
+    oro_product.service.related_items_handler:
+        class: 'Oro\Bundle\ProductBundle\Form\Handler\RelatedItemsHandler'
+        arguments:
+            - '@translator'
+        calls:
+            - [addAssigner, ['relatedProducts', '@oro_product.related_item.related_product.assigner_strategy']]
+            - [addAssigner, ['upsellProducts', '@oro_product.related_item.upsell_product.assigner_strategy']]
+
     oro_product.service.product_update_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
         parent: oro_form.model.update_handler
@@ -132,7 +140,7 @@ services:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setRouter, ['@router']]
-            - [setRelatedProductAssigner, ['@oro_product.related_item.related_product.assigner_strategy']]
+            - [setRelatedItemsHandler, ['@oro_product.service.related_items_handler']]
 
     oro_product.storage.product_data_bag:
         class: '%session.attribute_bag.class%'
@@ -199,6 +207,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: not_empty_configurable_attributes }
 
+    oro_product.validator.product_page_template:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductPageTemplateValidator'
+        arguments:
+            - '@oro_layout.page_templates_manager'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_page_template_validator }
+
     oro_product.component_processor.filter:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false
@@ -245,6 +260,7 @@ services:
         arguments:
             - '@translator'
             - '@oro_product.related_item.related_product.config_provider'
+            - '@oro_product.related_item.upsell_product.config_provider'
             - '@security.authorization_checker'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -661,7 +677,7 @@ services:
             - '@session'
             - '@translator'
         tags:
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.update_after, method: afterUpdate }
 
     oro.product.provider.watermark_image_filter:
         class: 'Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider'
@@ -1134,3 +1150,9 @@ services:
     oro_product.doctrine.abstract_cached_provider_decorator:
         class: 'Oro\Bundle\ProductBundle\Provider\Cache\Doctrine\CachedProductsProviderDecorator'
         abstract: true
+
+    oro_product.provider.product_images_urls:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesURLsProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_attachment.manager'
