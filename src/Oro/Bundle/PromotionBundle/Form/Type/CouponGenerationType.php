@@ -152,7 +152,7 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.generation.dashesSequence.prefix.label',
-                    'attr' => ['class' => 'input-small promotion-coupon-generation-preview'],
+                    'attr' => ['class' => 'dashesSequence-coupon-preview promotion-coupon-generation-preview'],
                 ]
             );
     }
