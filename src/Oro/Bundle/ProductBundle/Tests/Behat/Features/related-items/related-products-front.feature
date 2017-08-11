@@ -29,7 +29,7 @@ Feature: Showing related products
   Scenario: Minimum Items restriction
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 6     |
@@ -55,7 +55,7 @@ Feature: Showing related products
   Scenario: Maximum Items restriction
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 2     |
@@ -75,7 +75,7 @@ Feature: Showing related products
   Scenario: Verify equivalence partitioning for Minimum and Maximum Items
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 2     |
@@ -95,7 +95,7 @@ Feature: Showing related products
   Scenario: Disabled products are not displayed in "Related Products" block
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 6     |
@@ -124,7 +124,7 @@ Feature: Showing related products
     Scenario: Related products are displayed on both sides when "Assign In Both Directions" option is enabled
       Given I proceed as the Admin
       And go to System/ Configuration
-      And I click "Related Items" on configuration sidebar
+      And I follow Commerce/Catalog/Related Items on configuration sidebar
       And I fill "RelatedProductsConfig" with:
         | Assign in Both Directions Use Default | false |
         | Assign in Both Directions             | true  |
@@ -159,7 +159,7 @@ Feature: Showing related products
       And I should see "Add to Shopping List" in related products
       And I proceed as the Admin
       And go to System/ Configuration
-      And I click "Related Items" on configuration sidebar
+      And I follow Commerce/Catalog/Related Items on configuration sidebar
       And I fill "RelatedProductsConfig" with:
         | Show Add Button Use Default | false |
         | Show Add Button             | false |
@@ -187,7 +187,7 @@ Feature: Showing related products
 #    And I set window size to 1920x1280
 #    And I proceed as the Admin
 #    And go to System/ Configuration
-#    And I click "Related Items" on configuration sidebar
+#    And I follow Commerce/Catalog/Related Items on configuration sidebar
 #    And I fill "RelatedProductsConfig" with:
 #      | Use Slider On Mobile Use Default | false |
 #      | Use Slider On Mobile             | true |
@@ -206,7 +206,7 @@ Feature: Showing related products
   Scenario: Verify that "Related Products" block is displayed in "Short page" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Theme" on configuration sidebar
+    And I follow Commerce/Design/Theme on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false      |
       | Product Page | Short page |
@@ -221,7 +221,7 @@ Feature: Showing related products
   Scenario: Verify that "Related Products" block is displayed in "Two columns page" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Theme" on configuration sidebar
+    And I follow Commerce/Design/Theme on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false            |
       | Product Page | Two columns page |
@@ -236,7 +236,7 @@ Feature: Showing related products
   Scenario: Verify that "Related Products" block is displayed in "List page" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Theme" on configuration sidebar
+    And I follow Commerce/Design/Theme on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false     |
       | Product Page | List page |

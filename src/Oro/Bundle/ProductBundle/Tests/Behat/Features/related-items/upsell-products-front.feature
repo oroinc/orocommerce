@@ -28,7 +28,7 @@ Feature: Showing upsell products
   Scenario: Minimum Items restriction
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 6     |
@@ -55,7 +55,7 @@ Feature: Showing upsell products
   Scenario: Maximum Items restriction
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 2     |
@@ -75,7 +75,7 @@ Feature: Showing upsell products
   Scenario: Verify equivalence partitioning for Minimum and Maximum Items
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 2     |
@@ -95,7 +95,7 @@ Feature: Showing upsell products
   Scenario: Disabled products are not displayed in "Up-sell Products" block
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Maximum Items Use Default | false |
       | Maximum Items             | 6     |
@@ -132,7 +132,7 @@ Feature: Showing upsell products
       And I should see "Add to Shopping List" in upsell products
       And I proceed as the Admin
       And go to System/ Configuration
-      And I click "Related Items" on configuration sidebar
+      And I follow Commerce/Catalog/Related Items on configuration sidebar
       And I fill "UpsellProductsConfig" with:
         | Show Add Button Use Default | false |
         | Show Add Button             | false |
@@ -160,7 +160,7 @@ Feature: Showing upsell products
 #    And I set window size to 1920x1280
 #    And I proceed as the Admin
 #    And go to System/ Configuration
-#    And I click "Related Items" on configuration sidebar
+#    And I follow Commerce/Catalog/Related Items on configuration sidebar
 #    And I fill "UpsellProductsConfig" with:
 #      | Use Slider On Mobile Use Default | false |
 #      | Use Slider On Mobile             | true |
@@ -179,7 +179,7 @@ Feature: Showing upsell products
   Scenario: Verify that "Up-sell Products" block is displayed in "Short page" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Theme" on configuration sidebar
+    And I follow Commerce/Design/Theme on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false      |
       | Product Page | Short page |
@@ -194,7 +194,7 @@ Feature: Showing upsell products
   Scenario: Verify that "Up-sell Products" block is displayed in "Two columns page" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Theme" on configuration sidebar
+    And I follow Commerce/Design/Theme on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false            |
       | Product Page | Two columns page |
@@ -209,7 +209,7 @@ Feature: Showing upsell products
   Scenario: Verify that "Up-sell Products" block is displayed in "List page" layout view
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Theme" on configuration sidebar
+    And I follow Commerce/Design/Theme on configuration sidebar
     And I fill "Page Templates Form" with:
       | Use Default  | false     |
       | Product Page | List page |
@@ -224,7 +224,7 @@ Feature: Showing upsell products
   Scenario: Check if Related block is not displayed in case when Upsell feature is enabled but Related is disabled.
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow Commerce/Catalog/Related Items on configuration sidebar
     And I fill "UpsellProductsConfig" with:
       | Enable Up-sell Products Use Default | false |
       | Enable Up-sell Products             | true  |

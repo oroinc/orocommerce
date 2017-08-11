@@ -4,8 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
-use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
+use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SidebarConfigMenu;
+use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SystemConfigForm;
+use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep;
@@ -30,16 +31,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
     private $oroMainContext;
 
     /**
-     * @var FormContext
-     */
-    private $formContext;
-
-    /**
-     * @var ConfigContext
-     */
-    private $configContext;
-
-    /**
      * @var ShoppingListContext
      */
     private $shoppingListContext;
@@ -51,8 +42,6 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
     {
         $environment = $scope->getEnvironment();
         $this->oroMainContext = $environment->getContext(OroMainContext::class);
-        $this->configContext = $environment->getContext(ConfigContext::class);
-        $this->formContext = $environment->getContext(FormContext::class);
         $this->shoppingListContext = $environment->getContext(ShoppingListContext::class);
     }
 
@@ -146,11 +135,20 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function iDisableInventoryManagement()
     {
-        $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
+        /** @var MainMenu $menu */
+        $menu = $this->createElement('MainMenu');
+        $menu->openAndClick('System/Configuration');
         $this->waitForAjax();
-        $this->configContext->clickLinkOnConfigurationSidebar('Product Options');
+
+        /** @var SidebarConfigMenu $sidebarMenu */
+        $sidebarMenu = $this->createElement('SidebarConfigMenu');
+        $sidebarMenu->openAndClick('Commerce/Inventory/Product Options');
         $this->waitForAjax();
-        $this->formContext->uncheckUseDefaultForField("Decrement Inventory");
+
+        /** @var SystemConfigForm $form */
+        $form = $this->createElement('SystemConfigForm');
+        $form->uncheckUseDefaultCheckbox("Decrement Inventory");
+
         $this->oroMainContext->fillField("Decrement Inventory", 0);
         $this->oroMainContext->pressButton('Save settings');
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
