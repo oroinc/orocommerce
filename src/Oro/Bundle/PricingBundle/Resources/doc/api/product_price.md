@@ -108,6 +108,8 @@ Delete a product price identified by ID. <br />
 
 Delete a collection of product prices. A collection may contain all prices or may be filtered using standard <a href="https://www.orocommerce.com/documentation/current/dev-guide/integration#filters">filters</a>.
 
+**Note:** It is required to provide priceList filter with request.
+
 ## FIELDS
 
 ### currency
