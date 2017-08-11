@@ -20,6 +20,9 @@ layout:
                         mode: 'text'
                 __product_image_holder:
                     blockType: container
+                    options:
+                        attr:
+                            class: 'product-item__image-holder--aspect-ratio'
                 __product_view:
                     blockType: product_listing_view
                     options:
