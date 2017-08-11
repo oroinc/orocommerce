@@ -105,7 +105,6 @@ oro:
 
         workflow:
             order_options.label: Order options
-            view_options.label: View Options for this Order
             unavailable_transition.message: 'This action is not available, reason:'
 
             success:

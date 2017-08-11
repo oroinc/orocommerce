@@ -15,6 +15,8 @@ define(function(require) {
         }),
 
         lastSavedData: '',
+        reloadEvents: [],
+        buttonDisabled: false,
 
         /**
          * @param {Object} options
@@ -22,17 +24,9 @@ define(function(require) {
         initialize: function(options) {
             SinglePageTransitionButtonComponent.__super__.initialize.call(this, options);
             if (this.options.saveStateUrl || false) {
-                var delayCallback = _.debounce(_.bind(this.onFormChange, this), this.options.changeTimeout);
+                this.saveOnChange = _.debounce(this.saveOnChange, this.options.changeTimeout);
 
-                this.$form.on('change', _.bind(function(e) {
-                    var selectors = _.keys(this.options.targetEvents);
-
-                    if (Boolean(e.originalEvent) && $(e.target).closest(selectors.join(',')).length) {
-                        mediator.trigger('checkout:transition-button:disable');
-                    }
-
-                    delayCallback.apply(this, arguments);
-                }, this));
+                this.$form.on('change', _.bind(this.onFormChange, this));
             }
             if (this.$form) {
                 this.$el.on('click', _.bind(this.submit, this));
@@ -74,11 +68,47 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onFormChange: function(e) {
-            if (this.inProgress) {
+            if (!Boolean(e.originalEvent)) {
                 return;
             }
 
             var $target = $(e.target);
+
+            this.isReloadRequired($target);
+            this.saveOnChange($target);
+        },
+
+        /**
+         * @param {jQuery} $target
+         */
+        isReloadRequired: function($target) {
+            var self = this;
+
+            _.each(this.options.targetEvents, function(eventNames, selector) {
+                if (!$target.closest(selector).length) {
+                    return;
+                }
+
+                _.each(eventNames, function(eventName) {
+                    if (_.indexOf(self.reloadEvents, eventName) === -1) {
+                        self.reloadEvents.push(eventName);
+                    }
+                });
+            });
+
+            if (!_.isEmpty(this.reloadEvents) && !this.buttonDisabled) {
+                mediator.trigger('checkout:transition-button:disable');
+                this.buttonDisabled = true;
+            }
+        },
+
+        /**
+         * @param {jQuery} $target
+         */
+        saveOnChange: function($target) {
+            if (this.inProgress) {
+                return;
+            }
 
             for (var i = 0; i < this.options.ignoreTargets.length; i++) {
                 var selector = this.options.ignoreTargets[i];
@@ -116,35 +146,26 @@ define(function(require) {
          * @param {Object} response
          */
         afterSaveState: function($target, response) {
+            var self = this;
             var responseData = response.responseData || {};
-            if (!_.isEmpty(this.options.targetEvents) && (responseData.stateSaved || false)) {
-                var eventCount = 0;
-                var disabled = false;
+            if (!_.isEmpty(this.reloadEvents) && (responseData.stateSaved || false)) {
+                var eventCount = this.reloadEvents.length;
 
-                $.each(this.options.targetEvents, function(selector, eventNames) {
-                    eventCount += eventNames.length;
+                _.each(this.reloadEvents, function(eventName) {
+                    mediator.trigger(
+                        eventName,
+                        {
+                            'layoutSubtreeCallback': function() {
+                                eventCount--;
 
-                    if ($target.closest(selector).length) {
-                        if (!disabled) {
-                            mediator.trigger('checkout:transition-button:disable');
-                            disabled = true;
-                        }
-
-                        _.each(eventNames, function(eventName) {
-                            mediator.trigger(
-                                eventName,
-                                {
-                                    'layoutSubtreeCallback': function() {
-                                        eventCount--;
-
-                                        if (eventCount < 1) {
-                                            mediator.trigger('checkout:transition-button:enable');
-                                        }
-                                    }
+                                if (eventCount < 1) {
+                                    mediator.trigger('checkout:transition-button:enable');
+                                    self.reloadEvents = [];
+                                    self.buttonDisabled = false;
                                 }
-                            );
-                        });
-                    }
+                            }
+                        }
+                    );
                 });
             }
         }

@@ -23,6 +23,6 @@ Feature: Default Checkout From Shopping List Quantity Errors
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     Then I should see "There is not enough quantity for this product"
 
-    When I check "Delete this Shopping List after Submitting Order" on the "Order Review" checkout step and press Submit Order
+    When I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I should see "There was an error while processing the order"
     And I should see "There is not enough quantity for this product"

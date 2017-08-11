@@ -1,5 +1,5 @@
 @ticket-BB-11014
-@fixture-OroOrderBundle:Order.yml
+@fixture-OroOrderBundle:OrderAddressesFixture.yml
 Feature: Order Addresses
 
   Scenario: Check Order Billing and Shipping Address Labels

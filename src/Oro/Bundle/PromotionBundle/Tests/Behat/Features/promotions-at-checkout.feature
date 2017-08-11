@@ -24,7 +24,7 @@ Feature: Promotions at Checkout
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount  |
       | Discount | -$12.50 |
@@ -35,7 +35,7 @@ Feature: Promotions at Checkout
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount  |
       | Discount | -$12.50 |
@@ -46,7 +46,7 @@ Feature: Promotions at Checkout
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$12.50 |
@@ -57,7 +57,7 @@ Feature: Promotions at Checkout
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$12.50 |
@@ -69,7 +69,7 @@ Feature: Promotions at Checkout
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$12.50 |

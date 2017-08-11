@@ -69,7 +69,7 @@ oro_behat_extension:
 
     PromotionCheckoutStepLineItem:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStepLineItem
-      selector: 'table[data-scrollable-inner-content] > tbody > tr[data-scrollable-content-body]'
+      selector: 'table.checkout-order-summary__grid > tbody > tr.checkout-order-summary__grid-tr'
 
     PromotionOrder:
       class: Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionOrder

@@ -83,7 +83,7 @@ Feature: Quick order form
       | Product1 | 2 | items |
       | Product2 | 4 | sets  |
       | Product3 | 2 | items |
-    And I check "Delete this Shopping List after Submitting Order" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Add to shopping list from quick order page
