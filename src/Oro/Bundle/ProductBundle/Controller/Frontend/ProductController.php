@@ -10,6 +10,7 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension;
 
 class ProductController extends Controller
 {
@@ -79,6 +80,11 @@ class ProductController extends Controller
         $templateProduct = $parentProduct ? $parentProduct : $product;
         $pageTemplate = $this->get('oro_product.provider.page_template_provider')
             ->getPageTemplate($templateProduct, 'oro_product_frontend_product_view');
+
+        $this->get('oro_entity_config.attribute_render_registry')->setAttributeRendered(
+            $product->getAttributeFamily(),
+            PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES
+        );
 
         return  [
             'data' => $data,

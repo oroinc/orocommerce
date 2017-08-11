@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
 {
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEnabled()
     {
@@ -20,7 +20,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getLimit()
     {
@@ -29,7 +29,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isBidirectional()
     {
@@ -38,7 +38,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getMinimumItems()
     {
@@ -47,7 +47,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getMaximumItems()
     {
@@ -56,7 +56,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isSliderEnabledOnMobile()
     {
@@ -65,7 +65,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isAddButtonVisible()
     {

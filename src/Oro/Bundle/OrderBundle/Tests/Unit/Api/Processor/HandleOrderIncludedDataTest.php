@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\FormContext;
+use Oro\Bundle\ApiBundle\Tests\Unit\Processor\FormProcessorTestCase;
 use Oro\Bundle\OrderBundle\Api\Processor\HandleOrderIncludedData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
-use Oro\Component\ChainProcessor\ContextInterface;
 
-class HandleOrderIncludedDataTest extends \PHPUnit_Framework_TestCase
+class HandleOrderIncludedDataTest extends FormProcessorTestCase
 {
     /**
      * @var SkuCachedProductProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -18,27 +17,20 @@ class HandleOrderIncludedDataTest extends \PHPUnit_Framework_TestCase
     /**
      * @var HandleOrderIncludedData
      */
-    protected $testedProcessor;
+    protected $processor;
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->skuCachedProductProviderMock = $this->createMock(SkuCachedProductProvider::class);
 
-        $this->testedProcessor = new HandleOrderIncludedData($this->skuCachedProductProviderMock);
-    }
-
-    /**
-     * @return FormContext|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createContextMock()
-    {
-        return $this->createMock(FormContext::class);
+        $this->processor = new HandleOrderIncludedData($this->skuCachedProductProviderMock);
     }
 
     public function testSuccessfulProcess()
     {
         $productSku = '4HC51';
-        $contextMock = $this->createContextMock();
         $includedData = [
             [
                 'data' =>
@@ -50,74 +42,35 @@ class HandleOrderIncludedDataTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($this->createMock(Order::class));
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getIncludedData')
-            ->willReturn($includedData);
-
         $this->skuCachedProductProviderMock
             ->expects(static::once())
             ->method('addSkuToCache')
             ->with($productSku);
 
-        $this->testedProcessor->process($contextMock);
-    }
-
-    public function testWrongContext()
-    {
-        $contextMock = $this->createMock(ContextInterface::class);
-
-        $contextMock
-            ->expects(static::never())
-            ->method('getResult');
-
-        $this->skuCachedProductProviderMock
-            ->expects(static::never())
-            ->method('addSkuToCache');
-
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($this->createMock(Order::class));
+        $this->context->setIncludedData($includedData);
+        $this->processor->process($this->context);
     }
 
     public function testWrongResult()
     {
-        $contextMock = $this->createContextMock();
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn(new \stdClass());
-
         $this->skuCachedProductProviderMock
             ->expects(static::never())
             ->method('addSkuToCache');
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult(new \stdClass());
+        $this->processor->process($this->context);
     }
 
     public function testNoIncludedData()
     {
-        $contextMock = $this->createContextMock();
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($this->createMock(Order::class));
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getIncludedData')
-            ->willReturn([]);
-
         $this->skuCachedProductProviderMock
             ->expects(static::never())
             ->method('addSkuToCache');
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($this->createMock(Order::class));
+        $this->context->setIncludedData([]);
+        $this->processor->process($this->context);
     }
 
     /**
@@ -126,23 +79,13 @@ class HandleOrderIncludedDataTest extends \PHPUnit_Framework_TestCase
      */
     public function testWrongIncludedData(array $includedData)
     {
-        $contextMock = $this->createContextMock();
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getResult')
-            ->willReturn($this->createMock(Order::class));
-
-        $contextMock
-            ->expects(static::once())
-            ->method('getIncludedData')
-            ->willReturn($includedData);
-
         $this->skuCachedProductProviderMock
             ->expects(static::never())
             ->method('addSkuToCache');
 
-        $this->testedProcessor->process($contextMock);
+        $this->context->setResult($this->createMock(Order::class));
+        $this->context->setIncludedData($includedData);
+        $this->processor->process($this->context);
     }
 
     /**

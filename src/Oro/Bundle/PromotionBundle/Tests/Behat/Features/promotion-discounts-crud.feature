@@ -1,3 +1,4 @@
+@regression
 @fixture-OroPromotionBundle:promotion_crud.yml
 Feature: Managing promotions
   In order to use configure promotions discounts

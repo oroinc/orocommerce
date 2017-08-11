@@ -129,7 +129,7 @@ oro:
             entity_plural_label: Promotion Schedules
             id.label: ID
             promotion.label: Promotion
-            active_at.label: Active At
+            active_at.label: Activate At
             deactivate_at.label: Deactivate At
 
             was_activated: Was activated on %date%.

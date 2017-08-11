@@ -27,6 +27,8 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU1 |
+    And I wait for products to load
+    When I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And "PSKU1" product should has "$45.00" value in price field
     And I wait for products to load
@@ -119,6 +121,8 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU4 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     When I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items with price" flash message
@@ -139,18 +143,24 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Get Quote"
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Create Order"
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click on "Shopping List Dropdown"
     And I click "Add to List 2"

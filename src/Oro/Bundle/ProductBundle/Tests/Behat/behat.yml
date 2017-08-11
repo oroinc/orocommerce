@@ -24,6 +24,7 @@ oro_behat_extension:
           locator: '//h4[text()[contains(.,"Related Items")]]/parent::div//a[contains(@class, "quick-editable")]'
 
     ### Related Items ###
+    ## Related Products ##
     SelectRelatedProductsGrid:
       selector: 'div[data-page-component-name="products-related-products-select"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -76,6 +77,7 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="products-related-products-edit"] div.filter-item'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
+    ## Upsell Products ##
     SelectUpsellProductsGrid:
       selector: 'div[data-page-component-name="products-upsell-products-select"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
@@ -129,7 +131,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
     ProductForm Step One:
-      selector: 'div#container'
+      selector: 'form[name="oro_product_step_one"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -137,7 +139,7 @@ oro_behat_extension:
           Attribute Family: 'oro_product_step_one[attributeFamily]'
 
     ProductForm:
-      selector: 'div#container'
+      selector: 'form[name="oro_product"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -158,7 +160,7 @@ oro_behat_extension:
           Size Attribute: 'oro_product[size_attribute]'
 
     RelatedProductsConfig:
-      selector: 'div#container'
+      selector: 'form[name="related_items"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -178,7 +180,7 @@ oro_behat_extension:
           Use Slider On Mobile: 'related_items[oro_product___related_products_use_slider_on_mobile][value]'
 
     UpsellProductsConfig:
-      selector: 'div#container'
+      selector: 'form[name="related_items"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -186,9 +188,17 @@ oro_behat_extension:
           Maximum Number Of Assigned Items: 'related_items[oro_product___max_number_of_upsell_products][value]'
           Enable Up-sell Products Use Default: 'related_items[oro_product___upsell_products_enabled][use_parent_scope_value]'
           Enable Up-sell Products: 'related_items[oro_product___upsell_products_enabled][value]'
+          Maximum Items Use Default: 'related_items[oro_product___upsell_products_max_items][use_parent_scope_value]'
+          Maximum Items: 'related_items[oro_product___upsell_products_max_items][value]'
+          Minimum Items Use Default: 'related_items[oro_product___upsell_products_min_items][use_parent_scope_value]'
+          Minimum Items: 'related_items[oro_product___upsell_products_min_items][value]'
+          Show Add Button Use Default: 'related_items[oro_product___upsell_products_show_add_button][use_parent_scope_value]'
+          Show Add Button: 'related_items[oro_product___upsell_products_show_add_button][value]'
+          Use Slider On Mobile Use Default: 'related_items[oro_product___upsell_products_use_slider_on_mobile][use_parent_scope_value]'
+          Use Slider On Mobile: 'related_items[oro_product___upsell_products_use_slider_on_mobile][value]'
 
     Product Family Form:
-      selector: 'div#container'
+      selector: 'form[name="oro_attribute_family"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -399,11 +409,17 @@ oro_behat_extension:
     ProductFrontendGrid:
       selector: '.product-list'
 
-    ProductRelatedItems:
+    ProductRelatedProducts:
       selector: '.product-view__related-products .embedded-list__item'
+
+    ProductUpsellProducts:
+      selector: '.product-view__upsell-products .embedded-list__item'
 
     Related Products Slider:
       selector: '.product-view__related-products .embedded-list-slider'
+
+    Up-sell Products Slider:
+      selector: '.product-view__upsell-products .embedded-list-slider'
 
     ProductRelatedItem:
       selector: '.embedded-product'
@@ -522,6 +538,8 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
+          Product Images Default: 'product_images[oro_product___image_preview_on_product_listing_enabled][use_parent_scope_value]'
+          Product Images: 'product_images[oro_product___image_preview_on_product_listing_enabled][value]'
           Popup Gallery Default: 'product_images[oro_product___popup_gallery_on_product_view][use_parent_scope_value]'
           Popup Gallery On Product View: 'product_images[oro_product___popup_gallery_on_product_view][value]'
 
@@ -575,6 +593,13 @@ oro_behat_extension:
           Meta Title: 'oro_product_brand[metaTitles][values][default]'
           Meta Description: 'oro_product_brand[metaDescriptions][values][default]'
           Meta Keywords: 'oro_product_brand[metaKeywords][values][default]'
+
+    Product Item Preview:
+      selector: '.product-item .product-item__preview'
+
+    Product Item Gallery Trigger:
+      selector: '.product-item [data-trigger-gallery-open]'
+
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
 

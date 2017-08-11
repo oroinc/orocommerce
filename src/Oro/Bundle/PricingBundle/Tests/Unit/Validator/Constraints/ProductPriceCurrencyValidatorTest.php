@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
+use Symfony\Component\Validator\Constraint;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency;
 use Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator;
-use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,10 +33,18 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new ProductPriceCurrency();
-        $this->context = $this->createMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
 
         $this->validator = new ProductPriceCurrencyValidator();
         $this->validator->initialize($this->context);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown()
+    {
+        unset($this->constraint, $this->context, $this->validator);
     }
 
     public function testConfiguration()
@@ -45,39 +53,81 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Constraint::CLASS_CONSTRAINT, $this->constraint->getTargets());
     }
 
+    public function testGetDefaultOption()
+    {
+        $this->assertNull($this->constraint->getDefaultOption());
+    }
+
+    public function testValidateWithAllowedPrice()
+    {
+        $price = new Price();
+        $price
+            ->setValue('50')
+            ->setCurrency('USD');
+
+        $productPrice = $this->getProductPrice();
+        $productPrice->setPrice($price);
+
+        $this->context->expects($this->never())
+            ->method('addViolationAt');
+
+        $this->validator->validate($productPrice, $this->constraint);
+    }
+
+    public function testValidateWithNotAllowedCurrency()
+    {
+        $invalidCurrency = 'ABC';
+
+        $price = new Price();
+        $price
+            ->setValue('50')
+            ->setCurrency($invalidCurrency);
+
+        $productPrice = $this->getProductPrice();
+        $productPrice->setPrice($price);
+
+        $this->context->expects($this->once())
+            ->method('addViolationAt')
+            ->with(
+                'price.currency',
+                $this->constraint->message,
+                $this->equalTo(['%invalidCurrency%' => $invalidCurrency])
+            );
+
+        $this->validator->validate($productPrice, $this->constraint);
+    }
+
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given
+     * @expectedExceptionMessage must be instance of "Oro\Bundle\PricingBundle\Entity\BaseProductPrice",
+     * "stdClass" given
      */
     public function testNotExpectedValueException()
     {
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 
-    public function testValidateWithoutPriceList()
+    public function testWithoutPrice()
     {
         $productPrice = new ProductPrice();
-        $productPrice->setPrice(new Price());
-        $this->context->expects(static::never())->method('addViolationAt');
+
+        $this->context->expects($this->never())
+            ->method('addViolationAt');
+
         $this->validator->validate($productPrice, $this->constraint);
     }
 
-    public function testValidPrice()
+    /**
+     * @return ProductPrice
+     */
+    public function getProductPrice()
     {
-        $productPrice = new ProductPrice();
-        $productPrice->getPriceList(new PriceList());
-        $productPrice->setPrice(new Price());
-        $this->context->expects(static::never())->method('addViolationAt');
-        $this->validator->validate($productPrice, $this->constraint);
-    }
-
-    public function testInvalidPrice()
-    {
-        $productPrice = new ProductPrice();
         $priceList = new PriceList();
+        $priceList->setCurrencies(['USD', 'EUR']);
+
+        $productPrice = new ProductPrice();
         $productPrice->setPriceList($priceList);
-        $productPrice->setPrice(Price::create(1, 'USD'));
-        $this->context->expects(static::once())->method('addViolationAt');
-        $this->validator->validate($productPrice, $this->constraint);
+
+        return $productPrice;
     }
 }
