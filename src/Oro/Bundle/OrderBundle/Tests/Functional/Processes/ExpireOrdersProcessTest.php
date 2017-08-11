@@ -125,6 +125,23 @@ class ExpireOrdersProcessTest extends WebTestCase
         );
     }
 
+    public function testExecuteWithCurrentDateForDNSL()
+    {
+        $this->configManager->reset('oro_order.order_automation_enable_cancellation');
+        $this->configManager->reset('oro_order.order_automation_applicable_statuses');
+        $this->configManager->reset('oro_order.order_automation_target_status');
+        $this->configManager->flush();
+
+        $order = $this->prepareOrderObject((new \DateTime()));
+        $internalStatus = $order->getInternalStatus();
+        $this->executeProcessForOrder($order);
+        $order = $this->reloadOrder($order);
+        $this->assertEquals(
+            $internalStatus->getId(),
+            $order->getInternalStatus()->getId()
+        );
+    }
+
     public function testExecuteWithOverriddenTargetStatus()
     {
         $this->configManager->reset('oro_order.order_automation_enable_cancellation');

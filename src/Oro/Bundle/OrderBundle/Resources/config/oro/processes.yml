@@ -29,11 +29,14 @@ processes:
                             identifier: $.targetStatusId
                         - '@create_datetime':
                             attribute: $.date
+                            #should be start of the day, to avoid cancellation of orders with today's DNSL
+                            time: '00:00:00'
                         - '@find_entities':
                             class: Oro\Bundle\OrderBundle\Entity\Order
                             attribute: $.orders
                             where:
                                 and:
+                                    - e.shipUntil IS NOT NULL
                                     - e.shipUntil < :date
                                     - NOT IDENTITY(e.internal_status) = :targetStatus
                                     - IDENTITY(e.internal_status) IN (:statuses)
