@@ -131,13 +131,7 @@
             class: attr.class|default('') ~ " notes collapse-view expanded"
         }) %}
 
-        <div {{ block('block_attributes') }}
-            data-page-component-module="oroui/js/app/components/jquery-widget-component"
-            data-page-component-options="{{ {
-                widgetModule: 'oroui/js/widget/collapse-widget',
-                storageKey: id
-            }|json_encode() }}"
-        >
+        <div {{ block('block_attributes') }} data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
             <h3 class="section-title section-title--size-m">
                 {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
                 <span class="notes__count">({{ requestAdditionalNotes|length }})</span>
@@ -166,10 +160,6 @@
 
 {% block _rfp_request_view_line_items_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set expandTextOptions = {
-        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
-        maxLength: 100
-    }|json_encode() %}
     <!-- START ITEMS ORDERED DESKTOP -->
     <div class="customer-oq-container hidden-sm hidden-xs">
         <div class="customer-oq__item customer-oq__item_full">
@@ -225,10 +215,7 @@
                             <tr class="borderless">
                                 <td colspan="4">
                                     <div class="customer-oq__order-item-more">
-                                        <div class="expand-text"
-                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
-                                             data-page-component-options="{{ expandTextOptions }}"
-                                        >
+                                        <div class="expand-text" data-page-component-expand-text="100">
                                             {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}: {{ requestProduct.comment }}
                                         </div>
                                     </div>
@@ -252,10 +239,6 @@
 
 {% block _rfp_request_view_line_items_mobile_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% set expandTextOptions = {
-        widgetModule: 'orofrontend/default/js/widgets/expand-text-widget',
-        maxLength: 100
-    }|json_encode() %}
     <!-- START ITEMS ORDERED MOBILE -->
     <div class="customer-oq-container hidden-lg hidden-md">
         <div class="customer-oq__item customer-oq__item_full">
@@ -304,10 +287,7 @@
                                             <tr class="borderless t_paddingless">
                                                 <td colspan="2">
                                                     <div class="customer-oq__order-item-more">
-                                                        <div class="expand-text"
-                                                             data-page-component-module="oroui/js/app/components/jquery-widget-component"
-                                                             data-page-component-options="{{ expandTextOptions }}"
-                                                        >
+                                                        <div class="expand-text" data-page-component-expand-text="100">
                                                             {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}: {{ requestProduct.comment }}
                                                         </div>
                                                     </div>
