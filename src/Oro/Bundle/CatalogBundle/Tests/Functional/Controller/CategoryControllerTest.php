@@ -385,7 +385,6 @@ class CategoryControllerTest extends WebTestCase
             $result = $this->client->getResponse();
             $this->assertResponseStatusCodeEquals($result, 200);
             $this->assertResponseContentTypeEquals($result, 'image/svg+xml');
-
         }
     }
 
