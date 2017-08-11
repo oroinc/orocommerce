@@ -29,12 +29,13 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
 
+    Edit Billing Information:
+      selector: '[data-title="Edit Billing Information"]'
+
     Checkout Shipping Method:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-content="shipping_method_form"] .checkout__form__radio label'
 
     Checkout Payment Method:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '[data-content="payment_method_form"] .checkout__form__radio label'
 
     CheckoutStep:

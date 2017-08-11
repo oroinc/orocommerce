@@ -89,9 +89,7 @@ Feature: Guest Shopping Lists
   Scenario: Check default status of guest shopping list in configurations
     Given I proceed as the Admin
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    When I click "Shopping List" on configuration sidebar
+    When I follow "Commerce/Sales/Shopping List" on configuration sidebar
     Then the "Enable guest shopping list" checkbox should not be checked
     When uncheck Use Default for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
@@ -114,7 +112,7 @@ Feature: Guest Shopping Lists
     And I click "Search Button"
     Then I should see "Product1"
     And I should see "Add to Shopping list"
-    When I click "Product1"
+    When I click "View Details" for "PSKU1" product
     Then I should see "Add to Shopping list"
     When I click "Add to Shopping list"
     Then I should see "Product has been added to" flash message
