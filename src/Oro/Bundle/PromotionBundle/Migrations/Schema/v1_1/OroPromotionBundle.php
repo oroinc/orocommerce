@@ -30,8 +30,8 @@ class OroPromotionBundle implements Migration
     {
         $table = $schema->createTable('oro_promotion_coupon_usage');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
-        $table->addColumn('coupon_id', 'integer', ['notnull' => false]);
+        $table->addColumn('promotion_id', 'integer', ['notnull' => true]);
+        $table->addColumn('coupon_id', 'integer', ['notnull' => true]);
         $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }

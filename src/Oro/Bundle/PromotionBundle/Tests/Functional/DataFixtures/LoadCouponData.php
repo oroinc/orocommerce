@@ -15,6 +15,9 @@ class LoadCouponData extends AbstractFixture implements DependentFixtureInterfac
     const COUPON_WITH_PROMO_AND_EXPIRED = 'coupon_with_promo_and_expired';
     const COUPON_WITH_PROMO_AND_VALID_UNTIL = 'coupon_with_promo_and_valid_until';
 
+    /**
+     * @var array
+     */
     protected static $coupons = [
         self::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL => [
             'code' => self::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL,

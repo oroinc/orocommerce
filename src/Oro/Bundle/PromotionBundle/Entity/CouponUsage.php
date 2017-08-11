@@ -7,7 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
  * @ORM\Table(name="oro_promotion_coupon_usage")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\CouponUsageRepository")
  */
 class CouponUsage
 {
@@ -24,7 +24,7 @@ class CouponUsage
      * @var Coupon
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Coupon")
-     * @ORM\JoinColumn(name="coupon_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="coupon_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $coupon;
 
@@ -32,7 +32,7 @@ class CouponUsage
      * @var Promotion
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion")
-     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     private $promotion;
 

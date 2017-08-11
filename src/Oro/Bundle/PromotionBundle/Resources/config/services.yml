@@ -412,6 +412,11 @@ services:
             - '@service_container'
             - '@oro_entity.doctrine_helper'
 
+    oro_promotion.coupon_usage_manager:
+        class: Oro\Bundle\PromotionBundle\Manager\CouponUsageManager
+        arguments:
+            - '@doctrine'
+
     oro_promotion.event_listener.order_view_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderViewListener
         arguments:
