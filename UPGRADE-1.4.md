@@ -17,6 +17,7 @@ PricingBundle
 -------------
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository` got an abstract method:
     - `getPriceListIdsByProduct(Product $product)` - that should return array of Price Lists identifiers witch contains price for given product
+- Required option for layout block type 'product_prices' renamed from 'productUnitSelectionVisible' to 'isPriceUnitsVisible'
 - Import/export functionality was added to `PriceAttributeProductPrice` entity and import/export buttons were added on product index page. 
   While importing with `Add and replace` strategy, it is possible to remove existing record by setting empty value for price in the file.
   While importing with `Reset and add` strategy, only prices with attributes that are listed in the file will be removed.

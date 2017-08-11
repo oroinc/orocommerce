@@ -34,7 +34,7 @@ Feature: Guest Shopping Lists
       | L     |
       | M     |
     When I save and close form
-      And click update schema
+    And click update schema
     Then I should see Schema updated flash message
 
   Scenario: Add new attributes to product family
@@ -73,7 +73,7 @@ Feature: Guest Shopping Lists
 
   Scenario: Check Shopping List is not available for a guest on frontend
     Given I proceed as the User
-    When I visit store frontend as guest
+    When I am on homepage
     Then I should not see "Shopping list"
     When type "SKU003" in "search"
     And I click "Search Button"
@@ -108,7 +108,7 @@ Feature: Guest Shopping Lists
     And I should see "Order with Matrix Grid"
 
   Scenario: Create Shopping List as unauthorized user from product view page
-    Given I visit store frontend as guest
+    Given I am on homepage
     Then I should see "Shopping list"
     When type "PSKU1" in "search"
     And I click "Search Button"

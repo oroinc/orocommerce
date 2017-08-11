@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
@@ -134,18 +133,13 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testVote(array $inputData, $expectedResult)
     {
-        $object = $inputData['object'];
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->willReturnCallback(function ($attribute, $object) use ($inputData) {
+            ->willReturnCallback(function ($attribute) use ($inputData) {
                 if ($attribute === $inputData['isGrantedAttr']) {
                     return $inputData['isGranted'];
                 }
                 if ($attribute === $inputData['isGrantedAttrCheckout']) {
-                    if ($object instanceof Quote) {
-                        $this->assertInstanceOf(CustomerUser::class, $object->getCustomerUser());
-                    }
-
                     return $inputData['isGrantedCheckout'];
                 }
                 return null;
@@ -156,7 +150,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedResult,
-            $this->voter->vote($token, $object, $inputData['attributes'])
+            $this->voter->vote($token, $inputData['object'], $inputData['attributes'])
         );
     }
 
@@ -168,7 +162,8 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     public function voteProvider()
     {
         $object = $this->createMock(Quote::class);
-        $object->expects($this->once())->method('getCustomerUser')->willReturn(new CustomerUser());
+
+        $permissionCreate = 'CREATE;entity:OroCheckoutBundle:Checkout';
 
         return [
             '!Entity' => [
@@ -200,7 +195,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                     'isGranted' => false,
                     'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
                     'isGrantedCheckout' => true,
-                    'isGrantedAttrCheckout' => BasicPermissionMap::PERMISSION_CREATE,
+                    'isGrantedAttrCheckout' => $permissionCreate,
                 ],
                 'expected' => CheckoutVoter::ACCESS_DENIED,
             ],
@@ -211,7 +206,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                     'isGranted' => true,
                     'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
                     'isGrantedCheckout' => false,
-                    'isGrantedAttrCheckout' => BasicPermissionMap::PERMISSION_CREATE,
+                    'isGrantedAttrCheckout' => $permissionCreate,
                 ],
                 'expected' => CheckoutVoter::ACCESS_DENIED,
             ],
@@ -222,7 +217,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                     'isGranted' => true,
                     'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
                     'isGrantedCheckout' => true,
-                    'isGrantedAttrCheckout' => BasicPermissionMap::PERMISSION_CREATE,
+                    'isGrantedAttrCheckout' => $permissionCreate,
                 ],
                 'expected' => CheckoutVoter::ACCESS_GRANTED,
             ],
@@ -233,9 +228,16 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                     'isGranted' => true,
                     'isGrantedAttr' => BasicPermissionMap::PERMISSION_VIEW,
                     'isGrantedCheckout' => true,
-                    'isGrantedAttrCheckout' => BasicPermissionMap::PERMISSION_CREATE,
+                    'isGrantedAttrCheckout' => $permissionCreate,
                 ],
                 'expected' => CheckoutVoter::ACCESS_GRANTED,
+            ],
+            'ATTRIBUTE_CREATE not in attributes' => [
+                'input' => [
+                    'object' => $object,
+                    'attributes' => []
+                ],
+                'expected' => CheckoutVoter::ACCESS_ABSTAIN
             ],
         ];
     }
