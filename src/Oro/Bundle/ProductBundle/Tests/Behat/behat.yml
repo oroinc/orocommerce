@@ -131,7 +131,7 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterStringItem
 
     ProductForm Step One:
-      selector: 'div#container'
+      selector: 'form[name="oro_product_step_one"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -139,7 +139,7 @@ oro_behat_extension:
           Attribute Family: 'oro_product_step_one[attributeFamily]'
 
     ProductForm:
-      selector: 'div#container'
+      selector: 'form[name="oro_product"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -180,7 +180,7 @@ oro_behat_extension:
           Use Slider On Mobile: 'related_items[oro_product___related_products_use_slider_on_mobile][value]'
 
     UpsellProductsConfig:
-      selector: 'div#container'
+      selector: 'form[name="related_items"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -198,7 +198,7 @@ oro_behat_extension:
           Use Slider On Mobile: 'related_items[oro_product___upsell_products_use_slider_on_mobile][value]'
 
     Product Family Form:
-      selector: 'div#container'
+      selector: 'form[name="oro_attribute_family"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
