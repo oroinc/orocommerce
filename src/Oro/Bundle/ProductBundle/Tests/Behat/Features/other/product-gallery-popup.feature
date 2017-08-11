@@ -30,7 +30,7 @@ Feature: Product Gallery Popup On Products Catalog
     Scenario: "Enable Image Preview On Product Listing" is Off
         Given I proceed as the Admin
         And go to System/ Configuration
-        And click "Product Images" on configuration sidebar
+        And I follow "Commerce/Product/Product Images" on configuration sidebar
         And fill "Product Images Form" with:
             | Product Images Default |false |
             | Product Images         |false |

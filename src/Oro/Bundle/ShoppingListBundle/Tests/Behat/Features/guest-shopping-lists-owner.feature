@@ -7,9 +7,7 @@ Feature: Guest shopping lists owner
   Scenario: Change default owner to new user
     Given I login as administrator
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     And uncheck "Use default" for "Default Guest Shopping List Owner" field
