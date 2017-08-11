@@ -14,15 +14,16 @@
                 reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
             }|json_encode }}"
             data-layout="separate">
-           {{ block_widget(block) }}
-       </div>
-    {% if not app.user %}
-        <div class="notification-flash notification-flash--warning">
-            <div class="notification-flash__text">
-                {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans({'%url%': path('oro_customer_customer_user_security_login')})|raw }}
-            </div>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_view_container_checkout_message_widget %}
+    <div class="notification-flash notification-flash--warning">
+        <div class="notification-flash__text">
+            {{ 'oro.frontend.shoppinglist.messages.must_be_logged'|trans({'%url%': path('oro_customer_customer_user_security_login')})|raw }}
         </div>
-    {% endif %}
+    </div>
 {% endblock %}
 
 {% block _no_shopping_lists_widget %}
@@ -91,13 +92,7 @@
     {% set notes = shoppingList.notes %}
     {% set hasRecords = notes is not empty %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " collapse-view" }) %}
-    <div{{ block('block_attributes') }}
-            data-page-component-module="oroui/js/app/components/jquery-widget-component"
-            data-page-component-options="{{ {
-                widgetModule: 'oroui/js/widget/collapse-widget',
-                open: hasRecords
-            }|json_encode() }}"
-    >
+    <div{{ block('block_attributes') }} data-page-component-collapse="{{ { open: hasRecords }|json_encode() }}">
         <span class="collapse-view__trigger" data-collapse-trigger>
             <i class="collapse-view__trigger-icon fa-caret-right"></i>
         </span>
@@ -115,9 +110,10 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_patch_shopping_list',
+                                route: 'oro_api_frontend_patch_entity_data',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
+                                    className: oro_class_name(shoppingList, true),
                                     id: shoppingList.id
                                 }
                             }
@@ -470,7 +466,7 @@
                         inline_editing: {
                             enable: is_granted('oro_shopping_list_frontend_update'),
                             save_api_accessor: {
-                                route: 'oro_api_shopping_list_frontend_patch_line_item',
+                                route: 'oro_api_frontend_patch_entity_data',
                                 http_method: 'PATCH',
                                 default_route_parameters: {
                                     className: oro_class_name(lineItem, true),
