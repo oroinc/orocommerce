@@ -1,5 +1,5 @@
 @fixture-OroOrganizationBundle:BusinessUnit.yml
-@fixture-OroPromotionBundle:promotions.yml
+@fixture-OroPromotionBundle:promotions_for_coupons.yml
 @fixture-OroPromotionBundle:export-coupons.yml
 Feature: Export of Coupons codes
   As an Administrator

@@ -1,4 +1,4 @@
-@fixture-OroPromotionBundle:promotions.yml
+@fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: Generation of coupons
 
   Scenario: Generate coupons with suffix and prefix

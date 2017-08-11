@@ -75,7 +75,7 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         discountConfiguration: '@lineItemDiscountPromotionDiscountConfiguration'
         organization: '@organization'
         owner: '@admin'
-        useCoupons: false
+        useCoupons: true
     orderDiscountPromotion:
         addLabel: ['@orderDiscountPromotionLabel']
         addDescription: ['@orderDiscountPromotionDesc']
@@ -85,7 +85,7 @@ Oro\Bundle\PromotionBundle\Entity\Promotion:
         discountConfiguration: '@orderDiscountPromotionDiscountConfiguration'
         organization: '@organization'
         owner: '@admin'
-        useCoupons: false
+        useCoupons: true
     shippingDiscountPromotion:
         addLabel: ['@shippingDiscountPromotionLabel']
         addDescription: ['@shippingDiscountPromotionDesc']

@@ -61,14 +61,13 @@ services:
             - '@oro_promotion.rule_filtration.schedule_decorator.inner'
             - '@oro_cron.checker.schedule_interval_checker'
 
-#    TODO: uncomment after BB-9489
-#    oro_promotion.rule_filtration.coupon_decorator:
-#        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
-#        decorates: oro_promotion.rule_filtration.service
-#        decoration_priority: 250
-#        public: false
-#        arguments:
-#            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+    oro_promotion.rule_filtration.coupon_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 250
+        public: false
+        arguments:
+            - '@oro_promotion.rule_filtration.coupon_decorator.inner'
 
     oro_promotion.rule_filtration.matching_items:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService

@@ -1,4 +1,4 @@
-@fixture-OroPromotionBundle:promotions.yml
+@fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: CRUD operations for Coupons codes
   As an Administrator
   I want to be able to CRUD Coupons codes via Management Console UI,

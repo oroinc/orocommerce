@@ -1,5 +1,5 @@
 @fixture-OroOrganizationBundle:BusinessUnit.yml
-@fixture-OroPromotionBundle:promotions.yml
+@fixture-OroPromotionBundle:promotions_for_coupons.yml
 Feature: Import of Coupons codes
   As an Administrator
   I want to be able to import coupon codes via Management Console UI

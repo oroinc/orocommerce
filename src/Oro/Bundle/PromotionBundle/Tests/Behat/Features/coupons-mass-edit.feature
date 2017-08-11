@@ -1,4 +1,4 @@
-@fixture-OroPromotionBundle:promotions.yml
+@fixture-OroPromotionBundle:promotions_for_coupons.yml
 @fixture-OroPromotionBundle:coupons.yml
 Feature: Mass edit of Coupons codes
   As an Administrator
