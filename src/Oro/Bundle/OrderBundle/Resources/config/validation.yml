@@ -1,7 +1,6 @@
 Oro\Bundle\OrderBundle\Entity\Order:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
-        - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
     properties:
         poNumber:
             - Length:

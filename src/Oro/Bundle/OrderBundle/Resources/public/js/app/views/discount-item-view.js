@@ -4,10 +4,9 @@ define(function(require) {
     var DiscountItemView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var TotalsListener = require('oropricing/js/app/listener/totals-listener');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var BaseView = require('oroui/js/app/views/base/view');
+    var mediator = require('oroui/js/mediator');
 
     /**
      * @export oroorder/js/app/views/discount-item-view
@@ -25,10 +24,9 @@ define(function(require) {
             amountInput: '[data-ftid$=amount]',
             descriptionInput: '[data-ftid$=description]',
             valueCalculatedSelector: '.discount-item-value-calculated',
-            valuePercentSelector: '.discount-item-value-percent',
             percentTypeValue: null,
             totalType: null,
-            discountType: null,
+            totals: '[data-totals-container]'
         },
 
         /**
@@ -62,13 +60,10 @@ define(function(require) {
             this.$percentInputElement = this.$el.find(this.options.percentInput);
             this.$amountInputElement = this.$el.find(this.options.amountInput);
 
-            this.initValueValidation();
+            this._initValueValidation();
 
-            this.delegate('click', '.removeDiscountItem', this.removeRow);
             this.$el.on('change', this.options.valueInput, _.bind(this.onValueInputChange, this));
             this.$el.on('change', this.options.typeInput, _.bind(this.onValueInputChange, this));
-            this.$el.on('change', this.options.descriptionInput, _.bind(this.updateTotals, this));
-            mediator.on('totals:update', this.updateAmountsAndValidators, this);
         },
 
         /**
@@ -83,14 +78,20 @@ define(function(require) {
                 this.$amountInputElement.val(value);
             }
 
-            this.initValueValidation();
+            this._initValueValidation();
 
-            var validator = $(this.$valueInputElement.closest('form')).validate();
+            var validator = this.$valueInputElement.closest('form').validate();
             validator.element(this.$valueInputElement);
-            TotalsListener.updateTotals();
+
+            if (this.$valueInputElement.closest('form').valid()) {
+                this._updateAmountsAndValidators(parseFloat(value));
+            }
         },
 
-        initValueValidation: function() {
+        /**
+         * @private
+         */
+        _initValueValidation: function() {
             if (this.$typeInputElement.val() === this.options.percentTypeValue) {
                 this.$valueInputElement.data('validation', this.$percentInputElement.data('validation'));
             } else {
@@ -98,63 +99,42 @@ define(function(require) {
             }
         },
 
-        removeRow: function() {
-            this.$el.trigger('content:remove');
-            this.remove();
-            TotalsListener.updateTotals();
-        },
-
         /**
-         * @param {jQuery.Event} e
+         * @private
+         * @param {Number} value
          */
-        updateTotals: function(e) {
-            TotalsListener.updateTotals();
-        },
+        _updateAmountsAndValidators: function(value) {
+            if (!value) {
+                return;
+            }
 
-        updateAmountsAndValidators: function(subtotals) {
-            var valueDataValidation = this.$valueInputElement.data('validation');
-            var amountDataValidation = this.$amountInputElement.data('validation');
+            var totalsData = {};
+            mediator.trigger('order:totals:get:current', totalsData);
+
+            var totals = totalsData['result'];
             var total = 0;
-            var index = this.$el.index();
-            var currentIndex = -1;
-            var discountAmount = null;
+            var amount = 0;
+            var percent = 0;
 
             var self = this;
-            _.each(subtotals.subtotals, function(subtotal) {
+            _.each(totals.subtotals, function(subtotal) {
                 if (subtotal.type === self.options.totalType) {
-                    total = subtotal.amount;
-                }
-
-                if (subtotal.type === self.options.discountType) {
-                    currentIndex++;
-                }
-
-                if (currentIndex === index && discountAmount === null) {
-                    discountAmount = subtotal.amount;
+                    total = parseFloat(subtotal.amount);
                 }
             });
 
-            var percent = total > 0 ? (discountAmount / total * 100).toFixed(2) : 0;
-            var formatedDiscountAmount = NumberFormatter.formatCurrency(discountAmount, this.options.currency);
+            if (this.$typeInputElement.val() === this.options.percentTypeValue) {
+                amount = (total * value / 100).toFixed(2);
+                percent = value;
+            } else {
+                amount = value;
+                percent = total > 0 ? (value / total * 100).toFixed(2) : 0;
+            }
+            var formatedDiscountAmount = NumberFormatter.formatCurrency(amount, this.options.currency);
             this.$el.find(this.options.valueCalculatedSelector).html(formatedDiscountAmount + ' (' + percent + '%)');
 
-            this.$amountInputElement.val(discountAmount);
+            this.$amountInputElement.val(amount);
             this.$percentInputElement.val(percent);
-
-            if (this.$typeInputElement.val() !== this.options.percentTypeValue &&
-                valueDataValidation && !_.isEmpty(valueDataValidation.Range)
-            ) {
-                valueDataValidation.Range.max = total;
-            }
-
-            if (amountDataValidation && !_.isEmpty(amountDataValidation.Range)) {
-                amountDataValidation.Range.max = total;
-            }
-
-            var validator = this.$valueInputElement.closest('form').validate();
-            if (validator) {
-                validator.element(this.$valueInputElement);
-            }
         },
 
         /**
@@ -165,7 +145,6 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('totals:update', this.updateAmountsAndValidators, this);
             DiscountItemView.__super__.dispose.call(this);
         }
     });
