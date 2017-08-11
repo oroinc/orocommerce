@@ -1,4 +1,6 @@
 @fixture-OroProductBundle:product_listing_images.yml
+@skip
+#todo: Unskip after OPI-137 will resolved
 Feature: Product Gallery Popup On Products Catalog
     
     Scenario: Create different window session
