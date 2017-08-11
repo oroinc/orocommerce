@@ -142,7 +142,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
         /** @var SidebarConfigMenu $sidebarMenu */
         $sidebarMenu = $this->createElement('SidebarConfigMenu');
-        $sidebarMenu->openAndClick('Commerce/Inventory/Product Options');
+        $sidebarMenu->openNestedMenu('Commerce/Inventory/Product Options');
         $this->waitForAjax();
 
         /** @var SystemConfigForm $form */

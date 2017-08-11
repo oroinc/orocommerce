@@ -10,7 +10,7 @@ Feature: Minimum Price Selection Strategies
   Scenario: Minimum price strategy is available by default
     Given I operate as the Manager
     When I go to System/Configuration
-    And I follow Commerce/Catalog/Pricing on configuration sidebar
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
     Then I should see "Pricing Strategy"
     Then I should see "Minimal prices"
     And I submit form
@@ -123,7 +123,7 @@ Feature: Minimum Price Selection Strategies
   Scenario: Pricing strategy changing
     Given I operate as the Manager
     When I go to System/Configuration
-    And I follow Commerce/Catalog/Pricing on configuration sidebar
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
     And I fill "PriceSelectionStrategyForm" with:
       | Use Default          | false             |
       | Pricing Strategy     | Merge by priority |
