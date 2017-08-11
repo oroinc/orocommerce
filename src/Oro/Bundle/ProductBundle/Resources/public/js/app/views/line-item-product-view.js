@@ -13,7 +13,9 @@ define(function(require) {
 
         modelElements: _.extend({}, BaseProductView.prototype.modelElements, {
             id: 'id'
-        })
+        }),
+
+        model: BaseProductView.model
     });
 
     return LineItemProductView;

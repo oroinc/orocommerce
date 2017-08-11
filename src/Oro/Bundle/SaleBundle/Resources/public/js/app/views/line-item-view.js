@@ -380,18 +380,18 @@ define(function(require) {
 
                 var currentValue = $(select).val();
                 $(select).empty();
-                $.each(units, function(key, value) {
+                $.each(_.keys(units), function(key, value) {
                     $(select)
-                        .append($('<option/>').val(key).text(value))
+                        .append($('<option/>').val(value).text(value))
                     ;
                 });
                 var firstValue = $(select).find('option:first-child').val();
                 if (!currentValue && firstValue) {
                     currentValue = firstValue;
                 }
-                $(select).val(currentValue);
+                $(select).val(currentValue).trigger('change');
                 if (null === $(select).val() && firstValue) {
-                    $(select).val(firstValue);
+                    $(select).val(firstValue).trigger('change');
                 }
                 $(select).addClass(self.options.syncClass);
 

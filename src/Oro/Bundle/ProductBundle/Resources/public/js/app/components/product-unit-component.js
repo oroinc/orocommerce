@@ -151,6 +151,7 @@ define(function(require) {
             var self = this;
             var disabled = _.isEmpty(units);
             var value = self.unitSelector.val();
+            this.options.productModel.set('product_units', units);
 
             this.unitSelector
                 .prop('disabled', disabled)
@@ -162,9 +163,9 @@ define(function(require) {
                 .remove();
 
             if (units) {
-                $.each(units, function(code, label) {
-                    if (!self.unitSelector.find('option[value=' + code + ']').length) {
-                        self.unitSelector.append($('<option/>').val(code).text(label));
+                $.each(_.keys(units), function(key, unit) {
+                    if (!self.unitSelector.find('option[value=' + unit + ']').length) {
+                        self.unitSelector.append($('<option/>').val(unit).text(unit));
                     }
                 });
                 self.unitSelector.find('option[value=""]').hide();

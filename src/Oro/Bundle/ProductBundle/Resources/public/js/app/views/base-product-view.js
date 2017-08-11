@@ -12,6 +12,10 @@ define(function(require) {
     var _ = require('underscore');
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
+        options: {
+            enableForbidQtyField: true
+        },
+
         elements: {
             quantity: '[data-name="field__quantity"]:first',
             unit: '[data-name="field__unit"]:first',
@@ -45,6 +49,7 @@ define(function(require) {
         originalProductId: null,
 
         initialize: function(options) {
+            this.options = _.extend({}, this.options, options);
             BaseProductView.__super__.initialize.apply(this, arguments);
 
             this.rowId = this.$el.parent().data('row-id');
@@ -57,7 +62,9 @@ define(function(require) {
                 productModel: this.model
             });
 
-            ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
+            if (this.options.enableForbidQtyField) {
+                ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
+            }
         },
 
         initModel: function(options) {
@@ -90,9 +97,11 @@ define(function(require) {
         },
 
         onUnitChange: function() {
-            var $quantity = this.getElement('quantity');
-            ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
-            $quantity.trigger('input');
+            if (this.options.enableForbidQtyField) {
+                var $quantity = this.getElement('quantity');
+                ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
+                $quantity.trigger('input');
+            }
         },
 
         onQuantityChange: function(e) {
@@ -146,7 +155,11 @@ define(function(require) {
         },
 
         _getUnitPrecision: function() {
-            return this.model.get('product_units')[this.model.get('unit')];
+            if (_.has(this.model.get('product_units'), this.model.get('unit'))) {
+                return this.model.get('product_units')[this.model.get('unit')];
+            }
+
+            return 0;
         },
 
         dispose: function() {
