@@ -3,13 +3,15 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
+
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -51,16 +53,34 @@ class RequestControllerTest extends WebTestCase
         );
     }
 
-    public function testGridAccessDeniedForAnonymousUsers()
+    public function testGridForAnonymousUsers()
     {
         $this->initClient();
         $this->client->getCookieJar()->clear();
-
-        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
-
         $response = $this->client->requestGrid(['gridName' => 'frontend-requests-grid'], [], true);
         $this->assertSame($response->getStatusCode(), 302);
+    }
+
+    public function testIndexNotFoundForAnonymousUsers()
+    {
+        $this->initClient();
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
+    }
+
+    public function testIndexAccessDeniedForAnonymousUsers()
+    {
+        $this->initClient();
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_rfp.guest_rfp', true);
+        $configManager->flush();
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 403);
+
+        $configManager->reset('oro_rfp.guest_rfp');
+        $configManager->flush();
     }
 
     /**
@@ -69,6 +89,8 @@ class RequestControllerTest extends WebTestCase
      * @param bool $activateFrontoffice
      *
      * @dataProvider indexProvider
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testIndex(array $inputData, array $expectedData, $activateFrontoffice = false)
     {
@@ -80,6 +102,13 @@ class RequestControllerTest extends WebTestCase
             ? static::generateBasicAuthHeader($inputData['login'], $inputData['password'])
             : [];
         $this->initClient([], $authParams);
+
+        $this->simulateAuthentication(
+            $inputData['login'],
+            $inputData['password'],
+            'customer_identity',
+            CustomerUser::class
+        );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expectedData['code']);
@@ -152,6 +181,13 @@ class RequestControllerTest extends WebTestCase
     public function testView(array $inputData, array $expectedData)
     {
         $this->initClient([], static::generateBasicAuthHeader($inputData['login'], $inputData['password']));
+
+        $this->simulateAuthentication(
+            $inputData['login'],
+            $inputData['password'],
+            'customer_identity',
+            CustomerUser::class
+        );
 
         /* @var $request Request */
         $request = $this->getReference($inputData['request']);
@@ -479,6 +515,7 @@ class RequestControllerTest extends WebTestCase
     {
         if ('' !== $login) {
             $this->initClient([], static::generateBasicAuthHeader($login, $password));
+            $this->simulateAuthentication($login, $password, 'customer_identity', CustomerUser::class);
         } else {
             $this->initClient([]);
             $this->client->getCookieJar()->clear();
@@ -510,14 +547,14 @@ class RequestControllerTest extends WebTestCase
                 'request' => LoadRequestData::REQUEST2,
                 'login' => '',
                 'password' => '',
-                'status' => 401
+                'status' => 404
             ],
             'UPDATE (anonymous user)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => '',
                 'password' => '',
-                'status' => 401
+                'status' => 404
             ],
             'VIEW (user from another customer)' => [
                 'route' => 'oro_rfp_frontend_request_view',
@@ -595,6 +632,12 @@ class RequestControllerTest extends WebTestCase
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
+        $this->simulateAuthentication(
+            LoadUserData::ACCOUNT1_USER1,
+            LoadUserData::ACCOUNT1_USER1,
+            'customer_identity',
+            CustomerUser::class
+        );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();
@@ -766,6 +809,12 @@ class RequestControllerTest extends WebTestCase
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
+        $this->simulateAuthentication(
+            LoadUserData::ACCOUNT1_USER1,
+            LoadUserData::ACCOUNT1_USER1,
+            'customer_identity',
+            CustomerUser::class
+        );
 
         $response = $this->client->requestFrontendGrid(
             'frontend-requests-grid',

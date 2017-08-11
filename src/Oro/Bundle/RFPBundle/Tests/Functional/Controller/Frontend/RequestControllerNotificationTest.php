@@ -3,7 +3,9 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
@@ -203,6 +205,13 @@ class RequestControllerNotificationTest extends WebTestCase
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
+
+        $this->simulateAuthentication(
+            LoadUserData::ACCOUNT1_USER1,
+            LoadUserData::ACCOUNT1_USER1,
+            'customer_identity',
+            CustomerUser::class
+        );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();
