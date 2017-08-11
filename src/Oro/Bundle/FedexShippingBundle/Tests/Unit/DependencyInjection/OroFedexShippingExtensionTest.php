@@ -23,6 +23,10 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_fedex_shipping.integration.channel',
+            'oro_fedex_shipping.client.rate_service.response.factory',
+            'oro_fedex_shipping.client.rate_service',
+            'oro_fedex_shipping.client.request.factory.line_items',
+            'oro_fedex_shipping.client.rate_service.request.factory',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

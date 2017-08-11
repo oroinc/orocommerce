@@ -23,6 +23,9 @@ class FedexIntegrationSettings extends Transport
     const UNIT_OF_WEIGHT_KG = 'KG';
     const UNIT_OF_WEIGHT_LB = 'LB';
 
+    const DIMENSION_CM = 'CM';
+    const DIMENSION_IN = 'IN';
+
     /**
      * @var string
      *

@@ -7,3 +7,29 @@ services:
         public: false
         tags:
             - { name: oro_integration.channel, type: '%oro_fedex_shipping.integration.channel.type%' }
+
+    oro_fedex_shipping.client.rate_service.response.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseFactory'
+        public: false
+
+    oro_fedex_shipping.client.rate_service:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
+        public: false
+        arguments:
+            - '@oro_soap.client'
+            - '@oro_soap.client.settings.factory'
+            - '@oro_fedex_shipping.client.rate_service.response.factory'
+
+    oro_fedex_shipping.client.request.factory.line_items:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexLineItemsFactory'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_shipping.provider.measure_units.conversion'
+
+    oro_fedex_shipping.client.rate_service.request.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_fedex_shipping.client.request.factory.line_items'
