@@ -87,10 +87,6 @@
     }
 
     &__image-holder {
-        &:not(.product-item__image-holder_in-cart) {
-            @include aspect-ratio();
-        }
-
         @include element-state('hover') {
             .product-item__quick-view-btn {
                 visibility: visible;
@@ -101,6 +97,10 @@
                     opacity: 1;
                 }
             }
+        }
+
+        &--aspect-ratio {
+            @include aspect-ratio();
         }
 
         &--gallery-view {
