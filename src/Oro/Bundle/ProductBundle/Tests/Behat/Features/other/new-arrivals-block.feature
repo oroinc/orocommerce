@@ -65,7 +65,7 @@ Feature: New Arrivals Block
     Given I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
-    And click "Promotions" on configuration sidebar
+    And I follow "Commerce/Product/Promotions" on configuration sidebar
     And fill "Promotions Form" with:
       |Product Segment Default|false         |
       |Product Segment        |Choose segment|
@@ -168,7 +168,7 @@ Feature: New Arrivals Block
 
   Scenario: "New Arrival" on and "New Arrivals" segment selected (Site level)
     Given I proceed as the Admin
-    And click "Promotions" on configuration sidebar
+    And I follow "Commerce/Product/Promotions" on configuration sidebar
     And fill "Promotions Form" with:
       |Product Segment Default|false            |
       |Product Segment        |New Arrivals     |

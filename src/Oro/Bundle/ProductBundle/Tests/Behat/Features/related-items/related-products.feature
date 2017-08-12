@@ -125,7 +125,7 @@ Feature: Editing related products
   Scenario: Disable related products functionality
     Given I login as administrator
     When go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Enable Related Products Use Default | false |
       | Enable Related Products             | false |
@@ -136,12 +136,12 @@ Feature: Editing related products
 
   Scenario: Limit should be restricted
     Given go to System/ Configuration
-      And I click "Related Items" on configuration sidebar
-      And I fill "RelatedProductsConfig" with:
-        | Enable Related Products                      | true  |
-        | Maximum Number Of Assigned Items Use Default | false |
-        | Maximum Number Of Assigned Items             | 2     |
-      And I click "Save settings"
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
+    And I fill "RelatedProductsConfig" with:
+      | Enable Related Products                      | true  |
+      | Maximum Number Of Assigned Items Use Default | false |
+      | Maximum Number Of Assigned Items             | 2     |
+    And I click "Save settings"
     When go to Products/ Products
       And I click Edit "PSKU1" in grid
       And I click "Select related products"
@@ -155,7 +155,7 @@ Feature: Editing related products
 
   Scenario: Check related grid view after related product title has been updated
     Given go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Enable Related Products                      | true  |
       | Maximum Number Of Assigned Items Use Default | false |
@@ -188,7 +188,7 @@ Feature: Editing related products
 
   Scenario: Check if relation is saved after disable/enable related items feature
     Given go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Enable Related Products Use Default | false |
       | Enable Related Products             | false |
@@ -197,7 +197,7 @@ Feature: Editing related products
     And I click Edit "PSKU1" in grid
     And I should not see "RelatedProductsViewGrid" grid
     When go to System/ Configuration
-    And I click "Related Items" on configuration sidebar
+    And I follow "Commerce/Catalog/Related Items" on configuration sidebar
     And I fill "RelatedProductsConfig" with:
       | Enable Related Products Use Default | false |
       | Enable Related Products             | true  |

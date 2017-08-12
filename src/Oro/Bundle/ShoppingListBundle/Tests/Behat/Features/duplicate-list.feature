@@ -34,7 +34,7 @@ Feature: Duplicate Lists
     Given I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
-    And I click "Shopping List" on configuration sidebar
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Limit Form" with:
       |Enable Guest Shopping List Default|false|
       |Enable Guest Shopping List        |true |
@@ -49,7 +49,9 @@ Feature: Duplicate Lists
   Scenario: Front - user without permissions
     Given I proceed as the Admin
     And go to System/ Configuration
-    And I click "Shopping List" on configuration sidebar
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And uncheck Use Default for "Enable guest shopping list" field
+    And I check "Enable guest shopping list"
     And fill "Shopping List Limit Form" with:
       |Shopping List Limit Default|false|
       |Shopping List Limit        |2    |
@@ -114,7 +116,7 @@ Feature: Duplicate Lists
     When I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
-    And I click "Shopping List" on configuration sidebar
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Limit Form" with:
       |Shopping List Limit Default|false|
       |Shopping List Limit        |3    |
