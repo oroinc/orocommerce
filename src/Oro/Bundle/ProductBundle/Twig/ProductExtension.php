@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Form\FormView;
 
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\Repository\RelatedItem\RelatedProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider;
+use Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface;
 
 class ProductExtension extends \Twig_Extension
 {
@@ -56,7 +54,34 @@ class ProductExtension extends \Twig_Extension
                 'get_related_products_ids',
                 [$this, 'getRelatedProductsIds']
             ),
+            new \Twig_SimpleFunction(
+                'set_unique_line_item_form_id',
+                [$this, 'setUniqueLineItemFormId']
+            ),
         ];
+    }
+
+    /**
+     * @param FormView $form
+     * @param Product|array $product
+     */
+    public function setUniqueLineItemFormId($form, $product = [])
+    {
+        if (!isset($form->vars['_notUniqueId'])) {
+            $form->vars['_notUniqueId'] = $form->vars['id'];
+        }
+
+        $productId = null;
+        if ($product) {
+            $productId  = is_array($product) ? $product['id'] : $product->getId();
+        }
+        if ($productId) {
+            $form->vars['id'] = sprintf('%s-product-id-%s', $form->vars['_notUniqueId'], $productId);
+        } else {
+            $form->vars['id'] = $form->vars['_notUniqueId'];
+        }
+
+        $form->vars['attr']['id'] = $form->vars['id'];
     }
 
     /**
@@ -102,7 +127,7 @@ class ProductExtension extends \Twig_Extension
     {
         return $this->getRelatedItemsIds(
             $product,
-            $this->container->get('oro.product.related_item.upsell_product.finder_strategy')
+            $this->container->get('oro_product.related_item.upsell_product.finder_strategy')
         );
     }
 

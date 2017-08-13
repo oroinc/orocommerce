@@ -96,13 +96,15 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         /** @var User $user */
         $user = $userRepository->findOneBy([]);
 
-        $customerUser = $this->getCustomerUser();
-
         $rateConverter = $this->container->get('oro_currency.converter.rate');
+
+        $regularCustomerUser = $this->getCustomerUser($manager);
+        $guestCustomerUser = $this->getCustomerUser($manager, true);
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
+            $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
             $order = new Order();
 
             $billingAddress = [
@@ -208,13 +210,12 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     }
 
     /**
-     * @param string $email
-     *
-     * @return null|CustomerUser|object
+     * @param bool $isGuest
+     * @return null|CustomerUser
      */
-    protected function getCustomerUser($email = 'AmandaRCole@example.org')
+    protected function getCustomerUser(ObjectManager $manager, $isGuest = false)
     {
-        return $this->getReference(LoadCustomerUserDemoData::ACCOUNT_USERS_REFERENCE_PREFIX . $email);
+        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy(['isGuest' => $isGuest]);
     }
 
     /**

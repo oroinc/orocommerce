@@ -91,7 +91,7 @@ class RelatedProduct implements RelatedItemEntityInterface
     }
 
     /**
-     * @deprecated since 1.6 Use RelatedProduct::getRelatedItem() instead
+     * @deprecated since 1.4 Use RelatedProduct::getRelatedItem() instead
      * @return Product
      */
     public function getRelatedProduct()
@@ -100,9 +100,9 @@ class RelatedProduct implements RelatedItemEntityInterface
     }
 
     /**
-     * @deprecated since 1.6 Use RelatedProduct::setRelatedProduct() instead
+     * @deprecated since 1.4 Use RelatedProduct::setRelatedItem() instead
      * @param Product $relatedProduct
-     * @return $this
+     * @return RelatedProduct
      */
     public function setRelatedProduct(Product $relatedProduct)
     {

@@ -57,3 +57,5 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            visitor_email:
+                type: string

@@ -73,6 +73,22 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => false,
                     'scope' => 'app'
                 ],
+                'upsell_products_max_items' => [
+                    'value' => 4,
+                    'scope' => 'app'
+                ],
+                'upsell_products_min_items' => [
+                    'value' => 3,
+                    'scope' => 'app'
+                ],
+                'upsell_products_show_add_button' => [
+                    'value' => true,
+                    'scope' => 'app'
+                ],
+                'upsell_products_use_slider_on_mobile' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ],
                 'unit_rounding_type' => [
                     'value' => RoundingServiceInterface::ROUND_HALF_UP,
                     'scope' => 'app'
@@ -154,6 +170,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'new_arrivals_use_slider_on_mobile' => [
                     'value' => false,
+                    'scope' => 'app',
+                ],
+                'image_preview_on_product_listing_enabled' => [
+                    'value' => true,
                     'scope' => 'app',
                 ],
                 'popup_gallery_on_product_view' => [

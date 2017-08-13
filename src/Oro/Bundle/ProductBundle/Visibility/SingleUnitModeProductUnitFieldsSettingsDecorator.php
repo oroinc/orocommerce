@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Visibility;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Service\SingleUnitModeServiceInterface;
 
 class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFieldsSettingsInterface
@@ -104,7 +105,11 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
     private function isProductPrimaryUnitSingleAndDefault(Product $product)
     {
         $defaultUnitCode = $this->singleUnitModeService->getDefaultUnitCode();
+
         return $defaultUnitCode === $product->getPrimaryUnitPrecision()->getUnit()->getCode()
-            && $product->getAdditionalUnitPrecisions()->isEmpty();
+            && $product->getAdditionalUnitPrecisions()
+                ->filter(function (ProductUnitPrecision $precision) {
+                    return $precision->isSell();
+                })->isEmpty();
     }
 }
