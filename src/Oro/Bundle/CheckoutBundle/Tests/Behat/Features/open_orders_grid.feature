@@ -38,7 +38,6 @@ Feature: Open Orders Grid
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
 
     And I open Order History page on the store frontend
-    And I reset "Completed" filter on grid "OpenOrdersGrid"
     Then I should see following "OpenOrdersGrid" grid:
       | Started From |
       | List 1       |

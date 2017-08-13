@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+
+/**
+ * @method ArrayCollection|CustomerVisitor[] getVisitors()
+ */
 class ExtendShoppingList
 {
     /**

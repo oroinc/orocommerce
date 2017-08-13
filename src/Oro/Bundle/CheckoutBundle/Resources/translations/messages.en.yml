@@ -164,6 +164,8 @@ oro:
                             middle_name: ""
                             last_name: ""
                             sufix: ""
+                        visitor:
+                            email: ""
         form:
             address.manual: Enter other address
             address.select.billing.label: SELECT BILLING ADDRESS
@@ -199,8 +201,17 @@ oro:
         system_configuration:
             fields:
                 frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
+                guest_checkout:
+                    title: 'Enable Guest Checkout'
+                    tooltip: 'Enable Guest Checkout'
+                default_guest_checkout_owner:
+                    title: 'Default guest checkout owner'
+                    tooltip: 'Allows guests to create order'
             groups:
                 open_orders.title: 'Open Orders'
+                checkout.title: 'Checkout'
+                guest_checkout.title: 'Guest Checkout'
+                guest_checkout_owner.title: 'Guest Checkout Owner Settings'
 
         privilege:
             category.checkout.label: 'Checkout'

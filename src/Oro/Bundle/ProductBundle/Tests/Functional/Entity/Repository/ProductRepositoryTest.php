@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -292,6 +292,40 @@ class ProductRepositoryTest extends WebTestCase
                 ],
                 'expectedImages' => [
                     'img.product-1',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getImagesFilesByProductIdDataProvider
+     *
+     * @param int   $productId
+     * @param array $expectedImages
+     */
+    public function testImagesFilesByProductId($productId, array $expectedImages)
+    {
+        $result = $this->repository->getImagesFilesByProductId($this->getReference($productId));
+
+        $this->assertEquals($this->referencesToEntities($expectedImages), array_values($result));
+    }
+
+    /**
+     * @return array
+     */
+    public function getImagesFilesByProductIdDataProvider()
+    {
+        return [
+            [
+                'productId' => 'product-1',
+                'expectedImages' => [
+                    'img.product-1',
+                ],
+            ],
+            [
+                'productId' => 'product-2',
+                'expectedImages' => [
+                    'img.product-2',
                 ],
             ],
         ];

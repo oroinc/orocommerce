@@ -501,7 +501,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
         $this->waitForAjax();
-        $this->configContext->clickLinkOnConfigurationSidebar('Product Collections');
+        $this->configContext->clickLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
         $this->waitForAjax();
     }
 
@@ -708,19 +708,37 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     /**
      * @Then /^I should see "(?P<text>(?:[^"]|\\")*)" in related products$/
      */
-    public function iShouldSeeInRelatedItems($string)
+    public function iShouldSeeInRelatedProducts($string)
     {
         $this->oroMainContext
-            ->iShouldSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedItems');
+            ->iShouldSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedProducts');
+    }
+
+    /**
+     * @Then /^I should see "(?P<text>(?:[^"]|\\")*)" in upsell products$/
+     */
+    public function iShouldSeeInUpsellProducts($string)
+    {
+        $this->oroMainContext
+            ->iShouldSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductUpsellProducts');
     }
 
     /**
      * @Then /^I should not see "(?P<text>(?:[^"]|\\")*)" in related products$/
      */
-    public function iShouldNotSeeInRelatedItems($string)
+    public function iShouldNotSeeInRelatedProducts($string)
     {
         $this->oroMainContext
-            ->iShouldNotSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedItems');
+            ->iShouldNotSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductRelatedProducts');
+    }
+
+    /**
+     * @Then /^I should not see "(?P<text>(?:[^"]|\\")*)" in upsell products$/
+     */
+    public function iShouldNotSeeInUpsellProducts($string)
+    {
+        $this->oroMainContext
+            ->iShouldNotSeeStringInElementUnderElements($string, 'ProductRelatedItem', 'ProductUpsellProducts');
     }
 
     /**
