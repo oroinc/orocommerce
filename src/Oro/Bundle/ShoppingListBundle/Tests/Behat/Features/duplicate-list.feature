@@ -36,7 +36,7 @@ Feature: Duplicate Lists
     And login as administrator
     And go to System/ Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck Use Default for "Enable guest shopping list" field
+    And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     And fill "Shopping List Limit Form" with:
       |Shopping List Limit Default|false|
