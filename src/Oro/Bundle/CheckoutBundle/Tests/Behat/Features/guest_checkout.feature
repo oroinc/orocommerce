@@ -19,7 +19,7 @@ Feature: Guest Checkout
     And go to System/ Configuration
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
     Then the "Enable guest shopping list" checkbox should not be checked
-    When uncheck Use Default for "Enable guest shopping list" field
+    When uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     When I save form
     Then I should see "Configuration saved" flash message
@@ -57,14 +57,14 @@ Feature: Guest Checkout
 
   Scenario: Enable guest checkout setting
     Given I proceed as the Admin
-    And uncheck Use Default for "Enable Guest Checkout" field
+    And uncheck "Use default" for "Enable Guest Checkout" field
     And I check "Enable Guest Checkout"
     When I save form
     Then the "Enable Guest Checkout" checkbox should be checked
 
   Scenario: Change default guest checkout user owner
     Given I proceed as the Admin
-    And uncheck Use Default for "Default guest checkout owner" field
+    And uncheck "Use default" for "Default guest checkout owner" field
     And I fill form with:
       | Default guest checkout owner | Charlie Sheen |
     When I save form

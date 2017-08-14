@@ -2,8 +2,9 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '../templates/request_approval.html.twig'
+
         - '@setOption':
-            id: checkout_information
+            id: checkout_information_title
             optionName: stepOrder
             optionValue: 6
         - '@setOption':

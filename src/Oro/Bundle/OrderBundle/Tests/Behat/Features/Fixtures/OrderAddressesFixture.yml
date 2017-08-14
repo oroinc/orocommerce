@@ -1,0 +1,12 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAddressFixture.yml'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'Order1'
+        website: '@website1'
+        currency: USD

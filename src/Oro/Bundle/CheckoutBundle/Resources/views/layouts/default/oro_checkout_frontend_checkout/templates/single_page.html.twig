@@ -2,6 +2,13 @@
     {{ block_widget(block) }}
 {% endblock %}
 
+{% block _checkout_information_body_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__body--offset-none"
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block _checkout_form_fields_widget %}
     {{ block_widget(block) }}
     {% if form.state_token is defined %}
@@ -11,7 +18,7 @@
 
 {% block _checkout_view_widget %}
     {% set attr = attr|merge({
-        'class': attr.class|default('') ~ " checkout-view",
+        'class': attr.class|default('') ~ " single-page-checkout-view",
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
             view: 'orocheckout/js/app/views/single-page-checkout-view'
@@ -22,35 +29,124 @@
     </div>
 {% endblock %}
 
-{% block _checkout_shipping_information_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
-    <div {{ block('block_attributes') }}>
-        <h2 class="checkout-view__title">
-            <span class="checkout-view__badge">2</span>{{ 'oro.checkout.shipping_information'|trans }}
-        </h2>
-        <div class="checkout-view__column-inner">
-            {{ block_widget(block) }}
-        </div>
-    </div>
+{% block _top_sticky_panel_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' sticky-panel--background-less',
+    }) %}
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block _checkout_billing_information_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
-    <div {{ block('block_attributes') }}>
-        <h2 class="checkout-view__title">
-            <span class="checkout-view__badge">1</span>{{ 'oro.checkout.billing_information'|trans }}
-        </h2>
-        <div class="checkout-view__column-inner">
-            {{ block_widget(block) }}
-        </div>
-    </div>
-{% endblock %}
-
-{% block _checkout_summary_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-view__column"}) %}
+{% block _single_page_checkout_sticky_panel_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        id: 'single-page-checkout-sticky'
+    }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _single_page_checkout_sticky_titles_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        id: 'single-page-checkout-sticky-titles',
+        '~class': ' single-page-checkout-view__sticky-titles'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _single_page_checkout_sticky_totals_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        id: 'single-page-checkout-sticky-totals',
+        '~class': ' single-page-checkout-view__sticky-totals'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _checkout_billing_information_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <h2 class="single-page-checkout-view__title"
+            data-sticky-target="top-sticky-panel"
+            data-sticky="{{ {
+                isSticky: true,
+                autoWidth: true,
+                placeholderId: 'single-page-checkout-sticky-titles',
+                viewport: {
+                    minScreenType: 'desktop'
+                }
+            }|json_encode }}"
+        >
+            <span class="single-page-checkout-view__badge">1</span>
+            <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.billing_information'|trans }}</span>
+        </h2>
+        <div class="single-page-checkout-view__column-inner">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _shipping_methods_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " single-page-checkout-view__shipping-methods"
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _payment_methods_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " single-page-checkout-view__payment-methods"
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _checkout_shipping_information_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
+    <div {{ block('block_attributes') }}>
+        <h2 class="single-page-checkout-view__title"
+            data-sticky-target="top-sticky-panel"
+            data-sticky="{{ {
+                isSticky: true,
+                autoWidth: true,
+                placeholderId: 'single-page-checkout-sticky-titles',
+                viewport: {
+                    minScreenType: 'desktop'
+                }
+            }|json_encode }}"
+        >
+            <span class="single-page-checkout-view__badge">2</span>
+            <span class="single-page-checkout-view__title-text">{{ 'oro.checkout.shipping_information'|trans }}</span>
+        </h2>
+        <div class="single-page-checkout-view__column-inner">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _checkout_order_summary_header_widget %}
+    {% set attr = attr|merge({
+        'data-sticky-target': 'top-sticky-panel',
+        'data-sticky': {
+            isSticky: true,
+            autoWidth: true,
+            placeholderId: 'single-page-checkout-sticky-titles',
+            viewport: {
+                minScreenType: 'desktop'
+            }
+        }
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _checkout_summary_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--extended"}) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _checkout_summary_badge_widget %}
+    <span class="single-page-checkout-view__badge">3</span>
 {% endblock %}
 
 {% block _shipping_address_widget -%}
@@ -72,9 +168,10 @@
                      address: '#' ~ form.shipping_address.customerAddress.vars.id,
                      region: '#' ~ form.shipping_address.region.vars.id,
                      fieldsContainer: '#checkout-address-fields-container',
-                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id
+                     shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
+                     externalShipToBillingCheckbox: '#checkout_ship_to_billing_address_checkbox',
                  },
-                 hideInputOnShipTo: true
+                 hideInputOnShipTo: false
              }|json_encode }}">
 
             {{ form_row(form.shipping_address.customerAddress) }}
@@ -117,6 +214,12 @@
                 {{ form_row(form.visitor_email, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.visitor.email'|trans}}) }}
 
                 {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, compact) }}
+                {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
+                    <label for="checkout_ship_to_billing_address_checkbox" id="checkout_ship_to_billing_address_label" class="custom-checkbox input-widget">
+                        <input type="checkbox" id="checkout_ship_to_billing_address_checkbox" class=" custom-checkbox__input" value="1"><span class="custom-checkbox__icon"></span>
+                        <span class="custom-checkbox__text">{{ 'oro.checkout.workflow.b2b_flow_checkout.form.ship_to_this_address.label'|trans }}</span>
+                    </label>
+                {% endif %}
             </div>
         {% endif %}
     </div>
@@ -128,7 +231,6 @@
         {{ form_widget(form.shipping_method) }}
         {{ form_widget(form.shipping_method_type) }}
     </div>
-
     {{ block_widget(block) }}
 {% endblock %}
 
@@ -163,50 +265,41 @@
     {% endfor %}
 {% endblock %}
 
-{% block _additional_options_widget -%}
+{% block _shipping_date_widget %}
+    <fieldset class="grid__row grid__row--offset-none"
+              data-trigger-selector="#addShipDate"
+              data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
+        <label class="label label--full">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
+        <div class="datepicker-box">
+            <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+            {{ form_widget(form.ship_until, {
+                'attr': {
+                    'class': 'datepicker-box__input input',
+                    'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans
+                },
+                'datePickerOptions': {
+                    'minDate': 0
+                }
+            }) }}
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block _checkout_summary_additional_options_widget -%}
     <div class="collapse-view" data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
         <span class="collapse-view__trigger collapse-view__trigger--icon" data-collapse-trigger>
             <i class="collapse-view__trigger-icon fa-caret-right" data-toggle="collapse" data-target="#orderOptionsContainer"></i>
         </span>
         <a href="#" class="collapse-view__trigger" data-collapse-trigger>
-            {{ 'oro.checkout.workflow.view_options.label'|trans }}
+            {{ 'oro.checkout.workflow.order_options.label'|trans }}
         </a>
         <div class="order-review-options collapse-view__container" data-collapse-container>
             <fieldset class="grid__row grid__row--offset-none"
-                      data-trigger-selector="#addShipDate"
-                      data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--12 grid__column grid__column--offset-y toggle-block">
-                    <label for="addShipDate" class="custom-checkbox toggle-block__trigger {% if checkout.shipUntil is not empty %}checked{% endif %}" data-checkbox>
-                        <input class="custom-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate" {% if checkout.shipUntil is not empty %}checked="checked"{% endif %}/>
-                        <span class="custom-checkbox__icon"></span>
-                        <span class="custom-checkbox__text">{{ "oro.checkout.order_review.shipping_date"|trans }}</span>
-                    </label>
-                    <div class="toggle-block__content">
-                        <div class="datepicker-box">
-                            <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
-                            {{ form_widget(form.ship_until, {
-                                'attr': {
-                                    'class': 'datepicker-box__input input',
-                                    'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans
-                                },
-                                'datePickerOptions': {
-                                    'minDate': 0
-                                }
-                            }) }}
-                        </div>
-                    </div>
-                </div>
-            </fieldset>
-            <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addPoNumber"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--12 grid__column--offset-y toggle-block">
-                    <label for="addPoNumber" class="custom-checkbox toggle-block__trigger {% if checkout.poNumber is not empty %}checked{% endif %}" data-checkbox>
-                        <input class="custom-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber" {% if checkout.poNumber is not empty %}checked="checked"{% endif %}/>
-                        <span class="custom-checkbox__icon"></span>
-                        <span class="custom-checkbox__text">{{ "oro.checkout.order_review.po_number"|trans }}</span>
-                    </label>
-                    <div class="toggle-block__content checkout__form__optional-ref-number">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    <label class=" label label--full">{{ "oro.checkout.order_review.po_number"|trans }}</label>
+                    <div class="checkout-form__optional-ref-number">
                         {{ form_widget(form.po_number, {'attr': {'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans}}) }}
                     </div>
                 </div>
@@ -214,14 +307,10 @@
             <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addNote"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="grid__column grid__column--12 grid__column--offset-y toggle-block">
-                    <label for="addNote" class="custom-checkbox toggle-block__trigger {% if checkout.customerNotes is not empty %}checked{% endif %}" data-checkbox>
-                        <input class="custom-checkbox__input" type="checkbox" name="addNote" id="addNote" {% if checkout.customerNotes is not empty %}checked="checked"{% endif %}/>
-                        <span class="custom-checkbox__icon"></span>
-                        <span class="custom-checkbox__text">{{ "oro.checkout.order_review.note"|trans }}</span>
-                    </label>
-                    <div class="toggle-block__content">
-                        {{ form_widget(form.customer_notes, {'attr': {'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+                <div class="grid__column grid__column--12 grid__column--offset-y">
+                    <label class=" label label--full">{{ "oro.checkout.order_review.note"|trans }}</label>
+                    <div class="checkout-form__order-notes">
+                    {{ form_widget(form.customer_notes, {'attr': {'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
                     </div>
                 </div>
             </fieldset>
@@ -242,13 +331,29 @@
     </div>
 {%- endblock %}
 
+{% block _checkout_order_summary_totals_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-sticky-target': 'top-sticky-panel',
+        'data-sticky': {
+            isSticky: true,
+            autoWidth: true,
+            ignoreWhenBelowViewport: true,
+            placeholderId: 'single-page-checkout-sticky-totals',
+            viewport: {
+                minScreenType: 'desktop'
+            }
+        }
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block _checkout_button_continue_right_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if transitionData is defined and transitionData %}
         {% import 'OroCheckoutBundle:layouts/default:layout.html.twig' as _layout %}
         <div class="order-checkout-widget text-right">
             <button type="submit"
-                    class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-l checkout__submit-btn"
+                    class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__submit-btn"
                     disabled="disabled"
                     autocomplete="off"
                     {{ _layout.transitionAttrbiutes(transitionData, checkout) }}
@@ -257,7 +362,7 @@
                 {{ transitionData.transition.label|trans({},'workflows') }}
             </button>
         </div>
-            
+
         <div {{ UI.renderPageComponentAttributes({
             module: 'orocheckout/js/app/components/shipping-transition-button-component',
             options: {

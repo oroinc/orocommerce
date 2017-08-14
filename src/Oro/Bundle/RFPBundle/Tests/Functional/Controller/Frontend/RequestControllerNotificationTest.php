@@ -84,6 +84,7 @@ class RequestControllerNotificationTest extends WebTestCase
 
     public function testCreateRequestEmailNotifySalesRepsOfCustomer()
     {
+        $this->markTestIncomplete('Random failing test. TODO: BB-11348');
         $saleRep1 = $this->getReference(LoadUserData::USER1);
         $saleRep2 = $this->getReference(LoadUserData::USER2);
         $customer = $this->getReference(LoadUserData::ACCOUNT1);

@@ -91,7 +91,7 @@ Feature: Guest Shopping Lists
     And I go to System/Configuration
     When I follow "Commerce/Sales/Shopping List" on configuration sidebar
     Then the "Enable guest shopping list" checkbox should not be checked
-    When uncheck Use Default for "Enable guest shopping list" field
+    When uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     And I save setting
     Then I should see "Configuration saved" flash message
