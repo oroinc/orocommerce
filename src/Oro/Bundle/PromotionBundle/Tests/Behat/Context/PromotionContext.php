@@ -4,8 +4,9 @@ namespace Oro\Bundle\PromotionBundle\Tests\Behat\Context;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
-use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
+use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SidebarConfigMenu;
+use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SystemConfigForm;
+use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep;
@@ -30,29 +31,19 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
     private $oroMainContext;
 
     /**
-     * @var FormContext
-     */
-    private $formContext;
-
-    /**
-     * @var ConfigContext
-     */
-    private $configContext;
-
-    /**
      * @var ShoppingListContext
      */
     private $shoppingListContext;
 
     /**
      * @BeforeScenario
+     *
+     * @param BeforeScenarioScope $scope
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
         $environment = $scope->getEnvironment();
         $this->oroMainContext = $environment->getContext(OroMainContext::class);
-        $this->configContext = $environment->getContext(ConfigContext::class);
-        $this->formContext = $environment->getContext(FormContext::class);
         $this->shoppingListContext = $environment->getContext(ShoppingListContext::class);
     }
 
@@ -100,6 +91,7 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Then /^(?:|I )see next line item discounts for backoffice order:$/
+     * @param TableNode $table
      */
     public function assertBackendOrderLineItemDiscount(TableNode $table)
     {
@@ -146,12 +138,21 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function iDisableInventoryManagement()
     {
-        $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
+        /** @var MainMenu $menu */
+        $menu = $this->createElement('MainMenu');
+        $menu->openAndClick('System/Configuration');
         $this->waitForAjax();
-        $this->configContext->clickLinkOnConfigurationSidebar('Product Options');
+
+        /** @var SidebarConfigMenu $sidebarMenu */
+        $sidebarMenu = $this->createElement('SidebarConfigMenu');
+        $sidebarMenu->openNestedMenu('Commerce/Inventory/Product Options');
         $this->waitForAjax();
-        $this->formContext->uncheckUseDefaultForField("Decrement Inventory");
-        $this->oroMainContext->fillField("Decrement Inventory", 0);
+
+        /** @var SystemConfigForm $form */
+        $form = $this->createElement('SystemConfigForm');
+        $form->uncheckCheckboxByLabel('Decrement Inventory', 'Use default');
+
+        $this->oroMainContext->fillField('Decrement Inventory', 0);
         $this->oroMainContext->pressButton('Save settings');
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
     }
@@ -167,16 +168,16 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $this->waitForAjax();
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Shipping Information - Open Order');
+        $this->oroMainContext->assertPageTitle('Shipping Information - Checkout');
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Shipping Method - Open Order');
+        $this->oroMainContext->assertPageTitle('Shipping Method - Checkout');
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Payment - Open Order');
+        $this->oroMainContext->assertPageTitle('Payment - Checkout');
         $this->oroMainContext->pressButton('Continue');
         $this->waitForAjax();
-        $this->oroMainContext->assertPageTitle('Order Review - Open Order');
+        $this->oroMainContext->assertPageTitle('Order Review - Checkout');
         $this->oroMainContext->pressButton('Submit Order');
         $this->waitForAjax();
         $this->oroMainContext->clickLink('click here to review');
