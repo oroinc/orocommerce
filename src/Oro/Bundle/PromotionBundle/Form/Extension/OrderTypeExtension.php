@@ -6,8 +6,10 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
 use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
@@ -51,6 +53,8 @@ class OrderTypeExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add('appliedCoupons', EntityIdentifierType::class, ['class' => Coupon::class]);
+
         // Should be called before OrderBundle\Form\Type\EventListener\SubtotalSubscriber::onSubmitEventListener
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit'], self::ON_SUBMIT_LISTENER_PRIORITY);
     }

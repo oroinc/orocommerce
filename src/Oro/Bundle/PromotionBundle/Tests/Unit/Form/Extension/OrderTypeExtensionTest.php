@@ -8,8 +8,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
 use Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension;
 use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
@@ -56,6 +58,10 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
         $builder = $this->createMock(FormBuilderInterface::class);
+
+        $builder->expects($this->once())
+            ->method('add')
+            ->with('appliedCoupons', EntityIdentifierType::class, ['class' => Coupon::class]);
 
         $builder->expects($this->once())
             ->method('addEventListener')
