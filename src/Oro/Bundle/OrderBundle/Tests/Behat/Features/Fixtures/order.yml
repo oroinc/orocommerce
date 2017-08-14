@@ -9,6 +9,13 @@ Oro\Bundle\OrderBundle\Entity\Order:
         identifier: 'SimpleOrder'
         website: '@website1'
         currency: USD
+    secondOrder:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        identifier: 'SecondOrder'
+        website: '@website1'
+        currency: USD
 
 Oro\Bundle\CurrencyBundle\Entity\Price (local):
     price1:
@@ -19,6 +26,13 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     simpleOrderLineItem:
         product: '@product1'
         order: '@simpleOrder'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+    ssecondOrderLineItem:
+        product: '@product1'
+        order: '@secondOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'

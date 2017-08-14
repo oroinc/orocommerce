@@ -103,5 +103,8 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroCustomerBundle::CustomerUserContext
         - OroCheckoutBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroActionBundle::OroActionContext
+        - OroOrderBundle::OrderContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'
