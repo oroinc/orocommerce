@@ -141,7 +141,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
      *      }
      * )
      */
-    protected $websites;
+    private $websites;
 
     /**
      * {@inheritdoc}
