@@ -8,9 +8,9 @@ Feature: Guest shopping lists owner
     Given I login as administrator
     And I go to System/Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck Use Default for "Enable guest shopping list" field
+    And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
-    And uncheck Use Default for "Default Guest Shopping List Owner" field
+    And uncheck "Use default" for "Default Guest Shopping List Owner" field
     And I fill in "Select2Entity" with "Admin User - newadmin@example.com (newadmin)"
     And I should see "Admin User"
     And I save setting

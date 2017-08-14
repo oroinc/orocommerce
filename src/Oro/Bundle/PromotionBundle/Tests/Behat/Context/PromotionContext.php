@@ -147,9 +147,9 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
 
         /** @var SystemConfigForm $form */
         $form = $this->createElement('SystemConfigForm');
-        $form->uncheckUseDefaultCheckbox("Decrement Inventory");
+        $form->uncheckCheckboxByLabel('Decrement Inventory', 'Use default');
 
-        $this->oroMainContext->fillField("Decrement Inventory", 0);
+        $this->oroMainContext->fillField('Decrement Inventory', 0);
         $this->oroMainContext->pressButton('Save settings');
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
     }
