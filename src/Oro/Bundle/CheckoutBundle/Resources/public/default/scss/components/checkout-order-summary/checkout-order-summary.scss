@@ -19,7 +19,7 @@
 
     &__title-text {
         font-size: $checkout-order-summary-title-text-font-size;
-        font-weight: $checkout-order-summary-title-text-font-weight;
+        font-weight: 700;
         line-height: $checkout-order-summary-title-text-line-height;
 
         + * {
