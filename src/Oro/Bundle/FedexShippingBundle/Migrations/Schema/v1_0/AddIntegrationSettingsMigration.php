@@ -16,8 +16,9 @@ class AddIntegrationSettingsMigration implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOroFlatRateTransportLabelTable($schema);
+        $this->createOroFedexTransportLabelTable($schema);
         $this->updateOroIntegrationTransportTable($schema);
+        $this->createOroFedexShippingServiceTable($schema);
     }
 
     /**
@@ -25,7 +26,7 @@ class AddIntegrationSettingsMigration implements Migration
      *
      * @throws SchemaException
      */
-    private function createOroFlatRateTransportLabelTable(Schema $schema)
+    private function createOroFedexTransportLabelTable(Schema $schema)
     {
         $table = $schema->createTable('oro_fedex_transport_label');
 
@@ -66,5 +67,19 @@ class AddIntegrationSettingsMigration implements Migration
         $table->addColumn('fedex_meter_number', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_pickup_type', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_unit_of_weight', 'string', ['notnull' => false, 'length' => 3]);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function createOroFedexShippingServiceTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_fedex_transp_ship_service');
+
+        $table->addColumn('transport_id', 'integer', []);
+        $table->addColumn('ship_service_id', 'integer', []);
+
+        $table->setPrimaryKey(['transport_id', 'ship_service_id']);
+        $table->addIndex(['ship_service_id'], 'oro_fedex_transp_ship_service_id');
     }
 }

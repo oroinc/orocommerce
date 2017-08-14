@@ -14,3 +14,8 @@ services:
         public: false
         tags:
             - { name: oro_integration.transport, type: '%oro_fedex_shipping.integration.transport.type%', channel_type: '%oro_fedex_shipping.integration.channel.type%' }
+
+    oro_fedex_shipping.integration.identifier_generator:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
