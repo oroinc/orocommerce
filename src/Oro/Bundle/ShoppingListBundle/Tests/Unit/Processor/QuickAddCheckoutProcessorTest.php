@@ -15,6 +15,7 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
@@ -23,6 +24,11 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
      * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager
      */
     protected $shoppingListManager;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLimitManager
+     */
+    protected $shoppingListLimitManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ActionGroupRegistry
@@ -66,6 +72,8 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
             ->disableOriginalConstructor()->getMock();
+        $this->shoppingListLimitManager = $this->getMockBuilder(ShoppingListLimitManager::class)
+            ->disableOriginalConstructor()->getMock();
         $this->actionGroupRegistry = $this->getMockBuilder(ActionGroupRegistry::class)
             ->disableOriginalConstructor()->getMock();
         $this->actionGroup = $this->getMockBuilder(ActionGroup::class)
@@ -79,6 +87,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');
         $this->processor->setShoppingListManager($this->shoppingListManager);
+        $this->processor->setShoppingListLimitManager($this->shoppingListLimitManager);
         $this->processor->setActionGroupRegistry($this->actionGroupRegistry);
         $this->processor->setTranslator($this->translator);
         $this->processor->setDateFormatter($this->dateFormatter);
@@ -94,6 +103,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         unset(
             $this->shoppingListManager,
+            $this->shoppingListLimitManager,
             $this->actionGroupRegistry,
             $this->actionGroup,
             $this->translator,
@@ -163,6 +173,19 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
         $productIds = ['sku1' => 1, 'sku2' => 2];
         $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+
+        $this->shoppingListLimitManager
+            ->expects($this->once())
+            ->method('isReachedLimit')
+            ->willReturn(true);
+
+        $this->shoppingListManager
+            ->expects($this->once())
+            ->method('getCurrent');
+
+        $this->em
+            ->expects($this->once())
+            ->method('remove');
 
         $shoppingList = new ShoppingList();
 
@@ -372,56 +395,6 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->willReturn($flashBag);
 
         $request->setSession($session);
-    }
-
-    /**
-     * @return array
-     */
-    public function processDataProvider()
-    {
-        return [
-            'empty' => [
-                'data' => [],
-                'request' => new Request()
-            ],
-            'not empty' => [
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
-                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'set'],
-                    ]
-                ],
-                'request' => new Request(),
-                'productIds' =>['sku1' => 1, 'sku2' => 2],
-                'productQuantities' => ['sku1' => ['item' => 2], 'sku2' => ['set' => 3]],
-            ],
-            'process failed' => [
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
-                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'set'],
-                    ]
-                ],
-                'request' => new Request(),
-                'productIds' =>['sku1' => 1, 'sku2' => 2],
-                'productQuantities' => ['sku1' => ['item' => 2], 'sku2' => ['set' => 3]],
-                'redirectUrl' => '/account/shoppingList/123',
-                'failed' => true
-            ],
-            'without redirect url' => [
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2, 'productUnit' => 'item'],
-                        ['productSku' => 'sku2', 'productQuantity' => 3, 'productUnit' => 'set'],
-                    ]
-                ],
-                'request' => new Request(),
-                'productIds' =>['sku1' => 1, 'sku2' => 2],
-                'productQuantities' => ['sku1' => ['item' => 2], 'sku2' => ['set' => 3]],
-                'failed' => false,
-                'issetRedirectUrl' => false
-            ],
-        ];
     }
 
     /**

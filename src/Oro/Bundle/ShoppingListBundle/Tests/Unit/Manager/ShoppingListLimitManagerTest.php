@@ -70,7 +70,44 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testIsCreateEnabledNotLoggedUser()
+    public function testIsReachedNotLogged()
+    {
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(false);
+
+        $this->assertEquals(true, $this->shoppingListLimitManager->isReachedLimit());
+    }
+
+    /**
+     * @dataProvider limitDataProvider
+     *
+     * @param int $limit
+     * @param int $count
+     * @param bool $expected
+     */
+    public function testIsReached($limit, $count, $expected)
+    {
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(true);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.shopping_list_limit')
+            ->willReturn($limit);
+
+        if ($limit) {
+            $this->configureCount($count);
+        }
+
+        $this->assertEquals(!$expected, $this->shoppingListLimitManager->isReachedLimit());
+    }
+
+    public function testIsCreateEnabledNotLogged()
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -80,7 +117,14 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $this->shoppingListLimitManager->isCreateEnabled());
     }
 
-    public function testIsCreateEnabledNotLimitSet()
+    /**
+     * @dataProvider limitDataProvider
+     *
+     * @param int $limit
+     * @param int $count
+     * @param bool $expected
+     */
+    public function testIsCreateEnabled($limit, $count, $expected)
     {
         $this->tokenAccessor
             ->expects($this->once())
@@ -91,45 +135,37 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
-            ->willReturn(0);
+            ->willReturn($limit);
 
-        $this->assertEquals(true, $this->shoppingListLimitManager->isCreateEnabled());
+        if ($limit) {
+            $this->configureCount($count);
+        }
+
+        $this->assertEquals($expected, $this->shoppingListLimitManager->isCreateEnabled());
     }
 
-    public function testIsCreateEnabledLimitSet()
+    /**
+     * @return array
+     */
+    public function limitDataProvider()
     {
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('hasUser')
-            ->willReturn(true);
-
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_shopping_list.shopping_list_limit')
-            ->willReturn(5);
-
-        $this->configureCount(4);
-
-        $this->assertEquals(true, $this->shoppingListLimitManager->isCreateEnabled());
-    }
-
-    public function testIsCreateEnabledLimitReached()
-    {
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('hasUser')
-            ->willReturn(true);
-
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_shopping_list.shopping_list_limit')
-            ->willReturn(5);
-
-        $this->configureCount(5);
-
-        $this->assertEquals(false, $this->shoppingListLimitManager->isCreateEnabled());
+        return [
+            'without limit' => [
+                'limit' => 0,
+                'count' => 5,
+                'expected' => true,
+            ],
+            'with not reached limit' => [
+                'limit' => 5,
+                'count' => 4,
+                'expected' => true,
+            ],
+            'with reached limit' => [
+                'limit' => 5,
+                'count' => 5,
+                'expected' => false,
+            ],
+        ];
     }
 
     public function testIsCreateEnabledForUserNotLimitSet()

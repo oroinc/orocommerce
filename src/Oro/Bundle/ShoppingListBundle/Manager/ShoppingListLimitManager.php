@@ -41,6 +41,16 @@ class ShoppingListLimitManager
     }
 
     /**
+     * Check if shopping list configuration limit is reached for logged customer user
+     *
+     * @return bool
+     */
+    public function isReachedLimit()
+    {
+        return !$this->isCreateEnabled();
+    }
+
+    /**
      * Restricts creating new shopping list if configuration limit is reached / or Customer is not logged in
      * @return bool
      */

@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -24,6 +26,9 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
     /** @var ShoppingListManager */
     protected $shoppingListManager;
+
+    /** @var ShoppingListLimitManager */
+    protected $shoppingListLimitManager;
 
     /** @var ActionGroupRegistry */
     protected $actionGroupRegistry;
@@ -47,6 +52,17 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
     public function setShoppingListManager(ShoppingListManager $shoppingListManager)
     {
         $this->shoppingListManager = $shoppingListManager;
+
+        return $this;
+    }
+
+    /**
+     * @param ShoppingListLimitManager $shoppingListLimitManager
+     * @return QuickAddCheckoutProcessor
+     */
+    public function setShoppingListLimitManager(ShoppingListLimitManager $shoppingListLimitManager)
+    {
+        $this->shoppingListLimitManager = $shoppingListLimitManager;
 
         return $this;
     }
@@ -114,11 +130,17 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
             return null;
         }
 
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass(ShoppingList::class);
+
+        if ($this->shoppingListLimitManager->isReachedLimit()) {
+            $shoppingList = $this->shoppingListManager->getCurrent();
+            $em->remove($shoppingList);
+        }
+
         $shoppingList = $this->shoppingListManager->create();
         $shoppingList->setLabel($this->getShoppingListLabel());
 
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass(ClassUtils::getClass($shoppingList));
         $em->beginTransaction();
         $em->persist($shoppingList);
         $em->flush($shoppingList);
