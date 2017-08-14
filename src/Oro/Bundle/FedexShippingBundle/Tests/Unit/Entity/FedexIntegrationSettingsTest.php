@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +25,7 @@ class FedexIntegrationSettingsTest extends TestCase
         ]);
 
         static::assertPropertyCollections(new FedexIntegrationSettings(), [
+            ['shippingServices', new ShippingService()],
             ['labels', new LocalizedFallbackValue()],
         ]);
     }

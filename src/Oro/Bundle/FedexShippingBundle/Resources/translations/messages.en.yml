@@ -20,3 +20,4 @@ oro:
                     kg.label: 'Kilogram'
                     lb.label: 'Pound'
                 labels.label: 'Label'
+                shipping_services.label: 'Shipping Services'
