@@ -38,7 +38,7 @@ Feature: Shopping list limit
     Given I login as administrator
     And I go to System/Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck Use Default for "Shopping List Limit" field
+    And uncheck "Use default" for "Shopping List Limit" field
     And I fill in "Shopping List Limit" with "1"
     And I save setting
     And I should see "Configuration saved" flash message

@@ -23,8 +23,8 @@
         'data-shipping-method-forms': '',
     }) %}
 
-    <div class="{{ class_prefix }}__form" data-content="shipping_method_form">
-        <div class="grid__row grid__row--offset-none">
+    <div class="{{ class_prefix }}-form" data-content="shipping_method_form">
+        <div class="grid__row">
             <div {{ block('block_attributes') }}></div>
         </div>
     </div>
@@ -47,7 +47,7 @@
             <% _.each(method.types, function(type, key) { %>
                 <% if (type.price) { %>
                     <% var selected = currentShippingMethodType === type.identifier && currentShippingMethod === method.identifier %>
-                    <div class="{{ class_prefix }}__form__radio" data-item-container>
+                    <div class="{{ class_prefix }}-form__radio" data-item-container>
                         <label class="custom-radio custom-radio--large <%= selected ? 'checked' : '' %>" data-radio tabindex="0">
                             <input class="custom-radio__control"
                                    type="radio" name="shippingMethodType" value="<%= type.identifier %>-<%= method.identifier %>"
