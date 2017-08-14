@@ -79,8 +79,10 @@ class CheckoutPaymentContextFactory
             ->setSubTotal($subtotal)
             ->setCurrency($checkout->getCurrency());
 
-        $paymentContextBuilder
-            ->setWebsite($checkout->getWebsite());
+        if (null !== $checkout->getWebsite()) {
+            $paymentContextBuilder
+                ->setWebsite($checkout->getWebsite());
+        }
 
         if (null !== $checkout->getBillingAddress()) {
             $paymentContextBuilder->setBillingAddress($checkout->getBillingAddress());

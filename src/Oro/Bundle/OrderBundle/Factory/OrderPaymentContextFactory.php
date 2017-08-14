@@ -56,8 +56,10 @@ class OrderPaymentContextFactory
             ->setSubTotal($subtotal)
             ->setCurrency($order->getCurrency());
 
-        $paymentContextBuilder
-            ->setWebsite($order->getWebsite());
+        if (null !== $order->getWebsite()) {
+            $paymentContextBuilder
+                ->setWebsite($order->getWebsite());
+        }
 
         $convertedLineItems = $this->paymentLineItemConverter->convertLineItems($order->getLineItems());
 
