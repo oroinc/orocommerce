@@ -14,6 +14,8 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class QuickAddController extends Controller
 {
+    const DEPENDANT_FEATURES = ['guest_shopping_list', 'guest_checkout', 'guest_rfp'];
+
     /**
      * @Route("/", name="oro_product_frontend_quick_add")
      * @Layout
@@ -23,6 +25,10 @@ class QuickAddController extends Controller
      */
     public function addAction(Request $request)
     {
+        if (!$this->GuestFeatureEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         $response = $this->get('oro_product.form_handler.quick_add')->process(
             $request,
             'oro_product_frontend_quick_add'
@@ -40,6 +46,10 @@ class QuickAddController extends Controller
      */
     public function importAction(Request $request)
     {
+        if (!$this->GuestFeatureEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processImport();
 
         return [
@@ -60,6 +70,10 @@ class QuickAddController extends Controller
      */
     public function copyPasteAction()
     {
+        if (!$this->GuestFeatureEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         $collection = $this->get('oro_product.layout.data_provider.quick_add_collection')->processCopyPaste();
 
         return [
@@ -78,6 +92,10 @@ class QuickAddController extends Controller
      */
     public function validationResultAction(Request $request)
     {
+        if (!$this->GuestFeatureEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         $response = $this->get('oro_product.form_handler.quick_add')->process(
             $request,
             'oro_product_frontend_quick_add'
@@ -100,10 +118,34 @@ class QuickAddController extends Controller
      */
     private function getImportStep(QuickAddRowCollection $collection = null)
     {
+        if (!$this->GuestFeatureEnabled()) {
+            throw $this->createNotFoundException();
+        }
+
         if ($collection !== null && !$collection->isEmpty() && $collection->hasValidRows()) {
             return 'result';
         }
 
         return 'form';
+    }
+
+    /**
+     * Provides additional check to guest_quick_order_form features
+     *
+     * @return boolean
+     */
+    private function guestFeatureEnabled()
+    {
+        $featureChecker = $this->get('oro_featuretoggle.checker.feature_checker');
+        $allow = false;
+
+        foreach (self::DEPENDANT_FEATURES as $requiredFeature) {
+            if ($featureChecker->isFeatureEnabled($requiredFeature)) {
+                $allow = true;
+                break;
+            }
+        }
+
+        return $allow;
     }
 }
