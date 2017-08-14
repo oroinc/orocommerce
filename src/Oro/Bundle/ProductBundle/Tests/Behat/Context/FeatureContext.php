@@ -488,8 +488,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iSetMassActionLimitInProductCollectionsSettings($limit)
     {
         $this->iOnProductCollectionsSettingsPage();
-        $this->formContext->uncheckUseDefaultForField("Mass action limit");
-        $this->oroMainContext->fillField("Mass action limit", $limit);
+        $this->formContext->uncheckUseDefaultForField('Mass action limit', 'Use default');
+        $this->oroMainContext->fillField('Mass action limit', $limit);
         $this->oroMainContext->pressButton('Save settings');
         $this->oroMainContext->iShouldSeeFlashMessage('Configuration saved');
     }
@@ -501,7 +501,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
         $this->waitForAjax();
-        $this->configContext->clickLinkOnConfigurationSidebar('Product Collections');
+        $this->configContext->clickLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
         $this->waitForAjax();
     }
 
