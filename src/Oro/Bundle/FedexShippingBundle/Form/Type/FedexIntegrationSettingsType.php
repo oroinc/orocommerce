@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Form\Type;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
+use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractType;
@@ -23,6 +24,15 @@ class FedexIntegrationSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add(
+                'labels',
+                LocalizedFallbackValueCollectionType::class,
+                [
+                    'label'    => 'oro.fedex.integration.settings.labels.label',
+                    'required' => true,
+                    'options'  => ['constraints' => [new NotBlank()]],
+                ]
+            )
             ->add(
                 'key',
                 TextType::class,
@@ -90,12 +100,14 @@ class FedexIntegrationSettingsType extends AbstractType
                 ]
             )
             ->add(
-                'labels',
-                LocalizedFallbackValueCollectionType::class,
+                'shippingServices',
+                'entity',
                 [
-                    'label'    => 'oro.fedex.integration.settings.labels.label',
+                    'class' => ShippingService::class,
+                    'property' => 'description',
+                    'label' => 'oro.fedex.integration.settings.shipping_services.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'multiple' => true,
                 ]
             );
     }
