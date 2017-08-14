@@ -31,7 +31,14 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false,
                 ],
-                self::DEFAULT_GUEST_CHECKOUT_OWNER => ['type' => 'string', 'value' => null],
+                'registration_allowed' => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                self::DEFAULT_GUEST_CHECKOUT_OWNER => [
+                    'type' => 'string',
+                    'value' => null,
+                ],
             ]
         );
 

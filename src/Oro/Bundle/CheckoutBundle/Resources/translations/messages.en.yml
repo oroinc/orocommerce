@@ -204,6 +204,9 @@ oro:
                 guest_checkout:
                     title: 'Enable Guest Checkout'
                     tooltip: 'Enable Guest Checkout'
+                registration_allowed:
+                    title: 'Allow registration'
+                    tooltip: 'Allow customer users registration on checkout page'
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
                     tooltip: 'Allows guests to create order'
@@ -212,6 +215,7 @@ oro:
                 checkout.title: 'Checkout'
                 guest_checkout.title: 'Guest Checkout'
                 guest_checkout_owner.title: 'Guest Checkout Owner Settings'
+                customer_users_registration.title: 'Customer Users Registration'
 
         privilege:
             category.checkout.label: 'Checkout'

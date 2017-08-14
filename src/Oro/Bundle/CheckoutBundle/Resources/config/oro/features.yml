@@ -1,4 +1,11 @@
 features:
+    checkout_customer_users_registration:
+        label: oro.checkout.system_configuration.fields.registration_allowed.label
+        description: oro.checkout.system_configuration.fields.registration_allowed.tooltip
+        toggle: oro_customer.registration_allowed
+        configuration:
+            - checkout_customer_users_registration
+
     guest_checkout:
         label: oro.checkout.system_configuration.fields.guest_checkout.label
         description: oro.checkout.system_configuration.fields.guest_checkout.tooltip

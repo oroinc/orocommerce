@@ -49,6 +49,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => false,
                             'scope' => 'app'
                         ],
+                        'registration_allowed' => [
+                            'value' => true,
+                            'scope' => 'app'
+                        ],
                         'resolved' => true,
                         Configuration::DEFAULT_GUEST_CHECKOUT_OWNER => [
                             'value' => null,
