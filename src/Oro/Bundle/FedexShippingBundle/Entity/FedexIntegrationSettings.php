@@ -256,4 +256,16 @@ class FedexIntegrationSettings extends Transport
     {
         return new ParameterBag();
     }
+
+    /**
+     * @return string
+     */
+    public function getDimensionsUnit(): string
+    {
+        if ($this->getUnitOfWeight() === FedexIntegrationSettings::UNIT_OF_WEIGHT_LB) {
+            return self::DIMENSION_IN;
+        }
+
+        return self::DIMENSION_CM;
+    }
 }

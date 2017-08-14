@@ -33,3 +33,20 @@ services:
         arguments:
             - '@oro_security.encoder.mcrypt'
             - '@oro_fedex_shipping.client.request.factory.line_items'
+
+    oro_fedex_shipping.transfomer.shipping_dimensions_unit:
+        class: 'Oro\Bundle\FedexShippingBundle\Transformer\FedexToShippingDimensionsUnitTransformer'
+        public: false
+
+    oro_fedex_shipping.transfomer.shipping_weight_unit:
+        class: 'Oro\Bundle\FedexShippingBundle\Transformer\FedexToShippingWeightUnitTransformer'
+        public: false
+
+    oro_fedex_shipping.provider.line_items_with_shipping_options:
+        class: 'Oro\Bundle\FedexShippingBundle\Provider\ShippingLineItemsWithShippingOptionsProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_shipping.provider.measure_units.conversion'
+            - '@oro_fedex_shipping.transfomer.shipping_weight_unit'
+            - '@oro_fedex_shipping.transfomer.shipping_dimensions_unit'

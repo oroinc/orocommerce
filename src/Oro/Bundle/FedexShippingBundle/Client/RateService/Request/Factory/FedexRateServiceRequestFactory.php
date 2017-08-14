@@ -40,6 +40,8 @@ class FedexRateServiceRequestFactory implements FedexRequestFactoryInterface
         FedexIntegrationSettings $settings,
         ShippingContextInterface $context
     ): FedexRequestInterface {
+        $packages = $this->lineItemsFactory->create($settings, $context)->getRequestData();
+
         return new FedexRequest([
             'WebAuthenticationDetail' => [
                 'UserCredential' => [
@@ -60,26 +62,31 @@ class FedexRateServiceRequestFactory implements FedexRequestFactoryInterface
             'RequestedShipment' => [
                 'DropoffType' => $settings->getPickupType(),
                 'Shipper' => [
-                    'StreetLines' => [
-                        $context->getShippingAddress()->getStreet(),
-                        $context->getShippingAddress()->getStreet2(),
+                    'Address' => [
+                        'StreetLines' => [
+                            $context->getShippingOrigin()->getStreet(),
+                            $context->getShippingOrigin()->getStreet2(),
+                        ],
+                        'City' => $context->getShippingOrigin()->getCity(),
+                        'StateOrProvinceCode' => $context->getShippingOrigin()->getRegionCode(),
+                        'PostalCode' => $context->getShippingOrigin()->getPostalCode(),
+                        'CountryCode' => $context->getShippingOrigin()->getCountryIso2(),
                     ],
-                    'City' => $context->getShippingAddress()->getCity(),
-                    'StateOrProvinceCode' => $context->getShippingAddress()->getRegionCode(),
-                    'PostalCode' => $context->getShippingAddress()->getPostalCode(),
-                    'CountryCode' => $context->getShippingAddress()->getCountryIso2(),
                 ],
                 'Recipient' => [
-                    'StreetLines' => [
-                        $context->getShippingOrigin()->getStreet(),
-                        $context->getShippingOrigin()->getStreet2(),
+                    'Address' => [
+                        'StreetLines' => [
+                            $context->getShippingAddress()->getStreet(),
+                            $context->getShippingAddress()->getStreet2(),
+                        ],
+                        'City' => $context->getShippingAddress()->getCity(),
+                        'StateOrProvinceCode' => $context->getShippingAddress()->getRegionCode(),
+                        'PostalCode' => $context->getShippingAddress()->getPostalCode(),
+                        'CountryCode' => $context->getShippingAddress()->getCountryIso2(),
                     ],
-                    'City' => $context->getShippingOrigin()->getCity(),
-                    'StateOrProvinceCode' => $context->getShippingOrigin()->getRegionCode(),
-                    'PostalCode' => $context->getShippingOrigin()->getPostalCode(),
-                    'CountryCode' => $context->getShippingOrigin()->getCountryIso2(),
                 ],
-                'RequestedPackageLineItems' => $this->lineItemsFactory->create($settings, $context)->getRequestData(),
+                'PackageCount' => count($packages),
+                'RequestedPackageLineItems' => $packages,
             ],
         ]);
     }

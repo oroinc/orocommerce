@@ -18,7 +18,12 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
         }
 
         $severityCode = $soapResponse->HighestSeverity;
-        $severityMessage = $soapResponse->Notifications->message;
+
+        $notifications = $soapResponse->Notifications;
+        if (is_array($notifications)) {
+            $notifications = $notifications[0];
+        }
+        $severityMessage = $notifications->Message;
 
         $prices = [];
         if ($this->isResponseHasPrices($severityCode)) {
@@ -63,6 +68,9 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
                 $serviceCode = $rateReply->ServiceType;
                 $prices[$serviceCode] = $this->getPrice($rateReply);
             }
+        } else {
+            $rateReply = $soapResponse->RateReplyDetails;
+            $prices[$rateReply->ServiceType] = $this->getPrice($rateReply);
         }
 
         return $prices;

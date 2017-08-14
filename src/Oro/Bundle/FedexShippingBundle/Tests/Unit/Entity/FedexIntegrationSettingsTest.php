@@ -32,4 +32,15 @@ class FedexIntegrationSettingsTest extends TestCase
     {
         static::assertEquals(new ParameterBag(), (new FedexIntegrationSettings())->getSettingsBag());
     }
+
+    public function testGetDimensionsUnit()
+    {
+        $settings = new FedexIntegrationSettings();
+
+        $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
+        static::assertSame(FedexIntegrationSettings::DIMENSION_CM, $settings->getDimensionsUnit());
+
+        $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_LB);
+        static::assertSame(FedexIntegrationSettings::DIMENSION_IN, $settings->getDimensionsUnit());
+    }
 }

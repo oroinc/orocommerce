@@ -33,7 +33,7 @@ class FedexRateServiceSoapClient implements FedexRateServiceClientInterface
     private $soapSettingsFactory;
 
     /**
-     * @var FedexRateServiceResponseInterface
+     * @var FedexRateServiceResponseFactoryInterface
      */
     private $responseFactory;
 
