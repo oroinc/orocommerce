@@ -98,14 +98,20 @@ oro:
                 save_success: shipping tracking numbers have been updated
 
         orderdiscount:
+            flash.save_success: Order Discount successfully added
+            add_discount.label: Add Special Discount
             entity_label: Order Discount
             entity_plural_label: Order Discounts
             id.label: ID
             amount.label: Amount
+            value.label: Discount
             description.label: Description
             percent.label: Percent
             order.label: Order
             type.label: Order Discount Type
+            action:
+                cancel: Cancel
+                save: Save
 
         orderaddress:
             entity_label: Order Address
@@ -189,6 +195,7 @@ oro:
             best_selling_list.description: List of best selling products
             static_reports_tab.label: Reports
         widgets:
+            add_order_discount: Add Special Discount
             order_information: Order Information
             shipping_tracking: Shipping Tracking
 

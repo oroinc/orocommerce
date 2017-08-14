@@ -26,7 +26,7 @@ define(function(require) {
             valueCalculatedSelector: '.discount-item-value-calculated',
             percentTypeValue: null,
             totalType: null,
-            totals: '[data-totals-container]'
+            discountType: null,
         },
 
         /**
@@ -62,6 +62,7 @@ define(function(require) {
 
             this._initValueValidation();
 
+            this.$valueInputElement.on('focusout', _.bind(this.onValueInputChange, this));
             this.$el.on('change', this.options.valueInput, _.bind(this.onValueInputChange, this));
             this.$el.on('change', this.options.typeInput, _.bind(this.onValueInputChange, this));
         },
@@ -79,12 +80,13 @@ define(function(require) {
             }
 
             this._initValueValidation();
+            this._updateValidatorRules();
 
             var validator = this.$valueInputElement.closest('form').validate();
             validator.element(this.$valueInputElement);
 
-            if (this.$valueInputElement.closest('form').valid()) {
-                this._updateAmountsAndValidators(parseFloat(value));
+            if (!validator.numberOfInvalids()) {
+                this._updateAmounts(parseFloat(value));
             }
         },
 
@@ -101,20 +103,28 @@ define(function(require) {
 
         /**
          * @private
-         * @param {Number} value
          */
-        _updateAmountsAndValidators: function(value) {
-            if (!value) {
-                return;
-            }
+        _updateValidatorRules: function() {
+            var rules = this.$valueInputElement.rules();
 
+            var rangeRules = _.result(rules, 'Range',  []);
+            var total = this._getTotal();
+            for (var index = 0; index < rangeRules.length; ++index) {
+                var rangeRule = rangeRules[index];
+                rangeRule.max = total;
+            }
+        },
+
+        /**
+         * @private
+         * @returns {Float}
+         */
+        _getTotal: function() {
             var totalsData = {};
             mediator.trigger('order:totals:get:current', totalsData);
 
             var totals = totalsData.result;
             var total = 0;
-            var amount = 0;
-            var percent = 0;
 
             var self = this;
             _.each(totals.subtotals, function(subtotal) {
@@ -123,6 +133,22 @@ define(function(require) {
                 }
             });
 
+            return total;
+        },
+
+        /**
+         * @private
+         * @param {Number} value
+         */
+        _updateAmounts: function(value) {
+            if (!value) {
+                return;
+            }
+
+            var amount = 0;
+            var percent = 0;
+            var total = this._getTotal();
+
             if (this.$typeInputElement.val() === this.options.percentTypeValue) {
                 amount = (total * value / 100).toFixed(2);
                 percent = value;
@@ -130,8 +156,8 @@ define(function(require) {
                 amount = value;
                 percent = total > 0 ? (value / total * 100).toFixed(2) : 0;
             }
-            var formatedDiscountAmount = NumberFormatter.formatCurrency(amount, this.options.currency);
-            this.$el.find(this.options.valueCalculatedSelector).html(formatedDiscountAmount + ' (' + percent + '%)');
+            var formattedDiscountAmount = NumberFormatter.formatCurrency(amount, this.options.currency);
+            this.$el.find(this.options.valueCalculatedSelector).html(formattedDiscountAmount + ' (' + percent + '%)');
 
             this.$amountInputElement.val(amount);
             this.$percentInputElement.val(percent);

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -12,6 +13,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class OrderDiscountItemTypeTest extends FormIntegrationTestCase
@@ -21,11 +23,17 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * @var TotalHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $totalHelper;
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->formType = new OrderDiscountItemType();
+        $this->totalHelper = $this->createMock(TotalHelper::class);
+        $this->formType = new OrderDiscountItemType($this->totalHelper);
         $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderDiscount');
     }
 
@@ -73,6 +81,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
                 'totalType' => LineItemSubtotalProvider::TYPE,
                 'discountType' => DiscountSubtotalProvider::TYPE,
             ],
+            'validation_groups' => ['OrderDiscountItemType']
         ];
         $resolver = new OptionsResolver();
         $resolver->setDefault('currency', 'USD');
@@ -90,6 +99,8 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
     public function testSubmit()
     {
         $data = new OrderDiscount();
+        $order = new Order();
+        $order->addDiscount($data);
 
         $form = $this->factory->create($this->formType, $data, ['currency' => 'USD', 'total' => 99]);
 
@@ -101,10 +112,16 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
             'description' => 'some test description'
         ];
 
+        $this->totalHelper
+            ->expects($this->once())
+            ->method('fillDiscounts')
+            ->with($order);
+
         $expectedData = new OrderDiscount();
         $expectedData->setAmount('9.99')
             ->setDescription('some test description')
             ->setPercent('10')
+            ->setOrder($order)
             ->setType(OrderDiscount::TYPE_PERCENT);
 
         $form->submit($submittedData);

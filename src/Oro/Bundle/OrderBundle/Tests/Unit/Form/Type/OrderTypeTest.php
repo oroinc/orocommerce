@@ -349,6 +349,8 @@ class OrderTypeTest extends TypeTestCase
             ->method('validate')
             ->will($this->returnValue(new ConstraintViolationList()));
 
+        /** @var TotalHelper $totalHelper */
+        $totalHelper = $this->createMock(TotalHelper::class);
 
         return [
             new PreloadedExtension(
@@ -367,7 +369,7 @@ class OrderTypeTest extends TypeTestCase
                     OrderLineItemsCollectionType::NAME => new OrderLineItemsCollectionType(),
                     OrderDiscountItemsCollectionType::NAME => new OrderDiscountItemsCollectionType(),
                     OrderLineItemType::NAME => $OrderLineItemType,
-                    OrderDiscountItemType::NAME => new OrderDiscountItemType(),
+                    OrderDiscountItemType::NAME => new OrderDiscountItemType($totalHelper),
                     QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []

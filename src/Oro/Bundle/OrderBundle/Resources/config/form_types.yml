@@ -62,6 +62,8 @@ services:
 
     oro_order.form.type.order_discount_item:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType'
+        arguments:
+            - '@oro_order.order.total.total_helper'
         calls:
             - [setDataClass, ['%oro_order.entity.order_discount_item.class%']]
         tags:

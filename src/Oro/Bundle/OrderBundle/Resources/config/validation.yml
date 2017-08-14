@@ -89,27 +89,38 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     constraints:
-        - Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType: ~
+        - Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
+            groups: [Default, OrderDiscountItemType]
     properties:
         percent:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [Default, OrderDiscountItemType]
             - Type:
+                groups: [Default, OrderDiscountItemType]
                 type: numeric
             - Range:
+                groups: [Default, OrderDiscountItemType]
                 min: -100
                 max: 100
         amount:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [Default, OrderDiscountItemType]
             - Type:
+                groups: [Default, OrderDiscountItemType]
                 type: numeric
             - Range:
+                groups: [Default, OrderDiscountItemType]
                 min: 0
                 max: 999999999999999999
         type:
             - Type:
+                groups: [Default, OrderDiscountItemType]
                 type: string
         order:
             - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
+            - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
+                errorMessage: 'oro.order.discounts.sum.error.single_discount.label'
+                groups: [OrderDiscountItemType]
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:

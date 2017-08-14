@@ -1,0 +1,30 @@
+{% block oro_order_discount_item_widget %}
+    <div class="form-horizontal" data-page-component-module="{{ page_component }}" data-page-component-options="{{ page_component_options|json_encode }}">
+        <div class="control-group">
+            <div class="control-label wrap">{{ form_label(form.value) }}</div>
+            <div class="controls controls-discount-popup">
+                <div class="discount-popup">
+                    <div class="discount-amount-value">
+                        {{ form_widget(form.value) }}
+                        <div class="discount-amount-type">
+                            {{ form_widget(form.type) }}
+                        </div>
+                    </div>
+
+                    <div class="discount-item-value-calculated">
+                        {% if (form.vars.value is not empty) %}
+                            {{ form.vars.value.amountPrice|oro_format_price }} ({{ form.vars.value.percent|number_format }}%)
+                        {% endif %}
+                    </div>
+                    <div class="js-errors"></div>
+
+                    <span data-validation-ignore="">{{ form_widget(form.percent) }}</span>
+                    <span data-validation-ignore="">{{ form_widget(form.amount) }}</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            {{ form_row(form.description) }}
+        </div>
+    </div>
+{% endblock %}

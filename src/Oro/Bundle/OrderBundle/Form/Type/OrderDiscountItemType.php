@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormView;
@@ -9,21 +12,35 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Constraints\Range;
 
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 
 class OrderDiscountItemType extends AbstractType
 {
     const NAME = 'oro_order_discount_item';
+    const VALIDATION_GROUP = 'OrderDiscountItemType';
+
+    /**
+     * @var TotalHelper
+     */
+    protected $totalHelper;
 
     /**
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @param TotalHelper $totalHelper
+     */
+    public function __construct(TotalHelper $totalHelper)
+    {
+        $this->totalHelper = $totalHelper;
+    }
 
     /**
      * @param string $dataClass
@@ -45,6 +62,7 @@ class OrderDiscountItemType extends AbstractType
                 'intention' => 'order_discount_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
+                'validation_groups' => [self::VALIDATION_GROUP]
             ]
         );
         $resolver->setAllowedTypes('page_component_options', 'array');
@@ -70,15 +88,16 @@ class OrderDiscountItemType extends AbstractType
         $builder
             ->add(
                 'value',
-                'text',
+                TextType::class,
                 [
                     'required' => true,
-                    'mapped' => false
+                    'mapped' => false,
+                    'label' => 'oro.order.orderdiscount.value.label'
                 ]
             )
             ->add(
                 'type',
-                'choice',
+                ChoiceType::class,
                 [
                     'choices' => [
                         OrderDiscount::TYPE_AMOUNT => $options['currency'],
@@ -88,7 +107,7 @@ class OrderDiscountItemType extends AbstractType
             )
             ->add(
                 'description',
-                'text',
+                TextType::class,
                 [
                     'error_bubbling' => false,
                     'required' => false,
@@ -97,23 +116,24 @@ class OrderDiscountItemType extends AbstractType
             ->add('percent', 'hidden')
             ->add(
                 'amount',
-                'hidden',
+                HiddenType::class,
                 [
                     'constraints' => [
                         //range should be used, because this type also is implemented with JS
                         new Range(
                             [
-                                'min' => PHP_INT_MAX * (-1), //use some big negative number
+                                'min' => 0,
                                 'max' => $options['total'],
-                                'maxMessage' => 'oro.order.discounts.item.error.label'
+                                'maxMessage' => 'oro.order.discounts.item.error.label',
+                                'groups' => [self::VALIDATION_GROUP]
                             ]
                         ),
-                        new Type(['type' => 'numeric'])
                     ]
                 ]
             );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
+        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'submit']);
     }
 
     /**
@@ -134,6 +154,20 @@ class OrderDiscountItemType extends AbstractType
     }
 
     /**
+     * SUBMIT event handler
+     *
+     * @param FormEvent $event
+     */
+    public function submit(FormEvent $event)
+    {
+        /** @var OrderDiscount $data */
+        $data = $event->getData();
+        if ($data->getOrder()) {
+            $this->totalHelper->fillDiscounts($data->getOrder());
+        }
+    }
+
+    /**
      * POST_SET_DATA event handler
      *
      * @param FormEvent $event
@@ -142,7 +176,7 @@ class OrderDiscountItemType extends AbstractType
     {
         $form = $event->getForm();
         $data = $event->getData();
-        if ($data && $form->has('value')) {
+        if ($data && $form->has('value') && null !== $data->getValue()) {
             $form->get('value')->setData((double)$data->getValue());
         }
     }
