@@ -33,10 +33,10 @@ oro_behat_extension:
       selector: '[data-title="Edit Billing Information"]'
 
     Checkout Shipping Method:
-      selector: '[data-content="shipping_method_form"] .checkout__form__radio label'
+      selector: '[data-content="shipping_method_form"] .checkout-form__radio label'
 
     Checkout Payment Method:
-      selector: '[data-content="payment_method_form"] .checkout__form__radio label'
+      selector: '[data-content="payment_method_form"] .checkout-form__radio label'
 
     CheckoutStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
@@ -60,10 +60,6 @@ oro_behat_extension:
       options:
         mapping:
           Notes: 'oro_workflow_transition[customer_notes]'
-
-    Checkout Order Review Notes:
-      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
-      selector: 'input[id="addNote"]+.custom-checkbox__icon'
 
     Checkout Totals:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
@@ -103,7 +99,7 @@ oro_behat_extension:
 
     CheckoutStepLineItemProductSku:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: 'div:contains("Item #:") > span'
+      selector: 'td.checkout-order-summary__grid-td--sku div'
 
     Ship to This Address:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Checkbox
@@ -112,28 +108,28 @@ oro_behat_extension:
         locator: '//span[contains(., "Ship to this address")]'
 
     Order Summary Products Grid:
-      selector: '.checkout-order-summary__table'
+      selector: '.checkout-order-summary__content'
 
     Order Summary Products GridProductLine:
-      selector: '.checkout-order-summary__table-inner tr[data-scrollable-content-body]'
+      selector: 'table.checkout-order-summary__grid tr.checkout-order-summary__grid-tr'
 
     Order Summary Products GridProductLineName:
-      selector: '.checkout-order-summary__product a'
+      selector: '.checkout-order-summary__grid-td--info'
 
     Order Summary Products GridProductLineQuantity:
-      selector: '.checkout-order-summary__qty'
+      selector: '.checkout-order-summary__grid-td--qty'
 
     Order Summary Products GridProductLineUnit:
-      selector: '.checkout-order-summary__qty'
+      selector: '.checkout-order-summary__grid-td--qty'
 
     CheckoutGoBackButton:
         selector: 'div.checkout-sidebar ul.checkout-navigation > li > h3.checkout-navigation__title > a'
 
     ShippingMethodFlatRate2:
-      selector: 'div[data-content="shipping_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Flat Rate: $2.00")'
+      selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Flat Rate: $2.00")'
 
     PaymentMethodPaymentTerm30:
-      selector: 'div[data-content="payment_method_form"] div.checkout__form__radio span.custom-radio__text:contains("Payment Term 30")'
+      selector: 'div[data-content="payment_method_form"] div.checkout-form__radio span.custom-radio__text:contains("Payment Term 30")'
 
     Billing Information Form:
       selector: 'form[name="oro_workflow_transition"]'
