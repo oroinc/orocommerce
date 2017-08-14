@@ -84,6 +84,7 @@ action_groups:
                 target: $.promotion
                 attribute: $.promotionCopy
                 settings:
+                    - [[emptyCollection], [propertyName, [coupons]]]
                     - [[keep], [propertyName, [organization]]]
                     - [[keep], [propertyName, [owner]]]
                     - [[setNull], [propertyName, [id]]]
