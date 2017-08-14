@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-7986
 @automatically-ticket-tagged
 Feature: Page redirect suggestions

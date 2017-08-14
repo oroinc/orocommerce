@@ -88,7 +88,6 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
             $this->logger->error(
                 'Unexpected exception occurred during queue message processing',
                 [
-                    'message' => $message->getBody(),
                     'topic' => Topics::CALCULATE_WEB_CATALOG_CACHE,
                     'exception' => $e
                 ]

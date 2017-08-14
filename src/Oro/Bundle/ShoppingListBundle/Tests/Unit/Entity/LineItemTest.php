@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -32,5 +34,16 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertPropertyAccessors(new LineItem(), $properties);
+    }
+
+    public function testVisitor()
+    {
+        $visitor = new CustomerVisitor();
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor($visitor);
+        $lineItem = new LineItem();
+        $lineItem->setShoppingList($shoppingList);
+
+        $this->assertSame($visitor, $lineItem->getVisitor());
     }
 }

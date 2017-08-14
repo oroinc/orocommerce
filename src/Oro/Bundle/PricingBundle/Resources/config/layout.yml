@@ -25,4 +25,10 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_pricing_currency }
 
+    oro_pricing.layout.data_provider.price_unit_visibility:
+        class: 'Oro\Bundle\PricingBundle\Layout\DataProvider\PriceUnitVisibilityProvider'
+        arguments:
+            - '@oro_product.visibility.unit'
+        tags:
+            - { name: layout.data_provider, alias: oro_price_unit_visibility }
 

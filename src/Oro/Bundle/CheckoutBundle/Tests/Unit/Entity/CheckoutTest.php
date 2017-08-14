@@ -3,8 +3,12 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -146,5 +150,22 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($value, $item->getShippingCost()->getValue());
         $this->assertEquals($currency, $item->getShippingCost()->getCurrency());
+    }
+
+    public function testGetVisitor()
+    {
+        $visitor = new CustomerVisitor();
+        $visitor->setSessionId('session id');
+
+        $shoppingList = new ShoppingListStub();
+        $shoppingList->addVisitor($visitor);
+
+        $checkoutSource = new CheckoutSourceStub();
+        $checkoutSource->setShoppingList($shoppingList);
+
+        $checkout = new Checkout();
+        $checkout->setSource($checkoutSource);
+
+        $this->assertEquals('session id', $checkout->getVisitor()->getSessionId());
     }
 }

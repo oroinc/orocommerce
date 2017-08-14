@@ -1,6 +1,30 @@
+.line-item-price {
+  .currency-price-value {
+    width: 150px;
+
+    input[type="text"] {
+      text-align: right;
+      padding-left: 17px;
+      width: 80px !important;
+      border-radius: 4px 0 0 4px;
+      float: left;
+    }
+  }
+}
+
 .product-tier-prices {
   float: left;
   position: relative;
+
+  padding: 2px 5px 4px 5px;
+  margin-left: -1px;
+
+  border: 1px solid #ccc;
+  border-radius: 0 4px 4px 0;
+  background-color: #eee;
+
+  text-align: center;
+  text-shadow: 0 1px 0 #fff;
 
   i {
     padding-top: 5px;
@@ -91,6 +115,20 @@ table.product-price-attributes {
   .price-rules {
     & > .controls {
       margin-left: 0;
+    }
+  }
+}
+
+.mobile-version  {
+  .line-item-price {
+    .currency-price-value {
+      input[type="text"] {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        width: 100%;
+        height: 30px;
+      }
     }
   }
 }

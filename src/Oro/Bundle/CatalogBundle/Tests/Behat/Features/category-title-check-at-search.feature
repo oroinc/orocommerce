@@ -1,3 +1,4 @@
+@regression
 @fixture-OroCatalogBundle:category-title-check-at-search.yml
 Feature: Invalid category title at search results
   Scenario: Search

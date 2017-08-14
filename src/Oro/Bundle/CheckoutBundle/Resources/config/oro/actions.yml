@@ -225,16 +225,20 @@ action_groups:
                 entity_class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
                 group_name: 'b2b_checkout_flow'
 
-            - '@get_active_user': $.currentUser
+            - '@get_active_user_or_null': $.currentUser
 
-            - '@call_service_method':
-                attribute: $.checkout
-                service: 'oro_checkout.repository.checkout'
-                method: findCheckoutByCustomerUserAndSourceCriteria
-                method_parameters:
-                    - $.currentUser
-                    - $.sourceCriteria
-                    - $.currentWorkflow.name
+            - '@tree':
+                conditions:
+                    '@not_empty': $.currentUser
+                actions:
+                    - '@call_service_method':
+                        attribute: $.checkout
+                        service: 'oro_checkout.repository.checkout'
+                        method: findCheckoutByCustomerUserAndSourceCriteria
+                        method_parameters:
+                            - $.currentUser
+                            - $.sourceCriteria
+                            - $.currentWorkflow.name
 
             - '@call_service_method':
                 attribute: $.currentWebsite
@@ -268,7 +272,9 @@ action_groups:
             # update checkout data
             - '@tree':
                 conditions:
-                    '@equal': [true, $.updateData]
+                    '@and':
+                        - '@not_empty': $.currentUser
+                        - '@equal': [true, $.updateData]
                 actions:
                     - '@assign_value': [$.checkout.customer, $.currentUser.customer]
                     - '@assign_value': [$.checkout.organization, $.currentUser.customer.organization]

@@ -1,3 +1,4 @@
+@regression
 Feature: UPS shipping integration
   Scenario: Create UPS integration
     Given I login as administrator

@@ -39,15 +39,6 @@ define(function(require) {
             if (productUnits) {
                 var select = this.options._sourceElement.find('select');
 
-                if (this.isProductApplySingleUnitMode(productUnits)) {
-                    if (this.options.singleUnitModeCodeVisible) {
-                        select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
-                        select.remove();
-                    }
-
-                    return ;
-                }
-
                 var content = '';
                 var length = productUnits.length;
 
@@ -58,6 +49,14 @@ define(function(require) {
                 }
 
                 select.html(content).change();
+
+                if (this.isProductApplySingleUnitMode(productUnits)) {
+                    if (this.options.singleUnitModeCodeVisible) {
+                        select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
+                    }
+                    select.inputWidget('dispose');
+                    select.addClass('no-input-widget').hide();
+                }
             }
         },
 

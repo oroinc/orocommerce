@@ -395,6 +395,10 @@ define(function(require) {
                 }
                 $(select).addClass(self.options.syncClass);
 
+                if (currentValue !== $(select).val()) {
+                    $(select).change();
+                }
+
                 if (!force) {
                     $(widget).find('select').inputWidget('refresh');
                 }
