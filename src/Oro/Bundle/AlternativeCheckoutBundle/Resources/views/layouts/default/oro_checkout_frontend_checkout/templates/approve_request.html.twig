@@ -23,3 +23,10 @@
         {{ block_widget(block) }}
     </div>
 {%- endblock %}
+
+{% block _checkout_information_body_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__body--offset-none"
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}

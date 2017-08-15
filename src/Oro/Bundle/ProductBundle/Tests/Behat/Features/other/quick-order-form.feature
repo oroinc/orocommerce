@@ -83,7 +83,7 @@ Feature: Quick order form
       | Product1 | 2 | items |
       | Product2 | 4 | sets  |
       | Product3 | 2 | items |
-    And I check "Delete the shopping list" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Add to shopping list from quick order page
@@ -104,7 +104,7 @@ Feature: Quick order form
     Then I should see "3 products were added (view shopping list)." flash message
     When I open page with shopping list List 2
     Then Buyer is on view shopping list "List 2" page and clicks create order button
-    And Page title equals to "Billing Information - Open Order"
+    And Page title equals to "Billing Information - Checkout"
 
   Scenario: Get A Quote from quick order page with product without price
     Given I click "Quick Order Form"
@@ -134,7 +134,7 @@ Feature: Quick order form
       | QTY1 | 1     |
       | QTY2 | 2     |
     And I click "Create Order"
-    Then Page title equals to "Billing Information - Open Order"
+    Then Page title equals to "Billing Information - Checkout"
     And I should see "Some products have not been added to this order. Please create an RFQ to request price." flash message
     And "Billing Information" checkout step "Order Summary Products Grid" contains products
       | Product1 | 2 | items |
