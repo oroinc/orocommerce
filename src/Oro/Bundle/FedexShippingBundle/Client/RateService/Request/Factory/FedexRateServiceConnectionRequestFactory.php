@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory;
 
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
-class FedexRateServiceConnectionRequestFactory
+class FedexRateServiceConnectionRequestFactory implements FedexRequestFactoryInterface
 {
     /**
      * @var SymmetricCrypterInterface
@@ -31,9 +32,7 @@ class FedexRateServiceConnectionRequestFactory
     }
 
     /**
-     * @param FedexIntegrationSettings $settings
-     *
-     * @return FedexRequestInterface
+     * {@inheritDoc}
      */
     public function create(FedexIntegrationSettings $settings): FedexRequestInterface
     {
