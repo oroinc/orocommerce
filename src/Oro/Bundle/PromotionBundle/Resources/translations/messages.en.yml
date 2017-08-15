@@ -216,6 +216,7 @@ oro:
                 absent_promotion: There is no promotion for this coupon
                 expired: Coupon is expired
                 usage_limit_exceeded: Coupon usage limit is exceeded
+                customer_user_usage_limit_exceeded: Customer user coupon usage limit is exceeded
 
     applied_discount:
         name: Name

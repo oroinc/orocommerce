@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\ValidationService;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Manager\CouponUsageManager;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CouponUsageManager|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -85,6 +89,28 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('oro.promotion.coupon.violation.usage_limit_exceeded', $violations);
     }
 
+    public function testGetViolationsCustomerUserUsageLimitExceededCoupon()
+    {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 42, 'email' => 'test@example.com']);
+
+        $coupon = new Coupon();
+        $coupon->setPromotion(new Promotion());
+        $coupon->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC')));
+        $coupon->setUsesPerCoupon(10);
+        $coupon->setUsesPerUser(5);
+
+        $this->couponUsageManager->expects($this->once())
+            ->method('getCouponUsageCountByCustomerUser')
+            ->with($coupon, $customerUser)
+            ->willReturn(5);
+
+        $violations = $this->couponValidationService->getViolations($coupon, $customerUser);
+
+        $this->assertCount(1, $violations);
+        $this->assertContains('oro.promotion.coupon.violation.customer_user_usage_limit_exceeded', $violations);
+    }
+
     public function testGetViolationsSeveralErrors()
     {
         $coupon = new Coupon();
@@ -101,5 +127,36 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertContains('oro.promotion.coupon.violation.expired', $violations);
         $this->assertContains('oro.promotion.coupon.violation.usage_limit_exceeded', $violations);
         $this->assertContains('oro.promotion.coupon.violation.absent_promotion', $violations);
+    }
+
+    /**
+     * @dataProvider isValidDataProvider
+     * @param Coupon $coupon
+     * @param boolean $isValid
+     */
+    public function testIsValid(Coupon $coupon, $isValid)
+    {
+        $this->assertEquals($isValid, $this->couponValidationService->isValid($coupon));
+    }
+
+    /**
+     * @return array
+     */
+    public function isValidDataProvider()
+    {
+        return [
+            'not valid' => [
+                'coupon' => (new Coupon())->setValidUntil(new \DateTime('-3 days', new \DateTimeZone('UTC'))),
+                'isValid' => false
+            ],
+            'valid' => [
+                'coupon' => (new Coupon())
+                    ->setPromotion(new Promotion())
+                    ->setUsesPerCoupon(null)
+                    ->setUsesPerUser(null)
+                    ->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC'))),
+                'isValid' => true
+            ]
+        ];
     }
 }
