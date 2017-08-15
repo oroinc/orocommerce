@@ -26,7 +26,6 @@ services:
 
     oro_fedex_shipping.client.rate_service:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
-        public: false
         arguments:
             - '@oro_soap.client'
             - '@oro_soap.client.settings.factory'
@@ -62,3 +61,9 @@ services:
             - '@oro_shipping.provider.measure_units.conversion'
             - '@oro_fedex_shipping.transfomer.shipping_weight_unit'
             - '@oro_fedex_shipping.transfomer.shipping_dimensions_unit'
+
+    oro_fedex_shipping.client.rate_service.connection_request.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceConnectionRequestFactory'
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_shipping.shipping_origin.provider'

@@ -19,30 +19,44 @@ class FedexRateServiceResponseFactoryTest extends TestCase
 
     public function testCreateErrorWithMultipleNotifications()
     {
-        $message1 = $this->createNotificationMessage('1');
-        $message2 = $this->createNotificationMessage('2');
+        $notification1 = $this->createNotification(23);
+        $notification2 = $this->createNotification(34);
 
 
         $soapResponse = new \StdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_ERROR;
-        $soapResponse->Notifications = [$message1, $message2];
+        $soapResponse->Notifications = [$notification1, $notification2];
 
         static::assertEquals(
-            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_ERROR, '1'),
+            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_ERROR, 23),
             (new FedexRateServiceResponseFactory())->create($soapResponse)
         );
     }
 
     public function testCreateFailureWithOneNotification()
     {
-        $message = $this->createNotificationMessage('1');
+        $notification = $this->createNotification(1);
 
         $soapResponse = new \StdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_FAILURE;
-        $soapResponse->Notifications = $message;
+        $soapResponse->Notifications = $notification;
 
         static::assertEquals(
-            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_FAILURE, '1'),
+            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_FAILURE, 1),
+            (new FedexRateServiceResponseFactory())->create($soapResponse)
+        );
+    }
+
+    public function testCreateWarningWithNoRateDetails()
+    {
+        $notification = $this->createNotification(1);
+
+        $soapResponse = new \StdClass();
+        $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_WARNING;
+        $soapResponse->Notifications = $notification;
+
+        static::assertEquals(
+            new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_WARNING, 1),
             (new FedexRateServiceResponseFactory())->create($soapResponse)
         );
     }
@@ -52,7 +66,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         $price = 100.04;
         $currency = 'USD';
         $service = 'service1';
-        $message = 'message';
+        $notificationCode = 42;
 
         $rateReplyDetails = new \StdClass();
         $rateReplyDetails->ServiceType = $service;
@@ -64,13 +78,13 @@ class FedexRateServiceResponseFactoryTest extends TestCase
 
         $soapResponse = new \StdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_WARNING;
-        $soapResponse->Notifications = $this->createNotificationMessage($message);
+        $soapResponse->Notifications = $this->createNotification($notificationCode);
         $soapResponse->RateReplyDetails = $rateReplyDetails;
 
         static::assertEquals(
             new FedexRateServiceResponse(
                 FedexRateServiceResponse::SEVERITY_WARNING,
-                $message,
+                $notificationCode,
                 [$service => Price::create($price, $currency)]
             ),
             (new FedexRateServiceResponseFactory())->create($soapResponse)
@@ -84,11 +98,11 @@ class FedexRateServiceResponseFactoryTest extends TestCase
             Price::create(54.6, 'EUR'),
             Price::create(46.03, 'USD'),
         ];
-        $message = 'message';
+        $notificationCode = 65;
 
         $soapResponse = new \StdClass();
         $soapResponse->HighestSeverity = FedexRateServiceResponse::SEVERITY_SUCCESS;
-        $soapResponse->Notifications = $this->createNotificationMessage($message);
+        $soapResponse->Notifications = $this->createNotification($notificationCode);
         $soapResponse->RateReplyDetails = [
             $this->createRateReplyDetail($services[0], $prices[0]),
             $this->createRateReplyDetail($services[1], $prices[1]),
@@ -97,7 +111,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
         static::assertEquals(
             new FedexRateServiceResponse(
                 FedexRateServiceResponse::SEVERITY_SUCCESS,
-                $message,
+                $notificationCode,
                 [
                     $services[0] => $prices[0],
                     $services[1] => $prices[1],
@@ -128,16 +142,16 @@ class FedexRateServiceResponseFactoryTest extends TestCase
     }
 
     /**
-     * @param string $text
+     * @param int $code
      *
      * @return \StdClass
      */
-    private function createNotificationMessage(string $text): \StdClass
+    private function createNotification(int $code): \StdClass
     {
-        $message = new \StdClass();
-        $message->Message = $text;
+        $notification = new \StdClass();
+        $notification->Code = $code;
 
-        return $message;
+        return $notification;
     }
 
     /**
@@ -147,7 +161,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
     {
         return new FedexRateServiceResponse(
             FedexRateServiceResponse::SEVERITY_ERROR,
-            'Connection Error'
+            FedexRateServiceResponse::CONNECTION_ERROR
         );
     }
 }

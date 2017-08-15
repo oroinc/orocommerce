@@ -32,6 +32,7 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.transfomer.shipping_dimensions_unit',
             'oro_fedex_shipping.transfomer.shipping_weight_unit',
             'oro_fedex_shipping.provider.line_items_with_shipping_options',
+            'oro_fedex_shipping.client.rate_service.connection_request.factory',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

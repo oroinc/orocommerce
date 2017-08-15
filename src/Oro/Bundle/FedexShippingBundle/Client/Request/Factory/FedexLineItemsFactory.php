@@ -8,7 +8,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Provider\ShippingLineItemsByContextAndSettingsProviderInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
-class FedexLineItemsFactory implements FedexRequestFactoryInterface
+class FedexLineItemsFactory implements FedexRequestFromShippingContextFactoryInterface
 {
     const MAX_PACKAGE_WEIGHT_KGS = 70;
     const MAX_PACKAGE_WEIGHT_LBS = 150;

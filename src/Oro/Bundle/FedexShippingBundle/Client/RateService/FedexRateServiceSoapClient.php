@@ -57,9 +57,13 @@ class FedexRateServiceSoapClient implements FedexRateServiceClientInterface
      */
     public function send(FedexRequestInterface $request): FedexRateServiceResponseInterface
     {
-        $soapResponse = $this->soapClient->send($this->createSettings(), $request->getRequestData());
+        try {
+            $soapResponse = $this->soapClient->send($this->createSettings(), $request->getRequestData());
 
-        return $this->responseFactory->create($soapResponse);
+            return $this->responseFactory->create($soapResponse);
+        } catch (\Exception $e) {
+            return $this->responseFactory->create(null);
+        }
     }
 
     /**

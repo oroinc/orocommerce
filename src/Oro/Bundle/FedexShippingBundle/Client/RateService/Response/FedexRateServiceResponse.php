@@ -9,15 +9,19 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     const SEVERITY_ERROR = 'ERROR';
     const SEVERITY_FAILURE = 'FAILURE';
 
-    /**
-     * @var string
-     */
-    protected $severityCode;
+    const CONNECTION_ERROR = 111;
+    const NO_SERVICES_ERROR = 556;
+    const AUTHORIZATION_ERROR = 1000;
 
     /**
      * @var string
      */
-    protected $severityMessage;
+    protected $severityType;
+
+    /**
+     * @var int
+     */
+    protected $severityCode;
 
     /**
      * @var array
@@ -25,31 +29,31 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     protected $prices;
 
     /**
-     * @param string $severityCode
-     * @param string $severityMessage
+     * @param string $severityType
+     * @param int    $severityCode
      * @param array  $prices
      */
-    public function __construct(string $severityCode, string $severityMessage, array $prices = [])
+    public function __construct(string $severityType, int $severityCode, array $prices = [])
     {
+        $this->severityType = $severityType;
         $this->severityCode = $severityCode;
-        $this->severityMessage = $severityMessage;
         $this->prices = $prices;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getSeverityCode(): string
+    public function getSeverityType(): string
     {
-        return $this->severityCode;
+        return $this->severityType;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getSeverityMessage(): string
+    public function getSeverityCode(): int
     {
-        return $this->severityMessage;
+        return $this->severityCode;
     }
 
     /**

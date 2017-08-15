@@ -17,20 +17,20 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
             return $this->createConnectionErrorResponse();
         }
 
-        $severityCode = $soapResponse->HighestSeverity;
+        $severityType = $soapResponse->HighestSeverity;
 
         $notifications = $soapResponse->Notifications;
         if (is_array($notifications)) {
             $notifications = $notifications[0];
         }
-        $severityMessage = $notifications->Message;
+        $severityCode = $notifications->Code;
 
         $prices = [];
-        if ($this->isResponseHasPrices($severityCode)) {
+        if ($this->isResponseHasPrices($severityType, $soapResponse)) {
             $prices = $this->getPrices($soapResponse);
         }
         
-        return new FedexRateServiceResponse($severityCode, $severityMessage, $prices);
+        return new FedexRateServiceResponse($severityType, $severityCode, $prices);
     }
 
     /**
@@ -40,19 +40,21 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
     {
         return new FedexRateServiceResponse(
             FedexRateServiceResponse::SEVERITY_ERROR,
-            'Connection Error'
+            FedexRateServiceResponse::CONNECTION_ERROR
         );
     }
 
     /**
-     * @param string $severityCode
+     * @param string $severityType
+     * @param mixed  $soapResponse
      *
      * @return bool
      */
-    private function isResponseHasPrices(string $severityCode): bool
+    private function isResponseHasPrices(string $severityType, $soapResponse): bool
     {
-        return $severityCode !== FedexRateServiceResponse::SEVERITY_ERROR &&
-            $severityCode !== FedexRateServiceResponse::SEVERITY_FAILURE;
+        return $severityType !== FedexRateServiceResponse::SEVERITY_ERROR &&
+            $severityType !== FedexRateServiceResponse::SEVERITY_FAILURE &&
+            property_exists($soapResponse, 'RateReplyDetails');
     }
 
     /**

@@ -21,3 +21,12 @@ oro:
                     lb.label: 'Pound'
                 labels.label: 'Label'
                 shipping_services.label: 'Shipping Services'
+
+        connection_validation:
+            button.text: Check FedEx Connection
+            result:
+                authorization_error.message: 'Authentication error has occurred'
+                no_services_error.message: 'No services are available for current configuration'
+                no_shipping_origin_error.message: 'No shipping origin options provided. Please, fill them in System Configuration -> Shipping -> Shipping Origin'
+                success.message: 'Connection is valid'
+                connection_error.message: 'Connection error has occurred. Please, try again later'

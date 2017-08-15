@@ -9,14 +9,14 @@ class FedexRateServiceResponseTest extends TestCase
 {
     public function testAccessors()
     {
-        $severityCode = 'code';
-        $severityMessage = 'message';
+        $severityType = 'code';
+        $severityCode = 35;
         $prices = ['1', '2'];
 
-        $response = new FedexRateServiceResponse($severityCode, $severityMessage, $prices);
+        $response = new FedexRateServiceResponse($severityType, $severityCode, $prices);
 
+        static::assertSame($severityType, $response->getSeverityType());
         static::assertSame($severityCode, $response->getSeverityCode());
-        static::assertSame($severityMessage, $response->getSeverityMessage());
         static::assertSame($prices, $response->getPrices());
     }
 }

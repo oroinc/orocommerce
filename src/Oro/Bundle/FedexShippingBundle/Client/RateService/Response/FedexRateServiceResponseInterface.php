@@ -9,12 +9,12 @@ interface FedexRateServiceResponseInterface
     /**
      * @return string
      */
-    public function getSeverityCode(): string;
+    public function getSeverityType(): string;
 
     /**
-     * @return string
+     * @return int
      */
-    public function getSeverityMessage(): string;
+    public function getSeverityCode(): int;
 
     /**
      * @return Price[]
