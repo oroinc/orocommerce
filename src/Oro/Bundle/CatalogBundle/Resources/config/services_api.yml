@@ -28,5 +28,5 @@ services:
         class: Oro\Bundle\CatalogBundle\Api\Processor\RemoveCategoryFromProductRequest
         arguments: ['@oro_api.doctrine_helper', '@oro_api.value_normalizer']
         tags:
-            - { name: oro.api.processor, action: create, group: normalize_input, priority: 94, class: '%oro_product.entity.product.class%'}
-            - { name: oro.api.processor, action: update, group: normalize_input, priority: 94, class: '%oro_product.entity.product.class%'}
+            - { name: oro.api.processor, action: create, group: normalize_input, priority: 89, class: '%oro_product.entity.product.class%'}
+            - { name: oro.api.processor, action: update, group: normalize_input, priority: 89, class: '%oro_product.entity.product.class%'}

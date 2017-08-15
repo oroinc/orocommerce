@@ -56,8 +56,7 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
 
         if (!array_key_exists('slugId', $messageData)) {
             $this->logger->critical(
-                'Message is invalid. Key "slugId" is missing from message data.',
-                ['message' => $message]
+                'Message is invalid. Key "slugId" is missing from message data.'
             );
 
             return self::REJECT;

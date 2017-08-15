@@ -62,13 +62,13 @@
         width: $product-view-additional-width;
     }
 
-    &__related-products {
-        float: $product-view-related-products-state;
-        width: $product-view-related-products-width;
+    &__related-items {
+        float: $product-view-related-items-state;
+        width: $product-view-related-items-width;
 
         .embedded-list {
             .product-price {
-                max-width: $product-view-related-products-product-price-width;
+                max-width: $product-view-related-items-product-price-width;
             }
         }
     }

@@ -1,3 +1,8 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: 'Common Business Unit'
+        organization: '@organization'
+
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
     price:
         value: '10'
@@ -9,17 +14,20 @@ Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         precision: '1'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
-    locValue: ~
+    locValue:
+        string: '400-Watt Bulb Work Light'
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product:
         sku: 'SKU123'
+        type: 'simple'
         primaryUnitPrecision: '@precision'
         addName: ['@locValue']
+        attributeFamily: '@defaultProductFamily'
         inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
         organization: '@organization'
-
+        owner: '@businessUnit'
+        status: 'enabled'
 
 Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelistShipping:
