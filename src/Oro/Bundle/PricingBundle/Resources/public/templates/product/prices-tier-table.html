@@ -1,10 +1,9 @@
-<table class="table product-tier-prices-table">
+<table class="table">
     <% if (clickable) { %>
     <thead>
         <tr>
-            <th colspan="2">
-                <%= _.__('oro.pricing.click_to_select') %>
-            </th>
+            <th class="text-uppercase"><%= _.__('oro.pricing.qty') %></th>
+            <th><%= _.__('oro.pricing.unit_price') %></th>
         </tr>
     </thead>
     <% } %>
@@ -17,19 +16,16 @@
         </tr>
         <% _.each(unitPrices, function(price) { %>
         <tr class="<% if (!_.isEmpty(matchedPrice) && unit === matchedPrice.unit && parseFloat(price.price) === parseFloat(matchedPrice.price)) { %>matched-tier-price<% } %>">
-            <td><div class="text-right"><%= price.quantity %>:</div></td>
+            <td><%= price.quantity %></td>
             <td>
-                <div class="text-left">
-                    <% if (clickable) { %>
-                    <a
-                            href="javascript: void(0);"
-                            data-price="<%= parseFloat(price.price) %>"
-                            data-unit="<%= unit %>"
-                    ><%= formatter.formatCurrency(price.price, price.currency) %></a>
-                    <% } else { %>
-                    <%= formatter.formatCurrency(price.price, price.currency) %>
-                    <% } %>
-                </div>
+                <% if (clickable) { %>
+                <a href="javascript: void(0);" 
+                    data-price="<%= parseFloat(price.price) %>"
+                    data-unit="<%= unit %>"
+                ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                <% } else { %>
+                <%= formatter.formatCurrency(price.price, price.currency) %>
+                <% } %>
             </td>
         </tr>
         <% }) %>
