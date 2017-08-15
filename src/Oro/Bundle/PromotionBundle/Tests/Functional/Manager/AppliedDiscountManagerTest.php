@@ -52,7 +52,7 @@ class AppliedDiscountManagerTest extends WebTestCase
         $appliedDiscountManager->saveAppliedDiscounts($order, true);
 
         $appliedDiscountsAfterSave = $this->getAppliedDiscountRepository()->findByOrder($order);
-        $this->assertCount(2, $appliedDiscountsAfterSave);
+        $this->assertCount(1, $appliedDiscountsAfterSave);
     }
 
     /**

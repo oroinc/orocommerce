@@ -225,7 +225,8 @@ class Promotion extends ExtendPromotion implements
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\PromotionBundle\Entity\Coupon",
-     *     mappedBy="promotion"
+     *     mappedBy="promotion",
+     *     fetch="EXTRA_LAZY"
      * )
      * @ConfigField(
      *      defaultValues={
@@ -472,7 +473,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return Collection|Coupon[]
+     * @return ArrayCollection|Coupon[]
      */
     public function getCoupons()
     {

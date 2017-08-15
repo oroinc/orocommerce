@@ -7,7 +7,8 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -18,12 +19,16 @@ use Oro\Bundle\PromotionBundle\Context\OrderContextDataConverter;
 use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CriteriaDataProvider|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -45,6 +50,11 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
     private $lineItemSubtotalProvider;
 
     /**
+     * @var CouponValidationService|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $couponValidationService;
+
+    /**
      * @var OrderContextDataConverter
      */
     private $converter;
@@ -55,12 +65,14 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $this->lineItemsConverter = $this->createMock(OrderLineItemsToDiscountLineItemsConverter::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
         $this->lineItemSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
+        $this->couponValidationService = $this->createMock(CouponValidationService::class);
 
         $this->converter = new OrderContextDataConverter(
             $this->criteriaDataProvider,
             $this->lineItemsConverter,
             $this->scopeManager,
-            $this->lineItemSubtotalProvider
+            $this->lineItemSubtotalProvider,
+            $this->couponValidationService
         );
     }
 
@@ -109,6 +121,15 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
         $entity->setShippingMethod($shippingMethod);
         $entity->setShippingMethodType($shippingMethodType);
 
+        /** @var Coupon $coupon1 */
+        $coupon1 = $this->getEntity(Coupon::class, ['id' => 1, 'code' => 'COUPON1']);
+
+        /** @var Coupon $coupon2 */
+        $coupon2 = $this->getEntity(Coupon::class, ['id' => 2, 'code' => 'COUPON2']);
+
+        $entity->addAppliedCoupons($coupon1);
+        $entity->addAppliedCoupons($coupon2);
+
         $this->criteriaDataProvider->expects($this->once())
             ->method('getCustomerUser')
             ->with($entity)
@@ -125,6 +146,13 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
             ->method('getWebsite')
             ->with($entity)
             ->willReturn($website);
+
+        $this->couponValidationService->expects($this->exactly(2))
+            ->method('isValid')
+            ->willReturnMap([
+                [$coupon1, null, true],
+                [$coupon2, null, false]
+            ]);
 
         $discountLineItems = $this->getDiscountLineItems($entity);
         $scopeCriteria = $this->getScopeCriteria($customer, $customerGroup, $website);
@@ -143,6 +171,7 @@ class OrderContextDataConverterTest extends \PHPUnit_Framework_TestCase
             ContextDataConverterInterface::SHIPPING_COST => Price::create(10.0, 'USD'),
             ContextDataConverterInterface::SHIPPING_METHOD => $shippingMethod,
             ContextDataConverterInterface::SHIPPING_METHOD_TYPE => $shippingMethodType,
+            ContextDataConverterInterface::APPLIED_COUPONS => [$coupon1],
         ], $this->converter->getContextData($entity));
     }
 

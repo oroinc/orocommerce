@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\Converter\OrderLineItemsToDiscountLineItemsConverter;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
 use Oro\Bundle\PromotionBundle\Discount\Exception\UnsupportedSourceEntityException;
+use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
 class OrderContextDataConverter implements ContextDataConverterInterface
@@ -32,21 +33,29 @@ class OrderContextDataConverter implements ContextDataConverterInterface
     protected $lineItemSubtotalProvider;
 
     /**
+     * @var CouponValidationService
+     */
+    private $couponValidationService;
+
+    /**
      * @param CriteriaDataProvider $criteriaDataProvider
      * @param OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter
      * @param ScopeManager $scopeManager
      * @param SubtotalProviderInterface $lineItemSubtotalProvider
+     * @param CouponValidationService $couponValidationService
      */
     public function __construct(
         CriteriaDataProvider $criteriaDataProvider,
         OrderLineItemsToDiscountLineItemsConverter $lineItemsConverter,
         ScopeManager $scopeManager,
-        SubtotalProviderInterface $lineItemSubtotalProvider
+        SubtotalProviderInterface $lineItemSubtotalProvider,
+        CouponValidationService $couponValidationService
     ) {
         $this->criteriaDataProvider = $criteriaDataProvider;
         $this->lineItemsConverter = $lineItemsConverter;
         $this->scopeManager = $scopeManager;
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
+        $this->couponValidationService = $couponValidationService;
     }
 
     /**
@@ -85,8 +94,20 @@ class OrderContextDataConverter implements ContextDataConverterInterface
             self::SHIPPING_ADDRESS => $entity->getShippingAddress(),
             self::SHIPPING_COST => $entity->getShippingCost(),
             self::SHIPPING_METHOD => $entity->getShippingMethod(),
-            self::SHIPPING_METHOD_TYPE => $entity->getShippingMethodType()
+            self::SHIPPING_METHOD_TYPE => $entity->getShippingMethodType(),
+            self::APPLIED_COUPONS => $this->getValidateCoupons($entity->getAppliedCoupons()->toArray())
         ];
+    }
+
+    /**
+     * @param array $coupons
+     * @return array
+     */
+    private function getValidateCoupons(array $coupons)
+    {
+        return  array_filter($coupons, function ($coupon) {
+            return $this->couponValidationService->isValid($coupon);
+        });
     }
 
     /**
