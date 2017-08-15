@@ -109,9 +109,11 @@ class StatusMassActionHandler implements MassActionHandlerInterface
                 ->createQueryBuilder('rule');
 
             if (!$isAllSelected) {
-                $queryBuilder->andWhere($queryBuilder->expr()->in('rule.id', $methodsConfigsRuleIds));
+                $queryBuilder->andWhere($queryBuilder->expr()->in('rule.id', ':methodsConfigsRuleIds'))
+                    ->setParameter('methodsConfigsRuleIds', $methodsConfigsRuleIds);
             } elseif ($methodsConfigsRuleIds) {
-                $queryBuilder->andWhere($queryBuilder->expr()->notIn('rule.id', $methodsConfigsRuleIds));
+                $queryBuilder->andWhere($queryBuilder->expr()->notIn('rule.id', ':methodsConfigsRuleIds'))
+                    ->setParameter('methodsConfigsRuleIds', $methodsConfigsRuleIds);
             }
 
             $iteration = $this->process($queryBuilder, $status, $iteration);
