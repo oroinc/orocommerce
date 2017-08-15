@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
  */
 class DashesSequenceType extends AbstractType
 {
-    const NAME = 'oro_dashes_sequence';
+    const NAME = 'oro_promotion_coupon_dashes_sequence';
 
     /**
      * {@inheritdoc}

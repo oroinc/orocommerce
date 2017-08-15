@@ -24,6 +24,6 @@ class DashesSequenceTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals('oro_dashes_sequence', $this->dashesSequenceType->getBlockPrefix());
+        $this->assertEquals('oro_promotion_coupon_dashes_sequence', $this->dashesSequenceType->getBlockPrefix());
     }
 }
