@@ -85,8 +85,9 @@ class ShoppingListTotalRepository extends EntityRepository
     protected function invalidateTotals(BufferedQueryResultIterator $iterator)
     {
         $ids = [];
-        $qbUpdate = $this->_em->createQueryBuilder()
-            ->update($this->_entityName, 'total')
+        $qbUpdate = $this->_em->createQueryBuilder();
+        $qbUpdate->update($this->_entityName, 'total')
+            ->where($qbUpdate->expr()->in('total.id', ':totalIds'))
             ->set('total.valid', ':valid')
             ->setParameter('valid', false);
         $i = 0;
@@ -94,14 +95,14 @@ class ShoppingListTotalRepository extends EntityRepository
             $ids[] = $total['id'];
             $i++;
             if ($i % 500 === 0) {
-                $qbUpdate->where($qbUpdate->expr()->in('total.id', $ids))
+                $qbUpdate->setParameter('totalIds', $ids)
                     ->getQuery()
                     ->execute();
                 $ids = [];
             }
         }
         if (!empty($ids)) {
-            $qbUpdate->where($qbUpdate->expr()->in('total.id', $ids))
+            $qbUpdate->setParameter('totalIds', $ids)
                 ->getQuery()
                 ->execute();
         }
