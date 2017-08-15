@@ -47,7 +47,7 @@ class CodeGenerationOptions
      */
     public function setCodeLength($codeLength)
     {
-        $this->codeLength = $codeLength;
+        $this->codeLength = (int)$codeLength;
 
         return $this;
     }
@@ -123,7 +123,7 @@ class CodeGenerationOptions
      */
     public function setDashesSequence($dashesSequence)
     {
-        $this->dashesSequence = $dashesSequence;
+        $this->dashesSequence = (int)$dashesSequence;
 
         return $this;
     }

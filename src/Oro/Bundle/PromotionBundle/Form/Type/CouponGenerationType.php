@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Form type that used to receive options for coupon generation from User.
@@ -29,6 +30,9 @@ class CouponGenerationType extends AbstractType
      */
     protected $tokenAccessor;
 
+    /**
+     * @param TokenAccessorInterface $tokenAccessor
+     */
     public function __construct(TokenAccessorInterface $tokenAccessor)
     {
         $this->tokenAccessor = $tokenAccessor;
@@ -56,13 +60,16 @@ class CouponGenerationType extends AbstractType
                         'allowClear' => false,
                         'autocomplete_alias' => 'business_units_owner_search_handler',
                         'component' => 'tree-autocomplete',
-                    ]
+                    ],
                 ]
             )
             ->add(
                 'couponQuantity',
                 IntegerType::class,
-                ['required' => true, 'label' => 'oro.promotion.coupon.generation.couponQuantity.label',]
+                [
+                    'required' => true,
+                    'label' => 'oro.promotion.coupon.generation.couponQuantity.label',
+                ]
             )
             ->add(
                 'promotion',
@@ -81,7 +88,6 @@ class CouponGenerationType extends AbstractType
                     'required' => false,
                     'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_coupon',
                     'label' => 'oro.promotion.coupon.uses_per_coupon.label',
-                    'data' => 1
                 ]
             )
             ->add(
@@ -91,7 +97,6 @@ class CouponGenerationType extends AbstractType
                     'required' => false,
                     'tooltip' => 'oro.promotion.coupon.form.tooltip.uses_per_person',
                     'label' => 'oro.promotion.coupon.uses_per_person.label',
-                    'data' => 1
                 ]
             )
             ->add(
@@ -108,8 +113,7 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'oro.promotion.coupon.generation.codeLength.label',
-                    'data' => 12,
-                    'attr' => ['class' => 'promotion-coupon-generation-preview']
+                    'attr' => ['class' => 'promotion-coupon-generation-preview'],
                 ]
             )
             ->add(
@@ -117,15 +121,8 @@ class CouponGenerationType extends AbstractType
                 ChoiceType::class,
                 [
                     'label' => 'oro.promotion.coupon.generation.codeType.label',
-                    'choices' => [
-                        CouponGenerationOptions::NUMERIC_CODE_TYPE =>
-                            'oro.promotion.coupon.generation.codeType.numeric.label',
-                        CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
-                            'oro.promotion.coupon.generation.codeType.alphanumeric.label',
-                        CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
-                            'oro.promotion.coupon.generation.codeType.alphabetic.label',
-                    ],
-                    'attr' => ['class' => 'promotion-coupon-generation-preview']
+                    'choices' => $this->getCodeTypes(),
+                    'attr' => ['class' => 'promotion-coupon-generation-preview'],
                 ]
             )
             ->add(
@@ -134,7 +131,7 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.generation.codePrefix.label',
-                    'attr' => ['class' => 'promotion-coupon-generation-preview']
+                    'attr' => ['class' => 'promotion-coupon-generation-preview'],
                 ]
             )
             ->add(
@@ -143,7 +140,7 @@ class CouponGenerationType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.promotion.coupon.generation.codeSuffix.label',
-                    'attr' => ['class' => 'promotion-coupon-generation-preview']
+                    'attr' => ['class' => 'promotion-coupon-generation-preview'],
                 ]
             )
             ->add(
@@ -165,6 +162,7 @@ class CouponGenerationType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => CouponGenerationOptions::class,
+                'constraints' => [new Valid()],
             ]
         );
     }
@@ -201,5 +199,20 @@ class CouponGenerationType extends AbstractType
                 return $businessUnit->getOrganization()->getId() === $currentOrganization->getId();
             })
             ->first();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCodeTypes()
+    {
+        return [
+            CouponGenerationOptions::NUMERIC_CODE_TYPE =>
+                'oro.promotion.coupon.generation.codeType.numeric.label',
+            CouponGenerationOptions::ALPHANUMERIC_CODE_TYPE =>
+                'oro.promotion.coupon.generation.codeType.alphanumeric.label',
+            CouponGenerationOptions::ALPHABETIC_CODE_TYPE =>
+                'oro.promotion.coupon.generation.codeType.alphabetic.label',
+        ];
     }
 }

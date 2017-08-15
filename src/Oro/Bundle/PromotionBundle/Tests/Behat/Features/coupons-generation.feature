@@ -16,7 +16,7 @@ Feature: Generation of coupons
       | Code Prefix     | test                             |
       | Code Suffix     | new                              |
     And I click "Generate"
-    Then I should see "Coupons have been generated succesfully" flash message
+    Then I should see "Coupons have been generated successfully" flash message
     And I should see "test7new" in grid with following data:
       | Uses per Coupon | 5                        |
       | Uses per Person | 5                        |
@@ -34,7 +34,7 @@ Feature: Generation of coupons
       | Code Length     | 2                                |
       | Code Type       | Numeric                          |
     And I click "Generate"
-    Then I should see "Coupons have been generated succesfully" flash message
+    Then I should see "Coupons have been generated successfully" flash message
     And I should see "Total Of 160 Records"
 
   Scenario: Generate coupons with minimum data
@@ -45,7 +45,7 @@ Feature: Generation of coupons
       | Code Length     | 4          |
       | Code Type       | Alphabetic |
     And I click "Generate"
-    Then I should see "Coupons have been generated succesfully" flash message
+    Then I should see "Coupons have been generated successfully" flash message
 
   Scenario: Check that grid contains only Promotions that can use Coupons
     Given I go to Marketing/Promotions/Coupons

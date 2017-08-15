@@ -80,7 +80,9 @@ operations:
             attribute_default_values:
                 couponGenerationOptions: $.couponGenerationOptions
         form_init:
-            - '@assign_value': [$.couponGenerationOptions, $.data.couponGenerationOptions]
+            - '@create_object':
+                class: 'Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions'
+                attribute: $.couponGenerationOptions
         actions:
             - '@call_service_method':
                 service: oro_promotion.coupon_generation.handler

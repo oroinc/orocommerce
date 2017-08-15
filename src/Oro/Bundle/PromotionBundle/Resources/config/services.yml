@@ -501,14 +501,27 @@ services:
         arguments:
             - '@oro_promotion.coupon_generation.coupon'
 
-    oro_promotion.coupon_generation.code:
+    oro_promotion.coupon_generation.code_generator:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator
 
     oro_promotion.coupon_generation.coupon:
         class: Oro\Bundle\PromotionBundle\CouponGeneration\Coupon\CouponGenerator
         arguments:
-            - '@oro_promotion.coupon_generation.code'
+            - '@oro_promotion.coupon_generation.code_generator'
             - '@oro_entity.doctrine_helper'
             - '@logger'
         tags:
             - { name: monolog.logger, channel: oro_promotion }
+
+    oro_promotion.validator.coupon_code_length:
+        class: 'Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLengthValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_promotion_coupon_code_length }
+
+    oro_promotion.twig.extension.coupon_preview:
+        class: 'Oro\Bundle\PromotionBundle\Twig\CouponPreviewExtension'
+        public: false
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: twig.extension }

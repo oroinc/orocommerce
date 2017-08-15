@@ -212,7 +212,7 @@ oro:
                     prefix.label: Add Dashes Every
                     suffix.label: Symbols
                 message:
-                    save_success: Coupons have been generated succesfully
+                    save_success: Coupons have been generated successfully
 
     applied_discount:
         name: Name

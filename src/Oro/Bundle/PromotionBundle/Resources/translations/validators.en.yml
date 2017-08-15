@@ -1,0 +1,7 @@
+oro:
+    promotion:
+        coupon:
+            validators:
+                max_possible_code_length_exceeded: |
+                    Coupon codes must not be longer than {{ maxAllowedLength }} symbols, including prefix, suffix, and dashes. With the current settings, the coupon codes are {{ actualLength }} symbols longer.
+                    Please adjust values of the Code Length, Code Prefix, Code Suffix, and/or Add Dashes Every X symbols fields to reduce the coupon code length to allowed maximum.

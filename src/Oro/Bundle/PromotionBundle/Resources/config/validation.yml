@@ -54,6 +54,9 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
                 max: 2147483647
 
 Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
+    constraints:
+        - Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLength:
+            groups: ['generation']
     properties:
         owner:
             - NotBlank:
@@ -85,6 +88,12 @@ Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
                 max: 255
         codeType:
             - NotBlank: ~
+        codePrefix:
+            - Length:
+                max: 100
+        codeSuffix:
+            - Length:
+                max: 100
         dashesSequence:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:

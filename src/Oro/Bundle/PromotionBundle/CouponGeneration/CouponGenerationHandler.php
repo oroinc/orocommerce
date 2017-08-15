@@ -20,6 +20,9 @@ class CouponGenerationHandler
      */
     protected $generator;
 
+    /**
+     * @param CouponGeneratorInterface $generator
+     */
     public function __construct(CouponGeneratorInterface $generator)
     {
         $this->generator = $generator;

@@ -149,7 +149,7 @@ class CouponController extends Controller
             return new JsonResponse(['error' => (string)$form->getErrors(true, false)]);
         }
 
-        $generator = $this->get('oro_promotion.coupon_generation.code');
+        $generator = $this->get('oro_promotion.coupon_generation.code_generator');
 
         return new JsonResponse(['error' => false, 'code' => $generator->generateOne($options)]);
     }
