@@ -1,5 +1,6 @@
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 @ticket-BB-11463
+@regression
 Feature: Generation of long coupon code
 
   Scenario: Trying to generate coupons exceeding max length

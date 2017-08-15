@@ -1,5 +1,6 @@
 @fixture-OroPromotionBundle:promotions_for_coupons.yml
 @fixture-OroPromotionBundle:coupons.yml
+@regression
 Feature: Mass edit of Coupons codes
   As an Administrator
   I want to be able to mass edit coupon codes via Management Console UI

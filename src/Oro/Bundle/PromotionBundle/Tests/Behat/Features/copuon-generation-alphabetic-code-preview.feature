@@ -1,3 +1,4 @@
+@regression
 Feature: Preview of alphabetic coupon code in coupon generation form
 
   Scenario: Preview of alphabetic code with custom length and without dashes
