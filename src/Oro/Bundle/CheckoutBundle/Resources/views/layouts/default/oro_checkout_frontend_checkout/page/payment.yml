@@ -5,13 +5,15 @@ layout:
         - '@setBlockTheme':
             themes:
                 - '../templates/payment.html.twig'
+
         - '@setOption':
-            id: checkout_information
+            id: checkout_information_title
             optionName: stepOrder
             optionValue: 4
+
         - '@add':
             id: payment_methods
-            parentId: checkout_information
+            parentId: checkout_information_body
             blockType: payment_methods
             prepend: true
             options:

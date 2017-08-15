@@ -184,7 +184,7 @@ oro:
                 delete: 'Delete'
                 matrix_grid_order: 'Order with Matrix Grid'
             workflow:
-                remove_source.label: Delete the shopping list
+                remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:
                 total_qty: 'Total QTY'
                 total: 'TOTAL'
