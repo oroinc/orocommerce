@@ -846,7 +846,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $imageSrc = $image->getAttribute('src');
         $matches = [];
         preg_match('/\/media\/cache\/attachment\/resize\/\d+\/\d+\/\d+\/(.+)\.\w+/', $imageSrc, $matches);
-        self::assertNotEmpty($matches[1], sprintf('Image ID not found for "%s" imahe', $imageType));
+        self::assertNotEmpty($matches[1], sprintf('Image ID not found for "%s" image', $imageType));
 
         $this->rememberedData[$imageType] = $matches[1];
     }
@@ -875,7 +875,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $image = $section->find(
             'xpath',
             sprintf(
-                '//a[contains(@class, "view-product")][contains(@style, "background-image")][contains(@style, "%s")]',
+                '//img[contains(@class, "product-item__preview-image")][contains(@src, "%s")]',
                 $rememberedImageId
             )
         );
