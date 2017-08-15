@@ -34,8 +34,7 @@ class CouponGenerationHandlerTest extends \PHPUnit_Framework_TestCase
         $this->couponGenerator
             ->expects($this->once())
             ->method('generateAndSave')
-            ->with($this->identicalTo($options))
-        ;
+            ->with($this->identicalTo($options));
 
         $this->couponGenerationHandler->process($options);
     }

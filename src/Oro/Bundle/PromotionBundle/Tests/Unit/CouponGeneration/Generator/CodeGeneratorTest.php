@@ -108,7 +108,7 @@ class CodeGeneratorTest extends \PHPUnit_Framework_TestCase
                     ->setCodeLength(7)
                     ->setDashesSequence(2),
                 'expected' => '/^Hello[0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]World$/',
-            ]
+            ],
         ];
     }
 }

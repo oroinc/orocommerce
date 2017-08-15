@@ -1,6 +1,6 @@
 <?php
 
-namespace  Oro\Bundle\PromotionBundle\CouponGeneration\Options;
+namespace Oro\Bundle\PromotionBundle\CouponGeneration\Options;
 
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
@@ -133,7 +133,7 @@ class CouponGenerationOptions extends CodeGenerationOptions
      *
      * @return $this
      */
-    public function setOwner(BusinessUnit $owner)
+    public function setOwner(BusinessUnit $owner = null)
     {
         $this->owner = $owner;
 
