@@ -71,19 +71,20 @@ class OrderAddressManager extends AbstractAddressManager
 
     /**
      * @param array|OrderAddress[] $addresses
+     * @param string $groupLabelPrefix
      * @return array
      */
-    public function getAddressTypes(array $addresses = [])
+    public function getAddressTypes(array $addresses = [], $groupLabelPrefix = 'oro.order.')
     {
         return array_merge(
             $this->getTypesMapping(
                 'OroCustomerBundle:CustomerAddressToAddressType',
-                self::ACCOUNT_LABEL,
+                $groupLabelPrefix . static::ACCOUNT_LABEL,
                 $addresses
             ),
             $this->getTypesMapping(
                 'OroCustomerBundle:CustomerUserAddressToAddressType',
-                self::ACCOUNT_USER_LABEL,
+                $groupLabelPrefix . static::ACCOUNT_USER_LABEL,
                 $addresses
             )
         );

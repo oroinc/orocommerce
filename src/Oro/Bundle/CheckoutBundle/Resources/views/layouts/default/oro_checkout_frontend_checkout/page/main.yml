@@ -9,6 +9,10 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue: 'oro.checkout.open_order.label'
+        - '@setOption':
+            id: checkout_order_summary_line_items_container
+            optionName: keepState
+            optionValue: true
 
     imports:
         -

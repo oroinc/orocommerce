@@ -1,17 +1,19 @@
 layout:
     imports:
         - 'oro_payment_method_options'
+
     actions:
         - '@setBlockTheme':
             themes:
                 - '../templates/payment.html.twig'
         - '@setOption':
-            id: checkout_information
+            id: checkout_information_title
             optionName: stepOrder
             optionValue: 4
+
         - '@add':
             id: payment_methods
-            parentId: checkout_information
+            parentId: checkout_information_body
             blockType: payment_methods
             prepend: true
             options:
@@ -20,8 +22,10 @@ layout:
                 class_prefix: 'checkout'
                 views: '=data["oro_payment_method_views_provider"].getViews(data["checkout_payment_context"].getContext(data["checkout"]))'
                 currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
+
         - '@move':
             id: checkout_form_buttons
             parentId: checkout_form
             siblingId: checkout_form_fields
+
     conditions: 'context["workflowStepName"]=="enter_payment"'
