@@ -1,3 +1,4 @@
+@regression
 @fixture-OroShoppingListBundle:DuplicateList.yml
 Feature: Duplicate Lists
   In order to create multiple similar orders
@@ -34,8 +35,8 @@ Feature: Duplicate Lists
     Given I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
-    And I click "Shopping List" on configuration sidebar
-    And uncheck Use Default for "Enable guest shopping list" field
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     And fill "Shopping List Limit Form" with:
       |Shopping List Limit Default|false|
@@ -120,7 +121,7 @@ Feature: Duplicate Lists
     And I proceed as the Admin
     And login as administrator
     And go to System/ Configuration
-    And I click "Shopping List" on configuration sidebar
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And fill "Shopping List Limit Form" with:
       |Shopping List Limit Default|true|
     And click "Save settings"

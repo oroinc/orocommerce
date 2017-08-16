@@ -27,6 +27,8 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU1 |
+    And I wait for products to load
+    When I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And "PSKU1" product should has "$45.00" value in price field
     And I wait for products to load
@@ -81,7 +83,7 @@ Feature: Quick order form
       | Product1 | 2 | items |
       | Product2 | 4 | sets  |
       | Product3 | 2 | items |
-    And I check "Delete the shopping list" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
   Scenario: Add to shopping list from quick order page
@@ -102,7 +104,7 @@ Feature: Quick order form
     Then I should see "3 products were added (view shopping list)." flash message
     When I open page with shopping list List 2
     Then Buyer is on view shopping list "List 2" page and clicks create order button
-    And Page title equals to "Billing Information - Open Order"
+    And Page title equals to "Billing Information - Checkout"
 
   Scenario: Get A Quote from quick order page with product without price
     Given I click "Quick Order Form"
@@ -119,6 +121,8 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
       | SKU1 | PSKU4 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     When I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items with price" flash message
@@ -130,7 +134,7 @@ Feature: Quick order form
       | QTY1 | 1     |
       | QTY2 | 2     |
     And I click "Create Order"
-    Then Page title equals to "Billing Information - Open Order"
+    Then Page title equals to "Billing Information - Checkout"
     And I should see "Some products have not been added to this order. Please create an RFQ to request price." flash message
     And "Billing Information" checkout step "Order Summary Products Grid" contains products
       | Product1 | 2 | items |
@@ -139,18 +143,24 @@ Feature: Quick order form
     Given I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Get Quote"
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click "Create Order"
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
       | SKU1 | PSKU5 |
+    And I wait for products to load
+    And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     And I click on "Shopping List Dropdown"
     And I click "Add to List 2"

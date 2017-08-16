@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 
 class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements CronCommandInterface
 {
@@ -55,9 +56,13 @@ class ClearExpiredShoppingListsCommand extends ContainerAwareCommand implements 
     private function getExpiredShoppingListIds()
     {
         $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $cookieLifetime = $this->getContainer()
+            ->get('oro_config.manager')
+            ->get('oro_customer.customer_visitor_cookie_lifetime_days');
+
         $expiredLastVisitDate->modify(sprintf(
             '-%d seconds',
-            $this->getContainer()->getParameter('oro_customer.anonymous_customer_user.lifetime')
+            $cookieLifetime * Configuration::SECONDS_IN_DAY
         ));
 
         $registry = $this->getContainer()->get('doctrine');

@@ -1,0 +1,32 @@
+services:
+    oro_catalog.api.processor.normalize_result.abstract_load_category_for_product:
+        abstract: true
+        arguments: ['@oro_api.doctrine_helper', '@oro_api.value_normalizer']
+
+    oro_catalog.api.processor.normalize_result.load_category_for_product:
+        class: Oro\Bundle\CatalogBundle\Api\Processor\LoadCategoryForProduct
+        parent: oro_catalog.api.processor.normalize_result.abstract_load_category_for_product
+        tags:
+            - { name: oro.api.processor, action: get, group: normalize_result, priority: -170, class: '%oro_product.entity.product.class%'}
+            - { name: oro.api.processor, action: create, group: normalize_result, priority: -170, class: '%oro_product.entity.product.class%'}
+            - { name: oro.api.processor, action: update, group: normalize_result, priority: -170, class: '%oro_product.entity.product.class%'}
+
+    oro_catalog.api.processor.normalize_result.load_category_for_product_collection:
+        class: Oro\Bundle\CatalogBundle\Api\Processor\LoadCategoryForProductCollection
+        parent: oro_catalog.api.processor.normalize_result.abstract_load_category_for_product
+        tags:
+            - { name: oro.api.processor, action: get_list, group: normalize_result, priority: -170, class: '%oro_product.entity.product.class%'}
+
+    oro_catalog.api.processor.save_data.save_category_for_product:
+        class: Oro\Bundle\CatalogBundle\Api\Processor\SaveCategoryForProduct
+        arguments: ['@oro_api.doctrine_helper']
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, priority: -50, class: '%oro_product.entity.product.class%'}
+            - { name: oro.api.processor, action: update, group: save_data, priority: -50, class: '%oro_product.entity.product.class%'}
+
+    oro_catalog.api.processor.normalize_input.remove_category_from_product_request:
+        class: Oro\Bundle\CatalogBundle\Api\Processor\RemoveCategoryFromProductRequest
+        arguments: ['@oro_api.doctrine_helper', '@oro_api.value_normalizer']
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, priority: 89, class: '%oro_product.entity.product.class%'}
+            - { name: oro.api.processor, action: update, group: normalize_input, priority: 89, class: '%oro_product.entity.product.class%'}

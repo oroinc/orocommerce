@@ -1,0 +1,11 @@
+include:
+    - '@OroCustomerBundle:CustomerUserAddressFixture.yml'
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@amanda'
+        poNumber: 'PO1'
+        qid: 'Quote1'
+        website: '@website1'

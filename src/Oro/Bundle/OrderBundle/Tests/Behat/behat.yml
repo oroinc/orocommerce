@@ -4,6 +4,12 @@ oro_behat_extension:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder
       selector: 'div.layout-content'
 
+    Order Billing Address Select:
+      selector: '[name="oro_order_type[billingAddress][customerAddress]"]'
+
+    Order Shipping Address Select:
+      selector: '[name="oro_order_type[shippingAddress][customerAddress]"]'
+
     BackendOrderLineItem:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItem
       selector: 'tr'
@@ -33,13 +39,6 @@ oro_behat_extension:
     Order Payment Transaction Grid:
       selector: "div[id^='grid-order-payment-transactions-grid'] div.grid-container"
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
-
-    # Remove this mapping after resolving of BB-11025
-    Duplicated Line Item Remove Button:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector:
-        type: xpath
-        locator: '//tr[contains(@data-content, "oro_order_type[lineItems][1]")]//button[contains(@class, "removeLineItem")]'
 
     Calculate Shipping Button:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

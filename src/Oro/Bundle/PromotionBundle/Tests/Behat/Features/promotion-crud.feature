@@ -20,10 +20,9 @@ Feature: Managing promotions
       | Sort Order                   | 10                    |
       | Enabled                      | 1                     |
       | Stop Further Rule Processing | 1                     |
-#      TODO: uncomment after BB-9489
-#      | Use Coupons                  | Yes                   |
+      | Use Coupons                  | Yes                   |
       | Discount Value               | 10.0                  |
-      | Active At (first)            | <DateTime:today>      |
+      | Activate At (first)            | <DateTime:today>      |
       | Deactivate At (first)        | <DateTime:tomorrow>   |
       | Website                      | Default               |
       | Customer Group               | All Customers         |

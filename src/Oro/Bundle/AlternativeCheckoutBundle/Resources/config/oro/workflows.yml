@@ -94,6 +94,8 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            visitor_email:
+                type: string
         steps:
             enter_billing_address:
                 order: 10
@@ -230,6 +232,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        visitor_email:
+                            form_type: oro_customer_visitor_email_address
             continue_to_shipping_method:
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
@@ -680,6 +684,7 @@ workflows:
                                   - [[keep], [propertyName, [organization]]]
                                   - [[shallowCopy], [propertyType, ['\DateTime']]]
                             - '@flush_entity': $checkout.shippingAddress
+
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -688,6 +693,20 @@ workflows:
                         state: $.result.actualCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
+
+                    - '@tree':
+                        conditions:
+                            '@equal': [true, $ship_to_billing_address]
+                        actions:
+                            - '@generate_checkout_state_snapshot':
+                                entity: $checkout
+                                attribute: $.result.initCheckoutState
+                            - '@assign_value': [$.result.savedCheckoutState, $.result.initCheckoutState]
+
+                            - '@transit_workflow':
+                                entity: $checkout
+                                transition: continue_to_shipping_method
+                                workflow: 'b2b_flow_alternative_checkout'
 
             continue_to_shipping_method_definition:
                 preactions:

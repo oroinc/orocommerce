@@ -25,10 +25,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /** @var array */
     protected static $valueMapping = [
+        'Ship to this address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
         'Value'=> 'paymentMethod',
-        'Delete the shopping list' => 'oro_workflow_transition[remove_source]'
+        'Delete this shopping list after submitting order' => 'oro_workflow_transition[remove_source]',
+        'Save shipping address' => 'oro_workflow_transition[save_shipping_address]'
     ];
 
     /**
@@ -176,6 +178,14 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         self::fail(sprintf('Button with title "%s" was not found', $buttonTitle));
+    }
+
+    /**
+     * @Given /^(?:|I )wait "Submit Order" button$/
+     */
+    public function iWaitSubmitOrderButton()
+    {
+        $this->getSession()->getDriver()->wait(30000, "0 == $('button.checkout__submit-btn:disabled').length");
     }
 
     /**

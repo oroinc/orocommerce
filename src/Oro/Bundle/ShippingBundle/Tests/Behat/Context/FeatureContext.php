@@ -176,19 +176,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
 
-        // Add method type config
-        $method = array_search('Method', $table->getColumn(0), true);
-        if ($method !== false) {
-            $form->fill(new TableNode([['Method', $table->getRow($method)[1]]]));
-            $shippingMethodConfigAdd = $form->find('css', '.add-method');
-            $shippingMethodConfigAdd->click();
-            $this->waitForAjax();
-
-            $rows = $table->getRows();
-            unset($rows[$method]);
-            $table = new TableNode($rows);
-        }
-
         foreach ($table->getColumn(0) as $columnItem) {
             if (false !== strpos($columnItem, 'Country')) {
                 $destinationAdd = $form->find('css', '.add-list-item');
@@ -261,7 +248,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         /** @var Form $form */
         $form = $this->createElement('Address');
-        $form->fillField('SELECT SHIPPING ADDRESS', 'Enter other address');
+        $form->fillField('SELECT SHIPPING ADDRESS', 'New address');
         $this->waitForAjax();
         /** @var int $row */
         if ($row = array_search('Country', $table->getColumn(0))) {

@@ -7,26 +7,22 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
-use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
     use UserUtilityTrait;
+    use MakeProductAttributesTrait;
 
     const DEFAULT_FAMILY_CODE = 'default_family';
     const GENERAL_GROUP_CODE = 'general';
-
-    use ContainerAwareTrait;
 
     /**
      * @var array
@@ -40,14 +36,6 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
                 'names',
                 'descriptions',
                 'shortDescriptions',
-            ],
-            'groupVisibility' => true
-        ],
-        [
-            'groupLabel' => 'Product Prices',
-            'groupCode' => 'prices',
-            'attributes' => [
-                'productPriceAttributesPrices'
             ],
             'groupVisibility' => true
         ],
@@ -87,7 +75,6 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
         $user = $this->getFirstUser($manager);
         $organization = $user->getOrganization();
 
-        $configManager = $this->container->get('oro_entity_config.config_manager');
         $attributeFamily = new AttributeFamily();
         $attributeFamily->setCode(self::DEFAULT_FAMILY_CODE);
         $attributeFamily->setEntityClass(Product::class);
@@ -95,25 +82,8 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
         $attributeFamily->setDefaultLabel('Default');
         $attributeFamily->setOrganization($organization);
 
-        foreach (self::$groups as $groupData) {
-            $attributeGroup = new AttributeGroup();
-            $attributeGroup->setDefaultLabel($groupData['groupLabel']);
-            $attributeGroup->setIsVisible($groupData['groupVisibility']);
-            $attributeGroup->setCode($groupData['groupCode']);
-            foreach ($groupData['attributes'] as $attribute) {
-                $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $attribute);
-                $attributeGroupRelation = new AttributeGroupRelation();
-                $attributeGroupRelation->setEntityConfigFieldId($fieldConfigModel->getId());
-                $attributeGroup->addAttributeRelation($attributeGroupRelation);
-            }
-
-            $attributeFamily->addAttributeGroup($attributeGroup);
-        }
-
+        $this->addGroupsWithAttributesToFamily(self::$groups, $attributeFamily, $manager);
         $this->setReference(static::DEFAULT_FAMILY_CODE, $attributeFamily);
-
-        $manager->persist($attributeFamily);
-        $manager->flush();
 
         $queryBuilder = $manager
             ->getRepository(Product::class)
