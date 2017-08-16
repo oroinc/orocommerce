@@ -17,14 +17,14 @@ class LoadCouponData extends AbstractFixture
         $coupon
             ->setCode('test123')
             ->setUsesPerCoupon(1)
-            ->setUsesPerUser(1);
+            ->setUsesPerPerson(1);
         $manager->persist($coupon);
 
         $coupon2 = new Coupon();
         $coupon2
             ->setCode('test456')
             ->setUsesPerCoupon(2)
-            ->setUsesPerUser(2);
+            ->setUsesPerPerson(2);
 
         $manager->persist($coupon2);
 

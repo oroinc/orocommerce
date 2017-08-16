@@ -4,7 +4,9 @@
 {% set entityId = entity.id %}
 
 {% if entityId %}
-    {% oro_title_set({params : {"%title%": entity.rule.name} }) %}
+    {% oro_title_set({params : {"%name%": entity.rule.name} }) %}
+{% else %}
+    {% oro_title_set({params : {"%entityName%": 'oro.promotion.entity_label'|trans} }) %}
 {% endif %}
 
 {% set formAction = entityId ? path('oro_promotion_update', { 'id': entityId }) : path('oro_promotion_create')  %}
@@ -71,7 +73,6 @@
         </div>
     {% endset %}
 
-    {# TODO: add 'form_row(form.useCoupons)' to general block after BB-9489 #}
     {% set dataBlocks = [
         {
             'title': 'oro.promotion.blocks.general'|trans,
@@ -83,7 +84,8 @@
                     form_row(form.rule.name),
                     form_row(form.rule.sortOrder),
                     form_row(form.rule.enabled, {'label': 'oro.promotion.rule.enabled.label'}),
-                    form_row(form.rule.stopProcessing)
+                    form_row(form.rule.stopProcessing),
+                    form_row(form.useCoupons)
                 ]
             }]
         },
