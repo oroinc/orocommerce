@@ -192,7 +192,7 @@ oro:
             promotion.label: Promotion
             total_uses.label: Used
             uses_per_coupon.label: Uses per Coupon
-            uses_per_user.label: Uses per Customer
+            uses_per_person.label: Uses per Person
             valid_until.label: Valid Until
             menu:
                 coupon_list.description: List of existing coupons
@@ -208,7 +208,7 @@ oro:
                     saved: 'Coupon has been saved'
                 tooltip:
                     coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
-                    uses_per_user: 'Limits how many times the coupon may be used by the same customer user'
+                    uses_per_person: 'Limits how many times the coupon may be used by the same customer user'
                     uses_per_coupon: 'Limits how many times the coupon may be used'
                 add_type:
                     code.tooltip: Choose a Coupon Code
@@ -220,6 +220,24 @@ oro:
                 expired: Coupon is expired
                 usage_limit_exceeded: Coupon usage limit is exceeded
                 customer_user_usage_limit_exceeded: Customer user coupon usage limit is exceeded
+            generation:
+                label: Generate Coupons
+                action:
+                    generate: Generate
+                couponQuantity.label: Coupon Quantity
+                codeLength.label: Code Length
+                codeType:
+                    label: Code Type
+                    numeric.label: Numeric
+                    alphanumeric.label: Alphanumeric
+                    alphabetic.label: Alphabetic
+                codePrefix.label: Code Prefix
+                codeSuffix.label: Code Suffix
+                dashesSequence:
+                    prefix.label: Add Dashes Every
+                    suffix.label: Symbols
+                message:
+                    save_success: Coupons have been generated successfully
 
     applied_discount:
         name: Name

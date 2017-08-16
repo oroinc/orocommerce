@@ -43,6 +43,10 @@ class LoadUserData extends AbstractLoadCustomerUserFixture
                 'class' => 'oro_customer.entity.customer_user.class',
                 'acls'  => [],
             ],
+            [
+                'oid' => ['workflow', '(root)'],
+                'acls'  => ['VIEW_WORKFLOW_SYSTEM', 'PERFORM_TRANSITIONS_SYSTEM'],
+            ],
         ],
         self::ROLE2 => [
             [

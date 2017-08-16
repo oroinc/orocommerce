@@ -7,6 +7,8 @@ use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SidebarConfigMenu;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Element\SystemConfigForm;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Code\CodeGenerator;
+use Oro\Bundle\PromotionBundle\CouponGeneration\Options\CodeGenerationOptions;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrder;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionBackendOrderLineItem;
 use Oro\Bundle\PromotionBundle\Tests\Behat\Element\PromotionCheckoutStep;
@@ -196,6 +198,41 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
         $orderForm->saveWithoutDiscountsRecalculation();
     }
 
+    // @codingStandardsIgnoreStart
+    /**
+     * Example: Then I expecting to see alphabetic coupon of 10 symbols with prefix "hello" suffix "kitty" and dashes every 0 symbols
+     * Example: Then I expecting to see alphanumeric coupon of 16 symbols with prefix "hello" suffix "kitty" and dashes every 4 symbols
+     * Example: Then I expecting to see numeric coupon of 12 symbols with prefix "" suffix "" and dashes every 2 symbols
+     *
+     * @Then /^(?:|I )expecting to see (?P<codeType>[^"]*) coupon of (?P<codeLength>(?:\d+)) symbols with prefix "(?P<codePrefix>[^"]*)" suffix "(?P<codeSuffix>[^"]*)" and dashes every (?P<dashesSequence>(?:\d+)) symbols$/
+     * @param string $codeType
+     * @param int $codeLength
+     * @param string $codePrefix
+     * @param string $codeSuffix
+     * @param int $dashesSequence
+     */
+    // @codingStandardsIgnoreEnd
+    public function assertCouponMatchesGivenOptions(
+        $codeType,
+        $codeLength,
+        $codePrefix,
+        $codeSuffix,
+        $dashesSequence
+    ) {
+        $pattern = $this->getRegexpPatternForCouponCode($codeType);
+
+        if ($dashesSequence > 0) {
+            $pattern = $this->setDashesForCouponCode($pattern, $codeLength, $dashesSequence);
+        } else {
+            $pattern .= '{' . $codeLength . '}';
+        }
+
+        $pattern = '/^' . $codePrefix . $pattern . $codeSuffix . '$/';
+
+        $element = $this->elementFactory->createElement('couponCodePreview');
+        static::assertRegExp($pattern, $element->getText());
+    }
+
     /**
      * @param LineItemsAwareInterface $element
      * @param $table
@@ -231,5 +268,50 @@ class PromotionContext extends OroFeatureContext implements OroPageObjectAware
                 )
             );
         }
+    }
+
+    /**
+     * @param string $codeType
+     * @return string
+     */
+    protected function getRegexpPatternForCouponCode($codeType)
+    {
+        switch ($codeType) {
+            case CodeGenerationOptions::ALPHABETIC_CODE_TYPE:
+                $pattern = '[a-zA-Z]';
+                break;
+            case CodeGenerationOptions::NUMERIC_CODE_TYPE:
+                $pattern = '[0-9]';
+                break;
+            default:
+                $pattern = '[a-zA-Z0-9]';
+        };
+
+        return $pattern;
+    }
+
+    /**
+     * @param string $pattern
+     * @param int $codeLength
+     * @param int $dashesSequence
+     * @return string
+     */
+    protected function setDashesForCouponCode($pattern, $codeLength, $dashesSequence)
+    {
+        $patternData = [];
+        $complexPattern = $pattern . '{' . $dashesSequence . '}';
+        $partsLimit = floor($codeLength / $dashesSequence);
+
+        for ($i = 0; $i < $partsLimit; $i++) {
+            $patternData[] = $complexPattern;
+        }
+
+        $codeLengthAfterDashes = $codeLength % $dashesSequence;
+
+        if ($codeLengthAfterDashes) {
+            $patternData[] = $pattern . '{' . $codeLengthAfterDashes . '}';
+        }
+
+        return implode(CodeGenerator::DASH_SYMBOL, $patternData);
     }
 }

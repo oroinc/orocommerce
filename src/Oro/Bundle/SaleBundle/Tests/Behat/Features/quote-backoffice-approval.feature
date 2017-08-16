@@ -3,6 +3,8 @@
 @ticket-BB-11080
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
+@skip
+# todo: Unskip after BB-11483 will be resolved
 Feature: Quote Backoffice Approvals Workflow
   In order to edit quote internal statuses and aprove quotes after price changes
   As an Administrator

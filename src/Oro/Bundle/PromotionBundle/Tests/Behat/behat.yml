@@ -98,3 +98,11 @@ oro_behat_extension:
     OrderPromotionsGrid:
       selector: 'div[data-page-component-name="promotion-order-applied-discount-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    CouponCodePreview:
+      selector: 'div#coupon-code-preview'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Promotions Grid Button:
+      selector: '.entity-select-btn'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
