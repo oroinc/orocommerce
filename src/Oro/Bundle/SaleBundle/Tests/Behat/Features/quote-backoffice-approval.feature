@@ -3,9 +3,7 @@
 @ticket-BB-11080
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
-@skip
-# todo: Unskip after BB-11483 will be resolved
-Feature: Quote Backoffice Approvals Workflow
+Feature: Backoffice Quote Flow with Approvals
   In order to edit quote internal statuses and aprove quotes after price changes
   As an Administrator
   I want to have ability to change Quote internal status and approve quotes by Workflow transitions
@@ -13,8 +11,17 @@ Feature: Quote Backoffice Approvals Workflow
   Scenario: Check workflow variable
     Given I login as administrator
     When I go to System/Workflows
-    And I click Configuration Quote Backoffice Approval in grid
+    And I click Configuration Backoffice Quote Flow with Approvals in grid
     Then the "Price override requires approval" checkbox should be checked
+
+  Scenario: Add workflow permissions for user
+    Given I go to System/ User Management/ Roles
+    And I filter Label as is equal to "Sales Rep"
+    When I click edit Sales Rep in grid
+    And I select following permissions:
+      | Backoffice Quote Flow with Approvals | View Workflow:Global | Perform transitions:Global |
+    And I save and close form
+    Then I should see "Role saved" flash message
 
   Scenario: Draft -> Edit: Quote prices not changed
     Given I login as "john" user
