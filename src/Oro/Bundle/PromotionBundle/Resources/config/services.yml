@@ -559,3 +559,9 @@ services:
         class: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
         tags:
             - { name: form.type, alias: oro_promotion_coupon_add }
+
+    oro_promotion.validation_service.coupon_applicability_validation:
+        class: Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService
+        arguments:
+            - '@oro_promotion.validation_service.coupon_validation'
+            - '@oro_promotion.promotion_provider'

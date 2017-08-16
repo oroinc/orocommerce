@@ -51,4 +51,13 @@ class Order extends BaseOrder
 
         return $this;
     }
+
+    /**
+     * @param Coupon $appliedCoupon
+     * @return Order
+     */
+    public function addAppliedCoupon(Coupon $appliedCoupon)
+    {
+        return $this->addAppliedCoupons($appliedCoupon);
+    }
 }

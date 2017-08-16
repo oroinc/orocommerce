@@ -220,6 +220,9 @@ oro:
                 expired: Coupon is expired
                 usage_limit_exceeded: Coupon usage limit is exceeded
                 customer_user_usage_limit_exceeded: Customer user coupon usage limit is exceeded
+                coupon_already_applied: This coupon has been already added
+                coupon_promotion_already_applied: This coupon's discount has been already applied
+                coupon_promotion_not_applicable: This coupon's discount is not applicable
             generation:
                 label: Generate Coupons
                 action:

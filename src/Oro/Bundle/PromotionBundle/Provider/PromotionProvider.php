@@ -50,6 +50,48 @@ class PromotionProvider
             ->getRepository(Promotion::class)
             ->findAll();
 
+        return $this->filterPromotions($sourceEntity, $promotions);
+    }
+
+    /**
+     * Checks whether promotion has been already applied to a given source entity.
+     *
+     * @param object $sourceEntity
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function isPromotionApplied($sourceEntity, Promotion $promotion): bool
+    {
+        $promotions = $this->getPromotions($sourceEntity);
+
+        foreach ($promotions as $appliedPromotion) {
+            if ($appliedPromotion->getId() === $promotion->getId()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks whether promotion can be applied to a given source entity.
+     *
+     * @param $sourceEntity
+     * @param Promotion $promotion
+     * @return bool
+     */
+    public function isPromotionApplicable($sourceEntity, Promotion $promotion): bool
+    {
+        return !empty($this->filterPromotions($sourceEntity, [$promotion]));
+    }
+
+    /**
+     * @param object $sourceEntity
+     * @param array|Promotion[] $promotions
+     * @return array|\Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface[]
+     */
+    private function filterPromotions($sourceEntity, array $promotions): array
+    {
         $contextData = $this->contextDataConverter->getContextData($sourceEntity);
 
         return $this->ruleFiltrationService->getFilteredRuleOwners($promotions, $contextData);
