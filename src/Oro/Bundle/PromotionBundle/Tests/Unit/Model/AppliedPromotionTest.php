@@ -18,6 +18,7 @@ class AppliedPromotionTest extends \PHPUnit_Framework_TestCase
     public function testProperties()
     {
         $properties = [
+            ['id', 10],
             ['rule', new Rule(), false],
             ['discountConfiguration', new DiscountConfiguration(), false],
             ['useCoupons', true],

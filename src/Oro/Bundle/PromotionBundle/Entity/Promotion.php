@@ -258,7 +258,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getId()
     {

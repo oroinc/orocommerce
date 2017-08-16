@@ -11,6 +11,11 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 interface PromotionDataInterface extends RuleOwnerInterface, ScopeCollectionAwareInterface
 {
     /**
+     * @return int
+     */
+    public function getId();
+
+    /**
      * @return DiscountConfiguration
      */
     public function getDiscountConfiguration();

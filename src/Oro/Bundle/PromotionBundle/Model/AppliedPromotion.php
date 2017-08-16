@@ -14,6 +14,11 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 class AppliedPromotion implements PromotionDataInterface
 {
     /**
+     * @var int
+     */
+    protected $id;
+
+    /**
      * @var RuleInterface
      */
     protected $rule;
@@ -163,6 +168,25 @@ class AppliedPromotion implements PromotionDataInterface
         if (!$this->scopes->contains($scope)) {
             $this->scopes->add($scope);
         }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     * @return AppliedPromotion
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
 
         return $this;
     }
