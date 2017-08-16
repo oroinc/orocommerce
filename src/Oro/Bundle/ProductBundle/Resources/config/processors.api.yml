@@ -1,0 +1,31 @@
+services:
+    oro_product.create.process_unit_precisions:
+            class: Oro\Bundle\ProductBundle\Processor\Create\ProcessUnitPrecisionsCreate
+            arguments: ['@oro_api.doctrine_helper']
+            tags:
+                - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: 75 }
+
+    oro_product.update.process_unit_precisions:
+            class: Oro\Bundle\ProductBundle\Processor\Update\ProcessUnitPrecisionsUpdate
+            arguments: ['@oro_api.doctrine_helper']
+            tags:
+                - { name: oro.api.processor, action: update, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: 75 }
+
+    oro_product.create.validate_product_names:
+        class: Oro\Bundle\ProductBundle\Processor\Create\ValidateProductNamesCreate
+        arguments:
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', requestType: json_api, priority: 89 }
+
+    oro_attachment.api.processor.add_image_path:
+        class: Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToResultsProcessor
+        arguments:
+            - '@oro_attachment.manager'
+            - '@oro_api.doctrine_helper'
+            - '@oro_layout.provider.image_type'
+        tags:
+            - { name: oro.api.processor, action: get, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
+            - { name: oro.api.processor, action: create, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
+            - { name: oro.api.processor, action: update, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
+            - { name: oro.api.processor, action: get_list, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }

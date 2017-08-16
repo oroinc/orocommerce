@@ -190,6 +190,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_validator }
 
+    oro_product.validator.product_image_type:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator'
+        arguments:
+            - "@oro_layout.provider.image_type"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_image_type_validator }
+
     oro_product.validator.product_image_collection:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
         public: true
@@ -693,7 +700,7 @@ services:
         arguments:
             - '@oro_product.repository.product_image'
             - '@oro_layout.loader.image_filter'
-            - '@oro_layout.provider.image_type'
+            - '@oro_product.provider.product_images_dimensions'
             - '@oro_attachment.image_resizer'
             - '@oro_attachment.media_cache_manager'
             - '@oro_attachment.manager'
@@ -1156,3 +1163,9 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_attachment.manager'
+
+    oro_product.provider.product_images_dimensions:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider'
+        arguments:
+            - '@oro_layout.provider.image_type'
+

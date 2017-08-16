@@ -3,6 +3,8 @@ api:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
         Oro\Bundle\ProductBundle\Entity\ProductUnit: ~
+        Oro\Bundle\ProductBundle\Entity\ProductImage: ~
+        Oro\Bundle\ProductBundle\Entity\ProductImageType: ~
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
             fields:
