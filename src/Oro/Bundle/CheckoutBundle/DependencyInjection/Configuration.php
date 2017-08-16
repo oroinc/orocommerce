@@ -39,6 +39,10 @@ class Configuration implements ConfigurationInterface
                     'type' => 'string',
                     'value' => null,
                 ],
+                'allow_checkout_without_email_confirmation' => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ]
             ]
         );
 

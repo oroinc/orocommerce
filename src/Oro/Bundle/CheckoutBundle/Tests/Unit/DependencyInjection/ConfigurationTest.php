@@ -57,6 +57,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         Configuration::DEFAULT_GUEST_CHECKOUT_OWNER => [
                             'value' => null,
                             'scope' => 'app'
+                        ],
+                        'allow_checkout_without_email_confirmation' => [
+                            'value' => false,
+                            'scope' => 'app'
                         ]
                     ]
                 ]

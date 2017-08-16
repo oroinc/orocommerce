@@ -6,6 +6,13 @@ features:
         configuration:
             - checkout_customer_users_registration
 
+    allow_checkout_without_email_confirmation_feature:
+        label: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.label
+        description: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.tooltip
+        toggle: oro_customer.confirmation_required
+        configuration:
+            - oro_checkout.allow_checkout_without_email_confirmation
+
     guest_checkout:
         label: oro.checkout.system_configuration.fields.guest_checkout.label
         description: oro.checkout.system_configuration.fields.guest_checkout.tooltip
