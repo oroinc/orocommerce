@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\EventListener\RFPListener;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
@@ -17,6 +20,9 @@ class RFPListenerTest extends \PHPUnit_Framework_TestCase
     /** @var TokenAccessorInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $tokenAccessor;
 
+    /** @var GuestCustomerUserManager|\PHPUnit_Framework_MockObject_MockObject */
+    private $customerUserManager;
+
     /** @var RFPListener */
     private $listener;
 
@@ -27,8 +33,9 @@ class RFPListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->customerUserManager = $this->createMock(GuestCustomerUserManager::class);
 
-        $this->listener = new RFPListener($this->defaultUserProvider, $this->tokenAccessor);
+        $this->listener = new RFPListener($this->defaultUserProvider, $this->tokenAccessor, $this->customerUserManager);
     }
 
     /**
@@ -65,20 +72,21 @@ class RFPListenerTest extends \PHPUnit_Framework_TestCase
                 'checkout' => new Request()
             ],
             'with owner' => [
-                'token' => new AnonymousCustomerUserToken(''),
+                'token' => $this->createAnonymousToken(),
                 'checkout' => (new Request())->setOwner(new User())
             ]
         ];
     }
 
     /**
-     * @dataProvider persistSetDefaultOwnerDataProvider
-     *
      * @param string $token
      * @param Request $request
      */
-    public function testPrePersistSetDefaultOwner($token, Request $request)
+    public function testPrePersistSetDefaultOwner()
     {
+        $token = $this->createAnonymousToken();
+        $request = new Request();
+
         $this->tokenAccessor
             ->expects($this->once())
             ->method('getToken')
@@ -97,15 +105,14 @@ class RFPListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
+     * @return AnonymousCustomerUserToken
      */
-    public function persistSetDefaultOwnerDataProvider()
+    protected function createAnonymousToken()
     {
-        return [
-            'with token and without owner' => [
-                'token' => new AnonymousCustomerUserToken(''),
-                'checkout' => new Request()
-            ]
-        ];
+        $visitor = new CustomerVisitor();
+        $visitor->setCustomerUser(new CustomerUser);
+        $token = new AnonymousCustomerUserToken('', [], $visitor);
+
+        return $token;
     }
 }

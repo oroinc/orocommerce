@@ -6,56 +6,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Model\RequestManager;
 
 class RequestType extends AbstractType
 {
-    const NAME = 'oro_rfp_frontend_request';
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var RequestManager
-     */
-    protected $requestManager;
-
     /**
      * @var string
      */
     protected $dataClass;
-
-    /**
-     * @param ConfigManager $configManager
-     * @param ManagerRegistry $registry
-     * @param RequestManager $requestManager
-     */
-    public function __construct(
-        ConfigManager $configManager,
-        ManagerRegistry $registry,
-        RequestManager $requestManager
-    ) {
-        $this->configManager = $configManager;
-        $this->registry = $registry;
-        $this->requestManager = $requestManager;
-    }
 
     /**
      * @param string $dataClass
@@ -112,14 +75,6 @@ class RequestType extends AbstractType
                 'label' => 'oro.frontend.rfp.request.assigned_customer_users.label',
             ])
         ;
-
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            /** @var Request $rfpRequest */
-            $rfpRequest = $event->getData();
-            if ($rfpRequest->getId() === null) {
-                $this->requestManager->appendUserData($rfpRequest);
-            }
-        });
     }
 
     /**
@@ -135,16 +90,8 @@ class RequestType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getBlockPrefix()
     {
-        return static::NAME;
+        return 'oro_rfp_frontend_request';
     }
 }

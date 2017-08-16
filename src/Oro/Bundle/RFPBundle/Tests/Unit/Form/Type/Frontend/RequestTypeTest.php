@@ -46,19 +46,7 @@ class RequestTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /* @var $configManager ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $requestManager = $this->createMock(RequestManager::class);
-
-        $this->formType = new RequestType($configManager, $registry, $requestManager);
+        $this->formType = new RequestType();
         $this->formType->setDataClass(self::DATA_CLASS);
 
         parent::setUp();
@@ -81,14 +69,6 @@ class RequestTypeTest extends AbstractTest
             );
 
         $this->formType->configureOptions($resolver);
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
-    {
-        static::assertEquals(RequestType::NAME, $this->formType->getName());
     }
 
     /**
