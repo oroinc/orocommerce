@@ -10,7 +10,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\PromotionBundle\Migrations\Schema\v1_1\CreateCouponTable;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -21,6 +20,8 @@ class OroPromotionBundleInstaller implements
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
+    const ORDER_COUPONS_RELATION_NAME = 'appliedCoupons';
+
     /**
      * @var ActivityExtension
      */
@@ -507,7 +508,7 @@ class OroPromotionBundleInstaller implements
         $this->extendExtension->addManyToManyRelation(
             $schema,
             $targetTable,
-            CreateCouponTable::ORDER_COUPONS_RELATION_NAME,
+            self::ORDER_COUPONS_RELATION_NAME,
             $couponTable,
             $targetTitleColumnNames,
             $targetTitleColumnNames,

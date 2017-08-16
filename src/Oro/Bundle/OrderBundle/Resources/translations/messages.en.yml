@@ -81,7 +81,6 @@ oro:
         discount.label: Discount
         total_discounts_amount.label: Total Discounts Amount
         discounts.label: Discounts
-        discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
         frontend_index_title: Order History - My Account - Home page
@@ -172,10 +171,16 @@ oro:
             column:
                 product: 'Product'
 
-        orderdiscountitem:
+        order_discount:
+            add_label: Add Special Discount
+            all_label: All Special Discounts
+            no_entities: No records found
             columns:
                 title: Discount
                 description: Description
+            actions:
+                remove: Remove
+                edit: Edit
             types:
                 percent: %
 
@@ -210,7 +215,7 @@ oro:
             order_line_items: 'Line Items'
             order_totals: Totals
             shipping_information: Shipping Information
-            discounts: Discounts
+            discounts: Special Discounts
 
         security:
             permission:

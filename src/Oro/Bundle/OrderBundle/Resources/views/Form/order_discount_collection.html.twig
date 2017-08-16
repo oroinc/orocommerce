@@ -1,0 +1,55 @@
+<div class="oro-discount-collection-heading">
+    <h5>{{ 'oro.order.order_discount.all_label'|trans }}</h5>
+    {% if editStyle is defined and editStyle %}
+        <a data-role="add" class="btn" href="javascript: void(0);">
+            {{ 'oro.order.order_discount.add_label'|trans }}
+        </a>
+    {% endif %}
+</div>
+
+{% if collection|length %}
+    <table class="grid table-hover table table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th class="order-discount-item-description">
+                    <span>{{ 'oro.order.order_discount.columns.description'|trans }}</span>
+                </th>
+                <th class="order-discount-item-title">
+                    <span>{{ 'oro.order.order_discount.columns.title'|trans }}</span>
+                </th>
+                {% if editStyle is defined and editStyle %}
+                    <th class="action"></th>
+                    <th class="action"></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for discount in collection %}
+                <tr data-element-index="{{ loop.index0 }}" class="order-discount-item">
+                    <td>
+                        {{ discount.description|default('N/A'|trans) }}
+                    </td>
+                    <td>
+                        {% if discount.order is not empty %}
+                            {{ discount.amountPrice|oro_format_price }}
+                        {% endif %}
+                    </td>
+                    {% if editStyle is defined and editStyle %}
+                        <td class="action">
+                            <a data-role="edit" href="javascript:void(0);">
+                                <i class="fa-edit hide-text" title="{{ 'oro.order.order_discount.actions.edit'|trans }}">{{ 'oro.order.order_discount.actions.edit'|trans }}</i>
+                            </a>
+                        </td>
+                        <td class="action">
+                            <a data-role="remove" href="javascript:void(0);">
+                                <i class="fa-trash hide-text" title="{{ 'oro.order.order_discount.actions.remove'|trans }}">{{ 'oro.order.order_discount.actions.remove'|trans }}</i>
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% elseif editStyle is not defined or not editStyle %}
+    <div class="no-data"><span>{{ 'oro.order.order_discount.no_entities'|trans }}<span></span></span></div>
+{% endif %}

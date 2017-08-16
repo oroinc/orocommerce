@@ -94,14 +94,7 @@ class OrderType extends AbstractType
             )
             ->add(
                 'discounts',
-                OrderDiscountItemsCollectionType::NAME,
-                [
-                    'add_label' => 'oro.order.discountitem.add_label',
-                    'options' => [
-                        'currency' => $order->getCurrency(),
-                        'total' => pow(10, 18) - 1,
-                    ]
-                ]
+                OrderDiscountCollectionTableType::NAME
             )
             ->add(
                 'discountsSum',

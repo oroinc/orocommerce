@@ -223,28 +223,16 @@
         }] ) %}
     {% endif %}
 
-    {% set discountItems %}
-        {% set discountType = constant('Oro\\Bundle\\OrderBundle\\Provider\\DiscountSubtotalProvider::TYPE') %}
-        {% set totalType = constant('Oro\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
-        <div class="order-discount-items"
-             data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ {
-                 view: 'oroorder/js/app/views/discount-items-view',
-                 discountType: discountType,
-                 totalType: totalType,
-             }|json_encode }}"
-             data-layout="separate">
-            {{ form_widget(form.discounts) }}
-            <div class="discounts-sum-error">{{ form_errors(form.discounts) }}</div>
-            <div class="discounts-sum-error">{{ form_row(form.discountsSum) }}</div>
-        </div>
+    {% set discounts %}
+        {{ form_widget(form.discounts) }}
+        {{ form_errors(form.discounts) }}
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.discounts'|trans,
         'class': 'active',
         'subblocks': [{
-            'data': [discountItems]
+            'data': [discounts]
         }]
     }]) %}
 

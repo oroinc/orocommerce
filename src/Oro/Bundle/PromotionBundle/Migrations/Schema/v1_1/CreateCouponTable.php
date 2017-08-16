@@ -102,7 +102,7 @@ class CreateCouponTable implements Migration, ExtendExtensionAwareInterface
         $this->extendExtension->addManyToManyRelation(
             $schema,
             $targetTable,
-            CreateCouponTable::ORDER_COUPONS_RELATION_NAME,
+            self::ORDER_COUPONS_RELATION_NAME,
             $couponTable,
             $targetTitleColumnNames,
             $targetTitleColumnNames,
@@ -114,6 +114,8 @@ class CreateCouponTable implements Migration, ExtendExtensionAwareInterface
                     'cascade' => ['all'],
                     'without_default' => true
                 ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false],
             ]
         );
     }

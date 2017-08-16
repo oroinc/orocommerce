@@ -71,7 +71,9 @@ define(function(require) {
             }
 
             var validator = $(this.$discountsSumElement.closest('form')).validate();
-            validator.element(this.$discountsSumElement);
+            if (validator) {
+                validator.element(this.$discountsSumElement);
+            }
         },
         /**
          * @inheritDoc

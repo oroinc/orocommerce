@@ -7,7 +7,12 @@ UPGRADE FROM 1.3 to 1.4
 Some inline underscore templates from next bundles, were moved to separate .html file for each template:
  - PricingBundle
  - ProductBundle
- 
+
+OrderBundle
+-------------
+- Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` was removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` is introduced, but it has different purpose and can't be used instead of the old one.
+- Form type `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType` was refactored for use in popup, its template also was changed, therefore it can't be used instead of the old one.
+
 PaymentBundle
 -------------
 - Event `oro_payment.require_payment_redirect.PAYMENT_METHOD_IDENTIFIER` is no more specifically dispatched for each
