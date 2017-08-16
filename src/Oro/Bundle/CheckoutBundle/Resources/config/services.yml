@@ -504,6 +504,13 @@ services:
         tags:
             - { name: oro_featuretogle.voter }
 
+    oro_rfp.voter.guest_quick_order_form:
+        parent: oro_product.voter.guest_quick_order_form
+        calls:
+            - [ setFeatureName, ['guest_checkout'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
     oro_checkout.condition.is_workflow_start_from_shopping_list_allowed:
         class: Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed
         arguments:
