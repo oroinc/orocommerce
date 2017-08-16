@@ -32,10 +32,10 @@ navigation:
     titles:
         oro_promotion_index: ~
         oro_promotion_create: 'oro.ui.create_entity'
-        oro_promotion_update: 'oro.ui.update_entity'
-        oro_promotion_view: 'oro.ui.view_entity'
+        oro_promotion_update: '%name% - oro.ui.edit'
+        oro_promotion_view: '%name% - oro.ui.view'
 
         oro_promotion_coupon_index: ~
         oro_promotion_coupon_create: 'oro.ui.create_entity'
-        oro_promotion_coupon_update: 'oro.ui.update_entity'
-        oro_promotion_coupon_view: 'oro.ui.view_entity'
+        oro_promotion_coupon_update: '%code% - oro.ui.edit'
+        oro_promotion_coupon_view: '%code% - oro.ui.view'

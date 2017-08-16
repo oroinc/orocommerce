@@ -7,12 +7,10 @@ Feature: Guest shopping list merging functionality
   Scenario: Set limit to One shopping list in configuration
     Given I login as administrator
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Sales" on configuration sidebar
-    And I click "Shopping List" on configuration sidebar
-    And uncheck Use Default for "Shopping List Limit" field
+    And I follow "Commerce/Sales/Shopping List" on configuration sidebar
+    And uncheck "Use default" for "Shopping List Limit" field
     And I fill in "Shopping List Limit" with "1"
-    And uncheck Use Default for "Enable guest shopping list" field
+    And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
     And I save setting
     And I should see "Configuration saved" flash message
