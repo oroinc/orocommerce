@@ -126,7 +126,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($currency);
 
         $quoteMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getWebsite')
             ->willReturn($websiteMock);
 

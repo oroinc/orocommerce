@@ -35,6 +35,7 @@ class OrderPaymentContextFactory
     /**
      * @param Order $order
      * @return PaymentContextInterface
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function create(Order $order)
     {
