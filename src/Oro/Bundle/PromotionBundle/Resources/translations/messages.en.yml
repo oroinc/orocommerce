@@ -210,6 +210,9 @@ oro:
                     coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
                     uses_per_user: 'Limits how many times the coupon may be used by the same customer user'
                     uses_per_coupon: 'Limits how many times the coupon may be used'
+                add_type:
+                    code.tooltip: Choose a Coupon Code
+                    add_button.label: Add
             autocomplete:
                 placeholder: Choose a Coupon Code...
             violation:

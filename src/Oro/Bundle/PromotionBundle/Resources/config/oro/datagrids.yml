@@ -274,7 +274,7 @@ datagrids:
                 from:
                     - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
                 join:
-                    left:
+                    inner:
                         - { join: coupon.promotion, alias: promotion }
                         - { join: promotion.rule, alias: rule }
         columns:

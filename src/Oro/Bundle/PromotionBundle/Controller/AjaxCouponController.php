@@ -30,9 +30,9 @@ class AjaxCouponController extends Controller
 
         $ids = $request->request->get('ids');
         $view = $this->renderView(
-            'OroPromotionBundle:Coupon/widget:addedCouponsTable.html.twig',
+            'OroPromotionBundle:Coupon:addedCouponsTable.html.twig',
             [
-                'coupons' => $ids ? $repository->findBy(['id' => explode(',', $ids)]) : []
+                'coupons' => $ids ? $repository->getCouponsWithPromotionByIds(explode(',', $ids)) : [],
             ]
         );
 

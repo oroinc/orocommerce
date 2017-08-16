@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroPromotionBundle implements Migration
+class CreateCouponUsageTable implements Migration
 {
     /**
      * {@inheritdoc}

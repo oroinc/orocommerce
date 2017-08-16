@@ -36,12 +36,14 @@ class CouponApplicabilityQueryBuilderModifierTest extends WebTestCase
 
         $this->modifier->modify($queryBuilder);
         $coupons = $queryBuilder->getQuery()->getResult();
-        $this->assertCount(2, $coupons);
-        /** @var Coupon $firstCoupon */
-        $firstCoupon = reset($coupons);
-        $this->assertEquals(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL, $firstCoupon->getCode());
-        /** @var Coupon $firstCoupon */
-        $secondCoupon = end($coupons);
-        $this->assertEquals(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL, $secondCoupon->getCode());
+        $this->assertCount(3, $coupons);
+        $this->assertEquals(
+            [
+                $this->getReference(LoadCouponData::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL),
+                $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL),
+                $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL),
+            ],
+            $coupons
+        );
     }
 }

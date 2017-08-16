@@ -101,10 +101,10 @@ class CouponUsage
     }
 
     /**
-     * @param CustomerUser $customerUser
+     * @param CustomerUser|null $customerUser
      * @return $this
      */
-    public function setCustomerUser(CustomerUser $customerUser)
+    public function setCustomerUser(CustomerUser $customerUser = null)
     {
         $this->customerUser = $customerUser;
 

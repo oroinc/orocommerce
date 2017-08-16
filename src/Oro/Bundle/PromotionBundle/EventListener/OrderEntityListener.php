@@ -24,9 +24,8 @@ class OrderEntityListener
 
     /**
      * @param Order $order
-     * @param LifecycleEventArgs $args
      */
-    public function prePersist(Order $order, LifecycleEventArgs $args)
+    public function prePersist(Order $order)
     {
         $this->appliedDiscountManager->saveAppliedDiscounts($order);
     }

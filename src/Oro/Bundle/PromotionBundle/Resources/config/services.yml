@@ -519,3 +519,13 @@ services:
         class: Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService
         arguments:
             - '@oro_promotion.coupon_usage_manager'
+
+    oro_promotion.form.type.coupon_autocomplete_type:
+        class: Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType
+        tags:
+            - { name: form.type, alias: oro_promotion_coupon_autocomplete }
+
+    oro_promotion.form.type.coupon_add_type:
+        class: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+        tags:
+            - { name: form.type, alias: oro_promotion_coupon_add }

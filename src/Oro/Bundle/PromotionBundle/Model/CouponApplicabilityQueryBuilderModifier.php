@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 
 /**
  * Modify coupons query builder according applicability rules.
- * Only coupons with promotions and relevant "Valid Until" date should be applicable.
+ * Only coupons with relevant "Valid Until" date should be applicable.
  */
 class CouponApplicabilityQueryBuilderModifier
 {
@@ -19,9 +19,8 @@ class CouponApplicabilityQueryBuilderModifier
         $alias = reset($aliases);
 
         $queryBuilder
-            ->andWhere($queryBuilder->expr()->isNotNull($alias . '.promotion'))
             ->andWhere($queryBuilder->expr()->orX(
-                $queryBuilder->expr()->gt($alias . '.validUntil', ':now'),
+                $queryBuilder->expr()->gte($alias . '.validUntil', ':now'),
                 $queryBuilder->expr()->isNull($alias . '.validUntil')
             ))
             ->setParameter('now', new \DateTime('now', new \DateTimeZone('UTC')));

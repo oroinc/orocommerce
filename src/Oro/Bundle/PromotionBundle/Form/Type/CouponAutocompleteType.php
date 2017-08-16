@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class CouponAutocompleteType extends AbstractType
 {
-    const NAME = 'oro_coupon_autocomplete';
+    const NAME = 'oro_promotion_coupon_autocomplete';
 
     /**
      * {@inheritdoc}
