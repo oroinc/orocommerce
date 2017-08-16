@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -44,8 +44,12 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
     public function testNotMatchedFiltered()
     {
         $scope = new Scope();
-        $promotion = new Promotion();
-        $promotion->addScope($scope);
+
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getScopes')
+            ->willReturn([$scope]);
+
         $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria([], []);
 
         $this->scopeManager->expects($this->any())
@@ -64,16 +68,21 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
     {
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
-        $promotion = new Promotion();
-        $promotion->addScope($scope);
+
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getScopes')
+            ->willReturn([$scope]);
 
         /** @var Scope $scope2 */
         $scope2 = $this->getEntity(Scope::class, ['id' => 5]);
         /** @var Scope $scope3 */
         $scope3 = $this->getEntity(Scope::class, ['id' => 2]);
-        $promotion2 = new Promotion();
-        $promotion2->addScope($scope2);
-        $promotion2->addScope($scope3);
+
+        $promotion2 = $this->createMock(PromotionDataInterface::class);
+        $promotion2->expects($this->any())
+            ->method('getScopes')
+            ->willReturn([$scope2, $scope3]);
 
         $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria([], []);
 

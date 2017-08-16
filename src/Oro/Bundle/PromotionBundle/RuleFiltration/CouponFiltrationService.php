@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class CouponFiltrationService implements RuleFiltrationServiceInterface
@@ -47,7 +47,7 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
         }
 
         return array_values(array_filter($ruleOwners, function ($ruleOwner) use ($appliedCoupons) {
-            if (!$ruleOwner instanceof Promotion) {
+            if (!$ruleOwner instanceof PromotionDataInterface) {
                 return false;
             }
 

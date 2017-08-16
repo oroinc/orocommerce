@@ -14,9 +14,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PromotionBundle\Model\ExtendPromotion;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
-use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
@@ -56,8 +54,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 class Promotion extends ExtendPromotion implements
     DatesAwareInterface,
     OrganizationAwareInterface,
-    RuleOwnerInterface,
-    ScopeCollectionAwareInterface,
+    PromotionDataInterface,
     ScheduleIntervalsAwareInterface
 {
     use DatesAwareTrait;
@@ -356,7 +353,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return Collection|Scope[]
+     * {@inheritdoc}
      */
     public function getScopes()
     {
@@ -435,7 +432,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return DiscountConfiguration
+     * {@inheritdoc}
      */
     public function getDiscountConfiguration()
     {
@@ -454,7 +451,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isUseCoupons()
     {
@@ -473,7 +470,7 @@ class Promotion extends ExtendPromotion implements
     }
 
     /**
-     * @return ArrayCollection|Coupon[]
+     * {@inheritdoc}
      */
     public function getCoupons()
     {
