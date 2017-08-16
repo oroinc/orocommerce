@@ -83,5 +83,6 @@ class RFPListener
                 );
             $visitor->setCustomerUser($user);
         }
+        $request->setCustomerUser($user);
     }
 }

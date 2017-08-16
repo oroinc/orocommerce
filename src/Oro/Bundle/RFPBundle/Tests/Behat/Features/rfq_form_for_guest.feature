@@ -44,6 +44,7 @@ Feature: Guest RFQ
       | Role                   | CEO                  |
       | Notes                  | Test note for quote. |
       | PO Number              | PO Test 01           |
+    And I click "Submit Request"
     And click "Edit"
     And I fill in "TargetPriceField" with "10.99"
     And click "Update"

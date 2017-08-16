@@ -156,7 +156,6 @@ class RequestController extends Controller
      */
     protected function update(RFPRequest $rfpRequest)
     {
-        /* @var $handler RequestUpdateHandler */
         $handler = $this->get('oro_rfp.service.request_update_handler');
         $isCreateAction = !$rfpRequest->getId();
         $form = $this->get('oro_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest);
@@ -210,6 +209,7 @@ class RequestController extends Controller
 
                 return [
                     'backToUrl' => $url,
+                    'form' => $form->createView()
                 ];
             }
         );
