@@ -98,7 +98,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
         $coupon->setPromotion(new Promotion());
         $coupon->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC')));
         $coupon->setUsesPerCoupon(10);
-        $coupon->setUsesPerUser(5);
+        $coupon->setUsesPerPerson(5);
 
         $this->couponUsageManager->expects($this->once())
             ->method('getCouponUsageCountByCustomerUser')
@@ -153,7 +153,7 @@ class CouponValidationServiceTest extends \PHPUnit_Framework_TestCase
                 'coupon' => (new Coupon())
                     ->setPromotion(new Promotion())
                     ->setUsesPerCoupon(null)
-                    ->setUsesPerUser(null)
+                    ->setUsesPerPerson(null)
                     ->setValidUntil(new \DateTime('+3 days', new \DateTimeZone('UTC'))),
                 'isValid' => true
             ]

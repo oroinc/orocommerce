@@ -91,8 +91,8 @@ class CouponValidationService
     private function isCouponUsagePerCustomerUserLimitExceeded(Coupon $coupon, CustomerUser $customerUser = null): bool
     {
         return $customerUser
-            && $coupon->getUsesPerUser() !== null
-            && $coupon->getUsesPerUser() <= $this->couponUsageManager
+            && $coupon->getUsesPerPerson() !== null
+            && $coupon->getUsesPerPerson() <= $this->couponUsageManager
                 ->getCouponUsageCountByCustomerUser($coupon, $customerUser);
     }
 }
