@@ -9,7 +9,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 
-class FedexRateServiceConnectionRequestFactory implements FedexRequestFactoryInterface
+class FedexRateServiceValidateConnectionRequestFactory implements FedexRequestFactoryInterface
 {
     /**
      * @var SymmetricCrypterInterface

@@ -62,8 +62,8 @@ services:
             - '@oro_fedex_shipping.transfomer.shipping_weight_unit'
             - '@oro_fedex_shipping.transfomer.shipping_dimensions_unit'
 
-    oro_fedex_shipping.client.rate_service.connection_request.factory:
-        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceConnectionRequestFactory'
+    oro_fedex_shipping.client.rate_service.connection_validate_request.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory'
         arguments:
             - '@oro_security.encoder.mcrypt'
             - '@oro_shipping.shipping_origin.provider'

@@ -4,7 +4,7 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Client\RateService\Request\F
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceConnectionRequestFactory;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceValidateConnectionRequestFactory;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use PHPUnit\Framework\TestCase;
 
-class FedexRateServiceConnectionRequestFactoryTest extends TestCase
+class FedexRateServiceValidateConnectionRequestFactoryTest extends TestCase
 {
     const KEY = 'key';
     const PASS = 'pass';
@@ -37,7 +37,7 @@ class FedexRateServiceConnectionRequestFactoryTest extends TestCase
     private $shippingOriginProvider;
 
     /**
-     * @var FedexRateServiceConnectionRequestFactory
+     * @var FedexRateServiceValidateConnectionRequestFactory
      */
     private $factory;
 
@@ -46,7 +46,7 @@ class FedexRateServiceConnectionRequestFactoryTest extends TestCase
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
         $this->shippingOriginProvider = $this->createMock(ShippingOriginProvider::class);
 
-        $this->factory = new FedexRateServiceConnectionRequestFactory(
+        $this->factory = new FedexRateServiceValidateConnectionRequestFactory(
             $this->crypter,
             $this->shippingOriginProvider
         );
