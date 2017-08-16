@@ -62,4 +62,15 @@ class CouponControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
+
+    public function testCouponGenerationPreview()
+    {
+        $request = [
+            'couponGenerationData' => [
+                'codeLength' => 3,
+            ],
+        ];
+        $this->client->request('POST', $this->getUrl('oro_promotion_coupon_generation_preview'), $request);
+        $this->getJsonResponseContent($this->client->getResponse(), 200);
+    }
 }
