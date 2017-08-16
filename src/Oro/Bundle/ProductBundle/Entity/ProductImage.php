@@ -145,7 +145,7 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @param string $type
+     * @param ProductImageType|string $type
      */
     public function addType($type)
     {

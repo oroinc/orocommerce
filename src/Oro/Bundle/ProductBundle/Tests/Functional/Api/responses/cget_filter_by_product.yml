@@ -28,6 +28,11 @@ data:
                     -
                         type: productunitprecisions
                         id: '<toString(@product_unit_precision.product-1.milliliter->id)>'
+            images:
+                data:
+                    -
+                        type: productimages
+                        id: '<toString(@product-1->images->first->id)>'
             primaryUnitPrecision:
                 data:
                     type: productunitprecisions

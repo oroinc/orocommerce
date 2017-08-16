@@ -23,10 +23,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures([
-            ProductFixture::class,
-            LoadProductImageData::class,
-        ]);
+        $this->loadFixtures([ProductFixture::class]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
             $this->getContainer()->getParameter('oro_product.entity.product.class')

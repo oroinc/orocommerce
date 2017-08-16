@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Symfony\Component\Yaml\Yaml;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -19,6 +20,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
 use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
@@ -233,6 +236,32 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 $product->addShortDescription($this->createValue($slugPrototype));
             }
         }
+
+        if (!empty($item['images'])) {
+            foreach ($item['images'] as $image) {
+                $product->addImage($this->createProductImage($image, $item['productCode']));
+            }
+        }
+    }
+
+    /**
+     * @param $image
+     * @param $sku
+     * @return ProductImage
+     */
+    public function createProductImage($image, $sku)
+    {
+        $imageFile = new File();
+        $imageFile->setFilename($sku);
+        $this->setReference($image['reference'] . '.' . $sku, $imageFile);
+
+        $productImage = new ProductImage();
+        $productImage->setImage($imageFile);
+
+        $productType = $image['type'] ?? ProductImageType::TYPE_LISTING;
+        $productImage->addType($productType);
+
+        return $productImage;
     }
 
     /**

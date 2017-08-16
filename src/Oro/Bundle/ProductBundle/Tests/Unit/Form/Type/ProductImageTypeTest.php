@@ -70,7 +70,7 @@ class ProductImageTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isValid());
         /** @var ProductImage $productImage */
         $productImage  = $form->getData();
-        $this->assertEquals($expectedTypes, $productImage->getTypes());
+        $this->assertEquals($expectedTypes, array_keys($productImage->getTypes()->toArray()));
     }
 
     public function submitDataProvider()
