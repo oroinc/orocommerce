@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PromotionBundle\Entity\GeneratorExtensions;
+namespace Oro\Bundle\PromotionBundle\Entity\GeneratorExtension;
 
 use CG\Generator\PhpClass;
 use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGeneratorExtension;
@@ -9,9 +9,10 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscountsAwareInterface;
 
 /**
- * Add AppliedDiscountsAwareInterface and AppliedCouponsAwareInterface interfaces to Order
+ * Add AppliedDiscountsAwareInterface and AppliedCouponsAwareInterface interfaces to Entities that has relation to
+ * Applied Coupons and Applied Discounts.
  */
-class ExtendOrderGeneratorExtension extends AbstractEntityGeneratorExtension
+class PromotionAwareEntityGeneratorExtension extends AbstractEntityGeneratorExtension
 {
     /**
      * {@inheritdoc}

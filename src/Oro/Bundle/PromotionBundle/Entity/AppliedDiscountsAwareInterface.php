@@ -2,28 +2,26 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
-
-interface AppliedCouponAwareInterface
+interface AppliedDiscountsAwareInterface
 {
     /**
-     * @param Coupon $coupon
+     * @param AppliedDiscount $discount
      */
-    public function addAppliedCoupon($coupon);
+    public function addAppliedDiscount($discount);
 
     /**
-     * @return Collection
+     * @return AppliedDiscount[]
      */
-    public function getAppliedCoupons();
+    public function getAppliedDiscounts();
 
     /**
-     * @param Coupon $coupon
+     * @param AppliedDiscount $discount
      */
-    public function removeAppliedCoupon($coupon);
+    public function removeAppliedDiscount($discount);
 
     /**
-     * @param array|Collection|\Traversable|\ArrayAccess $coupons
+     * @param AppliedDiscount[] $discounts
      * @return $this
      */
-    public function setAppliedCoupons($coupons);
+    public function setAppliedDiscounts($discounts);
 }

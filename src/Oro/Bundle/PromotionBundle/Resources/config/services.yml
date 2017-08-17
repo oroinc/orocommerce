@@ -3,6 +3,11 @@ parameters:
     oro_promotion.entity.coupon.class: Oro\Bundle\PromotionBundle\Entity\Coupon
 
 services:
+    oro_promotion.entity_generator_extension.order:
+        class: Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension
+        tags:
+            - { name: oro_entity_extend.entity_generator_extension }
+
     oro_promotion.security.acl.voter.promotion_matched_product_segment:
         class: Oro\Bundle\PromotionBundle\Acl\Voter\PromotionMatchedProductSegmentVoter
         public: false
