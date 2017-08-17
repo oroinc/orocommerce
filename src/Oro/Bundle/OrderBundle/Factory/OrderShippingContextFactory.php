@@ -46,6 +46,7 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
     /**
      * @param Order $order
      * @return ShippingContextInterface
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function create($order)
     {
