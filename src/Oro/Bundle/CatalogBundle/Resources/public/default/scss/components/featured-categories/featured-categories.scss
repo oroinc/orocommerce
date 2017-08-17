@@ -2,11 +2,11 @@
     margin: 35px 0 5px 0;
 
     .embedded-list {
-        margin: 0 -10px;
+        margin: 0 -#{$offset-x-m};
 
         &__item {
             width: 25%;
-            padding: 0 10px;
+            padding: 0 $offset-x-m;
             margin-bottom: 35px;
 
             text-align: center;
