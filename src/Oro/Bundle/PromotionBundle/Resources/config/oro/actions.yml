@@ -93,6 +93,67 @@ operations:
                 type: 'success'
             - '@refresh_grid': promotion-coupons-grid
 
+    oro_promotion_add_coupon:
+        label: oro.promotion.ui.add_coupon_code.label
+        button_options:
+            icon: fa-ticket
+        frontend_options:
+            template: OroPromotionBundle:Coupon:addCouponDialog.html.twig
+            title: oro.promotion.ui.add_coupon_codes.title
+            options:
+                okText: oro.promotion.ui.apply_button.label
+                width: 600
+                autoResize: true
+                modal: true
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: true
+                allowMinimize: false
+                maximizedHeightDecreaseBy: minimize-bar
+        routes:
+            - oro_order_view
+        acl_resource: oro_order_update
+        order: 20
+        attributes:
+            addedCoupons:
+                label: ' '
+                type: array
+        form_options:
+            attribute_fields:
+                addedCoupons:
+                    form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+        actions:
+            - '@count':
+                attribute: $.addedCouponsCount
+                value: $.addedCoupons
+            - '@tree':
+                conditions:
+                    '@gt': [$.addedCouponsCount, 0]
+                actions:
+                    - '@foreach':
+                        array: $.addedCoupons
+                        value: $.coupon
+                        actions:
+                            - '@call_method':
+                                object: $.data
+                                method: addAppliedCoupon
+                                method_parameters:
+                                    - $.coupon
+                    - '@call_service_method':
+                        service: oro_promotion.applied_discount_manager
+                        method: saveAppliedDiscounts
+                        attribute: $.addedCoupons
+                        method_parameters: [$.data]
+                    - '@flush_entity': $.data
+                    - '@flash_message':
+                        message: oro.promotion.ui.order_add_coupon.added.message
+                        type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@eq': [$.addedCouponsCount, 0]
+                message: oro.promotion.ui.order_add_coupon.not_added.message
+                type: 'success'
+
 action_groups:
     oro_promotion_duplicate:
         parameters:

@@ -4,14 +4,13 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
-use Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\EntityIdentifierType;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAddType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -43,21 +42,17 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $configProvider = $this->createMock(ConfigProvider::class);
         /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
         $translator = $this->createMock(Translator::class);
-
+        /** @var Coupon $coupon */
         $coupon1 = $this->getEntity(Coupon::class, ['id' => 1]);
+
+        /** @var Coupon $coupon */
         $coupon2 = $this->getEntity(Coupon::class, ['id' => 2]);
 
         return [
             new PreloadedExtension(
                 [
-                    new EntityType(
-                        [
-                            'coupon1' => $coupon1,
-                            'coupon2' => $coupon2,
-                        ],
-                        CouponAutocompleteType::NAME
-                    ),
-                    new EntityIdentifierType([]),
+                    new EntityType(['coupon1' => $coupon1], CouponAutocompleteType::NAME),
+                    new EntityIdentifierType([1 => $coupon1, 2 => $coupon2]),
                 ],
                 [
                     'form' => [
@@ -73,7 +68,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType);
 
         $this->assertTrue($form->has('coupon'));
-        $this->assertTrue($form->has('addedIds'));
+        $this->assertTrue($form->has('addedCoupons'));
     }
 
     public function testGetName()
@@ -98,11 +93,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
-        $data = [
-            'coupon' => $form->get('coupon')->getData(),
-            'addedIds' => $form->get('addedIds')->getData(),
-        ];
-        $this->assertEquals($expectedData, $data);
+        $this->assertEquals($expectedData, $form->getData());
     }
 
     /**
@@ -110,19 +101,24 @@ class CouponAddTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
-        $coupon = $this->getEntity(Coupon::class, ['id' => 2]);
-
         return [
-            [
+            'empty data' => [
                 'submittedData' => [
-                    'coupon' => 'coupon2',
-                    'addedIds' => '',
+                    'coupon' => 'coupon1',
+                    'addedCoupons' => '',
+                ],
+                'expectedData' => [],
+            ],
+            'two coupons added' => [
+                'submittedData' => [
+                    'coupon' => '',
+                    'addedCoupons' => [1, 2],
                 ],
                 'expectedData' => [
-                    'coupon' => $coupon,
-                    'addedIds' => [],
+                    $this->getEntity(Coupon::class, ['id' => 1]),
+                    $this->getEntity(Coupon::class, ['id' => 2])
                 ],
-            ],
+            ]
         ];
     }
 }

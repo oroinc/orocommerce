@@ -84,6 +84,11 @@ oro:
         advanced_conditions.label: Advanced Conditions
 
         ui:
+            apply_button.label: Apply
+            add_coupon_code.label: Add Coupon Code
+            add_coupon_codes.title: Add Coupon Codes
+            order_add_coupon.added.message: Coupons were added to order
+            order_add_coupon.not_added.message: No coupons were added to order
             segment_edit_button.label: Edit within Promotion
             duplicate:
                 new_name: 'originalName (duplicated at dateTime)'

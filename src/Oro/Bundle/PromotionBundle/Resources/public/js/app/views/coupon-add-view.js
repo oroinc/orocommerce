@@ -6,6 +6,7 @@ define(function(require) {
     var routing = require('routing');
     var BaseView = require('oroui/js/app/views/base/view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var widgetManager = require('oroui/js/widget-manager');
     var CouponAddView;
 
     CouponAddView = BaseView.extend({
@@ -32,6 +33,13 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this._checkOptions();
             CouponAddView.__super__.constructor.call(this, options);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        initialize: function() {
+            this._updateApplyButtonState();
         },
 
         /**
@@ -97,6 +105,24 @@ define(function(require) {
             var newVal = _.uniq(currentState.sort(), true).join(this.options.delimiter);
             if ($addedIdsField.val() !== newVal) {
                 $addedIdsField.val(newVal).trigger('change');
+                this._updateApplyButtonState();
+            }
+        },
+
+        _updateApplyButtonState: function() {
+            var $widgetContainer = this.$el.closest('[data-wid]');
+            var $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
+            if ($widgetContainer.length) {
+                var wid = $widgetContainer.data('wid');
+                widgetManager.getWidgetInstance(wid, function(widget) {
+                    widget.getAction('form_submit', 'adopted', function(submitAction) {
+                        if ($addedIdsField.val()) {
+                            $(submitAction).removeAttr('disabled');
+                        } else {
+                            $(submitAction).attr('disabled', 'disabled');
+                        }
+                    });
+                });
             }
         },
 

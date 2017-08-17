@@ -48,14 +48,14 @@
 
 {% block oro_promotion_coupon_add_row %}
     {% set addButtonId = form.coupon.vars.id ~ '-add-button' %}
-    {% set addedCouponsContainerId = form.addedIds.vars.id ~ '-added-coupons-container' %}
-    <div
+    {% set addedCouponsContainerId = form.addedCoupons.vars.id ~ '-added-coupons-container' %}
+    <fieldset class="form-horizontal"
             data-page-component-view="oropromotion/js/app/views/coupon-add-view"
             data-page-component-options="{{ {
                 selectors: {
                     couponAutocompleteSelector: '#' ~ form.coupon.vars.id,
                     couponAddButtonSelector: '#' ~ addButtonId,
-                    addedIdsSelector: '#' ~ form.addedIds.vars.id,
+                    addedIdsSelector: '#' ~ form.addedCoupons.vars.id,
                     addedCouponsContainerSelector: '#' ~ addedCouponsContainerId
                 }
             }|json_encode }}"
@@ -65,10 +65,10 @@
             <button id="{{ addButtonId }}" class="btn btn-primary">{{ 'oro.promotion.coupon.form.add_type.add_button.label'|trans }}</button>
         </div>
         <div class="added-coupons-container">
-            {{ form_row(form.addedIds) }}
+            {{ form_row(form.addedCoupons) }}
             <div id="{{ addedCouponsContainerId }}"></div>
         </div>
-    </div>
+    </fieldset>
 {% endblock %}
 
 {% block oro_promotion_coupon_dashes_sequence_widget %}
