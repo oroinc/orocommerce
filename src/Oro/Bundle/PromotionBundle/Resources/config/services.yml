@@ -25,6 +25,14 @@ services:
         arguments:
             - '@oro_promotion.rule_filtration.enabled_decorator.inner'
 
+    oro_promotion.rule_filtration.duplicate_decorator:
+        class: Oro\Bundle\PromotionBundle\RuleFiltration\DuplicateFiltrationService
+        public: false
+        decorates: oro_promotion.rule_filtration.service
+        decoration_priority: 20
+        arguments:
+            - '@oro_promotion.rule_filtration.duplicate_decorator.inner'
+
     oro_promotion.rule_filtration.scope_decorator:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService
         decorates: oro_promotion.rule_filtration.service
