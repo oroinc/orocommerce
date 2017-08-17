@@ -1,8 +1,8 @@
 imports:
-    - { resource: 'b2b_flow_checkout/attributes.yml' }
+    - { resource: 'includes/attributes.yml' }
     - { resource: 'b2b_flow_checkout/steps.yml' }
-    - { resource: 'b2b_flow_checkout/base_transitions.yml' }
-    - { resource: 'b2b_flow_checkout/base_transition_definitions.yml' }
+    - { resource: 'includes/base_transitions.yml' }
+    - { resource: 'includes/base_transition_definitions.yml' }
     - { resource: 'b2b_flow_checkout/transitions.yml' }
     - { resource: 'b2b_flow_checkout/transition_definitions.yml' }
 

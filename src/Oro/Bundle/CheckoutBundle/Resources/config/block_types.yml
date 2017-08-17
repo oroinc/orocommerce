@@ -19,6 +19,13 @@ services:
         tags:
             - { name: layout.block_type, alias: checkout_transition_continue }
 
+    oro_checkout.layout.block_type.continue_as_guest_button:
+        parent: oro_checkout.layout.block_type.abstract_transition_button
+        calls:
+            - [setName, ['continue_as_guest_button']]
+        tags:
+            - { name: layout.block_type, alias: continue_as_guest_button }
+
     oro_checkout.layout.block_type.checkout_transition_step_edit:
         parent: oro_checkout.layout.block_type.abstract_transition_button
         calls:
@@ -118,6 +125,7 @@ services:
                         steps: {required: true}
                         currentStep: {required: true}
                         editTransitions: {required: true}
+                        excludedSteps: {default: []} # Defines steps which will not be displayed with sidebar and in sidebar
             - [setName, ['checkout_sidebar']]
         tags:
             - { name: layout.block_type, alias: checkout_sidebar }

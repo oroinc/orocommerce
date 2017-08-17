@@ -510,3 +510,8 @@ services:
            - '@oro_featuretoggle.checker.feature_checker'
            - '@security.token_storage'
         lazy: true
+
+    oro_checkout.workflow_state.action.custom_acion:
+          class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\CustomAction'
+          tags:
+              - { name: oro_action.action, alias: custom_action }
