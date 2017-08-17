@@ -14,13 +14,12 @@ features:
     guest_quick_order:
         label: oro.product.feature.guest_quick_order_form.label
         description: oro.product.feature.quick_order_form.description
-        toggle: oro_product.guest_quick_order_form
         strategy: affirmative
-        allow_if_all_abstain: true
 
     guest_quick_order_form:
         label: oro.product.feature.guest_quick_order_form.label
         description: oro.product.feature.quick_order_form.description
+        toggle: oro_product.guest_quick_order_form
         routes:
             - 'oro_product_frontend_quick_add'
             - 'oro_product_frontend_quick_add_import'

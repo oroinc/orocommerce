@@ -9,7 +9,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\Voter\VoterInterface;
 
 class GuestQuickOrderFormVoter implements VoterInterface
 {
-    const GUEST_QUICK_ORDER_FORM_FEATURE = 'guest_quick_order_form';
+    const GUEST_QUICK_ORDER_FORM_FEATURE = 'guest_quick_order';
 
     /** @var VoterInterface */
     private $configVoter;

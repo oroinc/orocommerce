@@ -41,7 +41,7 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->voter->setFeatureName($featureName);
 
-        $vote = $this->voter->vote('guest_quick_order_form', $scopeIdentifier);
+        $vote = $this->voter->vote('guest_quick_order', $scopeIdentifier);
         $this->assertEquals(VoterInterface::FEATURE_ENABLED, $vote);
     }
 
@@ -66,7 +66,7 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($token);
         $this->voter->setFeatureName($featureName);
 
-        $vote = $this->voter->vote('guest_quick_order_form', $scopeIdentifier);
+        $vote = $this->voter->vote('guest_quick_order', $scopeIdentifier);
         $this->assertEquals(VoterInterface::FEATURE_ENABLED, $vote);
     }
 
@@ -86,7 +86,7 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->voter->setFeatureName($featureName);
 
-        $vote = $this->voter->vote('guest_quick_order_form', $scopeIdentifier);
+        $vote = $this->voter->vote('guest_quick_order', $scopeIdentifier);
         $this->assertEquals(VoterInterface::FEATURE_DISABLED, $vote);
     }
 }
