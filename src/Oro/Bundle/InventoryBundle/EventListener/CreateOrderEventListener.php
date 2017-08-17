@@ -19,7 +19,6 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
-use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
 use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 class CreateOrderEventListener
