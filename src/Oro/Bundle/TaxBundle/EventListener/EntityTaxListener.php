@@ -31,6 +31,8 @@ class EntityTaxListener
     }
 
     /**
+     * TODO: This method is workaround and should be removed after BB-11299
+     *
      * @param boolean $enabled
      *
      * @return $this

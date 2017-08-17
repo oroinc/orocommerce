@@ -30,7 +30,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
-    ssecondOrderLineItem:
+    secondOrderLineItem:
         product: '@product1'
         order: '@secondOrder'
         price: '@price1'

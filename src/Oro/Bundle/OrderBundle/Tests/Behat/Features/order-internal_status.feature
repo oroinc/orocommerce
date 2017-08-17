@@ -1,4 +1,4 @@
-@story-BB-9594
+@ticket-BB-9594
 @fixture-OroOrderBundle:order.yml
 Feature: Order Internal Statuses
   In order to change order statuses
@@ -7,8 +7,8 @@ Feature: Order Internal Statuses
 
   Scenario: Verify internal statuses flow Open => Shipped => Closed => Archived
     Given I login as administrator
-    And go to Sales/Orders
-    When click view "SimpleOrder" in grid
+    And I go to Sales/Orders
+    When I click view "SimpleOrder" in grid
     Then I should see that order internal status is "Open"
     And I should see available page actions:
       | Mark As Shipped |
@@ -71,7 +71,7 @@ Feature: Order Internal Statuses
 
   Scenario: Verify internal statuses flow Open => Cancelled => Closed => Archived
     Given I go to Sales/Orders
-    When click view "SecondOrder" in grid
+    When I click view "SecondOrder" in grid
     Then I should see that order internal status is "Open"
     And I should see available page actions:
       | Mark As Shipped |

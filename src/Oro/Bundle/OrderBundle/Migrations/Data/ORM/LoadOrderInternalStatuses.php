@@ -25,7 +25,8 @@ class LoadOrderInternalStatuses extends AbstractEnumFixture
     }
 
     /**
-     * Returns array of data keys.
+     * Returns array of data keys
+     *
      * @return array
      */
     public static function getDataKeys()

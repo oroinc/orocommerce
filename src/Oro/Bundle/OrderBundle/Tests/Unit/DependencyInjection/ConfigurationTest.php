@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Symfony\Component\Config\Definition\Processor;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

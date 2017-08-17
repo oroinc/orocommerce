@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreFlushEventArgs;
-
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\TaxBundle\Entity\TaxValue;
+use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
+use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\TaxBundle\Entity\TaxValue;
-use Oro\Bundle\TaxBundle\Manager\TaxManager;
-use Oro\Bundle\TaxBundle\EventListener\EntityTaxListener;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -37,9 +37,9 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->taxManager = $this->createMock('Oro\Bundle\TaxBundle\Manager\TaxManager');
-        $this->entityManager = $this->createMock('Doctrine\ORM\EntityManager');
-        $this->metadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $this->taxManager = $this->createMock(TaxManager::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->metadata = $this->createMock(ClassMetadata::class);
 
         $this->entityManager->expects($this->any())->method('getClassMetadata')->willReturn($this->metadata);
 
@@ -163,10 +163,10 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUpPrePersist(Order $order, TaxValue $taxValue)
     {
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->createMock('Doctrine\ORM\EntityManager');
+        $entityManager = $this->createMock(EntityManager::class);
 
         /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
-        $metadata = $this->createMock('Doctrine\ORM\Mapping\ClassMetadata');
+        $metadata = $this->createMock(ClassMetadata::class);
 
         $entityManager->expects($this->any())->method('getClassMetadata')->willReturn($metadata);
 
@@ -192,15 +192,15 @@ class EntityTaxListenerTest extends \PHPUnit_Framework_TestCase
         $this->setValue($order, 'id', $orderId);
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
-        $entityManager = $this->createMock('Doctrine\ORM\EntityManager');
+        $entityManager = $this->createMock(EntityManager::class);
 
         /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
-        $metadata = $this->createMock('Doctrine\ORM\Mapping\ClassMetadata');
+        $metadata = $this->createMock(ClassMetadata::class);
 
         $entityManager->expects($this->any())->method('getClassMetadata')->willReturn($metadata);
 
         // Test
-        $uow = $this->createMock('Doctrine\ORM\UnitOfWork');
+        $uow = $this->createMock(UnitOfWork::class);
 
         $uow->expects($this->once())
             ->method('propertyChanged')

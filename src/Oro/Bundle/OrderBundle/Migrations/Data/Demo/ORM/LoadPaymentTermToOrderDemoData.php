@@ -22,9 +22,6 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    /** @var array */
-    protected $listenersToExclude = [];
-
     /**
      * {@inheritDoc}
      */

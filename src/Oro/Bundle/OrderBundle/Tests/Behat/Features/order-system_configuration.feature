@@ -1,4 +1,4 @@
-@story-BB-9594
+@ticket-BB-9594
 Feature: Order System Configuration
   In order to cancel orders after their "do not ship later than" date
   As an Administrator

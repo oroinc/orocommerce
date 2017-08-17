@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;

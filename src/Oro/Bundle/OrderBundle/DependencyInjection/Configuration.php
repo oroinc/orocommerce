@@ -44,7 +44,7 @@ class Configuration implements ConfigurationInterface
                     ],
                 ],
                 static::CONFIG_KEY_ENABLE_CANCELLATION => [
-                    'value' => true,
+                    'value' => false,
                 ],
                 static::CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES => [
                     'value' => [Order::INTERNAL_STATUS_OPEN],
@@ -61,6 +61,10 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    /**
+     * @param string $key
+     * @return string
+     */
     public static function getConfigKey($key)
     {
         return sprintf('%s%s%s', static::CONFIG_SECTION, ConfigManager::SECTION_MODEL_SEPARATOR, $key);
