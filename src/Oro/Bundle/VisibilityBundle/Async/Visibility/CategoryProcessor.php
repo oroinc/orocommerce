@@ -109,13 +109,7 @@ class CategoryProcessor implements MessageProcessorInterface
             $em->commit();
         } catch (InvalidArgumentException $e) {
             $em->rollback();
-            $this->logger->error(
-                sprintf(
-                    'Message is invalid: %s. Original message: "%s"',
-                    $e->getMessage(),
-                    $message->getBody()
-                )
-            );
+            $this->logger->error(sprintf('Message is invalid: %s', $e->getMessage()));
 
             return self::REJECT;
         } catch (\Exception $e) {

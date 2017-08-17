@@ -98,8 +98,8 @@ included:
         id: 'page-template'
         attributes:
             fallback: null
-            scalarValue: null
-            arrayValue: short
+            scalarValue: short
+            arrayValue: null
     -
         type: entityfieldfallbackvalues
         id: '2abcd'

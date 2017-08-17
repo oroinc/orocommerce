@@ -92,7 +92,7 @@ oro_behat_extension:
         locator: '//div[@class="filter-item oro-drop"]/div[contains(text(), "Price List")]/span[@class="filter-item-hint"]/span/strong'
         type: 'xpath'
     PricingConfigurationForm:
-      selector: 'div#container'
+      selector: 'form[name="pricing"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:

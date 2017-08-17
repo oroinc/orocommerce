@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -53,6 +54,7 @@ use Oro\Component\Checkout\LineItem\CheckoutLineItemInterface;
  */
 class LineItem extends ExtendLineItem implements
     OrganizationAwareInterface,
+    CustomerVisitorOwnerAwareInterface,
     ProductLineItemInterface,
     CheckoutLineItemInterface
 {
@@ -368,5 +370,13 @@ class LineItem extends ExtendLineItem implements
         }
 
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVisitor()
+    {
+        return $this->getShoppingList()->getVisitor();
     }
 }

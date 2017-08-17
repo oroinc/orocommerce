@@ -65,7 +65,7 @@
     {% if transitionData is defined and transitionData %}
         <div class="tooltip-container" {{ _self.conditionMessages(transitionData) }}>
             <button type="submit"
-                class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout__form__submit"
+                class="btn {% if transitionData.isAllowed %}btn--info{% endif %} btn--size-m checkout-form__submit"
                 disabled="disabled"
                 autocomplete="off"
                 {{ _self.transitionAttrbiutes(transitionData, checkout) }}

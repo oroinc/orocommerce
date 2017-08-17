@@ -87,7 +87,7 @@ class ProductPricesType extends AbstractContainerType
         BlockUtils::setViewVarsFromOptions(
             $view,
             $options,
-            ['product', 'productPrices', 'productUnitSelectionVisible']
+            ['product', 'productPrices', 'isPriceUnitsVisible']
         );
     }
 
@@ -99,7 +99,7 @@ class ProductPricesType extends AbstractContainerType
         $resolver
             ->setRequired([
                 'productPrices',
-                'productUnitSelectionVisible',
+                'isPriceUnitsVisible',
             ])
             ->setDefaults(
                 [

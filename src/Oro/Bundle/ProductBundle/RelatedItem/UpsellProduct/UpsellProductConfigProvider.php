@@ -35,46 +35,38 @@ class UpsellProductConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \LogicException
+     * {@inheritdoc}
      */
     public function getMinimumItems()
     {
-        throw new \LogicException(
-            'UpsellProductConfigProvider::getMinimumItems() is not supported.'
-        );
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_MIN_ITEMS));
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \LogicException
+     * {@inheritdoc}
      */
     public function getMaximumItems()
     {
-        throw new \LogicException(
-            'UpsellProductConfigProvider::getMaximumItems() is not supported.'
-        );
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_MAX_ITEMS));
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \LogicException
+     * {@inheritdoc}
      */
     public function isSliderEnabledOnMobile()
     {
-        throw new \LogicException(
-            'UpsellProductConfigProvider::isSliderEnabledOnMobile() is not supported.'
-        );
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_USE_SLIDER_ON_MOBILE));
     }
 
     /**
-     * {@inheritDoc}
-     * @throws \LogicException
+     * {@inheritdoc}
      */
     public function isAddButtonVisible()
     {
-        throw new \LogicException(
-            'UpsellProductConfigProvider::isAddButtonVisible() is not supported.'
-        );
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::UPSELL_PRODUCTS_SHOW_ADD_BUTTON));
     }
 }

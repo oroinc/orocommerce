@@ -6,9 +6,7 @@ Feature: Pricing configuration validation
   Scenario: Default Currency field validation should not affect other fields validation
     Given I login as administrator
     When I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Catalog" on configuration sidebar
-    And I click "Pricing" on configuration sidebar
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
     And I fill "Pricing Configuration Form" with:
       | Default Currency | Euro (€) |
     And I save form

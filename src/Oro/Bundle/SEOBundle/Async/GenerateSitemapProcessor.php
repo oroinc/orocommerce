@@ -139,10 +139,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',
-                [
-                    'exception' => $e,
-                    'message' => $message->getBody(),
-                ]
+                ['exception' => $e]
             );
 
             return self::REJECT;
@@ -151,7 +148,6 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
                 'Unexpected exception occurred during queue message processing',
                 [
                     'exception' => $e,
-                    'message' => $message->getBody(),
                     'topic' => Topics::GENERATE_SITEMAP,
                 ]
             );

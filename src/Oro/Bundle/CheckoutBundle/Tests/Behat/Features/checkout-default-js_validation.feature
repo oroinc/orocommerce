@@ -15,14 +15,12 @@ Feature: JS validation on "Default" Checkout workflow
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I press "Create Order (Custom)"
-    And I click on "Checkout Order Review Notes"
     And I press "Continue"
     Then I should see "This value should not be blank."
 
   Scenario: Check js validation without error
     Given I open page with shopping list List 1
     And I press "Create Order (Custom)"
-    And I click on "Checkout Order Review Notes"
     And I fill "Checkout Order Review Form" with:
       | Notes | Customer test note |
     And I press "Continue"

@@ -54,6 +54,8 @@ class Coupon implements
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;
 
+    const MAX_COUPON_CODE_LENGTH = 255;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -123,7 +125,7 @@ class Coupon implements
     /**
      * @var integer
      *
-     * @ORM\Column(name="uses_per_user", type="integer", nullable=true, options={"default"=1})
+     * @ORM\Column(name="uses_per_person", type="integer", nullable=true, options={"default"=1})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -135,7 +137,7 @@ class Coupon implements
      *      }
      *  )
      */
-    protected $usesPerUser = 1;
+    protected $usesPerPerson = 1;
 
     /**
      * @var Promotion
@@ -292,18 +294,18 @@ class Coupon implements
     /**
      * @return int|null
      */
-    public function getUsesPerUser()
+    public function getUsesPerPerson()
     {
-        return $this->usesPerUser;
+        return $this->usesPerPerson;
     }
 
     /**
-     * @param int|null $usesPerUser
+     * @param int|null $usesPerPerson
      * @return Coupon
      */
-    public function setUsesPerUser($usesPerUser)
+    public function setUsesPerPerson($usesPerPerson)
     {
-        $this->usesPerUser = $usesPerUser;
+        $this->usesPerPerson = $usesPerPerson;
 
         return $this;
     }
