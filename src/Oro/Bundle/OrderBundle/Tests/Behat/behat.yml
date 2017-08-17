@@ -112,5 +112,6 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroActionBundle::OroActionContext
         - OroOrderBundle::OrderContext
+        - OroNavigationBundle::FeatureContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

@@ -57,7 +57,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'order_automation_enable_cancellation' => [
-                            'value' => true,
+                            'value' => false,
                             'scope' => 'app'
                         ],
                         'order_automation_applicable_statuses' => [
