@@ -80,9 +80,7 @@ Delete a collection of relationships between the products and their related prod
 
 ### product
 
-#### common
-
-The main product in the relationship. 
+The main product in the relationship.
 
 #### create
 
@@ -91,8 +89,6 @@ The main product in the relationship.
 **Required field**
 
 ### relatedItem
-
-#### common
 
 The product that is related to the main product in the relationship.
 
