@@ -1,6 +1,6 @@
 security:
     firewalls:
         guest_checkout:
-            pattern:                 ^/customer/checkout|^/api/rest/latest/workflow/start/b2b_flow_checkout|^/api/latest/country/regions
+            pattern:                 ^/customer/checkout|^/api/rest/latest/workflow/start/b2b_flow_checkout|^/api/rest/latest/country/regions
             context:                 customer_identity
             anonymous_customer_user: true
