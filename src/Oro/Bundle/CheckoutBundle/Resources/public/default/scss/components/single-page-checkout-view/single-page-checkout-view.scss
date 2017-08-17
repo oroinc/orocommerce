@@ -57,6 +57,7 @@
     &__title {
         position: $checkout-view-title-position;
 
+        min-height: $checkout-view-title-min-height;
         margin: $checkout-view-title-margin;
 
         color: $checkout-view-title-color;
@@ -66,14 +67,7 @@
         font-weight: $checkout-view-title-font-weight;
 
         &.in-sticky {
-            width: $checkout-view-column-width;
-            padding: $checkout-view-column-offset;
             margin: 0;
-
-            &:first-child {
-                width: $checkout-view-column-first-width;
-                padding-left: 0;
-            }
         }
     }
 
@@ -99,18 +93,19 @@
     }
 
     &__sticky-titles {
-        display: $checkout-view-sticky-titles-display;
+        border-bottom: $checkout-view-sticky-titles-border-bottom;
+        background: $checkout-view-sticky-titles-background;
 
-        max-width: $checkout-view-sticky-titles-max-width;
-        padding: $checkout-view-sticky-titles-offset;
-        margin: $checkout-view-sticky-titles-margin;
+        &-inner {
+            max-width: $checkout-view-sticky-titles-inner-max-width;
+            margin: $checkout-view-sticky-titles-inner-margin;
+            padding: $checkout-view-sticky-titles-inner-offset;
 
-        flex-direction: $checkout-view-sticky-titles-flex-direction;
-        justify-content: $checkout-view-sticky-titles-justify-content;
-        align-items: $checkout-view-sticky-titles-align-items;
+            display: $checkout-view-sticky-titles-inner-display;
 
-        &:not(:empty) {
-            background: $checkout-view-sticky-titles-background;
+            flex-direction: $checkout-view-sticky-titles-inner-flex-direction;
+            justify-content: $checkout-view-sticky-titles-inner-justify-content;
+            align-items: $checkout-view-sticky-titles-inner-align-items;
         }
     }
 
@@ -120,6 +115,37 @@
         margin: $checkout-view-sticky-totals-margin;
 
         justify-content: $checkout-view-sticky-totals-justify-content;
+    }
+
+    &__sticky-column {
+        width: $checkout-view-column-width;
+        padding: $checkout-view-sticky-column-offset;
+
+        &:empty {
+            padding: 0;
+        }
+
+        &:first-child {
+            width: $checkout-view-column-first-width;
+            padding-left: 0;
+        }
+
+        &:last-child {
+            width: $checkout-view-column-extended-width;
+            padding-left: $checkout-view-column-gap;
+            padding-right: 0;
+        }
+    }
+
+    &__notification-container {
+        &:not(:empty) {
+            background: get-color('additional', 'ultra');
+        }
+
+        .notification-flash-container {
+            margin: 0 auto;
+            padding: $offset-y-m;
+        }
     }
 
     .checkout-form__payment-methods {

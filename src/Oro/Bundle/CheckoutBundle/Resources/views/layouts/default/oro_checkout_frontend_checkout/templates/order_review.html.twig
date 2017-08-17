@@ -46,7 +46,10 @@
                 <div class="grid__column grid__column--12">
                     <label class="label label--full">{{ "oro.checkout.order_review.note"|trans }}</label>
                     <div class="checkout-form__order-notes">
-                        {{ form_widget(form.customer_notes, {'attr': {'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+                        {{ form_widget(form.customer_notes, {'attr': {
+                            'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
+                            'data-page-component-elastic-area': ''
+                        }}) }}
                     </div>
                 </div>
             </fieldset>
