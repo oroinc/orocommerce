@@ -27,7 +27,6 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
-use Oro\Bundle\RFPBundle\Model\RequestManager;
 use Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
 
 class RequestTypeTest extends AbstractTest
@@ -69,6 +68,14 @@ class RequestTypeTest extends AbstractTest
             );
 
         $this->formType->configureOptions($resolver);
+    }
+
+    /**
+     * Test getName
+     */
+    public function testGetName()
+    {
+        static::assertEquals(RequestType::NAME, $this->formType->getName());
     }
 
     /**

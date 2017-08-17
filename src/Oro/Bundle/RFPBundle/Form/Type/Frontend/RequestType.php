@@ -15,6 +15,8 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 class RequestType extends AbstractType
 {
+    const NAME = 'oro_rfp_frontend_request';
+
     /**
      * @var string
      */
@@ -90,8 +92,16 @@ class RequestType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getBlockPrefix()
     {
-        return 'oro_rfp_frontend_request';
+        return static::NAME;
     }
 }
