@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory;
 
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
-class FedexRateServiceRequestFactory implements FedexRequestFactoryInterface
+class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettingsFactoryInterface
 {
     /**
      * @var SymmetricCrypterInterface
@@ -17,17 +17,17 @@ class FedexRateServiceRequestFactory implements FedexRequestFactoryInterface
     private $crypter;
 
     /**
-     * @var FedexRequestFactoryInterface
+     * @var FedexRequestByContextAndSettingsFactoryInterface
      */
     private $lineItemsFactory;
 
     /**
      * @param SymmetricCrypterInterface    $crypter
-     * @param FedexRequestFactoryInterface $lineItemsFactory
+     * @param FedexRequestByContextAndSettingsFactoryInterface $lineItemsFactory
      */
     public function __construct(
         SymmetricCrypterInterface $crypter,
-        FedexRequestFactoryInterface $lineItemsFactory
+        FedexRequestByContextAndSettingsFactoryInterface $lineItemsFactory
     ) {
         $this->crypter = $crypter;
         $this->lineItemsFactory = $lineItemsFactory;

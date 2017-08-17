@@ -6,7 +6,7 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -28,7 +28,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     private $crypter;
 
     /**
-     * @var FedexRequestFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRequestByContextAndSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $lineItemsFactory;
 
@@ -40,7 +40,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     protected function setUp()
     {
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
-        $this->lineItemsFactory = $this->createMock(FedexRequestFactoryInterface::class);
+        $this->lineItemsFactory = $this->createMock(FedexRequestByContextAndSettingsFactoryInterface::class);
 
         $this->factory = new FedexRateServiceRequestFactory(
             $this->crypter,

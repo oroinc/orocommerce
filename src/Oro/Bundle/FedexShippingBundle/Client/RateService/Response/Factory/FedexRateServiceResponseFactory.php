@@ -27,7 +27,7 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
 
         $prices = [];
         if ($this->isResponseHasPrices($severityCode)) {
-            $prices = $this->getPrices($soapResponse);
+            $prices = $this->createPricesByResponse($soapResponse);
         }
         
         return new FedexRateServiceResponse($severityCode, $severityMessage, $prices);
@@ -60,19 +60,21 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
      *
      * @return Price[]
      */
-    private function getPrices($soapResponse): array
+    private function createPricesByResponse($soapResponse): array
     {
         $prices = [];
         if (is_array($soapResponse->RateReplyDetails)) {
             foreach ($soapResponse->RateReplyDetails as $rateReply) {
                 $serviceCode = $rateReply->ServiceType;
-                $prices[$serviceCode] = $this->getPrice($rateReply);
+                $prices[$serviceCode] = $this->createPriceByResponse($rateReply);
             }
-        } else {
-            $rateReply = $soapResponse->RateReplyDetails;
-            $prices[$rateReply->ServiceType] = $this->getPrice($rateReply);
+            
+            return $prices;
         }
-
+        
+        $rateReply = $soapResponse->RateReplyDetails;
+        $prices[$rateReply->ServiceType] = $this->createPriceByResponse($rateReply);
+        
         return $prices;
     }
 
@@ -81,7 +83,7 @@ class FedexRateServiceResponseFactory implements FedexRateServiceResponseFactory
      *
      * @return Price
      */
-    private function getPrice(\StdClass $rateReply): Price
+    private function createPriceByResponse(\StdClass $rateReply): Price
     {
         if ($rateReply->RatedShipmentDetails && is_array($rateReply->RatedShipmentDetails)) {
             return Price::create(
