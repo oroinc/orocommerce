@@ -1,6 +1,8 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Functional\Processes;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\Process;
+
+use Doctrine\DBAL\Connection;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
@@ -17,19 +19,17 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\ProcessTrigger;
-use Oro\Bundle\WorkflowBundle\Model\ProcessData;
-use Oro\Bundle\WorkflowBundle\Model\ProcessHandler;
+use Oro\Bundle\WorkflowBundle\Tests\Functional\Process\AbstractProcessTest;
 
-class ExpireOrdersProcessTest extends WebTestCase
+/**
+ * @group CommunityEdition
+ */
+class ExpireOrdersProcessTest extends AbstractProcessTest
 {
-    /** @var ProcessHandler */
-    protected $processHandler;
-
     /** @var ProcessDefinition */
     protected $processDefinition;
 
@@ -39,14 +39,13 @@ class ExpireOrdersProcessTest extends WebTestCase
     /** @var ConfigManager */
     protected $configManager;
 
-    /** @var Order */
-    protected $order;
-
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->processHandler = $this->getContainer()->get('oro_workflow.process.process_handler');
         $this->processDefinition = $this->getContainer()
             ->get('doctrine')
             ->getRepository(ProcessDefinition::class)
@@ -62,12 +61,18 @@ class ExpireOrdersProcessTest extends WebTestCase
             LoadCustomerUserAddresses::class,
             LoadOrders::class,
         ]);
+
+        /** @var Connection $connection */
+        $connection = $this->getContainer()->get('doctrine')->getConnection();
+
+        $qb = $connection->createQueryBuilder();
+        $qb->delete('oro_config_value')
+            ->andWhere($qb->expr()->eq('section', 'oro_order'));
     }
 
     public function testProcessDefinition()
     {
         $this->assertNotNull($this->processDefinition);
-        $this->assertNotEmpty($this->processDefinition->getPreConditionsConfiguration());
         $this->assertNotEmpty($this->processDefinition->getActionsConfiguration());
         $this->assertTrue($this->processDefinition->isEnabled());
         $this->assertEquals(Order::class, $this->processDefinition->getRelatedEntity());
@@ -85,39 +90,33 @@ class ExpireOrdersProcessTest extends WebTestCase
 
     public function testExecuteWithoutDNSL()
     {
-        $this->configManager->reset('oro_order.order_automation_enable_cancellation');
-        $this->configManager->reset('oro_order.order_automation_applicable_statuses');
-        $this->configManager->reset('oro_order.order_automation_target_status');
-        $this->configManager->flush();
+        $this->configureMockManager();
 
         $order = $this->prepareOrderObject();
         $internalStatus = $order->getInternalStatus();
-        $this->executeProcessForOrder($order);
+        $this->executeProcess($this->processDefinition);
         $order = $this->reloadOrder($order);
         $this->assertEquals($internalStatus, $order->getInternalStatus());
     }
 
     public function testExecuteWithDisabledAutomation()
     {
-        $this->configManager->set('oro_order.order_automation_enable_cancellation', false);
-        $this->configManager->flush();
+        $this->configureMockManager(false);
 
         $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
+
         $internalStatus = $order->getInternalStatus();
-        $this->executeProcessForOrder($order);
+        $this->executeProcess($this->processDefinition);
         $order = $this->reloadOrder($order);
-        $this->assertEquals($internalStatus, $order->getInternalStatus());
+        $this->assertEquals($internalStatus->getId(), $order->getInternalStatus()->getId());
     }
 
     public function testExecuteDefault()
     {
-        $this->configManager->reset('oro_order.order_automation_enable_cancellation');
-        $this->configManager->reset('oro_order.order_automation_applicable_statuses');
-        $this->configManager->reset('oro_order.order_automation_target_status');
-        $this->configManager->flush();
+        $this->configureMockManager();
 
         $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
-        $this->executeProcessForOrder($order);
+        $this->executeProcess($this->processDefinition);
         $order = $this->reloadOrder($order);
         $this->assertEquals(
             $this->getOrderInternalStatusById(Order::INTERNAL_STATUS_CANCELLED)->getId(),
@@ -127,14 +126,11 @@ class ExpireOrdersProcessTest extends WebTestCase
 
     public function testExecuteWithCurrentDateForDNSL()
     {
-        $this->configManager->reset('oro_order.order_automation_enable_cancellation');
-        $this->configManager->reset('oro_order.order_automation_applicable_statuses');
-        $this->configManager->reset('oro_order.order_automation_target_status');
-        $this->configManager->flush();
+        $this->configureMockManager();
 
         $order = $this->prepareOrderObject((new \DateTime()));
         $internalStatus = $order->getInternalStatus();
-        $this->executeProcessForOrder($order);
+        $this->executeProcess($this->processDefinition);
         $order = $this->reloadOrder($order);
         $this->assertEquals(
             $internalStatus->getId(),
@@ -144,13 +140,10 @@ class ExpireOrdersProcessTest extends WebTestCase
 
     public function testExecuteWithOverriddenTargetStatus()
     {
-        $this->configManager->reset('oro_order.order_automation_enable_cancellation');
-        $this->configManager->reset('oro_order.order_automation_applicable_statuses');
-        $this->configManager->set('oro_order.order_automation_target_status', 'closed');
-        $this->configManager->flush();
+        $this->configureMockManager(true, [Order::INTERNAL_STATUS_OPEN], 'closed');
 
         $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
-        $this->executeProcessForOrder($order);
+        $this->executeProcess($this->processDefinition);
         $order = $this->reloadOrder($order);
         $this->assertEquals(
             $this->getOrderInternalStatusById('closed')->getId(),
@@ -160,42 +153,44 @@ class ExpireOrdersProcessTest extends WebTestCase
 
     public function testExecuteWithOverriddenApplicableStatuses()
     {
-        $this->configManager->reset('oro_order.order_automation_enable_cancellation');
-        $this->configManager->set('oro_order.order_automation_applicable_statuses', ['closed']);
-        $this->configManager->reset('oro_order.order_automation_target_status');
-        $this->configManager->flush();
+        $this->configureMockManager(true, ['closed']);
 
-        $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
-        $this->executeProcessForOrder($order);
-        $order = $this->reloadOrder($order);
+        $order1 = $this->prepareOrderObject((new \DateTime())->modify('-1 day'));
+        $order2 = $this->prepareOrderObject((new \DateTime())->modify('-1 day'), 'closed');
+        $this->executeProcess($this->processDefinition);
+        $order1 = $this->reloadOrder($order1);
         $this->assertEquals(
             $this->getOrderInternalStatusById(Order::INTERNAL_STATUS_OPEN)->getId(),
-            $order->getInternalStatus()->getId()
+            $order1->getInternalStatus()->getId()
         );
-
-        $order = $this->prepareOrderObject((new \DateTime())->modify('-1 day'), 'closed');
-        $this->executeProcessForOrder($order);
-        $order = $this->reloadOrder($order);
+        $order2 = $this->reloadOrder($order2);
         $this->assertEquals(
             $this->getOrderInternalStatusById(Order::INTERNAL_STATUS_CANCELLED)->getId(),
-            $order->getInternalStatus()->getId()
+            $order2->getInternalStatus()->getId()
         );
     }
 
     /**
-     * @param Order $order
+     * @param bool $enabled
+     * @param array $statuses
+     * @param string $target
      */
-    protected function executeProcessForOrder(Order $order)
+    protected function configureMockManager(
+        $enabled = true,
+        array $statuses = [Order::INTERNAL_STATUS_OPEN],
+        $target = Order::INTERNAL_STATUS_CANCELLED
+    ) {
+        $this->configManager->set('oro_order.order_automation_enable_cancellation', $enabled);
+        $this->configManager->set('oro_order.order_automation_applicable_statuses', $statuses);
+        $this->configManager->set('oro_order.order_automation_target_status', $target);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProcessHandler()
     {
-        $trigger = new ProcessTrigger();
-        $trigger->setId($this->processDefinition->getName());
-        $trigger->setDefinition($this->processDefinition);
-        $trigger->setEvent(ProcessTrigger::EVENT_CREATE);
-
-        $data = new ProcessData();
-        $data->set('data', $order);
-
-        $this->processHandler->handleTrigger($trigger, $data);
+        return $this->getContainer()->get('oro_workflow.process.process_handler');
     }
 
     /**

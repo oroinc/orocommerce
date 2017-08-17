@@ -24,7 +24,7 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\ORM\OrderStatusListener'
         public: false
         arguments:
-            - '@oro_config.manager'
+            - '@oro_order.provider.configuration'
             - '@doctrine'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist}
@@ -393,3 +393,8 @@ services:
         class: Oro\Bundle\OrderBundle\Datagrid\OrdersViewList
         arguments:
             - '@translator'
+
+    oro_order.provider.configuration:
+        class: 'Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider'
+        arguments:
+            - '@oro_config.manager'

@@ -19,6 +19,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @group CommunityEdition
+ */
 class OrderStatusListenerTest extends WebTestCase
 {
     /** @var ManagerRegistry */
@@ -46,7 +49,6 @@ class OrderStatusListenerTest extends WebTestCase
     public function testPrePersistDefaultStatus()
     {
         $this->configManager->reset('oro_order.order_creation_new_internal_order_status');
-        $this->configManager->flush();
 
         $this->assertOrderStatus(Order::INTERNAL_STATUS_OPEN);
     }
@@ -57,7 +59,6 @@ class OrderStatusListenerTest extends WebTestCase
             'oro_order.order_creation_new_internal_order_status',
             Order::INTERNAL_STATUS_CANCELLED
         );
-        $this->configManager->flush();
 
         $this->assertOrderStatus(Order::INTERNAL_STATUS_CANCELLED);
     }

@@ -9,14 +9,12 @@ processes:
             actions_configuration:
                 - '@call_service_method':
                     attribute: $.applicableStatuses
-                    service: oro_config.manager
-                    method: get
-                    method_parameters: ['oro_order.order_automation_applicable_statuses']
+                    service: oro_order.provider.configuration
+                    method: getApplicableInternalStatutes
                 - '@call_service_method':
                     attribute: $.targetStatusId
-                    service: oro_config.manager
-                    method: get
-                    method_parameters: ['oro_order.order_automation_target_status']
+                    service: oro_order.provider.configuration
+                    method: getTargetInternalStatus
                 - '@tree':
                     conditions:
                         '@and':

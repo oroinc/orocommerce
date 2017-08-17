@@ -4,26 +4,26 @@ namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
 
 class OrderStatusListener
 {
-    /** @var ConfigManager */
-    protected $configManager;
+    /** @var OrderConfigurationProviderInterface */
+    protected $configurationProvider;
 
     /** @var ManagerRegistry */
     protected $registry;
 
     /**
-     * @param ConfigManager $configManager
+     * @param OrderConfigurationProviderInterface $configurationProvider
      * @param ManagerRegistry $registry
      */
-    public function __construct(ConfigManager $configManager, ManagerRegistry $registry)
+    public function __construct(OrderConfigurationProviderInterface $configurationProvider, ManagerRegistry $registry)
     {
-        $this->configManager = $configManager;
+        $this->configurationProvider = $configurationProvider;
         $this->registry = $registry;
     }
 
@@ -33,16 +33,18 @@ class OrderStatusListener
     public function prePersist(Order $entity)
     {
         if (!$entity->getInternalStatus()) {
-            $entity->setInternalStatus($this->getDefaultStatus());
+            $statusId = $this->configurationProvider->getNewOrderInternalStatus($entity);
+            $entity->setInternalStatus($this->getInternalStatus($statusId));
         }
     }
 
     /**
+     * @param string $statusId
+     *
      * @return object|AbstractEnumValue
      */
-    protected function getDefaultStatus()
+    protected function getInternalStatus($statusId)
     {
-        $statusId = $this->configManager->get('oro_order.order_creation_new_internal_order_status');
         $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
 
         return $this->registry->getManagerForClass($className)->getRepository($className)->find($statusId);

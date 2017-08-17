@@ -5,14 +5,11 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\UnitOfWork;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\ORM\OrderStatusListener;
+use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub;
 
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
@@ -25,8 +22,8 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $configManager;
+    /** @var OrderConfigurationProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $configurationProvider;
 
     /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $entityManager;
@@ -44,26 +41,12 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->entityRepository = $this->createMock(EntityRepository::class);
         $this->entityManager = $this->createMock(EntityManager::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->configurationProvider = $this->createMock(OrderConfigurationProviderInterface::class);
 
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->entityManager);
 
-        $this->listener = new OrderStatusListener($this->configManager, $this->registry);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset(
-            $this->entityRepository,
-            $this->entityManager,
-            $this->registry,
-            $this->configManager,
-            $this->listener
-        );
+        $this->listener = new OrderStatusListener($this->configurationProvider, $this->registry);
     }
 
     /**
@@ -79,9 +62,9 @@ class OrderStatusListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->with(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
             ->willReturn($this->entityRepository);
-        $this->configManager->expects($this->exactly((int)$expected))
-            ->method('get')
-            ->with('oro_order.order_creation_new_internal_order_status')
+        $this->configurationProvider->expects($this->exactly((int)$expected))
+            ->method('getNewOrderInternalStatus')
+            ->with($order)
             ->willReturn(Order::INTERNAL_STATUS_OPEN);
         $status = new StubEnumValue('open', 'open');
         $this->entityRepository->expects($this->exactly((int)$expected))
