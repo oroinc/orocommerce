@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Shared;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -11,13 +11,13 @@ use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Api\Processor\AddImagePathToResultsProcessor;
+use Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ProductImageStub;
-use Oro\Bundle\ProductBundle\Tests\Unit\Processor\Shared\CreateContextStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor\Stub\ContextStub;
 use Oro\Component\ChainProcessor\ContextInterface;
 
-class AddImagePathToResultsProcessorTest extends \PHPUnit_Framework_TestCase
+class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AttachmentManager|\PHPUnit_Framework_MockObject_MockObject
@@ -35,7 +35,7 @@ class AddImagePathToResultsProcessorTest extends \PHPUnit_Framework_TestCase
     protected $typeProvider;
 
     /**
-     * @var AddImagePathToResultsProcessor
+     * @var ProcessImagePaths
      */
     protected $addImagePathToResultsProcessor;
 
@@ -72,13 +72,13 @@ class AddImagePathToResultsProcessorTest extends \PHPUnit_Framework_TestCase
         $this->typeProvider = $this->getMockBuilder(ImageTypeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->addImagePathToResultsProcessor = new AddImagePathToResultsProcessor(
+        $this->addImagePathToResultsProcessor = new ProcessImagePaths(
             $this->attachmentManager,
             $this->doctrineHelper,
             $this->typeProvider
         );
         /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context * */
-        $this->context = $this->createMock(CreateContextStub::class);
+        $this->context = $this->createMock(ContextStub::class);
         $this->config = $this->createMock(EntityDefinitionConfig::class);
         $this->context->expects($this->once())
             ->method('getConfig')
@@ -94,7 +94,7 @@ class AddImagePathToResultsProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('addField')
             ->willReturnCallback(
                 function ($fieldName, $configValue) {
-                    $this->assertEquals(AddImagePathToResultsProcessor::CONFIG_FILE_PATH, $fieldName);
+                    $this->assertEquals(ProcessImagePaths::CONFIG_FILE_PATH, $fieldName);
                     $this->assertInstanceOf(EntityDefinitionFieldConfig::class, $configValue);
                 }
             );

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Api\Processor;
+namespace Oro\Bundle\ProductBundle\Api\Processor\Shared;
 
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionFieldConfig;
@@ -12,11 +12,11 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Class AddImagePathToResultsProcessor
+ * Class ProcessImagePaths
  *
  * Adds the file path(or paths) of a file if it's an image type to the File API endpoints
  */
-class AddImagePathToResultsProcessor implements ProcessorInterface
+class ProcessImagePaths implements ProcessorInterface
 {
     const CONFIG_FILE_PATH = 'filePath';
 
