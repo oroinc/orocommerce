@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\RuleFiltration;
 
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
+use Oro\Bundle\PromotionBundle\Model\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponFilterCouponData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponFilteredPromotionData;
@@ -34,12 +35,16 @@ class CouponFiltrationServiceTest extends WebTestCase
             = $this->getReference(LoadCouponFilteredPromotionData::PROMO_NOT_CORRESPONDING_APPLIED_DISCOUNTS);
         $promoWithoutDiscounts = $this->getReference(LoadCouponFilteredPromotionData::PROMO_WITHOUT_DISCOUNTS);
 
+        // All AppliedPromotion models should not be filtered by CouponFiltrationService
+        $appliedPromotion = new AppliedPromotion();
+
         $filteredPromotions = $couponFiltrationService->getFilteredRuleOwners(
             [
                 $promoCorrespondingSeveralAppliedDiscounts,
                 $promoCorrespondingOneAppliedDiscounts,
                 $promoNotCorrespondingAppliedDiscounts,
-                $promoWithoutDiscounts
+                $promoWithoutDiscounts,
+                $appliedPromotion
             ],
             [
                 ContextDataConverterInterface::APPLIED_COUPONS => [
@@ -53,8 +58,8 @@ class CouponFiltrationServiceTest extends WebTestCase
         $expected = [
             $promoCorrespondingSeveralAppliedDiscounts,
             $promoCorrespondingOneAppliedDiscounts,
-            $promoWithoutDiscounts
-
+            $promoWithoutDiscounts,
+            $appliedPromotion
         ];
 
         $this->assertEquals($expected, $filteredPromotions);

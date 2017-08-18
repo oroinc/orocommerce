@@ -578,3 +578,26 @@ services:
         arguments:
             - '@oro_promotion.validation_service.coupon_validation'
             - '@oro_promotion.promotion_provider'
+
+    oro_promotion.rule_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\RuleNormalizer
+
+    oro_promotion.scope_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\ScopeNormalizer
+        arguments:
+            - '@doctrine'
+
+    oro_promotion.segment_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\SegmentNormalizer
+
+    oro_promotion.applied_discount_promotion_normalizer:
+        public: false
+        class: Oro\Bundle\PromotionBundle\Normalizer\AppliedDiscountPromotionNormalizer
+        arguments:
+            - '@oro_promotion.rule_normalizer'
+            - '@oro_promotion.scope_normalizer'
+            - '@oro_promotion.segment_normalizer'
+
