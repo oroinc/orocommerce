@@ -1,0 +1,104 @@
+<?php
+
+namespace Oro\Bundle\PromotionBundle\Discount;
+
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
+
+/**
+ * Decorates discount to make it's amount zero (i.e. disable it).
+ */
+class DisabledDiscountDecorator implements DiscountInterface
+{
+    /**
+     * @var DiscountInterface
+     */
+    private $discount;
+
+    /**
+     * @param DiscountInterface $discount
+     */
+    public function __construct(DiscountInterface $discount)
+    {
+        $this->discount = $discount;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configure(array $options): array
+    {
+        return $this->discount->configure($options);
+    }
+
+    /**
+     *{@inheritdoc}
+     */
+    public function getMatchingProducts()
+    {
+        return $this->discount->getMatchingProducts();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMatchingProducts(array $products)
+    {
+        $this->discount->setMatchingProducts($products);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDiscountType(): string
+    {
+        return $this->discount->getDiscountType();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDiscountValue(): float
+    {
+        return $this->discount->getDiscountValue();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDiscountCurrency()
+    {
+        return $this->discount->getDiscountCurrency();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function apply(DiscountContext $discountContext)
+    {
+        $this->discount->apply($discountContext);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function calculate($entity): float
+    {
+        return 0.0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPromotion()
+    {
+        return $this->discount->getPromotion();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPromotion(Promotion $promotion)
+    {
+        $this->discount->setPromotion($promotion);
+    }
+}
