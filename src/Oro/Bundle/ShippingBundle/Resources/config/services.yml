@@ -502,3 +502,7 @@ services:
             - '@oro_shipping.context.doctrine_line_item_collection_factory'
             - '@oro_shipping.repository.product_shipping_options'
             - '@oro_shipping.line_item.factory_basic'
+
+    oro_shipping.factory.shipping_package_options:
+        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'
+        public: false
