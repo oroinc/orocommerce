@@ -76,12 +76,6 @@ Example:
             "value": 120
         },
         "relationships": {
-            "priceList": {
-                "data":{
-                    "type": "pricelists",
-                    "id": "2"
-                }
-            },
             "product": {
                 "data": {
                     "type": "products",
