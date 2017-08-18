@@ -35,16 +35,11 @@ class ShoppingListController extends RestController implements ClassResourceInte
      *
      * @return JsonResponse
      */
-    public function setCurrentAction($id)
+    public function setCurrentAction(ShoppingList $shoppingList)
     {
         /** @var ShoppingListManager $manager */
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
 
-        $shoppingList = $this->get('oro_shopping_list.repository.shopping_list')->find($id);
-
-        if ($shoppingList === null) {
-            throw $this->createNotFoundException('Can\'t find shopping list with id ' . $id);
-        }
         $isGranted = $this->isGranted('EDIT', $shoppingList);
         $isProcessed = false;
         $view = $this->view([], Codes::HTTP_NO_CONTENT);
@@ -54,7 +49,11 @@ class ShoppingListController extends RestController implements ClassResourceInte
         }
         $manager->setCurrent($this->getUser(), $shoppingList);
 
-        return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'success' => $isProcessed]);
+        return $this->buildResponse(
+            $view,
+            self::ACTION_UPDATE,
+            ['id' => $shoppingList->getId(), 'success' => $isProcessed]
+        );
     }
 
     /**
