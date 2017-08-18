@@ -821,23 +821,15 @@ Example:
 
 ### sku
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
 **Required field**
 
-### skuUppercase
-
-Product SKU in uppercase
-
-#### create, get, get_list, update
-
-{@inheritdoc}
-
 ### names
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -845,7 +837,7 @@ Product SKU in uppercase
 
 ### decrementQuantity
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -853,7 +845,7 @@ Product SKU in uppercase
 
 ### inventoryThreshold
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -861,7 +853,7 @@ Product SKU in uppercase
 
 ### inventory_status
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -869,7 +861,7 @@ Product SKU in uppercase
 
 ### manageInventory
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -879,7 +871,7 @@ Product SKU in uppercase
 
 Backorder.
 
-#### create, get, get_list, update
+#### create
 
 {@inheritdoc}
 
@@ -887,7 +879,7 @@ Backorder.
 
 ### status
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -895,7 +887,7 @@ Backorder.
 
 ### featured
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -903,7 +895,7 @@ Backorder.
 
 ### newArrival
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -911,7 +903,7 @@ Backorder.
 
 ### productType
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -919,7 +911,7 @@ Backorder.
 
 ### attributeFamily
 
-#### create, get, get_list
+#### create
 
 {@inheritdoc}
 
@@ -927,29 +919,23 @@ Backorder.
 
 ### category
 
-#### create, get, get_list
-
-{@inheritdoc}
-
 Specify the category of the product
 
 ### taxCode
 
 Specify a tax code
 
-#### create, get, get_list, update
+#### create
 
 {@inheritdoc}
 
 ### test_variant_field
 
-#### create, get, get_list, update
+#### create
 
 {@inheritdoc}
 
 ### pageTemplate
-
-### create, update, get, get_list
 
 Specify the page template for the product
 

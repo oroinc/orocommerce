@@ -1,37 +1,17 @@
 services:
-    oro_product.create.process_unit_precisions:
-            class: Oro\Bundle\ProductBundle\Api\Processor\Create\ProcessUnitPrecisionsCreate
-            arguments: ['@oro_api.doctrine_helper']
-            tags:
-                - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: 75 }
-
-    oro_product.update.process_unit_precisions:
-            class: Oro\Bundle\ProductBundle\Api\Processor\Update\ProcessUnitPrecisionsUpdate
-            arguments: ['@oro_api.doctrine_helper']
-            tags:
-                - { name: oro.api.processor, action: update, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', priority: 75 }
-
-    oro_product.create.validate_product_names:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Create\ValidateProductNamesCreate
-        arguments:
-            - '@oro_api.value_normalizer'
+    oro_product.api.add_validate_unit_precisions_duplicate_form_listener:
+        class: Oro\Bundle\ProductBundle\Api\Processor\AddValidateUnitPrecisionsDuplicateFormListener
         tags:
-            - { name: oro.api.processor, action: create, group: normalize_input, class: 'Oro\Bundle\ProductBundle\Entity\Product', requestType: json_api, priority: 89 }
+            - { name: oro.api.processor, action: create, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }
+            - { name: oro.api.processor, action: update, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 90 }
 
-    oro_product.create.add_product_type_data_transformers:
+    oro_product.api.create.add_product_type_data_transformers:
         class: Oro\Bundle\ProductBundle\Api\Processor\Create\AddProductTypeDataTransformers
         tags:
-            - { name: oro.api.processor, action: create, group: transform_data, class: 'Oro\Bundle\ProductBundle\Entity\Product',  requestType: json_api, priority: 95 }
+            - { name: oro.api.processor, action: create, group: transform_data, class: Oro\Bundle\ProductBundle\Entity\Product, priority: 95 }
 
-    oro_product.create.related_product.validate_required:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Create\ValidateRelatedProduct
-        arguments:
-            - '@oro_api.value_normalizer'
-        tags:
-            - { name: oro.api.processor, action: create, group: normalize_input, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, requestType: json_api, priority: 89 }
-
-    oro_product.create.related_product.security_check:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\RelatedItemSecurityCheck
+    oro_product.api.create.related_product.security_check:
+        class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
             - '@security.authorization_checker'
             - ['VIEW', 'EDIT']
@@ -39,8 +19,8 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
-    oro_product.delete.related_product.security_check:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\RelatedItemSecurityCheck
+    oro_product.api.delete.related_product.security_check:
+        class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
             - '@security.authorization_checker'
             - ['EDIT']
@@ -49,8 +29,8 @@ services:
             - { name: oro.api.processor, action: delete, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
             - { name: oro.api.processor, action: delete_list, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
-    oro_product.get.related_product.security_check:
-        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\RelatedItemSecurityCheck
+    oro_product.api.get.related_product.security_check:
+        class: Oro\Bundle\ProductBundle\Api\Processor\RelatedItemSecurityCheck
         arguments:
             - '@security.authorization_checker'
             - ['VIEW']
@@ -59,11 +39,11 @@ services:
             - { name: oro.api.processor, action: get, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
             - { name: oro.api.processor, action: get_list, group: security_check, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
-    oro_product.create.add_related_product:
+    oro_product.api.create.add_related_product:
         class: Oro\Bundle\ProductBundle\Api\Processor\Create\AddRelatedProduct
         arguments:
             - '@oro_product.related_item.related_product.assigner_database_strategy'
-            - '@oro_entity.doctrine_helper'
+            - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
 
