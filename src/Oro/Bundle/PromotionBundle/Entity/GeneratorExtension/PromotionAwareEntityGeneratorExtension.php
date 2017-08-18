@@ -27,7 +27,11 @@ class PromotionAwareEntityGeneratorExtension extends AbstractEntityGeneratorExte
      */
     public function generate(array $schema, PhpClass $class)
     {
-        $class->addInterfaceName(AppliedDiscountsAwareInterface::class);
-        $class->addInterfaceName(AppliedCouponsAwareInterface::class);
+        if ($class->hasProperty('appliedDiscounts')) {
+            $class->addInterfaceName(AppliedDiscountsAwareInterface::class);
+        }
+        if ($class->hasProperty('appliedCoupons')) {
+            $class->addInterfaceName(AppliedCouponsAwareInterface::class);
+        }
     }
 }

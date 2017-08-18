@@ -33,18 +33,43 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
         ];
     }
 
-    public function testGenerate()
+    public function testGeneratePropertyExists()
     {
         $extension = new PromotionAwareEntityGeneratorExtension();
         $schema = [];
         /** @var PhpClass|\PHPUnit_Framework_MockObject_MockObject $class */
         $class = $this->createMock(PhpClass::class);
         $class->expects($this->exactly(2))
+            ->method('hasProperty')
+            ->withConsecutive(
+                ['appliedDiscounts'],
+                ['appliedCoupons']
+            )
+            ->willReturn(true);
+        $class->expects($this->exactly(2))
             ->method('addInterfaceName')
             ->withConsecutive(
                 [AppliedDiscountsAwareInterface::class],
                 [AppliedCouponsAwareInterface::class]
             );
+        $extension->generate($schema, $class);
+    }
+
+    public function testGeneratePropertyDoesNotExists()
+    {
+        $extension = new PromotionAwareEntityGeneratorExtension();
+        $schema = [];
+        /** @var PhpClass|\PHPUnit_Framework_MockObject_MockObject $class */
+        $class = $this->createMock(PhpClass::class);
+        $class->expects($this->exactly(2))
+            ->method('hasProperty')
+            ->withConsecutive(
+                ['appliedDiscounts'],
+                ['appliedCoupons']
+            )
+            ->willReturn(false);
+        $class->expects($this->never())
+            ->method('addInterfaceName');
         $extension->generate($schema, $class);
     }
 }
