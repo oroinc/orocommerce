@@ -2,15 +2,33 @@
 
 namespace Oro\Bundle\PromotionBundle\Form\Type;
 
+use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CouponAddType extends AbstractType implements DataMapperInterface
 {
     const NAME = 'oro_promotion_coupon_add';
+
+    /**
+     * @var DoctrineHelper
+     */
+    private $doctrineHelper;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     */
+    public function __construct(DoctrineHelper $doctrineHelper)
+    {
+        $this->doctrineHelper = $doctrineHelper;
+    }
 
     /**
      * {@inheritdoc}
@@ -37,6 +55,25 @@ class CouponAddType extends AbstractType implements DataMapperInterface
             );
 
         $builder->setDataMapper($this);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired([
+            'entity',
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['entityClass'] = ClassUtils::getClass($options['entity']);
+        $view->vars['entityId'] = $this->doctrineHelper->getSingleEntityIdentifier($options['entity']);
     }
 
     /**

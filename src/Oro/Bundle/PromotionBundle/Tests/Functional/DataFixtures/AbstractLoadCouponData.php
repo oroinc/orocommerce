@@ -30,7 +30,7 @@ abstract class AbstractLoadCouponData extends AbstractFixture implements Depende
             $coupon
                 ->setCode($couponData['code'])
                 ->setUsesPerCoupon($couponData['usesPerCoupon'])
-                ->setUsesPerPerson($couponData['usesPerUser']);
+                ->setUsesPerPerson($couponData['usesPerPerson']);
 
             if (!empty($couponData['promotion'])) {
                 /** @var Promotion $promotion */

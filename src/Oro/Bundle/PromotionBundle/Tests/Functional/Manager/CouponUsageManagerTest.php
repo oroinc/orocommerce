@@ -44,7 +44,7 @@ class CouponUsageManagerTest extends WebTestCase
     {
         $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
         $customerUser = $this->getReference(LoadCustomerUserData::ANONYMOUS_EMAIL);
-        $promotion = $this->getReference(LoadPromotionData::ORDER_AMOUNT_PROMOTION);
+        $promotion = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
 
         $manager = $this->getContainer()->get('oro_promotion.coupon_usage_manager');
 

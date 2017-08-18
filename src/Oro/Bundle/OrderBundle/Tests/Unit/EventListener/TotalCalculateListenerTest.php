@@ -2,136 +2,102 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Form\FormFactory;
-
+use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
+use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\ActionBundle\Provider\CurrentApplicationProviderInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener;
+use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class TotalCalculateListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FormFactory */
-    protected $formFactory;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CurrentApplicationProviderInterface */
-    protected $applicationProvider;
-
-    /** @var TotalCalculateListener */
-    protected $listener;
+    /**
+     * @var FormFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $formFactory;
 
     /**
-     * {@inheritdoc}
+     * @var CurrentApplicationProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
+    private $applicationProvider;
+
+    /**
+     * @var TotalCalculateListener
+     */
+    private $listener;
+
     protected function setUp()
     {
-        $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactory')
-            ->disableOriginalConstructor()->getMock();
-
+        $this->formFactory = $this->createMock(FormFactory::class);
         $this->applicationProvider = $this->createMock(CurrentApplicationProviderInterface::class);
-
         $this->listener = new TotalCalculateListener($this->formFactory, $this->applicationProvider);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
+    public function testOnBeforeTotalCalculateWhenEntityIsNotOrder()
     {
-        unset($this->formFactory, $this->listener, $this->applicationProvider);
-    }
+        $this->applicationProvider->expects($this->never())
+            ->method('getCurrentApplication');
+        $this->formFactory->expects($this->never())
+            ->method('create');
 
-    /**
-     * @dataProvider testOnBeforeTotalCalculateProvider
-     *
-     * @param $application
-     * @param $expected
-     */
-    public function testOnBeforeTotalCalculate($application, $expected)
-    {
-        $this->applicationProvider->expects($this->once())->method('getCurrentApplication')->willReturn($application);
-
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form = $this->getMockBuilder('Oro\Bundle\OrderBundle\Form\Type\OrderType')
-            ->setMethods(['submit'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form->expects($this->once())->method('submit');
-
-        $this->formFactory->expects($this->once())->method('create')->willReturn($form);
-
-        $entity = $this->createMock('Oro\Bundle\OrderBundle\Entity\Order');
-
-        if ($expected['resetDiscounts']) {
-            $entity->expects($this->once())->method('resetDiscounts');
-        } else {
-            $entity->expects($this->never())->method('resetDiscounts');
-        }
-        $event = new TotalCalculateBeforeEvent($entity, $request);
-
+        $event = new TotalCalculateBeforeEvent(new \stdClass(), $this->getRequest());
         $this->listener->onBeforeTotalCalculate($event);
     }
 
-    /**
-     * @return array
-     */
-    public function testOnBeforeTotalCalculateProvider()
+    public function testOnBeforeTotalCalculateWhenFormIsNotDefined()
     {
-        return [
-            'application default' => [
-                'application' => 'default',
-                'expected' => [
-                    'resetDiscounts' => true
-                ]
-            ]
-        ];
+        $this->applicationProvider->expects($this->once())
+            ->method('getCurrentApplication')
+            ->willReturn('some other application');
+        $this->formFactory->expects($this->never())
+            ->method('create');
+
+        $event = new TotalCalculateBeforeEvent(new Order(), $this->getRequest());
+        $this->listener->onBeforeTotalCalculate($event);
     }
 
-    public function testOnBeforeTotalCalculateUnexpectedApplication()
+    public function testOnBeforeTotalCalculateWhenRequestNotContainsData()
     {
-        $application  = 'unexpected application';
-        $this->applicationProvider->expects($this->once())->method('getCurrentApplication')->willReturn($application);
+        $this->applicationProvider->expects($this->once())
+            ->method('getCurrentApplication')
+            ->willReturn(ActionCurrentApplicationProvider::DEFAULT_APPLICATION);
+        $this->formFactory->expects($this->never())
+            ->method('create');
 
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = new TotalCalculateBeforeEvent(new Order(), $this->getRequest());
+        $this->listener->onBeforeTotalCalculate($event);
+    }
 
-        $form = $this->getMockBuilder('Oro\Bundle\OrderBundle\Form\Type\OrderType')
-            ->setMethods(['submit'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form->expects($this->never())->method('submit');
+    public function testOnBeforeTotalCalculate()
+    {
+        $this->applicationProvider->expects($this->once())
+            ->method('getCurrentApplication')
+            ->willReturn(ActionCurrentApplicationProvider::DEFAULT_APPLICATION);
 
         $entity = new Order();
-        $event = new TotalCalculateBeforeEvent($entity, $request);
+        $request = $this->getRequest([OrderType::NAME => ['some data']]);
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('submit')
+            ->with($request, false);
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(OrderType::NAME, $entity)
+            ->willReturn($form);
 
+        $event = new TotalCalculateBeforeEvent($entity, $request);
         $this->listener->onBeforeTotalCalculate($event);
     }
 
-    public function testUnSupportedEntity()
+    /**
+     * @param array $postData
+     * @return Request
+     */
+    private function getRequest(array $postData = [])
     {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form = $this->getMockBuilder('Oro\Bundle\OrderBundle\Form\Type\OrderType')
-            ->setMethods(['submit'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $form->expects($this->never())->method('submit');
-
-        $this->formFactory->expects($this->never())->method('create')->willReturn($form);
-
-        $entity = new OrderLineItem();
-        $event = new TotalCalculateBeforeEvent($entity, $request);
-
-        $this->listener->onBeforeTotalCalculate($event);
+        return new Request([], $postData);
     }
 }

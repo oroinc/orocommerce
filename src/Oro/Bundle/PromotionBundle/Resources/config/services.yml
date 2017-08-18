@@ -570,6 +570,8 @@ services:
 
     oro_promotion.form.type.coupon_add_type:
         class: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+        arguments:
+            - '@oro_entity.doctrine_helper'
         tags:
             - { name: form.type, alias: oro_promotion_coupon_add }
 
@@ -601,3 +603,17 @@ services:
             - '@oro_promotion.scope_normalizer'
             - '@oro_promotion.segment_normalizer'
 
+    oro_promotion.handler.coupon_validation_handler:
+        class: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler
+        arguments:
+            - '@oro_promotion.validation_service.coupon_applicability_validation'
+            - '@oro_entity.routing_helper'
+            - '@doctrine'
+            - '@event_dispatcher'
+
+    oro_promotion.event_listener.actualize_coupons_state_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }

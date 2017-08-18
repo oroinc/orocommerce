@@ -4,9 +4,11 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var routing = require('routing');
+    var __ = require('orotranslation/js/translator');
     var BaseView = require('oroui/js/app/views/base/view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var widgetManager = require('oroui/js/widget-manager');
+    var errorsTemplate = require('tpl!oropromotion/templates/field-errors.html');
     var CouponAddView;
 
     CouponAddView = BaseView.extend({
@@ -14,7 +16,10 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            entityClass: null,
+            entityId: null,
             getAddedCouponsTableRoute: 'oro_promotion_get_added_coupons_table',
+            validateCouponApplicabilityRoute: 'oro_promotion_validate_coupon_applicability',
             delimiter: ',',
             skipMaskView: false,
             selectors: {
@@ -22,9 +27,17 @@ define(function(require) {
                 couponAddButtonSelector: null,
                 addedIdsSelector: null,
                 addedCouponsContainerSelector: null,
-                removeCouponButtonSelector: '[data-remove-coupon-id]'
+                removeCouponButtonSelector: '[data-remove-coupon-id]',
+                selectCouponValidationContainerSelector: null
             }
         },
+
+        /**
+         * @property {Object}
+         */
+        requiredOptions: [
+            'entityClass'
+        ],
 
         /**
          * @inheritDoc
@@ -56,20 +69,53 @@ define(function(require) {
 
         addCoupon: function(e) {
             e.preventDefault();
-            // TODO: Add validate ajax action in scope of BB-11280
-            var $couponAutocomplete = this.$(this.options.selectors.couponAutocompleteSelector);
-            var couponId = $couponAutocomplete.val();
 
-            // Success behavior
-            var currentState = this.$(this.options.selectors.addedIdsSelector).val()
-                .split(this.options.delimiter)
-                .concat([couponId]);
-            currentState = _.filter(currentState, function(value) {
-                return value !== '';
+            var $couponAutocomplete = this.$(this.options.selectors.couponAutocompleteSelector);
+            var $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
+            var couponId = $couponAutocomplete.val();
+            if (!couponId) {
+                return;
+            }
+
+            /*
+             TODO: change logic for getting form data in scope of BB-11292
+             var data = $form.find(':input[data-ftid]').serializeArray();
+             */
+            var data = [];
+            _.each({
+                couponId: couponId,
+                addedCouponIds: $addedIdsField.val(),
+                entityClass: this.options.entityClass,
+                entityId: this.options.entityId
+            }, function(value, key) {
+                data.push({name: key, value: value});
             });
 
-            this._updateState(currentState);
-            $couponAutocomplete.val(null).trigger('change');
+            this._showLoadingMask();
+            var self = this;
+            $.ajax({
+                url: routing.generate(this.options.validateCouponApplicabilityRoute),
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function(response) {
+                    var $validationContainer = self.$(self.options.selectors.selectCouponValidationContainerSelector);
+                    $validationContainer.html('');
+                    if (response.success) {
+                        var currentState = $addedIdsField.val().split(self.options.delimiter).concat([couponId]);
+                        currentState = _.filter(currentState, function(value) {
+                            return value !== '';
+                        });
+
+                        self._updateState(currentState);
+                        $couponAutocomplete.val(null).trigger('change');
+                    } else {
+                        self._hideLoadingMask();
+                        var errors = _.map(response.errors, __);
+                        $validationContainer.html(errorsTemplate({messages: errors}));
+                    }
+                }
+            });
         },
 
         removeCoupon: function(e) {
@@ -90,7 +136,7 @@ define(function(require) {
             $.ajax({
                 url: routing.generate(this.options.getAddedCouponsTableRoute),
                 type: 'POST',
-                data: {ids: this.$(this.options.selectors.addedIdsSelector).val()},
+                data: {addedCouponIds: this.$(this.options.selectors.addedIdsSelector).val()},
                 dataType: 'json',
                 success: _.bind($addedCouponsContainer.html, $addedCouponsContainer)
             }).always(_.bind(this._hideLoadingMask, this));
@@ -109,6 +155,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @private
+         */
         _updateApplyButtonState: function() {
             var $widgetContainer = this.$el.closest('[data-wid]');
             var $addedIdsField = this.$(this.options.selectors.addedIdsSelector);
@@ -135,7 +184,10 @@ define(function(require) {
             }
 
             this._ensureLoadingMaskLoaded();
-            this.subview('loadingMask').show();
+
+            if (!this.subview('loadingMask').isShown()) {
+                this.subview('loadingMask').show();
+            }
         },
 
         /**
@@ -162,6 +214,13 @@ define(function(require) {
          * @private
          */
         _checkOptions: function() {
+            var requiredMissed = this.requiredOptions.filter(_.bind(function(option) {
+                return _.isUndefined(this.options[option]) && !this.options[option];
+            }, this));
+            if (requiredMissed.length) {
+                throw new TypeError('Missing required option(s): ' + requiredMissed.join(', '));
+            }
+
             var requiredSelectors = [];
             _.each(this.options.selectors, function(selector, selectorName) {
                 if (!selector) {

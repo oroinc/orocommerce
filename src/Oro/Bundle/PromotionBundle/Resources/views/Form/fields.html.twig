@@ -52,11 +52,14 @@
     <fieldset class="form-horizontal"
             data-page-component-view="oropromotion/js/app/views/coupon-add-view"
             data-page-component-options="{{ {
+                entityClass: entityClass,
+                entityId: entityId,
                 selectors: {
                     couponAutocompleteSelector: '#' ~ form.coupon.vars.id,
                     couponAddButtonSelector: '#' ~ addButtonId,
                     addedIdsSelector: '#' ~ form.addedCoupons.vars.id,
-                    addedCouponsContainerSelector: '#' ~ addedCouponsContainerId
+                    addedCouponsContainerSelector: '#' ~ addedCouponsContainerId,
+                    selectCouponValidationContainerSelector: '.select-coupon-validation-container'
                 }
             }|json_encode }}"
     >
@@ -64,6 +67,7 @@
             {{ form_row(form.coupon, {attr: {class: 'coupon-select'}}) }}
             <button id="{{ addButtonId }}" class="btn btn-primary">{{ 'oro.promotion.coupon.form.add_type.add_button.label'|trans }}</button>
         </div>
+        <div class="select-coupon-validation-container control-group"></div>
         <div class="added-coupons-container">
             {{ form_row(form.addedCoupons) }}
             <div id="{{ addedCouponsContainerId }}"></div>

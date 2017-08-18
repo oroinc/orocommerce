@@ -122,6 +122,8 @@ operations:
             attribute_fields:
                 addedCoupons:
                     form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+                    options:
+                        entity: $.data
         actions:
             - '@count':
                 attribute: $.addedCouponsCount

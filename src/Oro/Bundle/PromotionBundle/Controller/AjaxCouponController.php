@@ -22,20 +22,32 @@ class AjaxCouponController extends Controller
      */
     public function getAddedCouponsTableAction(Request $request)
     {
-        /** @var CouponRepository $repository */
-        $repository = $this->container
+        /** @var CouponRepository $couponRepository */
+        $couponRepository = $this->container
             ->get('doctrine')
             ->getManagerForClass(Coupon::class)
             ->getRepository(Coupon::class);
 
-        $ids = $request->request->get('ids');
+        $ids = $request->request->get('addedCouponIds');
         $view = $this->renderView(
             'OroPromotionBundle:Coupon:addedCouponsTable.html.twig',
             [
-                'coupons' => $ids ? $repository->getCouponsWithPromotionByIds(explode(',', $ids)) : [],
+                'coupons' => $ids ? $couponRepository->getCouponsWithPromotionByIds(explode(',', $ids)) : [],
             ]
         );
 
         return new JsonResponse($view);
+    }
+
+    /**
+     * @Route("/validate-coupon-applicability", name="oro_promotion_validate_coupon_applicability")
+     * @AclAncestor("oro_promotion_coupon_view")
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function validateCouponApplicabilityAction(Request $request)
+    {
+        return $this->get('oro_promotion.handler.coupon_validation_handler')->handle($request);
     }
 }

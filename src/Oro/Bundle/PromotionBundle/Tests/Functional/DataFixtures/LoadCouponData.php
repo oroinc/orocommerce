@@ -28,26 +28,26 @@ class LoadCouponData extends AbstractLoadCouponData
             self::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL => [
                 'code' => self::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL,
                 'usesPerCoupon' => 1,
-                'usesPerUser' => 1,
+                'usesPerPerson' => 1,
             ],
             self::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL => [
                 'code' => self::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL,
                 'usesPerCoupon' => 2,
-                'usesPerUser' => 2,
-                'promotion' => LoadPromotionData::ORDER_AMOUNT_PROMOTION,
+                'usesPerPerson' => 2,
+                'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
             ],
             self::COUPON_WITH_PROMO_AND_EXPIRED => [
                 'code' => self::COUPON_WITH_PROMO_AND_EXPIRED,
                 'usesPerCoupon' => 3,
-                'usesPerUser' => 3,
-                'promotion' => LoadPromotionData::ORDER_AMOUNT_PROMOTION,
+                'usesPerPerson' => 3,
+                'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
                 'validUntil' => '-1 day',
             ],
             self::COUPON_WITH_PROMO_AND_VALID_UNTIL => [
                 'code' => self::COUPON_WITH_PROMO_AND_VALID_UNTIL,
                 'usesPerCoupon' => 4,
-                'usesPerUser' => 4,
-                'promotion' => LoadPromotionData::ORDER_AMOUNT_PROMOTION,
+                'usesPerPerson' => 4,
+                'promotion' => LoadPromotionData::ORDER_PERCENT_PROMOTION,
                 'validUntil' => '+1 day',
             ],
         ];

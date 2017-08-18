@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -19,6 +21,7 @@ class AjaxCouponControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadCouponData::class,
+                LoadOrders::class,
             ]
         );
     }
@@ -33,7 +36,7 @@ class AjaxCouponControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl('oro_promotion_get_added_coupons_table'),
-            ['ids' => implode(',', [$coupon1->getId(), $coupon2->getId()])]
+            ['addedCouponIds' => implode(',', [$coupon1->getId(), $coupon2->getId()])]
         );
         $result = $this->client->getResponse();
 
@@ -55,5 +58,23 @@ class AjaxCouponControllerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         $jsonContent = json_decode($result->getContent(), true);
         $this->assertEmpty($jsonContent);
+    }
+
+    public function testValidateCouponApplicabilityAction()
+    {
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_promotion_validate_coupon_applicability'),
+            [
+                'couponId' => $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
+                'entityClass' => Order::class,
+                'entityId' => $this->getReference(LoadOrders::ORDER_1)->getId(),
+            ]
+        );
+        $result = $this->client->getResponse();
+
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        $jsonContent = json_decode($result->getContent(), true);
+        $this->assertFalse($jsonContent['success']);
     }
 }

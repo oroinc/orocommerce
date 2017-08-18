@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAddType;
 use Oro\Bundle\PromotionBundle\Form\Type\CouponAutocompleteType;
@@ -11,6 +13,9 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -19,9 +24,14 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     use EntityTrait;
 
     /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
+    /**
      * @var CouponAddType
      */
-    protected $formType;
+    private $formType;
 
     /**
      * {@inheritDoc}
@@ -30,7 +40,8 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new CouponAddType();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->formType = new CouponAddType($this->doctrineHelper);
     }
 
     /**
@@ -65,7 +76,8 @@ class CouponAddTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->formType);
+        $entity = $this->getEntity(Order::class, ['id' => 777]);
+        $form = $this->factory->create($this->formType, null, ['entity' => $entity]);
 
         $this->assertTrue($form->has('coupon'));
         $this->assertTrue($form->has('addedCoupons'));
@@ -89,7 +101,8 @@ class CouponAddTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $submittedData, array $expectedData)
     {
-        $form = $this->factory->create($this->formType);
+        $entity = $this->getEntity(Order::class, ['id' => 777]);
+        $form = $this->factory->create($this->formType, null, ['entity' => $entity]);
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
 
@@ -120,5 +133,24 @@ class CouponAddTypeTest extends FormIntegrationTestCase
                 ],
             ]
         ];
+    }
+
+    public function testFinishView()
+    {
+        $view = new FormView();
+        $entityId = 777;
+        $entity = $this->getEntity(Order::class, ['id' => $entityId]);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->willReturn($entityId);
+        $this->formType->finishView($view, $form, ['entity' => $entity]);
+        $this->assertArrayHasKey('entityClass', $view->vars);
+        $this->assertEquals(Order::class, $view->vars['entityClass']);
+        $this->assertArrayHasKey('entityId', $view->vars);
+        $this->assertEquals($entityId, $view->vars['entityId']);
     }
 }

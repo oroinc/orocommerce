@@ -46,33 +46,20 @@ class TotalCalculateListener
 
         if ($entity instanceof Order) {
             $currentApplication = $this->applicationProvider->getCurrentApplication();
+            if (!$this->isDefinedForm($currentApplication)
+                || !$request->request->has($this->forms[$currentApplication])) {
+                return;
+            }
+
             $entity->resetLineItems();
 
             if ($currentApplication === ActionCurrentApplicationProvider::DEFAULT_APPLICATION) {
                 $entity->resetDiscounts();
             }
 
-            if ($form = $this->createForm($entity, $currentApplication)) {
-                $form->submit($request, false);
-            }
-        }
-    }
-
-    /**
-     * @param object $entity
-     * @param string $currentApplication - Application Name
-     *
-     * @return null|Form|FormInterface
-     */
-    protected function createForm($entity, $currentApplication)
-    {
-        $form = null;
-
-        if ($this->isDefinedForm($currentApplication)) {
             $form = $this->formFactory->create($this->forms[$currentApplication], $entity);
+            $form->submit($request, false);
         }
-
-        return $form;
     }
 
     /**

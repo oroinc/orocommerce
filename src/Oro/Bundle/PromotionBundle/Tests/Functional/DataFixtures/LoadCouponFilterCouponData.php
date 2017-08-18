@@ -30,37 +30,37 @@ class LoadCouponFilterCouponData extends AbstractLoadCouponData
             self::COUPON1 => [
                 'code' => self::COUPON1,
                 'usesPerCoupon' => 1,
-                'usesPerUser' => 1,
+                'usesPerPerson' => 1,
                 'promotion' => LoadCouponFilteredPromotionData::PROMO_CORRESPONDING_SEVERAL_APPLIED_DISCOUNTS
             ],
             self::COUPON2 => [
                 'code' => self::COUPON2,
                 'usesPerCoupon' => 1,
-                'usesPerUser' => 1,
+                'usesPerPerson' => 1,
                 'promotion' => LoadCouponFilteredPromotionData::PROMO_CORRESPONDING_SEVERAL_APPLIED_DISCOUNTS,
             ],
             self::COUPON3 => [
                 'code' => self::COUPON3,
                 'usesPerCoupon' => 1,
-                'usesPerUser' => 1,
+                'usesPerPerson' => 1,
                 'promotion' => LoadCouponFilteredPromotionData::PROMO_CORRESPONDING_ONE_APPLIED_DISCOUNTS,
             ],
             self::COUPON4 => [
                 'code' => self::COUPON4,
                 'usesPerCoupon' => 3,
-                'usesPerUser' => 2,
+                'usesPerPerson' => 2,
                 'promotion' => LoadCouponFilteredPromotionData::PROMO_CORRESPONDING_ONE_APPLIED_DISCOUNTS,
             ],
             self::COUPON5 => [
                 'code' => self::COUPON5,
                 'usesPerCoupon' => 3,
-                'usesPerUser' => 2,
+                'usesPerPerson' => 2,
                 'promotion' => LoadCouponFilteredPromotionData::PROMO_NOT_CORRESPONDING_APPLIED_DISCOUNTS,
             ],
             self::COUPON5 => [
                 'code' => self::COUPON6,
                 'usesPerCoupon' => 3,
-                'usesPerUser' => 2,
+                'usesPerPerson' => 2,
                 'promotion' => LoadCouponFilteredPromotionData::PROMO_NOT_CORRESPONDING_APPLIED_DISCOUNTS,
             ],
         ];
