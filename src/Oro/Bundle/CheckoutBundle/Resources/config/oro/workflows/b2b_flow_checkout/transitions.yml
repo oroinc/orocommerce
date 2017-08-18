@@ -27,8 +27,6 @@ workflows:
                     icon: fa-briefcase
                     is_checkout_continue: true
 
-
-
             start_checkout_as_guest_system:
                 step_to: enter_credentials_step
                 is_hidden: true

@@ -1,6 +1,5 @@
 {% block __oro_checkout_sidebar__checkout_sidebar_widget %}
-    {% if currentStep.name in excludedSteps %}
-    {% else %}
+    {% if currentStep.name not in excludedSteps %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
     <div {{ block('block_attributes') }}
         data-layout="separate"
