@@ -3,15 +3,18 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider\MethodsConfigsRule\Context\RegardlessDestination;
 
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository;
-use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\RegardlessDestination;
 use Oro\Bundle\PaymentBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Context\PaymentContextMockTrait;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Entity\PaymentMethodsConfigsRuleMockTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use PaymentMethodsConfigsRuleMockTrait;
+    use PaymentContextMockTrait;
+
     /**
      * @var PaymentMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -44,14 +47,17 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
         $currency = 'USD';
         $address = $this->createAddressMock();
         $website = $this->createWebsiteMock();
-        $rulesFromDb = [$this->createPaymentMethodsConfigsRuleMock()];
+        $rulesFromDb = [
+            $this->createPaymentMethodsConfigsRuleMock(),
+            $this->createPaymentMethodsConfigsRuleMock(),
+        ];
 
         $this->repository->expects(static::once())
             ->method('getByDestinationAndCurrencyAndWebsite')
             ->with($address, $currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $context = $this->createPaymentContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getBillingAddress')
@@ -83,7 +89,7 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
             ->with($currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $context = $this->createPaymentContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getWebsite')
@@ -100,22 +106,6 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
             $expectedRules,
             $this->provider->getPaymentMethodsConfigsRules($context)
         );
-    }
-
-    /**
-     * @return PaymentMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createPaymentMethodsConfigsRuleMock()
-    {
-        return $this->createMock(PaymentMethodsConfigsRule::class);
-    }
-
-    /**
-     * @return PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(PaymentContextInterface::class);
     }
 
     /**

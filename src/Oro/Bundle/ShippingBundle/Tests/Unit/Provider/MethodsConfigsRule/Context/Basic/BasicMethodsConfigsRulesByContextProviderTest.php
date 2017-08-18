@@ -3,15 +3,18 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\MethodsConfigsRule\Context\Basic;
 
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\Basic\BasicMethodsConfigsRulesByContextProvider;
 use Oro\Bundle\ShippingBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingContextMockTrait;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\ShippingMethodsConfigsRuleMockTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use ShippingContextMockTrait;
+    use ShippingMethodsConfigsRuleMockTrait;
+
     /**
      * @var ShippingMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -44,14 +47,20 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
         $currency = 'USD';
         $address = $this->createAddressMock();
         $website = $this->createWebsiteMock();
-        $rulesFromDb = [$this->createShippingMethodsConfigsRuleMock()];
+        $rulesFromDb = [
+            $this->createShippingMethodsConfigsRuleMock(),
+            $this->createShippingMethodsConfigsRuleMock(),
+        ];
 
         $this->repository->expects(static::once())
             ->method('getByDestinationAndCurrencyAndWebsite')
             ->with($address, $currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $this->repository->expects(static::never())
+            ->method('getByCurrencyAndWebsiteWithoutDestination');
+
+        $context = $this->createShippingContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getShippingAddress')
@@ -83,7 +92,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
             ->with($currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $context = $this->createShippingContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getWebsite')
@@ -103,19 +112,11 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
     }
 
     /**
-     * @return ShippingMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
+     * @return Website|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createShippingMethodsConfigsRuleMock()
+    private function createWebsiteMock()
     {
-        return $this->createMock(ShippingMethodsConfigsRule::class);
-    }
-
-    /**
-     * @return ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(ShippingContextInterface::class);
+        return $this->createMock(Website::class);
     }
 
     /**
@@ -124,13 +125,5 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
     private function createAddressMock()
     {
         return $this->createMock(AddressInterface::class);
-    }
-
-    /**
-     * @return Website|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createWebsiteMock()
-    {
-        return $this->createMock(Website::class);
     }
 }

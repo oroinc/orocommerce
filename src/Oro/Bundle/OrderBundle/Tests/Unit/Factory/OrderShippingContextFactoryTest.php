@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -110,6 +110,9 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->prepareContextBuilder(
             $this->contextBuilder,
             $order->getBillingAddress(),
+            Price::create($order->getSubtotal(), $order->getCurrency()),
+            $order->getCurrency(),
+            $order->getWebsite(),
             $order->getCustomer(),
             $order->getCustomerUser()
         );
@@ -123,22 +126,6 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             ->expects($this->once())
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setSubTotal')
-            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
-            ->willReturnSelf();
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setCurrency')
-            ->with($order->getCurrency());
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setWebsite')
-            ->with($order->getWebsite());
 
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
@@ -165,6 +152,9 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->prepareContextBuilder(
             $this->contextBuilder,
             $order->getBillingAddress(),
+            Price::create($order->getSubtotal(), $order->getCurrency()),
+            $order->getCurrency(),
+            $order->getWebsite(),
             $order->getCustomer(),
             $order->getCustomerUser()
         );
@@ -177,22 +167,6 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->contextBuilder
             ->expects($this->never())
             ->method('setLineItems');
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setSubTotal')
-            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
-            ->willReturnSelf();
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setCurrency')
-            ->with($order->getCurrency());
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setWebsite')
-            ->with($order->getWebsite());
 
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())

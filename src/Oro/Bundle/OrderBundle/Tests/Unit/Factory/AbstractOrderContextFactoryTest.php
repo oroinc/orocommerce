@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -19,20 +19,29 @@ abstract class AbstractOrderContextFactoryTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @param \PHPUnit_Framework_MockObject_MockObject $builder
-     * @param OrderAddress|\PHPUnit_Framework_MockObject_MockObject $address
-     * @param Customer|\PHPUnit_Framework_MockObject_MockObject $customer
-     * @param CustomerUser|\PHPUnit_Framework_MockObject_MockObject $customerUser
+     * @param AddressInterface                         $address
+     * @param string                                   $subtotal
+     * @param string                                   $currency
+     * @param string                                   $website
+     * @param string                                   $customer
+     * @param string                                   $customerUser
      */
     protected function prepareContextBuilder(
         \PHPUnit_Framework_MockObject_MockObject $builder,
-        $address,
+        AddressInterface $address,
+        $subtotal,
+        $currency,
+        $website,
         $customer,
         $customerUser
     ) {
-        $builder->method('setShippingAddress')->with($address);
-        $builder->method('setBillingAddress')->with($address);
-        $builder->method('setCustomer')->with($customer);
-        $builder->method('setCustomerUser')->with($customerUser);
+        $builder->method('setShippingAddress')->with($address)->willReturnSelf();
+        $builder->method('setBillingAddress')->with($address)->willReturnSelf();
+        $builder->method('setCustomer')->with($customer)->willReturnSelf();
+        $builder->method('setCustomerUser')->with($customerUser)->willReturnSelf();
+        $builder->method('setSubTotal')->with($subtotal)->willReturnSelf();
+        $builder->method('setCurrency')->with($currency)->willReturnSelf();
+        $builder->method('setWebsite')->with($website)->willReturnSelf();
         $builder->expects($this->once())->method('getResult');
     }
 
@@ -55,7 +64,7 @@ abstract class AbstractOrderContextFactoryTest extends \PHPUnit_Framework_TestCa
                 ->setPrice(Price::create($amount, $currency)),
             (new OrderLineItem())
                 ->setQuantity(20)
-                ->setPrice(Price::create($amount, $currency))
+                ->setPrice(Price::create($amount, $currency)),
         ];
 
         $orderLineItemsCollection = new ArrayCollection($ordersLineItems);

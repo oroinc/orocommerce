@@ -3,15 +3,18 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider\MethodsConfigsRule\Context\Basic;
 
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository;
-use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\Basic\BasicMethodsConfigsRulesByContextProvider;
 use Oro\Bundle\PaymentBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Context\PaymentContextMockTrait;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Entity\PaymentMethodsConfigsRuleMockTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use PaymentMethodsConfigsRuleMockTrait;
+    use PaymentContextMockTrait;
+
     /**
      * @var PaymentMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -51,7 +54,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
             ->with($address, $currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $context = $this->createPaymentContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getBillingAddress')
@@ -59,7 +62,10 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
         $context->method('getWebsite')
             ->willReturn($website);
 
-        $expectedRules = [$this->createPaymentMethodsConfigsRuleMock()];
+        $expectedRules = [
+            $this->createPaymentMethodsConfigsRuleMock(),
+            $this->createPaymentMethodsConfigsRuleMock(),
+        ];
 
         $this->filtrationService->expects(static::once())
             ->method('getFilteredPaymentMethodsConfigsRules')
@@ -83,7 +89,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
             ->with($currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $context = $this->createPaymentContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getWebsite')
@@ -100,22 +106,6 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_T
             $expectedRules,
             $this->provider->getPaymentMethodsConfigsRules($context)
         );
-    }
-
-    /**
-     * @return PaymentMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createPaymentMethodsConfigsRuleMock()
-    {
-        return $this->createMock(PaymentMethodsConfigsRule::class);
-    }
-
-    /**
-     * @return PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(PaymentContextInterface::class);
     }
 
     /**

@@ -3,15 +3,18 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider\MethodsConfigsRule\Context\RegardlessDestination;
 
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\RegardlessDestination;
 use Oro\Bundle\ShippingBundle\RuleFiltration\MethodsConfigsRulesFiltrationServiceInterface;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Context\ShippingContextMockTrait;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\ShippingMethodsConfigsRuleMockTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use ShippingContextMockTrait;
+    use ShippingMethodsConfigsRuleMockTrait;
+
     /**
      * @var ShippingMethodsConfigsRuleRepository|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -51,7 +54,10 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
             ->with($address, $currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $this->repository->expects(static::never())
+            ->method('getByCurrencyAndWebsite');
+
+        $context = $this->createShippingContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getShippingAddress')
@@ -59,7 +65,10 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
         $context->method('getWebsite')
             ->willReturn($website);
 
-        $expectedRules = [$this->createShippingMethodsConfigsRuleMock()];
+        $expectedRules = [
+            $this->createShippingMethodsConfigsRuleMock(),
+            $this->createShippingMethodsConfigsRuleMock(),
+        ];
 
         $this->filtrationService->expects(static::once())
             ->method('getFilteredShippingMethodsConfigsRules')
@@ -83,7 +92,7 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
             ->with($currency, $website)
             ->willReturn($rulesFromDb);
 
-        $context = $this->createContextMock();
+        $context = $this->createShippingContextMock();
         $context->method('getCurrency')
             ->willReturn($currency);
         $context->method('getWebsite')
@@ -100,22 +109,6 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
             $expectedRules,
             $this->provider->getShippingMethodsConfigsRules($context)
         );
-    }
-
-    /**
-     * @return ShippingMethodsConfigsRule|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createShippingMethodsConfigsRuleMock()
-    {
-        return $this->createMock(ShippingMethodsConfigsRule::class);
-    }
-
-    /**
-     * @return ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createContextMock()
-    {
-        return $this->createMock(ShippingContextInterface::class);
     }
 
     /**

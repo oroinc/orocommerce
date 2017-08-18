@@ -1,14 +1,10 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Factory;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Converter\OrderPaymentLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Factory\OrderPaymentContextFactory;
 use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactoryInterface;
@@ -79,6 +75,9 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->prepareContextBuilder(
             $this->contextBuilder,
             $order->getShippingAddress(),
+            Price::create($order->getSubtotal(), $order->getCurrency()),
+            $order->getCurrency(),
+            $order->getWebsite(),
             $order->getCustomer(),
             $order->getCustomerUser()
         );
@@ -92,22 +91,6 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
             ->expects($this->once())
             ->method('setShippingMethod')
             ->with(self::TEST_SHIPPING_METHOD);
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setSubTotal')
-            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
-            ->willReturnSelf();
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setCurrency')
-            ->with($order->getCurrency());
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setWebsite')
-            ->with($order->getWebsite());
 
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())
@@ -131,6 +114,9 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->prepareContextBuilder(
             $this->contextBuilder,
             $order->getShippingAddress(),
+            Price::create($order->getSubtotal(), $order->getCurrency()),
+            $order->getCurrency(),
+            $order->getWebsite(),
             $order->getCustomer(),
             $order->getCustomerUser()
         );
@@ -143,22 +129,6 @@ class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
             ->expects($this->once())
             ->method('setShippingMethod')
             ->with(self::TEST_SHIPPING_METHOD);
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setSubTotal')
-            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
-            ->willReturnSelf();
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setCurrency')
-            ->with($order->getCurrency());
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setWebsite')
-            ->with($order->getWebsite());
 
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())
