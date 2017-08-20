@@ -113,7 +113,10 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " checkout-order-summary__title-text"
     }) %}
-    <span {{ block('block_attributes') }}>{{ 'oro.checkout.order_summary.label'|trans }}</span>
+    <span {{ block('block_attributes') }}>
+        {{ 'oro.checkout.order_summary.label'|trans }}
+        {{ block_widget(block) }}
+    </span>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_subtitle_widget %}
