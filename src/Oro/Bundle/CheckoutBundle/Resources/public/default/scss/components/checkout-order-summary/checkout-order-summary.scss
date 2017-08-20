@@ -4,11 +4,10 @@
     &__header {
         position: $checkout-order-summary-header-position;
 
+        min-height: $checkout-order-summary-header-min-height;
         margin: $checkout-order-summary-header-margin;
 
         &.in-sticky {
-            width: $checkout-view-column-extended-width;
-            padding: 0 0 0 $checkout-view-column-gap;
             margin: 0;
 
             .checkout-order-summary__subtitle {
@@ -18,13 +17,18 @@
     }
 
     &__title-text {
-        font-size: $checkout-order-summary-title-text-font-size;
-        font-weight: 700;
-        line-height: $checkout-order-summary-title-text-line-height;
+        vertical-align: $checkout-order-summary-title-text-vertical-align;
 
-        + * {
-            margin: $offset-x-m;
-        }
+        font-size: $checkout-order-summary-title-text-font-size;
+        font-weight: $checkout-order-summary-title-text-font-weight;
+        line-height: $checkout-order-summary-title-text-line-height;
+    }
+
+    &__subtitle {
+        margin: $checkout-order-summary-subtitle-margin;
+
+        font-size: $checkout-order-summary-subtitle-font-size;
+        font-weight: $checkout-order-summary-subtitle-font-weight;
     }
 
     &__edit-link {
@@ -163,7 +167,7 @@
             margin: $checkout-order-summary-totals-container-in-sticky-margin;
             padding: $checkout-order-summary-totals-container-in-sticky-offset;
 
-            background-color: $checkout-order-summary-totals-container-in-sticky-background-color;
+            border-top: $checkout-order-summary-totals-container-in-sticky-border-top;
         }
     }
 

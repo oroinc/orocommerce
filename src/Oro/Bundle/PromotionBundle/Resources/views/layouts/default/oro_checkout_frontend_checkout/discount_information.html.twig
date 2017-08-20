@@ -15,6 +15,6 @@
     }) %}
     {% set matchedDiscount = parent.lineItemDiscounts.contains(lineItem) ? parent.lineItemDiscounts.get(lineItem) : null %}
     {% if matchedDiscount is not null and matchedDiscount.total.value > 0 %}
-        <div {{ block('block_attributes') }}>{{ '-' ~ matchedDiscount.total|oro_format_price }}</div>
+        <div {{ block('block_attributes') }}>{{ (-matchedDiscount.total.value)|oro_format_currency({'currency': matchedDiscount.total.currency}) }}</div>
     {% endif %}
 {% endblock %}

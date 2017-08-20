@@ -148,8 +148,8 @@ layout:
                             __checkout_order_summary:
                                 __checkout_order_summary_header:
                                     __checkout_order_summary_title:
-                                        __checkout_order_summary_title_text: ~
-                                        __checkout_order_summary_subtitle: ~
+                                        __checkout_order_summary_title_text:
+                                            __checkout_order_summary_subtitle: ~
                                     __checkout_order_summary_edit_link: ~
                                 __checkout_order_summary_content:
                                     __checkout_order_summary_line_items_container:
