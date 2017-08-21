@@ -842,7 +842,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'id' => $inventoryLevel->getProduct()->getId(),
+                'id' => (string)$inventoryLevel->getProduct()->getId(),
                 'attributes' =>
                 [
                     'quantity' => 17,
@@ -870,7 +870,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'id' => $this->getReference('product-1')->getId(),
+                'id' => (string)$this->getReference('product-1')->getId(),
                 'attributes' =>
                     [
                         'quantity' => 1,
