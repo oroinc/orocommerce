@@ -16,7 +16,6 @@ class OroInventoryExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_inventory.inventory_level.manager.api',
-            'oro_inventory.api.processor.product_id.normalize_input',
             'oro_inventory.api.processor.entity_id.load_data',
             'oro_inventory.api.processor.update_inventory_level.build_query',
             'oro_inventory.api.processor.create_inventory_level.normalize_input',

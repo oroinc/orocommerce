@@ -842,7 +842,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'id' => $inventoryLevel->getProduct()->getSku(),
+                'id' => $inventoryLevel->getProduct()->getId(),
                 'attributes' =>
                 [
                     'quantity' => 17,
@@ -854,7 +854,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             'PATCH',
             $this->getUrl(
                 'oro_rest_api_patch',
-                ['entity' => $entityType, 'id' => $inventoryLevel->getProduct()->getSku()]
+                ['entity' => $entityType, 'id' => $inventoryLevel->getProduct()->getId()]
             ),
             $data
         );
@@ -870,7 +870,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'id' => 'product-1',
+                'id' => $this->getReference('product-1')->getId(),
                 'attributes' =>
                     [
                         'quantity' => 1,
