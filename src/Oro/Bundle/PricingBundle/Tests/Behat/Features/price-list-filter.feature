@@ -7,14 +7,15 @@ Feature: Price list filter is resettable
     And click view "PSKU1" in grid
     And I click "ProductPricesGridFiltersButton"
     And I should see "All" in the "PriceListFilterHint" element
-    And I should see following records in "ProductPricesGrid":
-      | Default Price List | 1 | item | 6.0000 | USD |
-      | priceList2         | 1 | item | 5.0000 | USD |
+    And I should see following "ProductPricesGrid" grid:
+      | Price List         | Quantity | Unit | Value  | Currency |
+      | Default Price List | 1        | item | 6.0000 | USD      |
+      | priceList2         | 1        | item | 5.0000 | USD      |
     When I check "Default Price List" in "Price List: All" filter in "ProductPricesGrid" strictly
-    Then I should see following records in "ProductPricesGrid":
-      | Default Price List | 1 | item | 6.0000 | USD |
+    And I should see "Default Price List"
+    And I should not see "priceList2"
     When I reset "Price List" filter on grid "ProductPricesGrid"
     Then I should see "All" in the "PriceListFilterHint" element
     And I should see following records in "ProductPricesGrid":
-      | Default Price List | 1 | item | 6.0000 | USD |
-      | priceList2         | 1 | item | 5.0000 | USD |
+      | Default Price List |
+      | priceList2         |
