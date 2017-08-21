@@ -1,6 +1,7 @@
 parameters:
     oro_fedex_shipping.integration.channel.type: 'fedex'
     oro_fedex_shipping.integration.transport.type: 'fedex'
+    oro_fedex_shipping.shipping_rule.method_template: 'OroFedexShippingBundle::FedexMethodWithOptions.html.twig'
 
 services:
     oro_fedex_shipping.integration.channel:
