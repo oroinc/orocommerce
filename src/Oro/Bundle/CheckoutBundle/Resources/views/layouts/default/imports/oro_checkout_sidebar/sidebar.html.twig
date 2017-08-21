@@ -1,4 +1,5 @@
 {% block __oro_checkout_sidebar__checkout_sidebar_widget %}
+    {% if currentStep.name not in excludedSteps %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
     <div {{ block('block_attributes') }}
         data-layout="separate"
@@ -9,8 +10,9 @@
         }|json_encode }}">
         <ul class="checkout-navigation">
             {% set isComplete = true %}
-            {% for key, step in steps if step.final == false %}
-                {% set pageNum = key+1 %}
+            {% set pageNum = 0 %}
+            {% for key, step in steps if step.final == false and step.name not in excludedSteps %}
+                {% set pageNum = pageNum + 1 %}
                 {% set isCurrent = currentStep.name == step.name %}
                 {% if isCurrent %}
                     {% set isComplete = false %}
@@ -51,6 +53,7 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_checkout_sidebar__enter_billing_address_information_widget %}

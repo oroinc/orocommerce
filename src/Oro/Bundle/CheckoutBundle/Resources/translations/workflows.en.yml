@@ -22,6 +22,8 @@ oro:
                     label: 'Order Review'
                 order_created:
                     label: 'Order Created'
+                enter_credentials_step:
+                    label: 'Enter Credentials'
             attribute:
                 additional_data:
                     label: 'Additional Data'
@@ -92,6 +94,11 @@ oro:
                 start_from_shoppinglist:
                     label: 'Start Checkout From Shopping List'
                     button_label: 'Create Order'
+                    button_title: ''
+                    warning_message: ''
+                start_from_shoppinglist_as_guest:
+                    label: 'Start Guest Checkout From Shopping List'
+                    button_label: 'Create Order (As Guest)'
                     button_title: ''
                     warning_message: ''
                 start_from_quickorderform:

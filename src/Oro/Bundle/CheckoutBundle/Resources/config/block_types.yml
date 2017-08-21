@@ -118,6 +118,7 @@ services:
                         steps: {required: true}
                         currentStep: {required: true}
                         editTransitions: {required: true}
+                        excludedSteps: {default: []} # Defines steps which will not be displayed with sidebar and in sidebar
             - [setName, ['checkout_sidebar']]
         tags:
             - { name: layout.block_type, alias: checkout_sidebar }
