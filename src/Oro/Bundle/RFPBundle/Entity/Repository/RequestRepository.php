@@ -23,7 +23,8 @@ class RequestRepository extends EntityRepository
             ->select('COUNT(r.id)')
             ->leftJoin('r.requestProducts', 'requestProducts')
             ->leftJoin('requestProducts.requestProductItems', 'requestProductItems')
-            ->where($qb->expr()->in('requestProductItems.currency', $removingCurrencies));
+            ->where($qb->expr()->in('requestProductItems.currency', ':removingCurrencies'))
+            ->setParameter('removingCurrencies', $removingCurrencies);
         if ($organization instanceof Organization) {
             $qb->andWhere('r.organization = :organization');
             $qb->setParameter(':organization', $organization);
