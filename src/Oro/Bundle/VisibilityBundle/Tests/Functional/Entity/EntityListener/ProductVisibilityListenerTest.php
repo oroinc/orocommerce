@@ -167,9 +167,6 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
 
         $visibility->setVisibility(ProductVisibility::CATEGORY);
-        $visibilityId = $visibility->getId();
-
-
         $entityManager->flush();
 
         $this->sendScheduledMessages();
@@ -177,7 +174,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         self::assertMessageSent(
             'oro_visibility.visibility.resolve_product_visibility',
             [
-                VisibilityMessageFactory::ID => $visibilityId,
+                VisibilityMessageFactory::ID => null, //null because default value will be deleted
                 VisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
                 VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
                 VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
@@ -270,7 +267,7 @@ class ProductVisibilityListenerTest extends WebTestCase
 
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $expectedMessage = [
-            VisibilityMessageFactory::ID => $visibility->getId(),
+            VisibilityMessageFactory::ID => null, //null because default value will be deleted
             VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
             VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
             VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
@@ -370,12 +367,12 @@ class ProductVisibilityListenerTest extends WebTestCase
         $this->cleanScheduledMessages();
         // Already exists customer group product visibility with `CATEGORY` value
         $visibility = $this->getReference('product-2.visibility.customer.level_1');
-        $visibility->setVisibility(CustomerProductVisibility::ACCOUNT_GROUP);
+        $visibility->setVisibility(CustomerProductVisibility::CUSTOMER_GROUP);
 
         $entityManager = $this->getManagerForCustomerProductVisibility();
 
         $expectedMessage = [
-            VisibilityMessageFactory::ID => $visibility->getId(),
+            VisibilityMessageFactory::ID => null, // because default value will e deleted
             VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
             VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
             VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
