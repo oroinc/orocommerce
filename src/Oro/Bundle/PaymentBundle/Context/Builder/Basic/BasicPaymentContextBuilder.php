@@ -11,6 +11,7 @@ use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItem
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
 {
@@ -73,6 +74,11 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
      * @var PaymentLineItemCollectionFactoryInterface
      */
     private $paymentLineItemCollectionFactory;
+
+    /**
+     * @var Website
+     */
+    private $website;
 
     /**
      * @param object                                    $sourceEntity
@@ -201,6 +207,16 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     private function getMandatoryParams()
@@ -228,6 +244,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
             PaymentContext::FIELD_SHIPPING_METHOD => $this->shippingMethod,
             PaymentContext::FIELD_CUSTOMER => $this->customer,
             PaymentContext::FIELD_CUSTOMER_USER => $this->customerUser,
+            PaymentContext::FIELD_WEBSITE => $this->website,
         ];
 
         // Exclude NULL elements.
