@@ -238,7 +238,8 @@ abstract class AbstractIndexer implements IndexerInterface
             }
             $this->delete($entities, $context);
 
-            $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
+            $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", ':contextEntityIds'))
+                ->setParameter('contextEntityIds', $contextEntityIds);
         }
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);

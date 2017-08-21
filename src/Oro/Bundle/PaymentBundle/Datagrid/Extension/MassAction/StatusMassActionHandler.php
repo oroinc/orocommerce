@@ -97,9 +97,11 @@ class StatusMassActionHandler implements MassActionHandlerInterface
 
 
             if (!$isAllSelected) {
-                $queryBuilder->andWhere($queryBuilder->expr()->in('rule.id', $paymentMethodsConfigsRuleIds));
+                $queryBuilder->andWhere($queryBuilder->expr()->in('rule.id', ':paymentMethodsConfigsRuleIds'))
+                    ->setParameter('paymentMethodsConfigsRuleIds', $paymentMethodsConfigsRuleIds);
             } elseif ($paymentMethodsConfigsRuleIds) {
-                $queryBuilder->andWhere($queryBuilder->expr()->notIn('rule.id', $paymentMethodsConfigsRuleIds));
+                $queryBuilder->andWhere($queryBuilder->expr()->notIn('rule.id', ':paymentMethodsConfigsRuleIds'))
+                    ->setParameter('paymentMethodsConfigsRuleIds', $paymentMethodsConfigsRuleIds);
             }
 
             $iteration = $this->process($queryBuilder, $status, $iteration);
