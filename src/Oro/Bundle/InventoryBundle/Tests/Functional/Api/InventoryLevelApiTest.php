@@ -90,11 +90,11 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $inventoryLevel = $this->getReference('inventory_level.product_unit_precision.product-1.liter');
 
         $response = $this->patch(
-            ['entity' => 'inventorylevels', 'id' => $inventoryLevel->getProduct()->getSku()],
+            ['entity' => 'inventorylevels', 'id' => $inventoryLevel->getProduct()->getId()],
             [
                 'data' => [
                     'type' => 'inventorylevels',
-                    'id' => $inventoryLevel->getProduct()->getSku(),
+                    'id' => $inventoryLevel->getProduct()->getId(),
                     'attributes' => [
                         'quantity' => 17,
                         'unit' => $inventoryLevel->getProductUnitPrecision()->getProductUnitCode(),
@@ -110,11 +110,11 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     public function testUpdateEntityWithDefaultUnit()
     {
         $response = $this->patch(
-            ['entity' => 'inventorylevels', 'id' => 'product-1'],
+            ['entity' => 'inventorylevels', 'id' => $this->getReference('product-1')->getId()],
             [
                 'data' => [
                     'type' => 'inventorylevels',
-                    'id' => 'product-1',
+                    'id' => $this->getReference('product-1')->getId(),
                     'attributes' => [
                         'quantity' => 1,
                     ],
