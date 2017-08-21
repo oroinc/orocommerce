@@ -12,13 +12,22 @@ services:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseFactory'
         public: false
 
+    oro_fedex_shipping.client.rate_service.soap_settings:
+        class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
+        public: false
+        factory: ['Oro\Bundle\SoapBundle\Client\Settings\Factory\SoapClientSettingsFactory', create]
+        arguments:
+            - '@=service("kernel").locateResource("@OroFedexShippingBundle/Resources/wsdl/RateService_v20.wsdl")'
+            - 'getRates'
+            - connection_timeout: 3
+
     oro_fedex_shipping.client.rate_service:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
         public: false
         arguments:
             - '@oro_soap.client'
-            - '@oro_soap.client.settings.factory'
             - '@oro_fedex_shipping.client.rate_service.response.factory'
+            - '@oro_fedex_shipping.client.rate_service.soap_settings'
 
     oro_fedex_shipping.client.rate_service.request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'

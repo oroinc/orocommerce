@@ -32,7 +32,8 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.factory.fedex_package_settings_by_integration_settings',
             'oro_fedex_shipping.factory.fedex_package_by_shipping_package_options',
             'oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings',
-            'oro_fedex_shipping.builder.shipping_packages_by_line_item'
+            'oro_fedex_shipping.builder.shipping_packages_by_line_item',
+            'oro_fedex_shipping.client.rate_service.soap_settings',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
