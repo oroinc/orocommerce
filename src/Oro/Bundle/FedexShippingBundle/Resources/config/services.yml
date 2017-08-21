@@ -20,3 +20,6 @@ services:
         arguments:
             - '%oro_fedex_shipping.integration.channel.type%'
 
+    oro_fedex_shipping.shipping_method.method_type_identifier_generator:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'
+        public: false
