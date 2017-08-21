@@ -8,7 +8,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
 class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     private $paymentMethodProviderMock;
 
     /**
-     * @var PaymentMethodsConfigsRulesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $paymentMethodsConfigsRulesProviderMock;
 
@@ -32,13 +32,9 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
         $this->paymentMethodProviderMock = $this->createMock(PaymentMethodProviderInterface::class);
 
         $this->paymentMethodsConfigsRulesProviderMock = $this
-            ->getMockBuilder(PaymentMethodsConfigsRulesProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->createMock(MethodsConfigsRulesByContextProviderInterface::class);
 
-        $this->paymentContextMock = $this->getMockBuilder(PaymentContextInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentContextMock = $this->createMock(PaymentContextInterface::class);
     }
 
     public function testGetApplicablePaymentMethods()
@@ -48,7 +44,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->paymentMethodsConfigsRulesProviderMock
             ->expects($this->once())
-            ->method('getFilteredPaymentMethodsConfigs')
+            ->method('getPaymentMethodsConfigsRules')
             ->with($this->paymentContextMock)
             ->willReturn($configsRules);
 

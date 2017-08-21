@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\PaymentLineItemCollectionInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 interface PaymentContextBuilderInterface
 {
@@ -86,4 +87,11 @@ interface PaymentContextBuilderInterface
      * @return self
      */
     public function setCurrency($currency);
+
+    /**
+     * @param Website $website
+     *
+     * @return self
+     */
+    public function setWebsite(Website $website);
 }

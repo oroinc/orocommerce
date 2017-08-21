@@ -19,6 +19,7 @@ use Oro\Bundle\PaymentBundle\Context\Builder\Factory\PaymentContextBuilderFactor
 use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -125,6 +126,7 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $amount = 100;
         $customer = new Customer();
         $customerUser = new CustomerUser();
+        $websiteMock = $this->createMock(Website::class);
         $checkoutLineItems = new ArrayCollection([
             new OrderLineItem()
         ]);
@@ -139,7 +141,8 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setCurrency($currency)
             ->setShippingMethod($shippingMethod)
             ->setCustomer($customer)
-            ->setCustomerUser($customerUser);
+            ->setCustomerUser($customerUser)
+            ->setWebsite($websiteMock);
 
         $this->contextBuilderMock
             ->method('setShippingAddress')
@@ -164,6 +167,11 @@ class CheckoutPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('setCurrency')
             ->with($checkout->getCurrency());
+
+        $this->contextBuilderMock
+            ->expects($this->once())
+            ->method('setWebsite')
+            ->with($checkout->getWebsite());
 
         $this->contextBuilderMock
             ->expects($this->once())

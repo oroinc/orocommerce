@@ -12,6 +12,7 @@ use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollec
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicShippingContextBuilder implements ShippingContextBuilderInterface
 {
@@ -79,6 +80,11 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
      * @var ShippingOriginProvider
      */
     private $shippingOriginProvider;
+
+    /**
+     * @var Website
+     */
+    private $website;
 
     /**
      * @param object $sourceEntity
@@ -210,6 +216,16 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     protected function getMandatoryParams()
@@ -242,6 +258,7 @@ class BasicShippingContextBuilder implements ShippingContextBuilderInterface
             ShippingContext::FIELD_PAYMENT_METHOD => $this->paymentMethod,
             ShippingContext::FIELD_CUSTOMER => $this->customer,
             ShippingContext::FIELD_CUSTOMER_USER => $this->customerUser,
+            ShippingContext::FIELD_WEBSITE => $this->website,
         ];
 
         // Exclude NULL elements.
