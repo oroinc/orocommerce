@@ -842,11 +842,10 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'id' => (string)$inventoryLevel->getProduct()->getId(),
+                'id' => (string)$inventoryLevel->getId(),
                 'attributes' =>
                 [
                     'quantity' => 17,
-                    'unit' => $inventoryLevel->getProductUnitPrecision()->getProductUnitCode(),
                 ],
             ]
         ];
@@ -854,7 +853,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             'PATCH',
             $this->getUrl(
                 'oro_rest_api_patch',
-                ['entity' => $entityType, 'id' => $inventoryLevel->getProduct()->getId()]
+                ['entity' => $entityType, 'id' => $inventoryLevel->getId()]
             ),
             $data
         );
@@ -866,11 +865,18 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testUpdateEntityWithDefaultUnit()
     {
+        /** @var InventoryLevel $inventoryLevel */
+        $inventoryLevel = $this->getReference(
+            sprintf(
+                'inventory_level.%s',
+                'product_unit_precision.product-1.liter'
+            )
+        );
         $entityType = $this->getEntityType(InventoryLevel::class);
         $data = [
             'data' => [
                 'type' => $entityType,
-                'id' => (string)$this->getReference('product-1')->getId(),
+                'id' => (string)$inventoryLevel->getId(),
                 'attributes' =>
                     [
                         'quantity' => 1,
@@ -881,7 +887,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             'PATCH',
             $this->getUrl(
                 'oro_rest_api_patch',
-                ['entity' => $entityType, $this->getReference('product-1')->getId()]
+                ['entity' => $entityType, $inventoryLevel->getId()]
             ),
             $data
         );
