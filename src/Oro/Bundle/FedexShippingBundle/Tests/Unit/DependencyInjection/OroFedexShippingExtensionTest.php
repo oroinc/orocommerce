@@ -25,6 +25,7 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.integration.channel',
             'oro_fedex_shipping.integration.identifier_generator',
             'oro_fedex_shipping.integration.transport',
+            'oro_fedex_shipping.form.type.shipping_method_options',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
@@ -32,6 +33,7 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
         $expectedParameters = [
             'oro_fedex_shipping.integration.channel.type',
             'oro_fedex_shipping.integration.transport.type',
+            'oro_fedex_shipping.shipping_rule.method_template',
         ];
 
         $this->assertParametersLoaded($expectedParameters);

@@ -1,0 +1,5 @@
+{% block oro_fedex_shipping_method_options_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.tooltip('oro.fedex.shipping_method_options.surcharge.tooltip', {}, 'right') }}
+    {{ form_widget(form) }}
+{% endblock %}
