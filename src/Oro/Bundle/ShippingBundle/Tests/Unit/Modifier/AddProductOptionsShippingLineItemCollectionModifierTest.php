@@ -17,6 +17,9 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Modifier\AddProductOptionsShippingLineItemCollectionModifier;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
 {
     /**
@@ -82,6 +85,15 @@ class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
                 ShippingLineItem::FIELD_PRICE => Price::create(135, 'USD'),
                 ShippingLineItem::FIELD_QUANTITY => 5,
             ],
+            [
+                ShippingLineItem::FIELD_PRODUCT => $this->createProduct(8),
+                ShippingLineItem::FIELD_PRODUCT_SKU => 'sku',
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'each',
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->createProductUnit('each'),
+                ShippingLineItem::FIELD_PRODUCT_HOLDER => $this->createMock(ProductHolderInterface::class),
+                ShippingLineItem::FIELD_PRICE => Price::create(135, 'USD'),
+                ShippingLineItem::FIELD_QUANTITY => 36,
+            ],
         ];
 
         $lineItemCollection = new DoctrineShippingLineItemCollection([
@@ -89,6 +101,7 @@ class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
             new ShippingLineItem($items[1]),
             new ShippingLineItem($items[2]),
             new ShippingLineItem($items[3]),
+            new ShippingLineItem($items[4]),
         ]);
 
         $productOptions = [
@@ -125,6 +138,12 @@ class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
                     [
                         ShippingLineItem::FIELD_ENTITY_IDENTIFIER => null,
                         ShippingLineItem::FIELD_WEIGHT => Weight::create(6),
+                    ]
+                )),
+                new ShippingLineItem(array_merge(
+                    $items[4],
+                    [
+                        ShippingLineItem::FIELD_ENTITY_IDENTIFIER => null,
                     ]
                 )),
             ]),

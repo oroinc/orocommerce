@@ -12,10 +12,7 @@ interface FedexRequestByContextAndSettingsFactoryInterface
      * @param FedexIntegrationSettings $settings
      * @param ShippingContextInterface $context
      *
-     * @return FedexRequestInterface
+     * @return FedexRequestInterface|null
      */
-    public function create(
-        FedexIntegrationSettings $settings,
-        ShippingContextInterface $context
-    ): FedexRequestInterface;
+    public function create(FedexIntegrationSettings $settings, ShippingContextInterface $context);
 }

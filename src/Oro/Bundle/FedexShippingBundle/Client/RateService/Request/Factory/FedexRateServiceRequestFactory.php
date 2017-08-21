@@ -4,7 +4,6 @@ namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory;
 
 use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
-use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequestInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackagesByLineItemsAndPackageSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Factory\FedexPackageSettingsByIntegrationSettingsFactoryInterface;
@@ -64,10 +63,8 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
     /**
      * {@inheritDoc}
      */
-    public function create(
-        FedexIntegrationSettings $settings,
-        ShippingContextInterface $context
-    ): FedexRequestInterface {
+    public function create(FedexIntegrationSettings $settings, ShippingContextInterface $context)
+    {
         $packageSettings = $this->packageSettingsFactory->create($settings);
 
         $lineItems = $this->convertToFedexUnitsModifier->modify(
@@ -76,6 +73,9 @@ class FedexRateServiceRequestFactory implements FedexRequestByContextAndSettings
         );
 
         $packages = $this->packagesFactory->create($lineItems, $packageSettings);
+        if (empty($packages)) {
+            return null;
+        }
 
         return new FedexRequest([
             'WebAuthenticationDetail' => [

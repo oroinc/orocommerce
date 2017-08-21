@@ -69,14 +69,14 @@ class AddProductOptionsShippingLineItemCollectionModifier implements ShippingLin
     }
 
     /**
-     * @param ShippingLineItemInterface $lineItem
-     * @param ProductShippingOptions    $shippingOption
+     * @param ShippingLineItemInterface   $lineItem
+     * @param ProductShippingOptions|null $shippingOption
      *
      * @return ShippingLineItemInterface
      */
     private function createLineItemWithShippingOptions(
         ShippingLineItemInterface $lineItem,
-        ProductShippingOptions $shippingOption
+        ProductShippingOptions $shippingOption = null
     ): ShippingLineItemInterface {
         $builder = $this->lineItemBuilderFactory->createBuilder(
             $lineItem->getProductUnit(),
@@ -85,10 +85,10 @@ class AddProductOptionsShippingLineItemCollectionModifier implements ShippingLin
             $lineItem->getProductHolder()
         );
 
-        if ($shippingOption->getDimensions()) {
+        if ($shippingOption && $shippingOption->getDimensions()) {
             $builder->setDimensions($shippingOption->getDimensions());
         }
-        if ($shippingOption->getWeight()) {
+        if ($shippingOption && $shippingOption->getWeight()) {
             $builder->setWeight($shippingOption->getWeight());
         }
         if ($lineItem->getPrice()) {

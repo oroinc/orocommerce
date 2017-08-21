@@ -6,6 +6,7 @@ use Oro\Bundle\FedexShippingBundle\Builder\ShippingPackagesByLineItemBuilderInte
 use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
 class FedexPackagesByLineItemsAndPackageSettingsFactory implements
     FedexPackagesByLineItemsAndPackageSettingsFactoryInterface
@@ -56,7 +57,7 @@ class FedexPackagesByLineItemsAndPackageSettingsFactory implements
     }
 
     /**
-     * @param array $packageOptions
+     * @param ShippingPackageOptionsInterface[] $packageOptions
      *
      * @return array
      */
