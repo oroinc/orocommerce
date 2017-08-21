@@ -887,7 +887,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             'PATCH',
             $this->getUrl(
                 'oro_rest_api_patch',
-                ['entity' => $entityType, $inventoryLevel->getId()]
+                ['entity' => $entityType, 'id' => $inventoryLevel->getId()]
             ),
             $data
         );
