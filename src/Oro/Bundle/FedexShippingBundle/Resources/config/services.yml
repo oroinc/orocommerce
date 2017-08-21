@@ -24,3 +24,18 @@ services:
     oro_fedex_shipping.shipping_method.method_type_identifier_generator:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'
         public: false
+
+    oro_fedex_shipping.shipping_method.factory.method_type:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodTypeFactory'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.shipping_method.method_type_identifier_generator'
+
+    oro_fedex_shipping.shipping_method.factory.method:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodFactory'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_locale.helper.localization'
+            - '@oro_integration.provider.integration_icon'
+            - '@oro_fedex_shipping.shipping_method.factory.method_type'
