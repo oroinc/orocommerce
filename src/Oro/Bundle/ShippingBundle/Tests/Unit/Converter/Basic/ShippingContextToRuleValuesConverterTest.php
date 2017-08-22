@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Converter;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Converter\Basic;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter;
+use Oro\Bundle\ShippingBundle\Converter\Basic\ShippingContextToRulesValuesConverter;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -27,7 +27,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
     protected $factory;
 
     /**
-     * @var ShippingContextToRuleValuesConverter
+     * @var ShippingContextToRulesValuesConverter
      */
     protected $shippingContextToRuleValuesConverter;
 
@@ -40,7 +40,7 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
             $this->createMock(VirtualFieldsProductDecoratorFactory::class)
         );
 
-        $this->shippingContextToRuleValuesConverter = new ShippingContextToRuleValuesConverter(
+        $this->shippingContextToRuleValuesConverter = new ShippingContextToRulesValuesConverter(
             $this->factory
         );
     }

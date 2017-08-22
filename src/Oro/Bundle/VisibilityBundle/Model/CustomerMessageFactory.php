@@ -3,13 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 
 class CustomerMessageFactory implements MessageFactoryInterface
 {
-    const ID = 'id';
 
     /**
      * @var ManagerRegistry
@@ -33,6 +31,7 @@ class CustomerMessageFactory implements MessageFactoryInterface
         $message = [self::ID => null];
         if ($customer instanceof Customer) {
             $message[self::ID] = $customer->getId();
+            $message[self::ENTITY_CLASS_NAME] = Customer::class;
         }
 
         return $message;

@@ -25,7 +25,7 @@ use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
  */
 class CustomerProductVisibility implements VisibilityInterface, ScopeAwareInterface
 {
-    const ACCOUNT_GROUP = 'customer_group';
+    const CUSTOMER_GROUP = 'customer_group';
     const CURRENT_PRODUCT = 'current_product';
     const CATEGORY = 'category';
     const VISIBILITY_TYPE = 'customer_product_visibility';
@@ -101,7 +101,7 @@ class CustomerProductVisibility implements VisibilityInterface, ScopeAwareInterf
      */
     public static function getDefault($product)
     {
-        return self::ACCOUNT_GROUP;
+        return self::CUSTOMER_GROUP;
     }
 
     /**
@@ -129,7 +129,7 @@ class CustomerProductVisibility implements VisibilityInterface, ScopeAwareInterf
     public static function getVisibilityList($product)
     {
         return [
-            self::ACCOUNT_GROUP,
+            self::CUSTOMER_GROUP,
             self::CURRENT_PRODUCT,
             self::CATEGORY,
             self::HIDDEN,

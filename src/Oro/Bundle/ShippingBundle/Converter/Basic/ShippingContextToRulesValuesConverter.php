@@ -1,17 +1,18 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Converter;
+namespace Oro\Bundle\ShippingBundle\Converter\Basic;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Converter\ShippingContextToRulesValuesConverterInterface;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
 
-class ShippingContextToRuleValuesConverter
+class ShippingContextToRulesValuesConverter implements ShippingContextToRulesValuesConverterInterface
 {
     /**
      * @var DecoratedProductLineItemFactory
      */
-    protected $decoratedProductLineItemFactory;
+    private $decoratedProductLineItemFactory;
 
     /**
      * @param DecoratedProductLineItemFactory $decoratedProductLineItemFactory
@@ -25,7 +26,7 @@ class ShippingContextToRuleValuesConverter
      * @param ShippingContextInterface $context
      * @return array
      */
-    public function convert(ShippingContextInterface $context)
+    public function convert(ShippingContextInterface $context): array
     {
         $lineItems = $context->getLineItems()->toArray();
 
