@@ -209,6 +209,9 @@ oro:
                 registration_allowed:
                     title: 'Allow registration'
                     tooltip: 'Allow customer users registration on checkout page'
+                allow_checkout_without_email_confirmation:
+                    title: 'Allow checkout without email confirmation'
+                    tooltip: 'Gives possibility to proceed checkout after enter registration data without email confirmation'
                 default_guest_checkout_owner:
                     title: 'Default guest checkout owner'
                     tooltip: 'Allows guests to create order'

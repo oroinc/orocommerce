@@ -16,4 +16,7 @@ layout:
             options:
                 order: '=data["workflowItem"].getData().get("order")'
 
+        - '@remove':
+            id: page_title
+
     conditions: 'context["workflowStepName"]=="order_created"'

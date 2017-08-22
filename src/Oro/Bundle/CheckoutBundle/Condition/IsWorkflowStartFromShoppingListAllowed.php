@@ -35,11 +35,7 @@ class IsWorkflowStartFromShoppingListAllowed
      */
     public function isAllowedForLogged()
     {
-        if ($this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken) {
-            return false;
-        }
-
-        return true;
+        return !$this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken;
     }
 
     /**

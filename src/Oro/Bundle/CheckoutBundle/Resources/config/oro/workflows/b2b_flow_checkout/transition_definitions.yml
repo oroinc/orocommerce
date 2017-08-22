@@ -1,7 +1,6 @@
 workflows:
     b2b_flow_checkout:
         transition_definitions:
-
             start_from_shoppinglist_definition:
                 preactions:
                     - '@find_entity':
