@@ -79,7 +79,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
         $currency = $data['currency'];
 
         $expectedConfigsRules = $this->getConfigsRulesByReferences($data['expectedEntityReferences']);
-        $configsRules = $this->repository->getByDestinationAndCurrency($billingAddress, $currency);
+        $configsRules = $this->repository->getByDestinationAndCurrencyAndWebsite($billingAddress, $currency);
 
         $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
     }
@@ -160,7 +160,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
             'payment.payment_methods_configs_rule.6',
         ]);
 
-        $configsRules = $this->repository->getByCurrencyWithoutDestination('UAH');
+        $configsRules = $this->repository->getByCurrencyAndWebsiteWithoutDestination('UAH');
 
         $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
     }
@@ -173,14 +173,14 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
             'payment.payment_methods_configs_rule.6',
         ]);
 
-        $configsRules = $this->repository->getByCurrency('UAH');
+        $configsRules = $this->repository->getByCurrencyAndWebsite('UAH');
 
         $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
     }
 
     public function testGetByCurrencyWhenCurrencyNotExists()
     {
-        $configsRules = $this->repository->getByCurrency('WON');
+        $configsRules = $this->repository->getByCurrencyAndWebsite('WON');
 
         $this->assertEmpty($configsRules);
     }
