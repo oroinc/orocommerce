@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory;
 
+use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethodType;
@@ -18,12 +20,28 @@ class FedexShippingMethodTypeFactory implements FedexShippingMethodTypeFactoryIn
     private $identifierGenerator;
 
     /**
-     * @param FedexMethodTypeIdentifierGeneratorInterface $identifierGenerator
+     * @var FedexRequestFromShippingContextFactoryInterface
+     */
+    private $rateServiceRequestFactory;
+
+    /**
+     * @var FedexRateServiceBySettingsClientInterface
+     */
+    private $rateServiceClient;
+
+    /**
+     * @param FedexMethodTypeIdentifierGeneratorInterface     $identifierGenerator
+     * @param FedexRequestFromShippingContextFactoryInterface $rateServiceRequestFactory
+     * @param FedexRateServiceBySettingsClientInterface       $rateServiceClient
      */
     public function __construct(
-        FedexMethodTypeIdentifierGeneratorInterface $identifierGenerator
+        FedexMethodTypeIdentifierGeneratorInterface $identifierGenerator,
+        FedexRequestFromShippingContextFactoryInterface $rateServiceRequestFactory,
+        FedexRateServiceBySettingsClientInterface $rateServiceClient
     ) {
         $this->identifierGenerator = $identifierGenerator;
+        $this->rateServiceRequestFactory = $rateServiceRequestFactory;
+        $this->rateServiceClient = $rateServiceClient;
     }
 
     /**
@@ -32,6 +50,8 @@ class FedexShippingMethodTypeFactory implements FedexShippingMethodTypeFactoryIn
     public function create(Channel $channel, ShippingService $service): ShippingMethodTypeInterface
     {
         return new FedexShippingMethodType(
+            $this->rateServiceRequestFactory,
+            $this->rateServiceClient,
             $this->identifierGenerator->generate($service),
             $service->getDescription(),
             $this->getSettings($channel)

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod\Factory;
 
+use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodFactory;
@@ -42,6 +44,16 @@ class FedexShippingMethodFactoryTest extends TestCase
     private $typeFactory;
 
     /**
+     * @var FedexRequestFromShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $rateServiceRequestFactory;
+
+    /**
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $rateServiceClient;
+
+    /**
      * @var FedexShippingMethodFactory
      */
     private $factory;
@@ -52,12 +64,16 @@ class FedexShippingMethodFactoryTest extends TestCase
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->iconProvider = $this->createMock(IntegrationIconProviderInterface::class);
         $this->typeFactory = $this->createMock(FedexShippingMethodTypeFactoryInterface::class);
+        $this->rateServiceRequestFactory = $this->createMock(FedexRequestFromShippingContextFactoryInterface::class);
+        $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
 
         $this->factory = new FedexShippingMethodFactory(
             $this->identifierGenerator,
             $this->localizationHelper,
             $this->iconProvider,
-            $this->typeFactory
+            $this->typeFactory,
+            $this->rateServiceRequestFactory,
+            $this->rateServiceClient
         );
     }
 
@@ -107,6 +123,8 @@ class FedexShippingMethodFactoryTest extends TestCase
 
         static::assertEquals(
             new FedexShippingMethod(
+                $this->rateServiceRequestFactory,
+                $this->rateServiceClient,
                 self::IDENTIFIER,
                 self::LABEL,
                 self::ICON_PATH,

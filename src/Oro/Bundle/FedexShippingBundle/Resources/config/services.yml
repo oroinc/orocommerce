@@ -99,6 +99,8 @@ services:
         public: false
         arguments:
             - '@oro_fedex_shipping.shipping_method.method_type_identifier_generator'
+            - '@oro_fedex_shipping.client.rate_service.request.factory'
+            - '@oro_fedex_shipping.client.rate_service_cached'
 
     oro_fedex_shipping.shipping_method.factory.method:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodFactory'
@@ -108,6 +110,8 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_integration.provider.integration_icon'
             - '@oro_fedex_shipping.shipping_method.factory.method_type'
+            - '@oro_fedex_shipping.client.rate_service.request.factory'
+            - '@oro_fedex_shipping.client.rate_service_cached'
 
     oro_fedex_shipping.shipping_method.provider:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Provider\FedexShippingMethodProvider'

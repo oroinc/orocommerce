@@ -2,9 +2,15 @@
 
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -15,21 +21,29 @@ class FedexShippingMethodTest extends TestCase
     const ICON_PATH = 'path';
     const ENABLED = true;
 
+    /**
+     * @var FedexRequestFromShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $rateServiceRequestFactory;
+
+    /**
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $rateServiceClient;
+
+    protected function setUp()
+    {
+        $this->rateServiceRequestFactory = $this->createMock(FedexRequestFromShippingContextFactoryInterface::class);
+        $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
+    }
+
     public function testGetters()
     {
-        $settings = new FedexIntegrationSettings();
         $types = [
             $this->createMethodType('test1'),
             $this->createMethodType('test2'),
         ];
-        $method = new FedexShippingMethod(
-            self::IDENTIFIER,
-            self::LABEL,
-            self::ICON_PATH,
-            self::ENABLED,
-            $settings,
-            $types
-        );
+        $method = $this->createShippingMethod(new FedexIntegrationSettings(), $types);
 
         static::assertTrue($method->isGrouped());
         static::assertSame(self::ENABLED, $method->isEnabled());
@@ -46,16 +60,7 @@ class FedexShippingMethodTest extends TestCase
 
     public function testGetTrackingLinkMatches()
     {
-        $settings = new FedexIntegrationSettings();
-        $types = [];
-        $method = new FedexShippingMethod(
-            self::IDENTIFIER,
-            self::LABEL,
-            self::ICON_PATH,
-            self::ENABLED,
-            $settings,
-            $types
-        );
+        $method = $this->createShippingMethod(new FedexIntegrationSettings(), []);
         $matchingNumbers = [
             '9612345676543456787654',
             '145678765432123',
@@ -79,6 +84,50 @@ class FedexShippingMethodTest extends TestCase
         static::assertNull($method->getTrackingLink('000'));
     }
 
+    public function testCalculatePrices()
+    {
+        $settings = new FedexIntegrationSettings();
+        $types = [
+            $this->createMethodType('test1'),
+            $this->createMethodType('test2'),
+        ];
+        $prices = [
+            'test1' => Price::create(12.6, 'USD'),
+            'test2' => Price::create(10.3, 'USD'),
+        ];
+        $method = $this->createShippingMethod($settings, $types);
+        $context = $this->createMock(ShippingContextInterface::class);
+        $request = new FedexRequest();
+        $response = new FedexRateServiceResponse('', 0, $prices);
+
+        $this->rateServiceRequestFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($settings, $context)
+            ->willReturn($request);
+
+        $this->rateServiceClient
+            ->expects(static::once())
+            ->method('send')
+            ->with($request, $settings)
+            ->willReturn($response);
+
+        static::assertEquals(
+            [
+                'test1' => Price::create(15.1, 'USD'),
+                'test2' => Price::create(14.8, 'USD'),
+            ],
+            $method->calculatePrices(
+                $context,
+                [FedexShippingMethod::OPTION_SURCHARGE => 1.5],
+                [
+                    'test1' => [FedexShippingMethod::OPTION_SURCHARGE => 1],
+                    'test2' => [FedexShippingMethod::OPTION_SURCHARGE => 3],
+                ]
+            )
+        );
+    }
+
     /**
      * @param string $identifier
      *
@@ -93,5 +142,25 @@ class FedexShippingMethodTest extends TestCase
             ->willReturn($identifier);
 
         return $type;
+    }
+
+    /**
+     * @param FedexIntegrationSettings $settings
+     * @param array                    $types
+     *
+     * @return FedexShippingMethod
+     */
+    private function createShippingMethod(FedexIntegrationSettings $settings, array $types): FedexShippingMethod
+    {
+        return new FedexShippingMethod(
+            $this->rateServiceRequestFactory,
+            $this->rateServiceClient,
+            self::IDENTIFIER,
+            self::LABEL,
+            self::ICON_PATH,
+            self::ENABLED,
+            $settings,
+            $types
+        );
     }
 }
