@@ -23,6 +23,9 @@ class FedexIntegrationSettings extends Transport
     const UNIT_OF_WEIGHT_KG = 'KG';
     const UNIT_OF_WEIGHT_LB = 'LB';
 
+    const DIMENSION_CM = 'CM';
+    const DIMENSION_IN = 'IN';
+
     /**
      * @var string
      *
@@ -103,6 +106,13 @@ class FedexIntegrationSettings extends Transport
      * )
      */
     private $labels;
+
+    /**
+     * @var \DateTime|null $invalidateCacheAt
+     *
+     * @ORM\Column(name="fedex_invalidate_cache_at", type="datetime")
+     */
+    private $invalidateCacheAt;
 
     public function __construct()
     {
@@ -308,5 +318,37 @@ class FedexIntegrationSettings extends Transport
     public function getSettingsBag()
     {
         return new ParameterBag();
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensionsUnit(): string
+    {
+        if ($this->getUnitOfWeight() === FedexIntegrationSettings::UNIT_OF_WEIGHT_LB) {
+            return self::DIMENSION_IN;
+        }
+
+        return self::DIMENSION_CM;
+    }
+
+    /**
+     * @param \DateTime|null $invalidateCacheAt
+     *
+     * @return self
+     */
+    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null): self
+    {
+        $this->invalidateCacheAt = $invalidateCacheAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getInvalidateCacheAt()
+    {
+        return $this->invalidateCacheAt;
     }
 }

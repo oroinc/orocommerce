@@ -21,6 +21,75 @@ services:
         arguments:
             - '%oro_fedex_shipping.integration.channel.type%'
 
+    oro_fedex_shipping.client.rate_service.response.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseFactory'
+        public: false
+
+    oro_fedex_shipping.client.rate_service:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
+        arguments:
+            - '@oro_soap.client'
+            - '@oro_soap.client.settings.factory'
+            - '@oro_fedex_shipping.client.rate_service.response.factory'
+
+    oro_fedex_shipping.client.request.factory.line_items:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexLineItemsFactory'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_shipping.provider.measure_units.conversion'
+
+    oro_fedex_shipping.client.rate_service.request.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_fedex_shipping.client.request.factory.line_items'
+
+    oro_fedex_shipping.transfomer.shipping_dimensions_unit:
+        class: 'Oro\Bundle\FedexShippingBundle\Transformer\FedexToShippingDimensionsUnitTransformer'
+        public: false
+
+    oro_fedex_shipping.transfomer.shipping_weight_unit:
+        class: 'Oro\Bundle\FedexShippingBundle\Transformer\FedexToShippingWeightUnitTransformer'
+        public: false
+
+    oro_fedex_shipping.provider.line_items_with_shipping_options:
+        class: 'Oro\Bundle\FedexShippingBundle\Provider\ShippingLineItemsWithShippingOptionsProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_shipping.provider.measure_units.conversion'
+            - '@oro_fedex_shipping.transfomer.shipping_weight_unit'
+            - '@oro_fedex_shipping.transfomer.shipping_dimensions_unit'
+
+    oro_fedex_shipping.client.rate_service.connection_request.factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceConnectionRequestFactory'
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_shipping.shipping_origin.provider'
+
+    oro_fedex_shipping.cache.cache_key_factory:
+        class: 'Oro\Bundle\FedexShippingBundle\Cache\Factory\FedexResponseCacheKeyFactory'
+        public: false
+
+    oro_fedex_shipping.cache:
+        public: false
+        parent: oro.cache.abstract
+
+    oro_fedex_shipping.cache.response:
+        class: 'Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCache'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.cache'
+
+    oro_fedex_shipping.client.rate_service_cached:
+        class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceCachedClient'
+        public: false
+        arguments:
+            - '@oro_fedex_shipping.client.rate_service'
+            - '@oro_fedex_shipping.cache.response'
+            - '@oro_fedex_shipping.cache.cache_key_factory'
     oro_fedex_shipping.shipping_method.method_type_identifier_generator:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'
         public: false

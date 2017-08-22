@@ -22,6 +22,7 @@ class FedexIntegrationSettingsTest extends TestCase
             ['meterNumber', 'meterNumber'],
             ['pickupType', 'pickupType'],
             ['unitOfWeight', 'unitOfWeight'],
+            ['invalidateCacheAt', new \DateTime()],
         ]);
 
         static::assertPropertyCollections(new FedexIntegrationSettings(), [
@@ -33,5 +34,16 @@ class FedexIntegrationSettingsTest extends TestCase
     public function testGetSettingsBag()
     {
         static::assertEquals(new ParameterBag(), (new FedexIntegrationSettings())->getSettingsBag());
+    }
+
+    public function testGetDimensionsUnit()
+    {
+        $settings = new FedexIntegrationSettings();
+
+        $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_KG);
+        static::assertSame(FedexIntegrationSettings::DIMENSION_CM, $settings->getDimensionsUnit());
+
+        $settings->setUnitOfWeight(FedexIntegrationSettings::UNIT_OF_WEIGHT_LB);
+        static::assertSame(FedexIntegrationSettings::DIMENSION_IN, $settings->getDimensionsUnit());
     }
 }
