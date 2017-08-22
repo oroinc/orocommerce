@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -132,18 +131,20 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass(ShoppingList::class);
+        $em->beginTransaction();
 
         if ($this->shoppingListLimitManager->isReachedLimit()) {
-            $shoppingList = $this->shoppingListManager->getCurrent();
-            $em->remove($shoppingList);
+            $shoppingList = $this->shoppingListManager->edit(
+                $this->shoppingListManager->getCurrent(),
+                $this->getShoppingListLabel()
+            );
+            $this->shoppingListManager->removeLineItems($shoppingList);
+        } else {
+            $shoppingList = $this->shoppingListManager->create(false, $this->getShoppingListLabel());
+
+            $em->persist($shoppingList);
+            $em->flush($shoppingList);
         }
-
-        $shoppingList = $this->shoppingListManager->create();
-        $shoppingList->setLabel($this->getShoppingListLabel());
-
-        $em->beginTransaction();
-        $em->persist($shoppingList);
-        $em->flush($shoppingList);
 
         /** @var Session $session */
         $session = $request->getSession();

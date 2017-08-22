@@ -25,10 +25,15 @@ workflows:
                        attribute: $.result.isReachedLimit
                        service: oro_shopping_list.manager.shopping_list_limit
                        method: isReachedLimit
+                    - '@call_service_method':
+                        service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
+                        method: isAllowed
+                        attribute: $.result.isCheckoutAllowed
                 preconditions:
                     '@and':
                         - '@not_empty': $init_context
                         - '@equal': [true, $.result.isAllowed]
+                        - '@equal': [true, $.result.isCheckoutAllowed]
 
             start_from_shoppinglist_definition:
                 preactions:

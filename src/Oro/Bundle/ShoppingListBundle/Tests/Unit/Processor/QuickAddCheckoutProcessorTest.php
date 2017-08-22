@@ -177,21 +177,96 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->shoppingListLimitManager
             ->expects($this->once())
             ->method('isReachedLimit')
-            ->willReturn(true);
-
-        $this->shoppingListManager
-            ->expects($this->once())
-            ->method('getCurrent');
-
-        $this->em
-            ->expects($this->once())
-            ->method('remove');
+            ->willReturn(false);
 
         $shoppingList = new ShoppingList();
 
         $this->shoppingListManager->expects($this->once())
             ->method('create')
             ->willReturn($shoppingList);
+
+        $this->em
+            ->expects($this->once())
+            ->method('persist');
+
+        $this->em
+            ->expects($this->once())
+            ->method('flush');
+
+        $this->dateFormatter->expects($this->once())
+            ->method('format')
+            ->willReturn('Mar 28, 2016, 2:50 PM');
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
+
+        $redirectUrl = '/customer/shoppingList/123';
+        $actionData = new ActionData([
+            'shoppingList' => $shoppingList,
+            'redirectUrl' => $redirectUrl
+        ]);
+
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+
+        $this->actionGroupRegistry->expects($this->once())
+            ->method('findByName')
+            ->with('start_shoppinglist_checkout')
+            ->willReturn($this->actionGroup);
+
+        $this->actionGroup->expects($this->once())
+            ->method('execute')
+            ->willReturn($actionData);
+
+        $this->handler->expects($this->once())
+            ->method('createForShoppingList')
+            ->with(
+                $this->isInstanceOf(ShoppingList::class),
+                array_values($productIds),
+                $productUnitsQuantities
+            )
+            ->willReturn(count($data));
+
+        $this->em
+            ->expects($this->once())
+            ->method('commit');
+
+        $expectedResponse = new RedirectResponse($redirectUrl);
+        $this->assertEquals($expectedResponse, $this->processor->process($data, new Request()));
+    }
+
+    public function testProcessWhenCommittedWithLimit()
+    {
+        $data = $this->getProductData();
+
+        $productIds = ['sku1' => 1, 'sku2' => 2];
+        $productUnitsQuantities = ['SKU1' => ['kg' => 2], 'SKU2' => ['liter' => 3]];
+
+        $this->shoppingListLimitManager
+            ->expects($this->once())
+            ->method('isReachedLimit')
+            ->willReturn(true);
+
+        $shoppingList = new ShoppingList();
+
+        $this->shoppingListManager->expects($this->once())
+            ->method('getCurrent')
+            ->willReturn($shoppingList);
+
+        $this->shoppingListManager->expects($this->once())
+            ->method('edit')
+            ->willReturn($shoppingList);
+
+        $this->shoppingListManager->expects($this->once())
+            ->method('removeLineItems');
+
+        $this->em
+            ->expects($this->never())
+            ->method('persist');
+
+        $this->em
+            ->expects($this->never())
+            ->method('flush');
 
         $this->dateFormatter->expects($this->once())
             ->method('format')
