@@ -39,3 +39,48 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_integration.provider.integration_icon'
             - '@oro_fedex_shipping.shipping_method.factory.method_type'
+
+    oro_fedex_shipping.shipping_method.provider:
+        class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Provider\FedexShippingMethodProvider'
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_fedex_shipping.shipping_method.factory.method'
+        tags:
+            - { name: oro_shipping_method_provider }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+
+    oro_fedex_shipping.event_listener.remove_integration:
+        parent: oro_shipping.remove_integration_listener
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_shipping.method.event.dispatcher.method_removal'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
+
+    oro_fedex_shipping.event_listener.shipping_method_config_data:
+        parent: oro_shipping.admin_view.method_template.listener
+        arguments:
+            - '%oro_fedex_shipping.shipping_rule.method_template%'
+            - '@oro_fedex_shipping.shipping_method.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    oro_fedex_shipping.event_listener.disable_integration:
+        parent: oro_shipping.disable_integration_listener
+        arguments:
+            - '%oro_fedex_shipping.integration.channel.type%'
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_shipping.method_disable_handler.decorator'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }
+
+    oro_fedex_shipping.entity_listener.delete_integration_settings_services:
+        class: 'Oro\Bundle\FedexShippingBundle\Entity\EntityListener\FedexDeleteIntegrationSettingsServicesEntityListener'
+        arguments:
+            - '@oro_fedex_shipping.integration.identifier_generator'
+            - '@oro_fedex_shipping.shipping_method.method_type_identifier_generator'
+            - '@oro_shipping.method.event.dispatcher.type_removal'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings', event: postUpdate }

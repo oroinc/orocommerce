@@ -9,9 +9,10 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\IntegrationBundle\Provider\IntegrationIconProviderInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
-class FedexShippingMethodFactory implements FedexShippingMethodByChannelFactoryInterface
+class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInterface
 {
     /**
      * @var IntegrationIdentifierGeneratorInterface

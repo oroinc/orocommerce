@@ -29,6 +29,11 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.shipping_method.method_type_identifier_generator',
             'oro_fedex_shipping.shipping_method.factory.method_type',
             'oro_fedex_shipping.shipping_method.factory.method',
+            'oro_fedex_shipping.shipping_method.provider',
+            'oro_fedex_shipping.event_listener.remove_integration',
+            'oro_fedex_shipping.event_listener.shipping_method_config_data',
+            'oro_fedex_shipping.event_listener.disable_integration',
+            'oro_fedex_shipping.entity_listener.delete_integration_settings_services',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);
