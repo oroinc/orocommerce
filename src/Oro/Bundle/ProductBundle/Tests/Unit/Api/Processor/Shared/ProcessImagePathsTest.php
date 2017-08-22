@@ -169,7 +169,6 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->addImagePathToResultsProcessor->process($this->context);
-
     }
 
     public function getTestProcessShouldHandlePathsCorrectlyProvider()

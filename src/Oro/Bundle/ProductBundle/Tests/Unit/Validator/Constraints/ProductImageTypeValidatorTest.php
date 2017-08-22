@@ -44,7 +44,6 @@ class ProductImageTypeValidatorTest extends \PHPUnit_Framework_TestCase
         $this->constraint = $this->getMockBuilder(Constraint::class)
             ->disableOriginalConstructor()
             ->getMock();
-
     }
 
     public function testValidateShouldIgnore()
