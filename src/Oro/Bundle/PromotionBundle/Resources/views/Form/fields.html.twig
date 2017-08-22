@@ -81,3 +81,8 @@
         {{ form_widget(form) }}
     {% endspaceless %}
 {% endblock %}
+
+{% block oro_promotion_applied_discount_row_widget %}
+    {{ form_widget(form.enabled) }}
+    {{ form_widget(form.promotion) }}
+{% endblock %}

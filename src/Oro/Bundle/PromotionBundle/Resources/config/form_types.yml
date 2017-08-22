@@ -15,3 +15,15 @@ services:
             - '@oro_security.token_accessor'
         tags:
             - { name: form.type, alias: oro_promotion_coupon_generation_type  }
+
+    oro_promotion.form.type.applied_discount_collection_table:
+        class: 'Oro\Bundle\PromotionBundle\Form\Type\AppliedDiscountCollectionTableType'
+        tags:
+            - { name: form.type, alias: oro_promotion_applied_discount_collection_table }
+
+    oro_promotion.form.type.applied_discount_row:
+        class: 'Oro\Bundle\PromotionBundle\Form\Type\AppliedDiscountRowType'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type, alias: oro_promotion_applied_discount_row_type }

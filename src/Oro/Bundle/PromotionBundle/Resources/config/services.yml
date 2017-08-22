@@ -358,7 +358,6 @@ services:
             - '@oro_promotion.provider.applied_discounts_provider'
             - '@oro_currency.rounding.price_rounding_service'
             - '@translator'
-            - '@oro_promotion.provider.discount_recalculation_provider'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
 
@@ -408,9 +407,6 @@ services:
 
     oro_promotion.placeholder.discount_information_placeholder_filter:
         class: Oro\Bundle\PromotionBundle\Placeholder\DiscountInformationPlaceholderFilter
-
-    oro_promotion.placeholder.order_additional_placeholder_filter:
-        class: Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter
 
     oro_promotion.event_listener.order:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderEntityListener
@@ -469,7 +465,6 @@ services:
     oro_promotion.form.extension.order:
         class: 'Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension'
         arguments:
-            - '@oro_promotion.provider.discount_recalculation_provider'
             - '@oro_promotion.applied_discount_manager'
             - '@oro_promotion.provider.discounts_provider'
         tags:
@@ -484,12 +479,6 @@ services:
             - '@oro_promotion.provider.discounts_provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -128 }
-
-    oro_promotion.provider.discount_recalculation_provider:
-        class: 'Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider'
-        public: false
-        arguments:
-            - '@request_stack'
 
     oro_promotion.mass_action.coupon_edit_mass_action_handler:
         class: Oro\Bundle\PromotionBundle\Datagrid\Extension\MassAction\CouponEditMassActionHandler
@@ -532,6 +521,14 @@ services:
 
     oro_promotion.twig.extension.coupon_preview:
         class: 'Oro\Bundle\PromotionBundle\Twig\CouponPreviewExtension'
+        public: false
+        arguments:
+            - "@service_container"
+        tags:
+            - { name: twig.extension }
+
+    oro_promotion.twig.extension.applied_discounts:
+        class: 'Oro\Bundle\PromotionBundle\Twig\AppliedDiscountsExtension'
         public: false
         arguments:
             - "@service_container"

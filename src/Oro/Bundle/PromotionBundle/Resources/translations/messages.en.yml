@@ -45,6 +45,7 @@ oro:
             shipping_method:
                 label: Shipping Method
     promotion:
+        all_label: All Promotions
         entity_label: Promotion
         entity_plural_label: Promotions
         entity_description: Represents promotion information
@@ -171,6 +172,7 @@ oro:
                     discount_optins.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
+            promotion_and_discounts.label: Promotions and Discounts
 
         applieddiscount:
             entity_label: Applied Discount
@@ -179,14 +181,30 @@ oro:
             config_options.label: Options
             coupon_code.label: Coupon Code
             currency.label: Currency
-            enabled.label: Enabled
+            enabled:
+                label: Enabled
+                active: Active
+                inactive: Inactive
             id.label: Id
             promotion_name.label: Promotion Name
             type.label: Type
             line_item.label: Line Item
             order.label: Order
             promotion.label: Promotion
+            source_promotion_id.label: Source Promotion Id
             promotion_data.label: Promotion Data
+            add_coupon_label: Add Coupon Code
+            columns:
+                coupon_code: Code
+                promotion: Promotion
+                type: Type
+                status: Status
+                discount: Discount
+            actions:
+                disable: Disable
+                enable: Enable
+                remove: Remove
+            no_entities: No records found
 
         coupon:
             entity_label: Coupon
@@ -258,10 +276,6 @@ oro:
             applied_discount:
                 name: Name
                 amount: Amount
-            nav_button:
-                information_notice: Promotion discounts will be recalculated after saving the order
-                important: Important
-                save_without_discounts_recalculation: Save Without Discounts Recalculation
 
         view:
             order_line_item:

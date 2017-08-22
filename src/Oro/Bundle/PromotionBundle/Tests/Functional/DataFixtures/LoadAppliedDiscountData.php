@@ -24,6 +24,7 @@ class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtur
             'amount' => 10.00,
             'currency' => 'USD',
             'promotion_name' => 'Some name',
+            'source_promotion_id' => 0
         ],
         self::SIMPLE_APPLIED_DISCOUNT_WITH_LINE_ITEM => [
             'order' => LoadOrders::ORDER_1,
@@ -31,7 +32,8 @@ class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtur
             'amount' => 10.00,
             'currency' => 'USD',
             'promotion_name' => 'Some line item discount name',
-            'lineItem' => LoadOrderLineItems::ITEM_1
+            'lineItem' => LoadOrderLineItems::ITEM_1,
+            'source_promotion_id' => 0
         ],
     ];
 
@@ -57,6 +59,7 @@ class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtur
             $appliedDiscount->setAmount($appliedDiscountData['amount']);
             $appliedDiscount->setCurrency($appliedDiscountData['currency']);
             $appliedDiscount->setPromotionName($appliedDiscountData['promotion_name']);
+            $appliedDiscount->setSourcePromotionId($appliedDiscountData['source_promotion_id']);
 
             /** @var Order $order */
             $order = $this->getReference($appliedDiscountData['order']);

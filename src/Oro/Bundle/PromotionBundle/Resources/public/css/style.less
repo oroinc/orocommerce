@@ -24,12 +24,9 @@
   }
 }
 
-.applied_discounts-result-grid {
-  min-width: 325px;
-
-  th {
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
+.oro-promotions-collection.grid-container {
+  tr.disabled td {
+    color: rgb(203, 203, 203);
   }
 
   td:first-child {
@@ -37,9 +34,9 @@
     font-weight: bold;
     font-size: 11px;
   }
-
-  .other-scroll-container & {
-    border: 1px solid @generalBorderColor !important;
+  th.discount, td.discount {
+    width: 80px;
+    text-align: right;
   }
 }
 

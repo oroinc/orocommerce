@@ -6,8 +6,13 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
+/**
+ * This listener adds promotions table on order view and order edit pages.
+ */
 class OrderViewListener
 {
+    const DISCOUNTS_BLOCK_ID = 'discounts';
+
     /**
      * @var TranslatorInterface
      */
@@ -37,16 +42,33 @@ class OrderViewListener
 
     /**
      * @param BeforeListRenderEvent $event
+     * @throws \LogicException
      */
     public function onEdit(BeforeListRenderEvent $event)
     {
-        /** @var Order $order */
-        $order = $event->getEntity();
+        if (!$event->getScrollData()->hasBlock(self::DISCOUNTS_BLOCK_ID)) {
+            throw new \LogicException(sprintf('Scroll data must contain block with id "%s"', self::DISCOUNTS_BLOCK_ID));
+        }
+
         $template = $event->getEnvironment()->render(
-            'OroPromotionBundle:Order:discounts_promotions_with_warning.html.twig',
-            ['entity' => $order]
+            'OroPromotionBundle:Order:promotions_collection.html.twig',
+            ['form' => $event->getFormView()]
         );
-        $this->addPromotionsBlock($event, $template, 890);
+
+        $this->addPromotionsSubBlock($event, $template);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param string $template
+     */
+    protected function addPromotionsSubBlock(BeforeListRenderEvent $event, string $template)
+    {
+        $scrollData = $event->getScrollData();
+        $blockTitle = $this->translator->trans('oro.promotion.sections.promotion_and_discounts.label');
+        $scrollData->changeBlock(self::DISCOUNTS_BLOCK_ID, $blockTitle);
+        $subBlockId = $scrollData->addSubBlock(self::DISCOUNTS_BLOCK_ID);
+        $scrollData->addSubBlockData(self::DISCOUNTS_BLOCK_ID, $subBlockId, $template);
     }
 
     /**

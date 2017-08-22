@@ -5,9 +5,10 @@ namespace Oro\Bundle\PromotionBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class CreateCouponUsageTable implements Migration
+class CreateCouponUsageTable implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritdoc}
@@ -62,5 +63,13 @@ class CreateCouponUsageTable implements Migration
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 20;
     }
 }

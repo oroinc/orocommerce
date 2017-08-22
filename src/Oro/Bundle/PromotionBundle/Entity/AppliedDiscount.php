@@ -72,6 +72,12 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     protected $promotion;
 
     /**
+     * @ORM\Column(name="source_promotion_id", type="integer", options={"default"=0})
+     * @var int
+     */
+    protected $sourcePromotionId;
+
+    /**
      * @ORM\Column(name="promotion_name", type="text")
      *
      * @var string
@@ -201,6 +207,25 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
         $this->promotion = $promotion;
 
         return $this;
+    }
+
+    /**
+     * @param int $id
+     * @return $this
+     */
+    public function setSourcePromotionId($id)
+    {
+        $this->sourcePromotionId = (int)$id;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSourcePromotionId()
+    {
+        return $this->sourcePromotionId;
     }
 
     /**

@@ -92,10 +92,7 @@ class OrderType extends AbstractType
                     'options' => ['currency' => $order->getCurrency()]
                 ]
             )
-            ->add(
-                'discounts',
-                OrderDiscountCollectionTableType::NAME
-            )
+            ->add('discounts', OrderDiscountCollectionTableType::NAME)
             ->add(
                 'discountsSum',
                 HiddenType::class,

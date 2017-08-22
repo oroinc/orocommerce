@@ -1,6 +1,6 @@
-<div class="oro-discount-collection-heading">
+<div class="oro-collection-table-heading">
     <h5>{{ 'oro.order.order_discount.all_label'|trans }}</h5>
-    {% if editStyle is defined and editStyle %}
+    {% if editable is defined and editable %}
         <a data-role="add" class="btn" href="javascript: void(0);">
             {{ 'oro.order.order_discount.add_label'|trans }}
         </a>
@@ -17,7 +17,7 @@
                 <th class="order-discount-item-title">
                     <span>{{ 'oro.order.order_discount.columns.title'|trans }}</span>
                 </th>
-                {% if editStyle is defined and editStyle %}
+                {% if editable is defined and editable %}
                     <th class="action"></th>
                     <th class="action"></th>
                 {% endif %}
@@ -34,7 +34,7 @@
                             {{ discount.amountPrice|oro_format_price }}
                         {% endif %}
                     </td>
-                    {% if editStyle is defined and editStyle %}
+                    {% if editable is defined and editable %}
                         <td class="action">
                             <a data-role="edit" href="javascript:void(0);">
                                 <i class="fa-edit hide-text" title="{{ 'oro.order.order_discount.actions.edit'|trans }}">{{ 'oro.order.order_discount.actions.edit'|trans }}</i>
@@ -50,6 +50,6 @@
             {% endfor %}
         </tbody>
     </table>
-{% elseif editStyle is not defined or not editStyle %}
+{% elseif editable is not defined or not editable %}
     <div class="no-data"><span>{{ 'oro.order.order_discount.no_entities'|trans }}<span></span></span></div>
 {% endif %}

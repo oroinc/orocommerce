@@ -52,5 +52,6 @@ class ModifyAppliedDiscount implements Migration, DatabasePlatformAwareInterface
         $table->addColumn('promotion_data', 'json_array', ['notnull' => false]);
         $table->addColumn('enabled', 'boolean', ['default' => true]);
         $table->addColumn('coupon_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('source_promotion_id', 'integer', ['notnull' => false]);
     }
 }

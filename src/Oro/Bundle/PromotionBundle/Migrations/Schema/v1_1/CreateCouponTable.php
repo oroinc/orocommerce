@@ -8,9 +8,10 @@ use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class CreateCouponTable implements Migration, ExtendExtensionAwareInterface
+class CreateCouponTable implements Migration, ExtendExtensionAwareInterface, OrderedMigrationInterface
 {
     const ORDER_COUPONS_RELATION_NAME = 'appliedCoupons';
 
@@ -118,5 +119,13 @@ class CreateCouponTable implements Migration, ExtendExtensionAwareInterface
                 'view' => ['is_displayable' => false],
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
     }
 }

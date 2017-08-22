@@ -119,6 +119,7 @@ class AppliedDiscountManager
             ->setConfigOptions($discountConfigurationOptions)
             ->setPromotion($promotion)
             ->setPromotionName($promotion->getRule()->getName())
+            ->setSourcePromotionId($promotion->getId())
             ->setPromotionData($this->promotionNormalizer->normalize($promotion))
             ->setOrder($order);
     }

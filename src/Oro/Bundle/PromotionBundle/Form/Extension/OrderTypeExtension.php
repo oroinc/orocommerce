@@ -10,18 +10,13 @@ use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Form\Type\AppliedDiscountCollectionTableType;
 use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
-use Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider;
 use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
 
 class OrderTypeExtension extends AbstractTypeExtension
 {
     const ON_SUBMIT_LISTENER_PRIORITY = 10;
-
-    /**
-     * @var DiscountRecalculationProvider
-     */
-    protected $discountRecalculationProvider;
 
     /**
      * @var AppliedDiscountManager
@@ -34,16 +29,11 @@ class OrderTypeExtension extends AbstractTypeExtension
     protected $discountsProvider;
 
     /**
-     * @param DiscountRecalculationProvider $discountRecalculationProvider
      * @param AppliedDiscountManager $appliedDiscountManager
      * @param DiscountsProvider $discountsProvider
      */
-    public function __construct(
-        DiscountRecalculationProvider $discountRecalculationProvider,
-        AppliedDiscountManager $appliedDiscountManager,
-        DiscountsProvider $discountsProvider
-    ) {
-        $this->discountRecalculationProvider = $discountRecalculationProvider;
+    public function __construct(AppliedDiscountManager $appliedDiscountManager, DiscountsProvider $discountsProvider)
+    {
         $this->appliedDiscountManager = $appliedDiscountManager;
         $this->discountsProvider = $discountsProvider;
     }
@@ -54,6 +44,7 @@ class OrderTypeExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('appliedCoupons', EntityIdentifierType::class, ['class' => Coupon::class]);
+        $builder->add('appliedDiscounts', AppliedDiscountCollectionTableType::class);
 
         // Should be called before OrderBundle\Form\Type\EventListener\SubtotalSubscriber::onSubmitEventListener
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit'], self::ON_SUBMIT_LISTENER_PRIORITY);
@@ -69,11 +60,9 @@ class OrderTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        if ($this->discountRecalculationProvider->isRecalculationRequired()) {
-            $this->discountsProvider->enableRecalculation();
-            $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
-            $this->appliedDiscountManager->saveAppliedDiscounts($order);
-        }
+        $this->discountsProvider->enableRecalculation();
+        $this->appliedDiscountManager->removeAppliedDiscountByOrder($order);
+        $this->appliedDiscountManager->saveAppliedDiscounts($order);
     }
 
     /**

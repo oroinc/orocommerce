@@ -55,10 +55,10 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_order_type }
 
-    oro_order.form.type.order_discount_collection_table:
-        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType'
+    oro_order.form.type.collection_table:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType'
         tags:
-            - { name: form.type, alias: "oro_order_discount_collection_table" }
+            - { name: form.type, alias: "oro_order_collection_table" }
 
     oro_order.form.type.order_discount_collection_row:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionRowType'
@@ -66,6 +66,11 @@ services:
             - [setDataClass, ['%oro_order.entity.order_discount_item.class%']]
         tags:
             - { name: form.type, alias: "oro_order_discount_collection_row" }
+
+    oro_order.form.type.order_discount_collection_table:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType'
+        tags:
+            - { name: form.type, alias: "oro_order_discount_collection_table" }
 
     oro_order.form.type.order_discount_item:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType'

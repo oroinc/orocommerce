@@ -214,6 +214,7 @@ class OroPromotionBundleInstaller implements
         $table = $schema->createTable('oro_promotion_applied_discount');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
+        $table->addColumn('source_promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('line_item_id', 'integer', ['notnull' => false]);
         $table->addColumn('amount', 'money_value', [
             'precision' => 19,
@@ -472,7 +473,9 @@ class OroPromotionBundleInstaller implements
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
                     'on_delete' => 'CASCADE',
-                ]
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
             ]
         );
 

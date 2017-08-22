@@ -166,10 +166,10 @@
     {% endif %}
 {% endmacro %}
 
-{% block oro_order_discount_collection_table_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-discount-collection grid-container' }) %}
+{% block oro_order_collection_table_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ ' grid-container oro-collection-table' }) %}
     <div {{ block('widget_container_attributes') }}>
-        {% include 'OroOrderBundle:Form:order_discount_collection.html.twig' with {collection: form.vars.value, editStyle: true} only %}
+        {% include template_name with {collection: form.vars.value, editable: true} only %}
         <div data-role="hidden-collection"
              data-last-index="{{ form.children|length}}"
              data-prototype-name="{{ prototype.vars.name }}"

@@ -35,7 +35,9 @@ class AddAppliedDiscountToOrder implements Migration, ExtendExtensionAwareInterf
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
                     'on_delete' => 'CASCADE',
-                ]
+                ],
+                'form' => ['is_enabled' => false],
+                'view' => ['is_displayable' => false]
             ]
         );
 

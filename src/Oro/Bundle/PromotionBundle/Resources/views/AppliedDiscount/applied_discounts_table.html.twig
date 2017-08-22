@@ -1,0 +1,82 @@
+<div class="oro-collection-table-heading">
+    <h5>{{ 'oro.promotion.all_label'|trans }}</h5>
+    {% if editable is defined and editable %}
+        {# TODO: Use UI.addButton in scope of BB-11292 #}
+        <a data-role="add" class="btn" href="javascript: void(0);">
+            {{ 'oro.promotion.applieddiscount.add_coupon_label'|trans }}
+        </a>
+    {% endif %}
+</div>
+
+{% set collection = oro_promotion_prepare_applied_discounts(collection) %}
+{% if collection|length %}
+    <table class="grid table-hover table table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th>
+                    <span>{{ 'oro.promotion.applieddiscount.columns.coupon_code'|trans }}</span>
+                </th>
+                <th class="promotion">
+                    <span>{{ 'oro.promotion.applieddiscount.columns.promotion'|trans }}</span>
+                </th>
+                <th>
+                    <span>{{ 'oro.promotion.applieddiscount.columns.type'|trans }}</span>
+                </th>
+                <th>
+                    <span>{{ 'oro.promotion.applieddiscount.columns.status'|trans }}</span>
+                </th>
+                <th class="discount">
+                    <span>{{ 'oro.promotion.applieddiscount.columns.discount'|trans }}</span>
+                </th>
+                {% if editable is defined and editable %}
+                    <th colspan="2"></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in collection %}
+                <tr data-promotion-id="{{ item.promotionId }}"{{ item.enabled ? '' : ' class="disabled"'}}>
+                    <td>
+                        {% if item.couponCode %}
+                            {{ item.couponCode }}
+                        {% else %}
+                            <span class="not-available">{{ 'N/A'|trans }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.promotionName }}</td>
+                    <td>{{ ('oro.discount.type.choices.' ~ item.type)|trans }}</td>
+                    <td>
+                        {% if item.enabled %}
+                            {{ 'oro.promotion.applieddiscount.enabled.active'|trans }}
+                        {% else %}
+                            {{ 'oro.promotion.applieddiscount.enabled.inactive'|trans }}
+                        {% endif %}
+                    </td>
+                    <td class="discount">
+                        {{ (-item.amount)|oro_format_currency({currency: item.currency}) }}
+                    </td>
+                    {% if editable is defined and editable %}
+                        <td class="action">
+                            {% if item.enabled %}
+                                <a data-role="disable" href="javascript:void(0);">
+                                    <i class="fa-close hide-text" title="{{ 'oro.promotion.applieddiscount.actions.disable'|trans }}">{{ 'oro.promotion.applieddiscount.actions.disable'|trans }}</i>
+                                </a>
+                            {% else %}
+                                <a data-role="enable" href="javascript:void(0);">
+                                    <i class="fa-check hide-text" title="{{ 'oro.promotion.applieddiscount.actions.enable'|trans }}">{{ 'oro.promotion.applieddiscount.actions.enable'|trans }}</i>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td class="action">
+                            <a data-role="remove" href="javascript:void(0);">
+                                <i class="fa-trash hide-text" title="{{ 'oro.promotion.applieddiscount.actions.remove'|trans }}">{{ 'oro.promotion.applieddiscount.actions.remove'|trans }}</i>
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% elseif editable is not defined or not editable %}
+    <div class="no-data"><span>{{ 'oro.promotion.applieddiscount.no_entities'|trans }}<span></span></span></div>
+{% endif %}

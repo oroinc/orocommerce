@@ -10,8 +10,15 @@ Some inline underscore templates from next bundles, were moved to separate .html
 
 OrderBundle
 -------------
-- Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` was removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` is introduced, but it has different purpose and can't be used instead of the old one.
-- Form type `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType` was refactored for use in popup, its template also was changed, therefore it can't be used instead of the old one.
+- Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` was removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` is introduced.
+- Form type `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType` was changed for use in popup.
+
+PromotionBundle
+-------------
+- Class `Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider` was removed
+- Class `Oro\Bundle\PromotionBundle\Placeholder\OrderAdditionalPlaceholderFilter` was removed
+- Class `Oro\Bundle\PromotionBundle\Provider\SubtotalProvider`
+    - changed signature of `__construct` method. Sixth argument `Oro\Bundle\PromotionBundle\Provider\DiscountRecalculationProvider $discountRecalculationProvider` was removed
 
 PaymentBundle
 -------------

@@ -153,8 +153,12 @@ td.order-discount-item-remove {
   }
 }
 
-.oro-discount-collection-heading {
+.oro-collection-table-heading {
   h5 {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform: capitalize;
     display: inline;
     position: relative;
     top: 3px;
@@ -164,16 +168,26 @@ td.order-discount-item-remove {
   }
 }
 
-.oro-discount-collection.grid-container {
-  th.order-discount-item-description {
-    width: 50%;
-  }
+.oro-collection-table.grid-container {
   td.action {
     padding: 5px 10px 5px 0;
     width: 20px;
   }
   table {
     margin-top: 20px;
+  }
+  span.not-available {
+    color: rgb(203, 203, 203);
+  }
+}
+
+.oro-discount-collection {
+  max-width: 1000px;
+}
+
+.oro-discount-collection.grid-container {
+  th.order-discount-item-description {
+    width: 50%;
   }
 }
 

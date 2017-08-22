@@ -228,13 +228,15 @@
         {{ form_errors(form.discounts) }}
     {% endset %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.order.sections.discounts'|trans,
-        'class': 'active',
-        'subblocks': [{
-            'data': [discounts]
-        }]
-    }]) %}
+    {% set dataBlocks = dataBlocks|merge({
+        'discounts': {
+            'title': 'oro.order.sections.discounts'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [discounts],
+            }]
+        }
+    }) %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
