@@ -115,6 +115,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
             $this->addAdvancedValue($item, $product);
             $this->addEntityFieldFallbackValue($item, $product);
+            $this->addProductImages($item, $product);
 
             $manager->persist($product);
             $this->addReference($product->getSku(), $product);
@@ -236,32 +237,32 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
                 $product->addShortDescription($this->createValue($slugPrototype));
             }
         }
-
-        if (!empty($item['images'])) {
-            foreach ($item['images'] as $image) {
-                $product->addImage($this->createProductImage($image, $item['productCode']));
-            }
-        }
     }
 
     /**
-     * @param $image
-     * @param $sku
-     * @return ProductImage
+     * @param array $item
+     * @param Product $product
      */
-    public function createProductImage($image, $sku)
+    public function addProductImages(array $item, Product $product)
     {
-        $imageFile = new File();
-        $imageFile->setFilename($sku);
-        $this->setReference($image['reference'] . '.' . $sku, $imageFile);
+        if (empty($item['images'])) {
 
-        $productImage = new ProductImage();
-        $productImage->setImage($imageFile);
+            return;
+        }
 
-        $productType = $image['type'] ?? ProductImageType::TYPE_LISTING;
-        $productImage->addType($productType);
+        foreach ($item['images'] as $image) {
+            $imageFile = new File();
+            $imageFile->setFilename($item['productCode']);
+            $this->setReference($image['reference'] . '.' . $item['productCode'], $imageFile);
 
-        return $productImage;
+            $productImage = new ProductImage();
+            $productImage->setImage($imageFile);
+
+            $productType = $image['type'] ?? ProductImageType::TYPE_LISTING;
+            $productImage->addType($productType);
+
+            $product->addImage($productImage);
+        }
     }
 
     /**
