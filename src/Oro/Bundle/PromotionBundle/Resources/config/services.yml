@@ -114,6 +114,7 @@ services:
             - '@doctrine'
             - '@oro_promotion.rule_filtration.service'
             - '@oro_promotion.promotion.context_data_converter_registry'
+            - '@oro_promotion.applied_discount_promotion_normalizer'
 
     oro_promotion.discount_factory:
         class: Oro\Bundle\PromotionBundle\Discount\DiscountFactory
@@ -424,6 +425,7 @@ services:
         arguments:
             - '@service_container'
             - '@oro_entity.doctrine_helper'
+            - '@oro_promotion.applied_discount_promotion_normalizer'
 
     oro_promotion.coupon_usage_manager:
         class: Oro\Bundle\PromotionBundle\Manager\CouponUsageManager

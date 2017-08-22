@@ -4,15 +4,16 @@ namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
-use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
+use Oro\Bundle\PromotionBundle\Normalizer\NormalizerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AppliedDiscountManager
 {
@@ -27,13 +28,23 @@ class AppliedDiscountManager
     protected $doctrineHelper;
 
     /**
+     * @var NormalizerInterface
+     */
+    private $promotionNormalizer;
+
+    /**
      * @param ContainerInterface $container
      * @param DoctrineHelper $doctrineHelper
+     * @param NormalizerInterface $promotionNormalizer
      */
-    public function __construct(ContainerInterface $container, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        ContainerInterface $container,
+        DoctrineHelper $doctrineHelper,
+        NormalizerInterface $promotionNormalizer
+    ) {
         $this->container = $container;
         $this->doctrineHelper = $doctrineHelper;
+        $this->promotionNormalizer = $promotionNormalizer;
     }
 
     /**
@@ -102,13 +113,14 @@ class AppliedDiscountManager
         $discountConfigurationOptions = $discountConfiguration->getOptions();
 
         return (new AppliedDiscount())
-            ->setOrder($order)
             ->setType($discountType)
             ->setAmount($discountInfo->getDiscountAmount())
             ->setCurrency($order->getCurrency())
             ->setConfigOptions($discountConfigurationOptions)
             ->setPromotion($promotion)
-            ->setPromotionName($promotion->getRule()->getName());
+            ->setPromotionName($promotion->getRule()->getName())
+            ->setPromotionData($this->promotionNormalizer->normalize($promotion))
+            ->setOrder($order);
     }
 
     /**

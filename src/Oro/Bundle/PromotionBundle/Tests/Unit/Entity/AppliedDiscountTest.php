@@ -21,6 +21,7 @@ class AppliedDiscountTest extends \PHPUnit_Framework_TestCase
             ['promotion', new Promotion(), false],
             ['promotionName', 'test-promotion', false],
             ['configOptions', [1, 2, 3]],
+            ['promotionData', [1, 2, 3]],
             ['lineItem', new OrderLineItem(), false],
             ['enabled', false, true],
             ['couponCode', 'newCode', null],

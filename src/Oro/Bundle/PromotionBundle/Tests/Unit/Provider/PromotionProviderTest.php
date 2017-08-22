@@ -6,7 +6,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\AppliedDiscountsAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Model\AppliedPromotion;
+use Oro\Bundle\PromotionBundle\Normalizer\NormalizerInterface;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -31,6 +37,11 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
     private $contextDataConverter;
 
     /**
+     * @var NormalizerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $promotionNormalizer;
+
+    /**
      * @var PromotionProvider
      */
     private $provider;
@@ -40,19 +51,75 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->ruleFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);
         $this->contextDataConverter = $this->createMock(ContextDataConverterInterface::class);
+        $this->promotionNormalizer = $this->createMock(NormalizerInterface::class);
 
         $this->provider = new PromotionProvider(
             $this->registry,
             $this->ruleFiltrationService,
-            $this->contextDataConverter
+            $this->contextDataConverter,
+            $this->promotionNormalizer
         );
     }
 
     public function testGetPromotions()
     {
-        $sourceEntity = new \stdClass();
-        $filteredPromotion = new Promotion();
-        $promotions = [$filteredPromotion, new Promotion()];
+        $discountConfig = ['amount' => 10.0];
+        $discountType = 'order';
+        $promotionConfig1 = ['id' => 1];
+        $promotionConfig2 = ['id' => 2];
+        /** @var Promotion $promotion1 */
+        $promotion1 = $this->getEntity(Promotion::class, ['id' => 1]);
+        /** @var Promotion $promotion2 */
+        $promotion2 = $this->getEntity(Promotion::class, ['id' => 2]);
+
+        $appliedDiscount1 = new AppliedDiscount();
+        $appliedDiscount1->setType($discountType)
+            ->setAmount(10.0)
+            ->setPromotion($promotion1)
+            ->setConfigOptions($discountConfig)
+            ->setPromotionData($promotionConfig1);
+        $appliedDiscount2 = new AppliedDiscount();
+        $appliedDiscount2->setType($discountType)
+            ->setAmount(20.0)
+            ->setPromotion($promotion2)
+            ->setConfigOptions($discountConfig)
+            ->setPromotionData($promotionConfig2);
+        $appliedDiscount1Double = new AppliedDiscount();
+        $appliedDiscount1Double->setType($discountType)
+            ->setAmount(15.0)
+            ->setPromotion($promotion1)
+            ->setConfigOptions($discountConfig)
+            ->setPromotionData($promotionConfig1);
+        $appliedDiscount2Double = new AppliedDiscount();
+        $appliedDiscount2Double->setType($discountType)
+            ->setAmount(15.0)
+            ->setConfigOptions($discountConfig)
+            ->setPromotionData($promotionConfig2);
+
+        $appliedPromotion1 = $this->getAppliedPromotionMock(1);
+        $appliedPromotion2 = $this->getAppliedPromotionMock(2);
+
+        $this->promotionNormalizer->expects($this->exactly(3))
+            ->method('denormalize')
+            ->withConsecutive(
+                [$promotionConfig1],
+                [$promotionConfig2],
+                [$promotionConfig2]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $appliedPromotion1,
+                $appliedPromotion2,
+                $appliedPromotion2
+            );
+
+        /** @var AppliedDiscountsAwareInterface|\PHPUnit_Framework_MockObject_MockObject $sourceEntity */
+        $sourceEntity = $this->createMock(AppliedDiscountsAwareInterface::class);
+        $sourceEntity->expects($this->any())
+            ->method('getAppliedDiscounts')
+            ->willReturn([$appliedDiscount1, $appliedDiscount2, $appliedDiscount1Double, $appliedDiscount2Double]);
+
+        $filteredPromotion = $this->createMock(PromotionDataInterface::class);
+        $promotions = [$filteredPromotion, $this->createMock(PromotionDataInterface::class)];
         $context = ['some context item'];
 
         $this->expectsPromotions($promotions);
@@ -64,18 +131,21 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->ruleFiltrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
-            ->with($promotions, $context)
-            ->willReturn([$filteredPromotion]);
+            ->with(array_merge([$appliedPromotion1, $appliedPromotion2], $promotions), $context)
+            ->willReturn([$appliedPromotion1, $appliedPromotion2, $filteredPromotion]);
 
         $result = $this->provider->getPromotions($sourceEntity);
-        $this->assertSame([$filteredPromotion], $result);
+        $this->assertSame([$appliedPromotion1, $appliedPromotion2, $filteredPromotion], $result);
     }
 
     public function testIsPromotionAppliedWhenPromotionIsApplied()
     {
         $sourceEntity = new \stdClass();
-        /** @var Promotion $promotion */
-        $promotion = $this->getEntity(Promotion::class, ['id' => 5]);
+        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getId')
+            ->willReturn(5);
         $promotions = [$promotion];
         $context = ['some context item'];
 
@@ -97,11 +167,17 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsPromotionAppliedWhenPromotionIsNotApplied()
     {
         $sourceEntity = new \stdClass();
-        /** @var Promotion $anotherPromotion */
-        $anotherPromotion = $this->getEntity(Promotion::class, ['id' => 7]);
+        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $anotherPromotion */
+        $anotherPromotion = $this->createMock(PromotionDataInterface::class);
+        $anotherPromotion->expects($this->any())
+            ->method('getId')
+            ->willReturn(7);
 
-        /** @var Promotion $promotion */
-        $promotion = $this->getEntity(Promotion::class, ['id' => 5]);
+        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getId')
+            ->willReturn(5);
         $promotions = [$anotherPromotion];
         $context = ['some context item'];
 
@@ -124,8 +200,11 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
     {
         $sourceEntity = new \stdClass();
 
-        /** @var Promotion $promotion */
-        $promotion = $this->getEntity(Promotion::class, ['id' => 5]);
+        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getId')
+            ->willReturn(5);
         $context = ['some context item'];
 
         $this->contextDataConverter->expects($this->once())
@@ -146,7 +225,11 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
         $sourceEntity = new \stdClass();
 
         /** @var Promotion $promotion */
-        $promotion = $this->getEntity(Promotion::class, ['id' => 5]);
+        /** @var PromotionDataInterface|\PHPUnit_Framework_MockObject_MockObject $promotion */
+        $promotion = $this->createMock(PromotionDataInterface::class);
+        $promotion->expects($this->any())
+            ->method('getId')
+            ->willReturn(5);
         $context = ['some context item'];
 
         $this->contextDataConverter->expects($this->once())
@@ -182,5 +265,24 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(Promotion::class)
             ->willReturn($objectManager);
+    }
+
+    /**
+     * @param int $id
+     * @return AppliedPromotion|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getAppliedPromotionMock($id)
+    {
+        /** @var AppliedPromotion|\PHPUnit_Framework_MockObject_MockObject $appliedPromotion1 */
+        $appliedPromotion1 = $this->createMock(AppliedPromotion::class);
+        $appliedPromotion1->expects($this->any())
+            ->method('getId')
+            ->willReturn($id);
+        $appliedPromotion1->expects($this->once())
+            ->method('setDiscountConfiguration')
+            ->with($this->isInstanceOf(DiscountConfiguration::class))
+            ->willReturnSelf();
+
+        return $appliedPromotion1;
     }
 }

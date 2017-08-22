@@ -186,6 +186,7 @@ oro:
             line_item.label: Line Item
             order.label: Order
             promotion.label: Promotion
+            promotion_data.label: Promotion Data
 
         coupon:
             entity_label: Coupon

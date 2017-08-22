@@ -86,6 +86,13 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     protected $configOptions = [];
 
     /**
+     * @ORM\Column(name="promotion_data", type="json_array")
+     *
+     * @var array
+     */
+    protected $promotionData = [];
+
+    /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem")
      * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      *
@@ -268,6 +275,25 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     public function setLineItem(OrderLineItem $lineItem)
     {
         $this->lineItem = $lineItem;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPromotionData(): array
+    {
+        return $this->promotionData;
+    }
+
+    /**
+     * @param array $promotionData
+     * @return AppliedDiscount
+     */
+    public function setPromotionData(array $promotionData)
+    {
+        $this->promotionData = $promotionData;
 
         return $this;
     }

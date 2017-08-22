@@ -85,7 +85,6 @@ class OroPromotionBundleInstaller implements
         $this->addActivityAssociations($schema);
         $this->addAppliedDiscountToOrder($schema);
         $this->addCouponsRelationToOrders($schema);
-        $this->modifyAppliedDiscount($schema);
     }
 
     /**
@@ -222,9 +221,12 @@ class OroPromotionBundleInstaller implements
             'comment' => '(DC2Type:money_value)',
         ]);
         $table->addColumn('currency', 'currency', ['length' => 3, 'comment' => '(DC2Type:currency)']);
-        $table->addColumn('config_options', 'json_array', []);
-        $table->addColumn('promotion_name', 'text', []);
         $table->addColumn('type', 'string', ['length' => 255]);
+        $table->addColumn('promotion_name', 'text', []);
+        $table->addColumn('enabled', 'boolean', ['default' => true]);
+        $table->addColumn('coupon_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('config_options', 'json_array', []);
+        $table->addColumn('promotion_data', 'json_array', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
@@ -524,17 +526,5 @@ class OroPromotionBundleInstaller implements
                 'view' => ['is_displayable' => false],
             ]
         );
-    }
-
-    /**
-     * Add fields to applied discount.
-     *
-     * @param Schema $schema
-     */
-    protected function modifyAppliedDiscount(Schema $schema)
-    {
-        $table = $schema->getTable('oro_promotion_applied_discount');
-        $table->addColumn('enabled', 'boolean', ['default' => true]);
-        $table->addColumn('coupon_code', 'string', ['notnull' => false, 'length' => 255]);
     }
 }

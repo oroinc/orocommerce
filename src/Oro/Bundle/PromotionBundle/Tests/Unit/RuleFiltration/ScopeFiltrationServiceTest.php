@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\RuleFiltration;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\ScopeFiltrationService;
@@ -48,7 +49,7 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getScopes')
-            ->willReturn([$scope]);
+            ->willReturn(new ArrayCollection([$scope]));
 
         $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria([], []);
 
@@ -72,7 +73,7 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $promotion = $this->createMock(PromotionDataInterface::class);
         $promotion->expects($this->any())
             ->method('getScopes')
-            ->willReturn([$scope]);
+            ->willReturn(new ArrayCollection([$scope]));
 
         /** @var Scope $scope2 */
         $scope2 = $this->getEntity(Scope::class, ['id' => 5]);
@@ -82,7 +83,7 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $promotion2 = $this->createMock(PromotionDataInterface::class);
         $promotion2->expects($this->any())
             ->method('getScopes')
-            ->willReturn([$scope2, $scope3]);
+            ->willReturn(new ArrayCollection([$scope2, $scope3]));
 
         $context[ContextDataConverterInterface::CRITERIA] = new ScopeCriteria([], []);
 
@@ -104,11 +105,18 @@ class ScopeFiltrationServiceTest extends \PHPUnit_Framework_TestCase
                 return false;
             });
 
+        $expected = [$promotion2];
         $this->filtrationService->expects($this->once())
             ->method('getFilteredRuleOwners')
-            ->with([$promotion2], $context)
-            ->willReturn([$promotion2]);
+            ->with($expected, $context)
+            ->willReturnArgument(0);
 
-        $this->scopeFiltrationService->getFilteredRuleOwners([$promotion, $promotion2], $context);
+        $this->assertEquals(
+            $expected,
+            $this->scopeFiltrationService->getFilteredRuleOwners(
+                [$promotion, $promotion2],
+                $context
+            )
+        );
     }
 }
