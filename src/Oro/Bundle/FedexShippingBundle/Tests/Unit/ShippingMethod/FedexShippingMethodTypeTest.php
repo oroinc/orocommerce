@@ -5,7 +5,7 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
@@ -20,7 +20,7 @@ class FedexShippingMethodTypeTest extends TestCase
     const LABEL = 'label';
 
     /**
-     * @var FedexRequestFromShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRequestByContextAndSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $rateServiceRequestFactory;
 
@@ -31,7 +31,7 @@ class FedexShippingMethodTypeTest extends TestCase
 
     protected function setUp()
     {
-        $this->rateServiceRequestFactory = $this->createMock(FedexRequestFromShippingContextFactoryInterface::class);
+        $this->rateServiceRequestFactory = $this->createMock(FedexRequestByContextAndSettingsFactoryInterface::class);
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
     }
 

@@ -70,17 +70,10 @@ class FedexRateServiceSoapClientTest extends TestCase
         $requestData = ['data'];
         $request = new FedexRequest($requestData);
 
-        $settings = $this->createMock(SoapClientSettingsInterface::class);
-
-        $this->soapSettingsFactory
-            ->expects(static::once())
-            ->method('create')
-            ->willReturn($settings);
-
         $this->soapClient
             ->expects(static::once())
             ->method('send')
-            ->with($settings, $requestData)
+            ->with($this->soapSettings, $requestData)
             ->willThrowException(new \Exception());
 
         $this->responseFactory

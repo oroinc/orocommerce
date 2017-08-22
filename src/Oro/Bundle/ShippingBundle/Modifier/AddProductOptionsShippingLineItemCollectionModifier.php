@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Modifier;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Collection\ProductShippingOptionsGroupedByProductAndUnitCollection;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface;
@@ -18,9 +19,9 @@ class AddProductOptionsShippingLineItemCollectionModifier implements ShippingLin
     private $collectionFactory;
 
     /**
-     * @var ProductShippingOptionsRepository
+     * @var DoctrineHelper
      */
-    private $optionsRepository;
+    private $doctrineHelper;
 
     /**
      * @var ShippingLineItemBuilderFactoryInterface
@@ -29,16 +30,16 @@ class AddProductOptionsShippingLineItemCollectionModifier implements ShippingLin
 
     /**
      * @param ShippingLineItemCollectionFactoryInterface $collectionFactory
-     * @param ProductShippingOptionsRepository           $optionsRepository
+     * @param DoctrineHelper                             $doctrineHelper
      * @param ShippingLineItemBuilderFactoryInterface    $lineItemBuilderFactory
      */
     public function __construct(
         ShippingLineItemCollectionFactoryInterface $collectionFactory,
-        ProductShippingOptionsRepository $optionsRepository,
+        DoctrineHelper $doctrineHelper,
         ShippingLineItemBuilderFactoryInterface $lineItemBuilderFactory
     ) {
         $this->collectionFactory = $collectionFactory;
-        $this->optionsRepository = $optionsRepository;
+        $this->doctrineHelper = $doctrineHelper;
         $this->lineItemBuilderFactory = $lineItemBuilderFactory;
     }
 
@@ -111,7 +112,7 @@ class AddProductOptionsShippingLineItemCollectionModifier implements ShippingLin
         ShippingLineItemCollectionInterface $lineItems
     ): ProductShippingOptionsGroupedByProductAndUnitCollection {
         $info = $this->getProductAndUnitInfo($lineItems);
-        $options = $this->optionsRepository->findByProductsAndProductUnits(
+        $options = $this->getProductShippingOptionsRepository()->findByProductsAndProductUnits(
             array_column($info, 'product'),
             array_column($info, 'productUnit')
         );
@@ -142,5 +143,15 @@ class AddProductOptionsShippingLineItemCollectionModifier implements ShippingLin
         }
 
         return $productsInfo;
+    }
+
+    /**
+     * @return ProductShippingOptionsRepository
+     */
+    private function getProductShippingOptionsRepository(): ProductShippingOptionsRepository
+    {
+        return $this->doctrineHelper
+            ->getEntityManager(ProductShippingOptions::class)
+            ->getRepository(ProductShippingOptions::class);
     }
 }

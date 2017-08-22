@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Modifier;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
@@ -28,9 +30,9 @@ class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
     private $collectionFactory;
 
     /**
-     * @var ProductShippingOptionsRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $optionsRepository;
+    private $doctrineHelper;
 
     /**
      * @var BasicShippingLineItemBuilderFactory
@@ -45,12 +47,12 @@ class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
     protected function setUp()
     {
         $this->collectionFactory = new DoctrineShippingLineItemCollectionFactory();
-        $this->optionsRepository = $this->createMock(ProductShippingOptionsRepository::class);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->lineItemBuilderFactory = new BasicShippingLineItemBuilderFactory();
 
         $this->modifier = new AddProductOptionsShippingLineItemCollectionModifier(
             $this->collectionFactory,
-            $this->optionsRepository,
+            $this->doctrineHelper,
             $this->lineItemBuilderFactory
         );
     }
@@ -110,10 +112,7 @@ class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
             $this->createShippingOption(5, 'each', null, Weight::create(6)),
         ];
 
-        $this->optionsRepository
-            ->expects(static::once())
-            ->method('findByProductsAndProductUnits')
-            ->willReturn($productOptions);
+        $this->setFindOptionsByProductsAndProductUnitsExpectations($productOptions);
 
         static::assertEquals(
             new DoctrineShippingLineItemCollection([
@@ -149,6 +148,29 @@ class AddProductOptionsShippingLineItemCollectionModifierTest extends TestCase
             ]),
             $this->modifier->modify($lineItemCollection)
         );
+    }
+
+    /**
+     * @param array $productOptions
+     */
+    private function setFindOptionsByProductsAndProductUnitsExpectations(array $productOptions)
+    {
+        $repository = $this->createMock(ProductShippingOptionsRepository::class);
+        $repository
+            ->expects(static::once())
+            ->method('findByProductsAndProductUnits')
+            ->willReturn($productOptions);
+
+        $entityManager = $this->createMock(EntityManager::class);
+        $entityManager
+            ->expects(static::once())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $this->doctrineHelper
+            ->expects(static::once())
+            ->method('getEntityManager')
+            ->willReturn($entityManager);
     }
 
     /**

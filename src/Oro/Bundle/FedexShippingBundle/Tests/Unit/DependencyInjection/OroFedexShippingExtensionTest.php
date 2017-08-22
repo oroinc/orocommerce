@@ -36,7 +36,6 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.factory.fedex_packages_by_line_items_and_package_settings',
             'oro_fedex_shipping.builder.shipping_packages_by_line_item',
             'oro_fedex_shipping.client.rate_service.soap_settings',
-            'oro_fedex_shipping.provider.line_items_with_shipping_options',
             'oro_fedex_shipping.client.rate_service.connection_request.factory',
             'oro_fedex_shipping.cache.cache_key_factory',
             'oro_fedex_shipping.cache.response',

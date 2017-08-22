@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 class FedexShippingMethodType implements ShippingMethodTypeInterface
 {
     /**
-     * @var FedexRequestFromShippingContextFactoryInterface
+     * @var FedexRequestByContextAndSettingsFactoryInterface
      */
     private $rateServiceRequestFactory;
 
@@ -37,14 +37,14 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
     private $settings;
 
     /**
-     * @param FedexRequestFromShippingContextFactoryInterface $rateServiceRequestFactory
-     * @param FedexRateServiceBySettingsClientInterface       $rateServiceClient
-     * @param string                                          $identifier
-     * @param string                                          $label
-     * @param FedexIntegrationSettings                        $settings
+     * @param FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory
+     * @param FedexRateServiceBySettingsClientInterface        $rateServiceClient
+     * @param string                                           $identifier
+     * @param string                                           $label
+     * @param FedexIntegrationSettings                         $settings
      */
     public function __construct(
-        FedexRequestFromShippingContextFactoryInterface $rateServiceRequestFactory,
+        FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient,
         string $identifier,
         string $label,

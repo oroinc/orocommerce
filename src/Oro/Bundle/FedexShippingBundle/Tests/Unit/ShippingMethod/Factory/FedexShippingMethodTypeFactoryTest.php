@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\ShippingMethod\Factory;
 
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\Factory\FedexShippingMethodTypeFactory;
@@ -23,7 +23,7 @@ class FedexShippingMethodTypeFactoryTest extends TestCase
     private $identifierGenerator;
 
     /**
-     * @var FedexRequestFromShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRequestByContextAndSettingsFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $rateServiceRequestFactory;
 
@@ -40,7 +40,7 @@ class FedexShippingMethodTypeFactoryTest extends TestCase
     protected function setUp()
     {
         $this->identifierGenerator = $this->createMock(FedexMethodTypeIdentifierGeneratorInterface::class);
-        $this->rateServiceRequestFactory = $this->createMock(FedexRequestFromShippingContextFactoryInterface::class);
+        $this->rateServiceRequestFactory = $this->createMock(FedexRequestByContextAndSettingsFactoryInterface::class);
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
 
         $this->factory = new FedexShippingMethodTypeFactory(

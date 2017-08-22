@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
-use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestFromShippingContextFactoryInterface;
+use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\FedexShippingBundle\Form\Type\FedexShippingMethodOptionsType;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -24,7 +24,7 @@ class FedexShippingMethod implements
     const TRACKING_URL = 'https://www.fedex.com/apps/fedextrack/?action=track&trackingnumber=';
 
     /**
-     * @var FedexRequestFromShippingContextFactoryInterface
+     * @var FedexRequestByContextAndSettingsFactoryInterface
      */
     private $rateServiceRequestFactory;
 
@@ -64,17 +64,17 @@ class FedexShippingMethod implements
     private $enabled;
 
     /**
-     * @param FedexRequestFromShippingContextFactoryInterface $rateServiceRequestFactory
-     * @param FedexRateServiceBySettingsClientInterface       $rateServiceClient
-     * @param string                                          $identifier
-     * @param string                                          $label
-     * @param string|null                                     $iconPath
-     * @param bool                                            $enabled
-     * @param FedexIntegrationSettings                        $settings,
-     * @param ShippingMethodTypeInterface[]                   $types
+     * @param FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory
+     * @param FedexRateServiceBySettingsClientInterface        $rateServiceClient
+     * @param string                                           $identifier
+     * @param string                                           $label
+     * @param string|null                                      $iconPath
+     * @param bool                                             $enabled
+     * @param FedexIntegrationSettings                         $settings,
+     * @param ShippingMethodTypeInterface[]                    $types
      */
     public function __construct(
-        FedexRequestFromShippingContextFactoryInterface $rateServiceRequestFactory,
+        FedexRequestByContextAndSettingsFactoryInterface $rateServiceRequestFactory,
         FedexRateServiceBySettingsClientInterface $rateServiceClient,
         string $identifier,
         string $label,
