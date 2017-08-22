@@ -205,7 +205,14 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
                 'initialResults' => [$basicInitialResults],
                 'isImageType' => true,
                 'productImage' => [1 => $productImage],
-                'expectedResults' => [array_merge($basicInitialResults, ['filePath' => ['testDimension' => 'testUrl']])],
+                'expectedResults' => [
+                    array_merge(
+                        $basicInitialResults,
+                        [
+                            'filePath' => ['testDimension' => 'testUrl']
+                        ]
+                    )
+                ],
             ],
             [
                 'initialResults' => [$basicInitialResults, $basicInitialResults],
@@ -218,6 +225,4 @@ class ProcessImagePathsTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
-
-
 }

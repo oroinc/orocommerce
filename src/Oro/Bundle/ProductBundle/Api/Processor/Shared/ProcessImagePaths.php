@@ -90,8 +90,8 @@ class ProcessImagePaths implements ProcessorInterface
         $fieldConfig = new EntityDefinitionFieldConfig();
         $fieldConfig->set('data_type', 'string');
         $config->addField(self::CONFIG_FILE_PATH, $fieldConfig);
-        // Set a new config key and set metadata to null to trigger a new metadata refresh, otherwise the new field won't
-        // be populated in the response, as metadata is cached
+        // Set a new config key and set metadata to null to trigger a new metadata refresh,
+        // otherwise the new field won't be populated in the response, as metadata is cached
         $config->setKey($config->getKey() . 'new');
         $context->setConfig($config);
         $context->setMetadata(null);

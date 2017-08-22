@@ -149,7 +149,7 @@ class ProductImage extends ExtendProductImage
      */
     public function addType($type)
     {
-        if ($type instanceof ProductImageType){
+        if ($type instanceof ProductImageType) {
             $type = $type->getType();
         }
 
@@ -167,7 +167,7 @@ class ProductImage extends ExtendProductImage
      */
     public function removeType($type)
     {
-        if ($type instanceof ProductImageType){
+        if ($type instanceof ProductImageType) {
             $type = $type->getType();
         }
 

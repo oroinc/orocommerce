@@ -434,10 +434,14 @@ class ProductApiTest extends RestJsonApiTestCase
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->delete(
-            ['entity' => 'products', 'id' => (string) $product->getId()]);
+            [
+                'entity' => 'products',
+                'id' => (string) $product->getId()
+            ]
+        );
 
         $this->assertNull(
-            $this->getEntityManager()->find(Product::class,$product->getId())
+            $this->getEntityManager()->find(Product::class, $product->getId())
         );
     }
 }

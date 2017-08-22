@@ -65,9 +65,9 @@ class ProductImageType
      */
     public function setType($type)
     {
-       $this->type = $type;
+        $this->type = $type;
 
-       return $this;
+        return $this;
     }
 
     /**
