@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Discount;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 
 /**
  * Discount services MUST BE registered with shared: false
@@ -26,6 +26,7 @@ interface DiscountInterface
 
     /**
      * @param array|Product[] $products
+     * @return $this
      */
     public function setMatchingProducts(array $products);
 
@@ -66,14 +67,15 @@ interface DiscountInterface
     /**
      * Get related promotion
      *
-     * @return Promotion|null
+     * @return PromotionDataInterface|null
      */
     public function getPromotion();
 
     /**
      * Set related promotion
      *
-     * @param Promotion $promotion
+     * @param PromotionDataInterface $promotion
+     * @return $this
      */
-    public function setPromotion(Promotion $promotion);
+    public function setPromotion(PromotionDataInterface $promotion);
 }

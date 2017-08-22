@@ -72,7 +72,7 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     protected $promotion;
 
     /**
-     * @ORM\Column(name="source_promotion_id", type="integer", options={"default"=0})
+     * @ORM\Column(name="source_promotion_id", type="integer", nullable=true))
      * @var int
      */
     protected $sourcePromotionId;

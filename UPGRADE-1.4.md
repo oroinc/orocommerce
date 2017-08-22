@@ -41,6 +41,19 @@ SaleBundle
 - Class `Oro\Bundle\SaleBundle\Entity\Quote`
     - now implements `Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface` (corresponding methods have been implemented before, thus it's just a formal change)
 
+PromotionBundle
+-------------
+- Interface `Oro\Bundle\PromotionBundle\Discount\DiscountInterface` 
+    - now is fluent, please make sure that all classes which implement it return `$this` for `setPromotion` and  `setMatchingProducts` methods
+    - `getPromotion()` method return value type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
+    - `setPromotion()` method parameter's type changed from `Oro\Bundle\PromotionBundle\Entity\Promotion` to `Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface`
+- Class `Oro\Bundle\PromotionBundle\Executor\PromotionExecutor`
+    - changed signature of `__construct` method. Removed dependencies are first `Oro\Bundle\PromotionBundle\Provider\PromotionProvider $promotionProvider`,
+     third `Oro\Bundle\PromotionBundle\DiscountDiscountFactory $discountFactory`,
+     fifth `Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider $matchingProductsProvider`. Added dependency on newly added interface `Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface $promotionDiscountsProvider`.
+     
+
+
 PricingBundle
 -------------
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\BaseProductPriceRepository` got an abstract method:

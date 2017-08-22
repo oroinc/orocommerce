@@ -323,11 +323,9 @@ services:
     oro_promotion.promotion_executor:
         class: Oro\Bundle\PromotionBundle\Executor\PromotionExecutor
         arguments:
-            - '@oro_promotion.promotion_provider'
             - '@oro_promotion.discount.context_converter.registry'
-            - '@oro_promotion.discount_factory'
             - '@oro_promotion.discount.strategy_provider'
-            - '@oro_promotion.provider.matching_products_provider'
+            - '@oro_promotion.provider.promotion_discounts_provider'
 
     oro_promotion.provider.matching_products_provider:
         class: Oro\Bundle\PromotionBundle\Provider\MatchingProductsProvider
@@ -616,3 +614,18 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
+
+    oro_promotion.provider.promotion_discounts_provider:
+        class: Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProvider
+        public: false
+        arguments:
+            - '@oro_promotion.promotion_provider'
+            - '@oro_promotion.discount_factory'
+            - '@oro_promotion.provider.matching_products_provider'
+
+    oro_promotion.provider.disabled_promotion_discounts_provider_decorator:
+        class: Oro\Bundle\PromotionBundle\Provider\DisabledPromotionDiscountProviderDecorator
+        public: false
+        decorates: oro_promotion.provider.promotion_discounts_provider
+        arguments:
+            - '@oro_promotion.provider.disabled_promotion_discounts_provider_decorator.inner'

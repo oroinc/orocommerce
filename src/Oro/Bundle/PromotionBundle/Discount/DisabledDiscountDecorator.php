@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Discount;
 
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 
 /**
  * Decorates discount to make it's amount zero (i.e. disable it).
@@ -97,7 +97,7 @@ class DisabledDiscountDecorator implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function setPromotion(Promotion $promotion)
+    public function setPromotion(PromotionDataInterface $promotion)
     {
         $this->discount->setPromotion($promotion);
     }
