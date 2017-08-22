@@ -12,7 +12,6 @@ class RuleNormalizer implements NormalizerInterface
 {
     const REQUIRED_OPTIONS = [
         'name',
-        'expression',
         'sortOrder',
         'isStopProcessing',
     ];
@@ -42,7 +41,7 @@ class RuleNormalizer implements NormalizerInterface
     public function denormalize(array $ruleData)
     {
         $resolver = $this->getOptionResolver();
-        $resolver->resolve($ruleData);
+        $ruleData = $resolver->resolve($ruleData);
 
         $rule = new Rule();
         $rule->setName($ruleData['name'])
@@ -62,9 +61,13 @@ class RuleNormalizer implements NormalizerInterface
         $resolver = new OptionsResolver();
         $resolver->setRequired(self::REQUIRED_OPTIONS);
 
+        $resolver->setDefaults([
+            'expression' => null
+        ]);
+
         $resolver->setAllowedTypes([
             'name' => ['string'],
-            'expression' => ['string'],
+            'expression' => ['string', 'NULL'],
             'sortOrder' => ['integer'],
             'isStopProcessing' => ['boolean']
         ]);

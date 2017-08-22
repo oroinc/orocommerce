@@ -38,24 +38,45 @@ class RuleNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testDenormalize()
+    /**
+     * @dataProvider denormalizeDataProvider
+     *
+     * @param $ruleData
+     * @param $expectedRule
+     */
+    public function testDenormalize($ruleData, $expectedRule)
     {
-        $ruleData = [
-            'name' => 'Promo',
-            'expression' => 'currency = "USD"',
-            'sortOrder' => 10,
-            'isStopProcessing' => false,
+        $actualRule = $this->normalizer->denormalize($ruleData);
+        $this->assertEquals($expectedRule, $actualRule);
+    }
+
+    public function denormalizeDataProvider()
+    {
+        return [
+            'usual case' => [
+                'ruleData' => [
+                    'name' => 'Promo',
+                    'expression' => 'currency = "USD"',
+                    'sortOrder' => 10,
+                    'isStopProcessing' => false,
+                ],
+                'expectedRule' => (new Rule())->setName('Promo')
+                    ->setExpression('currency = "USD"')
+                    ->setSortOrder(10)
+                    ->setStopProcessing(false)
+            ],
+            'expression optional' => [
+                'ruleData' => [
+                    'name' => 'Promo',
+                    'sortOrder' => 10,
+                    'isStopProcessing' => false,
+                ],
+                'expectedRule' => (new Rule())->setName('Promo')
+                    ->setExpression(null)
+                    ->setSortOrder(10)
+                    ->setStopProcessing(false)
+            ]
         ];
-
-        $expected = new Rule();
-        $expected->setName('Promo')
-            ->setExpression('currency = "USD"')
-            ->setSortOrder(10)
-            ->setStopProcessing(false);
-
-        $actual = $this->normalizer->denormalize($ruleData);
-
-        $this->assertEquals($expected, $actual);
     }
 
     public function testRequiredOptionsException()
@@ -64,7 +85,7 @@ class RuleNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $this->expectException(MissingOptionsException::class);
         $this->expectExceptionMessage(
-            'The required options "expression", "isStopProcessing", "name", "sortOrder" are missing.'
+            'The required options "isStopProcessing", "name", "sortOrder" are missing.'
         );
 
         $this->normalizer->denormalize($ruleData);
