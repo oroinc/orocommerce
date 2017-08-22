@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ShippingContextTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,6 +53,11 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
      */
     private $sourceEntityMock;
 
+    /**
+     * @var Website|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteMock;
+
     protected function setUp()
     {
         $this->customerMock = $this->getMockBuilder(Customer::class)
@@ -70,6 +76,7 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         $this->sourceEntityMock = $this->getMockBuilder(Checkout::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->websiteMock = $this->createMock(Website::class);
     }
 
     public function testConstructionAndGetters()
@@ -90,6 +97,7 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
             ShippingContext::FIELD_SUBTOTAL => $this->subtotalMock,
             ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
+            ShippingContext::FIELD_WEBSITE => $this->websiteMock,
         ];
 
         $shippingContext = new ShippingContext($params);
@@ -106,6 +114,7 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
             ShippingContext::FIELD_SUBTOTAL => $shippingContext->getSubtotal(),
             ShippingContext::FIELD_SOURCE_ENTITY => $shippingContext->getSourceEntity(),
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $shippingContext->getSourceEntityIdentifier(),
+            ShippingContext::FIELD_WEBSITE => $shippingContext->getWebsite(),
         ];
 
         $this->assertEquals($params, $getterValues);

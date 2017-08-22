@@ -300,7 +300,6 @@ class CheckoutActionGroupsTest extends FrontendActionTestCase
 
     public function testFinishCheckout()
     {
-        $this->markTestIncomplete('Randomly failing test. TODO: BB-11413');
         /* @var $checkout Checkout */
         $checkout = $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1);
 
