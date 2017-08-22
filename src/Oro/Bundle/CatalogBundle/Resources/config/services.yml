@@ -121,7 +121,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier'
         public: false
         arguments:
-            - '@oro_commerce_entity.extra_insert_entity_storage'
+            - '@oro_entity.doctrine_helper'
 
     oro_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener'

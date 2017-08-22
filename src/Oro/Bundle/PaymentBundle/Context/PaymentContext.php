@@ -17,6 +17,7 @@ class PaymentContext extends ParameterBag implements PaymentContextInterface
     const FIELD_SUBTOTAL = 'subtotal';
     const FIELD_SOURCE_ENTITY = 'source_entity';
     const FIELD_SOURCE_ENTITY_ID = 'source_entity_id';
+    const FIELD_WEBSITE = 'website';
 
     /**
      * @param array $params
@@ -112,5 +113,13 @@ class PaymentContext extends ParameterBag implements PaymentContextInterface
     public function getSourceEntityIdentifier()
     {
         return $this->get(self::FIELD_SOURCE_ENTITY_ID);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getWebsite()
+    {
+        return $this->get(self::FIELD_WEBSITE);
     }
 }
