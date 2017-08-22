@@ -72,10 +72,14 @@
     }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: $site-width) {
     .featured-categories {
         .embedded-list {
             margin: 0 -20px;
+
+            &__item {
+                padding: 0 20px;
+            }
         }
     }
 }

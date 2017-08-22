@@ -1,7 +1,5 @@
 @fixture-OroProductBundle:product_listing_images.yml
 @regression
-@skip
-# todo: BB-11440
 Feature: Display product listing image instead of main image on the home page
 
   Scenario: Check that main image is displayed if there's no listing image

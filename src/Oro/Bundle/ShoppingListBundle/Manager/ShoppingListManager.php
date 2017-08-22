@@ -181,6 +181,7 @@ class ShoppingListManager
         $duplicate = $repository->findDuplicate($lineItem);
         if ($duplicate instanceof LineItem && $shoppingList->getId()) {
             $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
+            $em->remove($lineItem);
         } else {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
