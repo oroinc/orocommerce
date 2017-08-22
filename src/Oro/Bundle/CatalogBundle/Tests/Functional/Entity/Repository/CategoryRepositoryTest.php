@@ -171,4 +171,15 @@ class CategoryRepositoryTest extends WebTestCase
         $productIds = $this->repository->getProductIdsByCategories([]);
         $this->assertCount(0, $productIds);
     }
+
+    public function testUpdateMaterializedPath()
+    {
+        /** @var Category $category1 */
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $path = '1_2_3_4';
+        $category1->setMaterializedPath($path);
+        $this->repository->updateMaterializedPath($category1);
+        $category = $this->repository->findOneBy(['id' => $category1->getId(), 'materializedPath' => $path]);
+        static::assertNotNull($category);
+    }
 }

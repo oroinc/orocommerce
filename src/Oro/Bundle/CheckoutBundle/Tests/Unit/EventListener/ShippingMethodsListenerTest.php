@@ -11,12 +11,12 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProviderInterface;
+use Oro\Bundle\ShippingBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
 class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 {
     /**
-     * @var ShippingMethodsConfigsRulesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configsRuleProvider;
 
@@ -29,7 +29,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
     {
         parent::setUp();
 
-        $this->configsRuleProvider = $this->createMock(ShippingMethodsConfigsRulesProviderInterface::class);
+        $this->configsRuleProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);
 
         $this->contextFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
@@ -148,7 +148,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
      */
     protected function getConfigRuleProviderMethod()
     {
-        return 'getFilteredShippingMethodsConfigsRegardlessDestination';
+        return 'getShippingMethodsConfigsRules';
     }
 
     protected function getAddressToCheck(Checkout $checkout)

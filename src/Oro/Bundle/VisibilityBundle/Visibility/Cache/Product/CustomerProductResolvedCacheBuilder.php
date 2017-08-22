@@ -8,8 +8,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
@@ -39,7 +39,7 @@ class CustomerProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder i
         $hasCustomerProductVisibilityResolved = $er->hasEntity($where);
 
         if (!$hasCustomerProductVisibilityResolved
-            && $selectedVisibility !== CustomerProductVisibility::ACCOUNT_GROUP) {
+            && $selectedVisibility !== CustomerProductVisibility::CUSTOMER_GROUP) {
             $insert = true;
         }
 
@@ -63,7 +63,7 @@ class CustomerProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder i
                 'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
                 'category' => null,
             ];
-        } elseif ($selectedVisibility === CustomerProductVisibility::ACCOUNT_GROUP) {
+        } elseif ($selectedVisibility === CustomerProductVisibility::CUSTOMER_GROUP) {
             if ($hasCustomerProductVisibilityResolved) {
                 $delete = true;
             }

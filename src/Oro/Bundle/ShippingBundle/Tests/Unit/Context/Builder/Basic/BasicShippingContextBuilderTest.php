@@ -14,6 +14,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,6 +73,11 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
      */
     private $defaultShippingOriginMock;
 
+    /**
+     * @var Website|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteMock;
+
     protected function setUp()
     {
         $this->customerMock = $this->getMockBuilder(Customer::class)
@@ -99,6 +105,7 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
         $this->defaultShippingOriginMock = $this->getMockBuilder(ShippingOrigin::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->websiteMock = $this->createMock(Website::class);
     }
 
     public function testFullContextBuilding()
@@ -142,7 +149,8 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->setCustomer($this->customerMock)
             ->setCustomerUser($this->customerUserMock)
             ->setPaymentMethod($paymentMethod)
-            ->setShippingOrigin($this->shippingOriginMock);
+            ->setShippingOrigin($this->shippingOriginMock)
+            ->setWebsite($this->websiteMock);
 
         $expectedContext = $this->getExpectedFullContext(
             $paymentMethod,
@@ -234,7 +242,8 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
             ->setBillingAddress($this->billingAddressMock)
             ->setCustomer($this->customerMock)
             ->setCustomerUser($this->customerUserMock)
-            ->setPaymentMethod($paymentMethod);
+            ->setPaymentMethod($paymentMethod)
+            ->setWebsite($this->websiteMock);
 
         $expectedContext = $this->getExpectedFullContext(
             $paymentMethod,
@@ -249,14 +258,14 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $paymentMethod
-     * @param $currency
-     * @param $entityId
-     * @param $shippingOrigin
+     * @param string           $paymentMethod
+     * @param string           $currency
+     * @param int              $entityId
+     * @param AddressInterface $shippingOrigin
      *
      * @return ShippingContext
      */
-    private function getExpectedFullContext($paymentMethod, $currency, $entityId, $shippingOrigin)
+    private function getExpectedFullContext($paymentMethod, $currency, $entityId, AddressInterface $shippingOrigin)
     {
         $params = [
             ShippingContext::FIELD_CUSTOMER => $this->customerMock,
@@ -270,19 +279,19 @@ class BasicShippingContextBuilderTest extends \PHPUnit_Framework_TestCase
             ShippingContext::FIELD_SUBTOTAL => $this->subtotalMock,
             ShippingContext::FIELD_SOURCE_ENTITY => $this->sourceEntityMock,
             ShippingContext::FIELD_SOURCE_ENTITY_ID => $entityId,
+            ShippingContext::FIELD_WEBSITE => $this->websiteMock,
         ];
 
         return new ShippingContext($params);
     }
 
     /**
-     * @param $currency
-     * @param $entityId
-     * @param $shippingOrigin
+     * @param int              $entityId
+     * @param AddressInterface $shippingOrigin
      *
      * @return ShippingContext
      */
-    private function getExpectedContextWithoutOptionalFields($entityId, $shippingOrigin)
+    private function getExpectedContextWithoutOptionalFields($entityId, AddressInterface $shippingOrigin)
     {
         $params = [
             ShippingContext::FIELD_LINE_ITEMS => $this->lineItemsCollectionMock,

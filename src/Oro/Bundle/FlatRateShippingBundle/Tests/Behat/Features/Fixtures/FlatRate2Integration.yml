@@ -1,6 +1,6 @@
 parameters:
   flat_rate_type: 'flat_rate'
-  flat_rate2_label: 'Flat Rate'
+  flat_rate2_label: 'Flat Rate 2'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     flatRate2Label:
