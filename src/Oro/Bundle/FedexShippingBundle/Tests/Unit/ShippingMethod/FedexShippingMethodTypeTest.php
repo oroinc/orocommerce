@@ -45,7 +45,25 @@ class FedexShippingMethodTypeTest extends TestCase
         static::assertSame(FedexShippingMethodOptionsType::class, $type->getOptionsConfigurationFormType());
     }
 
-    public function testCalculatePriceIsNull()
+    public function testCalculatePriceNoRequest()
+    {
+        $settings = new FedexIntegrationSettings();
+        $context = $this->createMock(ShippingContextInterface::class);
+
+        $this->rateServiceRequestFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($settings, $context)
+            ->willReturn(null);
+
+        $this->rateServiceClient
+            ->expects(static::never())
+            ->method('send');
+
+        static::assertNull($this->createShippingMethodType($settings)->calculatePrice($context, [], []));
+    }
+
+    public function testCalculatePricesHasNoNeededPrice()
     {
         $prices = [
             'other' => Price::create(1, ''),

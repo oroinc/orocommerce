@@ -84,16 +84,39 @@ class FedexShippingMethodTest extends TestCase
         static::assertNull($method->getTrackingLink('000'));
     }
 
+    public function testCalculatePricesNoRequest()
+    {
+        $settings = new FedexIntegrationSettings();
+        $context = $this->createMock(ShippingContextInterface::class);
+
+        $this->rateServiceRequestFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($settings, $context)
+            ->willReturn(null);
+
+        $this->rateServiceClient
+            ->expects(static::never())
+            ->method('send');
+
+        static::assertSame(
+            [],
+            $this->createShippingMethod($settings, [])->calculatePrices($context, [], [])
+        );
+    }
+
     public function testCalculatePrices()
     {
         $settings = new FedexIntegrationSettings();
         $types = [
             $this->createMethodType('test1'),
             $this->createMethodType('test2'),
+            $this->createMethodType('test3'),
         ];
         $prices = [
             'test1' => Price::create(12.6, 'USD'),
             'test2' => Price::create(10.3, 'USD'),
+            'test4' => Price::create(8.9, 'USD'),
         ];
         $method = $this->createShippingMethod($settings, $types);
         $context = $this->createMock(ShippingContextInterface::class);

@@ -19,4 +19,22 @@ class FedexRateServiceResponseTest extends TestCase
         static::assertSame($severityCode, $response->getSeverityCode());
         static::assertSame($prices, $response->getPrices());
     }
+
+    public function testIsSuccessful()
+    {
+        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_SUCCESS, 0);
+        static::assertTrue($response->isSuccessful());
+
+        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_NOTE, 0);
+        static::assertTrue($response->isSuccessful());
+
+        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_WARNING, 0);
+        static::assertFalse($response->isSuccessful());
+
+        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_ERROR, 0);
+        static::assertFalse($response->isSuccessful());
+
+        $response = new FedexRateServiceResponse(FedexRateServiceResponse::SEVERITY_FAILURE, 0);
+        static::assertFalse($response->isSuccessful());
+    }
 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
@@ -176,25 +177,31 @@ class FedexShippingMethod implements
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
-        $response = $this->rateServiceClient->send(
-            $this->rateServiceRequestFactory->create($this->settings, $context),
-            $this->settings
-        );
-
-        $optionsDefaults = [static::OPTION_SURCHARGE => 0];
-        $methodOptions = array_merge($optionsDefaults, $methodOptions);
-
-        $prices = [];
-        foreach ($response->getPrices() as $typeId => $price) {
-            $typeOptions = array_merge($optionsDefaults, $optionsByTypes[$typeId]);
-            $prices[$typeId] = $price->setValue(array_sum([
-                (float)$price->getValue(),
-                (float)$methodOptions[static::OPTION_SURCHARGE],
-                (float)$typeOptions[static::OPTION_SURCHARGE]
-            ]));
+        $request = $this->rateServiceRequestFactory->create($this->settings, $context);
+        if (!$request) {
+            return [];
         }
 
-        return $prices;
+        $prices = $this->rateServiceClient->send($request, $this->settings)->getPrices();
+
+        $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
+
+        $result = [];
+        foreach ($optionsByTypes as $typeId => $option) {
+            if (!array_key_exists($typeId, $prices)) {
+                continue;
+            }
+
+            $price = $prices[$typeId];
+            $typeSurcharge = $this->getSurchargeFromOptions($option);
+
+            $result[$typeId] = Price::create(
+                (float) $price->getValue() + $methodSurcharge + $typeSurcharge,
+                $price->getCurrency()
+            );
+        }
+
+        return $result;
     }
 
     /**
@@ -221,5 +228,15 @@ class FedexShippingMethod implements
             '/\b((98\d\d\d\d\d?\d\d\d\d|98\d\d) ?\d\d\d\d ?\d\d\d\d( ?\d\d\d)?)\b/',
             '/^[0-9]{15}$/',
         ];
+    }
+
+    /**
+     * @param array $option
+     *
+     * @return float
+     */
+    private function getSurchargeFromOptions(array $option): float
+    {
+        return (float) $option[static::OPTION_SURCHARGE];
     }
 }

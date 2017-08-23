@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FedexShippingBundle\ShippingMethod;
 
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\Factory\FedexRequestByContextAndSettingsFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
@@ -94,28 +95,33 @@ class FedexShippingMethodType implements ShippingMethodTypeInterface
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
-        $response = $this->rateServiceClient->send(
-            $this->rateServiceRequestFactory->create($this->settings, $context),
-            $this->settings
-        );
+        $request = $this->rateServiceRequestFactory->create($this->settings, $context);
+        if (!$request) {
+            return null;
+        }
 
-        $prices = $response->getPrices();
+        $prices = $this->rateServiceClient->send($request, $this->settings)->getPrices();
         if (!array_key_exists($this->getIdentifier(), $prices)) {
             return null;
         }
 
         $price = $prices[$this->getIdentifier()];
+        $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
+        $typeSurcharge = $this->getSurchargeFromOptions($typeOptions);
 
-        $optionsDefaults = [
-            FedexShippingMethod::OPTION_SURCHARGE => 0,
-        ];
-        $methodOptions = array_merge($optionsDefaults, $methodOptions);
-        $typeOptions = array_merge($optionsDefaults, $typeOptions);
+        return Price::create(
+            (float) $price->getValue() + $methodSurcharge + $typeSurcharge,
+            $price->getCurrency()
+        );
+    }
 
-        return $price->setValue(array_sum([
-            (float)$price->getValue(),
-            (float)$methodOptions[FedexShippingMethod::OPTION_SURCHARGE],
-            (float)$typeOptions[FedexShippingMethod::OPTION_SURCHARGE]
-        ]));
+    /**
+     * @param array $option
+     *
+     * @return float
+     */
+    private function getSurchargeFromOptions(array $option): float
+    {
+        return (float) $option[FedexShippingMethod::OPTION_SURCHARGE];
     }
 }

@@ -20,4 +20,9 @@ interface FedexRateServiceResponseInterface
      * @return Price[]
      */
     public function getPrices(): array;
+
+    /**
+     * @return bool
+     */
+    public function isSuccessful(): bool;
 }

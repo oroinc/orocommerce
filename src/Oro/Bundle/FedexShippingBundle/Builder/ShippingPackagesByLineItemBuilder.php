@@ -26,7 +26,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
     /**
      * @var ShippingPackageOptionsInterface[]
      */
-    private $packages = [];
+    private $packages;
 
     /**
      * @var ShippingPackageOptionsInterface
@@ -47,6 +47,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
     public function init(FedexPackageSettingsInterface $settings)
     {
         $this->settings = $settings;
+        $this->packages = [];
         
         $this->resetCurrentPackage();
     }

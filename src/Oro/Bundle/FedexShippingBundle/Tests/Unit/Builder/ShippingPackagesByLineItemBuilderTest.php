@@ -118,4 +118,10 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
             $this->builder->getResult()
         );
     }
+
+    public function testBuilderReused()
+    {
+        $this->testAddLineItemDividedByWeight();
+        $this->testAddLineItemDividedByDimensions();
+    }
 }
