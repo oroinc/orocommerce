@@ -121,6 +121,7 @@ services:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig'
 
     oro_shipping.repository.product_shipping_options:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_shipping.entity.product_shipping_options.class%'
@@ -493,3 +494,15 @@ services:
             - ['setLogger', ['@logger']]
         public: false
         lazy: true
+
+    oro_shipping.modifier.add_product_options_to_shipping_line_item_colection:
+        class: 'Oro\Bundle\ShippingBundle\Modifier\AddProductOptionsShippingLineItemCollectionModifier'
+        public: false
+        arguments:
+            - '@oro_shipping.context.doctrine_line_item_collection_factory'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shipping.line_item.factory_basic'
+
+    oro_shipping.factory.shipping_package_options:
+        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactory'
+        public: false

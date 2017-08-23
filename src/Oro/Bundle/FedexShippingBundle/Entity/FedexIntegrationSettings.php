@@ -107,6 +107,13 @@ class FedexIntegrationSettings extends Transport
      */
     private $labels;
 
+    /**
+     * @var \DateTime|null $invalidateCacheAt
+     *
+     * @ORM\Column(name="fedex_invalidate_cache_at", type="datetime")
+     */
+    private $invalidateCacheAt;
+
     public function __construct()
     {
         $this->shippingServices = new ArrayCollection();
@@ -323,5 +330,25 @@ class FedexIntegrationSettings extends Transport
         }
 
         return self::DIMENSION_CM;
+    }
+
+    /**
+     * @param \DateTime|null $invalidateCacheAt
+     *
+     * @return self
+     */
+    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null): self
+    {
+        $this->invalidateCacheAt = $invalidateCacheAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getInvalidateCacheAt()
+    {
+        return $this->invalidateCacheAt;
     }
 }

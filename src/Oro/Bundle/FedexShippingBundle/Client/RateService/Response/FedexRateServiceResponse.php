@@ -5,6 +5,7 @@ namespace Oro\Bundle\FedexShippingBundle\Client\RateService\Response;
 class FedexRateServiceResponse implements FedexRateServiceResponseInterface
 {
     const SEVERITY_SUCCESS = 'SUCCESS';
+    const SEVERITY_NOTE = 'NOTE';
     const SEVERITY_WARNING = 'WARNING';
     const SEVERITY_ERROR = 'ERROR';
     const SEVERITY_FAILURE = 'FAILURE';
@@ -62,5 +63,14 @@ class FedexRateServiceResponse implements FedexRateServiceResponseInterface
     public function getPrices(): array
     {
         return $this->prices;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSuccessful(): bool
+    {
+        return $this->getSeverityType() === FedexRateServiceResponse::SEVERITY_SUCCESS ||
+            $this->getSeverityType() === FedexRateServiceResponse::SEVERITY_NOTE;
     }
 }

@@ -67,6 +67,11 @@ class AddIntegrationSettingsMigration implements Migration
         $table->addColumn('fedex_meter_number', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_pickup_type', 'string', ['notnull' => false, 'length' => 100]);
         $table->addColumn('fedex_unit_of_weight', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn(
+            'fedex_invalidate_cache_at',
+            'datetime',
+            ['notnull' => false, 'comment' => '(DC2Type:datetime)']
+        );
     }
 
     /**

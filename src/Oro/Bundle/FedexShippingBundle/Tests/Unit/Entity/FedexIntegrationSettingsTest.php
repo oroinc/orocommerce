@@ -22,6 +22,7 @@ class FedexIntegrationSettingsTest extends TestCase
             ['meterNumber', 'meterNumber'],
             ['pickupType', 'pickupType'],
             ['unitOfWeight', 'unitOfWeight'],
+            ['invalidateCacheAt', new \DateTime()],
         ]);
 
         static::assertPropertyCollections(new FedexIntegrationSettings(), [
