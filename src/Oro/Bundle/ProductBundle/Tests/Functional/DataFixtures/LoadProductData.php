@@ -246,7 +246,6 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     public function addProductImages(array $item, Product $product)
     {
         if (empty($item['images'])) {
-
             return;
         }
 

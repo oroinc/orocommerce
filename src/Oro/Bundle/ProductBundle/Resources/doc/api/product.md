@@ -939,6 +939,10 @@ Specify a tax code
 
 Specify the page template for the product
 
+### images
+
+Specify the images for the product
+
 ## SUBRESOURCES
 
 ### attributeFamily
@@ -1340,3 +1344,25 @@ Retrieve the ID of the pageTemplate for a specific product
 #### update_relationship
 
 Replace the pageTemplate for a specific product
+
+### images
+
+#### get_subresource
+
+Get the related productImages entity for a specific product
+
+#### get_relationship
+
+Retrieve the ID of productImages for a specific product
+
+#### add_relationship
+
+Set the productImages of a specific product record
+
+#### update_relationship
+
+Replace the productImages for a specific product
+
+#### delete_relationship
+
+Remove the productImages of a specific product record.
