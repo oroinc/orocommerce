@@ -46,7 +46,7 @@ define(function(require) {
         expect(el.value).toEqual(expected);
     };
 
-    describe('oroproduct/js/app/units-util', function() {
+    describe('oroproduct/js/app/product-helper', function() {
         describe('check number field value normalization', function() {
             it('only numbers allowed when precision = 0', function() {
                 ProductHelper.normalizeNumberField($el, 0);

@@ -73,7 +73,7 @@ define(function(require) {
 
         modelAttr: {
             productId: 0,
-            productUnits: []
+            product_units: []
         },
 
         modelEvents: {
@@ -100,7 +100,7 @@ define(function(require) {
 
             this.initModel(options);
             this.initializeElements(options);
-            this.model.set('productUnits', this.options.units[this.model.get('productId')] || []);
+            this.model.set('product_units', this.options.units[this.model.get('productId')] || []);
 
             this.$el.on('options:set:lineItemModel', _.bind(function(e, options) {
                 options.lineItemModel = this.model;
@@ -208,8 +208,7 @@ define(function(require) {
         updateProductUnits: function(units, force) {
             var self = this;
 
-            units = units || {};
-            this.model.set('productUnits', units);
+            this.model.set('product_units', units);
 
             var widgets = self.$el.find(self.options.itemWidget);
             $.each(widgets, function(index, widget) {
@@ -219,7 +218,7 @@ define(function(require) {
                     return;
                 }
 
-                UnitsUtil.updateSelect(self.model, $select, units);
+                UnitsUtil.updateSelect(self.model, $select);
                 $select.addClass(self.options.syncClass);
             });
 

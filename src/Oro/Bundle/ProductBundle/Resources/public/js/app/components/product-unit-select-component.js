@@ -35,12 +35,8 @@ define(function(require) {
                 return;
             }
 
-            var units = {};
             var $select = this.options._sourceElement.find('select');
-            _.each(model.get('product_units'), function(precision, key) {
-                units[key] = _.__(this.options.unitLabel.replace('%s', key));
-            }, this);
-            UnitsUtil.updateSelect(model, $select, units);
+            UnitsUtil.updateSelect(model, $select);
 
             var productUnits = _.keys(model.get('product_units'));
             if (this.isProductApplySingleUnitMode(productUnits)) {

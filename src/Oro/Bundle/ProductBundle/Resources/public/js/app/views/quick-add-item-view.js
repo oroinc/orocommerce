@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var UnitsUtil = require('oroproduct/js/app/units-util');
+    var ProductHelper = require('oroproduct/js/app/product-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
@@ -40,6 +41,7 @@ define(function(require) {
             skuHiddenField: '',
             quantity: 0,
             unit: null,
+            product_units: {},
             unit_placeholder: __('oro.product.frontend.quick_add.form.unit.default')
         },
 
@@ -73,6 +75,8 @@ define(function(require) {
             this.clearModel();
             this.clearSku();
             this.setUnits();
+
+            ProductHelper.normalizeNumberField(this.model, this.getElement('quantity'));
         },
 
         initModel: function(options) {
@@ -153,7 +157,7 @@ define(function(require) {
 
             this.model.set({
                 'quantity': data.item.quantity || this.model.get('quantity') || this.options.defaultQuantity,
-                'product_units': data.item.units
+                'product_units': data.item.units || {}
             });
         },
 
@@ -181,7 +185,7 @@ define(function(require) {
             this.model.set({
                 sku_changed_manually: false,
                 quantity: null,
-                product_units: null,
+                product_units: {},
                 unit: null,
                 unit_deferred: null
             });
@@ -226,7 +230,7 @@ define(function(require) {
         },
 
         unitInvalid: function() {
-            return this.model.has('product_units') &&
+            return !_.isEmpty(this.model.has('product_units')) &&
                 !_.has(this.model.get('product_units'), this.model.get('unit'));
         },
 

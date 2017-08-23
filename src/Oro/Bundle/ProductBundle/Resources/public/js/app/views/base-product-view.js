@@ -36,14 +36,14 @@ define(function(require) {
             id: 0,
             quantity: 0,
             unit: '',
+            product_units: '',
             line_item_form_enable: true
         },
 
         modelEvents: {
             'id': ['change', 'onProductChanged'],
             'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
-            'unit_label': ['change', 'changeUnitLabel'],
-            'unit': ['change', 'onUnitChange']
+            'unit_label': ['change', 'changeUnitLabel']
         },
 
         originalProductId: null,
@@ -62,7 +62,7 @@ define(function(require) {
             });
 
             if (this.normalizeQuantityField) {
-                ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
+                ProductHelper.normalizeNumberField(this.model, this.getElement('quantity'));
             }
         },
 
@@ -93,14 +93,6 @@ define(function(require) {
                 }),
                 layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
             });
-        },
-
-        onUnitChange: function() {
-            if (this.normalizeQuantityField) {
-                var $quantity = this.getElement('quantity');
-                ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
-                $quantity.trigger('input');
-            }
         },
 
         onQuantityChange: function(e) {

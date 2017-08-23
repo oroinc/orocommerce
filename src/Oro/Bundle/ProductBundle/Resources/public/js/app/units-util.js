@@ -5,10 +5,19 @@ define(function(require) {
     var _ = require('underscore');
 
     UnitsUtil = {
-        updateSelect: function(model, $el, units) {
+        getUnitsLabel: function(model) {
+            var units = {};
+            var unitLabel = model.get('unit_label_template') || 'oro.product.product_unit.%s.label.full';
+            _.each(model.get('product_units'), function(precision, value) {
+                units[value] = _.__(unitLabel.replace('%s', value));
+            });
+            return units;
+        },
+
+        updateSelect: function(model, $el) {
             var options = [];
-            units = units || model.get('product_units');
             var oldValue = $el.val();
+            var units = this.getUnitsLabel(model);
             if (!_.isEmpty(units)) {
                 _.each(units, function(label, value) {
                     options.push(this.generateSelectOption(value, label));

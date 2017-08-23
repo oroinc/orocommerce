@@ -373,7 +373,7 @@ define(function(require) {
         updateProductUnits: function(data, force) {
             var self = this;
 
-            var units = data || {};
+            self.model.set('product_units', data || {});
 
             var widgets = self.$el.find(self.options.itemWidget);
 
@@ -384,7 +384,7 @@ define(function(require) {
                     return;
                 }
 
-                UnitsUtil.updateSelect(self.model, $select, units);
+                UnitsUtil.updateSelect(self.model, $select);
                 $select.addClass(self.options.syncClass);
             });
 

@@ -33,20 +33,35 @@ define(function(require) {
         /**
          * Filter field input, user can type only numbers also filtering takes of precision
          *
-         * @param {jQuery} element
-         * @param {number} precision
+         * @param {Object} model
+         * @param {jQuery} $el
          */
-        normalizeNumberField: function(element, precision) {
+        normalizeNumberField: function(model, $el) {
+            model.on('change:product_units', function() {
+                this._initNormalizeNumberField(model, $el);
+            }, this);
+            model.on('change:unit', function() {
+                this._initNormalizeNumberField(model, $el);
+            }, this);
+
+            this._initNormalizeNumberField(model, $el);
+        },
+
+        _initNormalizeNumberField: function(model, $el) {
+            var precision = model.get('product_units')[model.get('unit')] || 0;
+
             if (_.isDesktop()) {
-                element.attr('type', 'text');
+                $el.attr('type', 'text');
             } else {
-                element.attr('pattern', precision === 0 ? '[0-9]*' : '');
+                $el.attr('pattern', precision === 0 ? '[0-9]*' : '');
             }
 
-            element
+            $el
                 .off(namespace)
                 .on('input' + namespace, {precision: precision}, _.bind(this._normalizeNumberFieldValue, this))
-                .on('keypress' + namespace, {precision: precision}, _.bind(this._addFraction, this));
+                .on('change' + namespace, {precision: precision}, _.bind(this._normalizeNumberFieldValue, this))
+                .on('keypress' + namespace, {precision: precision}, _.bind(this._addFraction, this))
+                .trigger('input');
         },
 
         _addFraction: function(event) {

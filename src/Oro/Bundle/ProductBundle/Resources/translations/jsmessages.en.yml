@@ -41,9 +41,9 @@ oro:
 
         product_unit.item:
             label:
-                full: item
+                full: item-item
                 full_plural: items
-                short: item
+                short: item-i
                 short_plural: items
             value:
                 full: '{0} none|{1} {{ count }} item|]1,Inf]{{ count }} items'
