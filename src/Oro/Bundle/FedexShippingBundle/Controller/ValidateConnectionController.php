@@ -51,9 +51,10 @@ class ValidateConnectionController extends Controller
         /** @var FedexIntegrationSettings $settings */
         $settings = $channel->getTransport();
 
-        $request = $this->get('oro_fedex_shipping.client.rate_service.connection_validate_request.factory')
+        $request = $this
+            ->get('oro_fedex_shipping.client.rate_service.connection_validate_request.factory')
             ->create($settings);
-        $response = $this->get('oro_fedex_shipping.client.rate_service')->send($request);
+        $response = $this->get('oro_fedex_shipping.client.rate_service')->send($request, $settings);
 
         if (!empty($response->getPrices())) {
             return new JsonResponse([

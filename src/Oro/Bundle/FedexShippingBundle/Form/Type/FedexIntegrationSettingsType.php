@@ -35,7 +35,7 @@ class FedexIntegrationSettingsType extends AbstractType
                 ]
             )
             ->add(
-                'testMode',
+                'fedexTestMode',
                 CheckboxType::class,
                 [
                     'label' => 'oro.fedex.integration.settings.test_mode.label',

@@ -87,7 +87,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
     public function testSubmit()
     {
         $submitData = [
-            'testMode' => true,
+            'fedexTestMode' => true,
             'key' => 'key2',
             'password' => 'pass2',
             'accountNumber' => 'num2',
@@ -102,7 +102,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
 
         $settings = new FedexIntegrationSettings();
         $settings
-            ->setTestMode(false)
+            ->setFedexTestMode(false)
             ->setKey('key')
             ->setPassword('pass')
             ->setAccountNumber('num')

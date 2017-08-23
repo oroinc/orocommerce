@@ -75,7 +75,7 @@ class FedexRateServiceSoapClient implements FedexRateServiceBySettingsClientInte
      */
     private function getSoapSettings(FedexIntegrationSettings $settings): SoapClientSettingsInterface
     {
-        if ($settings->isTestMode()) {
+        if ($settings->isFedexTestMode()) {
             return $this->soapTestSettings;
         }
 

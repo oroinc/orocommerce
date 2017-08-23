@@ -60,7 +60,7 @@ class FedexRateServiceSoapClientTest extends TestCase
         $soapResponse = 'response';
 
         $settings = new FedexIntegrationSettings();
-        $settings->setTestMode(true);
+        $settings->setFedexTestMode(true);
 
         $this->soapClient
             ->expects(static::once())
@@ -83,7 +83,7 @@ class FedexRateServiceSoapClientTest extends TestCase
         $soapResponse = 'response';
 
         $settings = new FedexIntegrationSettings();
-        $settings->setTestMode(false);
+        $settings->setFedexTestMode(false);
 
         $this->soapClient
             ->expects(static::once())

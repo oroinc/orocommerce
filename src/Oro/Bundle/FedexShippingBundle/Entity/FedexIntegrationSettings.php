@@ -31,7 +31,7 @@ class FedexIntegrationSettings extends Transport
      *
      * @ORM\Column(name="fedex_test_mode", type="boolean", options={"default"=false})
      */
-    private $testMode;
+    private $fedexTestMode;
 
     /**
      * @var string
@@ -130,9 +130,9 @@ class FedexIntegrationSettings extends Transport
     /**
      * @return bool
      */
-    public function isTestMode()
+    public function isFedexTestMode()
     {
-        return $this->testMode;
+        return $this->fedexTestMode;
     }
 
     /**
@@ -140,9 +140,9 @@ class FedexIntegrationSettings extends Transport
      *
      * @return self
      */
-    public function setTestMode(bool $testMode): self
+    public function setFedexTestMode(bool $testMode): self
     {
-        $this->testMode = $testMode;
+        $this->fedexTestMode = $testMode;
 
         return $this;
     }
