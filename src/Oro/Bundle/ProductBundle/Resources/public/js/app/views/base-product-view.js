@@ -12,9 +12,9 @@ define(function(require) {
     var _ = require('underscore');
 
     BaseProductView = BaseView.extend(_.extend({}, ElementsHelper, {
-        options: {
-            enableForbidQtyField: true
-        },
+        optionNames: BaseView.prototype.optionNames.concat(['normalizeQuantityField']),
+
+        normalizeQuantityField: true,
 
         elements: {
             quantity: '[data-name="field__quantity"]:first',
@@ -49,7 +49,6 @@ define(function(require) {
         originalProductId: null,
 
         initialize: function(options) {
-            this.options = _.extend({}, this.options, options);
             BaseProductView.__super__.initialize.apply(this, arguments);
 
             this.rowId = this.$el.parent().data('row-id');
@@ -62,7 +61,7 @@ define(function(require) {
                 productModel: this.model
             });
 
-            if (this.options.enableForbidQtyField) {
+            if (this.normalizeQuantityField) {
                 ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
             }
         },
@@ -97,7 +96,7 @@ define(function(require) {
         },
 
         onUnitChange: function() {
-            if (this.options.enableForbidQtyField) {
+            if (this.normalizeQuantityField) {
                 var $quantity = this.getElement('quantity');
                 ProductHelper.normalizeNumberField(this.getElement('quantity'), this._getUnitPrecision());
                 $quantity.trigger('input');

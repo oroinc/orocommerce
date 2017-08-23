@@ -68,7 +68,7 @@ define(function(require) {
                 loadingMaskEnabled: false,
                 dropQuantityOnLoad: false,
                 defaultValues: this.options.freeFormUnits,
-                productModel: this.model
+                model: this.model
             };
 
             this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions)));

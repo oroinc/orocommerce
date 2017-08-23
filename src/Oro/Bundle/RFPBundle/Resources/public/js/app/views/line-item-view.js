@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
@@ -212,31 +213,14 @@ define(function(require) {
 
             var widgets = self.$el.find(self.options.itemWidget);
             $.each(widgets, function(index, widget) {
-                var select = $(widget).find(self.options.selectors.unitSelector);
+                var $select = $(widget).find(self.options.selectors.unitSelector);
 
-                if (!force && $(select).hasClass(self.options.syncClass)) {
+                if (!force && $select.hasClass(self.options.syncClass)) {
                     return;
                 }
 
-                var currentValue = $(select).val();
-                $(select).empty();
-                $.each(_.keys(units), function(key, value) {
-                    $(select)
-                        .append($('<option/>').val(value).text(value));
-                });
-                var firstValue = $(select).find('option:first-child').val();
-                if (!currentValue && firstValue) {
-                    currentValue = firstValue;
-                }
-                $(select).val(currentValue).trigger('change');
-                if (null === $(select).val() && firstValue) {
-                    $(select).val(firstValue).trigger('change');
-                }
-                $(select).addClass(self.options.syncClass);
-
-                if (!force) {
-                    $(widget).find('select').inputWidget('refresh');
-                }
+                UnitsUtil.updateSelect(self.model, $select, units);
+                $select.addClass(self.options.syncClass);
             });
 
             if (force) {

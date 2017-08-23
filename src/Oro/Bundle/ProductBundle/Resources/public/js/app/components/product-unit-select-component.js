@@ -5,6 +5,7 @@ define(function(require) {
 
     var ProductUnitSelectComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
     var _ = require('underscore');
 
     ProductUnitSelectComponent = BaseComponent.extend({
@@ -34,29 +35,20 @@ define(function(require) {
                 return;
             }
 
+            var units = {};
+            var $select = this.options._sourceElement.find('select');
+            _.each(model.get('product_units'), function(precision, key) {
+                units[key] = _.__(this.options.unitLabel.replace('%s', key));
+            }, this);
+            UnitsUtil.updateSelect(model, $select, units);
+
             var productUnits = _.keys(model.get('product_units'));
-
-            if (productUnits) {
-                var select = this.options._sourceElement.find('select');
-
-                var content = '';
-                var length = productUnits.length;
-
-                for (var i = 0; i < length; i++) {
-                    var unitCode = productUnits[i];
-                    content = content + '<option value=' + unitCode + '>' +
-                        _.__(this.options.unitLabel.replace('%s', unitCode)) + '</option>';
+            if (this.isProductApplySingleUnitMode(productUnits)) {
+                if (this.options.singleUnitModeCodeVisible) {
+                    $select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
                 }
-
-                select.html(content).change();
-
-                if (this.isProductApplySingleUnitMode(productUnits)) {
-                    if (this.options.singleUnitModeCodeVisible) {
-                        select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
-                    }
-                    select.inputWidget('dispose');
-                    select.addClass('no-input-widget').hide();
-                }
+                $select.inputWidget('dispose');
+                $select.addClass('no-input-widget').hide();
             }
         },
 
