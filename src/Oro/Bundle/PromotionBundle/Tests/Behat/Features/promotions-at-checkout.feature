@@ -24,40 +24,40 @@ Feature: Promotions at Checkout
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount  |
       | Discount | -$12.50 |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Shipping Information Checkout's step
-    Given Page title equals to "Shipping Information - Open Order"
+    Given Page title equals to "Shipping Information - Checkout"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount  |
       | Discount | -$12.50 |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Shipping Method Checkout's step
-    Given Page title equals to "Shipping Method - Open Order"
+    Given Page title equals to "Shipping Method - Checkout"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$12.50 |
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Payment Checkout's step
-    Given Page title equals to "Payment - Open Order"
+    Given Page title equals to "Payment - Checkout"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$12.50 |
@@ -65,11 +65,11 @@ Feature: Promotions at Checkout
     Then I click "Continue"
 
   Scenario: Check line item and order discount at Order Review Checkout's step
-    Given Page title equals to "Order Review - Open Order"
+    Given Page title equals to "Order Review - Checkout"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
-      | SKU2 | $5.00    |
+      | SKU2 | -$5.00   |
     And I see next subtotals for "Checkout Step":
       | Subtotal          | Amount  |
       | Discount          | -$12.50 |

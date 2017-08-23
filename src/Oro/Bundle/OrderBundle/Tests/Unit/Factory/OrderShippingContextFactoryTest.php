@@ -1,17 +1,11 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
-
-use Doctrine\Common\Collections\ArrayCollection;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -23,14 +17,14 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 
 class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
 {
-    const TEST_PAYMENT_METHOD = 'SomePaymentMethod';
-
     /**
      * @var OrderShippingContextFactory
      */
     private $factory;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $doctrineHelper;
 
     /**
@@ -116,6 +110,9 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->prepareContextBuilder(
             $this->contextBuilder,
             $order->getBillingAddress(),
+            Price::create($order->getSubtotal(), $order->getCurrency()),
+            $order->getCurrency(),
+            $order->getWebsite(),
             $order->getCustomer(),
             $order->getCustomerUser()
         );
@@ -129,17 +126,6 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             ->expects($this->once())
             ->method('setLineItems')
             ->with($shippingLineItemCollection);
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setSubTotal')
-            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
-            ->willReturnSelf();
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setCurrency')
-            ->with($order->getCurrency());
 
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
@@ -166,6 +152,9 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->prepareContextBuilder(
             $this->contextBuilder,
             $order->getBillingAddress(),
+            Price::create($order->getSubtotal(), $order->getCurrency()),
+            $order->getCurrency(),
+            $order->getWebsite(),
             $order->getCustomer(),
             $order->getCustomerUser()
         );
@@ -178,17 +167,6 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->contextBuilder
             ->expects($this->never())
             ->method('setLineItems');
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setSubTotal')
-            ->with(Price::create($order->getSubtotal(), $order->getCurrency()))
-            ->willReturnSelf();
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('setCurrency')
-            ->with($order->getCurrency());
 
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
@@ -220,18 +198,8 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
         $this->factory->create(new \stdClass());
     }
 
-    /**
-     * @return Order
-     */
     protected function prepareOrder()
     {
-        /** @var AddressInterface $address */
-        $address = $this->createMock(OrderAddress::class);
-        $currency = 'USD';
-        $amount = 100;
-        $customer = $this->createMock(Customer::class);
-        $customerUser = $this->createMock(CustomerUser::class);
-
         $this->paymentTransactionMock
             ->expects(static::once())
             ->method('getPaymentMethod')
@@ -248,27 +216,6 @@ class OrderShippingContextFactoryTest extends AbstractOrderContextFactoryTest
             ->with(PaymentTransaction::class)
             ->willReturn($this->repositoryMock);
 
-        $ordersLineItems = [
-            (new OrderLineItem())
-                ->setQuantity(10)
-                ->setPrice(Price::create($amount, $currency)),
-            (new OrderLineItem())
-                ->setQuantity(20)
-                ->setPrice(Price::create($amount, $currency))
-        ];
-
-        $orderLineItemsCollection = new ArrayCollection($ordersLineItems);
-
-        $order = (new Order())
-            ->setBillingAddress($address)
-            ->setShippingAddress($address)
-            ->setCurrency($currency)
-            ->setLineItems($orderLineItemsCollection)
-            ->setSubtotal($amount)
-            ->setCurrency($currency)
-            ->setCustomer($customer)
-            ->setCustomerUser($customerUser);
-
-        return $order;
+        return parent::prepareOrder();
     }
 }

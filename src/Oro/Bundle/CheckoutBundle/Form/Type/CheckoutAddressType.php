@@ -64,7 +64,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
         $isEditEnabled
     ) {
         if ($isEditEnabled) {
-            $addressCollection = $this->orderAddressManager->getGroupedAddresses($entity, $type);
+            $addressCollection = $this->orderAddressManager->getGroupedAddresses($entity, $type, 'oro.checkout.');
             $defaultKey = $addressCollection->getDefaultAddressKey();
             $selectedKey = $this->getSelectedAddress($entity, $type);
             if (null === $selectedKey) {
@@ -81,7 +81,9 @@ class CheckoutAddressType extends AbstractOrderAddressType
                 'choices' => $this->getChoices($addresses),
                 'attr' => [
                     'data-addresses' => json_encode($this->getPlainData($addresses)),
-                    'data-addresses-types' => json_encode($this->orderAddressManager->getAddressTypes($addresses)),
+                    'data-addresses-types' => json_encode(
+                        $this->orderAddressManager->getAddressTypes($addresses, 'oro.checkout.')
+                    ),
                     'data-default' => $defaultKey,
                 ],
                 'data' => $selectedKey

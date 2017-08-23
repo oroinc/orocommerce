@@ -13,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository")
@@ -127,12 +128,29 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
      */
     protected $organization;
 
+    /**
+     * @var Website[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinTable(
+     *      name="oro_payment_mtds_rule_website",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="oro_payment_mtds_cfgs_rl_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     */
+    protected $websites;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->methodConfigs = new ArrayCollection();
         $this->destinations = new ArrayCollection();
+        $this->websites = new ArrayCollection();
     }
 
     /**
@@ -285,5 +303,41 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
         $this->organization = $organization;
 
         return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function addWebsite(Website $website)
+    {
+        if (!$this->websites->contains($website)) {
+            $this->websites->add($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function removeWebsite(Website $website)
+    {
+        if ($this->websites->contains($website)) {
+            $this->websites->removeElement($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Website[]
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
     }
 }

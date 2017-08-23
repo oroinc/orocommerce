@@ -47,8 +47,54 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
             - Range:
                 min: 0
                 max: 2147483647
-        usesPerUser:
+        usesPerPerson:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
             - Range:
                 min: 0
                 max: 2147483647
+
+Oro\Bundle\PromotionBundle\CouponGeneration\Options\CouponGenerationOptions:
+    constraints:
+        - Oro\Bundle\PromotionBundle\Validator\Constraints\CouponCodeLength:
+            groups: ['generation']
+    properties:
+        owner:
+            - NotBlank:
+                groups: ['generation']
+        couponQuantity:
+            - NotBlank:
+                groups: ['generation']
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Range:
+                min: 1
+                max: 2147483647
+        usesPerCoupon:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Range:
+                min: 0
+                max: 2147483647
+        usesPerPerson:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Range:
+                min: 0
+                max: 2147483647
+        validUntil:
+            - DateTime: ~
+        codeLength:
+            - NotBlank: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Range:
+                min: 1
+                max: 255
+        codeType:
+            - NotBlank: ~
+        codePrefix:
+            - Length:
+                max: 100
+        codeSuffix:
+            - Length:
+                max: 100
+        dashesSequence:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+            - Range:
+                min: 1

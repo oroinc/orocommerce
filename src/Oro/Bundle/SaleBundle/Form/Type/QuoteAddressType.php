@@ -69,7 +69,7 @@ class QuoteAddressType extends AbstractType
             function (FormEvent $event) use ($quote, $type, $isManualEditGranted) {
                 $form = $event->getForm();
 
-                $addressCollection = $this->quoteAddressManager->getGroupedAddresses($quote, $type);
+                $addressCollection = $this->quoteAddressManager->getGroupedAddresses($quote, $type, 'oro.sale.quote.');
                 $addresses = $addressCollection->toArray();
 
                 $customerAddressOptions = [

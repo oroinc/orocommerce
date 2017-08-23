@@ -190,11 +190,13 @@ class RequestControllerNotificationTest extends WebTestCase
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
         $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
         $emailMessages = $emailLogger->getMessages();
-        $i = 0;
+        $actualUsersSentTo = [];
+        foreach ($emailMessages as $message) {
+            $actualUsersSentTo = array_merge($actualUsersSentTo, array_keys($message->getTo()));
+        }
+
         foreach ($usersToSendTo as $userToSendTo) {
-            $toEmails = array_keys($emailMessages[$i]->getTo());
-            $this->assertEquals($userToSendTo->getEmail(), reset($toEmails));
-            $i++;
+            $this->assertTrue(in_array($userToSendTo->getEmail(), $actualUsersSentTo));
         }
         $this->assertCount($numberOfMessagesExpected, $emailMessages);
     }
