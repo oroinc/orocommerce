@@ -11,7 +11,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientInterface
 {
     /**
-     * @var FedexRateServiceClientInterface
+     * @var FedexRateServiceBySettingsClientInterface
      */
     private $rateServiceClient;
 
@@ -26,12 +26,12 @@ class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientIn
     private $cacheKeyFactory;
 
     /**
-     * @param FedexRateServiceClientInterface       $rateServiceClient
-     * @param FedexResponseCacheInterface           $cache
-     * @param FedexResponseCacheKeyFactoryInterface $cacheKeyFactory
+     * @param FedexRateServiceBySettingsClientInterface $rateServiceClient
+     * @param FedexResponseCacheInterface               $cache
+     * @param FedexResponseCacheKeyFactoryInterface     $cacheKeyFactory
      */
     public function __construct(
-        FedexRateServiceClientInterface $rateServiceClient,
+        FedexRateServiceBySettingsClientInterface $rateServiceClient,
         FedexResponseCacheInterface $cache,
         FedexResponseCacheKeyFactoryInterface $cacheKeyFactory
     ) {
@@ -54,7 +54,7 @@ class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientIn
             return $response;
         }
 
-        $response = $this->rateServiceClient->send($request);
+        $response = $this->rateServiceClient->send($request, $settings);
         if ($response->isSuccessful()) {
             $this->cache->set($cacheKey, $response);
         }

@@ -6,7 +6,7 @@ use Oro\Bundle\FedexShippingBundle\Cache\Factory\FedexResponseCacheKeyFactoryInt
 use Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCacheInterface;
 use Oro\Bundle\FedexShippingBundle\Cache\FedexResponseCacheKey;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceCachedClient;
-use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceClientInterface;
+use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceBySettingsClientInterface;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponse;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceResponseInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class FedexRateServiceCachedClientTest extends TestCase
 {
     /**
-     * @var FedexRateServiceClientInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FedexRateServiceBySettingsClientInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $rateServiceClient;
 
@@ -37,7 +37,7 @@ class FedexRateServiceCachedClientTest extends TestCase
 
     protected function setUp()
     {
-        $this->rateServiceClient = $this->createMock(FedexRateServiceClientInterface::class);
+        $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);
         $this->cache = $this->createMock(FedexResponseCacheInterface::class);
         $this->cacheKeyFactory = $this->createMock(FedexResponseCacheKeyFactoryInterface::class);
 
@@ -58,6 +58,7 @@ class FedexRateServiceCachedClientTest extends TestCase
         $this->cacheKeyFactory
             ->expects(static::once())
             ->method('create')
+            ->with($request, $settings)
             ->willReturn($cacheKey);
 
         $this->cache
@@ -82,6 +83,7 @@ class FedexRateServiceCachedClientTest extends TestCase
         $this->cacheKeyFactory
             ->expects(static::once())
             ->method('create')
+            ->with($request, $settings)
             ->willReturn($cacheKey);
 
         $this->cache
@@ -111,6 +113,7 @@ class FedexRateServiceCachedClientTest extends TestCase
         $this->cacheKeyFactory
             ->expects(static::once())
             ->method('create')
+            ->with($request, $settings)
             ->willReturn($cacheKey);
 
         $this->cache
@@ -126,6 +129,7 @@ class FedexRateServiceCachedClientTest extends TestCase
         $this->rateServiceClient
             ->expects(static::once())
             ->method('send')
+            ->with($request, $settings)
             ->willReturn($response);
 
         static::assertSame($response, $this->client->send($request, $settings));

@@ -5,6 +5,7 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Unit\Client\RateService;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient;
 use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\Factory\FedexRateServiceResponseFactoryInterface;
 use Oro\Bundle\FedexShippingBundle\Client\Request\FedexRequest;
+use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings;
 use Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettingsInterface;
 use Oro\Bundle\SoapBundle\Client\SoapClientInterface;
@@ -28,6 +29,11 @@ class FedexRateServiceSoapClientTest extends TestCase
     private $soapSettings;
 
     /**
+     * @var SoapClientSettingsInterface
+     */
+    private $soapTestSettings;
+
+    /**
      * @var FedexRateServiceSoapClient
      */
     private $client;
@@ -37,19 +43,47 @@ class FedexRateServiceSoapClientTest extends TestCase
         $this->soapClient = $this->createMock(SoapClientInterface::class);
         $this->responseFactory = $this->createMock(FedexRateServiceResponseFactoryInterface::class);
         $this->soapSettings = new SoapClientSettings('', '');
+        $this->soapTestSettings = new SoapClientSettings('test', '');
 
         $this->client = new FedexRateServiceSoapClient(
             $this->soapClient,
             $this->responseFactory,
-            $this->soapSettings
+            $this->soapSettings,
+            $this->soapTestSettings
         );
     }
 
-    public function testSend()
+    public function testSendTestMode()
     {
         $requestData = ['data'];
         $request = new FedexRequest($requestData);
         $soapResponse = 'response';
+
+        $settings = new FedexIntegrationSettings();
+        $settings->setTestMode(true);
+
+        $this->soapClient
+            ->expects(static::once())
+            ->method('send')
+            ->with($this->soapTestSettings, $requestData)
+            ->willReturn($soapResponse);
+
+        $this->responseFactory
+            ->expects(static::once())
+            ->method('create')
+            ->with($soapResponse);
+
+        $this->client->send($request, $settings);
+    }
+
+    public function testSendProdMode()
+    {
+        $requestData = ['data'];
+        $request = new FedexRequest($requestData);
+        $soapResponse = 'response';
+
+        $settings = new FedexIntegrationSettings();
+        $settings->setTestMode(false);
 
         $this->soapClient
             ->expects(static::once())
@@ -62,7 +96,7 @@ class FedexRateServiceSoapClientTest extends TestCase
             ->method('create')
             ->with($soapResponse);
 
-        $this->client->send($request);
+        $this->client->send($request, $settings);
     }
 
     public function testSendException()
@@ -81,6 +115,6 @@ class FedexRateServiceSoapClientTest extends TestCase
             ->method('create')
             ->with(null);
 
-        $this->client->send($request);
+        $this->client->send($request, new FedexIntegrationSettings());
     }
 }

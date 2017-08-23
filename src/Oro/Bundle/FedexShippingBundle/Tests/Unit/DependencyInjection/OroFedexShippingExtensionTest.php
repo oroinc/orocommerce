@@ -51,6 +51,7 @@ class OroFedexShippingExtensionTest extends ExtensionTestCase
             'oro_fedex_shipping.event_listener.disable_integration',
             'oro_fedex_shipping.entity_listener.delete_integration_settings_services',
             'oro_fedex_shipping.validator.remove_used_shipping_service',
+            'oro_fedex_shipping.client.rate_service.soap_test_settings',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

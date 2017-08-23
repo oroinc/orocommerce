@@ -34,12 +34,22 @@ services:
             - 'getRates'
             - connection_timeout: 3
 
+    oro_fedex_shipping.client.rate_service.soap_test_settings:
+        class: 'Oro\Bundle\SoapBundle\Client\Settings\SoapClientSettings'
+        public: false
+        factory: 'oro_soap.client.factory.settings:create'
+        arguments:
+            - '@=service("kernel").locateResource("@OroFedexShippingBundle/Resources/wsdl/RateService_v20_test_mode.wsdl")'
+            - 'getRates'
+            - connection_timeout: 3
+
     oro_fedex_shipping.client.rate_service:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\FedexRateServiceSoapClient'
         arguments:
             - '@oro_soap.client'
             - '@oro_fedex_shipping.client.rate_service.response.factory'
             - '@oro_fedex_shipping.client.rate_service.soap_settings'
+            - '@oro_fedex_shipping.client.rate_service.soap_test_settings'
 
     oro_fedex_shipping.client.rate_service.request.factory:
         class: 'Oro\Bundle\FedexShippingBundle\Client\RateService\Request\Factory\FedexRateServiceRequestFactory'
@@ -117,6 +127,7 @@ services:
             - '@oro_fedex_shipping.client.rate_service'
             - '@oro_fedex_shipping.cache.response'
             - '@oro_fedex_shipping.cache.cache_key_factory'
+
     oro_fedex_shipping.shipping_method.method_type_identifier_generator:
         class: 'Oro\Bundle\FedexShippingBundle\ShippingMethod\Identifier\FedexMethodTypeIdentifierGenerator'
         public: false
