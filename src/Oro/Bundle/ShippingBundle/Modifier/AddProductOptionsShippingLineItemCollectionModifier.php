@@ -146,6 +146,8 @@ class AddProductOptionsShippingLineItemCollectionModifier implements ShippingLin
     }
 
     /**
+     * ProductShippingOptionsRepository can't be injected because of Circular Reference Exception
+     *
      * @return ProductShippingOptionsRepository
      */
     private function getProductShippingOptionsRepository(): ProductShippingOptionsRepository
