@@ -58,6 +58,44 @@ class RelatedItemConfigHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->helper->isAnyEnabled());
     }
 
+    public function testGetRelatedItemsTranslationKeyReturnsDefaultKeyIfNoneConfigProviderIsEnabled()
+    {
+        $providerDisabled = $this->getProviderMock(false);
+        $providerDisabledTwo = $this->getProviderMock(false);
+
+        $this->helper->addConfigProvider('disabled', $providerDisabled);
+        $this->helper->addConfigProvider('disabled_2', $providerDisabledTwo);
+
+        $expected = RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_NAMESPACE . '.';
+        $expected .= RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_DEFAULT;
+
+        $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
+    }
+
+    public function testGetRelatedItemsTranslationKeyReturnsSpecificKeyIfOneConfigProviderIsEnabled() {
+        $providerName = 'related_product';
+        $providerEnabled = $this->getProviderMock(true);
+
+        $this->helper->addConfigProvider($providerName, $providerEnabled);
+
+        $expected = 'oro.product.sections.relatedItems.' . $providerName;
+
+        $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
+    }
+
+    public function testGetRelatedItemsTranslationKeyReturnsReturnsDefaultIfMoreConfigProvidersAreEnabled() {
+        $providerEnabled = $this->getProviderMock(true);
+        $providerEnabledTwo = $this->getProviderMock(true);
+
+        $this->helper->addConfigProvider('related_product', $providerEnabled);
+        $this->helper->addConfigProvider('up_sell_product', $providerEnabledTwo);
+
+        $expected = RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_NAMESPACE . '.';
+        $expected .= RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_DEFAULT;
+
+        $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
+    }
+
     /**
      * @param $isEnabled
      * @return AbstractRelatedItemConfigProvider|\PHPUnit_Framework_MockObject_MockObject

@@ -6,6 +6,9 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 
 class RelatedItemConfigHelper
 {
+    CONST RELATED_ITEMS_TRANSLATION_NAMESPACE = 'oro.product.sections.relatedItems';
+    CONST RELATED_ITEMS_TRANSLATION_DEFAULT = 'related_items';
+
     /** @var AbstractRelatedItemConfigProvider[] */
     private $configProviders = [];
 
@@ -54,5 +57,26 @@ class RelatedItemConfigHelper
         }
 
         return $isAnyEnabled;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRelatedItemsTranslationKey()
+    {
+        $enabled = [];
+        $suffix = self::RELATED_ITEMS_TRANSLATION_DEFAULT;
+
+        foreach ($this->configProviders as $configKey => $configProvider) {
+            if ($configProvider->isEnabled()) {
+                array_push($enabled, $configKey);
+            }
+        }
+
+        if (count($enabled) === 1) {
+            $suffix = $enabled[0];
+        }
+
+        return self::RELATED_ITEMS_TRANSLATION_NAMESPACE . '.' . $suffix;
     }
 }
