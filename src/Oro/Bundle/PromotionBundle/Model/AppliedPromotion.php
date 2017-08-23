@@ -190,4 +190,12 @@ class AppliedPromotion implements PromotionDataInterface
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSchedules()
+    {
+        return new ArrayCollection([]);
+    }
 }

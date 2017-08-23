@@ -4,11 +4,15 @@ namespace Oro\Bundle\PromotionBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Selectable;
+use Oro\Bundle\CronBundle\Entity\ScheduleIntervalsAwareInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-interface PromotionDataInterface extends RuleOwnerInterface, ScopeCollectionAwareInterface
+interface PromotionDataInterface extends
+    RuleOwnerInterface,
+    ScopeCollectionAwareInterface,
+    ScheduleIntervalsAwareInterface
 {
     /**
      * @return int
