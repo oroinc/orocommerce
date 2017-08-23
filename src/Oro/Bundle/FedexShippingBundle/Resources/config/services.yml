@@ -184,3 +184,12 @@ services:
             - '@oro_shipping.method.event.dispatcher.type_removal'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings', event: postUpdate }
+
+    oro_fedex_shipping.validator.remove_used_shipping_service:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\UpdateIntegrationValidator'
+        arguments:
+            - '@oro_fedex_shipping.shipping_method.factory.method'
+            - '@oro_shipping.method_validator.main'
+            - 'shippingServices'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_fedex_shipping_remove_used_shipping_service_validator }

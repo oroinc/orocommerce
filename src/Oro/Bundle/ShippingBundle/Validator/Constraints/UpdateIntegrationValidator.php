@@ -1,29 +1,22 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Validator\Constraints;
+namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class RemoveUsedShippingServiceValidator extends ConstraintValidator
+class UpdateIntegrationValidator extends ConstraintValidator
 {
-    const ALIAS = 'oro_ups_remove_used_shipping_service_validator';
-
-    /**
-     * @internal
-     */
-    const VIOLATION_PATH = 'applicableShippingServices';
-
     /**
      * @var IntegrationShippingMethodFactoryInterface
      */
-    private $integrationShippingMethodFactory;
+    private $shippingMethodFactory;
 
     /**
      * @var ShippingMethodValidatorInterface
@@ -31,24 +24,32 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     private $shippingMethodValidator;
 
     /**
-     * @param IntegrationShippingMethodFactoryInterface $integrationShippingMethodFactory
+     * @var string
+     */
+    private $violationPath;
+
+    /**
+     * @param IntegrationShippingMethodFactoryInterface $shippingMethodFactory
      * @param ShippingMethodValidatorInterface          $shippingMethodValidator
+     * @param string                                    $violationPath
      */
     public function __construct(
-        IntegrationShippingMethodFactoryInterface $integrationShippingMethodFactory,
-        ShippingMethodValidatorInterface $shippingMethodValidator
+        IntegrationShippingMethodFactoryInterface $shippingMethodFactory,
+        ShippingMethodValidatorInterface $shippingMethodValidator,
+        string $violationPath
     ) {
-        $this->integrationShippingMethodFactory = $integrationShippingMethodFactory;
+        $this->shippingMethodFactory = $shippingMethodFactory;
         $this->shippingMethodValidator = $shippingMethodValidator;
+        $this->violationPath = $violationPath;
     }
 
     /**
-     * @param UPSTransport                                   $value
-     * @param Constraint|RemoveUsedShippingServiceConstraint $constraint
+     * @param Transport  $value
+     * @param Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof UPSTransport) {
+        if (!$value instanceof Transport) {
             return;
         }
 
@@ -56,8 +57,8 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
             return;
         }
 
-        $upsShippingMethod = $this->integrationShippingMethodFactory->create($value->getChannel());
-        $shippingMethodValidatorResult = $this->shippingMethodValidator->validate($upsShippingMethod);
+        $shippingMethod = $this->shippingMethodFactory->create($value->getChannel());
+        $shippingMethodValidatorResult = $this->shippingMethodValidator->validate($shippingMethod);
 
         $this->handleValidationResult($shippingMethodValidatorResult);
     }
@@ -75,9 +76,10 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         $context = $this->context;
 
         foreach ($shippingMethodValidatorResult->getErrors() as $error) {
-            $context->buildViolation($error->getMessage())
+            $context
+                ->buildViolation($error->getMessage())
                 ->setTranslationDomain(null)
-                ->atPath(static::VIOLATION_PATH)
+                ->atPath($this->violationPath)
                 ->addViolation();
         }
     }

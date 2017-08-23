@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Validator\Constraints;
+namespace Oro\Bundle\FedexShippingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
@@ -11,7 +11,7 @@ class RemoveUsedShippingServiceConstraint extends Constraint
      */
     public function validatedBy()
     {
-        return 'oro_ups_remove_used_shipping_service_validator';
+        return 'oro_fedex_shipping_remove_used_shipping_service_validator';
     }
 
     /**

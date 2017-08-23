@@ -1,4 +1,6 @@
 Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings:
+    constraints:
+        - Oro\Bundle\FedexShippingBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
         key:
             - NotBlank: ~
