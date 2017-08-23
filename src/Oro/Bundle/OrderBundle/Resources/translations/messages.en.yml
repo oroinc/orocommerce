@@ -244,7 +244,7 @@ oro:
                 frontend_product_visibility.title: 'Can Be Added to Orders'
                 order_automation_enable_cancellation.title: 'Enable Automatic Order Cancellation'
                 order_automation_enable_cancellation.tooltip: 'All orders with selected internal statuses will be automatically cancelled past their "Do Not Ship Later Than" date.'
-                order_automation_applicable_statuses.title: 'Applicable Statutes'
+                order_automation_applicable_statuses.title: 'Applicable Statuses'
                 order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses will be cancelled automatically.'
                 order_automation_target_status.title: 'Target Status'
                 order_automation_target_status.tooltip: 'You may modify the default behavior of changing order status to "Cancelled".'

@@ -34,11 +34,11 @@ interface OrderConfigurationProviderInterface
     public function getTargetInternalStatus($identifier = null);
 
     /**
-     * Returns configured 'Applicable Statutes' for given scope
+     * Returns configured 'Applicable Statuses' for given scope
      *
      * @param mixed $identifier
      *
      * @return array
      */
-    public function getApplicableInternalStatutes($identifier = null);
+    public function getApplicableInternalStatuses($identifier = null);
 }

@@ -20,6 +20,8 @@ class OrderConfigurationProvider implements OrderConfigurationProviderInterface
     }
 
     /**
+     * Returns 'System'-level configuration value
+     *
      * {@inheritdoc}
      */
     public function getNewOrderInternalStatus(Order $order)
@@ -46,7 +48,7 @@ class OrderConfigurationProvider implements OrderConfigurationProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getApplicableInternalStatutes($identifier = null)
+    public function getApplicableInternalStatuses($identifier = null)
     {
         return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES, $identifier);
     }

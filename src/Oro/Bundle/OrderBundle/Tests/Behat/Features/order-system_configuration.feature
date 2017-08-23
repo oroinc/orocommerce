@@ -13,11 +13,11 @@ Feature: Order System Configuration
     When I follow "Commerce/Orders/Order Automation" on configuration sidebar
     Then the "Use default" checkbox should be checked
     And I should see "Enable Automatic Order Cancellation"
-    And I should not see "Applicable Statutes"
+    And I should not see "Applicable Statuses"
     And I should not see "Target Status"
     And I save setting
 
     When uncheck "Use default" for "Enable Automatic Order Cancellation" field
     And I check "Enable Automatic Order Cancellation"
-    And I should see "Applicable Statutes"
+    And I should see "Applicable Statuses"
     And I should see "Target Status"

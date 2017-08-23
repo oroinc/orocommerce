@@ -10,7 +10,7 @@ processes:
                 - '@call_service_method':
                     attribute: $.applicableStatuses
                     service: oro_order.provider.configuration
-                    method: getApplicableInternalStatutes
+                    method: getApplicableInternalStatuses
                 - '@call_service_method':
                     attribute: $.targetStatusId
                     service: oro_order.provider.configuration

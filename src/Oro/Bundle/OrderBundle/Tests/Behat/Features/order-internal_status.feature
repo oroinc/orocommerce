@@ -49,20 +49,23 @@ Feature: Order Internal Statuses
   Scenario: Verify internal statuses at BackOffice Order grid
     Given I go to Sales/Orders
     And there is one record in grid
-    And I should see following records in grid:
-      | SecondOrder | Open    |
+    And I should see following grid:
+      | Order Number | Internal Status |
+      | SecondOrder  | Open            |
     When click grid view list
     And I click "All Orders"
     And I reset "Internal Status" filter
     Then number of records should be 2
     When I sort grid by "Internal Status"
-    Then I should see following records in grid:
-      | SecondOrder | Open    |
-      | SimpleOrder | Shipped |
+    Then I should see following grid:
+      | Order Number | Internal Status |
+      | SimpleOrder  | Archived        |
+      | SecondOrder  | Open            |
     When I sort grid by "Internal Status" again
-    Then I should see following records in grid:
-      | SimpleOrder | Shipped |
-      | SecondOrder | Open    |
+    Then I should see following grid:
+      | Order Number | Internal Status |
+      | SecondOrder  | Open            |
+      | SimpleOrder  | Archived        |
 #TODO: Should be uncommented and verified after BB-11343
 #    When I filter Internal Status as is any of "Shipped"
 #    Then number of records should be 1
