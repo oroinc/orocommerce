@@ -10,8 +10,7 @@ Related Items
 Overview
 --------
 Usually, when you sell a product, you also would like to offer your customers
-some related products that are a tempting or useful add-on to the product. For example, if you are selling phones, it's good to show
-fitting accessories next to it. This is where the Related Items functionality comes handy. 
+some related products that are a tempting or useful add-on to the product. For example, if you are selling phones, it is good to show fitting accessories next to it. This is where the Related Items functionality comes handy. 
 
 Classes
 -------
@@ -64,13 +63,13 @@ For more information about configuration see OroConfigBundle
 
 ### Strategy
 #### Finder Strategy
-The finder strategy (*Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface*) provides related products for user.
-You can see very simple example in *Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy*
-where related products are fetched from the database. This strategy takes into account the configuration from Config Provider.
+The finder strategy (*Oro\Bundle\ProductBundle\RelatedItem\FinderStrategyInterface*) provides related products for a user.
+You can see a simple example in *Oro\Bundle\ProductBundle\RelatedItem\RelatedProduct\AssignerDatabaseStrategy*
+where related products are fetched from the database. This strategy takes into account the configuration from the Config Provider.
 
 For more complex logic, you can create your own strategy.
 
-Just implement Oro\Bundle\ProductBundle\RelatedItem\Strategy\StrategyInterface, overload or decorate its definition: "oro_product.related_products.strategy", and provide the implementation of the *find* method:
+For this, implement Oro\Bundle\ProductBundle\RelatedItem\Strategy\StrategyInterface, overload or decorate its definition: "oro_product.related_products.strategy", and provide the implementation of the *find* method:
 
 ```php
     /**
@@ -85,7 +84,7 @@ The method has to return an array of Products.
 #### Assigner Strategy
 *Oro\Bundle\ProductBundle\RelatedItem\AssignerStrategyInterface*
 Use *AssignerStrategyInterface* to store the relation between the product and its related item. 
-Example of implementation can be found in 
+An example of the implementation can be found in 
 *Oro\Bundle\ProductBundle\RelatedItem\RelatedProducts\AssignerDatabaseStrategy*.
 
 It defines two methods:
@@ -97,8 +96,8 @@ It defines two methods:
      * @param Product[] $productsTo
      *
      * @throws \LogicException When functionality is disabled
-     * @throws \InvalidArgumentException When user tries to add related product to itself
-     * @throws \OverflowException When user tries to add more products than limit allows
+     * @throws \InvalidArgumentException When a user tries to add a related product to itself
+     * @throws \OverflowException When a user tries to add more products than the limit allows
      */
     public function addRelations(Product $productFrom, array $productsTo);
 ```
