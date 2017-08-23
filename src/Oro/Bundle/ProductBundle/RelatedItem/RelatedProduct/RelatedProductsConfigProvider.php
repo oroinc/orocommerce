@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
 {
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isEnabled()
     {
@@ -20,7 +20,7 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getLimit()
     {
@@ -29,11 +29,47 @@ class RelatedProductsConfigProvider extends AbstractRelatedItemConfigProvider
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isBidirectional()
     {
         return $this->configManager
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_BIDIRECTIONAL));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMinimumItems()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MIN_ITEMS));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMaximumItems()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_MAX_ITEMS));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isSliderEnabledOnMobile()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_USE_SLIDER_ON_MOBILE));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isAddButtonVisible()
+    {
+        return $this->configManager
+            ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::RELATED_PRODUCTS_SHOW_ADD_BUTTON));
     }
 }

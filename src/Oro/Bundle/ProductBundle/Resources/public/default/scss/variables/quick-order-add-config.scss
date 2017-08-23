@@ -17,3 +17,15 @@ $quick-order-add-label-margin: 0 0 10px !default;
 $quick-order-add-col-padding: 0 7px !default;
 
 $quick-order-add-inputs-text-align: center !default;
+
+$quick-order-add-error-margins: -10px -7px 5px !default;
+
+$quick-order-add-mobile-margin: 0 0 30px !default;
+$quick-order-add-mobile-bottom-margin: 0 0 5px !default;
+$quick-order-add-mobile-widget-content-margin: 5px 0 !default;
+$quick-order-add-mobile-row-border: 1px solid get-color('additional', 'light') !default;
+$quick-order-add-mobile-add-to-shopping-list-button: calc(100% - 40px) !default;
+$quick-order-add-mobile-quantity-unit-width: 50% !default;
+$quick-order-add-mobile-float: left !default;
+$quick-order-add-mobile-error-margins: -10px 0px 5px !default;
+$quick-order-add-mobile-price-dropdown-bottom: 5px !default;

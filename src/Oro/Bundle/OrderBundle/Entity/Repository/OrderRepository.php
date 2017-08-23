@@ -22,7 +22,8 @@ class OrderRepository extends EntityRepository
         $qb = $this->createQueryBuilder('orders');
         $qb
             ->select('COUNT(orders.id)')
-            ->where($qb->expr()->in('orders.currency', $removingCurrencies));
+            ->where($qb->expr()->in('orders.currency', ':removingCurrencies'))
+            ->setParameter('removingCurrencies', $removingCurrencies);
         if ($organization instanceof Organization) {
             $qb->andWhere('orders.organization = :organization');
             $qb->setParameter(':organization', $organization);
@@ -43,7 +44,9 @@ class OrderRepository extends EntityRepository
             ->leftJoin('orders.shippingAddress', 'shippingAddress')
             ->leftJoin('orders.billingAddress', 'billingAddress')
             ->leftJoin('orders.discounts', 'discounts')
-            ->where($qb->expr()->eq('orders.id', $id));
+            ->where($qb->expr()->eq('orders.id', $id))
+            ->addOrderBy($qb->expr()->asc('orders.id'))
+            ->addOrderBy($qb->expr()->asc('lineItems.id'));
 
         return $qb->getQuery()->getOneOrNullResult();
     }

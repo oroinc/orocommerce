@@ -1,0 +1,88 @@
+{% block _sidebar_main_menu_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " sidebar__menu"
+    }) %}
+
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                viewport: {
+                    maxScreenType: 'tablet',
+                },
+                moveTo: '[data-main-menu-extra-container]'
+            }
+        ]
+    }|json_encode %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="main-menu"
+                data-dom-relocation
+                data-dom-relocation-options="{{ dom_relocation_options }}"
+        >
+            <ul class="main-menu__list">
+                {{ block_widget(block) }}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _sidebar_product_categories_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " sidebar__menu sidebar__menu--collapsible"
+    }) %}
+
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                viewport: {
+                    maxScreenType: 'tablet',
+                },
+                moveTo: '[data-main-menu-extra-container]'
+            }
+        ]
+    }|json_encode %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="collapse-view expanded" data-page-component-collapse="{{ { storageKey: id }|json_encode() }}">
+            <a href="#" class="main-menu__link main-menu__link--is-trigger" data-collapse-trigger>
+                <span class="badge categories-widget__badge">
+                    <i class="fa-shopping-cart"></i>
+                </span>
+                <span class="collapse-view__trigger collapse-view__trigger--icon">
+                    <i class="collapse-view__trigger-icon fa-caret-right" data-toggle="collapse"></i>
+                </span>
+                <span class="collapse-view__text">{{ 'oro.catalog.category.categories.label'|trans }}</span>
+            </a>
+            <div data-collapse-container>
+                <div data-page-component-module="oroui/js/app/components/viewport-component"
+                     data-page-component-options="{{ {
+                         viewport: {
+                             maxScreenType: 'tablet',
+                         },
+                         component: 'oroui/js/app/components/view-component',
+                         view: 'orocommercemenu/js/app/widgets/menu-traveling-widget'
+                     }|json_encode() }}"
+                     data-dom-relocation
+                     data-dom-relocation-options="{{ dom_relocation_options }}"
+                >
+                    <button class="main-menu__back-trigger"
+                            data-go-to="prev"
+                    ><i class="fa-chevron-left"></i> {{ 'oro_frontend.fullscreen_popup.back.label'|trans }}</button>
+                    <ul class="main-menu">
+                        {{ block_widget(block) }}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _sidebar_quick_access_menu_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " sidebar__quick-access"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

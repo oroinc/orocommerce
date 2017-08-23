@@ -20,7 +20,10 @@
         td {
             &:not(:first-child) {
                 padding-top: 0;
-                white-space: nowrap;
+            }
+
+            &.line-item-price {
+                padding: 0 0 $offset-y;
             }
         }
 

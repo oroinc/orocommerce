@@ -6,24 +6,23 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SaveAddressType extends AbstractType
 {
     const NAME = 'oro_save_address';
 
     /**
-     * @var SecurityFacade
+     * @var AuthorizationCheckerInterface
      */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -33,8 +32,8 @@ class SaveAddressType extends AbstractType
     {
         $type = HiddenType::class;
 
-        if ($this->securityFacade->isGranted('CREATE;entity:OroCustomerBundle:CustomerUserAddress') &&
-            $this->securityFacade->isGranted('CREATE;entity:OroCustomerBundle:CustomerAddress')
+        if ($this->authorizationChecker->isGranted('CREATE;entity:OroCustomerBundle:CustomerUserAddress')
+            && $this->authorizationChecker->isGranted('CREATE;entity:OroCustomerBundle:CustomerAddress')
         ) {
             $type = CheckboxType::class;
         }
@@ -47,8 +46,8 @@ class SaveAddressType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        if (!$this->securityFacade->isGranted('CREATE;entity:OroCustomerBundle:CustomerUserAddress') &&
-            !$this->securityFacade->isGranted('CREATE;entity:OroCustomerBundle:CustomerAddress')
+        if (!$this->authorizationChecker->isGranted('CREATE;entity:OroCustomerBundle:CustomerUserAddress')
+            && !$this->authorizationChecker->isGranted('CREATE;entity:OroCustomerBundle:CustomerAddress')
         ) {
             $resolver->setDefaults([
                'data' => 0

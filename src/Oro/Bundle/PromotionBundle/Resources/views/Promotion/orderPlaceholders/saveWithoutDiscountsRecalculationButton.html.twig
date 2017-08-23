@@ -1,0 +1,8 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{{ UI.saveActionButton({
+    'label': 'oro.order.promotions.nav_button.save_without_discounts_recalculation'|trans,
+    'action': 'save_without_discounts_recalculation',
+    'route' : 'oro_order_view',
+    'params' : {'id': '$id'}
+}) }}

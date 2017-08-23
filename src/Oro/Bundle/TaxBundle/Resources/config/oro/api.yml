@@ -1,0 +1,12 @@
+api:
+    entities:
+        Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+            actions:
+                create: false
+                delete: false
+                delete_list: false
+                update: false
+            fields:
+                taxCode:
+                    description: Tax code
+                    data_type: association:manyToOne

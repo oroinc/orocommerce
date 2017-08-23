@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-10111
 @fixture-OroProductBundle:ProductDuplicateFixture.yml
 Feature: Duplicate product
@@ -13,7 +14,6 @@ Feature: Duplicate product
       | Name             | Product1 |
       | Inventory Status | In Stock |
       | Status           | Enabled  |
-    And I wait for action
     And I click Edit Product1 in grid
     And I save and duplicate form
     Then I should see "Product has been saved and duplicated" flash message

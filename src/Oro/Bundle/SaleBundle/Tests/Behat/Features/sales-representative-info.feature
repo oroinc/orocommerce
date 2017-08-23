@@ -1,3 +1,4 @@
+@regression
 @fixture-OroSaleBundle:sales-representative-info.yml
 Feature: Sales Representative Info
   In order to provide the customer with the contact information of his primary assigned sales representative
@@ -97,6 +98,7 @@ Feature: Sales Representative Info
     And I proceed as the Admin
     When fill "Customer Visible Contact Info Form" with:
       |Display                |Pre-Configured|
+      |Contact Details Default|false         |
       |Contact Details        |Name: Test Data <br> Email: Test@test.com|
     And click "Save settings"
     And I proceed as the User
@@ -168,6 +170,7 @@ Feature: Sales Representative Info
     And click Sales in sidebar menu
     And click on "Contacts"
     When fill "Customer Visible Contact Info Form" with:
+      |Available User Options Default|false         |
       |Available User Options        |Enter Manually|
     And click "Save settings"
     And go to System/ User Management/ Users
@@ -186,6 +189,7 @@ Feature: Sales Representative Info
     And click Sales in sidebar menu
     And click on "Contacts"
     When fill "Customer Visible Contact Info Form" with:
+      |Guest Contact Default|false             |
       |Guest Contact        |Test guest contact|
     And click "Save settings"
     And I proceed as the User

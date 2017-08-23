@@ -1,0 +1,195 @@
+include:
+    - payment.yml
+    - shipping.yml
+
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+    price:
+        value: '10'
+        currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        role: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '0'
+    precision2:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locValue1:
+        string: 'Product 1'
+    locValue2:
+        string: 'Product 2'
+    locValueFamily:
+        string: 'Product Attribute Family'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code'
+        addLabel: ['@locValueFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'SKU1'
+        primaryUnitPrecision: '@precision1'
+        addName: ['@locValue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+    product2:
+        sku: 'SKU2'
+        primaryUnitPrecision: '@precision2'
+        addName: ['@locValue2']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist:
+        label: 'List 1'
+        customerUser: '@amanda'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+    lineitem2:
+        product: '@product2'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppingListTotal:
+        __construct: ['@shoppinglist','USD']
+        shoppingList: '@shoppinglist'
+        currency: 'USD'
+        subtotalValue: '20'
+        valid: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address:
+        country: '@germany'
+        region: '@berlin'
+        label: 'Primary address'
+        street: 'Fifth avenue'
+        city: 'Berlin'
+        postalCode: '10115'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        organization: '@organization'
+        primary: true
+
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    pricelist:
+        name: 'pricelist'
+        default: true
+        setCurrencies: [['USD']]
+        active: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    priceListToCustomer:
+        customer: '@customer'
+        pricelist: '@pricelist'
+        website: '@website1'
+        sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@pricelist'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+    productPrice2:
+        pricelist: '@pricelist'
+        product: '@product2'
+        productSku: 'SKU2'
+        quantity: 5
+        unit: '@item'
+        value: 5
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPrice1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'SKU1'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+   combinedProductPrice2:
+        pricelist: '@combinedPriceList'
+        product: '@product2'
+        productSku: 'SKU2'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer:
+    combinedPriceListToCustomer:
+        pricelist: '@combinedPriceList'
+        customer: '@customer'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combinedPriceListToWebsite:
+        pricelist: '@combinedPriceList'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+    customerUserSetting:
+        customerUser: '@amanda'
+        __construct: ['@website1']
+        currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    billing:
+        address: '@address'
+        type: '@billingType'
+        default: true
+    shipping:
+        address: '@address'
+        type: '@shippingType'
+        default: true

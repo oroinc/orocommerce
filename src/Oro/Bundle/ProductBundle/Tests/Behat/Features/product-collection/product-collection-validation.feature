@@ -1,3 +1,4 @@
+@regression
 @fixture-OroProductBundle:product_collection_add.yml
 Feature:
   In order to be sure that added Product Collection is valid

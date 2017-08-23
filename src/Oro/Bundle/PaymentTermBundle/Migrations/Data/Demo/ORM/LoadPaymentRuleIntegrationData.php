@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityNotFoundException;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -15,12 +16,14 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadPaymentRuleIntegrationData extends AbstractFixture implements ContainerAwareInterface
 {
     const PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE = 'payment_term_integration_channel';
+    const MAIN_USER_ID = 1;
 
     /**
      * @var ContainerInterface
@@ -60,12 +63,14 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
 
         $transport = new PaymentTermSettings();
         $transport->addLabel($label);
+        $transport->addShortLabel($label);
 
         $channel = new Channel();
         $channel->setType(PaymentTermChannelType::TYPE)
             ->setName((string)$label)
             ->setEnabled(true)
             ->setOrganization($this->getOrganization($manager))
+            ->setDefaultUserOwner($this->getMainUser($manager))
             ->setTransport($transport);
 
         $this->setReference(self::PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE, $channel);
@@ -113,6 +118,24 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
         }
 
         return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return User
+     *
+     * @throws EntityNotFoundException
+     */
+    public function getMainUser(ObjectManager $manager)
+    {
+        /** @var User $entity */
+        $entity = $manager->getRepository(User::class)->findOneBy([], ['id' => 'ASC']);
+        if (!$entity) {
+            throw new EntityNotFoundException('Main user does not exist.');
+        }
+
+        return $entity;
     }
 
     /**

@@ -1,0 +1,79 @@
+// @theme: default;
+
+.checkout {
+    padding: $checkout-padding;
+
+    border-radius: $checkout-border-radius;
+
+    background: $checkout-background-color;
+
+    &__head {
+        position: $checkout-head-position;
+
+        padding: $checkout-head-padding;
+        margin: $checkout-head-margin;
+    }
+
+    &__body {
+        margin: $checkout-body-margin;
+
+        &--offset-none {
+            margin: 0;
+        }
+    }
+
+    &__title {
+        display: block;
+
+        &-icon {
+            position: $checkout-title-badge-position;
+            left: 0;
+            top: 0;
+
+            @include badge($checkout-title-badge-size, $checkout-title-badge-font-size);
+        }
+
+        &-text {
+            font-size: $checkout-title-text-font-size;
+            font-weight: $checkout-title-text-font-weight;
+            line-height: $checkout-title-text-line-height;
+
+            + * {
+                margin: 0 0 0 $offset-x-m;
+            }
+        }
+    }
+
+    &__approval-wrapper {
+        margin: $checkout-approval-wrapper-margin;
+    }
+
+    &__approval-note {
+        margin: $checkout-approval-note-margin;
+    }
+
+    &.form-row {
+        padding: 0;
+
+        background: transparent;
+    }
+}
+
+@include breakpoint('tablet') {
+    .checkout {
+        padding: $checkout-tablet-padding;
+        border-radius: $checkout-tablet-border-radius;
+
+        &__approval-wrapper {
+            margin: $checkout-approval-wrapper-tablet-margin;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .checkout {
+        &__submit-btn {
+            width: $checkout-submit-btn-tablet-small-width;
+        }
+    }
+}

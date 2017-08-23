@@ -1,0 +1,54 @@
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProduct{1..3}Name:
+        string: 'Product <current()>'
+
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'
+    localValueRetailSupplies:
+        string: 'Retail Supplies'
+
+    localValuePrinters:
+        string: 'Printers'
+
+    localValueLightingProducts:
+        string: 'Lighting Products'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision{1..3}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code'
+        addLabel: ['@localProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..3}:
+        type: 'simple'
+        sku: 'PSKU<current()>'
+        primaryUnitPrecision: '@productUnitPrecision<current()>'
+        addName: ['@localProduct<current()>Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        addTitle: ['@localValueLightingProducts']
+        setParentCategory: [1]
+        addProduct: ['@product1']
+
+    categoryRetailSupplies:
+        addTitle: ['@localValueRetailSupplies']
+        setParentCategory: [1]
+        addProduct: ['@product2']
+
+    categoryPrinters:
+        addTitle: ['@localValuePrinters']
+        setParentCategory: ['@categoryRetailSupplies']
+        addProduct: ['@product3']

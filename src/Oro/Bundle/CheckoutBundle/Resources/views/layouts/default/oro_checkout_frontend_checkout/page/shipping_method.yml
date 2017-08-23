@@ -2,16 +2,20 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '../templates/shipping_method.html.twig'
+
         - '@setOption':
-            id: checkout_information
+            id: checkout_information_title
             optionName: stepOrder
             optionValue: 3
+
         - '@add':
             id: shipping_methods
-            parentId: checkout_information
+            parentId: checkout_information_body
             blockType: shipping_methods
             prepend: true
             options:
+                attr:
+                    class: 'grid__column grid__column--offset-y grid__column--6'
                 class_prefix: 'checkout'
                 methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
                 currentShippingMethod: '=data["checkout"].getShippingMethod()'

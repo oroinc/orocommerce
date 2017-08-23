@@ -42,6 +42,14 @@ class AjaxLineItemController extends AbstractLineItemController
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
+        if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$this->get('security.authorization_checker')->isGranted('VIEW', $product)) {
+            throw $this->createAccessDeniedException();
+        }
+
         $parentProduct = $this->getParentProduct($request);
 
         $lineItem = (new LineItem())

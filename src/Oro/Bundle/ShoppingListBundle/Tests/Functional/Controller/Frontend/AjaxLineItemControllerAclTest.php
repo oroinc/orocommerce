@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AjaxLineItemControllerAclTest extends WebTestCase
 {
@@ -99,6 +100,12 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
     public function testAddProductsToNewMassAction()
     {
+        $this->simulateAuthentication(
+            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+            'customer_identity',
+            CustomerUser::class
+        );
         $this->client->request(
             'GET',
             $this->getUrl(

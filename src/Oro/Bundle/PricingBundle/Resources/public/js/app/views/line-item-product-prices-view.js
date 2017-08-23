@@ -44,10 +44,15 @@ define(function(require) {
             mediator.on('pricing:refresh:products-tier-prices', this.refreshTierPrices, this);
 
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
+                var productId = this.model.get('id');
+
+                if (!_.isUndefined(productId) && _.isUndefined(tierPrices[productId])) {
+                    //load prices from server for new line items
+                    this.updateTierPrices();
+                }
+
                 this.setTierPrices(tierPrices, false);
             }, this));
-
-            this.updateTierPrices();
         },
 
         updateTierPrices: function() {

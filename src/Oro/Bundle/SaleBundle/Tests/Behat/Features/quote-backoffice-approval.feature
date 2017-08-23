@@ -1,7 +1,9 @@
+@regression
 @ticket-BB-9130
+@ticket-BB-11080
 @automatically-ticket-tagged
 @fixture-OroSaleBundle:QuoteBackofficeApprovalsFixture.yml
-Feature: Quote Backoffice Approvals Workflow
+Feature: Backoffice Quote Flow with Approvals
   In order to edit quote internal statuses and aprove quotes after price changes
   As an Administrator
   I want to have ability to change Quote internal status and approve quotes by Workflow transitions
@@ -9,8 +11,17 @@ Feature: Quote Backoffice Approvals Workflow
   Scenario: Check workflow variable
     Given I login as administrator
     When I go to System/Workflows
-    And I click Configuration Quote Backoffice Approval in grid
+    And I click Configuration Backoffice Quote Flow with Approvals in grid
     Then the "Price override requires approval" checkbox should be checked
+
+  Scenario: Add workflow permissions for user
+    Given I go to System/ User Management/ Roles
+    And I filter Label as is equal to "Sales Rep"
+    When I click edit Sales Rep in grid
+    And I select following permissions:
+      | Backoffice Quote Flow with Approvals | View Workflow:Global | Perform transitions:Global |
+    And I save and close form
+    Then I should see "Role saved" flash message
 
   Scenario: Draft -> Edit: Quote prices not changed
     Given I login as "john" user
@@ -26,7 +37,6 @@ Feature: Quote Backoffice Approvals Workflow
     And I fill "Quote Form" with:
       | PO Number | PO1_edit |
     And I click "Submit"
-    And I click "Save" in modal window
     Then I should see "Quote #1 successfully updated" flash message
     And should see Quote with:
       | Quote #         | 1        |
@@ -63,7 +73,9 @@ Feature: Quote Backoffice Approvals Workflow
     And I click "Edit"
     And I fill "Quote Form" with:
       | LineItemPrice | 1 |
+    And I wait 2 seconds until submit button becomes available
     And I click "Submit"
+    And I click "Save" in modal window
     Then I should see "Quote #2 successfully updated" flash message
     And I should not see "Send to Customer"
     And I should see "Submit for Review"
@@ -89,7 +101,9 @@ Feature: Quote Backoffice Approvals Workflow
     And I click "Edit"
     And I fill "Quote Form" with:
       | LineItemPrice | 1 |
+    And I wait 2 seconds until submit button becomes available
     And I click "Submit"
+    And I click "Save" in modal window
     And I press "Submit for Review"
     And I fill form with:
       | Comment | Test comment for submitting |
@@ -122,7 +136,6 @@ Feature: Quote Backoffice Approvals Workflow
     Then I should see Quote with:
       | PO Number       | PO2                  |
       | Internal Status | Submitted for Review |
-
     When I click "Review"
     Then I should see "Quote #2 on review" flash message
     And I should see Quote with:
@@ -471,6 +484,7 @@ Feature: Quote Backoffice Approvals Workflow
     And I click Edit PO13 in grid
     And I fill "Quote Form" with:
       | LineItemPrice | 10 |
+    And I wait 2 seconds until submit button becomes available
     And I click "Submit"
     And I click "Save" in modal window
     Then I should see "Price overriding allowed by tier price only"

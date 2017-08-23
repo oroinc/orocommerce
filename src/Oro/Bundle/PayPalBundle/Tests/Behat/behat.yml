@@ -1,7 +1,7 @@
 oro_behat_extension:
   elements:
     PayPalForm:
-      selector: 'div#container'
+      selector: 'form[name="oro_integration_channel_form"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -20,7 +20,10 @@ oro_behat_extension:
           Zero Amount Authorization: 'oro_integration_channel_form[transport][zeroAmountAuthorization]'
           Authorization For Required Amount: 'oro_integration_channel_form[transport][authorizationForRequiredAmount]'
     PayPalCreditCardForm:
-      selector: 'div#container'
+      selector:
+        type: 'xpath'
+        locator: '//input[@id[starts-with(.,"oro_paypal_credit_card_ACCT")]]/ancestor::div[contains(@class,"checkout-form__payment-methods-form")]'
+
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -28,6 +31,14 @@ oro_behat_extension:
           Month: 'oro_paypal_credit_card[expirationDate][month]'
           Year: 'oro_paypal_credit_card[expirationDate][year]'
           CVV: 'CVV2'
+    Transaction Capture Button:
+      selector: 'div.action-row a.action[title="Capture"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    Transactions History Grid:
+      selector:
+        locator: '//div[contains(@class, "responsive-section ")]/h4[text()="Payment History"]/..//div[@class="oro-datagrid"]//table'
+        type: xpath
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
   suites:
     OroPayPalBundle:
       contexts:

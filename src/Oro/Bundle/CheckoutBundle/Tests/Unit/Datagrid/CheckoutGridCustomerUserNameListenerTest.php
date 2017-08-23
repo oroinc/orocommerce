@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener;
 
@@ -55,7 +56,8 @@ class CheckoutGridCustomerUserNameListenerTest extends \PHPUnit_Framework_TestCa
               ->willReturn($configObject);
 
         $this->provider->expects($this->once())
-                       ->method('isGrantedViewLocal')
+                       ->method('isGrantedViewCustomerUser')
+                       ->with(Checkout::class)
                        ->willReturn(false);
 
         $this->testable = new CheckoutGridCustomerUserNameListener($this->provider);

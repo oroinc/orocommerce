@@ -1,6 +1,6 @@
 include:
-    - ../../../../../ShoppingListBundle/Tests/Behat/Features/Fixtures/ShoppingListFixture.yml
-    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+    - '@OroShoppingListBundle:ShoppingListFixture.yml'
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
 
 Oro\Bundle\SaleBundle\Entity\Quote:
     quote{1..29}:

@@ -1,0 +1,37 @@
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote1:
+        currency: 'USD'
+        customer: '@customer'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        poNumber: 'PO1'
+        qid: '1'
+        website: '@website1'
+        shippingMethod: '<(@flatRateIntegration->type."_".@flatRateIntegration->id)>'
+        shippingMethodType: 'primary'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteProduct1:
+        product: '@product'
+        quote: '@quote1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    quoteProductPrice1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteProductOffer1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteProductRequest1:
+        quote_product: '@quoteProduct1'
+        product_unit: '@item'
+        price: '@quoteProductPrice1'
+        quantity: 5

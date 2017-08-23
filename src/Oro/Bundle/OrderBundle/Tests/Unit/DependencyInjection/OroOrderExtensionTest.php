@@ -35,7 +35,7 @@ class OroOrderExtensionTest extends ExtensionTestCase
             'oro_order.api.form_listener.discount',
             'oro_order.api.handle_order_included_data',
             'oro_order.api.update_request_data_for_order_line_item',
-            'oro_order.api.update_product_line_item_price',
+            'oro_order.api.set_price_by_value_and_currency',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

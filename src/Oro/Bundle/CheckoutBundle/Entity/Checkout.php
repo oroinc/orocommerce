@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
@@ -13,11 +15,13 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
@@ -52,10 +56,12 @@ class Checkout implements
     CheckoutInterface,
     OrganizationAwareInterface,
     CustomerOwnerAwareInterface,
+    CustomerVisitorOwnerAwareInterface,
     DatesAwareInterface,
     ShippingAwareInterface,
     LineItemsNotPricedAwareInterface,
-    PaymentMethodAwareInterface
+    PaymentMethodAwareInterface,
+    WebsiteAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
@@ -476,5 +482,19 @@ class Checkout implements
         $sourceEntity = $this->getSourceEntity();
         return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
             || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
+    }
+
+    /**
+     * @return CustomerVisitor|null
+     */
+    public function getVisitor()
+    {
+        $sourceEntity = $this->getSourceEntity();
+
+        if ($sourceEntity instanceof ShoppingList) {
+            return $sourceEntity->getVisitor();
+        }
+
+        return null;
     }
 }

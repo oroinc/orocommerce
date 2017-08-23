@@ -3,23 +3,41 @@ define(function(require) {
 
     var AddressView;
     var _ = require('underscore');
+    var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/views/base/view');
 
     AddressView = BaseComponent.extend({
+        options: {
+            addedAddressOptionClass: 'option_added_address',
+            selectors: {
+                address: null,
+                fieldsContainer: null,
+                region: null,
+                shipToBillingCheckbox: null,
+                externalShipToBillingCheckbox: null
+            }
+        },
+
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.$addressSelector = this.$el.find(options.selectors.address);
-            this.$fieldsContainer = this.$el.find(options.selectors.fieldsContainer);
-            this.$regionSelector = this.$el.find(options.selectors.region);
+            this.options = $.extend(true, {}, this.options, options);
 
-            this.needCheckAddressTypes = options.selectors.hasOwnProperty('shipToBillingCheckbox');
+            this.$addressSelector = this.$el.find(this.options.selectors.address);
+            this.$fieldsContainer = this.$el.find(this.options.selectors.fieldsContainer);
+            this.$regionSelector = this.$el.find(this.options.selectors.region);
+
+            this.needCheckAddressTypes = this.options.selectors.shipToBillingCheckbox;
             if (this.needCheckAddressTypes) {
                 this.typesMapping = this.$addressSelector.data('addresses-types');
-                this.$shipToBillingCheckbox = this.$el.find(options.selectors.shipToBillingCheckbox);
+                this.$shipToBillingCheckbox = this.$el.find(this.options.selectors.shipToBillingCheckbox);
                 this.$shipToBillingCheckbox.on('change', _.bind(this._handleShipToBillingAddressCheckbox, this));
                 this.shipToBillingContainer = this.$shipToBillingCheckbox.closest('fieldset');
+                if (this.options.selectors.externalShipToBillingCheckbox) {
+                    this.$externalShipToBillingCheckbox = $(this.options.selectors.externalShipToBillingCheckbox);
+                }
             }
 
             this.$addressSelector.on('change', _.bind(this._onAddressChanged, this));
@@ -31,11 +49,17 @@ define(function(require) {
 
             this._onAddressChanged();
             this._handleShipToBillingAddressCheckbox();
+            mediator.on('checkout:address:updated', this._onAddressUpdated, this);
+            mediator.on('checkout:ship_to_checkbox:changed', this._onShipToCheckboxChanged, this);
         },
 
         _handleShipToBillingAddressCheckbox: function(e) {
+            var disabled = this.needCheckAddressTypes ? this.$shipToBillingCheckbox.prop('checked') : false;
+            if (!disabled) {
+                this.$addressSelector.find('option.' + this.options.addedAddressOptionClass).remove();
+            }
+
             var isOneOption = this.$addressSelector[0].length === 1;
-            var disabled = Boolean(this.$shipToBillingCheckbox.attr('checked'));
             if (!disabled && this._isFormVisible()) {
                 this._showForm();
             } else {
@@ -43,10 +67,28 @@ define(function(require) {
                 this.$addressSelector.focus();
             }
             this.$addressSelector.prop('disabled', disabled || isOneOption).inputWidget('refresh');
+            mediator.trigger('checkout:ship_to_checkbox:changed', this.$shipToBillingCheckbox);
             if (isOneOption) {
                 this.$addressSelector.inputWidget('dispose');
                 this.$addressSelector.hide();
             }
+
+            // if external checkbox exists - synchronize it
+            if (this.$externalShipToBillingCheckbox) {
+                this.$externalShipToBillingCheckbox.off('change');
+                this.$externalShipToBillingCheckbox.prop('checked', disabled);
+                this.$externalShipToBillingCheckbox.on(
+                    'change',
+                    _.bind(this._handleExternalShipToBillingAddressCheckbox, this)
+                );
+            }
+        },
+
+        _handleExternalShipToBillingAddressCheckbox: function(e) {
+            this.$shipToBillingCheckbox.prop(
+                'checked',
+                this.$externalShipToBillingCheckbox.prop('checked')
+            ).trigger('change');
         },
 
         _onAddressChanged: function(e) {
@@ -54,6 +96,38 @@ define(function(require) {
                 this._showForm();
             } else {
                 this._hideForm();
+            }
+            mediator.trigger('checkout:address:updated', this.$addressSelector);
+        },
+
+        _onAddressUpdated: function($addressSelector) {
+            if ($addressSelector === this.$addressSelector) {
+                return;
+            }
+            if (this.$addressSelector.prop('disabled') && this.$shipToBillingCheckbox.prop('checked')) {
+                var addressValue = $addressSelector.val();
+                var addressTitle = $addressSelector.find('option:selected').text();
+                this.$addressSelector.val(addressValue);
+                // if no value - add needed value
+                if (this.$addressSelector.val() !== addressValue) {
+                    var $addedAddress = this.$addressSelector.find('.' + this.options.addedAddressOptionClass);
+                    if (!$addedAddress.length) {
+                        $addedAddress = $('<option/>').addClass(this.options.addedAddressOptionClass);
+                        this.$addressSelector.append($addedAddress);
+                    }
+                    $addedAddress.attr('value', addressValue).text(addressTitle);
+                    this.$addressSelector.val(addressValue);
+                }
+                this.$addressSelector.inputWidget('refresh');
+            }
+        },
+
+        _onShipToCheckboxChanged: function($shipToCheckbox) {
+            if (!$shipToCheckbox || ($shipToCheckbox === this.$shipToBillingCheckbox)) {
+                return;
+            }
+            if ($shipToCheckbox.prop('checked')) {
+                mediator.trigger('checkout:address:updated', this.$addressSelector);
             }
         },
 

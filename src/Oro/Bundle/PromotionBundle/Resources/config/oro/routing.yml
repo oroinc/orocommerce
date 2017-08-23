@@ -1,0 +1,9 @@
+oro_promotion:
+    resource:     "@OroPromotionBundle/Controller/PromotionController.php"
+    type:         annotation
+    prefix:       /promotion
+
+oro_promotion_coupon:
+    resource:     "@OroPromotionBundle/Controller/CouponController.php"
+    type:         annotation
+    prefix:       /promotion/coupon

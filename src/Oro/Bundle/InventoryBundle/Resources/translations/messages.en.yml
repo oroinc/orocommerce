@@ -100,3 +100,17 @@ oro:
         frontend:
             messages:
                 quantity_limits_error: Cannot create order because some items' quantities don't fit allowed limits
+
+    product:
+        manage_inventory:
+            description: Option which defines if inventory for products is managed or not
+        inventory_threshold:
+            description: The value that defines the limit of the inventory after which this product can not be ordered
+        decrement_quantity:
+            description: Option that defines the strategy used for decrementing inventory for ordered products
+        backOrder:
+            description: Defines if it is allowed to order products even if the inventory treshold limit is reached
+        maximum_quantity_to_order:
+            description: The maximum quantity that the user must order for this product
+        minimum_quantity_to_order:
+            description: The minimum quantity that the user must order for this product

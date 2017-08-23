@@ -15,6 +15,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
 class OrderAddressManagerTest extends AbstractAddressManagerTest
@@ -173,7 +174,10 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
         $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
 
-        $this->assertEquals($expected, $this->manager->getGroupedAddresses($order, AddressType::TYPE_BILLING));
+        $result = $this->manager->getGroupedAddresses($order, AddressType::TYPE_BILLING);
+
+        $this->assertInstanceOf(TypedOrderAddressCollection::class, $result);
+        $this->assertEquals($expected, $result->toArray());
     }
 
     /**
@@ -191,7 +195,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
                 ],
                 [
-                    OrderAddressManager::ACCOUNT_USER_LABEL => [
+                    'oro.order.form.address.group_label.customer_user' => [
                         'au_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             1
@@ -211,7 +215,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 ],
                 [],
                 [
-                    OrderAddressManager::ACCOUNT_LABEL => [
+                    'oro.order.form.address.group_label.customer' => [
                         'a_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             1
@@ -234,7 +238,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
                 ],
                 [
-                    OrderAddressManager::ACCOUNT_LABEL => [
+                    'oro.order.form.address.group_label.customer' => [
                         'a_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             1
@@ -244,7 +248,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                             2
                         ),
                     ],
-                    OrderAddressManager::ACCOUNT_USER_LABEL => [
+                    'oro.order.form.address.group_label.customer_user' => [
                         'au_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             1
@@ -292,13 +296,13 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             );
 
         $expectedTypes = [];
-        if (array_key_exists(OrderAddressManager::ACCOUNT_LABEL, $addresses)) {
-            foreach ($addresses[OrderAddressManager::ACCOUNT_LABEL] as $id => $address) {
+        if (array_key_exists('oro.order.form.address.group_label.customer', $addresses)) {
+            foreach ($addresses['oro.order.form.address.group_label.customer'] as $id => $address) {
                 $expectedTypes[$id] = ['billing'];
             }
         }
-        if (array_key_exists(OrderAddressManager::ACCOUNT_USER_LABEL, $addresses)) {
-            foreach ($addresses[OrderAddressManager::ACCOUNT_USER_LABEL] as $id => $address) {
+        if (array_key_exists('oro.order.form.address.group_label.customer_user', $addresses)) {
+            foreach ($addresses['oro.order.form.address.group_label.customer_user'] as $id => $address) {
                 $expectedTypes[$id] = ['billing', 'shipping'];
             }
         }

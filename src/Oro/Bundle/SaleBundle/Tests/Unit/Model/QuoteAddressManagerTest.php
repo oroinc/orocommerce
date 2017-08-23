@@ -12,6 +12,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Tests\Unit\Manager\AbstractAddressManagerTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
@@ -174,7 +175,10 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
         $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
 
-        $this->assertEquals($expected, $this->manager->getGroupedAddresses($quote, AddressType::TYPE_BILLING));
+        $result = $this->manager->getGroupedAddresses($quote, AddressType::TYPE_BILLING, 'oro.sale.quote.');
+
+        $this->assertInstanceOf(TypedOrderAddressCollection::class, $result);
+        $this->assertEquals($expected, $result->toArray());
     }
 
     /**
@@ -192,7 +196,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
                 ],
                 [
-                    QuoteAddressManager::ACCOUNT_USER_LABEL => [
+                    'oro.sale.quote.form.address.group_label.customer_user' => [
                         'au_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             1
@@ -212,7 +216,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 ],
                 [],
                 [
-                    QuoteAddressManager::ACCOUNT_LABEL => [
+                    'oro.sale.quote.form.address.group_label.customer' => [
                         'a_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             1
@@ -235,7 +239,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
                 ],
                 [
-                    QuoteAddressManager::ACCOUNT_LABEL => [
+                    'oro.sale.quote.form.address.group_label.customer' => [
                         'a_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             1
@@ -245,7 +249,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                             2
                         ),
                     ],
-                    QuoteAddressManager::ACCOUNT_USER_LABEL => [
+                    'oro.sale.quote.form.address.group_label.customer_user' => [
                         'au_1' => $this->getEntity(
                             'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             1

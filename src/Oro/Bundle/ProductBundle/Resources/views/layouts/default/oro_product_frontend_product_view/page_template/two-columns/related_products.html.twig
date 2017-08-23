@@ -1,0 +1,21 @@
+{% block _product_view_related_products_container_widget %}
+    {% if blocks.offsetGet('product_view_attributes_rest').count() == 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-view__related-items product-view__related-products'
+        }) %}
+
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _two_column_related_products_widget %}
+    {% if blocks.offsetGet('product_view_attributes_rest').count() > 0 %}
+        <section {{ block('block_attributes') }} class="product-view__attribute-box">
+            <div class="tab-content__wrapper">
+                {{ block_widget(block) }}
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

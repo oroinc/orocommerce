@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutACLData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @group=segfault
  */
-class CheckoutControllerAclTest extends WebTestCase
+class CheckoutControllerAclTest extends FrontendWebTestCase
 {
     protected function setUp()
     {
@@ -20,6 +21,7 @@ class CheckoutControllerAclTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+        $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
                 LoadOrdersACLData::class,
@@ -53,7 +55,10 @@ class CheckoutControllerAclTest extends WebTestCase
         $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-checkouts-grid',
-            ]
+            ],
+            [],
+            true,
+            'oro_frontend_datagrid_index'
         );
 
         self::assertResponseStatusCodeEquals($response, $gridResponseStatus);
@@ -82,7 +87,7 @@ class CheckoutControllerAclTest extends WebTestCase
             'NOT AUTHORISED' => [
                 'user' => '',
                 'indexResponseStatus' => 401,
-                'gridResponseStatus' => 403,
+                'gridResponseStatus' => 401,
                 'data' => [],
             ],
             'BASIC: own orders' => [
@@ -119,7 +124,7 @@ class CheckoutControllerAclTest extends WebTestCase
 
 
     /**
-     * @dataProvider testViewDataProvider
+     * @dataProvider viewDataProvider
      *
      * @param string $resource
      * @param string $user
@@ -127,7 +132,7 @@ class CheckoutControllerAclTest extends WebTestCase
      */
     public function testView($resource, $user, $status)
     {
-        $this->loginUser($user);
+        $this->simulateAuthentication($user, $user, 'customer_identity', CustomerUser::class);
 
         /** @var Checkout $checkout */
         $checkout = $this->getReference($resource);
@@ -140,13 +145,13 @@ class CheckoutControllerAclTest extends WebTestCase
     /**
      * @return array
      */
-    public function testViewDataProvider()
+    public function viewDataProvider()
     {
         return [
             'anonymous user' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                 'user' => '',
-                'status' => 401,
+                'status' => 404,
             ],
             'user from another customer' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,

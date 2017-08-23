@@ -1,0 +1,20 @@
+{% block _promotion_checkout_line_items_list_discount_info_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-dom-relocation': true,
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    viewport: {
+                        maxScreenType: 'mobile-landscape'
+                    },
+                    moveTo: '[data-checkout-order-summary-line-item-price_' ~ productSku|lower ~ ']'
+                }
+            ]
+        }|json_encode,
+        '~class': " checkout-order-summary__lineitem-total"
+    }) %}
+    {% set matchedDiscount = parent.lineItemDiscounts.contains(lineItem) ? parent.lineItemDiscounts.get(lineItem) : null %}
+    {% if matchedDiscount is not null and matchedDiscount.total.value > 0 %}
+        <div {{ block('block_attributes') }}>{{ (-matchedDiscount.total.value)|oro_format_currency({'currency': matchedDiscount.total.currency}) }}</div>
+    {% endif %}
+{% endblock %}

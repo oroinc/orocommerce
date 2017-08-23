@@ -1,3 +1,4 @@
+@regression
 @ticket-BB-9611
 @ticket-BB-9613
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
@@ -18,9 +19,7 @@ Feature: Quote from Opportunity Default
 
   Scenario: Setup system configuration of Warehouses
     Given I go to System/Configuration
-    When I click "Commerce" on configuration sidebar
-    And I click "Inventory" on configuration sidebar
-    And I click "Warehouses" on configuration sidebar
+    When I follow "Commerce/Inventory/Warehouses" on configuration sidebar
     And I choose Warehouse "Test Warehouse" in 1 row
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
@@ -38,8 +37,9 @@ Feature: Quote from Opportunity Default
   Scenario: Create new Quote
     Given I press "Create quote"
     And I fill "Quote Form" with:
-      | LineItemProduct | SKU123 |
-      | LineItemPrice   | 1      |
+      | Assigned Customer Users | Amanda Cole |
+      | LineItemProduct         | SKU123      |
+      | LineItemPrice           | 1           |
     When I save and close form
     And I click "Save" in modal window
     Then I should see "Quote has been saved" flash message

@@ -1,10 +1,49 @@
+@regression
 Feature: UPS shipping integration
   Scenario: Create UPS integration
     Given I login as administrator
     And go to System/ Integrations/ Manage Integrations
     And click "Create Integration"
     When I fill "Integration Form" with:
-      | Type                    | UPS                       |
+      | Type   | UPS          |
+      | Country| United States|
+    Then should see the following options for "Shipping Service" select:
+    |UPS 2nd Day Air              |
+    |UPS 2nd Day Air A.M.         |
+    |UPS 3 Day Select             |
+    |UPS Ground                   |
+    |UPS Next Day Air             |
+    |UPS Next Day Air Early       |
+    |UPS Next Day Air Saver       |
+    |UPS Standard                 |
+    |UPS Worldwide Expedited      |
+    |UPS Worldwide Express Freight|
+    |UPS Worldwide Express Plus   |
+    |UPS Worldwide Saver          |
+    And should not see the following options for "Shipping Service" select:
+      |UPS Access Point|
+      |UPS Expedited   |
+      |UPS Express     |
+    When I fill "Integration Form" with:
+      | Country| United Kingdom|
+    Then should see the following options for "Shipping Service" select:
+      |UPS Access Point             |
+      |UPS Expedited                |
+      |UPS Express                  |
+      |UPS Standard                 |
+      |UPS Worldwide Express Freight|
+      |UPS Worldwide Express Plus   |
+      |UPS Worldwide Saver          |
+    And should not see the following options for "Shipping Service" select:
+      |UPS 2nd Day Air              |
+      |UPS 2nd Day Air A.M.         |
+      |UPS 3 Day Select             |
+      |UPS Ground                   |
+      |UPS Next Day Air             |
+      |UPS Next Day Air Early       |
+      |UPS Next Day Air Saver       |
+      |UPS Worldwide Expedited      |
+    When I fill "Integration Form" with:
       | Name                    | UPS                       |
       | Label                   | UPS                       |
       | Test Mode               | true                      |

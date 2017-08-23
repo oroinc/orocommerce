@@ -62,6 +62,8 @@ services:
     oro_pricing.listener.product_unit_precision_on_post_remove:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionPostRemoveListener'
         public: false
+        arguments:
+            - '@oro_pricing.shard_manager'
         calls:
             - [setPriceAttributeClass, ['%oro_pricing.entity.price_attribute_product_price.class%']]
         tags:
@@ -289,6 +291,7 @@ services:
             - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_list_trigger_factory:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory'
@@ -302,6 +305,7 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
+            - { name: kernel.event_listener, event: oro_pricing.product_prices.updated, method: sendScheduledTriggers }
 
     oro_pricing.price_rule_lexeme_trigger_handler:
         class: Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler
@@ -397,11 +401,6 @@ services:
             - '@property_accessor'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing_dates_chain_validator }
-
-    oro_pricing.validator.schedules_intersection:
-        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_pricing_schedules_intersection_validator }
 
     oro_pricing.model.price_list_request_handler:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRequestHandler'
@@ -728,6 +727,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_customer_type, method: onPostSubmit }
             - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_change, method: onCustomerGroupChange }
+
+    oro_pricing.entity_listener.product_form:
+        class: 'Oro\Bundle\PricingBundle\EventListener\ProductFormListener'
+        arguments:
+            - '@oro_pricing.manager.price_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_product, method: onBeforeFlush }
 
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'
@@ -1098,3 +1104,9 @@ services:
         class: Oro\Bundle\PricingBundle\PricingStrategy\StrategyRegister
         arguments:
             - '@oro_config.manager'
+
+    oro_pricing.provider.price_list_default_value:
+        class: 'Oro\Bundle\PricingBundle\Provider\PriceListDefaultValueProvider'
+        arguments:
+            - '@oro_pricing.provider.price_list_provider'
+            - '@oro_pricing.shard_manager'

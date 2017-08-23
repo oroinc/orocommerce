@@ -4,7 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -73,6 +75,7 @@ class ShoppingList extends ExtendShoppingList implements
     OrganizationAwareInterface,
     LineItemsNotPricedAwareInterface,
     CustomerOwnerAwareInterface,
+    CustomerVisitorOwnerAwareInterface,
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface,
     \JsonSerializable,
@@ -143,6 +146,7 @@ class ShoppingList extends ExtendShoppingList implements
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
+     * @ORM\OrderBy({"id" = "ASC"})
      **/
     protected $lineItems;
 
@@ -409,6 +413,18 @@ class ShoppingList extends ExtendShoppingList implements
     public function setSubtotal(Subtotal $subtotal)
     {
         $this->subtotal = $subtotal;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVisitor()
+    {
+        if ($this->getVisitors()->isEmpty()) {
+            return null;
+        }
+
+        return $this->getVisitors()->current();
     }
 
     /**

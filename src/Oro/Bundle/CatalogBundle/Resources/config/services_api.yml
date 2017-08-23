@@ -1,0 +1,16 @@
+services:
+    oro_catalog.api.customize_loaded_data.load_category_for_product:
+        class: Oro\Bundle\CatalogBundle\Api\Processor\LoadCategoryForProduct
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.entity_serializer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, class: '%oro_product.entity.product.class%' }
+
+    oro_catalog.api.add_update_category_for_product_form_listener:
+        class: Oro\Bundle\CatalogBundle\Api\Processor\AddUpdateCategoryForProductFormListener
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, class: '%oro_product.entity.product.class%', priority: 90 }
+            - { name: oro.api.processor, action: update, group: transform_data, class: '%oro_product.entity.product.class%', priority: 90 }

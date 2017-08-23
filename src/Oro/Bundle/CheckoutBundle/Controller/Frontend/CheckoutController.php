@@ -7,6 +7,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -154,8 +155,11 @@ class CheckoutController extends Controller
         $manager = $this->get('oro_checkout.data_provider.manager.checkout_line_items');
         $orderLineItemsCount = $manager->getData($checkout, true)->count();
         if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
-            $this->get('session')->getFlashBag()
-                ->add('warning', 'oro.checkout.order.line_items.line_item_has_no_price.message');
+            $orderLineItemsRfp = $manager->getData($checkout, true, 'oro_rfp.frontend_product_visibility');
+            $message = $orderLineItemsRfp->isEmpty()
+                ? 'oro.checkout.order.line_items.line_item_has_no_price_not_allow_rfp.message'
+                : 'oro.checkout.order.line_items.line_item_has_no_price_allow_rfp.message';
+            $this->get('session')->getFlashBag()->add('warning', $message);
         }
     }
 
@@ -196,9 +200,10 @@ class CheckoutController extends Controller
      */
     protected function handlePostTransition(WorkflowItem $workflowItem, Request $request)
     {
+        /* @var $transitionProvider TransitionProvider */
         $transitionProvider = $this->get('oro_checkout.layout.data_provider.transition');
 
-        $continueTransition = $transitionProvider->getContinueTransition($workflowItem);
+        $continueTransition = $transitionProvider->getContinueTransition($workflowItem, $request->get('transition'));
         if (!$continueTransition) {
             return;
         }

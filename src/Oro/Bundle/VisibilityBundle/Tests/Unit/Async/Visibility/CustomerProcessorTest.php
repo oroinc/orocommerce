@@ -136,7 +136,7 @@ class CustomerProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMockBuilder(MessageInterface::class)
             ->getMock();
-        $message->expects($this->exactly(2))
+        $message->expects($this->once())
             ->method('getBody')
             ->willReturn($body);
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/

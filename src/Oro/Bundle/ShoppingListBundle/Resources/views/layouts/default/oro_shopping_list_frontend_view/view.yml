@@ -7,6 +7,12 @@ layout:
             optionName: params
             optionValue:
                 '%label%': '=data["title"]'
+        - '@add':
+            id: order_taxes_template
+            blockType: block
+            parentId: head
+            siblingId: ~
+            prepend: false
         - '@addTree':
             items:
                 shopping_list_view_container:
@@ -19,12 +25,6 @@ layout:
                     blockType: shopping_list_awere_block
                     options:
                         visible: '=data["entity"]!=null'
-                        shoppingList: '=data["entity"]'
-                shopping_list_owner:
-                    blockType: shopping_list_owner_select_block
-                    options:
-                        visible: '=data["entity"]!=null'
-                        form: '=data["oro_customer_frontend_customer_user_form"].getCustomerUserSelectFormView(data["entity"].getCustomerUser(), data["entity"])'
                         shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
                     blockType: line_buttons
@@ -125,6 +125,10 @@ layout:
                         buttons: '=data["buttons"].getAll(data["entity"])'
                 shopping_list_view_container_content:
                     blockType: container
+                shopping_list_view_container_checkout_message:
+                    blockType: block
+                    options:
+                        visible: '=!data["feature"].isFeatureEnabled("guest_checkout") && !context["is_logged_in"]'
             tree:
                 page_content:
                     shopping_list_view_container:
@@ -133,7 +137,6 @@ layout:
                             shopping_list_title: ~
                             shopping_list_top_actions: ~
                             shopping_list_line_items:
-                                shopping_list_owner: ~
                                 shopping_list_options: ~
                                 shopping_list_line_items_list:
                                     shopping_list_line_items_list_row:
@@ -160,3 +163,4 @@ layout:
                                     shopping_list_delete_button: ~
                                 shopping_list_totals: ~
                                 shopping_list_combined_button: ~
+                    shopping_list_view_container_checkout_message: ~

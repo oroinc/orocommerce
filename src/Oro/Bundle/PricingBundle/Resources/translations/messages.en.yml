@@ -1,15 +1,25 @@
 oro.pricing:
     priceattributeproductprice:
-        entity_label: Price Attribute Product Price
-        entity_plural_label: Price Attribute Product Prices
-        id.label: Id
-        currency.label: Currency
-        product_sku.label: Product SKU
-        quantity.label: Quantity
-        value.label: Value
-        price_list.label: Price List
-        product.label: Product
-        unit.label: Unit
+        entity_label: 'Price Attribute Product Price'
+        entity_plural_label: 'Price Attribute Product Prices'
+        id.label: 'Id'
+        currency:
+            label: 'Currency'
+            description: 'The currency of a product price attribute value'
+        product_sku.label: 'Product SKU'
+        quantity.label: 'Quantity'
+        value:
+            label: 'Value'
+            description: 'Product price attribute value'
+        price_list:
+            label: 'Price List'
+            description: 'Product price attribute related to a product price attribute value'
+        product:
+            label: 'Product'
+            description: 'Product related to a product price attribute value'
+        unit:
+            label: 'Unit'
+            description: 'Unit related to a product price attribute value'
 
     priceAttribute:
         unit.label: Unit
@@ -84,11 +94,17 @@ oro.pricing:
     priceattributepricelist:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
-        name.label: Price Attribute
-        field_name.label: Field Name
+        name:
+            label: 'Price Attribute'
+            description: 'Price attribute name'
+        field_name:
+            label: 'Field Name'
+            description: 'Price attribute expression field name'
         id.label: Id
         currencies.label: Currencies
-        prices.label: Price Attribute Product Prices
+        prices:
+            label: 'Price Attribute Product Prices'
+            description: 'Product price attribute values'
 
     pricerule:
         entity_label: Price Calculation Rule
@@ -165,8 +181,6 @@ oro.pricing:
     pricelist_schedule:
         active.label: Enabled
         activity.label: Status
-        active_at.label: 'Active At'
-        deactivate_at.label: 'Deactivate At'
         was_activated: Was activated on %date%.
         was_deactivated: Was deactivated on %date%.
         will_be_acitivated: Will become active on %date%.
@@ -176,8 +190,6 @@ oro.pricing:
         active: Active
         inactive: Inactive
         disabled: Disabled
-
-    add_schedule: 'Add'
 
     menu:
         price_lists_tab.label: Price lists management
@@ -190,6 +202,7 @@ oro.pricing:
 
     sections:
         general: General
+        additional: Additional
         price_rules: Price Calculation Rules
         product_assignment: Product Assignment
 
@@ -204,6 +217,7 @@ oro.pricing:
 
     form:
         choose_price_list: Choose a Price List...
+        add_rule.label: Add
 
     grid:
         action:
@@ -245,7 +259,7 @@ oro.pricing:
                     real_time.label: 'Immediate'
             offset_of_processing_cpl_prices:
                 label: "Offset of processing CPL prices"
-                tooltip: 'Time before CPL prices calculation starts before activation.'
+                tooltip: 'Time (in hours) before the scheduled price list activation, when the prices calculation and indexing starts.'
             enabled_currencies.label: 'Enabled Currencies'
 
     lineitem:

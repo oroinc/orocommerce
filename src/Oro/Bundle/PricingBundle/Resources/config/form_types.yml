@@ -149,11 +149,6 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_product }
 
-    oro_pricing.form.type.price_list_schedule:
-        class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType'
-        tags:
-            - { name: form.type, alias: oro_pricing_price_list_schedule }
-
     oro_pricing.form.type.price_list_select_with_priority:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType'
         tags:
@@ -199,6 +194,8 @@ services:
         arguments:
             - '@translator'
             - '@oro_pricing.provider.price_list_provider'
+            - '@oro_pricing.shard_manager'
+            - '%oro_pricing.entity.price_list.class%'
         tags:
             - { name: form.type, alias: oro_type_default_price_list_filter }
 

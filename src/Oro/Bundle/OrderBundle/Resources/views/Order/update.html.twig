@@ -19,6 +19,7 @@
     {% if entity.id or is_granted('oro_order_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
+    {% set html = html ~ placeholder('order_update_additional_nav_buttons', {entity: entity}) %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
@@ -179,28 +180,19 @@
     {% endif %}
 
     {% set shippingInformation %}
-        {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
-            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
-            {% set shippingMethodLabel = methodLabel ~ get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
-            ': ' ~ entity.estimatedShippingCost|oro_format_price()
-            %}
-
-            {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
-                '<div class="control-label selected-shipping-method">' ~ shippingMethodLabel ~'</div>'
+        <div class="possible-shipping-methods-info">
+            {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
+                '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form, entity) ~ '</div>'
             ) }}
-        {% endif %}
 
-        {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
-            '<div class="possible_shipping_methods_container">' ~ SM.renderPossibleShippingMethods(form) ~ '</div>'
-        ) }}
+            {% set options = {
+                view: 'oroorder/js/app/views/shipping-cost-view'
+            } %}
 
-        {%  set options = {
-            view: 'oroorder/js/app/views/shipping-cost-view'
-        } %}
-
-        <div data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ options|json_encode }}">
-            {{ form_row(form.overriddenShippingCostAmount) }}
+            <div data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ options|json_encode }}">
+                {{ form_row(form.overriddenShippingCostAmount) }}
+            </div>
         </div>
     {% endset %}
 
@@ -259,6 +251,7 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,
         'class': 'active',
+        'priority': 900,
         'subblocks': [{
             'data': [subtotals]
         }]

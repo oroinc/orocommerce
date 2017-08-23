@@ -1,0 +1,41 @@
+navigation:
+    menu_config:
+        items:
+            promotions:
+                label:      oro.promotion.entity_plural_label
+                uri:        '#'
+                position:   23
+            promotion_list:
+                label:      oro.promotion.entity_plural_label
+                route:      oro_promotion_index
+                position:        10
+                extras:
+                    routes: ['oro_promotion_index', 'oro_promotion_view', 'oro_promotion_update', 'oro_promotion_create']
+            coupon_list:
+                label:           oro.promotion.coupon.entity_plural_label
+                route:           oro_promotion_coupon_index
+                position:        20
+                extras:
+                    routes: ['/^oro_promotion_coupon/']
+                    description: oro.promotion.coupon.menu.coupon_list.description
+
+        tree:
+            application_menu:
+                children:
+                    marketing_tab:
+                        children:
+                            promotions:
+                                children:
+                                    promotion_list: ~
+                                    coupon_list: ~
+
+    titles:
+        oro_promotion_index: ~
+        oro_promotion_create: 'oro.ui.create_entity'
+        oro_promotion_update: '%name% - oro.ui.edit'
+        oro_promotion_view: '%name% - oro.ui.view'
+
+        oro_promotion_coupon_index: ~
+        oro_promotion_coupon_create: 'oro.ui.create_entity'
+        oro_promotion_coupon_update: '%code% - oro.ui.edit'
+        oro_promotion_coupon_view: '%code% - oro.ui.view'

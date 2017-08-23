@@ -60,18 +60,6 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
         return $this->extendedType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        if (!$this->taxationSettingsProvider->isEnabled()) {
-            return;
-        }
-
-        $this->totalProcessorProvider->enableRecalculation();
-    }
-
     /** {@inheritdoc} */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {

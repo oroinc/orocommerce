@@ -1,6 +1,38 @@
 api:
     entities:
-        Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision: ~
+        Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
         Oro\Bundle\ProductBundle\Entity\ProductUnit: ~
-        Oro\Bundle\ProductBundle\Entity\Product: ~
+        Oro\Bundle\ProductBundle\Entity\Product:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
+            fields:
+                createdAt:
+                    exclude: true
+                updatedAt:
+                    exclude: true
+                skuUppercase:
+                    exclude: true
+            actions:
+                create:
+                    fields:
+                        names:
+                            form_options:
+                                constraints:
+                                    - Count:
+                                        min: 1
+        Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/related_product.md'
+            actions:
+                update:
+                    exclude: true
+                create:
+                    fields:
+                        product:
+                            form_options:
+                                constraints:
+                                    - NotBlank: ~
+                        relatedItem:
+                            form_options:
+                                constraints:
+                                    - NotBlank: ~
         Oro\Bundle\ProductBundle\Entity\Brand: ~

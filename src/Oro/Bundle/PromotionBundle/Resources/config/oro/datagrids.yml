@@ -1,0 +1,263 @@
+datagrids:
+    promotion-select-grid:
+        acl_resource: oro_promotion_view
+        extended_entity_name: '%oro_promotion.entity.promotion.class%'
+        options:
+            entityHint: 'promotions'
+        source:
+            type: orm
+            query:
+                select:
+                    - promotion.id
+                    - rule.name
+                    - promotion.useCoupons
+                    - promotion.createdAt
+                    - promotion.updatedAt
+                    - rule.enabled
+                from:
+                    - { table: '%oro_promotion.entity.promotion.class%', alias: promotion }
+                join:
+                    inner:
+                        - { join: promotion.rule, alias: rule}
+        properties:
+            id: ~
+        columns:
+            name:
+                label: oro.promotion.rule.name.label
+            useCoupons:
+                label: oro.promotion.use_coupons.label
+                frontend_type: boolean
+            createdAt:
+                label: oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label: oro.ui.updated_at
+                frontend_type: datetime
+            enabled:
+                label: oro.promotion.rule.enabled.label
+                frontend_type: boolean
+        sorters:
+            columns:
+                name:
+                    data_name: rule.name
+                useCoupons:
+                    data_name: promotion.useCoupons
+                createdAt:
+                    data_name: promotion.createdAt
+                updatedAt:
+                    data_name: promotion.updatedAt
+                enabled:
+                    data_name: rule.enabled
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: rule.name
+                useCoupons:
+                    type: boolean
+                    data_name: promotion.useCoupons
+                createdAt:
+                    type:      datetime
+                    data_name: promotion.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: promotion.updatedAt
+                enabled:
+                    type:      boolean
+                    data_name: rule.enabled
+
+    promotion-grid:
+        extends: promotion-select-grid
+        properties:
+            view_link:
+                type:  url
+                route: oro_promotion_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_promotion_view
+                rowAction:     true
+
+    promotion-for-coupons-select-grid:
+        extends: promotion-select-grid
+        source:
+            query:
+                where:
+                    and:
+                      - promotion.useCoupons = true
+
+    promotion-products-collection-grid:
+        extends: products-select-grid-base
+        options:
+            export: true
+
+    promotion-order-applied-discount-grid:
+        acl_resource: oro_promotion_view
+        source:
+            type: orm
+            query:
+                select:
+                    - SUM(discount.amount) AS discountAmount
+                    - discount.promotionName AS name
+                    - discount.currency AS currency
+                from:
+                    - { table: OroPromotionBundle:AppliedDiscount, alias: discount }
+                where:
+                    and:
+                        - discount.order = :orderId
+                groupBy: discount.promotionName, discount.currency
+            bind_parameters:
+                - orderId
+        columns:
+            name:
+                label: oro.order.promotions.applied_discount.name
+            discountAmount:
+                label: oro.order.promotions.applied_discount.amount
+                type: twig
+                frontend_type: html
+                template: OroPromotionBundle:AppliedDiscount/Datagrid:amount.html.twig
+        sorters:
+            columns:
+                name:
+                    data_name: discount.promotionName
+                discountAmount:
+                    data_name: discountAmount
+        filters:
+            columns:
+                name:
+                    type: string
+                    data_name: discount.promotionName
+                discountAmount:
+                    type: number-range
+                    data_name: discountAmount
+                    filter_by_having: true
+
+    promotion-coupons-grid:
+        extended_entity_name: '%oro_promotion.entity.coupon.class%'
+        options:
+            entityHint: coupon
+            export: true
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: oro_promotion_coupon_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_promotion_coupon_view
+                rowAction:     true
+        source:
+            type: orm
+            query:
+                select:
+                    - coupon.id
+                    - coupon.code
+                    - rule.name as promotionName
+                    - coupon.createdAt
+                    - coupon.updatedAt
+                    - coupon.totalUses
+                    - coupon.usesPerCoupon
+                    - coupon.usesPerPerson
+                    - coupon.validUntil
+                from:
+                    - { table: '%oro_promotion.entity.coupon.class%', alias: coupon }
+                join:
+                    left:
+                        - { join: coupon.promotion, alias: promotion }
+                        - { join: promotion.rule, alias: rule }
+        columns:
+            code:
+                label:         oro.promotion.coupon.code.label
+            promotionName:
+                label:         oro.promotion.coupon.promotion.label
+                frontend_type: html
+                type:          twig
+                template:      OroPromotionBundle:Coupon:Datagrid/Column/promotionName.html.twig
+            usesPerCoupon:
+                label:         oro.promotion.coupon.uses_per_coupon.label
+            usesPerPerson:
+                label:         oro.promotion.coupon.uses_per_person.label
+            totalUses:
+                label:         oro.promotion.coupon.total_uses.label
+            validUntil:
+                label:         oro.promotion.coupon.valid_until.label
+                frontend_type: datetime
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: coupon.code
+                promotionName:
+                    data_name: rule.name
+                totalUses:
+                    data_name: coupon.totalUses
+                usesPerCoupon:
+                    data_name: coupon.usesPerCoupon
+                usesPerPerson:
+                    data_name: coupon.usesPerPerson
+                validUntil:
+                    data_name: coupon.validUntil
+                createdAt:
+                    data_name: coupon.createdAt
+                updatedAt:
+                    data_name: coupon.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: coupon.code
+                promotionName:
+                    type:      string
+                    data_name: rule.name
+                usesPerCoupon:
+                    type:      number
+                    data_name: coupon.usesPerCoupon
+                usesPerPerson:
+                    type:      number
+                    data_name: coupon.usesPerPerson
+                totalUses:
+                    type:      number
+                    data_name: coupon.totalUses
+                validUntil:
+                    type:      datetime
+                    data_name: coupon.validUntil
+                createdAt:
+                    type:      datetime
+                    data_name: coupon.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: coupon.updatedAt
+        mass_actions:
+            edit:
+                type:            massedit
+                handler:         oro_promotion.mass_action.coupon_edit_mass_action_handler
+                acl_resource:    oro_promotion_coupon_edit
+                route:           oro_promotion_coupon_mass_edit_widget
+                label:           oro.ui.edit
+                icon:            edit
+                data_identifier: coupon.id
+                frontend_options:
+                    title:       "@translator->trans(oro.promotion.coupon.form.title.mass_edit)"
+                    dialogOptions:
+                        width: 500
+                        modal: false
+                        allowMaximize: false
+                        allowMinimize: false

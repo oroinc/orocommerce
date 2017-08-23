@@ -1,0 +1,253 @@
+oro:
+    discount:
+        type:
+            label: Discount
+            choices:
+                order: Order
+                line_item: Line Item
+                buy_x_get_y: Buy X Get Y
+                shipping: Shipping
+    discount_options:
+        general:
+            type:
+                label: Type
+                tooltip: Based on the type, promotion either enables a discount by some % of the line item price or introduces a fixed discount (e.g. -10USD) off the line item price. Note that when a fixed discount is used, the promotion applies to the order in the selected currency only.
+                choices:
+                    amount: Fixed Amount
+                    percent: Percent
+            value:
+                label: Discount Value
+        line_item_type:
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount To
+                choices:
+                    each_item: Each Item
+                    line_items_total: Line Items Total
+            maximum_qty:
+                label: Maximum Qty Discount is Applied To
+                tooltip: The quantity of products of the same type eligible for a discount in a line item/order. For example, when the limit is set to 10 and a buyer orders 100 items, they will be charged the discounted price for 10 items out of 100, and will pay the full price for the remaining 90 items.
+        buy_x_get_y_type:
+            buy_x.label: Buy X
+            get_y.label: Get Y
+            product_unit:
+                label: Product Unit
+            apply_to:
+                label: Apply Discount To
+                choices:
+                    apply_to_each_y: Each Y Item Separately
+                    apply_to_xy_total: X + Y Total
+            limit_times:
+                label: Limit, times
+                tooltip: The quantity of discounted groups (X+Y) of the same type eligible for a discount in a line item/order. For example, when the limit is set to 2 and a buyer orders 3 groups of 3+2 items (15 in total), they will be charged the discounted price for 2 groups out of 3, and will pay the full price for the remaining one group.
+        shipping_type:
+            shipping_method:
+                label: Shipping Method
+    promotion:
+        entity_label: Promotion
+        entity_plural_label: Promotions
+        entity_description: Represents promotion information
+        id.label: ID
+        coupons.label: Coupons
+        descriptions.label: Descriptions
+        descriptions.tooltip: This description will be displayed to user
+        discount_configuration.label: Discount Configuration
+        labels.label: Labels
+        labels.tooltip: This label will be displayed to user
+        name.tooltip: The promotion name will show in the order details.
+        organization.label: Organization
+        owner.label: Owner
+        products_segment.label: Product Segment
+        schedules.label: Schedules
+        scopes.label: Scopes
+        use_coupons:
+            label: Use Coupons
+            no: No
+            yes: Yes
+        rule:
+            label: Rule
+            name.label: Name
+            enabled:
+                label: Enabled
+                active: Active
+                inactive: Inactive
+            stop_processing:
+                yes: Yes
+                no: No
+            expression:
+                toggle:
+                    hide: Hide
+                    show: Show
+        dates.label: Dates
+        restrictions.label: Restrictions
+        advanced_conditions.label: Advanced Conditions
+
+        ui:
+            segment_edit_button.label: Edit within Promotion
+            duplicate:
+                new_name: 'originalName (duplicated at dateTime)'
+                label: Duplicate
+                success_message: Promotion has been duplicated
+
+        blocks:
+            general: General
+            discount_options: Discount Options
+            schedules: Schedules
+            conditions: Conditions
+            matching_items: Matching Items
+            store_frontend: Store Frontend
+
+        discount:
+            free_shipping:
+                label: Free Shipping
+                no: No
+                for_matching_items_only: For Matching Items Only
+                for_shipment_with_matching_items: For Shipment With Matching Items
+            strategy:
+                apply_all.label: Combine All Discounts
+                profitable.label: Best Value Discount Only
+            subtotal:
+                order.label: 'Discount'
+                shipping.label: 'Shipping Discount'
+
+        discountconfiguration:
+            entity_label: Discount Configuration
+            entity_plural_label: Discount Configurations
+            id.label: ID
+            type:
+                label: Type
+                discount.label: Discount
+            options:
+                label: Options
+                type.label: Type
+                discount_value.label: Discount Value
+                free_shipping.label: Free Shipping
+
+        promotionschedule:
+            entity_label: Promotion Schedule
+            entity_plural_label: Promotion Schedules
+            id.label: ID
+            promotion.label: Promotion
+            active_at.label: Activate At
+            deactivate_at.label: Deactivate At
+
+            was_activated: Was activated on %date%.
+            was_deactivated: Was deactivated on %date%.
+            will_be_acitivated: Will become active on %date%.
+            will_be_deacitivated: Will be deactivated on %date%.
+            active_now: Is active now.
+            not_active_now: Is not active now.
+
+        feature:
+            promotion:
+                label: Promotion
+                description: Promotion functionality allows admin users to manage promotions for Front Store customers
+
+        system_configuration:
+            groups:
+                promotion.title: Promotion
+                promotion_general.title: Promotion General
+            fields:
+                feature_enabled.label: Enable Promotion
+                discount_strategy.label: Discount Strategy
+
+        controller:
+            saved.message: Promotion has been saved
+
+        form:
+            choose: 'Choose a Promotion...'
+
+        sections:
+            general:
+                label: General Information
+                subsection:
+                    general_info.label: General Information
+                    discount_optins.label: Discount Options
+            conditions.label: Conditions
+            matching_items.label: Matching Items
+
+        coupon:
+            entity_label: Coupon
+            entity_plural_label: Coupons
+            organization.label: Organization
+            owner.label: Owner
+            id.label: Id
+            code.label: Coupon Code
+            promotion.label: Promotion
+            total_uses.label: Used
+            uses_per_coupon.label: Uses per Coupon
+            uses_per_person.label: Uses per Person
+            valid_until.label: Valid Until
+            menu:
+                coupon_list.description: List of existing coupons
+                shortcut_new_coupon.label: Create new coupon
+                shortcut_new_coupon.description: Create new coupon
+            sections:
+                general: General
+                additional: Additional
+            form:
+                title:
+                    mass_edit: Mass Coupon Edit
+                message:
+                    saved: 'Coupon has been saved'
+                tooltip:
+                    coupon_code: 'Code value should be numeric, alphabetic or both and without spaces'
+                    uses_per_person: 'Limits how many times the coupon may be used by the same customer user'
+                    uses_per_coupon: 'Limits how many times the coupon may be used'
+            generation:
+                label: Generate Coupons
+                action:
+                    generate: Generate
+                couponQuantity.label: Coupon Quantity
+                codeLength.label: Code Length
+                codeType:
+                    label: Code Type
+                    numeric.label: Numeric
+                    alphanumeric.label: Alphanumeric
+                    alphabetic.label: Alphabetic
+                codePrefix.label: Code Prefix
+                codeSuffix.label: Code Suffix
+                dashesSequence:
+                    prefix.label: Add Dashes Every
+                    suffix.label: Symbols
+                message:
+                    save_success: Coupons have been generated successfully
+
+    applied_discount:
+        name: Name
+        amount: Amount
+
+    frontend:
+        shoppinglist:
+            view:
+                discount.label: 'Row Discount:'
+        checkout:
+            view:
+                discount.label: 'Row Discount:'
+    order:
+        promotions:
+            applied_discount:
+                name: Name
+                amount: Amount
+            nav_button:
+                information_notice: Promotion discounts will be recalculated after saving the order
+                important: Important
+                save_without_discounts_recalculation: Save Without Discounts Recalculation
+
+        view:
+            order_line_item:
+                row_total_discount_amount.label: Row Total (Discount Amount)
+                row_total_after_discount.label: Row Total (After Discount)
+                row_total_after_discount_including_tax.label: Row Total (After Discount Including Tax)
+                row_total_after_discount_excluding_tax.label: Row Total (After Discount Excluding Tax)
+
+        edit:
+            order_line_item:
+                applied_discounts.label: Applied Discounts
+                row_total: Row Total
+                short:
+                    discount_amount.label: Disc. Amount
+                    row_total_after_discount.label: After Disc.
+                    includingTax.label: After Disc. Incl. Tax
+                    excludingTax.label:  After Disc. Excl. Tax

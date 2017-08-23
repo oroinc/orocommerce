@@ -1,0 +1,109 @@
+include:
+    - '@OroCatalogBundle:category_tree_with_products.yml'
+    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    customerGroup1:
+        name: 'first customer group'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'first customer'
+        organization: '@organization'
+        owner: '@admin'
+        group: '@customerGroup1'
+
+Oro\Bundle\WebsiteBundle\Entity\Website:
+    website2:
+        name: Second
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\ScopeBundle\Entity\Scope:
+  scopeCustomer:
+    customer: '@customer1'
+    website: 1
+  scopeCustomerGroup:
+    customerGroup: '@customerGroup1'
+    website: 1
+
+Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved:
+  productVisibilityResolved1:
+    __construct: [2, '@product1']
+    visibility: 1
+    category: '@categoryLightingProducts'
+  productVisibilityResolved2:
+    __construct: [2, '@product2']
+    visibility: 1
+    category: '@categoryRetailSupplies'
+  productVisibilityResolved3:
+    __construct: [2, '@product3']
+    visibility: 1
+    category: '@categoryPrinters'
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility:
+  customerProductVisibility1:
+    visibility: 'category'
+    product: '@product1'
+    scope: '@scopeCustomer'
+  customerProductVisibility2:
+    visibility: 'category'
+    product: '@product2'
+    scope: '@scopeCustomer'
+  customerProductVisibility3:
+    visibility: 'category'
+    product: '@product3'
+    scope: '@scopeCustomer'
+
+Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved:
+  customerProductVisibilityResolved1:
+    __construct: ['@scopeCustomer', '@product1']
+    visibility: 1
+    source: 2
+    sourceProductVisibility: '@customerProductVisibility1'
+    category: '@categoryLightingProducts'
+  customerProductVisibilityResolved2:
+    __construct: ['@scopeCustomer', '@product2']
+    visibility: 1
+    source: 2
+    sourceProductVisibility: '@customerProductVisibility2'
+    category: '@categoryRetailSupplies'
+  customerProductVisibilityResolved3:
+    __construct: ['@scopeCustomer', '@product3']
+    visibility: 1
+    source: 2
+    sourceProductVisibility: '@customerProductVisibility3'
+    category: '@categoryPrinters'
+
+Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility:
+  customerGroupProductVisibility1:
+    visibility: 'category'
+    product: '@product1'
+    scope: '@scopeCustomerGroup'
+  customerGroupProductVisibility2:
+    visibility: 'category'
+    product: '@product2'
+    scope: '@scopeCustomerGroup'
+  customerGroupProductVisibility3:
+    visibility: 'category'
+    product: '@product3'
+    scope: '@scopeCustomerGroup'
+
+Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved:
+  customerGroupProductVisibilityResolved1:
+    __construct: ['@scopeCustomerGroup', '@product1']
+    visibility: 1
+    sourceProductVisibility: '@customerGroupProductVisibility1'
+    category: '@categoryLightingProducts'
+  customerGroupProductVisibilityResolved2:
+    __construct: ['@scopeCustomerGroup', '@product2']
+    visibility: 1
+    sourceProductVisibility: '@customerGroupProductVisibility2'
+    category: '@categoryRetailSupplies'
+  customerGroupProductVisibilityResolved3:
+    __construct: ['@scopeCustomerGroup', '@product3']
+    visibility: 1
+    sourceProductVisibility: '@customerGroupProductVisibility3'
+    category: '@categoryPrinters'

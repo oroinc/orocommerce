@@ -3,7 +3,6 @@
 namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
-use Behat\Mink\Element\NodeElement;
 
 use Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Element\LocalizationSwitcherElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;

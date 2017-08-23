@@ -1,4 +1,5 @@
 @fixture-OroProductBundle:highlighting_new_products.yml
+@regression
 Feature: Highlighting new products
   In order to highlight selected new products
   As an Administrator
@@ -74,7 +75,7 @@ Feature: Highlighting new products
   Scenario: New Arrival Sticker on product view page - active
     Given I proceed as the Admin
     And go to System/ Configuration
-    And click "Promotions" on configuration sidebar
+    And I follow "Commerce/Product/Promotions" on configuration sidebar
     When fill "Promotions Form" with:
       |Show On Product View Default|false|
       |Show On Product View        |Yes  |

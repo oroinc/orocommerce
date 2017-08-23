@@ -1,0 +1,19 @@
+parameters:
+  flat_rate_type: 'flat_rate'
+  flat_rate2_label: 'Flat Rate 2'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    flatRate2Label:
+        string: '<{flat_rate2_label}>'
+
+Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings:
+    flatRate2Settings:
+        addLabel: ['@flatRate2Label']
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    flatRate2Integration:
+        type: '<{flat_rate_type}>'
+        name: '<{flat_rate2_label}>'
+        enabled: true
+        organization: '@organization'
+        transport: '@flatRate2Settings'

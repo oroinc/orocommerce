@@ -68,14 +68,15 @@ oro:
         paymentmethodsconfigsrule:
             entity_short_label: Payment Rule
             entity_short_plural_label: Payment Rules
-            entity_label: Payment Methods Configs Rule
-            entity_plural_label: Payment Methods Configs Rules
+            entity_label: Payment Rule
+            entity_plural_label: Payment Rules
             id.label: Id
             method_configs.label: Payment Methods Configs
             rule.label: Rule
             destinations.label: Destinations
             currency.label: Currency
             organization.label: Organization
+            websites.label: Websites
 
             notification:
                 enabled: Payment rule has been enabled successfully

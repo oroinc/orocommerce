@@ -167,8 +167,10 @@ class Product extends ExtendProduct implements
      *          "importexport"={
      *              "excluded"=true
      *          }
-     *      }
+     *      },
+     *     mode="hidden"
      * )
+     *
      */
     protected $skuUppercase;
 
@@ -890,6 +892,22 @@ class Product extends ExtendProduct implements
         }
 
         return $result;
+    }
+
+    /**
+     * @param array|LocalizedFallbackValue[] $names
+     *
+     * @return $this
+     */
+    public function setNames(array $names = [])
+    {
+        $this->names->clear();
+
+        foreach ($names as $name) {
+            $this->addName($name);
+        }
+
+        return $this;
     }
 
     /**

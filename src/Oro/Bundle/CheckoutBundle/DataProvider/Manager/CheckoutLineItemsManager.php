@@ -4,12 +4,13 @@ namespace Oro\Bundle\CheckoutBundle\DataProvider\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Component\Checkout\DataProvider\CheckoutDataProviderInterface;
 
 class CheckoutLineItemsManager
@@ -36,16 +37,16 @@ class CheckoutLineItemsManager
 
     /**
      * @param CheckoutLineItemsConverter $checkoutLineItemsConverter
-     * @param UserCurrencyManager $UserCurrencyManager
+     * @param UserCurrencyManager $userCurrencyManager
      * @param ConfigManager $configManager
      */
     public function __construct(
         CheckoutLineItemsConverter $checkoutLineItemsConverter,
-        UserCurrencyManager $UserCurrencyManager,
+        UserCurrencyManager $userCurrencyManager,
         ConfigManager $configManager
     ) {
         $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
-        $this->userCurrencyManager = $UserCurrencyManager;
+        $this->userCurrencyManager = $userCurrencyManager;
         $this->configManager = $configManager;
     }
 
@@ -60,33 +61,28 @@ class CheckoutLineItemsManager
     /**
      * @param CheckoutInterface $checkout
      * @param bool $disablePriceFilter
+     * @param string $configVisibilityPath
      * @return Collection|OrderLineItem[]
      */
-    public function getData(CheckoutInterface $checkout, $disablePriceFilter = false)
-    {
+    public function getData(
+        CheckoutInterface $checkout,
+        $disablePriceFilter = false,
+        $configVisibilityPath = 'oro_order.frontend_product_visibility'
+    ) {
         $entity = $checkout->getSourceEntity();
         $currency = $this->userCurrencyManager->getUserCurrency();
+        $supportedStatuses = $this->getSupportedStatuses($configVisibilityPath);
         foreach ($this->providers as $provider) {
             if ($provider->isEntitySupported($entity)) {
-                $supportedStatuses = $this->getSupportedStatuses();
                 $lineItems = $this->checkoutLineItemsConverter->convert($provider->getData($entity));
                 if (!$disablePriceFilter) {
                     $lineItems = $lineItems->filter(
-                        function (OrderLineItem $lineItem) use ($currency, $supportedStatuses) {
-                            $allowedProduct = true;
-
-                            $product = $lineItem->getProduct();
-                            if ($product) {
-                                $allowedProduct = false;
-                                if ($product->getInventoryStatus()) {
-                                    $statusId = $product->getInventoryStatus()->getId();
-                                    $allowedProduct = !empty($supportedStatuses[$statusId]);
-                                }
-                            }
-
-                            return $allowedProduct
-                                && (bool)$lineItem->getPrice()
-                                && $lineItem->getPrice()->getCurrency() === $currency;
+                        function ($lineItem) use ($currency, $supportedStatuses) {
+                            return $this->isLineItemHasCurrencyAndSupportedStatus(
+                                $lineItem,
+                                $currency,
+                                $supportedStatuses
+                            );
                         }
                     );
                 }
@@ -99,15 +95,47 @@ class CheckoutLineItemsManager
     }
 
     /**
+     * @param string $configVisibilityPath
      * @return array
      */
-    protected function getSupportedStatuses()
+    protected function getSupportedStatuses($configVisibilityPath)
     {
         $supportedStatuses = [];
-        foreach ((array)$this->configManager->get('oro_order.frontend_product_visibility') as $status) {
+        foreach ((array)$this->configManager->get($configVisibilityPath) as $status) {
             $supportedStatuses[$status] = true;
         }
 
         return $supportedStatuses;
+    }
+
+    /**
+     * @param object $lineItem
+     * @param string $currency
+     * @param array  $supportedStatuses
+     * @return bool
+     */
+    protected function isLineItemHasCurrencyAndSupportedStatus($lineItem, $currency, array $supportedStatuses)
+    {
+        $allowedProduct = true;
+
+        if ($lineItem instanceof ProductHolderInterface) {
+            $product = $lineItem->getProduct();
+            if ($product) {
+                $allowedProduct = false;
+                if ($product->getInventoryStatus()) {
+                    $statusId = $product->getInventoryStatus()->getId();
+                    $allowedProduct = !empty($supportedStatuses[$statusId]);
+                }
+            }
+        }
+
+        $lineItemPrice = null;
+        if ($lineItem instanceof PriceAwareInterface) {
+            $lineItemPrice = $lineItem->getPrice();
+        }
+
+        return $allowedProduct
+            && (bool)$lineItemPrice
+            && $lineItemPrice->getCurrency() === $currency;
     }
 }

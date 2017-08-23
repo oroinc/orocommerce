@@ -28,6 +28,8 @@ operations:
                 - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
                 - '@equal': [$.data.entity_class, '%oro_order.entity.order.class%']
                 - '@equal': [$.data.action, 'authorize']
+                - '@equal': [$.data.active, true]
+                - '@equal': [$.data.successful, true]
                 - '@equal': [$.paymentMethodExist, true]
                 - '@not':
                     - '@payment_transaction_was_charged':

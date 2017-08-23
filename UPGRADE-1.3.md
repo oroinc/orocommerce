@@ -35,10 +35,22 @@ CatalogBundle
 - Class `Oro\Bundle\CatalogBundle\EventListenerFormViewListener`
     - changed signature of `__construct` method. Dependency on `RequestStack` was removed.
 
+CronBundle
+-------------
+- New collection form type for schedule intervals was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalsCollectionType`
+- New form type for schedule interval was added `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType`
+- New constraint was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection`
+- New validator was added `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator`
+
 CheckoutBundle
 --------------
 - Class `Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter`
     - method `getSecurityFacade` was replaced with `getAuthorizationChecker`
+- Class `Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider`
+    - changed signature of `__construct` method:
+        - dependency on `CheckoutLineItemsManager` and `MapperInterface` were replaced with `CheckoutToOrderConverter`
+- Added class `Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutToOrderConverter` responsible for creation of an `Order` based on the `Checkout`
+- Layout `oro_payment_method_order_review` is deprecated since v1.3, will be removed in v1.6. Use 'oro_payment_method_order_submit' instead.
 
 WebsiteSearchBundle
 -------------------
@@ -65,6 +77,9 @@ ProductBundle
 - New class `Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributesValidator`
 - Class `Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy`
     - method `setSecurityFacade` was replaced with `setTokenAccessor`
+- Class `Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery` was removed
+- Class `Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId` was removed
+- Class `Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId` was removed
 - Adding Brand functionality to ProductBundle
     - New class `Oro\Bundle\ProductBundle\Controller\Api\Rest\BrandController` was added
     - New class `Oro\Bundle\ProductBundle\Controller\BrandController` was added
@@ -83,7 +98,9 @@ ProductBundle
     - changed signature of `__construct` method. New dependency on `Psr\Log\LoggerInterface` was added.
 - Class `Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider`
     - changed signature of `__construct` method. New dependency on `Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry` was added.
+
 - Adding skuUppercase to Product entity - the read-only property that consists uppercase version of sku, used to improve performance of searching by SKU 
+
 - `ProductPriceFormatter` method `formatProductPrice` changed to expect `BaseProductPrice` attribute instead of `ProductPrice`.
     
 PaymentBundle
@@ -103,7 +120,6 @@ ShippingBundle
  - previously deprecated `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method is removed now. Use `getEnabledRulesByMethod` method instead.
  - previously deprecated `Oro\Bundle\ShippingBundle\EventListener\AbstractIntegrationRemovalListener` is removed now. Use `Oro\Bundle\ShippingBundle\EventListener\IntegrationRemovalListener` instead.
 
-
 PayPalBundle
 --------------
 - Class `Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway`
@@ -116,7 +132,7 @@ PayPalBundle
 
 SEOBundle
 -------------
-- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added. 
+- metaTitles for `Product`, `Category`, `Page`, `WebCatalog`, `Brand` were added.
 MetaTitle is displayed as default view page title.
 - Class `Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener`
     - changed signature of `__construct` method:
@@ -135,7 +151,8 @@ MetaTitle is displayed as default view page title.
 - Service `oro_seo.event_listener.content_node_form_view`
     - dependency on `@request_stack` was removed
     - dependency on `@oro_entity.doctrine_helper` was removed
-
+- Class `Oro\Bundle\SEOBundle\Sitemap\Provider\ContentVariantUrlItemsProvider`
+    - previously deprecated method `getScopeRepository` was removed
 
 PaymentBundle
 -------------
@@ -185,9 +202,18 @@ ShippingBundle
 - Class `Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry` was renamed to `Oro\Bundle\ShippingBundle\Method\CompositeShippingMethodProvider`
     - method `getTrackingAwareShippingMethods` moved to class `Oro\Bundle\ShippingBundle\Method\TrackingAwareShippingMethodsProvider`
 - Service `oro_shipping.shipping_method.registry` was replaced with `oro_shipping.shipping_method_provider`
-        
+
+OrderBundle
+-----------
+- Return value of method `Oro\Bundle\OrderBundle\Manager\AbstractAddressManager:getGroupedAddresses` changed from `array` to `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection`
+- Removed protected method `Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
+
 PricingBundle
 --------------
+- Form type `Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType` was removed, use `Oro\Bundle\CronBundle\Form\Type\ScheduleIntervalType` instead
+- Constraint `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection` instead
+- Validator `Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersectionValidator` was removed, use `Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersectionValidator` instead
+- js `oropricing/js/app/views/price-list-schedule-view` view was removed, use `orocron/js/app/views/schedule-intervals-view` instead
 - Service `oro_pricing.listener.product_unit_precision` was changed from `doctrine.event_listener` to `doctrine.orm.entity_listener`
     - setter methods `setProductPriceClass`, `setEventDispatcher`, `setShardManager` were removed. To set properties, constructor used instead.
     - method `postRemove` has additional argument `ProductUnitPrecision $precision`.
@@ -217,6 +243,8 @@ PricingBundle
     - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessor` to rebuild price lists when customer aware relational entities are modified
     - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor` to rebuild price lists when customer group aware relational entities are modified
 - Added `Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber` for adding currently created schedule to price list
+- Interface `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface`
+    - new method added `supportsCachedSubtotal`
 
 ValidationBundle
 --------------
@@ -249,6 +277,7 @@ SaleBundle
     - oro_quote_review_and_approve
     - oro_quote_add_free_form_items
 - Added new workflow `b2b_quote_backoffice_approvals`
+- Removed protected method `Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType::getDefaultAddressKey`. Please, use method `Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection::getDefaultAddressKey` instead
 
 UPSBundle
 ---------
@@ -258,6 +287,13 @@ FlatRateShippingBundle
 ----------------------
 - Class `Oro\Bundle\FlatRateShippingBundle\Method\Identifier\FlatRateMethodIdentifierGenerator` is removed in favor of `Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator`.
 - previously deprecated `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` is removed now. Use `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` instead.
+
+InventoryBundle
+--------------
+- Class `Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleInventoryLevelQuery` was removed
+- Class `Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData` was removed
+- Previously deprecated class `Oro\Bundle\InventoryBundle\Api\Processor\JsonApi\FixProductUnitPrecisionUnitCodeFilter` was now removed
+- Inventory API has changed. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/InventoryBundle/doc/api/inventory-level.md) for more information.
 
 WebsiteBundle
 -------------

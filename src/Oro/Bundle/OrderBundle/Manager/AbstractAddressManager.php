@@ -7,22 +7,20 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class AbstractAddressManager
 {
     const DELIMITER = '_';
 
-    // TODO use oro.order.form.group_label.customer in the admin
-    const ACCOUNT_LABEL = 'oro.frontend.order.form.group_label.customer';
-    // TODO use oro.order.form.group_label.customer_user in the admin
-    const ACCOUNT_USER_LABEL = 'oro.frontend.order.form.group_label.customer_user';
+    const ACCOUNT_LABEL = 'form.address.group_label.customer';
+    const ACCOUNT_USER_LABEL = 'form.address.group_label.customer_user';
 
     /**
      * @var AddressProviderInterface
@@ -86,32 +84,35 @@ class AbstractAddressManager
     /**
      * @param CustomerOwnerAwareInterface $entity
      * @param string $type
-     * @return array
+     * @param string $groupLabelPrefix
+     * @return TypedOrderAddressCollection
      */
-    public function getGroupedAddresses(CustomerOwnerAwareInterface $entity, $type)
+    public function getGroupedAddresses(CustomerOwnerAwareInterface $entity, $type, $groupLabelPrefix = 'oro.order.')
     {
         $addresses = [];
 
         $customer = $entity->getCustomer();
         if ($customer) {
+            $customerGroupLabel = $groupLabelPrefix . static::ACCOUNT_LABEL;
             $customerAddresses = $this->addressProvider->getCustomerAddresses($customer, $type);
             foreach ($customerAddresses as $customerAddress) {
-                $addresses[self::ACCOUNT_LABEL][$this->getIdentifier($customerAddress)] = $customerAddress;
+                $addresses[$customerGroupLabel][$this->getIdentifier($customerAddress)] = $customerAddress;
             }
         }
 
         $customerUser = $entity->getCustomerUser();
         if ($customerUser) {
+            $customerUserGroupLabel = $groupLabelPrefix . static::ACCOUNT_USER_LABEL;
             $customerUserAddresses = $this->addressProvider->getCustomerUserAddresses($customerUser, $type);
             if ($customerUserAddresses) {
                 foreach ($customerUserAddresses as $customerUserAddress) {
-                    $addresses[self::ACCOUNT_USER_LABEL][$this->getIdentifier($customerUserAddress)] =
+                    $addresses[$customerUserGroupLabel][$this->getIdentifier($customerUserAddress)] =
                         $customerUserAddress;
                 }
             }
         }
 
-        return $addresses;
+        return new TypedOrderAddressCollection($customerUser, $type, $addresses);
     }
 
     /**
@@ -126,7 +127,7 @@ class AbstractAddressManager
             throw new \InvalidArgumentException(sprintf('Entity with "%s" not registered', $className));
         }
 
-        return sprintf('%s%s%s', $this->map->indexOf($className), self::DELIMITER, $address->getId());
+        return sprintf('%s%s%s', $this->map->indexOf($className), static::DELIMITER, $address->getId());
     }
 
     /**
@@ -135,7 +136,7 @@ class AbstractAddressManager
      */
     public function getEntityByIdentifier($identifier)
     {
-        $identifierData = explode(self::DELIMITER, $identifier);
+        $identifierData = explode(static::DELIMITER, $identifier);
         if (empty($identifierData[1]) || !empty($identifierData[2])) {
             throw new \InvalidArgumentException(sprintf('Wrong identifier "%s"', $identifier));
         }

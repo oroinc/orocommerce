@@ -4,8 +4,8 @@ oro:
         entity_plural_label: Checkouts
         id.label: Id
         owner.label: Owner
-        customer.label: Global Address Book
-        customer_user.label: My Address Book
+        customer.label: Customer
+        customer_user.label: Customer User
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
@@ -36,7 +36,7 @@ oro:
         started_from.label: Started From
         order_history.label: Order History
         open_order:
-            label: Open Order
+            label: Checkout
             plural_label: Open Orders
         deleted.label: Deleted
         completed.label: Completed
@@ -47,8 +47,8 @@ oro:
             entity_plural_label: Base Checkouts
             id.label: Id
             owner.label: Owner
-            customer.label: Global Address Book
-            customer_user.label: My Address Book
+            customer.label: Customer
+            customer_user.label: Customer User
             organization.label: Organization
             customer_notes.label: Customer Notes
             customer_notes.frontend.label: Notes
@@ -95,17 +95,16 @@ oro:
             edit_order: Edit Order
             item: Item
             sku: SKU
-            quantity : Quantity
-            price : Price
-            price_per_item: Price per item
-            total_price: Row Total
+            quantity: Quantity
+            quantity_short: Qty
+            price: Price
             total_qty: Total QTY
 
         title:
             step.label: '%step_label%'
 
         workflow:
-            view_options.label: View Options for this Order
+            order_options.label: Order options
             unavailable_transition.message: 'This action is not available, reason:'
 
             success:
@@ -164,8 +163,13 @@ oro:
                             middle_name: ""
                             last_name: ""
                             sufix: ""
+                        visitor:
+                            email: ""
         form:
-            address.manual: Enter other address
+            address.manual: New address
+            address.group_label:
+                customer: Global Address Book
+                customer_user: My address book
             address.select.billing.label: SELECT BILLING ADDRESS
             address.enter.billing.label: ENTER BILLING ADDRESS
             address.select.shipping.label: SELECT SHIPPING ADDRESS
@@ -178,7 +182,8 @@ oro:
             delete.label: Delete
 
         workflow.condition:
-            order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
+            order_line_item_has_count_allow_rfp.message: No products can be added to this order. Please create an RFQ to request price.
+            order_line_item_has_count_not_allow_rfp.message: No products can be added to this order.
             shipping_method_is_not_available.message: |-
                 The selected shipping method is not available.
                 Please return to the shipping method selection step and select a different one.
@@ -192,13 +197,23 @@ oro:
                 There was a change to the contents of your order.
                 Please review the order information before proceeding to the next step.
 
-        order.line_items.line_item_has_no_price.message: Some products have not been added to this order. Please create an RFQ to request price.
+        order.line_items.line_item_has_no_price_allow_rfp.message: Some products have not been added to this order. Please create an RFQ to request price.
+        order.line_items.line_item_has_no_price_not_allow_rfp.message: Some products have not been added to this order.
 
         system_configuration:
             fields:
                 frontend_open_orders_separate_page.title: 'Show open orders on a separate page'
+                guest_checkout:
+                    title: 'Enable Guest Checkout'
+                    tooltip: 'Enable Guest Checkout'
+                default_guest_checkout_owner:
+                    title: 'Default guest checkout owner'
+                    tooltip: 'Allows guests to create order'
             groups:
                 open_orders.title: 'Open Orders'
+                checkout.title: 'Checkout'
+                guest_checkout.title: 'Guest Checkout'
+                guest_checkout_owner.title: 'Guest Checkout Owner Settings'
 
         privilege:
             category.checkout.label: 'Checkout'

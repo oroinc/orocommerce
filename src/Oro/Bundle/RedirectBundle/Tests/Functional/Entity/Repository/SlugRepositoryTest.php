@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
@@ -256,6 +257,26 @@ class SlugRepositoryTest extends WebTestCase
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
 
         $this->assertTrue($this->repository->isScopeAttachedToSlug($slug->getScopes()->first()));
+    }
+
+    public function testFindMostSuitableUsedScope()
+    {
+        $scope = $this->getReference(LoadSlugScopesData::SCOPE_KEY);
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        /** @var Customer $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
+        $criteria = $scopeManager->getCriteria('web_content', ['customer' => $customer]);
+        $this->assertSame($scope, $this->repository->findMostSuitableUsedScope($criteria));
+    }
+
+    public function testFindMostSuitableUsedScopeEmptyResult()
+    {
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+
+        /** @var Customer $secondCustomer */
+        $secondCustomer = $this->getReference(LoadCustomers::CUSTOMER_LEVEL_1_1);
+        $nonUsedCriteria = $scopeManager->getCriteria('web_content', ['customer' => $secondCustomer]);
+        $this->assertNull($this->repository->findMostSuitableUsedScope($nonUsedCriteria));
     }
 
     public function testGetUsedRoutes()

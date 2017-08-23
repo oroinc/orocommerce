@@ -1,0 +1,40 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% oro_title_set({params : {"%code%": entity.code}}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('oro_promotion_coupon_index'),
+    'indexLabel': 'oro.promotion.coupon.entity_plural_label'|trans,
+    'entityTitle': entity.code
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% if entity.promotion %}
+        {% set promotion = UI.entityViewLink(entity.promotion, entity.promotion.rule.name|trans, 'oro_promotion_view') %}
+    {% endif %}
+    {% set dataBlocks = {
+        'general': {
+            'title': 'oro.promotion.coupon.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'data' : {
+                        'code': UI.renderProperty('oro.promotion.coupon.code.label'|trans, entity.code),
+                        'promotion': UI.renderHtmlProperty('oro.promotion.coupon.promotion.label'|trans, promotion|default('N/A'|trans)),
+                        'usesPerCoupon': UI.renderProperty('oro.promotion.coupon.uses_per_coupon.label'|trans, entity.usesPerCoupon),
+                        'usesPerPerson': UI.renderProperty('oro.promotion.coupon.uses_per_person.label'|trans, entity.usesPerPerson),
+                        'validUntil': UI.renderProperty('oro.promotion.coupon.valid_until.label'|trans, entity.validUntil|oro_format_datetime),
+                    }
+                },
+            ]
+        }
+    } %}
+
+    {% set id = 'coupon-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

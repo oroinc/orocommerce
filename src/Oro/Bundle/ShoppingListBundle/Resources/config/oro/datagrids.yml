@@ -36,8 +36,14 @@ datagrids:
                 label:         oro.shoppinglist.notes.label
             customer:
                 label:         oro.shoppinglist.customer.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/customer.html.twig
             customer_user:
                 label:         oro.shoppinglist.customer_user.label
+                type:          twig
+                frontend_type: html
+                template:      OroShoppingListBundle:Datagrid:Column/customer_user.html.twig
             subtotal:
                 label:         oro.shoppinglist.subtotal.label
                 type:          twig

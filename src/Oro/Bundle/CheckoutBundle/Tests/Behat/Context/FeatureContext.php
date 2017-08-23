@@ -25,10 +25,12 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
     /** @var array */
     protected static $valueMapping = [
+        'Ship to this address' => 'oro_workflow_transition[ship_to_billing_address]',
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
         'Value'=> 'paymentMethod',
-        'Delete the shopping list' => 'oro_workflow_transition[remove_source]'
+        'Delete this shopping list after submitting order' => 'oro_workflow_transition[remove_source]',
+        'Save shipping address' => 'oro_workflow_transition[save_shipping_address]'
     ];
 
     /**
@@ -59,7 +61,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function checkValueOnCheckoutStepAndPressButton($value, $step, $button)
     {
         $this->assertTitle($step);
+        $this->checkValueOnCheckoutPage($value);
 
+        $page = $this->getSession()->getPage();
+        $page->pressButton($button);
+        $this->waitForAjax();
+    }
+
+    /**
+     * @When /^I check "(?P<value>.+)" on the checkout page$/
+     *
+     * @param string $value
+     */
+    public function checkValueOnCheckoutPage($value)
+    {
         $page = $this->getSession()->getPage();
         $element = $page->findField(self::$valueMapping[$value]);
 
@@ -71,7 +86,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 
         self::assertTrue($element->isChecked(), sprintf('Option "%s" is not checked', $value));
 
-        $page->pressButton($button);
         $this->waitForAjax();
     }
 
@@ -136,6 +150,42 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 ...$row
             ));
         }
+    }
+
+    /**
+     * @Then /^on the "(?P<step>[\w\s]+)" checkout step (?:|I )go back to "(?P<buttonTitle>(?:[^"]|\\")*)"$/
+     *
+     * @param string $step
+     * @param string $buttonTitle
+     */
+    public function goBackTo($step, $buttonTitle)
+    {
+        $this->assertTitle($step);
+
+        $goBackButton = null;
+        $titleAttribute = 'data-title';
+        foreach ($this->findAllElements('CheckoutGoBackButton') as $goBackButton) {
+            if (!$goBackButton->hasAttribute($titleAttribute)) {
+                continue;
+            }
+
+            if ($goBackButton->getAttribute($titleAttribute) === $buttonTitle) {
+                $goBackButton->click();
+                $this->waitForAjax();
+
+                return;
+            }
+        }
+
+        self::fail(sprintf('Button with title "%s" was not found', $buttonTitle));
+    }
+
+    /**
+     * @Given /^(?:|I )wait "Submit Order" button$/
+     */
+    public function iWaitSubmitOrderButton()
+    {
+        $this->getSession()->getDriver()->wait(30000, "0 == $('button.checkout__submit-btn:disabled').length");
     }
 
     /**

@@ -5,9 +5,12 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Behat;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\AddressBundle\Entity\Repository\AddressTypeRepository;
+use Oro\Bundle\DPDBundle\Entity\ShippingService as DPDShippingService;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Bundle\TestFrameworkBundle\Behat\Fixtures\ReferenceRepositoryInitializer as BaseInitializer;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -21,6 +24,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 class ReferenceRepositoryInitializer extends BaseInitializer
 {
@@ -36,11 +40,19 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $us = $repository->findOneBy(['name' => 'United States']);
         $this->referenceRepository->set('united_states', $us);
 
+        /** @var Country $unitedStates */
+        $unitedStates = $repository->findOneBy(['name' => 'United States']);
+        $this->referenceRepository->set('us', $unitedStates);
+
         /** @var RegionRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroAddressBundle:Region');
         /** @var Region $berlin */
         $berlin = $repository->findOneBy(['name' => 'Berlin']);
         $this->referenceRepository->set('berlin', $berlin);
+
+        /** @var Region $florida */
+        $florida = $repository->findOneBy(['name' => 'Florida']);
+        $this->referenceRepository->set('florida', $florida);
 
         /** @var CustomerUserRoleRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroCustomerBundle:CustomerUserRole');
@@ -97,10 +109,42 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $combinedPriceList = $repository->findOneBy(['id' => '1']);
         $this->referenceRepository->set('combinedPriceList', $combinedPriceList);
 
+        $this->configureDictionaries();
+    }
+
+    protected function configureDictionaries()
+    {
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        /** @var AbstractEnumValue[] $enumInventoryStatuses */
         $enumInventoryStatuses = $this->getEntityManager()
             ->getRepository($inventoryStatusClassName)
-            ->findOneBy(['id' => 'in_stock']);
-        $this->referenceRepository->set('enumInventoryStatuses', $enumInventoryStatuses);
+            ->findAll();
+
+        $inventoryStatuses = [];
+        foreach ($enumInventoryStatuses as $inventoryStatus) {
+            $inventoryStatuses[$inventoryStatus->getId()] = $inventoryStatus;
+        }
+
+        $this->referenceRepository->set(
+            'enumInventoryStatuses',
+            $inventoryStatuses[Product::INVENTORY_STATUS_IN_STOCK]
+        );
+
+        $this->referenceRepository->set(
+            'enumInventoryStatusOutOfStock',
+            $inventoryStatuses[Product::INVENTORY_STATUS_OUT_OF_STOCK]
+        );
+
+        // move to DPDBundle after https://magecore.atlassian.net/browse/BAP-15050 will be done
+        /** @var EntityRepository $repository */
+        $repository = $this->getEntityManager()->getRepository('OroDPDBundle:ShippingService');
+        /** @var DPDShippingService $germany */
+        $germany = $repository->findOneBy(['code' => DPDShippingService::CLASSIC_SERVICE_SUBSTR]);
+        $this->referenceRepository->set('dpdClassicShippingService', $germany);
+
+        $types = $this->getEntityManager()->getRepository(SegmentType::class)->findAll();
+        foreach ($types as $type) {
+            $this->referenceRepository->set(sprintf('segment_%s_type', strtolower($type->getName())), $type);
+        }
     }
 }

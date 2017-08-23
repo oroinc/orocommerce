@@ -1,0 +1,27 @@
+{% set appliedDiscounts = form.vars.applied_discounts|default({}) %}
+
+{% set appliedDiscountsAmount = appliedDiscounts.discountAmount|default(0.0) %}
+{% set currency = appliedDiscounts.currency|default('') %}
+{% set rowTotalWithoutDiscount = appliedDiscounts.rowTotalWithoutDiscount|default(0.0) %}
+{% set rowTotalAfterDiscount = rowTotalWithoutDiscount - appliedDiscountsAmount %}
+
+<div data-page-component-module="oropromotion/js/app/components/order-line-item-discounts-no-tax-component">
+    <span data-value-container>
+        <table class="grid table table-condensed table-bordered applied_discount-result-grid">
+            <thead>
+                <tr>
+                    <th class="renderable">&nbsp;</th>
+                    <th class="renderable">{{ 'oro.order.edit.order_line_item.short.row_total_after_discount.label'|trans }}</th>
+                    <th class="renderable">{{ 'oro.order.edit.order_line_item.short.discount_amount.label'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="renderable">{{ 'oro.tax.result.row'|format('row')|trans }}</td>
+                    <td class="renderable applied-discount-row-total-after-discount">{{ rowTotalAfterDiscount|oro_format_currency({currency: currency}) }}</td>
+                    <td class="renderable applied-discount-row-total-discount-amount">{{ appliedDiscountsAmount|oro_format_currency({currency: currency}) }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </span>
+</div>

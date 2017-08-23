@@ -1,0 +1,26 @@
+imports:
+    - { resource: 'b2b_flow_checkout/attributes.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: [] }
+    - { resource: 'b2b_flow_checkout/base_transitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
+    - { resource: 'b2b_flow_checkout/base_transition_definitions.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
+
+    - { resource: 'b2b_flow_checkout_single_page/steps.yml' }
+    - { resource: 'b2b_flow_checkout_single_page/transitions.yml' }
+    - { resource: 'b2b_flow_checkout_single_page/transition_definitions.yml' }
+
+workflows:
+    b2b_flow_checkout_single_page:
+        entity: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        entity_attribute: checkout
+        steps_display_ordered: true
+
+        defaults:
+            active: false
+
+        applications: ['commerce']
+
+        exclusive_active_groups:
+            - b2b_checkout_flow
+        exclusive_record_groups:
+            - b2b_checkout_flow
+
+        priority: 200

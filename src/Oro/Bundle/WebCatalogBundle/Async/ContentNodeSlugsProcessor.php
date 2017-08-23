@@ -102,7 +102,6 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
             $this->logger->error(
                 'Unexpected exception occurred during content variant slugs processing',
                 [
-                    'message' => $message->getBody(),
                     'topic' => Topics::RESOLVE_NODE_SLUGS,
                     'exception' => $e
                 ]

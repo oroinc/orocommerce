@@ -1,0 +1,101 @@
+include:
+  - '@OroFlatRateShippingBundle:FlatRateIntegration.yml'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+    all_customers:
+        name: 'All Customers'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'first customer'
+        organization: '@organization'
+        owner: '@admin'
+        group: '@all_customers'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    localProduct1Name:
+        string: 'Product 1'
+
+    localProduct2Name:
+        string: 'Product 2'
+
+    localProductAttributeFamily:
+        string: 'Product Attribute Family'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productUnitPrecision1:
+        unit: '@item'
+        precision: '1'
+
+    productUnitPrecision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily:
+    productAttributeFamily:
+        entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+        code: 'product_attribute_family_code'
+        addLabel: ['@localProductAttributeFamily']
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'PSKU1'
+        primaryUnitPrecision: '@productUnitPrecision1'
+        addName: ['@localProduct1Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+    product2:
+        type: 'simple'
+        sku: 'PSKU2'
+        primaryUnitPrecision: '@productUnitPrecision2'
+        addName: ['@localProduct2Name']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    rule1:
+        name: 'Shipping Rule First'
+        enabled: true
+        sortOrder: 5
+        expression: 'true'
+        stopProcessing: false
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1.5
+            type: 'per_order'
+            handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig:
+        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        typeConfigs: ['@shippingMethodTypeConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shipping_methods_configs_rule1:
+        rule: '@rule1'
+        currency: 'EUR'
+        methodConfigs: ['@shippingMethodConfig']
+        organization: '@organization'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
+    germany_destination:
+        postalCodes: ['@postalCode1']
+        country: '@germany'
+        region: '@berlin'
+        regionText: 'Berlin'
+        methodConfigsRule: '@shipping_methods_configs_rule1'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestinationPostalCode:
+    postalCode1:
+        name: '10115'

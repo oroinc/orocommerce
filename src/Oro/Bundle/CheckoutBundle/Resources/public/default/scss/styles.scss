@@ -1,9 +1,15 @@
-@import './components/sidebar';
-@import './components/navigation';
-@import './components/form_theme';
-@import './components/submit';
-@import './components/main';
-@import './components/checkout-order-summary/checkout-order-summary.scss';
 @import './components/icons';
-@import './components/order-checkout-widget';
-@import './components/order-review-options';
+@import './components/navigation';
+
+@import './components/checkout/checkout';
+@import './components/checkout-sidebar/checkout-sidebar';
+@import './components/checkout-form/checkout-form';
+@import './components/checkout-order-summary-container/checkout-order-summary-container';
+@import './components/checkout-order-summary/checkout-order-summary';
+
+@import './components/order-checkout-widget/order-checkout-widget';
+@import './components/order-review-options/order-review-options';
+
+@import './components/single-page-checkout-view/single-page-checkout-view';
+@import './components/sticky-single-page-checkout-titles/sticky-single-page-checkout-titles';
+

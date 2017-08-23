@@ -13,18 +13,71 @@
 {% endblock %}
 
 {% block __oro_product_list_item__product_image_holder_widget %}
-    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
-
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-item__image-holder product-item__image-holder--{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
-        <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"
-           style="background-image: url('{{ Image.url(productImage, 'product_large') }}')">
-        </a>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_view_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__preview'
+    }) %}
+    
+    {% if popup_gallery and product.imagesByType('listing')|length > 0 %}
+        {% set options = {
+            ajaxMode: true,
+            ajaxRoute: 'oro_product_frontend_ajax_images_by_id',
+            id: product.id,
+            galleryFilter: 'product_gallery_popup',
+            alt: (product.name|e)
+        } %}
+
+        {% set attr = layout_attr_defaults(attr, {
+            'data-page-component-module': "orofrontend/js/app/components/popup-gallery-widget",
+            'data-page-component-options': options|json_encode
+        }) %}
+    {% endif %}
+
+    <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </a>
+{% endblock %}
+
+{% block __oro_product_list_item__product_popup_gallery_widget %}
+    {% if product.imagesByType('listing')|length > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' view-product-gallery',
+            'data-trigger-gallery-open': true
+        }) %}
+
+        <div {{ block('block_attributes') }}></div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_list_item__product_view_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__preview-picture',
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'orofrontend/js/app/views/object-fit-polyfill-view'
+        }
+    }) %}
+
+    {% set attrImage = {
+        'class': 'product-item__preview-image'
+    } %}
+
+    {% set productImage = product.imagesByType('listing')|length > 0 ? product.imagesByType('listing').first.image : null %}
+
+    <picture {{ block('block_attributes') }}>
+        <img src="{{ Image.url(productImage, product_image_size) }}" {{ UI.attributes(attrImage) }} alt="{{ product.name }}">
+    </picture>
 {% endblock %}
 
 {% block __oro_product_list_item__product_quick_view_widget %}

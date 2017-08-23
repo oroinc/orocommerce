@@ -1,0 +1,53 @@
+@import "oroui/css/less/variables";
+
+.controls {
+  .control-label.expression-collapse-label {
+    margin-top: 4px;
+    margin-left: -5px;
+  }
+}
+
+.collapse-view {
+  .collapse-view__trigger_show {
+    display: block;
+  }
+  .collapse-view__trigger_hide {
+    display: none;
+  }
+  &.expanded {
+    .collapse-view__trigger_show {
+      display: none;
+    }
+    .collapse-view__trigger_hide {
+      display: block;
+    }
+  }
+}
+
+.applied_discounts-result-grid {
+  min-width: 325px;
+
+  th {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  td:first-child {
+    white-space: nowrap;
+    font-weight: bold;
+    font-size: 11px;
+  }
+
+  .other-scroll-container & {
+    border: 1px solid @generalBorderColor !important;
+  }
+}
+
+input.dashesSequence-coupon-preview {
+  width: 90px;
+}
+
+label.dashes-sequence-suffix-label {
+  position: absolute;
+  margin: 7px auto auto 117px;
+}

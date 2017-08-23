@@ -20,6 +20,19 @@ layout:
                         mode: 'text'
                 __product_image_holder:
                     blockType: container
+                    options:
+                        attr:
+                            class: 'product-item__image-holder--aspect-ratio'
+                __product_view:
+                    blockType: product_listing_view
+                    options:
+                        popup_gallery: '=data["system_config_provider"].getValue("oro_product.image_preview_on_product_listing_enabled")'
+                __product_view_image:
+                    blockType: product_list_item_image
+                __product_popup_gallery:
+                    blockType: block
+                    options:
+                        visible: '=data["system_config_provider"].getValue("oro_product.image_preview_on_product_listing_enabled")'
                 __product_quick_view:
                     blockType: block
                     options:
@@ -58,6 +71,9 @@ layout:
                 __root:
                     __product:
                         __product_image_holder:
+                            __product_view:
+                                __product_view_image: ~
+                                __product_popup_gallery: ~
                             __product_sticker_new: ~
                             __product_quick_view: ~
                         __product_title: ~

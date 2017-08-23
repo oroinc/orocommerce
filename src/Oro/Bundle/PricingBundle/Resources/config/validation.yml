@@ -52,10 +52,11 @@ Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
 
 Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
     constraints:
-        - Oro\Bundle\PricingBundle\Validator\Constraints\SchedulesIntersection: ~
+        - Oro\Bundle\CronBundle\Validator\Constraints\ScheduleIntervalsIntersection:
+            message: oro.pricing.validators.price_list.schedules_intersection.message
         - Oro\Bundle\PricingBundle\Validator\Constraints\DatesChain:
             chain:
-                activeAt: 'Active At'
+                activeAt: 'Activate At'
                 deactivateAt: 'Deactivate At'
 
 Oro\Bundle\PricingBundle\Entity\PriceRule:
@@ -206,28 +207,42 @@ Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback:
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:
-        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
-        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits:
+            groups: [Default, ProductPriceCollection]
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency:
+            groups: [Default, ProductPriceCollection]
         - Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity:
-            fields:  [ product, priceList, quantity, unit, currency ]
+            groups: [Default]
+            fields: [ product, priceList, quantity, unit, currency ]
     properties:
         product:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [Default, ProductPriceCollection]
         productSku:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [Default, ProductPriceCollection]
         priceList:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [Default, ProductPriceCollection]
         quantity:
             - NotBlank:
+                groups: [Default, ProductPriceCollection]
                 message: 'oro.pricing.validators.product_price.quantity.blank'
             - Range:
+                groups: [Default, ProductPriceCollection]
                 min: 0
         price:
-            - NotBlank: ~
+            - NotBlank:
+                groups: [Default, ProductPriceCollection]
             - Valid: ~
         unit:
             - NotBlank:
+                groups: [Default, ProductPriceCollection]
                 message: 'oro.product.productunit.invalid'
+        currency:
+            - NotBlank:
+                message: 'oro.pricing.validators.product_price.currency.blank'
+                groups: [Default, ProductPriceCollection]
 
 Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig:
     properties:
@@ -242,3 +257,24 @@ Oro\Bundle\ProductBundle\Entity\Product:
     properties:
         unitPrecisions:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceForProductUnitExists: ~
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
+        - Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntity:
+            fields:  [ product, priceList, unit, currency, quantity ]
+    properties:
+        product:
+            - NotBlank: ~
+        productSku:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        price:
+            - NotBlank:
+                groups: [api]
+            - Valid: ~
+        unit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
