@@ -5,27 +5,21 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
-    const PRODUCT_UNIT_CLASS = 'Oro\Bundle\ProductBundle\Entity\ProductUnit';
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitsProvider
      */
-    protected $registry;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
-     */
-    protected $productUnitLabelFormatter;
+    protected $productUnitsProvider;
 
     /**
      * {@inheritdoc}
@@ -34,8 +28,8 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         $productSelectType = new ProductSelectEntityTypeStub(
             [
-                1 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]),
-                2 => $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
+                1 => $this->getEntity(Product::class, ['id' => 1]),
+                2 => $this->getEntity(Product::class, ['id' => 2]),
             ]
         );
 
@@ -49,45 +43,25 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         parent::setUp();
 
-        $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->productUnitLabelFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->any())
-            ->method('findBy')
-            ->will(
-                $this->returnValue(
-                    [
-                        'item' => 'item',
-                        'kg' => 'kilogram',
-                    ]
-                )
-            );
-
-        $this->registry->expects($this->any())
-            ->method('getRepository')
-            ->with(self::PRODUCT_UNIT_CLASS)
-            ->will($this->returnValue($repository));
+        $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
+        $this->productUnitsProvider->expects($this->any())
+            ->method('getAvailableProductUnits')
+            ->willReturn([
+                'item' => 'item',
+                'kg' => 'kilogram',
+            ]);
 
         $this->formType = $this->getFormType();
-        $this->formType->setDataClass('Oro\Bundle\OrderBundle\Entity\OrderLineItem');
+        $this->formType->setDataClass(OrderLineItem::class);
         $this->formType->setSectionProvider($this->sectionProvider);
-        $this->formType->setProductUnitClass(self::PRODUCT_UNIT_CLASS);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getFormType()
     {
-        return new OrderLineItemType($this->registry, $this->productUnitLabelFormatter);
+        return new OrderLineItemType($this->productUnitsProvider);
     }
 
     public function testGetName()
@@ -101,7 +75,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function submitDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('Oro\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
+        $product = $this->getEntity(Product::class, ['id' => 1]);
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
 
         return [
@@ -128,7 +102,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProduct($product)
                     ->setQuantity(10)
                     ->setProductUnit(
-                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                        $this->getEntity(ProductUnit::class, ['code' => 'item'])
                     )
                     ->setPrice(Price::create(5, 'USD'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_BUNDLED)
@@ -158,7 +132,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFreeFormProduct('Service')
                     ->setProductSku('SKU02')
                     ->setProductUnit(
-                        $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                        $this->getEntity(ProductUnit::class, ['code' => 'item'])
                     )
                     ->setPrice(Price::create(5, 'USD'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
@@ -177,7 +151,9 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $this->assertDefaultBuildViewCalled();
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     protected function getExpectedSections()
     {
         return new ArrayCollection(
@@ -202,12 +178,15 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         return [
             'currency' => null,
-            'data_class' => 'Oro\Bundle\OrderBundle\Entity\OrderLineItem',
+            'data_class' => OrderLineItem::class,
             'intention' => 'order_line_item',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
                 'view' => 'oroorder/js/app/views/line-item-view',
-                'freeFormUnits' => null,
+                'freeFormUnits' => [
+                    'item' => 'item',
+                    'kg' => 'kilogram',
+                ],
             ],
         ];
     }

@@ -42,7 +42,8 @@ class ProductUnitsProvider
             $code = $unit->getCode();
             $unitsFull[$code] = $this->formatter->format($code);
         }
-        return  $unitsFull;
+
+        return $unitsFull;
     }
 
     /**

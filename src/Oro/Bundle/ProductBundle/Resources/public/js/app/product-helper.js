@@ -35,7 +35,7 @@ define(function(require) {
         if (
             keyCode > 47 && keyCode < 58 ||
             keyName === 'Backspace' ||
-            (_.contains(specialKeys, keyCode) && (event.originalEvent.metaKey || event.originalEvent.ctrlKey) )
+            (_.contains(specialKeys, keyCode) && (event.originalEvent.metaKey || event.originalEvent.ctrlKey))
         ) {
             return true;
         }

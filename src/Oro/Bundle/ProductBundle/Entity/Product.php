@@ -895,7 +895,7 @@ class Product extends ExtendProduct implements
     }
 
     /**
-     * @return ProductUnitPrecision[]
+     * @return array
      */
     public function getAvailableUnitsPrecision()
     {
