@@ -27,6 +27,13 @@ class FedexIntegrationSettings extends Transport
     const DIMENSION_IN = 'IN';
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="fedex_test_mode", type="boolean", options={"default"=false})
+     */
+    private $testMode;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="fedex_key", type="string", length=100)
@@ -118,6 +125,26 @@ class FedexIntegrationSettings extends Transport
     {
         $this->shippingServices = new ArrayCollection();
         $this->labels = new ArrayCollection();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTestMode()
+    {
+        return $this->testMode;
+    }
+
+    /**
+     * @param bool $testMode
+     *
+     * @return self
+     */
+    public function setTestMode(bool $testMode): self
+    {
+        $this->testMode = $testMode;
+
+        return $this;
     }
 
     /**

@@ -4,6 +4,7 @@ oro:
             channel.label: 'FedEx'
             settings:
                 label: 'FedEx Transport Settings'
+                test_mode.label: 'Test Mode'
                 key.label: 'User Credential Key'
                 password.label: 'User Credential Password'
                 account_number.label: 'Shipping Account Number'

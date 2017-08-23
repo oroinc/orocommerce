@@ -16,6 +16,7 @@ class FedexIntegrationSettingsTest extends TestCase
     public function testAccessors()
     {
         static::assertPropertyAccessors(new FedexIntegrationSettings(), [
+            ['testMode', true],
             ['key', 'key'],
             ['password', 'password'],
             ['accountNumber', 'accountNumber'],

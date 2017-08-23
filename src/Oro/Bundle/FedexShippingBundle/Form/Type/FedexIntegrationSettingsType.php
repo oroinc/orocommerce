@@ -7,6 +7,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\ShippingService;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -31,6 +32,14 @@ class FedexIntegrationSettingsType extends AbstractType
                     'label'    => 'oro.fedex.integration.settings.labels.label',
                     'required' => true,
                     'options'  => ['constraints' => [new NotBlank()]],
+                ]
+            )
+            ->add(
+                'testMode',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.fedex.integration.settings.test_mode.label',
+                    'required' => false,
                 ]
             )
             ->add(
