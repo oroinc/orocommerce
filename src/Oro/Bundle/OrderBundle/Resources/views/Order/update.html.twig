@@ -224,8 +224,11 @@
     {% endif %}
 
     {% set discounts %}
-        {{ form_widget(form.discounts) }}
-        {{ form_errors(form.discounts) }}
+        <div class="oro-discount-collection-container">
+            {{ form_widget(form.discounts) }}
+            <div class="discounts-sum-error">{{ form_errors(form.discounts) }}</div>
+            <div class="discounts-sum-error">{{ form_row(form.discountsSum) }}</div>
+        </div>
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge({

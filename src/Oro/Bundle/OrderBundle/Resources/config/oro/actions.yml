@@ -224,25 +224,10 @@ operations:
                 message_parameters:
                     id: $identifier
 
-    oro_order_add_order_discount:
-        label: oro.order.widgets.add_order_discount
-        routes:
-            - oro_order_view
-        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
-        button_options:
-            icon: fa-dollar
+    oro_order_discount_form:
+        label: oro.order.widgets.order_discount_form
         frontend_options:
             template: OroOrderBundle:Action:orderDiscount.html.twig
-            title: oro.order.orderdiscount.add_discount.label
-            options:
-                width: 550
-                modal: false
-                stateEnabled: false
-                incrementalPosition: false
-                allowMaximize: false
-                allowMinimize: false
-                dblclick: false
-                maximizedHeightDecreaseBy: minimize-bar
         attributes:
             orderDiscount:
                 label: ' '
@@ -274,3 +259,42 @@ operations:
             - '@flash_message':
                 message: oro.order.orderdiscount.flash.save_success
                 type: 'success'
+
+    oro_order_discount_edit_form:
+        label: oro.order.widgets.order_discount_edit_form
+        extends: oro_order_discount_form
+        button_options:
+            data:
+                submit_label: 'oro.order.orderdiscount.action.apply'
+                class: 'btn-primary'
+
+    oro_order_discount_add_form:
+        label: oro.order.widgets.order_discount_add_form
+        extends: oro_order_discount_form
+        button_options:
+            data:
+                submit_label: 'oro.order.orderdiscount.action.save'
+                class: 'btn-success'
+
+    oro_order_add_order_discount:
+        extends: oro_order_discount_add_form
+        label: oro.order.widgets.add_order_discount
+        routes:
+            - oro_order_view
+        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
+        button_options:
+            icon: fa-dollar
+            data:
+                submit_label: 'oro.order.orderdiscount.action.save'
+                class: 'btn-success'
+        frontend_options:
+            title: oro.order.orderdiscount.add_discount.label
+            options:
+                width: 550
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: false
+                allowMinimize: false
+                dblclick: false
+                maximizedHeightDecreaseBy: minimize-bar

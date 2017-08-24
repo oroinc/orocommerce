@@ -101,7 +101,7 @@ class OrderDiscountItemType extends AbstractType
                 [
                     'choices' => [
                         OrderDiscount::TYPE_AMOUNT => $options['currency'],
-                        OrderDiscount::TYPE_PERCENT => 'oro.order.orderdiscountitem.types.percent',
+                        OrderDiscount::TYPE_PERCENT => 'oro.order.order_discount.types.percent',
                     ]
                 ]
             )

@@ -112,6 +112,8 @@ oro:
             action:
                 cancel: Cancel
                 save: Save
+                apply: Apply
+                edit: Edit
 
         orderaddress:
             entity_label: Order Address
@@ -201,7 +203,11 @@ oro:
             best_selling_list.description: List of best selling products
             static_reports_tab.label: Reports
         widgets:
+            order_discount_form: Special Discount Form
+            order_discount_edit_form: Edit Speical Discount Form
+            order_discount_add_form: Add Special Discount Form
             add_order_discount: Add Special Discount
+            edit_order_discount: Edit Special Discount
             order_information: Order Information
             shipping_tracking: Shipping Tracking
 

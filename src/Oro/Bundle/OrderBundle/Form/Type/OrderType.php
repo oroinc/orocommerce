@@ -27,6 +27,7 @@ use Symfony\Component\Validator\Constraints\Range;
 class OrderType extends AbstractType
 {
     const NAME = 'oro_order_type';
+    const DISCOUNTS_FIELD_NAME = 'discounts';
 
     /** @var string */
     protected $dataClass;
@@ -92,7 +93,11 @@ class OrderType extends AbstractType
                     'options' => ['currency' => $order->getCurrency()]
                 ]
             )
-            ->add('discounts', OrderDiscountCollectionTableType::NAME)
+            ->add(
+                self::DISCOUNTS_FIELD_NAME,
+                OrderDiscountCollectionTableType::NAME,
+                ['order' => $order]
+            )
             ->add(
                 'discountsSum',
                 HiddenType::class,

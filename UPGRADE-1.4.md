@@ -10,7 +10,7 @@ Some inline underscore templates from next bundles, were moved to separate .html
 
 OrderBundle
 -------------
-- Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` was removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` is introduced.
+- Form type `Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\OrderDiscountItemsCollectionType` and related `oroorder/js/app/views/discount-items-view` JS view were removed, new `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountCollectionTableType` and `oroorder/js/app/views/discount-collection-view` are introduced.
 - Form type `Oro\Bundle\OrderBundle\Form\Type\OrderDiscountItemType` was changed for use in popup.
 
 PromotionBundle
