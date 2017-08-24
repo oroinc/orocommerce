@@ -90,6 +90,74 @@ a Product entity, in the **"data"** section. Example:
 
 You can see the existing categories using its API [here](#get--admin-api-categories)
 
+##### 5. Specify variants (for configurable products only)
+
+When adding a new configurable product you want to specify the variants of that product. To be able to specify
+variants of a product first you have to add a configurable attribute for product entity and create the simple products
+that will the variants of the configurable product. After these steps you can specify variants for a new configurable 
+product. Example:
+
+      "variantLinks": {
+        "data": [
+          {
+            "type": "productvariantlinks",
+          "id": "variant-link1"
+          },
+          {
+            "type": "productvariantlinks",
+            "id": "variant-link2"
+          }
+        ]
+      }
+and in the included section we specify the variants:
+
+    {
+      "type": "productvariantlinks",
+      "id": "variant-link1",
+      "attributes": {
+        "visible": true
+      },
+      "relationships": {
+        "parentProduct": {
+          "data": {
+            "type": "products",
+            "id": "1"
+          }
+        },
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "65"
+          }
+        }
+      }
+    },
+    {
+      "type": "productvariantlinks",
+      "id": "variant-link2",
+      "attributes": {
+        "visible": true
+      },
+      "relationships": {
+        "parentProduct": {
+          "data": {
+            "type": "products",
+            "id": "1"
+          }
+        },
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "67"
+          }
+        }
+      }
+    }
+    
+For **parentProduct** id you need to specify any id of an existing product from the system,
+the link between the configurable product that is added on this request and the variants will be handled internally
+by the API. In **product** tag we specify the id of the product that will be a variant of the created product.
+
 {@request:json_api}
 
 Example:
@@ -1247,3 +1315,25 @@ Retrieve the ID of the pageTemplate for a specific product
 #### update_relationship
 
 Replace the pageTemplate for a specific product
+
+### variantLinks
+
+#### get_subresource
+
+Retrieve the variant products of a specific product record
+
+#### get_relationship
+
+Retrieve a list of IDs for the variant products of a specific product record.
+
+#### add_relationship
+
+Set the variant products of a specific product record
+
+#### update_relationship
+
+Replace the variant products for a specific product.
+
+#### delete_relationship
+
+Remove the variant products of a specific product record.

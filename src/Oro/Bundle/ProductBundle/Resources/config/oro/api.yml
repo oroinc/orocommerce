@@ -12,6 +12,8 @@ api:
                     exclude: true
                 skuUppercase:
                     exclude: true
+                parentVariantLinks:
+                    exclude: true
             actions:
                 create:
                     fields:
@@ -36,3 +38,5 @@ api:
                                 constraints:
                                     - NotBlank: ~
         Oro\Bundle\ProductBundle\Entity\Brand: ~
+        Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product-variant-links.md'
