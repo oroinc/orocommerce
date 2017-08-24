@@ -141,8 +141,6 @@ class OrderLineItemType extends AbstractOrderLineItemType
      */
     protected function getFreeFormUnits()
     {
-        $units = $this->productUnitsProvider->getAvailableProductUnits();
-
-        return $units;
+        return $this->productUnitsProvider->getAvailableProductUnitsWithPrecision();
     }
 }

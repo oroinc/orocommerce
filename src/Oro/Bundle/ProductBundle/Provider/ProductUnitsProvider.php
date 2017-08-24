@@ -47,6 +47,21 @@ class ProductUnitsProvider
     }
 
     /**
+     * @return array
+     */
+    public function getAvailableProductUnitsWithPrecision()
+    {
+        $productUnits = $this->getRepository()->getAllUnits();
+
+        $unitsWithPrecision = array();
+        foreach ($productUnits as $unit) {
+            $unitsWithPrecision[$unit->getCode()] = $unit->getDefaultPrecision();
+        }
+
+        return $unitsWithPrecision;
+    }
+
+    /**
      * @return ProductUnitRepository
      */
     protected function getRepository()

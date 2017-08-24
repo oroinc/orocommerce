@@ -73,7 +73,7 @@ define(function(require) {
 
         modelAttr: {
             productId: 0,
-            product_units: []
+            product_units: {}
         },
 
         modelEvents: {

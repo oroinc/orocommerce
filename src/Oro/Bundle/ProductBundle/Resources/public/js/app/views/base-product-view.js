@@ -36,7 +36,7 @@ define(function(require) {
             id: 0,
             quantity: 0,
             unit: '',
-            product_units: '',
+            product_units: {},
             line_item_form_enable: true
         },
 
