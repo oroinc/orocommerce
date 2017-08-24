@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use Psr\Log\LoggerInterface;
 
@@ -24,23 +23,23 @@ class LoginOnCheckoutListener
     private $configManager;
 
     /**
-     * @var DoctrineHelper
+     * @var CheckoutManager
      */
-    private $doctrineHelper;
+    private $checkoutManager;
 
     /**
      * @param LoggerInterface $logger
      * @param ConfigManager $configManager
-     * @param DoctrineHelper $doctrineHelper
+     * @param CheckoutManager $checkoutManager
      */
     public function __construct(
         LoggerInterface $logger,
         ConfigManager $configManager,
-        DoctrineHelper $doctrineHelper
+        CheckoutManager $checkoutManager
     ) {
         $this->logger = $logger;
         $this->configManager = $configManager;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->checkoutManager = $checkoutManager;
     }
 
     /**
@@ -49,27 +48,28 @@ class LoginOnCheckoutListener
     public function onInteractiveLogin(InteractiveLoginEvent $event)
     {
         $user = $event->getAuthenticationToken()->getUser();
-        $checkoutId = $event->getRequest()->request->get('_checkout_id');
 
-        if (!$user instanceof CustomerUser ||
-            !$checkoutId ||
-            !$this->configManager->get('oro_checkout.guest_checkout')) {
+        if (!$user instanceof CustomerUser) {
             return;
         }
 
-        /** @var Checkout $checkout */
-        $checkout = $this->doctrineHelper
-            ->getEntityRepository(Checkout::class)
-            ->find($checkoutId);
+        if (!$user->getLoginCount()) {
+            $this->checkoutManager->reassignCustomerUser($user);
+        }
+
+        $checkoutId = $event->getRequest()->request->get('_checkout_id');
+
+        if (!$checkoutId || !$this->configManager->get('oro_checkout.guest_checkout')) {
+            return;
+        }
+
+        $checkout = $this->checkoutManager->getCheckoutById($checkoutId);
 
         if (!$checkout || $checkout->getCustomerUser() || $checkout->getCustomer()) {
             $this->logger->warning("Wrong checkout id - $checkoutId passed during login from checkout");
             return;
         }
 
-        $checkout->setCustomerUser($user);
-        $checkout->setCustomer($user->getCustomer());
-
-        $this->doctrineHelper->getEntityManager(Checkout::class)->flush($checkout);
+        $this->checkoutManager->updateCheckoutCustomerUser($checkout, $user);
     }
 }

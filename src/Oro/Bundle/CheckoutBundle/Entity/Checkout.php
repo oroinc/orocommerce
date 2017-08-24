@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
@@ -181,6 +182,16 @@ class Checkout implements
      * @ORM\Column(name="completed_data", type="json_array")
      */
     protected $completedData;
+
+    /**
+     * @var CustomerUser
+     *
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(
+     *     name="registered_customer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL"
+     * )
+     */
+    protected $registeredCustomerUser;
 
     public function __construct()
     {
@@ -496,5 +507,24 @@ class Checkout implements
         }
 
         return null;
+    }
+
+    /**
+     * @return CustomerUser|null
+     */
+    public function getRegisteredCustomerUser()
+    {
+        return $this->registeredCustomerUser;
+    }
+
+    /**
+     * @param CustomerUser|null $customerUser
+     * @return $this
+     */
+    public function setRegisteredCustomerUser($customerUser)
+    {
+        $this->registeredCustomerUser = $customerUser;
+
+        return $this;
     }
 }

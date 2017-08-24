@@ -49,7 +49,8 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['shippingMethodType', 'shipping_method_type'],
             ['deleted', true],
             ['completed', true],
-            ['completedData', new CompletedCheckoutData(['test' => 'value']), false]
+            ['completedData', new CompletedCheckoutData(['test' => 'value']), false],
+            ['registeredCustomerUser', new CustomerUser()]
         ];
 
         $entity = new Checkout();

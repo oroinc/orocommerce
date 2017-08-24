@@ -516,18 +516,10 @@ services:
         arguments:
             - '@logger'
             - '@oro_config.manager'
-            - '@oro_entity.doctrine_helper'
+            - '@oro_checkout.manager'
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
 
-    oro_shopping_list.event_listener.login_on_checkout:
-        class: 'Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener'
-        arguments:
-            - '@logger'
-            - '@oro_config.manager'
-            - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
 
     oro_checkout.event_listener.customer_user_register_listener:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserRegisterListener'
@@ -535,6 +527,8 @@ services:
         arguments:
             - '@request'
             - '@oro_customer.manager.login_manager'
+            - '@oro_config.manager'
+            - '@oro_checkout.manager'
         tags:
             - { name: kernel.event_listener, event: oro_customer.event.customer_register, method: onCustomerUserRegister }
 
@@ -546,5 +540,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_customer.event.before_customer_user_register, method: beforeCustomerUserRegister }
 
-
+    oro_checkout.manager:
+        class: 'Oro\Bundle\CheckoutBundle\Manager\CheckoutManager'
+        arguments:
+            - '@oro_entity.doctrine_helper'
 

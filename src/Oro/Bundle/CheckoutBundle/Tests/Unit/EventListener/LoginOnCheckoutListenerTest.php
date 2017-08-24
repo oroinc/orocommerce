@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener;
+use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use Psr\Log\LoggerInterface;
 
@@ -35,9 +32,9 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
     private $configManager;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $doctrineHelper;
+    private $checkoutManager;
 
     /**
      * @var InteractiveLoginEvent|\PHPUnit_Framework_MockObject_MockObject
@@ -60,7 +57,7 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+        $this->checkoutManager = $this->getMockBuilder(CheckoutManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -68,18 +65,16 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new LoginOnCheckoutListener($this->logger, $this->configManager, $this->doctrineHelper);
+        $this->listener = new LoginOnCheckoutListener($this->logger, $this->configManager, $this->checkoutManager);
 
         $this->request = new Request();
     }
 
     /**
-     * @param bool $isCustomer
-     * @return CustomerUser|\stdClass
+     * @param object $customerUser
      */
-    private function configureToken($isCustomer = true)
+    private function configureToken($customerUser)
     {
-        $customerUser = $isCustomer ? new CustomerUser() : new \stdClass();
         $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
@@ -89,55 +84,52 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getAuthenticationToken')
             ->willReturn($token);
 
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('getRequest')
             ->willReturn($this->request);
-
-        return $customerUser;
     }
 
-    public function testOnInteractiveLoginNotLogged()
+    public function testOnInteractiveWrongToken()
     {
-        $this->configureToken(false);
+        $this->configureToken(new \stdClass());
         $this->configManager->expects($this->never())->method('get');
         $this->listener->onInteractiveLogin($this->event);
     }
 
-    public function testOnInteractiveLoginCheckoutIdNotPassed()
+    public function testOnInteractiveReassignCustomerUser()
     {
-        $this->configureToken();
+        $customerUser = new CustomerUser();
+        $this->configureToken($customerUser);
+        $this->checkoutManager->expects($this->once())
+            ->method('reassignCustomerUser')
+            ->with($customerUser);
         $this->configManager->expects($this->never())->method('get');
         $this->listener->onInteractiveLogin($this->event);
     }
 
     public function testOnInteractiveLoginConfigurationDisabled()
     {
-        $this->configureToken();
+        $this->configureToken(new CustomerUser());
         $this->request->request->add(['_checkout_id' => 777]);
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(false);
-        $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
+        $this->checkoutManager->expects($this->never())->method('getCheckoutById');
         $this->listener->onInteractiveLogin($this->event);
     }
 
     public function testOnInteractiveLoginWrongCheckout()
     {
-        $this->configureToken();
+        $this->configureToken(new CustomerUser());
         $this->request->request->add(['_checkout_id' => 777]);
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(true);
-        $repository = $this->createMock(EntityRepository::class);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(Checkout::class)
-            ->willReturn($repository);
 
-        $repository->expects($this->once())
-            ->method('find')
+        $this->checkoutManager->expects($this->once())
+            ->method('getCheckoutById')
             ->with(777)
             ->willReturn(null);
 
@@ -150,37 +142,26 @@ class LoginOnCheckoutListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnInteractiveLoginCheckoutAssigned()
     {
-        $this->configureToken();
+        $customerUser = new CustomerUser();
+        $this->configureToken($customerUser);
         $this->request->request->add(['_checkout_id' => 777]);
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_checkout.guest_checkout')
             ->willReturn(true);
-        $repository = $this->createMock(EntityRepository::class);
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(Checkout::class)
-            ->willReturn($repository);
 
         $checkout = new Checkout();
 
-        $repository->expects($this->once())
-            ->method('find')
+        $this->checkoutManager->expects($this->once())
+            ->method('getCheckoutById')
             ->with(777)
             ->willReturn($checkout);
 
         $this->logger->expects($this->never())->method('warning');
 
-        $entityManager = $this->createMock(EntityManager::class);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManager')
-            ->with(Checkout::class)
-            ->willReturn($entityManager);
-
-        $entityManager->expects($this->once())
-            ->method('flush')
-            ->with($checkout);
+        $this->checkoutManager->expects($this->once())
+            ->method('updateCheckoutCustomerUser')
+            ->with($checkout, $customerUser);
 
         $this->listener->onInteractiveLogin($this->event);
     }
