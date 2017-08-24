@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Processor;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\OrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -55,7 +55,23 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                                 Product::INVENTORY_STATUS_OUT_OF_STOCK
                             ],
                             'scope' => 'app'
-                        ]
+                        ],
+                        'order_automation_enable_cancellation' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'order_automation_applicable_statuses' => [
+                            'value' => [Order::INTERNAL_STATUS_OPEN],
+                            'scope' => 'app'
+                        ],
+                        'order_automation_target_status' => [
+                            'value' => Order::INTERNAL_STATUS_CANCELLED,
+                            'scope' => 'app'
+                        ],
+                        'order_creation_new_internal_order_status' => [
+                            'value' => Order::INTERNAL_STATUS_OPEN,
+                            'scope' => 'app'
+                        ],
                     ]
                 ]
             ]

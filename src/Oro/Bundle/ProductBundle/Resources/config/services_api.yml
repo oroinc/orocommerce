@@ -46,3 +46,15 @@ services:
             - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct, priority: 100}
+
+    oro_product.create.add_image_path:
+        class: Oro\Bundle\ProductBundle\Api\Processor\Shared\ProcessImagePaths
+        arguments:
+            - '@oro_attachment.manager'
+            - '@oro_api.doctrine_helper'
+            - '@oro_layout.provider.image_type'
+        tags:
+            - { name: oro.api.processor, action: get, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
+            - { name: oro.api.processor, action: create, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
+            - { name: oro.api.processor, action: update, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }
+            - { name: oro.api.processor, action: get_list, group: finalize, priority: -100, class: Oro\Bundle\AttachmentBundle\Entity\File }

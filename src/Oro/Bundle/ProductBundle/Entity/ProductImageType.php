@@ -60,6 +60,17 @@ class ProductImageType
     }
 
     /**
+     * @param $type
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
      * @param ProductImage $productImage
      * @return $this
      */
@@ -76,5 +87,13 @@ class ProductImageType
     public function getProductImage()
     {
         return $this->productImage;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->type;
     }
 }

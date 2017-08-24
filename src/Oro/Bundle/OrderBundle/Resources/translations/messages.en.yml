@@ -53,6 +53,7 @@ oro:
         subtotal_value.label: 'Subtotal'
         base_subtotal_value.label: 'Subtotal In Base Currency'
         contact_information.label: 'Contact Information'
+        internal_status.label: 'Internal Status'
 
         subtotal:
             label: Subtotal
@@ -253,9 +254,19 @@ oro:
             fields:
                 backend_product_visibility.title: 'Can Be Added to Orders'
                 frontend_product_visibility.title: 'Can Be Added to Orders'
+                order_automation_enable_cancellation.title: 'Enable Automatic Order Cancellation'
+                order_automation_enable_cancellation.tooltip: 'All orders with selected internal statuses will be automatically cancelled past their "Do Not Ship Later Than" date.'
+                order_automation_applicable_statuses.title: 'Applicable Statuses'
+                order_automation_applicable_statuses.tooltip: 'Only the orders with the selected internal statuses will be cancelled automatically.'
+                order_automation_target_status.title: 'Target Status'
+                order_automation_target_status.tooltip: 'You may modify the default behavior of changing order status to "Cancelled".'
+                order_creation_new_internal_order_status.title: 'New Internal Order Status'
+                order_creation_new_internal_order_status.tooltip: 'The selected status will be assigned to new orders upon creation.'
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
+                order_automation.title: 'Order Automation'
+                order_creation.title: 'Order Creation'
 
         privilege:
             category.orders.label: 'Orders'
@@ -273,6 +284,24 @@ oro:
                 message: 'The customer will be charged {{ amount }}. Are you sure you want to continue?'
                 button.okText: 'Yes, Charge'
                 result.success: 'The payment of %amount% has been captured successfully.'
+
+        action:
+            order:
+                cancel: 'Cancel'
+                close: 'Close'
+                archive : 'Archive'
+                mark_as_shipped: 'Mark as Shipped'
+            message:
+                order:
+                    cancel.success: 'Order #%id% has been cancelled.'
+                    close.success: 'Order #%id% has been closed.'
+                    archive.success: 'Order #%id% has been archived.'
+                    mark_as_shipped.success: 'Order #%id% has been marked as shipped.'
+
+        datagrid:
+            view:
+                open_orders: 'Open Orders'
+
     frontend:
         order:
             entity_plural_label: Orders

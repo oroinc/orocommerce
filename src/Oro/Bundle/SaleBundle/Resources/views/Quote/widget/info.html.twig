@@ -12,8 +12,8 @@
                 {{ UI.renderHtmlProperty('oro.sale.quote.customer.label'|trans, UI.entityViewLink(entity.customer, entity.customer.name, 'oro_customer_customer_view')) }}
             {% endif %}
 
-            {{ UI.renderProperty('oro.rfp.request.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
-            {{ UI.renderProperty('oro.rfp.request.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
+            {{ UI.renderProperty('oro.sale.quote.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
+            {{ UI.renderProperty('oro.sale.quote.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
             
             {{ UI.renderProperty('oro.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
             {% if entity.request %}
