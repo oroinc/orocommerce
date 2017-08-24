@@ -429,4 +429,19 @@ class ProductApiTest extends RestJsonApiTestCase
             'update attribute for unit precision'
         );
     }
+
+    public function testDeleteAction()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $this->delete(
+            [
+                'entity' => 'products',
+                'id' => (string) $product->getId()
+            ]
+        );
+
+        $this->assertNull(
+            $this->getEntityManager()->find(Product::class, $product->getId())
+        );
+    }
 }

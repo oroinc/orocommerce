@@ -8,7 +8,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -30,7 +29,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures([LoadProductImageData::class]);
+        $this->loadFixtures([LoadProductData::class]);
 
         $this->processor = self::getContainer()->get('oro.product.message_processor.image_resize');
     }
