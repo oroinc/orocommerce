@@ -27,7 +27,6 @@ define(function(require) {
         }
     });
 
-
     //variables
     var $el;
     var model;

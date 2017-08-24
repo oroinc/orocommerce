@@ -90,6 +90,7 @@ define(function(require) {
                 this.model.set({
                     'quantity': this.model.get('quantity') || this.options.defaultQuantity,
                     'quantity_changed_manually': this.model.get('quantity'),
+                    'units': data.item.units,
                     'product_units': data.item.units,
                     'prices': _.isEmpty(prices) ? this.model.get('prices') : prices
                 });
