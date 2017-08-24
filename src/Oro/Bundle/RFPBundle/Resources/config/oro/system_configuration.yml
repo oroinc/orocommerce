@@ -2,7 +2,6 @@ system_configuration:
     groups:
         sales:
             title: oro.rfp.system_configuration.groups.sales.title
-            icon: fa-file
         rfq:
             title: oro.rfp.system_configuration.groups.rfq.title
             icon: fa-file
