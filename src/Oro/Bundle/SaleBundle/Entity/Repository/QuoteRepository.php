@@ -52,7 +52,8 @@ class QuoteRepository extends EntityRepository
             ->select('COUNT(q.id)')
             ->leftJoin('q.quoteProducts', 'quoteProducts')
             ->leftJoin('quoteProducts.quoteProductOffers', 'quoteProductOffers')
-            ->where($qb->expr()->in('quoteProductOffers.currency', $removingCurrencies));
+            ->where($qb->expr()->in('quoteProductOffers.currency', ':removingCurrencies'))
+            ->setParameter('removingCurrencies', $removingCurrencies);
         if ($organization instanceof Organization) {
             $qb->andWhere('q.organization = :organization');
             $qb->setParameter(':organization', $organization);

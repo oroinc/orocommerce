@@ -13,6 +13,9 @@ api:
                             exclude: true
                         totalDiscountsAmount:
                             exclude: true
+                        internalStatus:
+                            exclude: true
+
                 update:
                     fields:
                         subtotalValue:
@@ -23,6 +26,11 @@ api:
                             exclude: true
                         currency:
                             exclude: true
+                        internalStatus:
+                            exclude: true
+
+        Extend\Entity\EV_Order_Internal_Status:
+            actions: false
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             fields:

@@ -164,8 +164,7 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             'required_data_options_missing' => [
                 'data' => [],
                 'message' =>
-                    'The required options "entity_class_name", "id", "scope_id", '
-                    .'"target_class_name", "target_id" are missing.',
+                    'The required options "entity_class_name", "id" are missing.',
             ],
             'invalid_id_type' => [
                 'data' => [
@@ -209,16 +208,6 @@ class VisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
                     VisibilityMessageFactory::SCOPE_ID => 5,
                 ],
                 'message' => 'The option "target_class_name" with value "\NotExistingClass" is invalid.',
-            ],
-            'invalid_entity_class_name_not_visibility_interface' => [
-                'data' => [
-                    VisibilityMessageFactory::ID => 1,
-                    VisibilityMessageFactory::ENTITY_CLASS_NAME => '\stdClass',
-                    VisibilityMessageFactory::TARGET_CLASS_NAME => 1,
-                    VisibilityMessageFactory::TARGET_ID => 'string',
-                    VisibilityMessageFactory::SCOPE_ID => 5,
-                ],
-                'message' => 'The option "entity_class_name" with value "\stdClass" is invalid.',
             ],
             'target_not_found_by_id' => [
                 'data' => [
