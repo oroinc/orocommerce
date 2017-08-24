@@ -156,6 +156,7 @@ define(function(require) {
             }
 
             this.model.set({
+                'units_loaded': !_.isUndefined(data.item.units),
                 'quantity': data.item.quantity || this.model.get('quantity') || this.options.defaultQuantity,
                 'product_units': data.item.units || {}
             });
@@ -183,6 +184,7 @@ define(function(require) {
 
         clearModel: function() {
             this.model.set({
+                units_loaded: false,
                 sku_changed_manually: false,
                 quantity: null,
                 product_units: {},
@@ -203,6 +205,9 @@ define(function(require) {
 
         setUnits: function() {
             UnitsUtil.updateSelect(this.model, this.getElement('unit'));
+            if (this.model.get('unit_deferred')) {
+                this.model.set('unit', this.model.get('unit_deferred'));
+            }
             this.updateUI();
         },
 
@@ -230,7 +235,7 @@ define(function(require) {
         },
 
         unitInvalid: function() {
-            return !_.isEmpty(this.model.has('product_units')) &&
+            return this.model.get('units_loaded') &&
                 !_.has(this.model.get('product_units'), this.model.get('unit'));
         },
 
@@ -243,7 +248,7 @@ define(function(require) {
                 _.defer(_.bind(function() {
                     mediator.trigger('quick-add-form-item:unit-invalid', {$el: this.$el});
                 }, this));
-            } else if (this.model.get('sku') && this.model.get('product_units')) {
+            } else if (this.model.get('sku') && this.model.get('units_loaded')) {
                 mediator.trigger('quick-add-form-item:item-valid', {item: this.model.attributes});
             }
 
