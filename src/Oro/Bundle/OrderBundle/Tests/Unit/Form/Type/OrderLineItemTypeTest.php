@@ -45,10 +45,10 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
         $this->productUnitsProvider->expects($this->any())
-            ->method('getAvailableProductUnits')
+            ->method('getAvailableProductUnitsWithPrecision')
             ->willReturn([
-                'item' => 'item',
-                'kg' => 'kilogram',
+                'item' => 0,
+                'kg' => 3,
             ]);
 
         $this->formType = $this->getFormType();
@@ -184,8 +184,8 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             'page_component_options' => [
                 'view' => 'oroorder/js/app/views/line-item-view',
                 'freeFormUnits' => [
-                    'item' => 'item',
-                    'kg' => 'kilogram',
+                    'item' => 0,
+                    'kg' => 3,
                 ],
             ],
         ];

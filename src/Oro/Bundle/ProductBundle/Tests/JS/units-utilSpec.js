@@ -8,9 +8,25 @@ define(function(require) {
     var BaseModel = require('oroui/js/app/models/base/model');
     var _ = require('underscore');
     var $ = require('jquery');
+    var translator = require('translator');
 
     //fixtures
     var html = require('text!./Fixture/units-select-template.html');
+
+    translator.fromJSON({
+        'locale': 'en',
+        'defaultDomain': 'jsmessages',
+        'translations': {
+            'en': {
+                'jsmessages': {
+                    'oro.product.product_unit.item.label.full': 'item',
+                    'oro.product.product_unit.set.label.full': 'set',
+                    'oro.product.product_unit.kg.label.full': 'kilogram'
+                }
+            }
+        }
+    });
+
 
     //variables
     var $el;
@@ -29,9 +45,9 @@ define(function(require) {
             $el = $('select');
             model = new BaseModel({
                 product_units: {
-                    item: 'item',
-                    set: 'set',
-                    kg: 'kilogram'
+                    item: 0,
+                    set: 0,
+                    kg: 3
                 }
             });
         });
@@ -61,6 +77,16 @@ define(function(require) {
             });
         });
 
+        describe('check get units label', function() {
+            it('we should get translated units label by codes', function() {
+                expect(UnitsUtil.getUnitsLabel(model)).toEqual({
+                    item: 'item',
+                    set: 'set',
+                    kg: 'kilogram'
+                });
+            });
+        });
+
         describe('check select update', function() {
             it('we should get limited list of select options', function() {
                 UnitsUtil.updateSelect(model, $el);
@@ -68,15 +94,6 @@ define(function(require) {
                 expect(getOptions($el)).toEqual(['item', 'set', 'kilogram']);
                 expect(model.get('unit')).toEqual('item');
                 expect($el.prop('disabled')).toBeFalsy();
-
-                var units = _.clone(model.get('product_units'));
-                _.each(units, function(label, key) {
-                    units[key] = label.toUpperCase();
-                });
-                UnitsUtil.updateSelect(model, $el, units);
-
-                expect(getOptions($el)).toEqual(['ITEM', 'SET', 'KILOGRAM']);
-                expect(model.get('unit')).toEqual('item');
             });
 
             it('we should see placeholder if units list is empty', function() {

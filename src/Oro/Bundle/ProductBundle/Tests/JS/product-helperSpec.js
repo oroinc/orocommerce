@@ -4,11 +4,20 @@ define(function(require) {
     require('jasmine-jquery');
 
     var ProductHelper = require('oroproduct/js/app/product-helper');
+    var BaseModel = require('oroui/js/app/models/base/model');
     var $ = require('jquery');
 
     window.setFixtures('<input type="number"/>');
     var $el = $('input');
     var el = $el[0];
+
+    var model = new BaseModel({
+        product_units: {
+            precision_0: 0,
+            precision_3: 3
+        }
+    });
+    ProductHelper.normalizeNumberField(model, $el);
 
     var testValue = function(val, expected, cursorToStart) {
         var enteredKey = '';
@@ -49,7 +58,7 @@ define(function(require) {
     describe('oroproduct/js/app/product-helper', function() {
         describe('check number field value normalization', function() {
             it('only numbers allowed when precision = 0', function() {
-                ProductHelper.normalizeNumberField($el, 0);
+                model.set('unit', 'precision_0');
 
                 testValue('0', '');
                 testValue('00123', '123');
@@ -58,7 +67,7 @@ define(function(require) {
             });
 
             it('numbers and separator allowed when precision > 0', function() {
-                ProductHelper.normalizeNumberField($el, 3);
+                model.set('unit', 'precision_3');
 
                 testValue('.', '0.');
                 testValue('.12', '0.12');
