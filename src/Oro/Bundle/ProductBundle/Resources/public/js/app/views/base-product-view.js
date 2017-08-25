@@ -24,7 +24,8 @@ define(function(require) {
         },
 
         elementsEvents: {
-            'quantity': ['input', 'onQuantityChange']
+            'quantity input': ['input', 'onQuantityChange'],
+            'quantity blur': ['input', 'onQuantityChange']
         },
 
         modelElements: {

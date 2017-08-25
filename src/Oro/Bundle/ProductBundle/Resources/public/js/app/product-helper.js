@@ -51,7 +51,7 @@ define(function(require) {
             var precision = model.get('product_units')[model.get('unit')] || 0;
 
             if (_.isDesktop()) {
-                //$el.attr('type', 'text');
+                $el.attr('type', 'text');
             } else {
                 $el.attr('pattern', precision === 0 ? '[0-9]*' : '');
             }

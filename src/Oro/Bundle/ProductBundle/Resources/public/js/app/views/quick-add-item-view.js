@@ -29,6 +29,14 @@ define(function(require) {
             'remove': '[data-role="row-remove"]'
         },
 
+        elementsEvents: _.extend({}, BaseView.prototype.elementsEvents, {
+            'quantity blur': ['blur', 'onQuantityChange']
+        }),
+
+        onQuantityChange: function(e) {
+            this.setModelValueFromElement(e, 'quantity', 'quantity');
+        },
+
         modelElements: {
             sku: 'sku',
             skuHiddenField: 'skuHiddenField',
