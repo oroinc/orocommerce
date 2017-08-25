@@ -18,6 +18,10 @@ Get the collection of price list customer group fallbacks. A collection may cont
 
 Create a new price list customer group fallback.
 
+`fallback` value should be one of: `0` or `1`.
+
+Fallback `0` maps to Website fallback. Fallback `1`  maps to Current Customer Group Only fallback.
+
 {@inheritdoc}
 
 {@request:json_api}
@@ -48,6 +52,10 @@ Example:
 ### update
 
 Update details of the price list customer group fallback identified by ID.
+
+`fallback` value should be one of: `0` or `1`.
+
+Fallback `0` maps to Website fallback. Fallback `1`  maps to Current Customer Group Only fallback.
 
 {@inheritdoc}
 
