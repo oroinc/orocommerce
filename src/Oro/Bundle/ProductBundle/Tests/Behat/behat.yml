@@ -455,6 +455,26 @@ oro_behat_extension:
     ProductItem:
       selector: 'div.product-item'
 
+    Product Shopping List Form:
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      selector:
+        locator: '//form[@name="oro_product_frontend_line_item"]'
+        type: xpath
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
+    Product Shopping List Dropdown:
+      selector:
+        locator: '//form[@name="oro_product_frontend_line_item"]//ul[@class="dropdown-menu"]'
+        type: 'xpath'
+
+    Request A Quote Button:
+      selector:
+        locator: '//a[@data-url="oro_rfp_frontend_request_create"]'
+        type: 'xpath'
+
     Product Collection Variant Label:
       selector:
         type: 'xpath'
