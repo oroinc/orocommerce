@@ -94,7 +94,7 @@ You can see the existing categories using its API [here](#get--admin-api-categor
 
 When adding a new configurable product you want to specify the variants of that product. To be able to specify
 variants of a product first you have to add a configurable attribute for product entity and create the simple products
-that will the variants of the configurable product. After these steps you can specify variants for a new configurable 
+that will be the variants of the configurable product. After these steps you can specify variants for a new configurable 
 product. Example:
 
       "variantLinks": {
