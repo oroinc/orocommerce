@@ -169,6 +169,7 @@ api:
                 fields:
                     priceList:
                         operators: ['=']
+                        allow_array: false
             fields:
                 # this is added in order to properly handle "price" parameter that is created out of these values
                 value:

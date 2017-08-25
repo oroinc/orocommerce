@@ -110,28 +110,100 @@ Delete a collection of product prices. A collection may contain all prices or ma
 
 The product price currency
 
-### quantity
-
-The product quantity
-
-### value
-
-The product price
-
-### priceList
-
-Price list related to a product price
-
-#### get_list
+#### create
 
 {@inheritdoc}
 
 **The required field**
 
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*This field is **required** and must remain defined.*
+
+### quantity
+
+The product quantity
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*This field is **required** and must remain defined.*
+
+### value
+
+The product price
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*This field is **required** and must remain defined.*
+
+### priceList
+
+Price list related to a product price
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*This field is **required** and must remain defined.*
+
 ### product
 
 The product of a product price
 
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*This field is **required** and must remain defined.*
+
 ### unit
 
 The unit of a product
+
+#### create
+
+{@inheritdoc}
+
+**The required field**
+
+#### update
+
+{@inheritdoc}
+
+**Please note:**
+*This field is **required** and must remain defined.*
