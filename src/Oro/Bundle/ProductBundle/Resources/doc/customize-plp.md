@@ -1,24 +1,26 @@
 Customize Product List Page
-=============================
+===========================
 
-In this example we consider how to customize product list page with 3 different cases:
+In this example we examine how to customize a product list page for 3 different cases:
 
 - [Static Block only](#static-block-only)
 - [Static Block and Products](#static-block-and-products)
 - [Products only](#products-only)
 
-### Getting started
+### Getting Started
 
-Every product list page contains current **category_id** and **category_ids** in layout context.
-So you can use it in the your layout update **conditions**. When you customize any page don't forget to use **Symfony Profiler** and look into **Layout** section.
-You can find there current layout **context** data and actual layout **tree**. Please see [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) for more details.
+Every product list page contains the current **category_id** and the **category_ids** in the layout context. You can use these values to evaluate the layout **conditions**. When you customize any page, remember to use **Symfony Profiler** and look into the **Layout** section, where the current layout **context** data and actual layout **tree** can be found. 
 
-### Static Block only
+Please see the [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) section for more details.
 
-In the first case let's create a first level category (with **id = 8**) that contains static block only and page is look like this:
+### Static Block Only
+
+For the first case, create the first level category (with **id = 8**) that contains a static block only. 
+
+The page looks the following way:
 ![Static Block only example](./images/static_block_only.png "Static Block only example")
 
-First of all we need to create layout update:
+Create the layout update:
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/static_block_only.yml
@@ -73,7 +75,7 @@ layout:
     conditions: 'context["category_id"] in [8]' # affected categories
 ```
 
-and template:
+Create a template:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/static_block.html.twig #}
@@ -141,10 +143,12 @@ and template:
 
 ### Static Block and Products
 
-In the second case let's create a second level category (with **id = 9**) that contains static block and products. Page is look like this:
+For the second case, create a second level category (with **id = 9**) that contains a static block and products. 
+
+The page looks the following way:
 ![Static Block and Products example](./images/static_block_and_products.png "Static Block and Products example")
 
-So we need to create layout update:
+Create the layout update:
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/static_block_and_products.yml
@@ -176,7 +180,7 @@ layout:
     conditions: 'context["category_id"] in [9]' # affected categories
 ```
 
-and extend static block template with our block:
+Extend static block template with our block:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/static_block.html.twig #}
@@ -210,10 +214,12 @@ and extend static block template with our block:
 
 ### Products only
 
-In the third case create a third level category (all **ids** that **not equal 8 or 9**) that contains products only. Page look like this:
+For the third case, create a third level category (all **ids** that are **not equal 8 or 9**) that contains products only. 
+
+The page looks the following way:
 ![Products only example](./images/products_only.png "Products only example")
 
-Create layout update:
+Create a layout update:
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/products_only.yml
@@ -239,7 +245,7 @@ layout:
     conditions: 'context["category_id"] not in [8, 9]' # affected categories
 ```
 
-and template:
+Create a template:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/products.html.twig #}

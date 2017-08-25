@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductImageCollectionValidator extends ConstraintValidator
 {
@@ -79,10 +80,12 @@ class ProductImageCollectionValidator extends ConstraintValidator
 
         foreach ($productImages as $productImage) {
             foreach ($productImage->getTypes() as $type) {
-                if (isset($imagesByTypeCounter[$type])) {
-                    $imagesByTypeCounter[$type]++;
+                /** @var ProductImageType $type */
+                $typeName = $type->getType();
+                if (isset($imagesByTypeCounter[$typeName])) {
+                    $imagesByTypeCounter[$typeName]++;
                 } else {
-                    $imagesByTypeCounter[$type] = 1;
+                    $imagesByTypeCounter[$typeName] = 1;
                 }
             }
         }

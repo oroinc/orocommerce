@@ -7,9 +7,9 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCustomerSubtreeCacheBuilder;
@@ -49,7 +49,7 @@ class CustomerCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $hasCustomerCategoryVisibilityResolved = $repository->hasEntity($where);
 
         if (!$hasCustomerCategoryVisibilityResolved
-            && $selectedVisibility !== CustomerCategoryVisibility::ACCOUNT_GROUP
+            && $selectedVisibility !== CustomerCategoryVisibility::CUSTOMER_GROUP
         ) {
             $insert = true;
         }
@@ -71,7 +71,7 @@ class CustomerCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 'sourceCategoryVisibility' => $visibilitySettings,
                 'source' => CustomerCategoryVisibilityResolved::SOURCE_STATIC,
             ];
-        } elseif ($selectedVisibility === CustomerCategoryVisibility::ACCOUNT_GROUP) {
+        } elseif ($selectedVisibility === CustomerCategoryVisibility::CUSTOMER_GROUP) {
             // Fallback to customer group is default for customer and should be removed if exists
             if ($hasCustomerCategoryVisibilityResolved) {
                 $delete = true;

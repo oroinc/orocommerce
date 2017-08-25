@@ -103,21 +103,9 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertAttributeEquals(
             ['oro_visibility.visibility.resolve_product_visibility' => [
-                'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility:42' => [
-                    VisibilityMessageFactory::ID => 42,
-                    VisibilityMessageFactory::ENTITY_CLASS_NAME =>
-                        'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility'
-                ],
-                'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility:123' => [
-                    VisibilityMessageFactory::ID => 123,
-                    VisibilityMessageFactory::ENTITY_CLASS_NAME =>
-                        'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility'
-                ],
-                'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility:321' => [
-                    VisibilityMessageFactory::ID => 321,
-                    VisibilityMessageFactory::ENTITY_CLASS_NAME =>
-                        'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility'
-                ]
+                spl_object_hash($productVisibility) => $productVisibility,
+                spl_object_hash($customerProductVisibility) => $customerProductVisibility,
+                spl_object_hash($customerGroupProductVisibility) => $customerGroupProductVisibility
             ]],
             'scheduledMessages',
             $this->visibilityMessageHandler

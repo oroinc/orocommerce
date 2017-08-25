@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Model;
 
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class CategoryMaterializedPathModifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,17 +18,24 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ExtraActionEntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $storage;
+    protected $doctrineHelper;
 
+    /**
+     * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $repository;
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        $this->storage = $this->getMockBuilder(ExtraActionEntityStorageInterface::class)
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+            ->disableOriginalConstructor()
             ->getMock();
 
-        $this->modifier = new CategoryMaterializedPathModifier($this->storage);
+        $this->repository = static::createMock(CategoryRepository::class);
+
+        $this->modifier = new CategoryMaterializedPathModifier($this->doctrineHelper);
     }
 
     public function testCalculateMaterializedPath()
@@ -42,9 +51,10 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit_Framework_TestCase
         $category->setParentCategory($parent);
         $reflection->setValue($category, 3);
 
-        $this->storage->expects($this->once())
-            ->method('scheduleForExtraInsert');
-
+        $this->repository->expects(static::once())->method('updateMaterializedPath');
+        $this->doctrineHelper->expects(static::once())
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($this->repository);
         $this->modifier->calculateMaterializedPath($category, true);
 
         $this->assertNotNull($category->getMaterializedPath());
@@ -64,8 +74,12 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit_Framework_TestCase
         $reflection->setValue($category, 2);
 
         $children = [$category];
-        $this->storage->expects($this->exactly(count($children)))
-            ->method('scheduleForExtraInsert');
+
+        $this->repository->expects(static::exactly(count($children)))
+            ->method('updateMaterializedPath');
+        $this->doctrineHelper->expects(static::exactly(count($children)))
+            ->method('getEntityRepositoryForClass')
+            ->willReturn($this->repository);
 
         $this->modifier->updateMaterializedPathNested($parent, $children);
 

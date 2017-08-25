@@ -92,6 +92,34 @@ services:
             - '@oro_pricing.builder.combined_price_list_activation_plan_builder'
             - '@oro_pricing.api.build_combined_price_list_on_schedule_delete.inner'
 
+    oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer_group:
+        class: 'Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor'
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: update, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_customer_group_fallback.class%' }
+            - { name: oro.api.processor, action: create, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+            - { name: oro.api.processor, action: update, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_to_customer_group.class%' }
+
+    oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer:
+        class: 'Oro\Bundle\PricingBundle\Api\Processor\PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessor'
+        arguments:
+            - '@oro_pricing.price_list_relation_trigger_handler'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: update, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_customer_fallback.class%' }
+            - { name: oro.api.processor, action: create, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_to_customer.class%' }
+            - { name: oro.api.processor, action: update, group: save_data, priority: -40, class: '%oro_pricing.entity.price_list_to_customer.class%' }
+            - { name: oro.api.processor, action: delete, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_to_customer.class%' }
+            - { name: oro.api.processor, action: delete_list, group: delete_data, priority: 0, class: '%oro_pricing.entity.price_list_to_customer.class%' }
+
     oro_pricing.api.set_price_by_value_and_currency:
         class: 'Oro\Bundle\CurrencyBundle\Api\Processor\SetPriceByValueAndCurrencyProcessor'
         tags:
