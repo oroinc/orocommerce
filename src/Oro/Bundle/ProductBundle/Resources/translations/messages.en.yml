@@ -238,7 +238,9 @@ oro:
             inventory: Inventory
             images: Images
             design: Design
-            relatedItems: Related Items
+            related_items: Related Items
+            upsell_products: Up-sell Products
+            related_products: Related Products
             upsellItems: Up-sell items
 
         tabs:

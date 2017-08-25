@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\RelatedItem\Helper;
 
+use Oro\Bundle\ProductBundle\Exception\ConfigProviderNotFoundException;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 
 class RelatedItemConfigHelper
 {
-    CONST RELATED_ITEMS_TRANSLATION_NAMESPACE = 'oro.product.sections.relatedItems';
+    CONST RELATED_ITEMS_TRANSLATION_NAMESPACE = 'oro.product.sections';
     CONST RELATED_ITEMS_TRANSLATION_DEFAULT = 'related_items';
 
     /** @var AbstractRelatedItemConfigProvider[] */
@@ -24,10 +25,15 @@ class RelatedItemConfigHelper
      * @param string $providerName
      *
      * @return AbstractRelatedItemConfigProvider
+     * @throws \UnexpectedValueException
      */
     public function getConfigProvider($providerName)
     {
-        return $this->configProviders[$providerName] ?? null;
+        if (!isset($this->configProviders[$providerName])) {
+            throw ConfigProviderNotFoundException::fromString($providerName);
+        }
+
+        return $this->configProviders[$providerName];
     }
 
     /**

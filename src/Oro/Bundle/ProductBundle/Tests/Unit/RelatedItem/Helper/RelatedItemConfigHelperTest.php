@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\RelatedItem\Helper;
 
+use Oro\Bundle\ProductBundle\Exception\ConfigProviderNotFoundException;
 use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 
@@ -27,13 +28,10 @@ class RelatedItemConfigHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($provider, $this->helper->getConfigProvider('related_product'));
     }
 
-    public function testReturnsNullOnNonExistingProvider()
+    public function testReturnsConfigProviderNotFoundExceptionOnNonExistingProvider()
     {
-        /** @var AbstractRelatedItemConfigProvider $provider */
-        $provider = $this->createMock(AbstractRelatedItemConfigProvider::class);
-        $this->helper->addConfigProvider('related_product', $provider);
-
-        $this->assertNull($this->helper->getConfigProvider('non_existing'));
+        $this->expectException(ConfigProviderNotFoundException::class);
+        $this->helper->getConfigProvider('non-existing');
     }
 
     public function testIsAnyEnabledReturnsTrueIfAtLeastOneIsEnabled()
@@ -78,7 +76,7 @@ class RelatedItemConfigHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->helper->addConfigProvider($providerName, $providerEnabled);
 
-        $expected = 'oro.product.sections.relatedItems.' . $providerName;
+        $expected = RelatedItemConfigHelper::RELATED_ITEMS_TRANSLATION_NAMESPACE . '.' . $providerName;
 
         $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
     }
