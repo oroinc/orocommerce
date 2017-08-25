@@ -242,6 +242,11 @@ oro_behat_extension:
             locator: 'select[name="oro_product_quick_add[products][1][productUnit]"]'
             element: Select2Entity
 
+    Quick Order Form > QTY1:
+      selector:
+        type: 'css'
+        locator: "input[name='oro_product_quick_add[products][0][productQuantity]']"
+
     Quick Add Price Field:
       selector:
         type: 'xpath'
