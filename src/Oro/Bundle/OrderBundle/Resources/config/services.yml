@@ -20,6 +20,15 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: postPersist}
 
+    oro_order.order.listener.orm.order_status_listener:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ORM\OrderStatusListener'
+        public: false
+        arguments:
+            - '@oro_order.provider.configuration'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_order.entity.order.class%', event: prePersist}
+
     oro_order.provider.shipping_cost_subtotal:
         class: 'Oro\Bundle\OrderBundle\Provider\ShippingCostSubtotalProvider'
         public: false
@@ -379,3 +388,13 @@ services:
           public: false
           tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_order.datagrid.orders_view_list:
+        class: Oro\Bundle\OrderBundle\Datagrid\OrdersViewList
+        arguments:
+            - '@translator'
+
+    oro_order.provider.configuration:
+        class: 'Oro\Bundle\OrderBundle\Provider\OrderConfigurationProvider'
+        arguments:
+            - '@oro_config.manager'

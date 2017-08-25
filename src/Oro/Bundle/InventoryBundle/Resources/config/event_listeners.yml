@@ -101,6 +101,7 @@ services:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_inventory.handler.inventory_decrement_status_handler'
             - '@oro_entity.doctrine_helper'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
             - { name: kernel.event_listener, event: extendable_condition.before_order_create, method: onBeforeOrderCreate, priority: 10 }
@@ -111,6 +112,7 @@ services:
             - '@oro_inventory.manager.inventory_quantity_manager'
             - '@oro_entity.doctrine_helper'
             - '@translator'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate, priority: 10 }
 
