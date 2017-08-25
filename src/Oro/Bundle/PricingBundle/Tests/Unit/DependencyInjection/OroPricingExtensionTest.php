@@ -47,6 +47,8 @@ class OroPricingExtensionTest extends ExtensionTestCase
             'oro_pricing.api.save_product_price',
             'oro_pricing.api.price_manager_delete_handler',
             'oro_pricing.api.reset_price_rule_field_on_update',
+            'oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer_group',
+            'oro_pricing.api.price_list_relation_trigger_handler_for_website_and_customer',
         ];
 
         $this->assertDefinitionsLoaded($expectedDefinitions);

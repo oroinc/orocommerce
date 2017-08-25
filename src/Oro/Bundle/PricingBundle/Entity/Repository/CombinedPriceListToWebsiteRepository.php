@@ -38,7 +38,8 @@ class CombinedPriceListToWebsiteRepository extends PriceListToWebsiteRepository
         $invalidRelationIds = array_map('current', $result);
         if ($invalidRelationIds) {
             $qb = $this->createQueryBuilder('relation');
-            $qb->delete()->where($qb->expr()->in('relation.id', $invalidRelationIds));
+            $qb->delete()->where($qb->expr()->in('relation.id', ':invalidRelationIds'))
+                ->setParameter('invalidRelationIds', $invalidRelationIds);
             $qb->getQuery()->execute();
         }
     }

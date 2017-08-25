@@ -25,7 +25,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_10';
     }
 
     /**
@@ -39,12 +39,14 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->createOroPaymentMethodsConfigsRuleTable($schema);
         $this->createOroPaymentMethodsConfigsRuleDestinationTable($schema);
         $this->createOroPaymentMethodsConfigsRuleDestinationPostalCodeTable($schema);
+        $this->createOroPaymentMtdsRuleWebsiteTable($schema);
 
         $this->addOroPaymentTransactionForeignKeys($schema);
         $this->addOroPaymentMethodConfigForeignKeys($schema);
         $this->addOroPaymentMethodsConfigsRuleForeignKeys($schema);
         $this->addOroPaymentMethodsConfigsRuleDestinationForeignKeys($schema);
         $this->addOroPaymentMethodsConfigsRuleDestinationPostalCodeForeignKeys($schema);
+        $this->addOroPaymentMtdsRuleWebsiteForeignKeys($schema);
     }
 
     /**
@@ -279,6 +281,42 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('payment_status', 'string', ['length' => 255]);
         $table->addUniqueIndex(['entity_class', 'entity_identifier'], 'oro_payment_status_unique');
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_payment_mtds_rule_website table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroPaymentMtdsRuleWebsiteTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_payment_mtds_rule_website');
+        $table->addColumn('oro_payment_mtds_cfgs_rl_id', 'integer', []);
+        $table->addColumn('website_id', 'integer', []);
+        $table->setPrimaryKey(['oro_payment_mtds_cfgs_rl_id', 'website_id']);
+        $table->addIndex(['oro_payment_mtds_cfgs_rl_id'], 'IDX_8316A7FAAE67BF3C', []);
+    }
+
+    /**
+     * Add oro_payment_mtds_rule_website foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroPaymentMtdsRuleWebsiteForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_payment_mtds_rule_website');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_website'),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_payment_mtds_cfgs_rl'),
+            ['oro_payment_mtds_cfgs_rl_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
