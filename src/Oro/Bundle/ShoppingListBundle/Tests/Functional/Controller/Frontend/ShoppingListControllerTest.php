@@ -150,11 +150,12 @@ class ShoppingListControllerTest extends WebTestCase
         // assert selected shopping list
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
-        $this->simulateAuthentication( #todo Andrey
-            BaseLoadCustomerData::AUTH_USER,
-            BaseLoadCustomerData::AUTH_PW,
-            'customer_identity',
-            CustomerUser::class
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(
+                BaseLoadCustomerData::AUTH_USER,
+                BaseLoadCustomerData::AUTH_PW
+            )
         );
         $crawler = $this->client->request(
             'GET',

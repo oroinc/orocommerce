@@ -20,6 +20,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @dbIsolationPerTest
  */
 class RequestControllerTest extends WebTestCase
 {
@@ -221,8 +222,9 @@ class RequestControllerTest extends WebTestCase
      *
      * @param array $input
      * @param string $path
+     * @param string $code
      */
-    public function testActionsForDeletedRequest(array $input, $path)
+    public function testActionsForDeletedRequest(array $input, $path, $code)
     {
         $this->initClient([], static::generateBasicAuthHeader($input['login'], $input['password']));
 
@@ -231,7 +233,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl($path, ['id' => $request->getId()]));
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $code);
     }
 
     /**
@@ -499,10 +501,8 @@ class RequestControllerTest extends WebTestCase
      */
     public function testACL($route, $request, $login, $password, $status)
     {
-        $this->markTestSkipped('#todo Andrey');
         if ('' !== $login) {
             $this->initClient([], static::generateBasicAuthHeader($login, $password));
-            $this->simulateAuthentication($login, $password, 'customer_identity', CustomerUser::class);
         } else {
             $this->initClient([]);
         }
@@ -568,7 +568,7 @@ class RequestControllerTest extends WebTestCase
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER1,
                 'password' => LoadUserData::PARENT_ACCOUNT_USER1,
-                'status' => 200
+                'status' => 403
             ],
             'VIEW (user from parent customer : LOCAL)' => [
                 'route' => 'oro_rfp_frontend_request_view',
@@ -597,14 +597,16 @@ class RequestControllerTest extends WebTestCase
                 'login' => LoadUserData::ACCOUNT1_USER1,
                 'password' => LoadUserData::ACCOUNT1_USER1
             ],
-            'path' => 'oro_rfp_frontend_request_view'
+            'path' => 'oro_rfp_frontend_request_view',
+            'code' => 404
         ];
         yield 'update action' => [
             'input' => [
                 'login' => LoadUserData::ACCOUNT1_USER1,
                 'password' => LoadUserData::ACCOUNT1_USER1
             ],
-            'path' => 'oro_rfp_frontend_request_update'
+            'path' => 'oro_rfp_frontend_request_update',
+            'code' => 403
         ];
     }
 
@@ -787,27 +789,13 @@ class RequestControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
+        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT2_USER1, LoadUserData::ACCOUNT2_USER1);
         $this->initClient([], $authParams);
-        $this->simulateAuthentication( #todo Andrey
-            LoadUserData::ACCOUNT1_USER1,
-            LoadUserData::ACCOUNT1_USER1,
-            'customer_identity',
-            CustomerUser::class
-        );
+        $this->getContainer()->get('oro_workflow.manager')->deactivateWorkflow('b2b_rfq_frontoffice_default');
 
-        $response = $this->client->requestFrontendGrid(
-            'frontend-requests-grid',
-            [
-                'frontend-requests-grid[_filter][poNumber][value]' => static::PO_NUMBER
-            ]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id = $result['id'];
+        $id = $this->getReference(LoadRequestData::REQUEST6)->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_update', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Submit Request')->form();
 
