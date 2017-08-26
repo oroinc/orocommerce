@@ -208,13 +208,6 @@ class RequestControllerNotificationTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $this->simulateAuthentication(
-            LoadUserData::ACCOUNT1_USER1,
-            LoadUserData::ACCOUNT1_USER1,
-            'customer_identity',
-            CustomerUser::class
-        );
-
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();
 
