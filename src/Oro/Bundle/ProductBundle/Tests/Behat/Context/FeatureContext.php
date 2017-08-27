@@ -147,14 +147,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When I am on quick order form page
-     */
-    public function amOnQuickOrderFormPage()
-    {
-        $this->visitPath('customer/product/quick-add/');
-    }
-
-    /**
      * @Given /^"(?P<sku>.*)" product should has "(?P<price>.+)" value in price field$/
      */
     public function productShouldHasValueInPriceField($sku, $price)
@@ -181,15 +173,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return null;
-    }
-
-    /**
-     * @When click create order button
-     */
-    public function clickCreateOrderButton()
-    {
-        $createOrderButton = $this->createElement('CreateOrderButton');
-        $createOrderButton->click();
     }
 
     /**
