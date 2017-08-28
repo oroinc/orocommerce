@@ -8,8 +8,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 

@@ -31,7 +31,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      * )
      * @AclAncestor("oro_shopping_list_frontend_update")
      *
-     * @param int $id
+     * @param ShoppingList $shoppingList
      *
      * @return JsonResponse
      */
