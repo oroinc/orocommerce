@@ -1,7 +1,5 @@
 @fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
 @regression
-@skip
-#todo: Unskip after resolve OPI-139
 Feature: Inline Editing in Products Grids
   In order to quickly edit product information
   As an Administrator

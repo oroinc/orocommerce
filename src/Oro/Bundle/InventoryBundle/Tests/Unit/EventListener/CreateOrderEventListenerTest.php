@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -52,6 +53,11 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     protected $createOrderEventListener;
 
     /**
+     * @var CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $checkoutLineItemsManager;
+
+    /**
      * @inheritdoc
      */
     protected function setUp()
@@ -68,10 +74,14 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->quantityManager = $this->getMockBuilder(InventoryQuantityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->checkoutLineItemsManager = $this->getMockBuilder(CheckoutLineItemsManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->createOrderEventListener = new CreateOrderEventListener(
             $this->quantityManager,
             $this->statusHandler,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->checkoutLineItemsManager
         );
     }
 
@@ -271,6 +281,7 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $product = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
         $lineItem = $this->createMock(OrderLineItem::class);
+        $checkout = $this->createMock(Checkout::class);
         $lineItem->expects($this->any())
             ->method('getProduct')
             ->willReturn($product);
@@ -280,8 +291,8 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $lineItem->expects($this->any())
             ->method('getQuantity')
             ->willReturn($numberOfItems);
-        $order->expects($this->once())
-            ->method('getLineItems')
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
             ->willReturn([$lineItem]);
         $workflowData->expects($this->once())
             ->method('has')
@@ -294,6 +305,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $workflowItem->expects($this->any())
             ->method('getData')
             ->willReturn($workflowData);
+        $workflowItem->expects($this->any())
+            ->method('getEntity')
+            ->willReturn($checkout);
         $event->expects($this->any())
             ->method('getContext')
             ->willReturn($workflowItem);
@@ -329,8 +343,8 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $checkoutSource->expects($this->any())
             ->method('getEntity')
             ->willReturn($checkoutLineItemsHolder);
-        $checkoutLineItemsHolder->expects($this->once())
-            ->method('getLineItems')
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
             ->willReturn([$lineItem]);
         $workflowItem->expects($this->any())
             ->method('getEntity')

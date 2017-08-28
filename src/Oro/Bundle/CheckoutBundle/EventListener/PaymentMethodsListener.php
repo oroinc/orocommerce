@@ -9,12 +9,12 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 
 class PaymentMethodsListener extends AbstractMethodsListener
 {
     /**
-     * @var PaymentMethodsConfigsRulesProviderInterface
+     * @var MethodsConfigsRulesByContextProviderInterface
      */
     private $paymentProvider;
 
@@ -34,17 +34,17 @@ class PaymentMethodsListener extends AbstractMethodsListener
     private $orderAddressSecurityProvider;
 
     /**
-     * @param OrderAddressProvider $addressProvider
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
-     * @param OrderAddressManager $orderAddressManager
-     * @param PaymentMethodsConfigsRulesProviderInterface $paymentProvider
-     * @param CheckoutPaymentContextFactory $contextFactory
+     * @param OrderAddressProvider                          $addressProvider
+     * @param OrderAddressSecurityProvider                  $orderAddressSecurityProvider
+     * @param OrderAddressManager                           $orderAddressManager
+     * @param MethodsConfigsRulesByContextProviderInterface $paymentProvider
+     * @param CheckoutPaymentContextFactory                 $contextFactory
      */
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderAddressManager $orderAddressManager,
-        PaymentMethodsConfigsRulesProviderInterface $paymentProvider,
+        MethodsConfigsRulesByContextProviderInterface $paymentProvider,
         CheckoutPaymentContextFactory $contextFactory
     ) {
         parent::__construct($orderAddressManager);
@@ -62,8 +62,7 @@ class PaymentMethodsListener extends AbstractMethodsListener
     {
         $checkout->setBillingAddress($address);
         $paymentContext = $this->contextFactory->create($checkout);
-        $paymentMethodsConfigs = $this->paymentProvider
-            ->getFilteredPaymentMethodsConfigsRegardlessDestination($paymentContext);
+        $paymentMethodsConfigs = $this->paymentProvider->getPaymentMethodsConfigsRules($paymentContext);
 
         return count($paymentMethodsConfigs) > 0;
     }

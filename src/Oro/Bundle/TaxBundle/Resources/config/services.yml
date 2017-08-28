@@ -481,7 +481,8 @@ services:
 
     oro_tax.event_listener.order_tax:
         class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
-        public: false
+        #TODO: Set to false after BB-11299
+        public: true
         arguments:
             - '@oro_tax.manager.tax_manager'
         tags:
@@ -492,7 +493,8 @@ services:
 
     oro_tax.event_listener.order_line_item_tax:
         class: 'Oro\Bundle\TaxBundle\EventListener\EntityTaxListener'
-        public: false
+        #TODO: Set to false after BB-11299
+        public: true
         arguments:
             - '@oro_tax.manager.tax_manager'
         tags:

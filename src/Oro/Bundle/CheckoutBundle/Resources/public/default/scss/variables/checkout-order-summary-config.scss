@@ -1,11 +1,17 @@
 // @theme: default;
 
 $checkout-order-summary-header-position: relative !default;
+$checkout-order-summary-header-min-height: 35px !default;
 $checkout-order-summary-header-margin: 0 0 $offset-y !default;
 
+$checkout-order-summary-title-text-vertical-align: middle !default;
 $checkout-order-summary-title-text-font-size: $base-font-size--m !default;
-$checkout-order-summary-title-text-font-weight: 400 !default;
-$checkout-order-summary-title-text-line-height: 1.69 !default;
+$checkout-order-summary-title-text-font-weight: 700 !default;
+$checkout-order-summary-title-text-line-height: 1.65 !default;
+
+$checkout-order-summary-subtitle-margin: 0 $offset-x-m !default;
+$checkout-order-summary-subtitle-font-size: $base-font-size !default;
+$checkout-order-summary-subtitle-font-weight: 400 !default;
 
 $checkout-order-summary-edit-link-position: absolute !default;
 $checkout-order-summary-edit-link-font-size: $base-font-size !default;
@@ -50,8 +56,8 @@ $checkout-order-summary-totals-container-offset: ($offset-y + $offset-y-m) 0 0 !
 $checkout-order-summary-totals-container-border-top: 1px solid get-color('additional', 'middle') !default;
 
 $checkout-order-summary-totals-container-in-sticky-float: right !default;
-$checkout-order-summary-totals-container-in-sticky-margin: 0 $offset-x-m 0 0 !default;
-$checkout-order-summary-totals-container-in-sticky-offset: $offset-y-m 0 0 !default;
-$checkout-order-summary-totals-container-in-sticky-background-color: get-color('additional', 'ultra') !default;
+$checkout-order-summary-totals-container-in-sticky-margin:  0 !default;
+$checkout-order-summary-totals-container-in-sticky-offset: $offset-y $offset-y-m $offset-y 0 !default;
+$checkout-order-summary-totals-container-in-sticky-border-top: 1px solid transparent !default;
 
 $checkout-order-summary-totals-order-checkout-widget-min-width: 200px !default;

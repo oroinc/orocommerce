@@ -225,6 +225,10 @@ PricingBundle
     - `Oro\Bundle\PricingBundle\Entity\PriceList`
     - `Oro\Bundle\PricingBundle\Entity\PriceListSchedule`
     - `Oro\Bundle\PricingBundle\Entity\PriceRule`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListToCustomer`
+    - `Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback`
 - Added API processors:
     - `Oro\Bundle\PricingBundle\Api\Processor\HandlePriceListStatusChangeProcessor` to handle price list status changes
     - `Oro\Bundle\PricingBundle\Api\Processor\UpdatePriceListLexemesProcessor` to update price rule lexemes while saving price list
@@ -236,6 +240,8 @@ PricingBundle
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteListProcessor` to update price rule lexemes while deleting list of price rules
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesOnPriceRuleDeleteProcessor` to update price rule lexemes while deleting single price rule
     - `Oro\Bundle\PricingBundle\Api\UpdateLexemesPriceRuleProcessor` to update price rule lexemes while saving price rule
+    - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerProcessor` to rebuild price lists when customer aware relational entities are modified
+    - `Oro\Bundle\PricingBundle\Api\PriceListRelationTriggerHandlerForWebsiteAndCustomerGroupProcessor` to rebuild price lists when customer group aware relational entities are modified
 - Added `Oro\Bundle\PricingBundle\Api\Form\AddSchedulesToPriceListApiFormSubscriber` for adding currently created schedule to price list
 - Interface `Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface`
     - new method added `supportsCachedSubtotal`
@@ -289,3 +295,6 @@ InventoryBundle
 - Previously deprecated class `Oro\Bundle\InventoryBundle\Api\Processor\JsonApi\FixProductUnitPrecisionUnitCodeFilter` was now removed
 - Inventory API has changed. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.3.0/src/Oro/Bundle/InventoryBundle/doc/api/inventory-level.md) for more information.
 
+WebsiteBundle
+-------------
+- Added `Oro\Bundle\WebsiteBundle\Form\EventSubscriber\DefaultWebsiteSubscriber` to set Default website when not provided on form.

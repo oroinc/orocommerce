@@ -220,6 +220,7 @@ oro:
                 edit.label: '[Related Products] Edit related products'
             upsell_products:
                 edit.label: '[Up-sell Products] Edit up-sell products'
+            quick_add.label: Quick order form
 
         rounding:
             type:

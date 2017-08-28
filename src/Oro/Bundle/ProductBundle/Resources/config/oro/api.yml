@@ -3,6 +3,10 @@ api:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product-unit-precision.md'
         Oro\Bundle\ProductBundle\Entity\ProductUnit: ~
+        Oro\Bundle\ProductBundle\Entity\ProductImage:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_image.md'
+        Oro\Bundle\ProductBundle\Entity\ProductImageType:
+                    documentation_resource: '@OroProductBundle/Resources/doc/api/product_image_type.md'
         Oro\Bundle\ProductBundle\Entity\Product:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product.md'
             fields:
@@ -12,9 +16,36 @@ api:
                     exclude: true
                 skuUppercase:
                     exclude: true
+            actions:
+                create:
+                    fields:
+                        names:
+                            form_options:
+                                constraints:
+                                    - Count:
+                                        min: 1
         Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct:
             documentation_resource: '@OroProductBundle/Resources/doc/api/related_product.md'
             actions:
                 update:
                     exclude: true
+                get:
+                    description: 'Get Related Product Relationship'
+                delete:
+                    description: 'Delete Related Product Relationship'
+                get_list:
+                    description: 'Get Related Product Relationships'
+                delete_list:
+                    description: 'Delete Related Product Relationships'
+                create:
+                    description: 'Create Related Product Relationships'
+                    fields:
+                        product:
+                            form_options:
+                                constraints:
+                                    - NotBlank: ~
+                        relatedItem:
+                            form_options:
+                                constraints:
+                                    - NotBlank: ~
         Oro\Bundle\ProductBundle\Entity\Brand: ~

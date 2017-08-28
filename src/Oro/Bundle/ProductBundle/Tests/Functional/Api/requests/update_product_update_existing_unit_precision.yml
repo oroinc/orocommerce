@@ -1,0 +1,17 @@
+data:
+    type: products
+    id: '<toString(@product-4->getId())>'
+    relationships:
+        unitPrecisions:
+            data:
+                -
+                    type: productunitprecisions
+                    id: '<toString(@product-4->getPrimaryUnitPrecision()->getId())>'
+included:
+    -
+        type: productunitprecisions
+        id: '<toString(@product-4->getPrimaryUnitPrecision()->getId())>'
+        meta:
+            update: true
+        attributes:
+            precision: 5

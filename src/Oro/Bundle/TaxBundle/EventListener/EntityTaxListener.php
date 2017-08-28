@@ -19,6 +19,9 @@ class EntityTaxListener
     /** @var TaxValue[] */
     protected $taxValues = [];
 
+    /** @var bool */
+    protected $enabled = true;
+
     /**
      * @param TaxManager $taxManager
      */
@@ -28,11 +31,29 @@ class EntityTaxListener
     }
 
     /**
+     * TODO: This method is workaround and should be removed after BB-11299
+     *
+     * @param boolean $enabled
+     *
+     * @return $this
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
      * @param object $entity
      * @param LifecycleEventArgs $event
      */
     public function prePersist($entity, LifecycleEventArgs $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         /**
          * Entities without ID can't be processed in preFlush, because flush() call required.
          * Create new TaxValue entities with empty "entityId" property.
@@ -58,6 +79,10 @@ class EntityTaxListener
      */
     public function postPersist($entity, LifecycleEventArgs $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $key = $this->getKey($entity);
         if (array_key_exists($key, $this->taxValues)) {
             $id = $this->getIdentifier($entity, $event->getEntityManager());
@@ -82,6 +107,10 @@ class EntityTaxListener
      */
     public function preFlush($entity, PreFlushEventArgs $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         // Entities with ID can be processed in preFlush
         if ($this->getIdentifier($entity, $event->getEntityManager())) {
             try {
@@ -114,6 +143,10 @@ class EntityTaxListener
      */
     public function preRemove($entity)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $this->taxManager->removeTax($entity);
     }
 

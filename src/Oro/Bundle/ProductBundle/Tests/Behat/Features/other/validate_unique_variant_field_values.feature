@@ -186,7 +186,7 @@ Feature: Validate unique variant field values when changing simple products
   Scenario: Check if Attribute not deleted from Product Family if it contained unique values
     And I go to Products / Product Families
     And I click Edit T_shirt in grid
-    And I unselect "Color" option from "oro_attribute_family[attributeGroups][t_shirt_group][attributeRelations][]"
+    And I unselect "Color" option from "T_shirt attribute group"
     And I save form
     Then I should see "Attributes Color used as configurable attributes in products: shirt_101" error message
 

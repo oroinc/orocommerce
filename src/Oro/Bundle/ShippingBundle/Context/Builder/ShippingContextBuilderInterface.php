@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 interface ShippingContextBuilderInterface
 {
@@ -86,4 +87,11 @@ interface ShippingContextBuilderInterface
      * @return self
      */
     public function setCurrency($currency);
+
+    /**
+     * @param Website $website
+     *
+     * @return self
+     */
+    public function setWebsite(Website $website);
 }
