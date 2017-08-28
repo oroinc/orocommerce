@@ -206,6 +206,7 @@ class FrontendProductDatagridListener
             $units = [];
             if ($productUnits) {
                 $units = explode('|', $productUnits);
+                $units = array_combine($units, array_fill(0, count($units), 0));
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }
