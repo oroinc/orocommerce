@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\CheckoutBundle\EventListener\CustomerUserRegisterListener;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Event\CustomerUserRegisterEvent;
 use Oro\Bundle\CustomerBundle\Manager\LoginManager;
-
-use Symfony\Component\HttpFoundation\Request;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CustomerUserRegisterListener
+     * @var CustomerUserListener
      */
     private $listener;
 
@@ -44,52 +46,61 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->request = new Request();
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack
+            ->expects($this->any())
+            ->method('getMasterRequest')
+            ->willReturn($this->request);
         $this->loginManager = $this->createMock(LoginManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->checkoutManager = $this->createMock(CheckoutManager::class);
-        $this->listener = new CustomerUserRegisterListener(
-            $this->request,
+        $this->listener = new CustomerUserListener(
+            $requestStack,
             $this->loginManager,
             $this->configManager,
             $this->checkoutManager
         );
     }
 
-    public function testOnCustomerUserRegisterWithoutCheckoutRegistration()
+    public function testAfterFlushWithoutCheckoutRegistration()
     {
-        $event = new CustomerUserRegisterEvent(new CustomerUser());
+        $form = $this->createMock(FormInterface::class);
+        $event = new AfterFormProcessEvent($form, new CustomerUser());
         $this->loginManager->expects($this->never())->method('logInUser');
-        $this->listener->onCustomerUserRegister($event);
+        $this->listener->afterFlush($event);
     }
 
-    public function testOnCustomerUserRegisterLogin()
+    public function testAfterFlushLogin()
     {
         $customerUser = new CustomerUser();
-        $event = new CustomerUserRegisterEvent($customerUser);
+        $form = $this->createMock(FormInterface::class);
+        $event = new AfterFormProcessEvent($form, $customerUser);
         $this->request->request->add(['_checkout_registration' => 1]);
         $this->loginManager->expects($this->once())
             ->method('logInUser')
             ->with('frontend_secure', $customerUser);
-        $this->listener->onCustomerUserRegister($event);
+        $this->listener->afterFlush($event);
     }
 
-    public function testOnCustomerUserRegisterCheckoutIdEmpty()
+    public function testAfterFlushCheckoutIdEmpty()
     {
         $customerUser = new CustomerUser();
         $customerUser->setConfirmed(false);
-        $event = new CustomerUserRegisterEvent($customerUser);
+        $form = $this->createMock(FormInterface::class);
+        $event = new AfterFormProcessEvent($form, $customerUser);
         $this->request->request->add(['_checkout_registration' => 1]);
         $this->loginManager->expects($this->never())->method('logInUser');
         $this->checkoutManager->expects($this->never())->method('assignRegisteredCustomerUserToCheckout');
 
-        $this->listener->onCustomerUserRegister($event);
+        $this->listener->afterFlush($event);
     }
 
-    public function testOnCustomerUserRegisterConfigurationDisabled()
+    public function testAfterFlushConfigurationDisabled()
     {
         $customerUser = new CustomerUser();
         $customerUser->setConfirmed(false);
-        $event = new CustomerUserRegisterEvent($customerUser);
+        $form = $this->createMock(FormInterface::class);
+        $event = new AfterFormProcessEvent($form, $customerUser);
         $this->request->request->add(['_checkout_registration' => 1]);
         $this->request->request->add(['_checkout_id' => 1]);
         $this->loginManager->expects($this->never())->method('logInUser');
@@ -99,14 +110,15 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_checkout.allow_checkout_without_email_confirmation')
             ->willReturn(false);
 
-        $this->listener->onCustomerUserRegister($event);
+        $this->listener->afterFlush($event);
     }
 
-    public function testOnCustomerUserRegisterCheckoutReassigned()
+    public function testAfterFlushCheckoutReassigned()
     {
         $customerUser = new CustomerUser();
         $customerUser->setConfirmed(false);
-        $event = new CustomerUserRegisterEvent($customerUser);
+        $form = $this->createMock(FormInterface::class);
+        $event = new AfterFormProcessEvent($form, $customerUser);
         $this->request->request->add(['_checkout_registration' => 1]);
         $this->request->request->add(['_checkout_id' => 777]);
         $this->loginManager->expects($this->never())->method('logInUser');
@@ -120,6 +132,6 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
             ->method('assignRegisteredCustomerUserToCheckout')
             ->with($customerUser, 777);
 
-        $this->listener->onCustomerUserRegister($event);
+        $this->listener->afterFlush($event);
     }
 }
