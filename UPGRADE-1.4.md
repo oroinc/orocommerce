@@ -43,4 +43,14 @@ PayPalBundle
 ProductBundle
 ------------
 
-Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API
+Enabled API for ProductImage and ProductImageType and added documentation of usage in Product API.
+
+Product images and unit information for the grid are now part of the search index.
+In order to see image changes, for example, immediate reindexation is required.     
+
+- Class `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener`
+    - changed signature of `addProductImages` method. Removed the `$productIds` parameter.
+    - changed signature of `addProductUnits` method. Removed the `$productIds` parameter.
+    - dependency on `RegistryInterface` will soon be removed. `getProductRepository` and `getProductUnitRepository` flagged as deprecated.
+- Class `Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener`
+    - signature of `__construct` changed. Added dependencies: `RegistryInterface`, `AttachmentManager`    
