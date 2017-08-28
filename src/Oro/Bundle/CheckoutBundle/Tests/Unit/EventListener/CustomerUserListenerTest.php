@@ -11,7 +11,7 @@ use Oro\Bundle\CustomerBundle\Manager\LoginManager;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class CustomerUserRegisterListenerTest extends \PHPUnit_Framework_TestCase
+class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var CustomerUserRegisterListener

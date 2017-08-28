@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Event\CustomerUserRegisterEvent;
 use Oro\Bundle\CustomerBundle\Manager\LoginManager;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
-use Symfony\Component\HttpFoundation\Request;
-
-class CustomerUserRegisterListener
+class CustomerUserListener
 {
     /**
-     * @var Request
+     * @var RequestStack
      */
-    private $request;
+    private $requestStack;
 
     /**
      * @var LoginManager
@@ -32,37 +32,39 @@ class CustomerUserRegisterListener
     private $checkoutManager;
 
     /**
-     * @param Request $request
+     * @param RequestStack $requestStack
      * @param LoginManager $loginManager
      * @param ConfigManager $configManager
      * @param CheckoutManager $checkoutManager
      */
     public function __construct(
-        Request $request,
+        RequestStack $requestStack,
         LoginManager $loginManager,
         ConfigManager $configManager,
         CheckoutManager $checkoutManager
     ) {
+        $this->requestStack = $requestStack;
         $this->loginManager = $loginManager;
-        $this->request = $request;
         $this->configManager = $configManager;
         $this->checkoutManager = $checkoutManager;
     }
 
     /**
-     * @param CustomerUserRegisterEvent $event
+     * @param AfterFormProcessEvent $event
      */
-    public function onCustomerUserRegister(CustomerUserRegisterEvent $event)
+    public function afterFlush(AfterFormProcessEvent $event)
     {
-        $customerUser = $event->getCustomerUser();
+        $customerUser = $event->getData();
 
-        if ($this->request->request->get('_checkout_registration')) {
+        $request = $this->requestStack->getMasterRequest();
+        if ($request->request->get('_checkout_registration')) {
             if ($customerUser->isConfirmed()) {
                 $this->loginManager->logInUser('frontend_secure', $customerUser);
+
                 return;
             }
-            $checkoutId = $this->request->request->get('_checkout_id');
 
+            $checkoutId = $request->request->get('_checkout_id');
             if ($checkoutId && $this->configManager->get('oro_checkout.allow_checkout_without_email_confirmation')) {
                 $this->checkoutManager->assignRegisteredCustomerUserToCheckout($customerUser, $checkoutId);
             }
