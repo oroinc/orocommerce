@@ -33,6 +33,8 @@ class FrontendProductDatagridListener
 
     /**
      * @var RegistryInterface
+     *
+     * @deprecated Will be removed in 1.4
      */
     protected $registry;
 
@@ -159,23 +161,15 @@ class FrontendProductDatagridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
-        $productIds = array_map(
-            function (ResultRecord $record) {
-                return $record->getValue('id');
-            },
-            $records
-        );
-
-        $this->addProductUnits($productIds, $records);
-        $this->addProductImages($event, $productIds, $records);
+        $this->addProductUnits($records);
+        $this->addProductImages($event, $records);
     }
 
     /**
      * @param SearchResultAfter $event
-     * @param array $productIds
      * @param ResultRecord[] $records
      */
-    protected function addProductImages(SearchResultAfter $event, array $productIds, array $records)
+    protected function addProductImages(SearchResultAfter $event, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
         $theme = $this->themeHelper->getTheme($gridName);
@@ -190,39 +184,28 @@ class FrontendProductDatagridListener
                 return;
         }
 
-        $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
-
         $defaultImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
-        foreach ($records as $record) {
-            $productId = $record->getValue('id');
 
-            if (isset($productImages[$productId])) {
-                $imageUrl = $this->attachmentManager->getFilteredImageUrl(
-                    $productImages[$productId],
-                    $imageFilter
-                );
-            } else {
-                $imageUrl = $defaultImageUrl;
+        foreach ($records as $record) {
+            $productImageUrl = $record->getValue('image_' . $imageFilter);
+
+            if (!$productImageUrl) {
+                $productImageUrl = $defaultImageUrl;
             }
-            $record->addData(['image' => $imageUrl]);
+            $record->addData(['image' => $productImageUrl]);
         }
     }
 
     /**
-     * @param array $productIds
      * @param ResultRecord[] $records
      */
-    protected function addProductUnits($productIds, $records)
+    protected function addProductUnits($records)
     {
-        $productUnits = $this->getProductUnitRepository()->getProductsUnits($productIds);
-
         foreach ($records as $record) {
+            $productUnits = $record->getValue('product_units');
             $units = [];
-            $productId = $record->getValue('id');
-            if (array_key_exists($productId, $productUnits)) {
-                foreach ($productUnits[$productId] as $unitCode => $precision) {
-                    $units[$unitCode] = $precision;
-                }
+            if ($productUnits) {
+                $units = explode('|', $productUnits);
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }
@@ -230,6 +213,8 @@ class FrontendProductDatagridListener
 
     /**
      * @return ProductRepository
+     *
+     * @deprecated Will be removed in 1.4
      */
     protected function getProductRepository()
     {
@@ -240,6 +225,8 @@ class FrontendProductDatagridListener
 
     /**
      * @return ProductUnitRepository
+     *
+     * @deprecated Will be removed in 1.4
      */
     protected function getProductUnitRepository()
     {

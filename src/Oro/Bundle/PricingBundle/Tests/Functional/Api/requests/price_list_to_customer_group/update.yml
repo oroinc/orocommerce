@@ -1,0 +1,11 @@
+data:
+    id: '<toString(@price_list_6_US_customer_group1->id)>'
+    type: 'pricelisttocustomergroups'
+    attributes:
+        sortOrder: 21
+        mergeAllowed: true
+    relationships:
+        priceList:
+            data:
+                type: 'pricelists'
+                id: '<toString(@price_list_2->id)>'
