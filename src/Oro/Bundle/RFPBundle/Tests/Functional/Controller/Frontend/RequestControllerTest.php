@@ -56,23 +56,18 @@ class RequestControllerTest extends WebTestCase
 
     public function testGridForAnonymousUsers()
     {
-        $this->initClient();
-        $this->client->getCookieJar()->clear();
         $response = $this->client->requestGrid(['gridName' => 'frontend-requests-grid'], [], true);
         $this->assertSame($response->getStatusCode(), 302);
     }
 
     public function testIndexNotFoundForAnonymousUsers()
     {
-        $this->initClient();
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
     }
 
     public function testIndexAccessDeniedForAnonymousUsers()
     {
-        $this->initClient();
-
         $configManager = $this->getContainer()->get('oro_config.manager');
         $configManager->set('oro_rfp.guest_rfp', true);
         $configManager->flush();
@@ -99,10 +94,7 @@ class RequestControllerTest extends WebTestCase
             $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
         }
 
-        $authParams = $inputData['login']
-            ? static::generateBasicAuthHeader($inputData['login'], $inputData['password'])
-            : [];
-        $this->initClient([], $authParams);
+        $this->loginUser($inputData['login']);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expectedData['code']);
@@ -174,8 +166,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testView(array $inputData, array $expectedData)
     {
-        $this->initClient([], static::generateBasicAuthHeader($inputData['login'], $inputData['password']));
-
+        $this->loginUser($inputData['login']);
         /* @var $request Request */
         $request = $this->getReference($inputData['request']);
 
@@ -226,8 +217,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testActionsForDeletedRequest(array $input, $path, $code)
     {
-        $this->initClient([], static::generateBasicAuthHeader($input['login'], $input['password']));
-
+        $this->loginUser($input['login']);
         /* @var $request Request */
         $request = $this->getReference(LoadRequestData::REQUEST14);
 
@@ -247,7 +237,6 @@ class RequestControllerTest extends WebTestCase
             'customer1 user1 (only customer user requests) and active frontoffice' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,
-                    'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -278,7 +267,6 @@ class RequestControllerTest extends WebTestCase
             'customer1 user1 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,
-                    'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -307,7 +295,6 @@ class RequestControllerTest extends WebTestCase
             'customer1 user2 (all customer requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER2,
-                    'password' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -339,7 +326,6 @@ class RequestControllerTest extends WebTestCase
             'customer1 user3 (all customer requests and submittedTo)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER3,
-                    'password' => LoadUserData::ACCOUNT1_USER3,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -366,7 +352,6 @@ class RequestControllerTest extends WebTestCase
             'customer2 user1 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT2_USER1,
-                    'password' => LoadUserData::ACCOUNT2_USER1,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -394,7 +379,6 @@ class RequestControllerTest extends WebTestCase
             'customer2 user2 (all customer user requests and full permissions)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT2_USER2,
-                    'password' => LoadUserData::ACCOUNT2_USER2,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -424,7 +408,6 @@ class RequestControllerTest extends WebTestCase
             'parent customer user1 (all requests)' => [
                 'input' => [
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,
-                    'password' => LoadUserData::PARENT_ACCOUNT_USER1,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -446,7 +429,6 @@ class RequestControllerTest extends WebTestCase
             'parent customer user2 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::PARENT_ACCOUNT_USER2,
-                    'password' => LoadUserData::PARENT_ACCOUNT_USER2,
                 ],
                 'expected' => [
                     'code' => 200,
@@ -470,7 +452,6 @@ class RequestControllerTest extends WebTestCase
                 'input' => [
                     'request' => LoadRequestData::REQUEST2,
                     'login' => LoadUserData::ACCOUNT1_USER1,
-                    'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
                     'columnsCount' => 8,
@@ -480,7 +461,6 @@ class RequestControllerTest extends WebTestCase
                 'input' => [
                     'request' => LoadRequestData::REQUEST2,
                     'login' => LoadUserData::ACCOUNT1_USER2,
-                    'password' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
                     'columnsCount' => 9,
@@ -496,13 +476,12 @@ class RequestControllerTest extends WebTestCase
      * @param string $route
      * @param string $request
      * @param string $login
-     * @param string $password
      * @param int $status
      */
-    public function testACL($route, $request, $login, $password, $status)
+    public function testACL($route, $request, $login, $status)
     {
         if ('' !== $login) {
-            $this->initClient([], static::generateBasicAuthHeader($login, $password));
+            $this->loginUser($login);
         } else {
             $this->initClient([]);
         }
@@ -532,56 +511,48 @@ class RequestControllerTest extends WebTestCase
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => '',
-                'password' => '',
                 'status' => 404
             ],
             'UPDATE (anonymous user)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => '',
-                'password' => '',
                 'status' => 404
             ],
             'VIEW (user from another customer)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::ACCOUNT2_USER1,
-                'password' => LoadUserData::ACCOUNT2_USER1,
                 'status' => 403
             ],
             'UPDATE (user from another customer)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::ACCOUNT2_USER1,
-                'password' => LoadUserData::ACCOUNT2_USER1,
                 'status' => 403
             ],
             'VIEW (user from parent customer : DEEP)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER1,
-                'password' => LoadUserData::PARENT_ACCOUNT_USER1,
                 'status' => 200
             ],
             'UPDATE (user from parent customer : DEEP)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER1,
-                'password' => LoadUserData::PARENT_ACCOUNT_USER1,
                 'status' => 403
             ],
             'VIEW (user from parent customer : LOCAL)' => [
                 'route' => 'oro_rfp_frontend_request_view',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER2,
-                'password' => LoadUserData::PARENT_ACCOUNT_USER2,
                 'status' => 403
             ],
             'UPDATE (user from parent customer : LOCAL)' => [
                 'route' => 'oro_rfp_frontend_request_update',
                 'request' => LoadRequestData::REQUEST2,
                 'login' => LoadUserData::PARENT_ACCOUNT_USER2,
-                'password' => LoadUserData::PARENT_ACCOUNT_USER2,
                 'status' => 403
             ],
         ];
@@ -595,7 +566,6 @@ class RequestControllerTest extends WebTestCase
         yield 'view action' => [
             'input' => [
                 'login' => LoadUserData::ACCOUNT1_USER1,
-                'password' => LoadUserData::ACCOUNT1_USER1
             ],
             'path' => 'oro_rfp_frontend_request_view',
             'code' => 404
@@ -603,7 +573,6 @@ class RequestControllerTest extends WebTestCase
         yield 'update action' => [
             'input' => [
                 'login' => LoadUserData::ACCOUNT1_USER1,
-                'password' => LoadUserData::ACCOUNT1_USER1
             ],
             'path' => 'oro_rfp_frontend_request_update',
             'code' => 403
@@ -618,8 +587,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testCreate(array $formData, array $expected)
     {
-        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
-        $this->initClient([], $authParams);
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();
@@ -700,8 +668,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testCreateQueryInit(array $productItems, array $expectedData)
     {
-        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
-        $this->initClient([], $authParams);
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
 
         $productIdCallable = function ($productReference) {
             return $this->getReference($productReference)->getId();
@@ -789,8 +756,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT2_USER1, LoadUserData::ACCOUNT2_USER1);
-        $this->initClient([], $authParams);
+        $this->loginUser(LoadUserData::ACCOUNT2_USER1);
         $this->getContainer()->get('oro_workflow.manager')->deactivateWorkflow('b2b_rfq_frontoffice_default');
 
         $id = $this->getReference(LoadRequestData::REQUEST6)->getId();
