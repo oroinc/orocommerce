@@ -2,25 +2,27 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
+
 interface AppliedCouponsAwareInterface
 {
     /**
-     * @param Coupon $coupon
+     * @param AppliedCoupon $coupon
      */
     public function addAppliedCoupon($coupon);
 
     /**
-     * @return Coupon[]
+     * @return Collection|AppliedCoupon[]
      */
     public function getAppliedCoupons();
 
     /**
-     * @param Coupon $coupon
+     * @param AppliedCoupon $coupon
      */
     public function removeAppliedCoupon($coupon);
 
     /**
-     * @param Coupon[] $coupons
+     * @param AppliedCoupon[] $coupons
      * @return $this
      */
     public function setAppliedCoupons($coupons);

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Twig;
 
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,38 +34,35 @@ class AppliedDiscountsExtension extends \Twig_Extension
     }
 
     /**
-     * @param array|AppliedDiscount[] $appliedDiscounts
+     * @param array|AppliedPromotion[] $appliedPromotions
      * @return array
      */
-    public function prepareAppliedDiscounts($appliedDiscounts)
+    public function prepareAppliedDiscounts($appliedPromotions)
     {
         $items = [];
-        foreach ($appliedDiscounts as $appliedDiscount) {
-            $this->addDiscountInformationToItems($appliedDiscount, $items);
+        foreach ($appliedPromotions as $appliedPromotion) {
+            $promotionId = $appliedPromotion->getId();
+
+            $couponCode = null;
+            if ($appliedPromotion->getAppliedCoupon()) {
+                $couponCode = $appliedPromotion->getAppliedCoupon()->getCouponCode();
+            }
+
+            $items[$promotionId] = [
+                'couponCode' => $couponCode,
+                'promotionName' => $appliedPromotion->getPromotionName(),
+                'promotionId' => $appliedPromotion->getSourcePromotionId(),
+                'enabled' => $appliedPromotion->isActive(),
+                'amount' => 0,
+                'type' => $appliedPromotion->getType()
+            ];
+
+            foreach ($appliedPromotion->getAppliedDiscounts() as $appliedDiscount) {
+                $items[$promotionId]['amount'] += $appliedDiscount->getAmount();
+                $items[$promotionId]['currency'] = $appliedDiscount->getCurrency();
+            }
         }
 
         return array_values($items);
-    }
-
-    /**
-     * @param AppliedDiscount $appliedDiscount
-     * @param array $items
-     */
-    private function addDiscountInformationToItems(AppliedDiscount $appliedDiscount, array &$items)
-    {
-        $sourcePromotionId = $appliedDiscount->getSourcePromotionId();
-        if (!isset($items[$sourcePromotionId])) {
-            $items[$sourcePromotionId] = [
-                'couponCode' => $appliedDiscount->getCouponCode(),
-                'promotionName' => $appliedDiscount->getPromotionName(),
-                'promotionId' => $sourcePromotionId,
-                'enabled' => $appliedDiscount->isEnabled(),
-                'amount' => 0,
-                'currency' => $appliedDiscount->getCurrency(),
-                'type' => $appliedDiscount->getType()
-            ];
-        }
-
-        $items[$sourcePromotionId]['amount'] += $appliedDiscount->getAmount();
     }
 }

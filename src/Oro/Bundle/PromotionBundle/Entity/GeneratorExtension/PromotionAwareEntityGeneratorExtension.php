@@ -6,7 +6,7 @@ use CG\Generator\PhpClass;
 use Oro\Bundle\EntityExtendBundle\Tools\GeneratorExtensions\AbstractEntityGeneratorExtension;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscountsAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 
 /**
  * Add AppliedDiscountsAwareInterface and AppliedCouponsAwareInterface interfaces to Entities that has relation to
@@ -27,8 +27,8 @@ class PromotionAwareEntityGeneratorExtension extends AbstractEntityGeneratorExte
      */
     public function generate(array $schema, PhpClass $class)
     {
-        if ($class->hasProperty('appliedDiscounts')) {
-            $class->addInterfaceName(AppliedDiscountsAwareInterface::class);
+        if ($class->hasProperty('appliedPromotions')) {
+            $class->addInterfaceName(AppliedPromotionsAwareInterface::class);
         }
         if ($class->hasProperty('appliedCoupons')) {
             $class->addInterfaceName(AppliedCouponsAwareInterface::class);

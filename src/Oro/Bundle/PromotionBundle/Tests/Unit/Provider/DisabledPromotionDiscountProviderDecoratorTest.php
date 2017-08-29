@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
@@ -53,9 +53,10 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit_Framework_
 
     public function testGetDiscountsWithSupportedSourceEntity()
     {
-        $sourceEntity = (new Order())->setAppliedDiscounts([
-            (new AppliedDiscount())->setEnabled(false)->setSourcePromotionId(self::DISABLED_PROMOTION_ID),
-            (new AppliedDiscount())->setEnabled(true)->setSourcePromotionId(self::ENABLED_PROMOTION_ID)
+        $sourceEntity = new Order();
+        $sourceEntity->setAppliedPromotions([
+            (new AppliedPromotion())->setActive(false)->setSourcePromotionId(self::DISABLED_PROMOTION_ID),
+            (new AppliedPromotion())->setActive(true)->setSourcePromotionId(self::ENABLED_PROMOTION_ID)
         ]);
 
         $context = new DiscountContext();

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Twig\AppliedDiscountsExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -43,19 +44,27 @@ class AppliedDiscountsExtensionTest extends \PHPUnit_Framework_TestCase
     public function testPrepareAppliedDiscounts()
     {
         $firstAppliedDiscount = $this->getEntity(AppliedDiscount::class, [
-            'promotionName' => self::FIRST_NAME,
             'currency' => self::CURRENCY_CODE,
             'amount' => 17.0,
+        ]);
+        $firstAppliedPromotion = $this->getEntity(AppliedPromotion::class, [
+            'promotionName' => self::FIRST_NAME,
+            'id' => 5,
+            'source_promotion_id' => 5,
+            'appliedDiscounts' => [$firstAppliedDiscount],
             'type' => self::DISCOUNT_TYPE,
-            'source_promotion_id' => 5
         ]);
 
         $secondAppliedDiscount = $this->getEntity(AppliedDiscount::class, [
-            'promotionName' => self::SECOND_NAME,
             'currency' => self::CURRENCY_CODE,
             'amount' => 35.0,
+        ]);
+        $secondAppliedPromotion = $this->getEntity(AppliedPromotion::class, [
+            'promotionName' => self::SECOND_NAME,
+            'id' => 6,
+            'source_promotion_id' => 6,
+            'appliedDiscounts' => [$secondAppliedDiscount],
             'type' => self::DISCOUNT_TYPE,
-            'source_promotion_id' => 6
         ]);
 
         $expectedItems = [
@@ -81,25 +90,26 @@ class AppliedDiscountsExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedItems,
-            $this->appliedDiscountsExtension->prepareAppliedDiscounts([$firstAppliedDiscount, $secondAppliedDiscount])
+            $this->appliedDiscountsExtension->prepareAppliedDiscounts([$firstAppliedPromotion, $secondAppliedPromotion])
         );
     }
 
     public function testPrepareAppliedDiscountsWithGrouping()
     {
         $firstAppliedDiscount = $this->getEntity(AppliedDiscount::class, [
-            'promotionName' => self::FIRST_NAME,
             'currency' => self::CURRENCY_CODE,
             'amount' => 17.0,
-            'type' => self::DISCOUNT_TYPE,
-            'source_promotion_id' => 5
         ]);
-
         $secondAppliedDiscount = $this->getEntity(AppliedDiscount::class, [
             'currency' => self::CURRENCY_CODE,
             'amount' => 35.0,
+        ]);
+        $appliedPromotion = $this->getEntity(AppliedPromotion::class, [
+            'promotionName' => self::FIRST_NAME,
+            'id' => 5,
+            'source_promotion_id' => 5,
+            'appliedDiscounts' => [$firstAppliedDiscount, $secondAppliedDiscount],
             'type' => self::DISCOUNT_TYPE,
-            'source_promotion_id' => 5
         ]);
 
         $expectedItems = [
@@ -116,7 +126,7 @@ class AppliedDiscountsExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expectedItems,
-            $this->appliedDiscountsExtension->prepareAppliedDiscounts([$firstAppliedDiscount, $secondAppliedDiscount])
+            $this->appliedDiscountsExtension->prepareAppliedDiscounts([$appliedPromotion])
         );
     }
 }

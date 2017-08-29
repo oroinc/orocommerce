@@ -3,15 +3,15 @@
 namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Doctrine\Common\Cache\Cache;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PromotionBundle\Discount\ShippingDiscount;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
-use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
+use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 
 /**
- * Provides data about AppliedDiscounts for given Orders (and OrderLineItems) (saved previously in DB)
+ * Provides data about discounts for given Orders (and OrderLineItems) (saved previously in DB)
  * Used on Order view pages
  */
 class AppliedDiscountsProvider
@@ -39,7 +39,7 @@ class AppliedDiscountsProvider
     }
 
     /**
-     * Returns sum of all AppliedDiscount amounts for given Order (including line item discounts, etc) without shipping
+     * Returns sum of all discounts amounts for given Order (including line item discounts, etc) without shipping
      *
      * @param Order $order
      * @return float
@@ -47,19 +47,19 @@ class AppliedDiscountsProvider
     public function getDiscountsAmountByOrder(Order $order): float
     {
         $amount = 0.0;
-        foreach ($this->getDiscountsByOrder($order) as $appliedDiscount) {
-            if ($appliedDiscount->getType() === ShippingDiscount::NAME) {
+        foreach ($this->getPromotionsByOrder($order) as $appliedPromotion) {
+            if ($appliedPromotion->getType() === ShippingDiscount::NAME) {
                 continue;
             }
 
-            $amount += $appliedDiscount->getAmount();
+            $amount += $this->getDiscountsSum($appliedPromotion);
         }
 
         return $amount;
     }
 
     /**
-     * Returns sum of all shipping AppliedDiscount amounts for given Order
+     * Returns sum of all shipping discounts amounts for given Order
      *
      * @param Order $order
      * @return float
@@ -67,19 +67,19 @@ class AppliedDiscountsProvider
     public function getShippingDiscountsAmountByOrder(Order $order): float
     {
         $amount = 0.0;
-        foreach ($this->getDiscountsByOrder($order) as $appliedDiscount) {
-            if ($appliedDiscount->getType() !== ShippingDiscount::NAME) {
+        foreach ($this->getPromotionsByOrder($order) as $appliedPromotion) {
+            if ($appliedPromotion->getType() !== ShippingDiscount::NAME) {
                 continue;
             }
 
-            $amount += $appliedDiscount->getAmount();
+            $amount += $this->getDiscountsSum($appliedPromotion);
         }
 
         return $amount;
     }
 
     /**
-     * Returns sum of all AppliedDiscount amounts for given OrderLineItem
+     * Returns sum of all discounts amounts for given OrderLineItem
      *
      * @param OrderLineItem $orderLineItem
      * @return float
@@ -93,15 +93,17 @@ class AppliedDiscountsProvider
 
         $order = $orderLineItem->getOrder();
 
-        foreach ($this->getDiscountsByOrder($order) as $orderAppliedDiscount) {
-            $lineItem = $orderAppliedDiscount->getLineItem();
+        foreach ($this->getPromotionsByOrder($order) as $appliedPromotion) {
+            foreach ($appliedPromotion->getAppliedDiscounts() as $appliedDiscount) {
+                $lineItem = $appliedDiscount->getLineItem();
 
-            if (!$lineItem instanceof OrderLineItem) {
-                continue;
-            }
+                if (!$lineItem instanceof OrderLineItem) {
+                    continue;
+                }
 
-            if ($lineItem->getId() === $orderLineItem->getId()) {
-                $lineItemDiscountAmount += $orderAppliedDiscount->getAmount();
+                if ($lineItem->getId() === $orderLineItem->getId()) {
+                    $lineItemDiscountAmount += $appliedDiscount->getAmount();
+                }
             }
         }
 
@@ -109,12 +111,12 @@ class AppliedDiscountsProvider
     }
 
     /**
-     * Returns applied orders discounts by order id
+     * Returns applied promotions by order id
      *
      * @param Order $order
-     * @return AppliedDiscount[]
+     * @return AppliedPromotion[]
      */
-    protected function getDiscountsByOrder(Order $order): array
+    protected function getPromotionsByOrder(Order $order): array
     {
         $orderId = $order->getId();
         if (!$orderId) {
@@ -127,19 +129,19 @@ class AppliedDiscountsProvider
             return $this->cache->fetch($cacheKey);
         }
 
-        $discounts = $this->getAppliedDiscountRepository()->findByOrder($order);
+        $appliedPromotions = $this->getAppliedPromotionRepository()->findByOrder($order);
 
-        $this->cache->save($cacheKey, $discounts);
+        $this->cache->save($cacheKey, $appliedPromotions);
 
-        return $discounts;
+        return $appliedPromotions;
     }
 
     /**
-     * @return \Doctrine\ORM\EntityRepository|AppliedDiscountRepository
+     * @return \Doctrine\ORM\EntityRepository|AppliedPromotionRepository
      */
-    protected function getAppliedDiscountRepository()
+    protected function getAppliedPromotionRepository()
     {
-        return $this->doctrineHelper->getEntityRepositoryForClass(AppliedDiscount::class);
+        return $this->doctrineHelper->getEntityRepositoryForClass(AppliedPromotion::class);
     }
 
     /**
@@ -149,5 +151,19 @@ class AppliedDiscountsProvider
     protected function getCacheKey(int $orderId): string
     {
         return self::CACHE_PREFIX . $orderId;
+    }
+
+    /**
+     * @param AppliedPromotion $appliedPromotion
+     * @return float float
+     */
+    protected function getDiscountsSum(AppliedPromotion $appliedPromotion)
+    {
+        $amount = 0.0;
+        foreach ($appliedPromotion->getAppliedDiscounts() as $appliedDiscount) {
+            $amount += $appliedDiscount->getAmount();
+        }
+
+        return $amount;
     }
 }

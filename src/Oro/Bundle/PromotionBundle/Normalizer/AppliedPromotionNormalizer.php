@@ -3,16 +3,17 @@
 namespace Oro\Bundle\PromotionBundle\Normalizer;
 
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
-use Oro\Bundle\PromotionBundle\Model\AppliedPromotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * This serializer serialize Promotion entity to array and unserialize array to AppliedPromotion model.
+ * This class normalize Promotion entity to array and denormalize array to AppliedPromotionData model.
  */
-class AppliedDiscountPromotionNormalizer implements NormalizerInterface
+class AppliedPromotionNormalizer implements NormalizerInterface
 {
     const REQUIRED_OPTIONS = [
         'id',
@@ -57,8 +58,11 @@ class AppliedDiscountPromotionNormalizer implements NormalizerInterface
      */
     public function normalize($promotion)
     {
-        if (!$promotion instanceof Promotion) {
-            throw new \InvalidArgumentException('Argument promotion should be instance of Promotion entity');
+        if (!$promotion instanceof PromotionDataInterface) {
+            throw new \InvalidArgumentException(sprintf(
+                'Argument promotion should be instance of %s entity',
+                PromotionDataInterface::class
+            ));
         }
 
         $promotionData = [
@@ -80,7 +84,7 @@ class AppliedDiscountPromotionNormalizer implements NormalizerInterface
 
     /**
      * @param array $promotionData
-     * @return AppliedPromotion
+     * @return AppliedPromotionData
      */
     public function denormalize(array $promotionData)
     {
@@ -90,7 +94,7 @@ class AppliedDiscountPromotionNormalizer implements NormalizerInterface
         /** @var Rule $rule */
         $rule = $this->ruleNormalizer->denormalize($promotionData['rule']);
 
-        $appliedPromotion = new AppliedPromotion();
+        $appliedPromotion = new AppliedPromotionData();
         $appliedPromotion->setId($promotionData['id'])
             ->setUseCoupons($promotionData['useCoupons'])
             ->setRule($rule);

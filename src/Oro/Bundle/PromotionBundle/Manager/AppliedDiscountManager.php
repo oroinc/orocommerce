@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Manager;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -9,10 +10,15 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
-use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Entity\Repository\AppliedPromotionRepository;
 use Oro\Bundle\PromotionBundle\Executor\PromotionExecutor;
-use Oro\Bundle\PromotionBundle\Normalizer\NormalizerInterface;
+use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AppliedDiscountManager
@@ -28,100 +34,122 @@ class AppliedDiscountManager
     protected $doctrineHelper;
 
     /**
-     * @var NormalizerInterface
+     * @var AppliedPromotionMapper
      */
-    private $promotionNormalizer;
+    protected $promotionMapper;
 
     /**
      * @param ContainerInterface $container
      * @param DoctrineHelper $doctrineHelper
-     * @param NormalizerInterface $promotionNormalizer
+     * @param AppliedPromotionMapper $promotionMapper
      */
     public function __construct(
         ContainerInterface $container,
         DoctrineHelper $doctrineHelper,
-        NormalizerInterface $promotionNormalizer
+        AppliedPromotionMapper $promotionMapper
     ) {
         $this->container = $container;
         $this->doctrineHelper = $doctrineHelper;
-        $this->promotionNormalizer = $promotionNormalizer;
+        $this->promotionMapper = $promotionMapper;
     }
 
     /**
      * @param Order $order
      * @param bool $flush
-     * @return AppliedDiscount[]
      */
     public function saveAppliedDiscounts(Order $order, $flush = false)
     {
         $discountContext = $this->getPromotionExecutor()->execute($order);
 
-        $appliedDiscounts = array_merge(
-            $this->createSubtotalDiscounts($order, $discountContext),
-            $this->createShippingDiscounts($order, $discountContext),
-            $this->createLineItemDiscounts($order, $discountContext)
-        );
-
-        $manager = $this->getAppliedDiscountManager();
-
-        foreach ($appliedDiscounts as $appliedDiscount) {
-            $manager->persist($appliedDiscount);
+        $manager = $this->getAppliedPromotionsManager();
+        foreach ($this->createAppliedPromotions($discountContext) as $appliedPromotion) {
+            $appliedPromotion->setOrder($order);
+            $manager->persist($appliedPromotion);
         }
 
         if ($flush) {
-            $manager->flush($appliedDiscounts);
+            $manager->flush();
         }
-
-        return $appliedDiscounts;
     }
 
     /**
-     * Remove applied discounts by order
+     * @param DiscountContext $discountContext
+     * @return AppliedPromotion[]
+     */
+    private function createAppliedPromotions(DiscountContext $discountContext)
+    {
+        /** @var AppliedPromotion[] $appliedPromotions */
+        $appliedPromotions = [];
+        /**
+         * @var DiscountInformation $discountInformation
+         * @var OrderLineItem $orderLineItem
+         */
+        foreach ($this->collectDiscountsInformation($discountContext) as list($discountInformation, $orderLineItem)) {
+            $promotion = $discountInformation->getDiscount()->getPromotion();
+            if (empty($appliedPromotions[$promotion->getId()])) {
+                $appliedPromotions[$promotion->getId()] = $this->promotionMapper
+                    ->mapPromotionDataToAppliedPromotion($promotion);
+            }
+
+            $appliedDiscount = $this->createAppliedDiscount($discountInformation);
+            $appliedDiscount->setLineItem($orderLineItem);
+            $appliedPromotions[$promotion->getId()]->addAppliedDiscount($appliedDiscount);
+        }
+
+        return $appliedPromotions;
+    }
+
+    /**
+     * @param DiscountContext $discountContext
+     * @return \Generator|array
+     */
+    private function collectDiscountsInformation(DiscountContext $discountContext)
+    {
+        foreach ($discountContext->getLineItems() as $lineItem) {
+            foreach ($lineItem->getDiscountsInformation() as $discountInformation) {
+                yield [$discountInformation, $lineItem->getSourceLineItem()];
+            }
+        }
+
+        foreach ($discountContext->getShippingDiscountsInformation() as $discountInformation) {
+            yield [$discountInformation, null];
+        }
+
+        foreach ($discountContext->getSubtotalDiscountsInformation() as $discountInformation) {
+            yield [$discountInformation, null];
+        }
+    }
+
+    /**
+     * Remove applied promotions with discounts by order
      *
      * @param Order $order
      * @param bool $flush
      */
     public function removeAppliedDiscountByOrder(Order $order, $flush = false)
     {
-        $appliedDiscounts = $this->getAppliedDiscountRepository()->findByOrder($order);
+        $appliedPromotions = $this->getAppliedPromotionsRepository()->findByOrder($order);
 
-        foreach ($appliedDiscounts as $appliedDiscount) {
-            $this->removeAppliendDiscount($appliedDiscount);
+        foreach ($appliedPromotions as $appliedPromotion) {
+            $this->removeAppliedPromotion($appliedPromotion);
         }
 
         if ($flush) {
-            $this->getAppliedDiscountManager()->flush($appliedDiscounts);
+            $this->getAppliedPromotionsManager()->flush();
         }
     }
 
     /**
-     * @param Order $order
-     * @param DiscountInformation $discountInfo
+     * @param DiscountInformation $discountInformation
      * @return AppliedDiscount
      */
-    protected function createAppliedDiscount(Order $order, DiscountInformation $discountInfo): AppliedDiscount
+    private function createAppliedDiscount(DiscountInformation $discountInformation): AppliedDiscount
     {
-        $discount = $discountInfo->getDiscount();
-        $promotion = $discount->getPromotion();
+        $appliedDiscount = new AppliedDiscount();
+        $appliedDiscount->setAmount($discountInformation->getDiscountAmount());
+        $appliedDiscount->setCurrency($discountInformation->getDiscount()->getDiscountCurrency());
 
-        if (!$promotion) {
-            throw new \LogicException('required parameter "promotion" of discount is missing');
-        }
-
-        $discountConfiguration = $promotion->getDiscountConfiguration();
-        $discountType = $discountConfiguration->getType();
-        $discountConfigurationOptions = $discountConfiguration->getOptions();
-
-        return (new AppliedDiscount())
-            ->setType($discountType)
-            ->setAmount($discountInfo->getDiscountAmount())
-            ->setCurrency($order->getCurrency())
-            ->setConfigOptions($discountConfigurationOptions)
-            ->setPromotion($promotion)
-            ->setPromotionName($promotion->getRule()->getName())
-            ->setSourcePromotionId($promotion->getId())
-            ->setPromotionData($this->promotionNormalizer->normalize($promotion))
-            ->setOrder($order);
+        return $appliedDiscount;
     }
 
     /**
@@ -136,96 +164,77 @@ class AppliedDiscountManager
     /**
      * @return EntityManager
      */
-    protected function getAppliedDiscountManager()
+    protected function getAppliedPromotionsManager()
     {
-        return $this->doctrineHelper->getEntityManagerForClass(AppliedDiscount::class);
+        return $this->doctrineHelper->getEntityManagerForClass(AppliedPromotion::class);
     }
 
     /**
-     * @return AppliedDiscountRepository|EntityRepository
+     * @return AppliedPromotionRepository|EntityRepository
      */
-    protected function getAppliedDiscountRepository()
+    protected function getAppliedPromotionsRepository()
     {
-        return $this->doctrineHelper->getEntityRepositoryForClass(AppliedDiscount::class);
+        return $this->doctrineHelper->getEntityRepositoryForClass(AppliedPromotion::class);
     }
 
     /**
-     * @param AppliedDiscount $appliedDiscount
+     * @param AppliedPromotion $appliedPromotion
      * @param bool $flush
      * @return bool
      */
-    protected function removeAppliendDiscount(AppliedDiscount $appliedDiscount, $flush = false)
+    protected function removeAppliedPromotion(AppliedPromotion $appliedPromotion, $flush = false): bool
     {
-        $em = $this->getAppliedDiscountManager();
+        $em = $this->getAppliedPromotionsManager();
 
-        if (!$em->contains($appliedDiscount)) {
+        if (!$em->contains($appliedPromotion)) {
             return false;
         }
 
-        $em->remove($appliedDiscount);
+        $em->remove($appliedPromotion);
 
         if ($flush) {
-            $em->flush($appliedDiscount);
+            $em->flush($appliedPromotion);
         }
 
         return true;
     }
 
     /**
-     * @param Order $order
-     * @param DiscountContext $discountContext
-     * @return AppliedDiscount[]
+     * @param PromotionDataInterface $promotion
+     * @return null|Promotion
      */
-    protected function createSubtotalDiscounts(Order $order, DiscountContext $discountContext)
+    protected function getManagedPromotion(PromotionDataInterface $promotion)
     {
-        $subtotalDiscounts = [];
-
-        foreach ($discountContext->getSubtotalDiscountsInformation() as $subtotalDiscountInfo) {
-            $subtotalDiscounts[] = $this->createAppliedDiscount($order, $subtotalDiscountInfo);
+        if ($promotion instanceof Promotion) {
+            return $promotion;
         }
 
-        return $subtotalDiscounts;
+        return $this->doctrineHelper
+            ->getEntityManagerForClass(Promotion::class)
+            ->find(Promotion::class, $promotion->getId());
     }
 
     /**
-     * @param Order $order
-     * @param DiscountContext $discountContext
-     * @return AppliedDiscount[]
+     * @param AppliedCouponsAwareInterface $couponsHolder
+     * @param PromotionDataInterface $promotion
+     * @return Coupon|null
      */
-    protected function createShippingDiscounts(Order $order, DiscountContext $discountContext)
+    protected function getAppliedCoupon(AppliedCouponsAwareInterface $couponsHolder, PromotionDataInterface $promotion)
     {
-        $shippingDiscounts = [];
-
-        foreach ($discountContext->getShippingDiscountsInformation() as $shippingDiscountInfo) {
-            $shippingDiscount = $this->createAppliedDiscount($order, $shippingDiscountInfo);
-            $shippingDiscounts[] = $shippingDiscount;
-        }
-
-        return $shippingDiscounts;
-    }
-
-    /**
-     * @param Order $order
-     * @param DiscountContext $discountContext
-     * @return AppliedDiscount[]
-     */
-    protected function createLineItemDiscounts(Order $order, DiscountContext $discountContext)
-    {
-        $lineItemDiscounts = [];
-
-        foreach ($discountContext->getLineItems() as $discountLineItem) {
-            foreach ($discountLineItem->getDiscountsInformation() as $discountInfo) {
-                $appliedDiscount = $this->createAppliedDiscount($order, $discountInfo);
-
-                $lineItem = $discountLineItem->getSourceLineItem();
-                if ($lineItem instanceof OrderLineItem) {
-                    $appliedDiscount->setLineItem($lineItem);
-                }
-
-                $lineItemDiscounts[] = $appliedDiscount;
+        $appliedCouponCodes = $couponsHolder->getAppliedCoupons()->map(
+            function (Coupon $coupon) {
+                return $coupon->getCode();
             }
+        )->toArray();
+
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->in('code', $appliedCouponCodes));
+
+        $coupon = $promotion->getCoupons()->matching($criteria)->first();
+        if ($coupon instanceof Coupon) {
+            return $coupon;
         }
 
-        return $lineItemDiscounts;
+        return null;
     }
 }

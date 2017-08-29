@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\PromotionBundle\RuleFiltration;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
+use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\PromotionBundle\Model\AppliedPromotion;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class CouponFiltrationService implements RuleFiltrationServiceInterface
@@ -42,7 +43,7 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
      */
     private function getFilteredPromotions(array $ruleOwners, array $context)
     {
-        $appliedCoupons = [];
+        $appliedCoupons = new ArrayCollection();
         if (array_key_exists(ContextDataConverterInterface::APPLIED_COUPONS, $context)) {
             $appliedCoupons = $context[ContextDataConverterInterface::APPLIED_COUPONS];
         }
@@ -52,33 +53,39 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
                 return false;
             }
 
-            if ($ruleOwner instanceof AppliedPromotion) {
-                return true;
-            }
-
             if (!$ruleOwner->isUseCoupons()) {
                 return true;
-            } elseif (!$appliedCoupons) {
+            } elseif ($appliedCoupons->isEmpty()) {
                 return false;
             }
 
-            if ($this->getMatchingCoupons($ruleOwner->getCoupons(), $appliedCoupons)->count()) {
-                return true;
-            }
-
-            return false;
+            $matchedCoupons = $this->getMatchingCoupons($ruleOwner->getCoupons(), $appliedCoupons)
+                ->filter(function (Coupon $coupon) use ($ruleOwner) {
+                    return $coupon->getPromotion() && $coupon->getPromotion()->getId() === $ruleOwner->getId();
+                });
+            
+            return !$matchedCoupons->isEmpty();
         }));
     }
 
     /**
      * @param Selectable $coupons
-     * @param array $appliedCoupons
+     * @param Collection $appliedCoupons
      * @return Collection
      */
-    private function getMatchingCoupons(Selectable $coupons, array $appliedCoupons)
+    private function getMatchingCoupons(Selectable $coupons, Collection $appliedCoupons): Collection
     {
+        $appliedCouponCodes = $appliedCoupons->map(
+            function (Coupon $coupon) {
+                return $coupon->getCode();
+            }
+        )->toArray();
+
         $criteria = Criteria::create();
-        $criteria->where(Criteria::expr()->in('id', $appliedCoupons));
+        $criteria->where(
+            Criteria::expr()->in('code', $appliedCouponCodes)
+        );
+
 
         return $coupons->matching($criteria);
     }

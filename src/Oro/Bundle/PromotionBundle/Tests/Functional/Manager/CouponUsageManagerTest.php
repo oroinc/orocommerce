@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Manager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponUsageData;
-use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -44,15 +43,14 @@ class CouponUsageManagerTest extends WebTestCase
     {
         $coupon = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL);
         $customerUser = $this->getReference(LoadCustomerUserData::ANONYMOUS_EMAIL);
-        $promotion = $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION);
 
         $manager = $this->getContainer()->get('oro_promotion.coupon_usage_manager');
 
         $this->assertEmpty($manager->getCouponUsageCountByCustomerUser($coupon, $customerUser));
 
-        $manager->createCouponUsage($coupon, $promotion, $customerUser, true);
-        $manager->createCouponUsage($coupon, $promotion, $customerUser, true);
-        $manager->createCouponUsage($coupon, $promotion, $customerUser, false);
+        $manager->createCouponUsage($coupon, $customerUser, true);
+        $manager->createCouponUsage($coupon, $customerUser, true);
+        $manager->createCouponUsage($coupon, $customerUser, false);
         $this->assertEquals(2, $manager->getCouponUsageCountByCustomerUser($coupon, $customerUser));
     }
 }

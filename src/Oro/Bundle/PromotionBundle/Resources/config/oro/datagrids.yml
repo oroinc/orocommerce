@@ -103,14 +103,17 @@ datagrids:
             query:
                 select:
                     - SUM(discount.amount) AS discountAmount
-                    - discount.promotionName AS name
+                    - promotion.promotionName AS name
                     - discount.currency AS currency
                 from:
                     - { table: OroPromotionBundle:AppliedDiscount, alias: discount }
+                join:
+                    inner:
+                        - { join: discount.appliedPromotion, alias: promotion}
                 where:
                     and:
-                        - discount.order = :orderId
-                groupBy: discount.promotionName, discount.currency
+                        - promotion.order = :orderId
+                groupBy: promotion.id, promotion.promotionName, discount.currency
             bind_parameters:
                 - orderId
         columns:

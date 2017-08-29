@@ -14,8 +14,8 @@ interface NormalizerInterface
     public function normalize($object);
 
     /**
-     * @param array $objectDta
+     * @param array $objectData
      * @return object
      */
-    public function denormalize(array $objectDta);
+    public function denormalize(array $objectData);
 }

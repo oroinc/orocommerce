@@ -5,7 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity\GeneratorExtension;
 use CG\Generator\PhpClass;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscountsAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\GeneratorExtension\PromotionAwareEntityGeneratorExtension;
 
 class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_TestCase
@@ -42,14 +42,14 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
         $class->expects($this->exactly(2))
             ->method('hasProperty')
             ->withConsecutive(
-                ['appliedDiscounts'],
+                ['appliedPromotions'],
                 ['appliedCoupons']
             )
             ->willReturn(true);
         $class->expects($this->exactly(2))
             ->method('addInterfaceName')
             ->withConsecutive(
-                [AppliedDiscountsAwareInterface::class],
+                [AppliedPromotionsAwareInterface::class],
                 [AppliedCouponsAwareInterface::class]
             );
         $extension->generate($schema, $class);
@@ -64,7 +64,7 @@ class PromotionAwareEntityGeneratorExtensionTest extends \PHPUnit_Framework_Test
         $class->expects($this->exactly(2))
             ->method('hasProperty')
             ->withConsecutive(
-                ['appliedDiscounts'],
+                ['appliedPromotions'],
                 ['appliedCoupons']
             )
             ->willReturn(false);

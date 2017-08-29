@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\CouponUsage;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class CouponUsageManager
 {
@@ -26,20 +25,18 @@ class CouponUsageManager
 
     /**
      * @param Coupon $coupon
-     * @param Promotion $promotion
      * @param CustomerUser $customerUser
      * @param bool $flush
      * @return CouponUsage
      */
     public function createCouponUsage(
         Coupon $coupon,
-        Promotion $promotion,
         CustomerUser $customerUser = null,
         $flush = false
     ) {
         $couponUsage = new CouponUsage();
         $couponUsage->setCoupon($coupon);
-        $couponUsage->setPromotion($promotion);
+        $couponUsage->setPromotion($coupon->getPromotion());
         $couponUsage->setCustomerUser($customerUser);
 
         $em = $this->getCouponUsageEntityManager();
@@ -80,9 +77,6 @@ class CouponUsageManager
      */
     private function getCouponUsageEntityManager()
     {
-        /** @var EntityManager $entityManager */
-        $entityManager = $this->registry->getManagerForClass(CouponUsage::class);
-
-        return $entityManager;
+        return $this->registry->getManagerForClass(CouponUsage::class);
     }
 }

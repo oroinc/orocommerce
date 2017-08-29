@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\ValidationService;
 
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 
@@ -50,15 +51,23 @@ class CouponApplicabilityValidationService
             return $violations;
         }
 
-        if ($entity->getAppliedCoupons()->contains($coupon)) {
-            return [self::MESSAGE_COUPON_ALREADY_ADDED];
+        /** @var AppliedCoupon $appliedCoupon */
+        foreach ($entity->getAppliedCoupons() as $appliedCoupon) {
+            if ($appliedCoupon->getSourceCouponId() === $coupon->getId()) {
+                return [self::MESSAGE_COUPON_ALREADY_ADDED];
+            }
         }
 
         if ($this->promotionProvider->isPromotionApplied($entity, $coupon->getPromotion())) {
             return [self::MESSAGE_PROMOTION_ALREADY_APPLIED];
         }
 
-        $entity->addAppliedCoupon($coupon);
+        $appliedCoupon = (new AppliedCoupon())
+            ->setSourceCouponId($coupon->getId())
+            ->setCouponCode($coupon->getCode())
+            ->setSourcePromotionId($coupon->getPromotion()->getId());
+
+        $entity->addAppliedCoupon($appliedCoupon);
         if (!$this->promotionProvider->isPromotionApplicable($entity, $coupon->getPromotion())) {
             return [self::MESSAGE_PROMOTION_NOT_APPLICABLE];
         }

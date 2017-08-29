@@ -10,8 +10,9 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItems;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 
-class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtureInterface
+class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtureInterface
 {
     const SIMPLE_APPLIED_DISCOUNT = 'simple_applied_discount';
     const SIMPLE_APPLIED_DISCOUNT_WITH_LINE_ITEM = 'simple_applied_discount_with_line_item';
@@ -54,16 +55,20 @@ class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtur
     public function load(ObjectManager $manager)
     {
         foreach (static::$appliedDiscounts as $reference => $appliedDiscountData) {
-            $appliedDiscount = new AppliedDiscount();
-            $appliedDiscount->setType($appliedDiscountData['type']);
-            $appliedDiscount->setAmount($appliedDiscountData['amount']);
-            $appliedDiscount->setCurrency($appliedDiscountData['currency']);
-            $appliedDiscount->setPromotionName($appliedDiscountData['promotion_name']);
-            $appliedDiscount->setSourcePromotionId($appliedDiscountData['source_promotion_id']);
-
             /** @var Order $order */
             $order = $this->getReference($appliedDiscountData['order']);
-            $appliedDiscount->setOrder($order);
+
+            $appliedPromotion = (new AppliedPromotion())
+                ->setType($appliedDiscountData['type'])
+                ->setPromotionName($appliedDiscountData['promotion_name'])
+                ->setSourcePromotionId($appliedDiscountData['source_promotion_id'])
+                ->setOrder($order);
+
+            $appliedDiscount = new AppliedDiscount();
+            $appliedDiscount->setAmount($appliedDiscountData['amount']);
+            $appliedDiscount->setCurrency($appliedDiscountData['currency']);
+
+            $appliedPromotion->addAppliedDiscount($appliedDiscount);
 
             if (isset($appliedDiscountData['lineItem'])) {
                 /** @var OrderLineItem $orderLineItem */
@@ -71,7 +76,7 @@ class LoadAppliedDiscountData extends AbstractFixture implements DependentFixtur
                 $appliedDiscount->setLineItem($orderLineItem);
             }
 
-            $manager->persist($appliedDiscount);
+            $manager->persist($appliedPromotion);
 
             $this->setReference($reference, $appliedDiscount);
         }

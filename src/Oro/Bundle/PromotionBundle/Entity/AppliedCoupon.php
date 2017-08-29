@@ -1,0 +1,113 @@
+<?php
+
+namespace Oro\Bundle\PromotionBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
+use Oro\Bundle\PromotionBundle\Model\ExtendAppliedCoupon;
+
+/**
+ * @Config()
+ * @ORM\Table(name="oro_promotion_applied_coupon")
+ * @ORM\Entity
+ */
+class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterface
+{
+    use CreatedAtAwareTrait;
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer", name="id")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * @ORM\Column(name="coupon_code", type="string", length=255, nullable=false)
+     *
+     * @var string
+     */
+    protected $couponCode;
+
+    /**
+     * @ORM\Column(name="source_promotion_id", type="integer", nullable=false)
+     * @var int
+     */
+    protected $sourcePromotionId;
+
+    /**
+     * @ORM\Column(name="source_coupon_id", type="integer", nullable=false)
+     * @var int|null
+     */
+    protected $sourceCouponId;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCouponCode()
+    {
+        return $this->couponCode;
+    }
+
+    /**
+     * @param string $couponCode
+     * @return $this
+     */
+    public function setCouponCode($couponCode)
+    {
+        $this->couponCode = $couponCode;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getSourcePromotionId()
+    {
+        return $this->sourcePromotionId;
+    }
+
+    /**
+     * @param int $sourcePromotionId
+     * @return $this
+     */
+    public function setSourcePromotionId($sourcePromotionId)
+    {
+        $this->sourcePromotionId = $sourcePromotionId;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getSourceCouponId()
+    {
+        return $this->sourceCouponId;
+    }
+
+    /**
+     * @param int|null $sourceCouponId
+     * @return $this
+     */
+    public function setSourceCouponId($sourceCouponId)
+    {
+        $this->sourceCouponId = $sourceCouponId;
+
+        return $this;
+    }
+}

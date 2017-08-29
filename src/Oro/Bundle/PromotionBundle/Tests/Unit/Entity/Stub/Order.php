@@ -5,21 +5,22 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\OrderBundle\Entity\Order as BaseOrder;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscountsAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 
-class Order extends BaseOrder implements AppliedDiscountsAwareInterface
+class Order extends BaseOrder implements AppliedPromotionsAwareInterface, AppliedCouponsAwareInterface
 {
     /**
-     * @var Collection|Coupon[]
+     * @var Collection|AppliedCoupon[]
      */
     private $appliedCoupons;
 
     /**
-     * @var Collection|AppliedDiscount[]
+     * @var Collection|AppliedPromotion[]
      */
-    private $appliedDiscounts;
+    private $appliedPromotions;
 
     public function __construct()
     {
@@ -30,7 +31,47 @@ class Order extends BaseOrder implements AppliedDiscountsAwareInterface
     }
 
     /**
-     * @return Collection|Coupon[]
+     * {@inheritdoc}
+     */
+    public function removeAppliedCoupon($coupon)
+    {
+        $this->appliedCoupons->removeElement($coupon);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAppliedCoupons($coupons)
+    {
+        $this->appliedCoupons = $coupons;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAppliedPromotions()
+    {
+        return $this->appliedPromotions;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeAppliedPromotion($promotion)
+    {
+        $this->appliedPromotions->removeElement($promotion);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAppliedPromotions($promotions)
+    {
+        $this->appliedPromotions = $promotions;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getAppliedCoupons()
     {
@@ -38,67 +79,18 @@ class Order extends BaseOrder implements AppliedDiscountsAwareInterface
     }
 
     /**
-     * @param Coupon $coupon
-     * @return bool
+     * {@inheritdoc}
      */
-    public function hasAppliedCoupon(Coupon $coupon)
+    public function addAppliedCoupon($appliedCoupon)
     {
-        return $this->appliedCoupons->contains($coupon);
-    }
-
-    /**
-     * @param Coupon $appliedCoupon
-     * @return Order
-     */
-    public function addAppliedCoupons(Coupon $appliedCoupon)
-    {
-        if (!$this->hasAppliedCoupon($appliedCoupon)) {
-            $this->appliedCoupons[] = $appliedCoupon;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Coupon $appliedCoupon
-     * @return Order
-     */
-    public function addAppliedCoupon(Coupon $appliedCoupon)
-    {
-        return $this->addAppliedCoupons($appliedCoupon);
+        return $this->appliedCoupons->add($appliedCoupon);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addAppliedDiscount($discount)
+    public function addAppliedPromotion($promotion)
     {
-        $this->appliedDiscounts->add($discount);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function removeAppliedDiscount($discount)
-    {
-        $this->appliedDiscounts->remove($discount);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAppliedDiscounts($discounts)
-    {
-        $this->appliedDiscounts = $discounts;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAppliedDiscounts()
-    {
-        return $this->appliedDiscounts;
+        $this->appliedPromotions->add($promotion);
     }
 }

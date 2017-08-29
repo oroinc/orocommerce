@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\RuleFiltration;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Model\AppliedPromotion;
+use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponFilterCouponData;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponFilteredPromotionData;
@@ -22,10 +23,7 @@ class CouponFiltrationServiceTest extends WebTestCase
 
     public function testGetFilteredRuleOwners()
     {
-        $couponFiltrationService = new CouponFiltrationService(
-            new BasicRuleFiltrationService(),
-            $this->getContainer()->get('oro_promotion.validation_service.coupon_validation')
-        );
+        $couponFiltrationService = new CouponFiltrationService(new BasicRuleFiltrationService());
 
         $promoCorrespondingSeveralAppliedDiscounts
             = $this->getReference(LoadCouponFilteredPromotionData::PROMO_CORRESPONDING_SEVERAL_APPLIED_DISCOUNTS);
@@ -36,7 +34,7 @@ class CouponFiltrationServiceTest extends WebTestCase
         $promoWithoutDiscounts = $this->getReference(LoadCouponFilteredPromotionData::PROMO_WITHOUT_DISCOUNTS);
 
         // All AppliedPromotion models should not be filtered by CouponFiltrationService
-        $appliedPromotion = new AppliedPromotion();
+        $appliedPromotion = new AppliedPromotionData();
 
         $filteredPromotions = $couponFiltrationService->getFilteredRuleOwners(
             [
@@ -47,11 +45,11 @@ class CouponFiltrationServiceTest extends WebTestCase
                 $appliedPromotion
             ],
             [
-                ContextDataConverterInterface::APPLIED_COUPONS => [
+                ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([
                     $this->getReference(LoadCouponFilterCouponData::COUPON1),
                     $this->getReference(LoadCouponFilterCouponData::COUPON2),
                     $this->getReference(LoadCouponFilterCouponData::COUPON3),
-                ]
+                ])
             ]
         );
 

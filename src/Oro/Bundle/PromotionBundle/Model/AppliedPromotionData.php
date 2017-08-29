@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
@@ -11,7 +12,7 @@ use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
-class AppliedPromotion implements PromotionDataInterface
+class AppliedPromotionData implements PromotionDataInterface
 {
     /**
      * @var int
@@ -39,7 +40,7 @@ class AppliedPromotion implements PromotionDataInterface
     protected $useCoupons = false;
 
     /**
-     * @var Collection|Coupon[]
+     * @var Collection|Selectable|Coupon[]
      */
     protected $coupons;
 
@@ -182,7 +183,7 @@ class AppliedPromotion implements PromotionDataInterface
 
     /**
      * @param int $id
-     * @return AppliedPromotion
+     * @return AppliedPromotionData
      */
     public function setId($id)
     {

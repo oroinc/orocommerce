@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\Entity;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
@@ -19,8 +19,8 @@ class OrderTest extends WebTestCase
     public function testAppliedCouponsCollection()
     {
         $order = new Order();
-        $firstCoupon = new Coupon();
-        $secondCoupon = new Coupon();
+        $firstCoupon = new AppliedCoupon();
+        $secondCoupon = new AppliedCoupon();
 
         $order->addAppliedCoupon($firstCoupon);
         $order->addAppliedCoupon($secondCoupon);

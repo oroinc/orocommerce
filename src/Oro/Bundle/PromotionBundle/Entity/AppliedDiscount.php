@@ -29,25 +29,12 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     protected $id;
 
     /**
-     * @ORM\Column(type="boolean", name="enabled", options={"default"=true})
+     * @var AppliedPromotion
      *
-     * @var bool
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedPromotion", inversedBy="appliedDiscounts")
+     * @ORM\JoinColumn(name="applied_promotion_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    protected $enabled = true;
-
-    /**
-     * @ORM\Column(name="coupon_code", type="string", length=255, nullable=true)
-     *
-     * @var string|null
-     */
-    protected $couponCode;
-
-    /**
-     * @ORM\Column(name="type", type="string", length=255)
-     *
-     * @var string
-     */
-    protected $type;
+    protected $appliedPromotion;
 
     /**
      * @ORM\Column(name="amount", type="money_value")
@@ -64,43 +51,8 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     protected $currency;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion")
-     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     *
-     * @var Promotion|null
-     */
-    protected $promotion;
-
-    /**
-     * @ORM\Column(name="source_promotion_id", type="integer", nullable=true))
-     * @var int
-     */
-    protected $sourcePromotionId;
-
-    /**
-     * @ORM\Column(name="promotion_name", type="text")
-     *
-     * @var string
-     */
-    protected $promotionName;
-
-    /**
-     * @ORM\Column(name="config_options", type="json_array")
-     *
-     * @var array
-     */
-    protected $configOptions = [];
-
-    /**
-     * @ORM\Column(name="promotion_data", type="json_array")
-     *
-     * @var array
-     */
-    protected $promotionData = [];
-
-    /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderLineItem")
-     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="line_item_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      *
      * @var OrderLineItem|null
      */
@@ -112,63 +64,6 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled(): bool
-    {
-        return (bool)$this->enabled;
-    }
-
-    /**
-     * @param bool $enabled
-     * @return $this
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getCouponCode()
-    {
-        return $this->couponCode;
-    }
-
-    /**
-     * @param string|null $couponCode
-     * @return $this
-     */
-    public function setCouponCode($couponCode)
-    {
-        $this->couponCode = $couponCode;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param string $type
-     * @return AppliedDiscount
-     */
-    public function setType(string $type)
-    {
-        $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -186,82 +81,6 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     public function setAmount(float $amount)
     {
         $this->amount = $amount;
-
-        return $this;
-    }
-
-    /**
-     * @return Promotion|null
-     */
-    public function getPromotion()
-    {
-        return $this->promotion;
-    }
-
-    /**
-     * @param Promotion $promotion
-     * @return $this
-     */
-    public function setPromotion(Promotion $promotion)
-    {
-        $this->promotion = $promotion;
-
-        return $this;
-    }
-
-    /**
-     * @param int $id
-     * @return $this
-     */
-    public function setSourcePromotionId($id)
-    {
-        $this->sourcePromotionId = (int)$id;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSourcePromotionId()
-    {
-        return $this->sourcePromotionId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPromotionName()
-    {
-        return $this->promotionName;
-    }
-
-    /**
-     * @param string $promotionName
-     * @return AppliedDiscount
-     */
-    public function setPromotionName(string $promotionName)
-    {
-        $this->promotionName = $promotionName;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getConfigOptions(): array
-    {
-        return $this->configOptions;
-    }
-
-    /**
-     * @param array $configOptions
-     * @return $this
-     */
-    public function setConfigOptions(array $configOptions)
-    {
-        $this->configOptions = $configOptions;
 
         return $this;
     }
@@ -286,7 +105,7 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     }
 
     /**
-     * @return OrderLineItem|null
+     * @return OrderLineItem
      */
     public function getLineItem()
     {
@@ -294,10 +113,10 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     }
 
     /**
-     * @param OrderLineItem $lineItem
-     * @return AppliedDiscount
+     * @param OrderLineItem|null $lineItem
+     * @return $this
      */
-    public function setLineItem(OrderLineItem $lineItem)
+    public function setLineItem($lineItem)
     {
         $this->lineItem = $lineItem;
 
@@ -305,20 +124,20 @@ class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterfa
     }
 
     /**
-     * @return array
+     * @return AppliedPromotion
      */
-    public function getPromotionData(): array
+    public function getAppliedPromotion()
     {
-        return $this->promotionData;
+        return $this->appliedPromotion;
     }
 
     /**
-     * @param array $promotionData
-     * @return AppliedDiscount
+     * @param AppliedPromotion $appliedPromotion
+     * @return $this
      */
-    public function setPromotionData(array $promotionData)
+    public function setAppliedPromotion(AppliedPromotion $appliedPromotion)
     {
-        $this->promotionData = $promotionData;
+        $this->appliedPromotion = $appliedPromotion;
 
         return $this;
     }

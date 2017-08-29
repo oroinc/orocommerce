@@ -178,21 +178,10 @@ oro:
             entity_label: Applied Discount
             entity_plural_label: Applied Discounts
             amount.label: Amount
-            config_options.label: Options
-            coupon_code.label: Coupon Code
             currency.label: Currency
-            enabled:
-                label: Enabled
-                active: Active
-                inactive: Inactive
             id.label: Id
-            promotion_name.label: Promotion Name
-            type.label: Type
             line_item.label: Line Item
             order.label: Order
-            promotion.label: Promotion
-            source_promotion_id.label: Source Promotion Id
-            promotion_data.label: Promotion Data
             add_coupon_label: Add Coupon Code
             columns:
                 coupon_code: Code
@@ -205,6 +194,8 @@ oro:
                 enable: Enable
                 remove: Remove
             no_entities: No records found
+            applied_promotion.label: Applied Promotion
+
 
         coupon:
             entity_label: Coupon
@@ -257,6 +248,34 @@ oro:
                     suffix.label: Symbols
                 message:
                     save_success: Coupons have been generated successfully
+        appliedcoupon:
+            entity_label: Applied Discount
+            entity_plural_label: Applied Discounts
+            coupon_code.label: Coupon Code
+            id.label: Id
+            source_coupon_id.label: Source Coupon Id
+            source_promotion_id.label: Source Promotion Id
+            order.label: Order
+            applied_promotion.label: Applied Promotion
+        appliedpromotion:
+            entity_label: Applied Promotion
+            entity_plural_label: Applied Promotions
+            active.label: Active
+            config_options.label: Config Options
+            id.label: Id
+            source_promotion_id: Source Promotion Id
+            promotion_data.label: Promotion Data
+            promotion_name.label: Promotion Name
+            source_promotion_id.label: Source Promotion Id
+            type.label: Type
+            applied_coupon.label: Applied Coupon
+            applied_discounts.label: Applied Discounts
+            order.label: Order
+            promotion.label: Promotion
+        applieddiscount:
+            applied_promotion.label: Applied Promotion
+            entity_plural_label: Applied Discount
+            source_promotion_id: Source Promotion
 
     applied_discount:
         name: Name
@@ -272,6 +291,7 @@ oro:
     order:
         applied_coupons.label: Applied Coupons
         applied_discounts.label: Applied Discounts
+        applied_promotions.label: Applied Promotions
         promotions:
             applied_discount:
                 name: Name

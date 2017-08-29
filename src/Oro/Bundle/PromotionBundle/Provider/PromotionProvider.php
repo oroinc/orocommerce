@@ -4,11 +4,10 @@ namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedDiscountsAwareInterface;
-use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
-use Oro\Bundle\PromotionBundle\Normalizer\NormalizerInterface;
+use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 
 class PromotionProvider
@@ -29,26 +28,26 @@ class PromotionProvider
     private $contextDataConverter;
 
     /**
-     * @var NormalizerInterface
+     * @var AppliedPromotionMapper
      */
-    private $promotionNormalizer;
+    private $promotionMapper;
 
     /**
      * @param ManagerRegistry $registry
      * @param RuleFiltrationServiceInterface $ruleFiltrationService
      * @param ContextDataConverterInterface $contextDataConverter
-     * @param NormalizerInterface $promotionNormalizer
+     * @param AppliedPromotionMapper $promotionMapper
      */
     public function __construct(
         ManagerRegistry $registry,
         RuleFiltrationServiceInterface $ruleFiltrationService,
         ContextDataConverterInterface $contextDataConverter,
-        NormalizerInterface $promotionNormalizer
+        AppliedPromotionMapper $promotionMapper
     ) {
         $this->registry = $registry;
         $this->ruleFiltrationService = $ruleFiltrationService;
         $this->contextDataConverter = $contextDataConverter;
-        $this->promotionNormalizer = $promotionNormalizer;
+        $this->promotionMapper = $promotionMapper;
     }
 
     /**
@@ -59,7 +58,7 @@ class PromotionProvider
     {
         $promotions = [];
 
-        if ($sourceEntity instanceof AppliedDiscountsAwareInterface) {
+        if ($sourceEntity instanceof AppliedPromotionsAwareInterface) {
             $promotions = $this->getAppliedPromotions($sourceEntity);
         }
 
@@ -124,33 +123,16 @@ class PromotionProvider
     }
 
     /**
-     * @param AppliedDiscountsAwareInterface $sourceEntity
+     * @param AppliedPromotionsAwareInterface $sourceEntity
      * @return array|PromotionDataInterface[]
      */
-    private function getAppliedPromotions(AppliedDiscountsAwareInterface $sourceEntity)
+    private function getAppliedPromotions(AppliedPromotionsAwareInterface $sourceEntity)
     {
         $appliedPromotions = [];
-        foreach ($sourceEntity->getAppliedDiscounts() as $appliedDiscount) {
-            // Early check for duplicated promotions for exiting promotions
-            $discountPromotion = $appliedDiscount->getPromotion();
-            if ($discountPromotion && array_key_exists($discountPromotion->getId(), $appliedPromotions)) {
-                continue;
-            }
-
-            $appliedPromotion = $this->promotionNormalizer->denormalize($appliedDiscount->getPromotionData());
-            // Check duplicated promotions for removed promotions
-            if (array_key_exists($appliedPromotion->getId(), $appliedPromotions)) {
-                continue;
-            }
-
-            $discountConfiguration = new DiscountConfiguration();
-            $discountConfiguration->setType($appliedDiscount->getType());
-            $discountConfiguration->setOptions($appliedDiscount->getConfigOptions());
-            $appliedPromotion->setDiscountConfiguration($discountConfiguration);
-
-            $appliedPromotions[$appliedPromotion->getId()] = $appliedPromotion;
+        foreach ($sourceEntity->getAppliedPromotions() as $appliedPromotionEntity) {
+            $appliedPromotions[] = $this->promotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity);
         }
 
-        return array_values($appliedPromotions);
+        return $appliedPromotions;
     }
 }

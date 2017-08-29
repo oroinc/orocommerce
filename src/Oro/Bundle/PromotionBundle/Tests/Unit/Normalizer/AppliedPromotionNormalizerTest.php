@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Normalizer;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
-use Oro\Bundle\PromotionBundle\Model\AppliedPromotion;
-use Oro\Bundle\PromotionBundle\Normalizer\AppliedDiscountPromotionNormalizer;
+use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
+use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
+use Oro\Bundle\PromotionBundle\Normalizer\AppliedPromotionNormalizer;
 use Oro\Bundle\PromotionBundle\Normalizer\RuleNormalizer;
 use Oro\Bundle\PromotionBundle\Normalizer\ScopeNormalizer;
 use Oro\Bundle\PromotionBundle\Normalizer\SegmentNormalizer;
@@ -17,7 +19,7 @@ use Oro\Bundle\SegmentBundle\Entity\SegmentType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
-class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
+class AppliedPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -37,7 +39,7 @@ class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
     private $segmentNormalizer;
 
     /**
-     * @var AppliedDiscountPromotionNormalizer
+     * @var AppliedPromotionNormalizer
      */
     private $normalizer;
 
@@ -50,7 +52,7 @@ class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->scopeNormalizer = $this->createMock(ScopeNormalizer::class);
         $this->segmentNormalizer = $this->createMock(SegmentNormalizer::class);
 
-        $this->normalizer = new AppliedDiscountPromotionNormalizer(
+        $this->normalizer = new AppliedPromotionNormalizer(
             $this->ruleNormalizer,
             $this->scopeNormalizer,
             $this->segmentNormalizer
@@ -60,11 +62,11 @@ class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider normalizeDataProvider
      *
-     * @param Promotion $promotion
+     * @param PromotionDataInterface $promotion
      * @param array $expected
      */
     public function testNormalize(
-        Promotion $promotion,
+        PromotionDataInterface $promotion,
         array $expected
     ) {
         $this->ruleNormalizer->expects($this->once())
@@ -137,26 +139,44 @@ class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        return [
+        $appliedPromotion = $this->getEntity(
+            AppliedPromotionData::class,
             [
+                'id' => 42,
+                'useCoupons' => true,
+                'rule' => $rule,
+                'scopes' => new ArrayCollection([$firstScope, $secondScope]),
+                'discountConfiguration' => $discountConfiguration,
+                'productsSegment' => $segment
+            ]
+        );
+
+        $expected = [
+            'id' => 42,
+            'useCoupons' => true,
+            'rule' => [
+                'name' => 'Promo',
+                'expression' => 'currency = "USD"',
+                'sortOrder' => 10,
+                'isStopProcessing' => false,
+            ],
+            'scopes' => [
+                ['id' => 42],
+                ['id' => 45],
+            ],
+            'productsSegment' => [
+                'definition' => '{"filters":[],"columns":[{"name":"sku","label":"sku","sorting":null}]}'
+            ]
+        ];
+
+        return [
+            'Promotion' => [
                 'promotion' => $promotion,
-                'expected' =>  [
-                    'id' => 42,
-                    'useCoupons' => true,
-                    'rule' => [
-                        'name' => 'Promo',
-                        'expression' => 'currency = "USD"',
-                        'sortOrder' => 10,
-                        'isStopProcessing' => false,
-                    ],
-                    'scopes' => [
-                        ['id' => 42],
-                        ['id' => 45],
-                    ],
-                    'productsSegment' => [
-                        'definition' => '{"filters":[],"columns":[{"name":"sku","label":"sku","sorting":null}]}'
-                    ]
-                ]
+                'expected' =>  $expected
+            ],
+            'Applied Promotion' => [
+                'promotion' => $appliedPromotion,
+                'expected' => $expected
             ]
         ];
     }
@@ -168,14 +188,14 @@ class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
      * @param Rule $rule
      * @param array|Scope[] $scopes
      * @param Segment $segment
-     * @param AppliedPromotion $expected
+     * @param AppliedPromotionData $expected
      */
     public function testDenormalize(
         array $promotionData,
         Rule $rule,
         array $scopes,
         Segment $segment,
-        AppliedPromotion $expected
+        AppliedPromotionData $expected
     ) {
         $this->ruleNormalizer->expects($this->once())
             ->method('denormalize')
@@ -241,7 +261,7 @@ class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
                 'rule' => $rule,
                 'scopes' => [$firstScope, $secondScope],
                 'segment' => $segment,
-                'expected' => (new AppliedPromotion())->setId(42)
+                'expected' => (new AppliedPromotionData())->setId(42)
                     ->setUseCoupons(true)
                     ->addScope($firstScope)
                     ->addScope($secondScope)
@@ -268,7 +288,9 @@ class AppliedDiscountPromotionNormalizerTest extends \PHPUnit_Framework_TestCase
     {
         $object = new \stdClass();
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Argument promotion should be instance of Promotion entity');
+        $this->expectExceptionMessage(
+            'Argument promotion should be instance of Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface entity'
+        );
 
         $this->normalizer->normalize($object);
     }

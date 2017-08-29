@@ -2,15 +2,19 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\ValidationService;
 
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order as OrderStub;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CouponValidationService|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -57,8 +61,11 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
 
     public function testGetViolationsWhenCouponAlreadyApplied()
     {
-        $coupon = new Coupon();
-        $entity = (new OrderStub())->addAppliedCoupon($coupon);
+        /** @var Coupon $coupon */
+        $coupon = $this->getEntity(Coupon::class, ['id' => 5]);
+        $entity = new OrderStub();
+        $appliedCoupon = (new AppliedCoupon())->setSourceCouponId(5);
+        $entity->addAppliedCoupon($appliedCoupon);
 
         $this->couponValidationService
             ->expects($this->once())
