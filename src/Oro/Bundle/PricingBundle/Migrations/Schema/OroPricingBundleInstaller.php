@@ -261,6 +261,10 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
             ['combined_price_list_id', 'product_id', 'merge_allowed'],
             'oro_cmb_price_mrg_idx'
         );
+        $table->addIndex(
+            ['product_id', 'currency'],
+            'oro_cmb_price_product_currency_idx'
+        );
     }
 
     /**

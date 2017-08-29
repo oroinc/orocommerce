@@ -28,7 +28,27 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
  *          @ORM\Index(name="idx_oro_product_sku_uppercase", columns={"sku_uppercase"}),
  *          @ORM\Index(name="idx_oro_product_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"}),
+ *          @ORM\Index(
+ *              name="idx_oro_product_created_at_id_organization",
+ *              columns={"created_at", "id", "organization_id"}
+ *          ),
+ *          @ORM\Index(
+ *              name="idx_oro_product_updated_at_id_organization",
+ *              columns={"updated_at", "id", "organization_id"}
+ *          ),
+ *          @ORM\Index(
+ *              name="idx_oro_product_sku_id_organization",
+ *              columns={"sku", "id", "organization_id"}
+ *          ),
+ *          @ORM\Index(
+ *              name="idx_oro_product_status_id_organization",
+ *              columns={"status", "id", "organization_id"}
+ *          ),
+ *          @ORM\Index(
+ *              name="idx_oro_product_is_featured",
+ *              columns={"is_featured"}
+ *          )
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository")
