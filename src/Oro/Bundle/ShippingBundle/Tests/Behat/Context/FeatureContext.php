@@ -290,4 +290,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             'Disabled'
         );
     }
+
+    /**
+     * Press agree in pop-up
+     *
+     * @Given /^(?:|I )agree that shipping cost may have changed$/
+     */
+    public function iAgreeThatShippingCostMayHaveChanged()
+    {
+        $saveLink = $this->getPage()->find('css', '.oro-modal-normal .ok.btn-primary');
+        self::assertNotNull($saveLink, "Can't find modal window or 'Save' button");
+        $saveLink->click();
+    }
 }

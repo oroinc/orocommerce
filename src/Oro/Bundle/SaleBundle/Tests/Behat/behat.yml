@@ -16,7 +16,9 @@ oro_behat_extension:
         - OroSaleBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
         - OroWarehouseBundle::FeatureContext
-        - OroSalesBundle::FeatureContext
+        - OroShippingBundle::FeatureContext
+        - OroProductBundle::FeatureContext
+        - OroRFPBundle::FeatureContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
