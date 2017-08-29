@@ -34,7 +34,13 @@ class SluggableUrlDumper
     public function dump($routeName, array $entityIds)
     {
         foreach ($this->slugRepository->getSlugDataForDirectUrls($entityIds) as $slug) {
-            $this->cache->setUrl($routeName, $slug['routeParameters'], $slug['url'], $slug['slugPrototype']);
+            $this->cache->setUrl(
+                $routeName,
+                $slug['routeParameters'],
+                $slug['url'],
+                $slug['slugPrototype'],
+                $slug['localization_id']
+            );
         }
 
         $this->cache->flush();

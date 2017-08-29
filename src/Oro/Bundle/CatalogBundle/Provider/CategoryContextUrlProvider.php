@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderInterface;
@@ -25,13 +26,23 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
     private $cache;
 
     /**
+     * @var UserLocalizationManager
+     */
+    private $userLocalizationManager;
+
+    /**
      * @param RequestStack $requestStack
      * @param UrlStorageCache $cache
+     * @param UserLocalizationManager $userLocalizationManager
      */
-    public function __construct(RequestStack $requestStack, UrlStorageCache $cache)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        UrlStorageCache $cache,
+        UserLocalizationManager $userLocalizationManager
+    ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
+        $this->userLocalizationManager = $userLocalizationManager;
     }
 
     /**
@@ -50,9 +61,15 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
             }
         }
         if (!$contextUrl) {
+            $localizationId = null;
+            if ($localization = $this->userLocalizationManager->getCurrentLocalization()) {
+                $localizationId = $localization->getId();
+            }
+
             $contextUrl = $this->cache->getUrl(
                 self::CATEGORY_ROUTE_NAME,
-                [self::CATEGORY_ID => $data, self::INCLUDE_SUBCATEGORIES => true]
+                [self::CATEGORY_ID => $data, self::INCLUDE_SUBCATEGORIES => true],
+                $localizationId
             );
         }
 
