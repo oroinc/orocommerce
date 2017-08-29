@@ -83,12 +83,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShippingMethodsConfigsRulesWithConfigs::class,
         ], $paymentFixtures, $inventoryFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
-        $this->simulateAuthentication(
-            TestCustomerUserData::AUTH_USER,
-            TestCustomerUserData::AUTH_PW,
-            'customer_identity',
-            CustomerUser::class
-        );
     }
 
     /**

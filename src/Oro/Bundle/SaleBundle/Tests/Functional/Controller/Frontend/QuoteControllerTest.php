@@ -616,7 +616,7 @@ class QuoteControllerTest extends WebTestCase
         $this->client->getCookieJar()->clear();
 
         $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
 
         $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
         $this->assertSame($response->getStatusCode(), 302);

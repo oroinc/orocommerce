@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUserACLData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
@@ -100,12 +102,6 @@ class AjaxLineItemControllerAclTest extends WebTestCase
 
     public function testAddProductsToNewMassAction()
     {
-        $this->simulateAuthentication(
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-            LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-            'customer_identity',
-            CustomerUser::class
-        );
         $this->client->request(
             'GET',
             $this->getUrl(

@@ -1,0 +1,21 @@
+{% block _rfp_success_message_widget %}
+    <div class="rfp-request__success">
+        <h1 class="rfp-request__success__title">
+            {{- 'oro.frontend.rfp.request.success.thank_you.label'|trans -}}
+        </h1>
+
+        <div class="rfp-request__success__order">
+            {% if is_granted('VIEW', request) %}
+                <p>{{ 'oro.frontend.rfp.request.success.request_number.label'|trans }} {{ request.id }}
+                    (<a href="{{ path('oro_rfp_frontend_request_view', {id: request.id}) }}">
+                    {{- 'oro.frontend.rfp.request.success.click_to_review.label'|trans }}</a>)
+                </p>
+            {% endif %}
+            <p>{{ 'oro.frontend.rfp.request.success.receive_email.label'|trans }}</p>
+        </div>
+
+        <a href="{{ path('oro_frontend_root') }}" class="btn btn--info rfp-request__success__btn">
+            {{- 'oro.frontend.rfp.request.success.done.label'|trans -}}
+        </a>
+    </div>
+{% endblock %}
