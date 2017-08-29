@@ -4,25 +4,15 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Functional\Helper;
 
 use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\UserBundle\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\UserBundle\Tests\Functional\Helper\AdminUserTrait;
 
 trait FedexIntegrationTrait
 {
-    /**
-     * @return ContainerInterface
-     */
-    abstract public static function getContainer();
+    use AdminUserTrait;
 
     protected function createFedexIntegrationSettings(bool $enabled = true)
     {
-        /** @var User $admin */
-        $admin = static::getContainer()
-            ->get('doctrine')
-            ->getManager()
-            ->getRepository('OroUserBundle:User')
-            ->findOneBy(['email' => WebTestCase::AUTH_USER]);
+        $admin = $this->getAdminUser();
 
         $settings = new FedexIntegrationSettings();
         $settings
@@ -38,7 +28,15 @@ trait FedexIntegrationTrait
             ->get('doctrine')
             ->getManager()
             ->getRepository('OroFedexShippingBundle:ShippingService')
-            ->findAll();
+            ->findBy([
+                'code' => [
+                    'EUROPE_FIRST_INTERNATIONAL_PRIORITY',
+                    'FEDEX_1_DAY_FREIGHT',
+                    'FEDEX_2_DAY',
+                    'FEDEX_2_DAY_AM',
+                    'FEDEX_2_DAY_FREIGHT',
+                ]
+            ]);
         foreach ($services as $service) {
             $settings->addShippingService($service);
         }
