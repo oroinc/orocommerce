@@ -528,8 +528,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
 
-
-    oro_checkout.event_listener.customer_user_register_listener:
+    oro_checkout.event_listener.customer_user_register:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener'
         arguments:
             - '@request_stack'
@@ -544,4 +543,3 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Manager\CheckoutManager'
         arguments:
             - '@oro_entity.doctrine_helper'
-
