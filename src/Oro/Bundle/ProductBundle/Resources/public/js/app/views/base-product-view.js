@@ -145,14 +145,6 @@ define(function(require) {
             this.getElement('lineItem').addClass('disabled');
         },
 
-        _getUnitPrecision: function() {
-            if (_.has(this.model.get('product_units'), this.model.get('unit'))) {
-                return this.model.get('product_units')[this.model.get('unit')];
-            }
-
-            return 0;
-        },
-
         dispose: function() {
             delete this.modelAttr;
             delete this.rowId;

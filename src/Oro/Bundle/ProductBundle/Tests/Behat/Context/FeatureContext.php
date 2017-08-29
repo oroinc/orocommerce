@@ -32,7 +32,6 @@ use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -952,26 +951,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 throw $e;
             }
         }
-    }
-
-    /**
-     * Example: The "FieldName" field should contain value "value"
-     *
-     * @Then /^The "(?P<elementName>[^"]*)" field should contain value "(?P<elementValue>[^"]*)"$/
-     * @param string $elementName
-     * @param string $elementValue
-     * @return bool
-     */
-    public function theFieldShouldContainValue($elementName, $elementValue)
-    {
-        if ($this->hasElement($elementName)) {
-            $element = $this->findElement($elementName);
-            if ($element->getValue() === $elementValue) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
