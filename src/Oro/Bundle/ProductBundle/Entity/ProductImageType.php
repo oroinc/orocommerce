@@ -6,7 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="oro_product_image_type")
+ * @ORM\Table(
+ *     name="oro_product_image_type",
+ *     indexes={
+ *         @ORM\Index(name="idx_oro_product_image_type_type", columns={"type"})
+ *     }
+ * )
  */
 class ProductImageType
 {

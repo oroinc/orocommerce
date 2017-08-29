@@ -704,6 +704,9 @@ datagrids:
                     - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
                     - text.type as type
+                    - text.image_product_medium as image_product_medium
+                    - text.image_product_large as image_product_large
+                    - text.product_units as product_units
                 from:
                     - oro_product_WEBSITE_ID
         columns:

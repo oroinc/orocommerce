@@ -48,7 +48,7 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
         );
     }
 
-    public function testUpdateSchedulesIntersectASD()
+    public function testUpdateSchedulesIntersectB()
     {
         $schedule = $this->getScheduleToTest();
 
@@ -77,6 +77,30 @@ class PriceListScheduleAdvancedTest extends AbstractPriceListScheduleTest
                             ],
                     ],
             ]
+        );
+
+        static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
+        static::assertContains(
+            'Price list schedule segments should not intersect',
+            $response->getContent()
+        );
+    }
+
+    public function testCreateSchedulesIntersect()
+    {
+        $response = $this->post(
+            ['entity' => 'pricelistschedules'],
+            'price_list_schedule/price_list_schedules_create.yml'
+        );
+
+        $this->assertResponseContains('../requests/price_list_schedule/price_list_schedules_create.yml', $response);
+
+        $routeParameters = self::processTemplateData(['entity' => 'pricelistschedules']);
+        $parameters = $this->getRequestData('price_list_schedule/price_list_schedules_create.yml');
+        $response = $this->request(
+            'POST',
+            $this->getUrl('oro_rest_api_post', $routeParameters),
+            $parameters
         );
 
         static::assertResponseStatusCodeEquals($response, Response::HTTP_BAD_REQUEST);
