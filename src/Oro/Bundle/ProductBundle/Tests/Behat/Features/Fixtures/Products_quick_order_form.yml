@@ -51,7 +51,7 @@ Oro\Bundle\CatalogBundle\Entity\Category:
 
 Oro\Bundle\ProductBundle\Entity\Product:
     product1:
-        sku: 'PSKU1'
+        sku: 'psku1'
         type: 'simple'
         organization: '@organization'
         owner: '@businessUnit'
