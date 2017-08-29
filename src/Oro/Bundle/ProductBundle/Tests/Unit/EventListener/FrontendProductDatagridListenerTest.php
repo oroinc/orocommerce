@@ -214,9 +214,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id'                   => 1,
                         'image_product_medium' => '/image/1/medium',
                         'image_product_large'  => '/image/1/large',
-                        'product_units'        => 'each|set'
+                        'product_units'        => serialize(['each' => 3, 'set' => 0])
                     ],
-                    ['id' => 2, 'product_units' => 'bottle'],
+                    ['id' => 2, 'product_units' => serialize(['bottle' => 0])],
                     [
                         'id'                   => 3,
                         'image_product_medium' => '/image/3/medium',
@@ -228,7 +228,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id'            => 1,
                         'image'         => '/image/1/medium',
                         'expectedUnits' => [
-                            'each' => 0,
+                            'each' => 3,
                             'set' => 0
                         ]
                     ],
