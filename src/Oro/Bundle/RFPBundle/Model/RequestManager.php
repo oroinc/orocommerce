@@ -41,54 +41,20 @@ class RequestManager
     }
 
     /**
-     * @param Request $request
-     *
      * @return Request
      */
-    public function appendUserData(Request $request)
+    public function create()
     {
+        $request = new Request();
         $user = $this->tokenAccessor->getUser();
-        $token = $this->tokenAccessor->getToken();
-        if ($token instanceof AnonymousCustomerUserToken) {
-            $visitor = $token->getVisitor();
-            $user = $visitor->getCustomerUser();
-            if ($user === null) {
-                $user = $this->guestCustomerUserManager
-                    ->generateGuestCustomerUser([
-                        'email' => $request->getEmail(),
-                        'first_name' => $request->getFirstName(),
-                        'last_name' => $request->getLastName()
-                    ]);
-
-                $em = $this->doctrineHelper->getEntityManager(CustomerUser::class);
-
-                $em->persist($user);
-                $em->flush($user);
-
-                $visitor->setCustomerUser($user);
-            }
-        }
-
         if ($user instanceof CustomerUser) {
             $request
                 ->setCustomerUser($user)
-                ->setCustomer($user->getCustomer());
-
-            if (!$request->getEmail()) {
-                $request->setEmail($user->getEmail());
-            }
-
-            if (!$request->getFirstName()) {
-                $request->setFirstName($user->getFirstName());
-            }
-
-            if (!$request->getLastName()) {
-                $request->setLastName($user->getLastName());
-            }
-
-            if (!$request->getCompany()) {
-                $request->setCompany($user->getCustomer()->getName());
-            }
+                ->setCustomer($user->getCustomer())
+                ->setFirstName($user->getFirstName())
+                ->setLastName($user->getLastName())
+                ->setCompany($user->getCustomer()->getName())
+                ->setEmail($user->getEmail());
         }
 
         return $request;

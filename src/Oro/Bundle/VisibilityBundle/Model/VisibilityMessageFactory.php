@@ -11,8 +11,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class VisibilityMessageFactory implements MessageFactoryInterface
 {
-    const ID = 'id';
-    const ENTITY_CLASS_NAME = 'entity_class_name';
     const TARGET_CLASS_NAME = 'target_class_name';
     const SCOPE_ID = 'scope_id';
     const TARGET_ID = 'target_id';
@@ -71,7 +69,7 @@ class VisibilityMessageFactory implements MessageFactoryInterface
             ->getRepository($data[self::ENTITY_CLASS_NAME])
             ->find($data[self::ID]);
 
-        if (!$visibility && $data[self::TARGET_CLASS_NAME]) {
+        if (!$visibility && array_key_exists(self::TARGET_CLASS_NAME, $data)) {
             $target = $this->registry->getManagerForClass($data[self::TARGET_CLASS_NAME])
                 ->getRepository($data[self::TARGET_CLASS_NAME])
                 ->find($data[self::TARGET_ID]);
@@ -108,12 +106,13 @@ class VisibilityMessageFactory implements MessageFactoryInterface
                 [
                     self::ID,
                     self::ENTITY_CLASS_NAME,
-                    self::TARGET_CLASS_NAME,
-                    self::TARGET_ID,
-                    self::SCOPE_ID,
                 ]
             );
-
+            $resolver->setDefined([
+                self::TARGET_CLASS_NAME,
+                self::TARGET_ID,
+                self::SCOPE_ID,
+            ]);
             $resolver->setAllowedTypes(self::ID, 'int');
             $resolver->setAllowedTypes(self::TARGET_ID, 'int');
             $resolver->setAllowedTypes(self::SCOPE_ID, 'int');
@@ -127,12 +126,6 @@ class VisibilityMessageFactory implements MessageFactoryInterface
             );
 
             $resolver->setAllowedTypes(self::ENTITY_CLASS_NAME, 'string');
-            $resolver->setAllowedValues(
-                self::ENTITY_CLASS_NAME,
-                function ($className) {
-                    return class_exists($className) && is_a($className, VisibilityInterface::class, true);
-                }
-            );
 
             $this->resolver = $resolver;
         }

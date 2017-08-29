@@ -47,10 +47,6 @@ services:
 
     oro_rfp.form.type.frontend_request:
         class: 'Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType'
-        arguments:
-            - "@oro_config.manager"
-            - "@doctrine"
-            - "@oro_rfp.request.manager"
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
         tags:

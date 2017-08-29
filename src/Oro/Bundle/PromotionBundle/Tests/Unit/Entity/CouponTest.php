@@ -20,7 +20,7 @@ class CouponTest extends \PHPUnit_Framework_TestCase
                 ['code', 'some string'],
                 ['totalUses', 1],
                 ['usesPerCoupon', 1],
-                ['usesPerUser', 1],
+                ['usesPerPerson', 1],
                 ['owner', new BusinessUnit()],
                 ['organization', new Organization()],
                 ['createdAt', $now, false],

@@ -1,5 +1,19 @@
 layout:
-    actions: []
+    actions:
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                 '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
+        - '@setOption':
+            id: page_title
+            optionName: defaultValue
+            optionValue: 'oro.checkout.open_order.label'
+        - '@setOption':
+            id: checkout_order_summary_line_items_container
+            optionName: keepState
+            optionValue: true
+
     imports:
         -
             id: oro_checkout_content

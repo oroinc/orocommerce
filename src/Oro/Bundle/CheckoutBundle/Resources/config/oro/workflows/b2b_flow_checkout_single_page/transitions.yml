@@ -89,7 +89,7 @@ workflows:
                                 - 'payment-methods:refresh'
                                 - 'shipping-methods:refresh'
                         ignoreTargets:
-                            - '.checkout-payment-methods .checkout__form__payment-container'
+                            - '.checkout-payment-methods .checkout-form__payment-container'
                         enableOnLoad: false
                 form_options:
                     attribute_fields:

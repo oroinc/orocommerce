@@ -12,7 +12,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CheckoutFormRow:
-      selector: '.checkout__form span.custom-radio__text'
+      selector: '.checkout-form span.custom-radio__text'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Flat Rate Shipping Method Icon:
@@ -84,3 +84,8 @@ oro_behat_extension:
     Deactivate Integration Confirm Button:
       selector: '.modal-footer .btn-primary'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Shipping Method Flat Rate Radio Button:
+      selector:
+        type: 'xpath'
+        locator: "//input[@name='possibleShippingMethodType']"

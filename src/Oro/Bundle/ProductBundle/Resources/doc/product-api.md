@@ -3,11 +3,13 @@ Product API
 
 Table of Contents
 -----------------
+
  - [GET Products](#get-products)
  - [PATCH Product](#patch-product)
 
 GET Products
 ============
+
 Returns a collection of **Products**.
 
 This API can be used to retrieve Inventory-Statuses.
@@ -16,21 +18,25 @@ One or more Product SKUs can be provided in order to filter the received data.
 
 Resource URL
 ------------
+
 `{web_backend_prefix}/api/products/`
 
 Request Headers
 ---------------
+
 ``Content-Type:  application/vnd.api+json``
 
-Do not forget to add the request headers for authentication.
+Remember to add request headers for authentication.
 
 Resource Information
 --------------------
+
 - Response formats - JSON (default), HTML, XML, etc
 - Requires authentication? - Yes
 
 Parameters
 ----------
+
 ### sku
 Product SKU(s).
 
@@ -40,16 +46,19 @@ E.g.: `filter[sku]=0RT28` or `filter[sku]=0RT28,1AB92`
 
 Authentication Requirements
 ---------------------------
+
 WSSE authentication is required.
 
 ACL permission to view products is required.
 
 Example Request
 ---------------
+
 http://demo.orocommerce.com/admin/api/products?filter[sku]=0RT28
 
 Example Response
 ----------------
+
 ```json
 {
   "data": [
@@ -109,6 +118,7 @@ Example Response
 
 PATCH Product
 =============
+
 Updates a single **Product**.
 
 This API can be used to update the Inventory-Status of a Product.
@@ -117,21 +127,25 @@ One Product SKU must be provided in order to identify the Product.
 
 Resource URL
 ------------
+
 `{web_backend_prefix}/api/products/{sku}`
 
 Request Headers
 ---------------
+
 ``Content-Type:  application/vnd.api+json``
 
-Do not forget to add the request headers for authentication.
+Remember to add request headers for authentication.
 
 Resource Information
 --------------------
+
 - Response formats - JSON (default), HTML, XML, etc
 - Requires authentication? - Yes
 
 Parameters
 ----------
+
 ### type
 Type of the resource.
 
@@ -169,16 +183,19 @@ E.g.:
 
 Authentication Requirements
 ---------------------------
+
 WSSE authentication is required.
 
 ACL permission to update products is required.
 
 Example Request
 ---------------
+
 http://demo.orocommerce.com/admin/api/products/0RT28
 
 Example Request Body
 --------------------
+
 ```json
 {
   "data": {
@@ -198,6 +215,7 @@ Example Request Body
 
 Example Response
 ----------------
+
 ```json
 {
   "data": {

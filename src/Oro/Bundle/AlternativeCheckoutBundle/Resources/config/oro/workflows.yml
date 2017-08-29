@@ -192,6 +192,7 @@ workflows:
                         page-component-module: oroproduct/js/app/components/quick-add-form-button-component
                         page-component-options:
                             component_name: '[name$="[component]"]'
+                            confirmation: $.result.isReachedLimit
                 init_routes:
                     - oro_product_frontend_quick_add
                     - oro_product_frontend_quick_add_copy_paste
@@ -512,12 +513,14 @@ workflows:
                         attribute: $.result.isAllowed
                         service: oro_shopping_list.processor.quick_add_to_checkout
                         method: isAllowed
+                    - '@call_service_method':
+                       attribute: $.result.isReachedLimit
+                       service: oro_shopping_list.manager.shopping_list_limit
+                       method: isReachedLimit
                 preconditions:
                     '@and':
                         - '@not_empty': $init_context
                         - '@equal': [true, $.result.isAllowed]
-                        - '@feature_enabled':
-                            feature: 'shopping_list_create'
 
             start_from_shoppinglist_definition:
                 preactions:

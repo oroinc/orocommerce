@@ -4,6 +4,12 @@ oro_behat_extension:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder
       selector: 'div.layout-content'
 
+    Order Billing Address Select:
+      selector: '[name="oro_order_type[billingAddress][customerAddress]"]'
+
+    Order Shipping Address Select:
+      selector: '[name="oro_order_type[shippingAddress][customerAddress]"]'
+
     BackendOrderLineItem:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrderLineItem
       selector: 'tr'
@@ -103,5 +109,9 @@ oro_behat_extension:
         - OroFormBundle::FormContext
         - OroCustomerBundle::CustomerUserContext
         - OroCheckoutBundle::FeatureContext
+        - OroConfigBundle::FeatureContext
+        - OroActionBundle::OroActionContext
+        - OroOrderBundle::OrderContext
+        - OroNavigationBundle::FeatureContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

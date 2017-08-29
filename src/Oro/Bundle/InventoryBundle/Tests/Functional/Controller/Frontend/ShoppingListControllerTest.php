@@ -12,7 +12,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 /**
  * @dbIsolationPerTest
@@ -47,13 +46,6 @@ class ShoppingListControllerTest extends WebTestCase
                 'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
             ]
-        );
-
-        $this->simulateAuthentication(
-            LoadCustomerUserData::AUTH_USER,
-            LoadCustomerUserData::AUTH_PW,
-            'customer_identity',
-            CustomerUser::class
         );
 
         $this->emProduct = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityManager(Product::class);

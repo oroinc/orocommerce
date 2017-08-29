@@ -52,170 +52,24 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @dataProvider loggedUserDataProvider
-     *
-     * @param mixed $user
-     * @param Request $request
-     * @param Request $expected
-     */
-    public function testAppendUserData($user, Request $request, Request $expected)
-    {
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('getUser')
-            ->willReturn($user);
-
-        $this->requestManager->appendUserData($request);
-
-        $this->assertEquals($expected->getEmail(), $request->getEmail());
-        $this->assertEquals($expected->getFirstName(), $request->getFirstName());
-        $this->assertEquals($expected->getLastName(), $request->getLastName());
-        $this->assertEquals($expected->getCompany(), $request->getCompany());
-    }
-
-    /**
-     * @return array
-     */
-    public function loggedUserDataProvider()
+    public function testCreate()
     {
         $customer = new Customer();
-        $customer->setName('customer name');
-
-        $user = new CustomerUser();
-        $user->setCustomer($customer);
-        $user->setEmail('test@example.com');
-        $user->setFirstName('first name');
-        $user->setLastName('last name');
-
-        $request = new Request();
-        $request->setCustomerUser($user);
-        $request->setCustomer($user->getCustomer());
-
-        return [
-            'empty user' => [
-                'user' => null,
-                'request' => new Request(),
-                'expected' => new Request(),
-            ],
-            'without additional data' => [
-                'user' => $user,
-                'request' => $request,
-                'expected' => $request->setEmail($user->getEmail())
-                    ->setFirstName($user->getFirstName())
-                    ->setLastName($user->getLastName())
-                    ->setCompany($user->getCustomer()->getName()),
-            ],
-            'with email' => [
-                'user' => $user,
-                'request' => $request->setEmail('test1@example.com'),
-                'expected' => $request->setFirstName($user->getFirstName())
-                    ->setLastName($user->getLastName())
-                    ->setCompany($user->getCustomer()->getName()),
-            ],
-            'with first name' => [
-                'user' => $user,
-                'request' => $request->setFirstName('first name 1'),
-                'expected' => $request->setEmail($user->getEmail())
-                    ->setLastName($user->getLastName())
-                    ->setCompany($user->getCustomer()->getName()),
-            ],
-            'with last name' => [
-                'user' => $user,
-                'request' => $request->setLastName('last name 1'),
-                'expected' => $request->setEmail($user->getEmail())
-                    ->setFirstName($user->getFirstName())
-                    ->setCompany($user->getCustomer()->getName()),
-            ],
-            'with company' => [
-                'user' => $user,
-                'request' => $request->setCompany('company'),
-                'expected' => $request->setEmail($user->getEmail())
-                    ->setFirstName($user->getFirstName())
-                    ->setLastName($user->getLastName()),
-            ],
-        ];
-    }
-
-    public function testAppendUserDataWithGuestCustomerUser()
-    {
         $customerUser = new CustomerUser();
-        $customerUser->setCustomer(new Customer());
-        $customerUser->setEmail('test@example.com');
-        $customerUser->setOrganization(new Organization());
-
-        $visitor = new CustomerVisitor();
-        $visitor->setCustomerUser($customerUser);
-
-        /** @var AnonymousCustomerUserToken|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $token->expects($this->once())
-            ->method('getVisitor')
-            ->willReturn($visitor);
-
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $request = new Request();
-
-        $this->requestManager->appendUserData($request);
-
-        $this->assertEquals('test@example.com', $request->getEmail());
-    }
-
-    public function testAppendUserDataCreateGuestCustomerUser()
-    {
-        $customerUser = new CustomerUser();
-        $customerUser->setCustomer(new Customer());
-        $customerUser->setOrganization(new Organization());
-
-        $visitor = new CustomerVisitor();
-
-        $this->guestCustomerUserManager
-            ->expects($this->once())
-            ->method('generateGuestCustomerUser')
-            ->with([
-                'email' => 'test@example.com',
-                'first_name' => 'first_name',
-                'last_name' => 'last_name',
-            ])
+        $customerUser->setCustomer($customer);
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($customerUser);
+        $expected = new Request();
+        $expected->setCustomerUser($customerUser);
+        $expected->setCustomer($customer);
 
-        /** @var EntityManager||\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManager::class);
-        $em->expects($this->once())
-            ->method('persist')
-            ->with($customerUser);
-
-        $em->expects($this->once())
-            ->method('flush')
-            ->with($customerUser);
-
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityManager')
-            ->with(CustomerUser::class)
-            ->willReturn($em);
-
-        /** @var AnonymousCustomerUserToken|\PHPUnit_Framework_MockObject_MockObject $token */
-        $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $token->expects($this->once())
-            ->method('getVisitor')
-            ->willReturn($visitor);
-
-        $this->tokenAccessor
-            ->expects($this->once())
-            ->method('getToken')
-            ->willReturn($token);
-
-        $request = new Request();
-        $request->setEmail('test@example.com');
-        $request->setFirstName('first_name');
-        $request->setLastName('last_name');
-
-        $this->requestManager->appendUserData($request);
+        $actual = $this->requestManager->create();
+        $this->assertInstanceOf(Request::class, $actual);
+        $this->assertEquals($expected->getCustomer(), $actual->getCustomer());
+        $this->assertEquals($expected->getCustomerUser(), $actual->getCustomerUser());
+        $this->assertEquals($expected->getCreatedAt(), $actual->getCreatedAt(), '', 5);
+        $this->assertEquals($expected->getUpdatedAt(), $actual->getUpdatedAt(), '', 5);
     }
 
     public function testAddProductItemToRequest()

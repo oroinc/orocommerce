@@ -220,6 +220,7 @@ oro:
                 edit.label: '[Related Products] Edit related products'
             upsell_products:
                 edit.label: '[Up-sell Products] Edit up-sell products'
+            quick_add.label: Quick order form
 
         rounding:
             type:
@@ -284,6 +285,7 @@ oro:
                 featured_products_segment.title: 'Featured Products Segment'
                 quick_order.title: Quick Order Form
                 quick_order_form.title: Quick Order Form
+                guest_quick_order_form.title: Guest Quick Order Form
                 new_product_icons.title: New Product Icons
                 product_promotions.title: Promotions
                 new_arrivals.title: New Arrivals
@@ -325,6 +327,8 @@ oro:
                     label: 'Use Slider On Mobile'
                     tooltip: 'When slider is enabled, the "Up-sell Products" block will occupy less screen space, while showing larger product images.'
                 enable_quick_order_form.title: Enable Quick Order Form
+                guest_quick_order_form.title: Enable Guest Quick Order Form
+                guest_quick_order_form.tooltip: Enable Quick Order Form for guests
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
                 single_unit_mode_show_code.label: 'Show Unit Code'
@@ -697,6 +701,9 @@ oro:
         quick_order_form:
             label: Quick Order Form
             description: Quick Order Form functionality allows users to have a simpler and faster way of making orders or requests for quote
+        guest_quick_order_form:
+            label: Guest Quick Order Form
+            description: Enable Quick Order Form for guests
         quick_add_import_help_widget:
             important: Important
             invalid_records: We have not been able to identify some of the product references in the uploaded file. Please review the data below and make necessary corrections to upload again.

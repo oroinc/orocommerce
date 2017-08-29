@@ -192,11 +192,13 @@ class RequestControllerNotificationTest extends WebTestCase
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
         $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
         $emailMessages = $emailLogger->getMessages();
-        $i = 0;
+        $actualUsersSentTo = [];
+        foreach ($emailMessages as $message) {
+            $actualUsersSentTo = array_merge($actualUsersSentTo, array_keys($message->getTo()));
+        }
+
         foreach ($usersToSendTo as $userToSendTo) {
-            $toEmails = array_keys($emailMessages[$i]->getTo());
-            $this->assertEquals($userToSendTo->getEmail(), reset($toEmails));
-            $i++;
+            $this->assertTrue(in_array($userToSendTo->getEmail(), $actualUsersSentTo));
         }
         $this->assertCount($numberOfMessagesExpected, $emailMessages);
     }
@@ -205,13 +207,6 @@ class RequestControllerNotificationTest extends WebTestCase
     {
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
-
-        $this->simulateAuthentication(
-            LoadUserData::ACCOUNT1_USER1,
-            LoadUserData::ACCOUNT1_USER1,
-            'customer_identity',
-            CustomerUser::class
-        );
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request')->form();

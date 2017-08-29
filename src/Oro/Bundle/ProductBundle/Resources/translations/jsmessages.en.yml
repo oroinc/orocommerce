@@ -149,6 +149,12 @@ oro:
                         default: '--'
                 copy_paste:
                     error: 'Some of the products SKUs or units you have provided were not found. Correct them and try again.'
+        dialog:
+            quick_add.confirm:
+                title: 'Create Order'
+                content: 'You have reached the limit of shopping lists. Creating the order will replace your default shopping list with order contents.'
+                continue: 'Create Order'
+                cancel: 'Cancel'
         product_collection:
             filter_query:
                 continue: Continue
