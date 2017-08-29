@@ -684,7 +684,6 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
-        - OroAuthorizeNetBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext
         - OroShippingBundle::FeatureContext

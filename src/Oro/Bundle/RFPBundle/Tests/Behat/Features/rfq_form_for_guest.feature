@@ -18,7 +18,6 @@ Feature: Guest RFQ
     And uncheck "Use default" for "Enable Guest RFQ" field
     And I check "Enable Guest RFQ"
     And I save setting
-    And I go to System/Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Enable guest shopping list" field
     And I check "Enable guest shopping list"
