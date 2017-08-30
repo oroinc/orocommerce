@@ -446,8 +446,7 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-view, method: onView }
-#        TODO: Fix me to work with new Data Structure
-#            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onEdit }
 
     oro_promotion.event_listener.shipping_methods_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\ShippingMethodsListener
@@ -481,8 +480,7 @@ services:
             - '@oro_promotion.applied_discount_manager'
             - '@oro_promotion.provider.discounts_provider'
         tags:
-#        TODO: Fix me to work with new Data Structure
-#            - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
 
     oro_promotion.event_listener.order.discounts:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener
@@ -535,14 +533,6 @@ services:
 
     oro_promotion.twig.extension.coupon_preview:
         class: 'Oro\Bundle\PromotionBundle\Twig\CouponPreviewExtension'
-        public: false
-        arguments:
-            - "@service_container"
-        tags:
-            - { name: twig.extension }
-
-    oro_promotion.twig.extension.applied_discounts:
-        class: 'Oro\Bundle\PromotionBundle\Twig\AppliedDiscountsExtension'
         public: false
         arguments:
             - "@service_container"
@@ -645,3 +635,9 @@ services:
         decorates: oro_promotion.provider.promotion_discounts_provider
         arguments:
             - '@oro_promotion.provider.disabled_promotion_discounts_provider_decorator.inner'
+
+    oro_promotion.event_listener.order_applied_promotion_event_listener:
+        class: Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener
+        parent: oro_order.event_listener.order.form.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }

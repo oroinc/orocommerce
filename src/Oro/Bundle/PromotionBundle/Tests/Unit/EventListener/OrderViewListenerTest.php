@@ -67,7 +67,7 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
         $environment = $this->createMock(\Twig_Environment::class);
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroPromotionBundle:Order:promotions_collection.html.twig', ['form' => $formView])
+            ->with('OroPromotionBundle:Order:applied_promotions_and_coupons.html.twig', ['form' => $formView])
             ->willReturn($template);
 
         $event = new BeforeListRenderEvent($environment, $scrollData, new Order(), $formView);

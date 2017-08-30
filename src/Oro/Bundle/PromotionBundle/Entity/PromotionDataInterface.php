@@ -12,7 +12,8 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
 interface PromotionDataInterface extends
     RuleOwnerInterface,
     ScopeCollectionAwareInterface,
-    ScheduleIntervalsAwareInterface
+    ScheduleIntervalsAwareInterface,
+    CouponsAwareInterface
 {
     /**
      * @return int

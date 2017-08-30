@@ -16,14 +16,22 @@ services:
         tags:
             - { name: form.type, alias: oro_promotion_coupon_generation_type  }
 
-    oro_promotion.form.type.applied_discount_collection_table:
-        class: 'Oro\Bundle\PromotionBundle\Form\Type\AppliedDiscountCollectionTableType'
+    oro_promotion.form.type.applied_coupon:
+        class: Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponType
         tags:
-            - { name: form.type, alias: oro_promotion_applied_discount_collection_table }
+            - { name: form.type, alias: oro_promotion_applied_coupon }
 
-    oro_promotion.form.type.applied_discount_row:
-        class: 'Oro\Bundle\PromotionBundle\Form\Type\AppliedDiscountRowType'
-        arguments:
-            - '@doctrine'
+    oro_promotion.form.type.applied_coupon_collection:
+        class: Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType
         tags:
-            - { name: form.type, alias: oro_promotion_applied_discount_row_type }
+            - { name: form.type, alias: oro_promotion_applied_coupon_collection }
+
+    oro_promotion.form.type.applied_promotion:
+        class: Oro\Bundle\PromotionBundle\Form\Type\AppliedPromotionType
+        tags:
+            - { name: form.type, alias: oro_promotion_applied_promotion }
+
+    oro_promotion.form.type.applied_promotion_collection_table:
+        class: Oro\Bundle\PromotionBundle\Form\Type\AppliedPromotionCollectionTableType
+        tags:
+            - { name: form.type, alias: oro_promotion_applied_promotion_collection_table }

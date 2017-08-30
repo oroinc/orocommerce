@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion as AppliedPromotionEntity;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
@@ -63,8 +63,9 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPromotions()
     {
-        $appliedPromotionEntity1 = new AppliedPromotionEntity();
-        $appliedPromotionEntity2 = new AppliedPromotionEntity();
+        $appliedPromotionEntity1 = $this->getEntity(AppliedPromotion::class, ['id' => 333]);
+        $appliedPromotionEntity2 = $this->getEntity(AppliedPromotion::class, ['id' => 777]);
+        $appliedPromotionEntity3 = new AppliedPromotion();
 
         $appliedPromotion1 = $this->createMock(AppliedPromotionData::class);
         $appliedPromotion2 = $this->createMock(AppliedPromotionData::class);
@@ -84,7 +85,11 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
         $sourceEntity = $this->createMock(AppliedPromotionsAwareInterface::class);
         $sourceEntity->expects($this->any())
             ->method('getAppliedPromotions')
-            ->willReturn(new ArrayCollection([$appliedPromotionEntity1, $appliedPromotionEntity2]));
+            ->willReturn(new ArrayCollection([
+                $appliedPromotionEntity1,
+                $appliedPromotionEntity2,
+                $appliedPromotionEntity3
+            ]));
 
         $filteredPromotion = $this->createMock(PromotionDataInterface::class);
         $promotions = [$filteredPromotion, $this->createMock(PromotionDataInterface::class)];

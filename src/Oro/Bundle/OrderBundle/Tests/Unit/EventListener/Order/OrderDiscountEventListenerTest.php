@@ -66,7 +66,7 @@ class OrderDiscountEventListenerTest extends \PHPUnit_Framework_TestCase
         /** @var OrderEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = static::createMock(OrderEvent::class);
         $event->expects(static::never())
-              ->method('getForm');
+            ->method('getForm');
         $this->listener->onOrderEvent($event);
     }
 }

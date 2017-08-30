@@ -39,7 +39,7 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
     /**
      * @var AppliedCoupon|null
      *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedCoupon")
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedCoupon", cascade={"all"})
      * @ORM\JoinColumn(name="applied_coupon_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
     protected $appliedCoupon;

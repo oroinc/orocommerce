@@ -51,7 +51,7 @@ class OrderViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroPromotionBundle:Order:promotions_collection.html.twig',
+            'OroPromotionBundle:Order:applied_promotions_and_coupons.html.twig',
             ['form' => $event->getFormView()]
         );
 

@@ -20,8 +20,6 @@ class OroPromotionBundleInstaller implements
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
-    const ORDER_COUPONS_RELATION_NAME = 'appliedCoupons';
-
     /**
      * @var ActivityExtension
      */

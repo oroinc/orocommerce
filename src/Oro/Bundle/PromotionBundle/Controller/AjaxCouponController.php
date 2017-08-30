@@ -14,25 +14,23 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class AjaxCouponController extends Controller
 {
     /**
-     * @Route("/get-added-coupons-table", name="oro_promotion_get_added_coupons_table")
+     * @Route(
+     *     "/get-added-coupons-table/{addedCouponIds}",
+     *     name="oro_promotion_get_added_coupons_table",
+     *     defaults={"addedCouponIds"=""}
+     * )
      * @AclAncestor("oro_promotion_coupon_view")
      *
-     * @param Request $request
+     * @param string $addedCouponIds
      * @return JsonResponse
      */
-    public function getAddedCouponsTableAction(Request $request)
+    public function getAddedCouponsTableAction($addedCouponIds)
     {
-        /** @var CouponRepository $couponRepository */
-        $couponRepository = $this->container
-            ->get('doctrine')
-            ->getManagerForClass(Coupon::class)
-            ->getRepository(Coupon::class);
-
-        $ids = $request->request->get('addedCouponIds');
+        $coupons = $this->getCouponRepository()->getCouponsWithPromotionByIds(explode(',', $addedCouponIds));
         $view = $this->renderView(
             'OroPromotionBundle:Coupon:addedCouponsTable.html.twig',
             [
-                'coupons' => $ids ? $couponRepository->getCouponsWithPromotionByIds(explode(',', $ids)) : [],
+                'coupons' => $coupons,
             ]
         );
 
@@ -49,5 +47,42 @@ class AjaxCouponController extends Controller
     public function validateCouponApplicabilityAction(Request $request)
     {
         return $this->get('oro_promotion.handler.coupon_validation_handler')->handle($request);
+    }
+
+    /**
+     * @Route(
+     *     "/get-applied-coupons-data/{couponIds}",
+     *     name="oro_promotion_get_applied_coupons_data",
+     *     defaults={"couponIds"=""}
+     * )
+     * @AclAncestor("oro_promotion_coupon_view")
+     *
+     * @param string $couponIds
+     * @return JsonResponse
+     */
+    public function getAppliedCouponsData($couponIds)
+    {
+        $data = [];
+        $coupons = $this->getCouponRepository()->getCouponsWithPromotionByIds(explode(',', $couponIds));
+        foreach ($coupons as $coupon) {
+            $data[] = [
+                'couponCode' => $coupon->getCode(),
+                'sourcePromotionId' => $coupon->getPromotion()->getId(),
+                'sourceCouponId' => $coupon->getId(),
+            ];
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
+     * @return CouponRepository
+     */
+    private function getCouponRepository()
+    {
+        return $this->container
+            ->get('doctrine')
+            ->getManagerForClass(Coupon::class)
+            ->getRepository(Coupon::class);
     }
 }

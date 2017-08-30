@@ -93,12 +93,27 @@ operations:
                 type: 'success'
             - '@refresh_grid': promotion-coupons-grid
 
+    oro_promotion_add_coupon_form:
+        label: oro.promotion.ui.add_coupon_code.label
+        frontend_options:
+            template: OroPromotionBundle:Coupon:addCouponDialog.html.twig
+        attributes:
+            addedCoupons:
+                label: ' '
+                type: array
+        form_options:
+            attribute_fields:
+                addedCoupons:
+                    form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
+                    options:
+                        entity: $.data
+
     oro_promotion_add_coupon:
         label: oro.promotion.ui.add_coupon_code.label
+        extends: oro_promotion_add_coupon_form
         button_options:
             icon: fa-ticket
         frontend_options:
-            template: OroPromotionBundle:Coupon:addCouponDialog.html.twig
             title: oro.promotion.ui.add_coupon_codes.title
             options:
                 okText: oro.promotion.ui.apply_button.label
@@ -114,16 +129,6 @@ operations:
             - oro_order_view
         acl_resource: oro_order_update
         order: 20
-        attributes:
-            addedCoupons:
-                label: ' '
-                type: array
-        form_options:
-            attribute_fields:
-                addedCoupons:
-                    form_type: Oro\Bundle\PromotionBundle\Form\Type\CouponAddType
-                    options:
-                        entity: $.data
         actions:
             - '@count':
                 attribute: $.addedCouponsCount

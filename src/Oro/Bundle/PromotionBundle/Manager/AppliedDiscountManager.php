@@ -62,9 +62,38 @@ class AppliedDiscountManager
         $discountContext = $this->getPromotionExecutor()->execute($order);
 
         $manager = $this->getAppliedPromotionsManager();
+        $appliedPromotions = [];
         foreach ($this->createAppliedPromotions($discountContext) as $appliedPromotion) {
             $appliedPromotion->setOrder($order);
             $manager->persist($appliedPromotion);
+            $appliedPromotions[] = $appliedPromotion;
+            // TODO: Add needed AppliedCoupon for appliedPromotion (get it from $order->getAppliedCoupons())
+            // maybe need to change $this->getAppliedCoupon() method
+            // also check CouponFiltrationService, maybe we can extract common logic to EntityCouponsProvider
+        }
+
+        // TODO: Remove this overhead after fixing logic of refreshing appliedPromotions state for order entity
+        foreach ($appliedPromotions as $key => $appliedPromotion) {
+            /** @var AppliedPromotion $existingPromotion */
+            foreach ($order->getAppliedPromotions() as $existingPromotion) {
+                if ($existingPromotion->getId()
+                    && $existingPromotion->getSourcePromotionId() === $appliedPromotion->getSourcePromotionId()
+                ) {
+                    unset($appliedPromotions[$key]);
+                    continue 2;
+                }
+
+                if ($existingPromotion->getSourcePromotionId() === $appliedPromotion->getSourcePromotionId()) {
+                    $appliedPromotion->setActive($existingPromotion->isActive());
+                    $order->removeAppliedPromotion($existingPromotion);
+                    $order->addAppliedPromotion($appliedPromotion);
+                    unset($appliedPromotions[$key]);
+                    continue 2;
+                }
+            }
+        }
+        foreach ($appliedPromotions as $appliedPromotion) {
+            $order->addAppliedPromotion($appliedPromotion);
         }
 
         if ($flush) {
@@ -78,7 +107,6 @@ class AppliedDiscountManager
      */
     private function createAppliedPromotions(DiscountContext $discountContext)
     {
-        /** @var AppliedPromotion[] $appliedPromotions */
         $appliedPromotions = [];
         /**
          * @var DiscountInformation $discountInformation

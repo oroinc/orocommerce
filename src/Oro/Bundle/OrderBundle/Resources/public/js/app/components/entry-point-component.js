@@ -63,7 +63,7 @@ define(function(require) {
         },
 
         listenerOn: function() {
-            var callback = _.bind(this.callEntryPoint, this);
+            var callback = _.bind(this._sendEntryPointAjax, this);
 
             var changeCallback = _.bind(function(e) {
                 if (this.timeoutId || $(e.target).is('select')) {
@@ -95,6 +95,14 @@ define(function(require) {
         },
 
         callEntryPoint: function() {
+            mediator.trigger(this.options.events.before);
+            this._sendEntryPointAjax();
+        },
+
+        /**
+         * @private
+         */
+        _sendEntryPointAjax: function() {
             var self = this;
 
             this.listenerOff();

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
@@ -34,7 +35,7 @@ class ActualizeCouponsStateListener
         if ($entity instanceof AppliedCouponsAwareInterface && $request->request->has('addedCouponIds')) {
             $coupons = $this->getAddedCoupons($request->request->get('addedCouponIds'));
             foreach ($coupons as $coupon) {
-                $entity->addAppliedCoupon($coupon);
+                $entity->addAppliedCoupon($this->createAppliedCoupon($coupon));
             }
         }
     }
@@ -51,5 +52,20 @@ class ActualizeCouponsStateListener
             ->getRepository(Coupon::class);
 
         return $ids ? $couponRepository->getCouponsWithPromotionByIds(explode(',', $ids)) : [];
+    }
+
+    /**
+     * @param Coupon $coupon
+     * @return AppliedCoupon
+     */
+    private function createAppliedCoupon(Coupon $coupon)
+    {
+        $appliedCoupon = new AppliedCoupon();
+        $appliedCoupon
+            ->setCouponCode($coupon->getCode())
+            ->setSourceCouponId($coupon->getId())
+            ->setSourcePromotionId($coupon->getPromotion()->getId());
+
+        return $appliedCoupon;
     }
 }

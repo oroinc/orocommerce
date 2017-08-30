@@ -134,9 +134,11 @@ define(function(require) {
             var $addedCouponsContainer = this.$(this.options.selectors.addedCouponsContainerSelector);
             this._showLoadingMask();
             $.ajax({
-                url: routing.generate(this.options.getAddedCouponsTableRoute),
-                type: 'POST',
-                data: {addedCouponIds: this.$(this.options.selectors.addedIdsSelector).val()},
+                url: routing.generate(
+                    this.options.getAddedCouponsTableRoute,
+                    {addedCouponIds: this.$(this.options.selectors.addedIdsSelector).val()}
+                ),
+                type: 'GET',
                 dataType: 'json',
                 success: _.bind($addedCouponsContainer.html, $addedCouponsContainer)
             }).always(_.bind(this._hideLoadingMask, this));

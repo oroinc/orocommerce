@@ -130,6 +130,9 @@ class PromotionProvider
     {
         $appliedPromotions = [];
         foreach ($sourceEntity->getAppliedPromotions() as $appliedPromotionEntity) {
+            if (!$appliedPromotionEntity->getId()) {
+                continue;
+            }
             $appliedPromotions[] = $this->promotionMapper->mapAppliedPromotionToPromotionData($appliedPromotionEntity);
         }
 
