@@ -328,7 +328,10 @@ oro:
                     tooltip: 'When slider is enabled, the "Up-sell Products" block will occupy less screen space, while showing larger product images.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 guest_quick_order_form.title: Enable Guest Quick Order Form
-                guest_quick_order_form.tooltip: Enable Quick Order Form for guests
+                guest_quick_order_form.tooltip: >
+                  Allows guests to use the quick order form. By default, this option is disabled.
+                  For the quick order form to be displayed, at least one of the following options should be enabled:
+                  guest RFQ, guest shopping list or guest checkout.
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
                 single_unit_mode_show_code.label: 'Show Unit Code'

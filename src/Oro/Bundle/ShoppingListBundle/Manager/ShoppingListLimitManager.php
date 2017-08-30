@@ -138,4 +138,19 @@ class ShoppingListLimitManager
     {
         return $this->configManager->get('oro_shopping_list.shopping_list_limit', false, false, $website);
     }
+
+    /**
+     * @return integer
+     */
+    public function getShoppingListLimitForUser()
+    {
+        if (!$this->tokenAccessor->hasUser()) {
+            return 1;
+        }
+        $user = $this->tokenAccessor->getUser();
+
+        return $this->getShoppingListLimit(
+            $user->getWebsite()
+        );
+    }
 }

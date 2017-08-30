@@ -26,6 +26,10 @@ workflows:
                        service: oro_shopping_list.manager.shopping_list_limit
                        method: isReachedLimit
                     - '@call_service_method':
+                       attribute: $.result.shoppingListLimit
+                       service: oro_shopping_list.manager.shopping_list_limit
+                       method: getShoppingListLimitForUser
+                    - '@call_service_method':
                         service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
                         method: isAllowed
                         attribute: $.result.isCheckoutAllowed

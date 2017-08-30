@@ -49,6 +49,9 @@ define(function(require) {
          */
         confirmModalConstructor: Modal,
 
+        /** @property {String} */
+        confirmMessage: null,
+
         /**
          * @inheritDoc
          */
@@ -57,8 +60,16 @@ define(function(require) {
 
             this.$button = this.options._sourceElement;
             this.$form = this.$button.closest('form');
+            this.confirmMessage = __(this.defaultMessages.confirm_content);
 
             if (options.confirmation) {
+                if(options.shopping_list_limit) {
+                    this.confirmMessage = __(
+                        this.defaultMessages.confirm_content,
+                        {'count': options.shopping_list_limit},
+                        options.shopping_list_limit
+                    );
+                }
                 this.confirmation = $.extend(true, {}, this.confirmation, options.confirmation);
             }
 
@@ -122,7 +133,7 @@ define(function(require) {
             if (!this.confirmModal) {
                 this.confirmModal = (new this.confirmModalConstructor({
                     title: __(this.messages.confirm_title),
-                    content: __(this.messages.confirm_content),
+                    content: this.confirmMessage,
                     okText: __(this.messages.confirm_ok),
                     cancelText: __(this.messages.confirm_cancel)
                 }));

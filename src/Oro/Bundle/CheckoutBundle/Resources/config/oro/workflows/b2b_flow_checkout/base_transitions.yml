@@ -28,6 +28,7 @@ workflows:
                         page-component-options:
                             component_name: '[name$="[component]"]'
                             confirmation: $.result.isReachedLimit
+                            shopping_list_limit: $.result.shoppingListLimit
                 init_routes:
                     - oro_product_frontend_quick_add
                     - oro_product_frontend_quick_add_copy_paste

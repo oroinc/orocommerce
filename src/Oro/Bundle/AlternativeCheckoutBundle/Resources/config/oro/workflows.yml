@@ -193,6 +193,7 @@ workflows:
                         page-component-options:
                             component_name: '[name$="[component]"]'
                             confirmation: $.result.isReachedLimit
+                            shopping_list_limit: $.result.shoppingListLimit
                 init_routes:
                     - oro_product_frontend_quick_add
                     - oro_product_frontend_quick_add_copy_paste
@@ -517,6 +518,10 @@ workflows:
                        attribute: $.result.isReachedLimit
                        service: oro_shopping_list.manager.shopping_list_limit
                        method: isReachedLimit
+                    - '@call_service_method':
+                       attribute: $.result.shoppingListLimit
+                       service: oro_shopping_list.manager.shopping_list_limit
+                       method: getShoppingListLimitForUser
                 preconditions:
                     '@and':
                         - '@not_empty': $init_context

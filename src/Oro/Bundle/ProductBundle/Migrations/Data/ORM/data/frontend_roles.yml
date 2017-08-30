@@ -1,0 +1,3 @@
+ANONYMOUS:
+    permissions:
+        action|oro_quick_add_form: [EXECUTE]
