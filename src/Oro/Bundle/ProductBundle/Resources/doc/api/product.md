@@ -90,9 +90,57 @@ a Product entity, in the **"data"** section. Example:
 
 You can see the existing categories using its API [here](#get--admin-api-categories)
 
-##### 5. Specify variants (for configurable products only)
+##### 5. Creating configurable products
 
-When adding a new configurable product you want to specify the variants of that product. To be able to specify
+When creating a product , there are two types available : simple and configurable. Configurable products must
+have custom product attributes in the product attribute family specified and a result product variants can be added to a
+configurable product. A product variant is a simple product attached to a parent configurable product.
+
+To create a configurable product type must be specified in the **"attributes"** section of the product.
+
+Example:
+
+      "attributes": {
+        "sku": "test-api-1"
+        ...
+        "productType": "configurable",
+        "variantFields": ["custom-variant-field"],
+        ...
+        
+      }
+
+The variantFields values must correspond to a custom product attribute within the product attribute family specified in the
+**"relations"** section. Example:
+
+      "attributeFamily": {
+        "data": {
+          "type": "attributefamilies",
+          "id": "1"
+        }
+      },
+
+The above examples are valid if "custom-variant-field" is present in the "attributeFamily" , and the configurable product
+will be created. If the "variantFields" is empty , the configurable product will be created but the variant fields will not be active.
+
+When creating a simple product with a product attribute family that has a configurable attribute, the value of this attribute can be set
+in the **"relations"** section. Example:
+
+      "relationships": {
+      ...
+        "customvariantfield":{
+           "data": {
+             "type": "productcustomvariantfield",
+             "id": "custom-variant-field-id"
+           }
+        }
+      ....
+      }
+
+The simple product with custom attribute can now be linked to a configurable product as a product variant.
+ 
+##### 6. Specify variants (for configurable products only)
+
+When adding a new configurable product you can the variants of that product. To be able to specify
 variants of a product first you have to add a configurable attribute for product entity and create the simple products
 that will be the variants of the configurable product. After these steps you can specify variants for a new configurable 
 product. Example:
@@ -101,7 +149,7 @@ product. Example:
         "data": [
           {
             "type": "productvariantlinks",
-          "id": "variant-link1"
+            "id": "variant-link1"
           },
           {
             "type": "productvariantlinks",
@@ -158,7 +206,7 @@ For **parentProduct** id you need to specify any id of an existing product from 
 the link between the configurable product that is added on this request and the variants will be handled internally
 by the API. In **product** tag we specify the id of the product that will be a variant of the created product.
             
-##### 6. Using product images
+##### 7. Using product images
 
 Add images definition in the **"data"** section. Example:
 
