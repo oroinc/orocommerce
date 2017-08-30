@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -26,10 +28,7 @@ class ProductControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryUnitPrecisionData'
-        ]);
+        $this->loadFixtures([LoadCategoryProductData::class, LoadCategoryUnitPrecisionData::class]);
     }
 
     /**
@@ -38,7 +37,7 @@ class ProductControllerTest extends WebTestCase
      * @param bool $includeSubcategories
      * @param array $expected
      */
-    public function testView($includeSubcategories, $expected)
+    public function testView($includeSubcategories, $includeNotCategorized, $expected)
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -48,6 +47,7 @@ class ProductControllerTest extends WebTestCase
                 'gridName' => 'products-grid',
                 RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
                 RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => $includeSubcategories,
+                RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY => $includeNotCategorized,
             ],
             [],
             true
@@ -60,6 +60,24 @@ class ProductControllerTest extends WebTestCase
         }
     }
 
+    public function testViewWithoutCategoryAndWithNotCategorizedProduct()
+    {
+        $response = $this->client->requestGrid(
+            [
+                'gridName' => 'products-grid',
+                RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY => true,
+            ],
+            [],
+            true
+        );
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertCount(1, $result['data']);
+
+        foreach ($result['data'] as $data) {
+            $this->assertContains($data['sku'], LoadProductData::PRODUCT_8);
+        }
+    }
+
     /**
      * @return array
      */
@@ -68,6 +86,7 @@ class ProductControllerTest extends WebTestCase
         return [
             'includeSubcategories' => [
                 'includeSubcategories' => true,
+                'includeNotCategorized' => false,
                 'expected' => [
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
@@ -76,10 +95,29 @@ class ProductControllerTest extends WebTestCase
             ],
             'excludeSubcategories' => [
                 'includeSubcategories' => false,
+                'includeNotCategorized' => false,
                 'expected' => [
                     LoadProductData::PRODUCT_2,
                 ],
             ],
+            'included subcategories and include not categorized products' => [
+                'includeSubcategories' => true,
+                'includeNotCategorized' => true,
+                'expected' => [
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_8,
+                ],
+            ],
+            'exclude subcategories and include not categorized products' => [
+                'includeSubcategories' => false,
+                'includeNotCategorized' => true,
+                'expected' => [
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_8,
+                ],
+            ]
         ];
     }
 

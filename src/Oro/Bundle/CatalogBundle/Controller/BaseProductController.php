@@ -25,6 +25,19 @@ class BaseProductController extends Controller
         );
     }
 
+    protected function createIncludeNotCategorizedProductForm()
+    {
+        return $this->createForm(
+            'checkbox',
+            null,
+            [
+                'label' => 'oro.catalog.category.include_not_categorized_products.label',
+                'required' => false,
+                'data' => $this->getCatalogRequestHandler()->getIncludeNotCategorizedProductsChoice(),
+            ]
+        );
+    }
+
     /**
      * @return RequestProductHandler
      */
@@ -40,7 +53,8 @@ class BaseProductController extends Controller
     {
         return [
             'defaultCategoryId' => $this->getCatalogRequestHandler()->getCategoryId(),
-            'includeSubcategoriesForm' => $this->createIncludeSubcategoriesForm()->createView()
+            'includeSubcategoriesForm' => $this->createIncludeSubcategoriesForm()->createView(),
+            'includeNotCategorizedProductForm' => $this->createIncludeNotCategorizedProductForm()->createView()
         ];
     }
 }

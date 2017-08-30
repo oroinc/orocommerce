@@ -26,7 +26,8 @@ define(function(require) {
         options: {
             defaultCategoryId: null,
             sidebarAlias: 'products-sidebar',
-            includeSubcategoriesSelector: '.include-sub-categories-choice input[type=checkbox]'
+            includeSubcategoriesSelector: '.include-sub-categories-choice input[type=checkbox]',
+            includeNotCategorizedProductSelector: '.include-not-categorized-product-choice input[type=checkbox]'
         },
 
         /**
@@ -48,12 +49,14 @@ define(function(require) {
                 return;
             }
 
-            this.selectedCategoryId = String(options.defaultCategoryId);
+            this.selectedCategoryId = options.defaultCategoryId;
             this.$tree.jstree('select_node', this.selectedCategoryId);
             this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
 
             this.subcategoriesSelector = $(this.options.includeSubcategoriesSelector);
+            this.notCategorizedProductSelector = $(this.options.includeNotCategorizedProductSelector);
             this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
+            this.notCategorizedProductSelector.on('change', _.bind(this.onIncludeNonCategorizedProductChange, this));
         },
 
         onGridLoadComplete: function(collection) {
@@ -98,15 +101,20 @@ define(function(require) {
         },
 
         onIncludeSubcategoriesChange: function() {
-            if (this.selectedCategoryId !== 'false' && this.selectedCategoryId !== null) {
+            if (this.selectedCategoryId) {
                 this.triggerSidebarChanged();
             }
         },
 
+        onIncludeNonCategorizedProductChange: function () {
+            this.triggerSidebarChanged();
+        },
+
         triggerSidebarChanged: function() {
             var params = {
-                categoryId: this.selectedCategoryId,
-                includeSubcategories: this.subcategoriesSelector.prop('checked') ? 1 : 0
+                categoryId: this.selectedCategoryId ? this.selectedCategoryId : 0,
+                includeSubcategories: this.subcategoriesSelector.prop('checked') ? 1 : 0,
+                includeNotCategorizedProducts: this.notCategorizedProductSelector.prop('checked') ? 1 : 0
             };
 
             params[this.gridName] = _.clone(params);
