@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Routing;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
@@ -30,15 +31,23 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
     private $contextUrlProvider;
 
     /**
+     * @var UserLocalizationManager
+     */
+    private $userLocalizationManager;
+
+    /**
      * @param UrlStorageCache $cache
      * @param ContextUrlProviderRegistry $contextUrlProvider
+     * @param UserLocalizationManager $userLocalizationManager
      */
     public function __construct(
         UrlStorageCache $cache,
-        ContextUrlProviderRegistry $contextUrlProvider
+        ContextUrlProviderRegistry $contextUrlProvider,
+        UserLocalizationManager $userLocalizationManager
     ) {
         $this->cache = $cache;
         $this->contextUrlProvider = $contextUrlProvider;
+        $this->userLocalizationManager = $userLocalizationManager;
     }
 
     /**
@@ -63,16 +72,21 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         $contextUrl = $this->getContextUrl($parameters);
 
         $url = null;
+        $localization = $this->userLocalizationManager->getCurrentLocalization();
+        $localizationId = null;
+        if ($localization) {
+            $localizationId = $localization->getId();
+        }
         $urlDataStorage = $this->getUrlDataStorage($name, $parameters);
         if ($urlDataStorage) {
             // For context aware URLs slug may be used as item part
-            if ($contextUrl && $slug = $urlDataStorage->getSlug($parameters)) {
+            if ($contextUrl && $slug = $urlDataStorage->getSlug($parameters, $localizationId)) {
                 $url = $slug;
             }
 
             // For URLs without context only full URL is acceptable
             if (!$url) {
-                $url = $urlDataStorage->getUrl($parameters);
+                $url = $urlDataStorage->getUrl($parameters, $localizationId);
             }
         }
 

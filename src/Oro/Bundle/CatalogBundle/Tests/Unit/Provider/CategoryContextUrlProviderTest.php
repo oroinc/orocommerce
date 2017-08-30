@@ -3,14 +3,19 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CatalogBundle\Provider\CategoryContextUrlProvider;
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -20,6 +25,11 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
      * @var UrlStorageCache|\PHPUnit_Framework_MockObject_MockObject
      */
     private $cache;
+
+    /**
+     * @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $userLocalizationManager;
 
     /**
      * @var CategoryContextUrlProvider
@@ -34,8 +44,13 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
         $this->cache = $this->getMockBuilder(UrlStorageCache::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
 
-        $this->provider = new CategoryContextUrlProvider($this->requestStack, $this->cache);
+        $this->provider = new CategoryContextUrlProvider(
+            $this->requestStack,
+            $this->cache,
+            $this->userLocalizationManager
+        );
     }
 
     public function testGetUrlByRequest()
@@ -170,6 +185,11 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn(null);
+        $localizationId = 1;
+        $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
 
         $this->cache->expects($this->once())
             ->method('getUrl')
@@ -178,7 +198,8 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
                 [
                     CategoryContextUrlProvider::CATEGORY_ID => $categoryId,
                     CategoryContextUrlProvider::INCLUDE_SUBCATEGORIES => true
-                ]
+                ],
+                $localizationId
             )
             ->willReturn(null);
 
@@ -191,6 +212,12 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
      */
     private function assertCacheCall($categoryId, $categoryUrl)
     {
+        $localizationId = 1;
+        $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         $this->cache->expects($this->once())
             ->method('getUrl')
             ->with(
@@ -198,7 +225,8 @@ class CategoryContextUrlProviderTest extends \PHPUnit_Framework_TestCase
                 [
                     CategoryContextUrlProvider::CATEGORY_ID => $categoryId,
                     CategoryContextUrlProvider::INCLUDE_SUBCATEGORIES => true
-                ]
+                ],
+                $localizationId
             )
             ->willReturn($categoryUrl);
     }

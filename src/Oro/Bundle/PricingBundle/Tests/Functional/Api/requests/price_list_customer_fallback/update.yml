@@ -1,0 +1,5 @@
+data:
+    id: '<toString(@US_customer_1_1_price_list_fallback->id)>'
+    type: 'pricelistcustomerfallbacks'
+    attributes:
+        fallback: 1

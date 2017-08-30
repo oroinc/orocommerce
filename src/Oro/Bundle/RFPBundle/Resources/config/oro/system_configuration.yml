@@ -10,6 +10,10 @@ system_configuration:
         rfp_notifications:
             priority: 100
             title: oro.rfp.system_configuration.groups.notifications.title
+        guest_rfp:
+            title: oro.rfp.system_configuration.groups.guest_rfp.title
+        guest_rfp_owner_section:
+            title: oro.rfp.system_configuration.groups.guest_rfp_owner.title
     fields:
         oro_rfp.backend_product_visibility:
             data_type: array
@@ -63,7 +67,22 @@ system_configuration:
             priority: 10
             options:
                 label: oro.rfp.system_configuration.fields.frontend_feature_enabled.label
-
+        oro_rfp.guest_rfp:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.rfp.system_configuration.fields.guest_rfp.title
+                tooltip: oro.rfp.system_configuration.fields.guest_rfp.tooltip
+        oro_rfp.default_guest_rfp_owner:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            priority: 20
+            options:
+                label: oro.rfp.system_configuration.fields.default_guest_rfp_owner.title
+                tooltip: oro.rfp.system_configuration.fields.default_guest_rfp_owner.tooltip
+                required: true
     tree:
         system_configuration:
             commerce:
@@ -78,6 +97,12 @@ system_configuration:
                                             - oro_rfp.notify_assigned_sales_reps_of_the_customer
                                             - oro_rfp.notify_owner_of_customer_user_record
                                             - oro_rfp.notify_owner_of_customer
+                                    guest_rfp:
+                                        children:
+                                            - oro_rfp.guest_rfp
+                                    guest_rfp_owner_section:
+                                        children:
+                                            - oro_rfp.default_guest_rfp_owner
                     product_inventory:
                         children:
                             allowed_statuses:
