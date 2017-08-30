@@ -17,7 +17,7 @@ class AjaxCouponController extends Controller
      * @Route(
      *     "/get-added-coupons-table/{addedCouponIds}",
      *     name="oro_promotion_get_added_coupons_table",
-     *     defaults={"addedCouponIds"=""}
+     *     defaults={"addedCouponIds"="0"}
      * )
      * @AclAncestor("oro_promotion_coupon_view")
      *
@@ -53,7 +53,7 @@ class AjaxCouponController extends Controller
      * @Route(
      *     "/get-applied-coupons-data/{couponIds}",
      *     name="oro_promotion_get_applied_coupons_data",
-     *     defaults={"couponIds"=""}
+     *     defaults={"couponIds"="0"}
      * )
      * @AclAncestor("oro_promotion_coupon_view")
      *
