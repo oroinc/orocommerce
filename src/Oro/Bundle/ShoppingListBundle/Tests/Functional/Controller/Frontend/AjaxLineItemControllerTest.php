@@ -30,13 +30,6 @@ class AjaxLineItemControllerTest extends WebTestCase
                 LoadCombinedProductPrices::class,
             ]
         );
-
-        $this->simulateAuthentication(
-            LoadCustomerUserData::AUTH_USER,
-            LoadCustomerUserData::AUTH_PW,
-            'customer_identity',
-            CustomerUser::class
-        );
     }
 
     /**

@@ -26,7 +26,7 @@ Feature: Quick order form
     Given I login as AmandaRCole@example.org buyer
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
-      | SKU1 | PSKU1 |
+      | SKU1 | psku1 |
     And I wait for products to load
     And I type "1" in "Quick Order Form > QTY1"
     And I click on empty space
@@ -228,14 +228,14 @@ Feature: Quick order form
       | Paste your order | PSKU1,2,item |
     And I click "Verify Order"
     And "QuickAddForm" must contains values:
-      | SKU1  | PSKU1 - Product1 |
+      | SKU1  | psku1 - Product1 |
       | QTY1  | 2                |
       | UNIT1 | item             |
     When I fill "Quick Add Copy Paste Form" with:
       | Paste your order | PSKU2;2;item |
     And I click "Verify Order"
     And "QuickAddForm" must contains values:
-      | SKU1  | PSKU1 - Product1 |
+      | SKU1  | psku1 - Product1 |
       | QTY1  | 2                |
       | UNIT1 | item             |
       | SKU2  | PSKU2 - Product2 |

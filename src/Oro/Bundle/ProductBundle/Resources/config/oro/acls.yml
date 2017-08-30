@@ -77,3 +77,9 @@ acls:
         label: oro.product.acl.upsell_products.edit.label
         group_name: ""
         category: "catalog"
+
+    oro_quick_add_form:
+        type: action
+        label: oro.product.acl.quick_add.label
+        group_name: "commerce"
+        category: "sales_data"
