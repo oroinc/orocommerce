@@ -15,13 +15,6 @@ class ShoppingListAddButtonTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-
-        $this->simulateAuthentication(
-            LoadCustomerUserData::AUTH_USER,
-            LoadCustomerUserData::AUTH_PW,
-            'customer_identity',
-            CustomerUser::class
-        );
     }
 
     public function testCreateNewShoppingList()

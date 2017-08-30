@@ -30,13 +30,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
                 LoadShippingMethodsConfigsRulesWithConfigs::class,
             ]
         );
-
-        $this->simulateAuthentication(
-            LoadBaseCustomerUserData::AUTH_USER,
-            LoadBaseCustomerUserData::AUTH_PW,
-            'customer_identity',
-            CustomerUser::class
-        );
     }
 
     public function testCreateOrder()
@@ -79,7 +72,6 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     protected function authUser($username, $password)
     {
         $this->initClient([], $this->generateBasicAuthHeader($username, $password));
-        $this->simulateAuthentication($username, $password, 'customer_identity', CustomerUser::class);
     }
 
     /**
