@@ -11,16 +11,12 @@ datagrids:
                     - product.sku
                     - product.createdAt
                     - product.updatedAt
-                    - productInventoryStatus.id as inventoryStatusId
-                    - productInventoryStatus.name as inventoryStatusName
                     - product.status
                     - product.type
                     - product.newArrival
+                    - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
-                join:
-                    left:
-                        - { join: product.inventory_status, alias: productInventoryStatus}
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -28,8 +24,8 @@ datagrids:
                 label:         oro.product.names.label
             inventoryStatusId:
                 label:         oro.product.inventory_status.label
+                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
                 frontend_type: select
-                choices:       "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses"
             status:
                 label:         oro.product.status.label
                 frontend_type: select
@@ -63,8 +59,6 @@ datagrids:
                     data_name: product.sku
                 productName:
                     data_name: productName
-                inventoryStatusId:
-                    data_name: inventoryStatusName
                 status:
                     data_name: product.status
                 type:
@@ -303,14 +297,10 @@ datagrids:
                 select:
                     - product.id
                     - product.sku
-                    - productInventoryStatus.id as inventoryStatusId
-                    - productInventoryStatus.name as inventoryStatusName
                     - product.status
+                    - IDENTITY(product.inventory_status) AS inventoryStatusId
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
-                join:
-                    left:
-                        - { join: product.inventory_status, alias: productInventoryStatus}
                 where:
                     and:
                         - product.id <> :parentProduct
@@ -330,8 +320,6 @@ datagrids:
                     data_name: productName
                 status:
                     data_name: product.status
-                inventoryStatus:
-                    data_name: inventoryStatusName
         filters:
             columns:
                 id:
@@ -349,7 +337,7 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-                inventoryStatus:
+                inventoryStatusId:
                     type:      enum
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
@@ -471,15 +459,11 @@ datagrids:
                     - product.sku
                     - product.createdAt
                     - product.updatedAt
-                    - productInventoryStatus.id as inventoryStatusId
-                    - productInventoryStatus.name as inventoryStatusName
                     - product.status
                     - product.type
+                    - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: %oro_product.entity.product.class%, alias: product }
-                join:
-                    left:
-                        - { join: product.inventory_status, alias: productInventoryStatus}
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -487,8 +471,9 @@ datagrids:
                 label:         oro.product.names.label
             inventoryStatusId:
                 label:         oro.product.inventory_status.label
-                frontend_type: select
-                choices:       "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses"
+                context:
+                    enum_code: prod_inventory_status
+                frontend_type: enum
             status:
                 label:         oro.product.status.label
                 frontend_type: select
@@ -515,8 +500,6 @@ datagrids:
                     data_name: product.sku
                 productName:
                     data_name: productName
-                inventoryStatusId:
-                    data_name: inventoryStatusName
                 status:
                     data_name: product.status
                 type:
@@ -704,6 +687,9 @@ datagrids:
                     - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
                     - text.type as type
+                    - text.image_product_medium as image_product_medium
+                    - text.image_product_large as image_product_large
+                    - text.product_units as product_units
                 from:
                     - oro_product_WEBSITE_ID
         columns:

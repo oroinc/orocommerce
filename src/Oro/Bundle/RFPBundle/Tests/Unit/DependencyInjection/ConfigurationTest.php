@@ -76,6 +76,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         'frontend_feature_enabled' => [
                             'value' => true,
                             'scope' => 'app'
+                        ],
+                        'guest_rfp' => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
+                        Configuration::DEFAULT_GUEST_RFP_OWNER => [
+                            'value' => null,
+                            'scope' => 'app'
                         ]
                     ]
                 ]

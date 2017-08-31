@@ -31,6 +31,13 @@ use Doctrine\ORM\Mapping as ORM;
  *                  "product_id",
  *                  "merge_allowed"
  *              }
+ *         ),
+ *         @ORM\Index(
+ *              name="oro_cmb_price_product_currency_idx",
+ *              columns={
+ *                  "product_id",
+ *                  "currency"
+ *              }
  *         )
  *     }
  * )

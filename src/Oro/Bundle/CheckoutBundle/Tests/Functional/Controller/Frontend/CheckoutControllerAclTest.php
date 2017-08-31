@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutACLData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
 
@@ -17,10 +15,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
 {
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
-        );
+        $this->initClient();
         $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
@@ -41,14 +36,14 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
      */
     public function testOrdersGridACL($user, $indexResponseStatus, $gridResponseStatus, array $data = [])
     {
+        $this->initClient([], static::generateBasicAuthHeader($user, $user));
+
         $configManager = $this
             ->getContainer()
             ->get('oro_config.manager');
 
         $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
-
-        $this->loginUser($user);
 
         $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
@@ -122,7 +117,6 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
         ];
     }
 
-
     /**
      * @dataProvider viewDataProvider
      *
@@ -132,8 +126,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
      */
     public function testView($resource, $user, $status)
     {
-        $this->simulateAuthentication($user, $user, 'customer_identity', CustomerUser::class);
-
+        $this->initClient([], $this->generateBasicAuthHeader($user, $user));
         /** @var Checkout $checkout */
         $checkout = $this->getReference($resource);
         $this->client->request('GET', $this->getUrl('oro_checkout_frontend_checkout', ['id' => $checkout->getId()]));
@@ -151,7 +144,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
             'anonymous user' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                 'user' => '',
-                'status' => 404,
+                'status' => 401,
             ],
             'user from another customer' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,

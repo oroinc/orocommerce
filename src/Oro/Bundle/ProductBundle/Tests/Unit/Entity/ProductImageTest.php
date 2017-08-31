@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
@@ -32,12 +33,17 @@ class ProductImageTest extends \PHPUnit_Framework_TestCase
 
     public function testTypesMutators()
     {
-        $this->assertEquals([], $this->productImage->getTypes());
+        $this->assertEquals([], $this->productImage->getTypes()->toArray());
 
         $this->productImage->addType('main');
         $this->productImage->addType('listing');
 
-        $this->assertEquals(['main', 'listing'], $this->productImage->getTypes());
+        $this->assertEquals(
+            ['main', 'listing'],
+            array_keys(
+                $this->productImage->getTypes()->toArray()
+            )
+        );
     }
 
     public function testHasType()

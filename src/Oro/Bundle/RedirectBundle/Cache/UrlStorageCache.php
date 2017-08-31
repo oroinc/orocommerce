@@ -10,7 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
 class UrlStorageCache
 {
     /**
-     * @var FileCache
+     * @var Cache
      */
     private $persistentCache;
 
@@ -30,11 +30,11 @@ class UrlStorageCache
     private $usedKeys = [];
 
     /**
-     * @param FileCache $persistentCache
+     * @param Cache $persistentCache
      * @param Cache $localCache
      * @param Filesystem $filesystem
      */
-    public function __construct(FileCache $persistentCache, Cache $localCache, Filesystem $filesystem)
+    public function __construct(Cache $persistentCache, Cache $localCache, Filesystem $filesystem)
     {
         $this->persistentCache = $persistentCache;
         $this->localCache = $localCache;
@@ -83,25 +83,27 @@ class UrlStorageCache
     /**
      * @param string $routeName
      * @param array $routeParameters
+     * @param null|int $localizationId
      * @return null|string
      */
-    public function getUrl($routeName, $routeParameters)
+    public function getUrl($routeName, $routeParameters, $localizationId = null)
     {
         $storage = $this->getUrlDataStorage($routeName, $routeParameters);
 
-        return $storage->getUrl($routeParameters);
+        return $storage->getUrl($routeParameters, $localizationId);
     }
 
     /**
      * @param string $routeName
      * @param array $routeParameters
+     * @param null|int $localizationId
      * @return null|string
      */
-    public function getSlug($routeName, $routeParameters)
+    public function getSlug($routeName, $routeParameters, $localizationId = null)
     {
         $storage = $this->getUrlDataStorage($routeName, $routeParameters);
 
-        return $storage->getSlug($routeParameters);
+        return $storage->getSlug($routeParameters, $localizationId);
     }
 
     /**
@@ -111,21 +113,23 @@ class UrlStorageCache
      * @param array $routeParameters
      * @param string $url
      * @param string|null $slug
+     * @param null|int $localizationId
      */
-    public function setUrl($routeName, $routeParameters, $url, $slug = null)
+    public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null)
     {
         $storage = $this->getUrlDataStorage($routeName, $routeParameters);
-        $storage->setUrl($routeParameters, $url, $slug);
+        $storage->setUrl($routeParameters, $url, $slug, $localizationId);
     }
 
     /**
      * @param string $routeName
      * @param array $routeParameters
+     * @param null|int $localizationId
      */
-    public function removeUrl($routeName, $routeParameters)
+    public function removeUrl($routeName, $routeParameters, $localizationId = null)
     {
         $storage = $this->getUrlDataStorage($routeName, $routeParameters);
-        $storage->removeUrl($routeParameters);
+        $storage->removeUrl($routeParameters, $localizationId);
     }
 
     /**
@@ -154,7 +158,11 @@ class UrlStorageCache
             $this->localCache->deleteAll();
         }
 
-        $cache = $this->persistentCache;
-        $this->filesystem->remove($cache->getDirectory() . DIRECTORY_SEPARATOR . $cache->getNamespace());
+        if ($this->persistentCache instanceof FileCache) {
+            $cache = $this->persistentCache;
+            $this->filesystem->remove($cache->getDirectory() . DIRECTORY_SEPARATOR . $cache->getNamespace());
+        } elseif ($this->persistentCache instanceof ClearableCache) {
+            $this->persistentCache->deleteAll();
+        }
     }
 }

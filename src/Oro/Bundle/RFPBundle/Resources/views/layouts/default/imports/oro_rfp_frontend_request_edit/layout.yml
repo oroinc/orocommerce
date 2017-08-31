@@ -15,6 +15,11 @@ layout:
                     blockType: form_fields
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])'
+                __rfp_form_field_assigned_to:
+                    blockType: form_field
+                    options:
+                        visible: '=context["is_logged_in"]'
+                        form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])["assignedCustomerUsers"]'
                 __rfp_form_lineitems_container:
                     blockType: container
                 __rfp_form_lineitems:
@@ -25,6 +30,7 @@ layout:
                     blockType: form_end
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])'
+                        render_rest: false
                 __rfp_form_actions:
                     blockType: container
                 __rfp_form_actions_back:
@@ -43,6 +49,7 @@ layout:
                     __rfp_form_start: ~
                     __rfp_form_edit_container:
                         __rfp_form_fields: ~
+                        __rfp_form_field_assigned_to: ~
                     __rfp_form_lineitems_container:
                         __rfp_form_lineitems: ~
                     __rfp_form_actions:

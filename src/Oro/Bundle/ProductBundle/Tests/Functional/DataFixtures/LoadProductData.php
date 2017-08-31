@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Symfony\Component\Yaml\Yaml;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -19,8 +20,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
@@ -112,6 +113,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 
             $this->addAdvancedValue($item, $product);
             $this->addEntityFieldFallbackValue($item, $product);
+            $this->addProductImages($item, $product);
 
             $manager->persist($product);
             $this->addReference($product->getSku(), $product);
@@ -232,6 +234,31 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
             foreach ($item['shortDescriptions'] as $slugPrototype) {
                 $product->addShortDescription($this->createValue($slugPrototype));
             }
+        }
+    }
+
+    /**
+     * @param array $item
+     * @param Product $product
+     */
+    public function addProductImages(array $item, Product $product)
+    {
+        if (empty($item['images'])) {
+            return;
+        }
+
+        foreach ($item['images'] as $image) {
+            $imageFile = new File();
+            $imageFile->setFilename($item['productCode']);
+            $this->setReference($image['reference'] . '.' . $item['productCode'], $imageFile);
+
+            $productImage = new ProductImage();
+            $productImage->setImage($imageFile);
+
+            $productType = $image['type'] ?? ProductImageType::TYPE_LISTING;
+            $productImage->addType($productType);
+
+            $product->addImage($productImage);
         }
     }
 
