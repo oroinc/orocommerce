@@ -23,21 +23,60 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new OrderViewListener($this->translator);
     }
 
+    public function testOnViewWhenNoDiscountBlockExist()
+    {
+        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment */
+        $environment = $this->createMock(\Twig_Environment::class);
+        $environment
+            ->expects($this->never())
+            ->method('render');
+
+        $this->listener->onView(new BeforeListRenderEvent($environment, new ScrollData(), new Order()));
+    }
+
     public function testOnView()
     {
-        $this->translator->expects($this->once())->method('trans');
-        $template = 'test html template';
-        $environment = $this->prepareEnvironment($template);
-        $scrollData = $this->prepareScrollData($template);
-        $this->listener->onView(new BeforeListRenderEvent($environment, $scrollData, new Order()));
+        $translatedTitle = 'Discount and Promotions';
+        $this->translator
+            ->expects($this->once())
+            ->method('trans')
+            ->with('oro.promotion.sections.promotion_and_discounts.label')
+            ->willReturn($translatedTitle);
+
+        $order = new Order();
+
+        $existingTemplate = 'Existing View template';
+        $template = 'View template';
+        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment */
+        $environment = $this->createMock(\Twig_Environment::class);
+        $environment
+            ->expects($this->once())
+            ->method('render')
+            ->with('OroPromotionBundle:AppliedPromotion:applied_promotions_view_table.html.twig', ['entity' => $order])
+            ->willReturn($template);
+
+        $scrollData = new ScrollData();
+        $scrollData->addNamedBlock('discounts', 'Discounts');
+        $subBlockId = $scrollData->addSubBlock('discounts');
+        $scrollData->addSubBlockData('discounts', $subBlockId, $existingTemplate);
+
+        $event = new BeforeListRenderEvent($environment, $scrollData, $order);
+        $this->listener->onView($event);
+
+        $expectedScrollData = new ScrollData();
+        $expectedScrollData->addNamedBlock('discounts', $translatedTitle);
+        $subBlockId = $expectedScrollData->addSubBlock('discounts');
+        $expectedScrollData->addSubBlockData('discounts', $subBlockId, $existingTemplate);
+
+        $subBlockId = $expectedScrollData->addSubBlockAsFirst('discounts');
+        $expectedScrollData->addSubBlockData('discounts', $subBlockId, $template);
+
+        $this->assertEquals($expectedScrollData, $event->getScrollData());
     }
 
     public function testOnEditWhenNoDiscountBlockExist()
     {
         $formView = $this->createMock(FormView::class);
-
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Scroll data must contain block with id "discounts"');
 
         /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $environment */
         $environment = $this->createMock(\Twig_Environment::class);
@@ -57,9 +96,12 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro.promotion.sections.promotion_and_discounts.label')
             ->willReturn($translatedTitle);
 
-        $template = 'test html template';
+        $existingTemplate = 'existing template';
+        $template = 'edit template';
         $scrollData = new ScrollData();
         $scrollData->addNamedBlock('discounts', 'Discounts');
+        $subBlockId = $scrollData->addSubBlock('discounts');
+        $scrollData->addSubBlockData('discounts', $subBlockId, $existingTemplate);
 
         $formView = $this->createMock(FormView::class);
 
@@ -76,34 +118,11 @@ class OrderViewListenerTest extends \PHPUnit_Framework_TestCase
         $expectedScrollData = new ScrollData();
         $expectedScrollData->addNamedBlock('discounts', $translatedTitle);
         $subBlockId = $expectedScrollData->addSubBlock('discounts');
+        $expectedScrollData->addSubBlockData('discounts', $subBlockId, $existingTemplate);
+
+        $subBlockId = $expectedScrollData->addSubBlockAsFirst('discounts');
         $expectedScrollData->addSubBlockData('discounts', $subBlockId, $template);
 
         $this->assertEquals($expectedScrollData, $event->getScrollData());
-    }
-
-    /**
-     * @param string $template
-     * @return \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
-     */
-    protected function prepareEnvironment($template)
-    {
-        $environment = $this->createMock(\Twig_Environment::class);
-        $environment->expects($this->once())->method('render')->willReturn($template);
-        return $environment;
-    }
-
-    /**
-     * @param string $template
-     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
-     */
-    protected function prepareScrollData($template)
-    {
-        $blockId = 123;
-        $subblockId = 456;
-        $scrollData = $this->createMock(ScrollData::class);
-        $scrollData->expects($this->once())->method('addBlock')->willReturn($blockId);
-        $scrollData->expects($this->once())->method('addSubBlock')->willReturn($subblockId);
-        $scrollData->expects($this->once())->method('addSubBlockData')->with($blockId, $subblockId, $template);
-        return $scrollData;
     }
 }

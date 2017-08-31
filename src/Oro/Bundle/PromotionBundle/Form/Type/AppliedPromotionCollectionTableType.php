@@ -25,7 +25,7 @@ class AppliedPromotionCollectionTableType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'template_name' => 'OroPromotionBundle:AppliedPromotion:applied_promotions_table.html.twig',
+                'template_name' => 'OroPromotionBundle:AppliedPromotion:applied_promotions_edit_table.html.twig',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => ['view' => 'oropromotion/js/app/views/applied-promotion-collection-view'],
                 'attr' => ['class' => 'oro-promotions-collection'],

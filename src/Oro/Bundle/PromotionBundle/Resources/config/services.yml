@@ -539,6 +539,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_promotion.twig.extension.applied_promotions:
+        class: 'Oro\Bundle\PromotionBundle\Twig\AppliedPromotionsExtension'
+        public: false
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: twig.extension }
+
     oro_promotion.model.coupon_applicability_query_builder_modifier:
         public: false
         class: Oro\Bundle\PromotionBundle\Model\CouponApplicabilityQueryBuilderModifier

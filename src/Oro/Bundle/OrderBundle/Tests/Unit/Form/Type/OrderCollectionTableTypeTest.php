@@ -81,6 +81,25 @@ class OrderCollectionTableTypeTest extends FormIntegrationTestCase
         ], $formView->vars);
     }
 
+    public function testViewWithParent()
+    {
+        $form = $this->factory->create($this->formType, null, [
+            'page_component' => 'SomeComponent',
+            'page_component_options' => ['option' => 'value'],
+            'template_name' => 'some_template',
+        ]);
+
+        $formView = $form->createView();
+
+        $this->assertArraySubset([
+            'template_name' => 'some_template',
+            'attr' => [
+                'data-page-component-module' => 'SomeComponent',
+                'data-page-component-options' => '{"option":"value"}'
+            ]
+        ], $formView->vars);
+    }
+
     public function testGetName()
     {
         $this->assertEquals('oro_order_collection_table', $this->formType->getName());

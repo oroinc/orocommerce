@@ -18,10 +18,10 @@ class AppliedPromotionRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], static::generateBasicAuthHeader());
         $this->loadFixtures([LoadAppliedPromotionData::class]);
 
-        $this->repository = $this->getContainer()->get('doctrine')
+        $this->repository = static::getContainer()->get('doctrine')
             ->getManagerForClass(AppliedPromotion::class)
             ->getRepository(AppliedPromotion::class);
     }
@@ -32,8 +32,8 @@ class AppliedPromotionRepositoryTest extends WebTestCase
         $order = $this->getReference(LoadOrders::ORDER_1);
 
         $expected = [
-            $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_DISCOUNT)->getId(),
-            $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_DISCOUNT_WITH_LINE_ITEM)->getId()
+            $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION)->getId(),
+            $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM)->getId()
         ];
 
         $actualAppliedPromotion = $this->repository->findByOrder($order);
@@ -43,5 +43,38 @@ class AppliedPromotionRepositoryTest extends WebTestCase
         foreach ($actualAppliedPromotion as $appliedPromotion) {
             $this->assertContains($appliedPromotion->getId(), $expected);
         }
+    }
+
+    public function testGetAppliedDiscountsInfo()
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderDiscount = $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION);
+        $lineItemDiscount = $this->getReference(LoadAppliedPromotionData::SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM);
+
+        $info = [
+            [
+                'id' => $orderDiscount->getId(),
+                'couponCode' => 'summer2000',
+                'promotionName' => 'Some name',
+                'promotionId' => 0,
+                'active' => true,
+                'currency' => 'USD',
+                'type' => 'order',
+                'amount' => '10.0000'
+            ],
+            [
+                'id' => $lineItemDiscount->getId(),
+                'couponCode' => null,
+                'promotionName' => 'Some line item discount name',
+                'promotionId' => 0,
+                'active' => true,
+                'currency' => 'USD',
+                'type' => 'lineItem',
+                'amount' => '10.0000'
+            ],
+        ];
+
+        $this->assertEquals($info, $this->repository->getAppliedPromotionsInfo($order));
     }
 }

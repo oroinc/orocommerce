@@ -9,17 +9,19 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItems;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 
 class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SIMPLE_APPLIED_DISCOUNT = 'simple_applied_discount';
-    const SIMPLE_APPLIED_DISCOUNT_WITH_LINE_ITEM = 'simple_applied_discount_with_line_item';
+    const SIMPLE_APPLIED_PROMOTION = 'simple_applied_discount';
+    const SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM = 'simple_applied_discount_with_line_item';
 
     /** @var array */
     protected static $appliedDiscounts = [
-        self::SIMPLE_APPLIED_DISCOUNT => [
+        self::SIMPLE_APPLIED_PROMOTION => [
+            'coupon_code' => 'summer2000',
             'order' => LoadOrders::ORDER_1,
             'type' => 'order',
             'amount' => 10.00,
@@ -27,7 +29,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
             'promotion_name' => 'Some name',
             'source_promotion_id' => 0
         ],
-        self::SIMPLE_APPLIED_DISCOUNT_WITH_LINE_ITEM => [
+        self::SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM => [
             'order' => LoadOrders::ORDER_1,
             'type' => 'lineItem',
             'amount' => 10.00,
@@ -44,6 +46,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
     public function getDependencies()
     {
         return [
+            LoadCouponData::class,
             LoadOrders::class,
             LoadOrderLineItems::class,
         ];
@@ -61,8 +64,11 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
             $appliedPromotion = (new AppliedPromotion())
                 ->setType($appliedDiscountData['type'])
                 ->setPromotionName($appliedDiscountData['promotion_name'])
-                ->setSourcePromotionId($appliedDiscountData['source_promotion_id'])
-                ->setOrder($order);
+                ->setSourcePromotionId($appliedDiscountData['source_promotion_id']);
+
+            $appliedPromotion->setOrder($order);
+
+            $this->addAppliedCoupon($appliedPromotion, $appliedDiscountData);
 
             $appliedDiscount = new AppliedDiscount();
             $appliedDiscount->setAmount($appliedDiscountData['amount']);
@@ -81,5 +87,21 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
             $this->setReference($reference, $appliedDiscount);
         }
         $manager->flush();
+    }
+
+    /**
+     * @param AppliedPromotion $appliedPromotion
+     * @param array $data
+     */
+    private function addAppliedCoupon(AppliedPromotion $appliedPromotion, array $data)
+    {
+        if (!empty($data['coupon_code'])) {
+            $appliedCoupon = (new AppliedCoupon())
+                ->setCouponCode($data['coupon_code'])
+                ->setSourcePromotionId(0)
+                ->setSourceCouponId(0);
+
+            $appliedPromotion->setAppliedCoupon($appliedCoupon);
+        }
     }
 }

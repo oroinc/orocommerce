@@ -55,7 +55,7 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_order_type }
 
-    oro_order.form.type.collection_table:
+    oro_order.form.type.order_collection_table:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderCollectionTableType'
         tags:
             - { name: form.type, alias: "oro_order_collection_table" }

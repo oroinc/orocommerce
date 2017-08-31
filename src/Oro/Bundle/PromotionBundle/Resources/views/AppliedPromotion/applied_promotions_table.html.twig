@@ -23,50 +23,44 @@
             </tr>
         </thead>
         <tbody>
-            {% for appliedPromotion in collection %}
+            {% for item in collection %}
                 <tr
                     data-role="applied-discount-table-row"
-                    data-source-promotion-id="{{ appliedPromotion.sourcePromotionId }}"
-                    {% if appliedPromotion.appliedCoupon %}
-                        data-source-coupon-id="{{ appliedPromotion.appliedCoupon.sourceCouponId }}"
+                    {% if item.sourcePromotionId is defined %}
+                        data-source-promotion-id="{{ item.sourcePromotionId }}"
                     {% endif %}
-                    {{ appliedPromotion.active ? '' : ' class="disabled"'}}
+                    {% if item.sourceCouponId is defined and item.sourceCouponId %}
+                        data-source-coupon-id="{{ item.sourceCouponId }}"
+                    {% endif %}
+                    {{ item.active ? '' : ' class="disabled"'}}
                 >
                     <td>
-                        {% if appliedPromotion.appliedCoupon %}
-                            {{ appliedPromotion.appliedCoupon.couponCode }}
+                        {% if item.couponCode %}
+                            {{ item.couponCode }}
                         {% else %}
                             <span class="not-available">{{ 'N/A'|trans }}</span>
                         {% endif %}
                     </td>
-                    <td>{{ appliedPromotion.promotionName }}</td>
-                    <td>{{ ('oro.discount.type.choices.' ~ appliedPromotion.type)|trans }}</td>
+                    <td>{{ item.promotionName }}</td>
+                    <td>{{ ('oro.discount.type.choices.' ~ item.type)|trans }}</td>
                     <td>
-                        {% if appliedPromotion.active %}
+                        {% if item.active %}
                             {{ 'oro.promotion.appliedpromotion.active.active'|trans }}
                         {% else %}
                             {{ 'oro.promotion.appliedpromotion.active.inactive'|trans }}
                         {% endif %}
                     </td>
                     <td class="discount">
-                        {% if appliedPromotion.appliedDiscounts|length %}
-                            {% set amount = 0 %}
-                            {% set currency = '' %}
-                            {% for appliedDiscount in appliedPromotion.appliedDiscounts %}
-                                {% set amount = amount + appliedDiscount.amount %}
-                                {% set currency = appliedDiscount.currency %}
-                            {% endfor %}
-                            {{ (-amount)|oro_format_currency({currency: currency}) }}
-                        {% endif %}
+                        {{ (-item.amount)|oro_format_currency({currency: item.currency}) }}
                     </td>
                     {% if editable is defined and editable %}
                         <td class="action">
                             <a data-role="applied-promotion-change-active-button" href="javascript:void(0);">
-                            {% if appliedPromotion.active %}
-                                <i class="fa-close hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.deactivate'|trans }}"></i>
-                            {% else %}
-                                <i class="fa-check hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.activate'|trans }}"></i>
-                            {% endif %}
+                                {% if item.active %}
+                                    <i class="fa-close hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.deactivate'|trans }}"></i>
+                                {% else %}
+                                    <i class="fa-check hide-text" title="{{ 'oro.promotion.appliedpromotion.actions.activate'|trans }}"></i>
+                                {% endif %}
                             </a>
                         </td>
                         <td class="action">

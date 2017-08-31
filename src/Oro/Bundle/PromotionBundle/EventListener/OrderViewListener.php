@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 /**
@@ -31,23 +30,25 @@ class OrderViewListener
      */
     public function onView(BeforeListRenderEvent $event)
     {
-        /** @var Order $order */
-        $order = $event->getEntity();
+        if (!$this->isApplicable($event)) {
+            return;
+        }
+
         $template = $event->getEnvironment()->render(
-            'OroPromotionBundle:Order:discounts_promotions.html.twig',
-            ['entity' => $order]
+            'OroPromotionBundle:AppliedPromotion:applied_promotions_view_table.html.twig',
+            ['entity' => $event->getEntity()]
         );
-        $this->addPromotionsBlock($event, $template, -75);
+
+        $this->addPromotionsSubBlock($event, $template);
     }
 
     /**
      * @param BeforeListRenderEvent $event
-     * @throws \LogicException
      */
     public function onEdit(BeforeListRenderEvent $event)
     {
-        if (!$event->getScrollData()->hasBlock(self::DISCOUNTS_BLOCK_ID)) {
-            throw new \LogicException(sprintf('Scroll data must contain block with id "%s"', self::DISCOUNTS_BLOCK_ID));
+        if (!$this->isApplicable($event)) {
+            return;
         }
 
         $template = $event->getEnvironment()->render(
@@ -60,28 +61,23 @@ class OrderViewListener
 
     /**
      * @param BeforeListRenderEvent $event
-     * @param string $template
+     * @return bool
      */
-    protected function addPromotionsSubBlock(BeforeListRenderEvent $event, string $template)
+    private function isApplicable(BeforeListRenderEvent $event): bool
     {
-        $scrollData = $event->getScrollData();
-        $blockTitle = $this->translator->trans('oro.promotion.sections.promotion_and_discounts.label');
-        $scrollData->changeBlock(self::DISCOUNTS_BLOCK_ID, $blockTitle);
-        $subBlockId = $scrollData->addSubBlock(self::DISCOUNTS_BLOCK_ID);
-        $scrollData->addSubBlockData(self::DISCOUNTS_BLOCK_ID, $subBlockId, $template);
+        return $event->getScrollData()->hasBlock(self::DISCOUNTS_BLOCK_ID);
     }
 
     /**
      * @param BeforeListRenderEvent $event
      * @param string $template
-     * @param int $priority
      */
-    protected function addPromotionsBlock(BeforeListRenderEvent $event, string $template, int $priority)
+    private function addPromotionsSubBlock(BeforeListRenderEvent $event, string $template)
     {
-        $blockTitle = $this->translator->trans('oro.promotion.entity_plural_label');
         $scrollData = $event->getScrollData();
-        $blockId = $scrollData->addBlock($blockTitle, $priority);
-        $subBlockId = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $subBlockId, $template);
+        $blockTitle = $this->translator->trans('oro.promotion.sections.promotion_and_discounts.label');
+        $scrollData->changeBlock(self::DISCOUNTS_BLOCK_ID, $blockTitle);
+        $subBlockId = $scrollData->addSubBlockAsFirst(self::DISCOUNTS_BLOCK_ID);
+        $scrollData->addSubBlockData(self::DISCOUNTS_BLOCK_ID, $subBlockId, $template);
     }
 }

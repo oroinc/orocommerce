@@ -51,7 +51,7 @@ class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, null, ['order' => new Order()]);
 
         static::assertArraySubset([
-            'template_name' => 'OroOrderBundle:Form:order_discount_collection.html.twig',
+            'template_name' => 'OroOrderBundle:Discount:order_discount_collection.html.twig',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => [
                 'view' => 'oroorder/js/app/views/discount-collection-view',

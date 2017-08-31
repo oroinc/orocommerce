@@ -16,4 +16,41 @@ class AppliedPromotionRepository extends EntityRepository
     {
         return $this->findBy(['order' => $order]);
     }
+
+    /**
+     * @param Order $order
+     * @return array
+     */
+    public function getAppliedPromotionsInfo(Order $order): array
+    {
+        $queryBuilder = $this->createQueryBuilder('appliedPromotion');
+
+        $queryBuilder
+            ->select([
+                'appliedPromotion.id',
+                'appliedPromotion.promotionName',
+                'appliedPromotion.sourcePromotionId AS promotionId',
+                'appliedPromotion.active AS active',
+                'appliedPromotion.type',
+                'appliedCoupon.couponCode',
+                'appliedDiscounts.currency AS currency',
+                'SUM(appliedDiscounts.amount) AS amount'
+            ])
+            ->join('appliedPromotion.appliedDiscounts', 'appliedDiscounts')
+            ->leftJoin('appliedPromotion.appliedCoupon', 'appliedCoupon')
+            ->where($queryBuilder->expr()->eq('appliedPromotion.order', ':order'))
+            ->groupBy(
+                'appliedPromotion.id',
+                'appliedPromotion.promotionName',
+                'appliedPromotion.sourcePromotionId',
+                'appliedPromotion.active',
+                'appliedPromotion.type',
+                'appliedCoupon.couponCode',
+                'appliedDiscounts.currency'
+            )
+            ->orderBy('appliedPromotion.id')
+            ->setParameter('order', $order);
+
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
 }
