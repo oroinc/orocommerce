@@ -5,6 +5,7 @@ define(function(require) {
     var QuickAddFormButtonComponent;
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
+    var $ = require('jquery');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var Modal = require('oroui/js/modal');
 
