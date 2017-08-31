@@ -11,7 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+/**
+ * @AclAncestor("oro_quick_add_form")
+ */
 class QuickAddController extends Controller
 {
     /**

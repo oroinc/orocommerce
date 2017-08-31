@@ -27,7 +27,7 @@
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {% set btnOptions = {
             'label': 'oro.frontend.product.view.request_a_quote'|trans,
-            'aCss': 'direct-link dropdown-item btn_lg',
+            'aCss': 'direct-link btn_lg btn--info',
             'dataUrl': 'oro_rfp_frontend_request_create',
             'pageComponent': {
                 'module': 'oroui/js/app/components/view-component',
@@ -36,6 +36,10 @@
                 }
             }
         } %}
-        {{ UI.clientButton(btnOptions) }}
+        {#{% espaceless %}#}
+        <div class="pull-left btn-group icons-holder full">
+            {{ UI.clientLink(btnOptions|merge({'class': 'btn icons-holder-text'})) }}
+        </div>
+        {#{% endspaceless %}#}
     {% endif %}
 {% endblock %}
