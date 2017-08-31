@@ -181,9 +181,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 1A" > Check simple product page with selected: Default template
     Given I login as administrator
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates Form" with:
       | Use Default  | true             |
       | Product Page | Default template |
@@ -219,9 +217,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 2A" > Check simple product page with selected: Short page template
     Given I login as administrator
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false      |
       | Product Page | Short page |
@@ -252,9 +248,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 3A" > Check simple product page with selected: Two columns page template
     Given I login as administrator
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false            |
       | Product Page | Two columns page |
@@ -292,9 +286,7 @@ Feature: Product View Page Templates
   Scenario: "Product View Page Templates 4A" > Check simple product page with selected: List page template
     Given I login as administrator
     And go to System / Configuration
-    And I click "Commerce"
-    And I click "Design"
-    And I click "Theme"
+    And I follow "Commerce/Design/Theme" on configuration sidebar
     And fill "Page Templates form" with:
       | Use Default  | false     |
       | Product Page | List page |
@@ -336,9 +328,7 @@ Feature: Product View Page Templates
 #      | Label | _Remark |
 #    And I save and close form
 #    And go to System / Configuration
-#    And I click "Commerce"
-#    And I click "Design"
-#    And I click "Theme"
+#    And I follow "Commerce/Design/Theme" on configuration sidebar
 #    And fill "Page Templates form" with:
 #      | Use Default  | false     |
 #      | Product Page | List page |
