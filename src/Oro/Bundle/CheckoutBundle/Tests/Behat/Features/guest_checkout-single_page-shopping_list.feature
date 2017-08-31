@@ -20,16 +20,18 @@ Feature: Single Page Guest Checkout From Shopping List
     And login as administrator
     And go to System/ Configuration
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
-    And uncheck "Use default" for "Enable guest shopping list" field
-    And I check "Enable guest shopping list"
-    When I save form
+    And fill "Shopping List Configuration Form" with:
+      |Enable Guest Shopping List Default|false|
+      |Enable Guest Shopping List        |true |
+    And click "Save settings"
     Then the "Enable guest shopping list" checkbox should be checked
 
   Scenario: Enable guest checkout setting
     Given I follow "Commerce/Sales/Checkout" on configuration sidebar
-    And uncheck "Use default" for "Enable Guest Checkout" field
-    And I check "Enable Guest Checkout"
-    When I save form
+    And fill "Checkout Configuration Form" with:
+      |Enable Guest Checkout Default|false|
+      |Enable Guest Checkout        |true |
+    And click "Save settings"
     Then the "Enable Guest Checkout" checkbox should be checked
 
   Scenario: Change default guest checkout user owner

@@ -63,7 +63,7 @@ define(function(require) {
             this.confirmMessage = __(this.defaultMessages.confirm_content);
 
             if (options.confirmation) {
-                if(options.shopping_list_limit) {
+                if (options.shopping_list_limit) {
                     this.confirmMessage = __(
                         this.defaultMessages.confirm_content,
                         {'count': options.shopping_list_limit},
