@@ -650,3 +650,12 @@ services:
         parent: oro_order.event_listener.order.form.abstract
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_promotion.event_listener.applied_coupon:
+        class: Oro\Bundle\PromotionBundle\EventListener\AppliedCouponEntityListener
+        public: false
+        arguments:
+            - '@oro_promotion.coupon_usage_manager'
+            - '@doctrine'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\PromotionBundle\Entity\AppliedCoupon', event: postPersist }
