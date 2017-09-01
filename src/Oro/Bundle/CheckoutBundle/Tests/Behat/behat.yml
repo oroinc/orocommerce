@@ -9,6 +9,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroApplicationBundle::CommerceMainContext
         - OroShippingBundle::SingleCurrencyContext
+        - OroShippingBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroCustomerBundle::CustomerUserContext
         - OroCustomerBundle::FrontendGridContext
