@@ -533,7 +533,6 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_customer.manager.login_manager'
-            - '@oro_config.manager'
             - '@oro_checkout.manager'
         lazy: true
         tags:

@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener;
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Manager\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -31,11 +30,6 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
     private $request;
 
     /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $configManager;
-
-    /**
      * @var CheckoutManager|\PHPUnit_Framework_MockObject_MockObject
      */
     private $checkoutManager;
@@ -52,12 +46,10 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getMasterRequest')
             ->willReturn($this->request);
         $this->loginManager = $this->createMock(LoginManager::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
         $this->checkoutManager = $this->createMock(CheckoutManager::class);
         $this->listener = new CustomerUserListener(
             $requestStack,
             $this->loginManager,
-            $this->configManager,
             $this->checkoutManager
         );
     }
@@ -95,24 +87,6 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->afterFlush($event);
     }
 
-    public function testAfterFlushConfigurationDisabled()
-    {
-        $customerUser = new CustomerUser();
-        $customerUser->setConfirmed(false);
-        $form = $this->createMock(FormInterface::class);
-        $event = new AfterFormProcessEvent($form, $customerUser);
-        $this->request->request->add(['_checkout_registration' => 1]);
-        $this->request->request->add(['_checkout_id' => 1]);
-        $this->loginManager->expects($this->never())->method('logInUser');
-        $this->checkoutManager->expects($this->never())->method('assignRegisteredCustomerUserToCheckout');
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_checkout.allow_checkout_without_email_confirmation')
-            ->willReturn(false);
-
-        $this->listener->afterFlush($event);
-    }
-
     public function testAfterFlushCheckoutReassigned()
     {
         $customerUser = new CustomerUser();
@@ -122,11 +96,6 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
         $this->request->request->add(['_checkout_registration' => 1]);
         $this->request->request->add(['_checkout_id' => 777]);
         $this->loginManager->expects($this->never())->method('logInUser');
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_checkout.allow_checkout_without_email_confirmation')
-            ->willReturn(true);
 
         $this->checkoutManager->expects($this->once())
             ->method('assignRegisteredCustomerUserToCheckout')

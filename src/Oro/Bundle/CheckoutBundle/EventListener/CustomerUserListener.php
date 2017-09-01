@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Manager\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
@@ -22,11 +21,6 @@ class CustomerUserListener
     private $loginManager;
 
     /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
      * @var CheckoutManager
      */
     private $checkoutManager;
@@ -34,18 +28,15 @@ class CustomerUserListener
     /**
      * @param RequestStack $requestStack
      * @param LoginManager $loginManager
-     * @param ConfigManager $configManager
      * @param CheckoutManager $checkoutManager
      */
     public function __construct(
         RequestStack $requestStack,
         LoginManager $loginManager,
-        ConfigManager $configManager,
         CheckoutManager $checkoutManager
     ) {
         $this->requestStack = $requestStack;
         $this->loginManager = $loginManager;
-        $this->configManager = $configManager;
         $this->checkoutManager = $checkoutManager;
     }
 
@@ -65,7 +56,7 @@ class CustomerUserListener
             }
 
             $checkoutId = $request->request->get('_checkout_id');
-            if ($checkoutId && $this->configManager->get('oro_checkout.allow_checkout_without_email_confirmation')) {
+            if ($checkoutId) {
                 $this->checkoutManager->assignRegisteredCustomerUserToCheckout($customerUser, $checkoutId);
             }
         }

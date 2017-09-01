@@ -53,7 +53,7 @@ class LoginOnCheckoutListener
             return;
         }
 
-        if (!$user->getLoginCount()) {
+        if ($user->getLoginCount() <= 1) {
             $this->checkoutManager->reassignCustomerUser($user);
         }
 

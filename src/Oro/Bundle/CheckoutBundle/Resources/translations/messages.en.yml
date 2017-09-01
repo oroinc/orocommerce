@@ -41,6 +41,7 @@ oro:
         deleted.label: Deleted
         completed.label: Completed
         completed_data.label: Completed Data
+        confirm_email_flash_message: Please confirm your email before continue checkout
 
         basecheckout:
             entity_label: Base Checkout

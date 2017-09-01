@@ -9,7 +9,11 @@ features:
     allow_checkout_without_email_confirmation_feature:
         label: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.label
         description: oro.checkout.system_configuration.fields.allow_checkout_without_email_confirmation.tooltip
-        toggle: oro_customer.confirmation_required
+        toggle: oro_checkout.allow_checkout_without_email_confirmation
+        dependencies:
+            - oro_customer_confirmation_required
+
+    oro_customer_confirmation_required:
         configuration:
             - oro_checkout.allow_checkout_without_email_confirmation
 
