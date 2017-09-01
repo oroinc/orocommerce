@@ -119,10 +119,12 @@ class SlugRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from($this->getEntityName(), 'slug')
-            ->select(['slug.routeParameters', 'slug.url', 'slug.slugPrototype'])
+            ->select(['slug.routeParameters', 'slug.url', 'slug.slugPrototype', 'localization.id as localization_id'])
+            ->leftJoin('slug.localization', 'localization')
             ->andWhere($qb->expr()->in('slug.id', ':ids'))
             ->setParameter('ids', $entityIds)
-            ->addOrderBy('slug.id', 'DESC');
+            ->addOrderBy('slug.id', 'DESC')
+            ->addOrderBy('localization.id', 'ASC');
 
         $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
 
@@ -135,9 +137,8 @@ class SlugRepository extends EntityRepository
 
     /**
      * @param string $entityClass
-     * @param ScopeCriteria|null $scopeCriteria
      */
-    public function deleteSlugAttachedToEntityByClass($entityClass, ScopeCriteria $scopeCriteria = null)
+    public function deleteSlugAttachedToEntityByClass($entityClass)
     {
         $entityManager = $this->getEntityManager();
 

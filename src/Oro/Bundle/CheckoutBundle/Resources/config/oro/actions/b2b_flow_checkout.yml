@@ -438,6 +438,7 @@ action_groups:
                             - $.visitor_email
                             - $.billing_address
                     - '@flush_entity': $.checkout.customerUser
+                    - '@assign_value': [$visitor.customerUser, $checkout.customerUser]
 
 
     b2b_flow_checkout_update_guest_customer_user:

@@ -2,13 +2,18 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Model;
 
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
+use Oro\Bundle\CustomerBundle\Entity\GuestCustomerUserManager;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class RequestManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,14 +34,22 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $doctrineHelper;
 
+    /**
+     * @var GuestCustomerUserManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $guestCustomerUserManager;
+
     public function setUp()
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->guestCustomerUserManager = $this->createMock(GuestCustomerUserManager::class);
 
-        $this->requestManager = new RequestManager($this->tokenAccessor, $this->doctrineHelper);
+        $this->requestManager = new RequestManager(
+            $this->tokenAccessor,
+            $this->doctrineHelper,
+            $this->guestCustomerUserManager
+        );
     }
 
     public function testCreate()

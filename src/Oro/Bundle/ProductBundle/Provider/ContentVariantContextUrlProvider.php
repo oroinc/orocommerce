@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantType;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -23,13 +24,23 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
     private $cache;
 
     /**
+     * @var UserLocalizationManager
+     */
+    private $userLocalizationManager;
+
+    /**
      * @param RequestStack $requestStack
      * @param UrlStorageCache $cache
+     * @param UserLocalizationManager $userLocalizationManager
      */
-    public function __construct(RequestStack $requestStack, UrlStorageCache $cache)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        UrlStorageCache $cache,
+        UserLocalizationManager $userLocalizationManager
+    ) {
         $this->requestStack = $requestStack;
         $this->cache = $cache;
+        $this->userLocalizationManager = $userLocalizationManager;
     }
 
     /**
@@ -40,9 +51,15 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
         $contextUrl = $this->getContextUrlFromRequest($data);
 
         if (!$contextUrl) {
+            $localizationId = null;
+            if ($localization = $this->userLocalizationManager->getCurrentLocalization()) {
+                $localizationId = $localization->getId();
+            }
+
             $contextUrl = $this->cache->getUrl(
                 ProductCollectionContentVariantType::PRODUCT_COLLECTION_ROUTE_NAME,
-                [ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => $data]
+                [ProductCollectionContentVariantType::CONTENT_VARIANT_ID_KEY => $data],
+                $localizationId
             );
         }
 

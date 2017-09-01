@@ -15,13 +15,14 @@ Feature: I need to make sure that "+Add' button" is not present on edit product 
     Given I login as administrator
     And I go to Products/ Products
     And click edit "SKU003" in grid
+    Then I should see "Add More Rows" element inside "Additional Units Form Section" element
     When set Additional Unit with:
       | Unit     | Precision | Rate |
       | Hour     | 0         | 10   |
       | Kilogram | 0         | 10   |
       | Piece    | 0         | 10   |
       | Set      | 0         | 10   |
-    Then I should not see "Add" in the ".add-list-item" element
+    Then I should not see "Add More Rows" element inside "Additional Units Form Section" element
     And I save and close form
     When I press "Edit"
-    Then I should not see "Add" in the ".add-list-item" element
+    Then I should not see "Add More Rows" element inside "Additional Units Form Section" element

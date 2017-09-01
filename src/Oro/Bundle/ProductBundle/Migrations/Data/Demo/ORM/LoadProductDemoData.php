@@ -12,7 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\ProductBundle\Entity\Brand;
-use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -155,7 +154,7 @@ class LoadProductDemoData extends AbstractFixture implements
                 ->setPrecision((int)$row['precision'])
                 ->setConversionRate(1)
                 ->setSell(true);
-            
+
             $product->setPrimaryUnitPrecision($productUnitPrecision);
 
             $this->addImageToProduct($product, $manager, $locator, $row['sku'], $allImageTypes);
@@ -291,11 +290,11 @@ class LoadProductDemoData extends AbstractFixture implements
         $mediaCacheManager = $this->container->get('oro_attachment.media_cache_manager');
 
         $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $allImageTypes);
-
+        $imageDimensionsProvider = $this->container->get('oro_product.provider.product_images_dimensions');
         if ($productImage) {
             $product->addImage($productImage);
 
-            foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
+            foreach ($imageDimensionsProvider->getDimensionsForProductImage($productImage) as $dimension) {
                 $image = $productImage->getImage();
                 $filterName = $dimension->getName();
                 $imagePath = $attachmentManager->getFilteredImageUrl($image, $filterName);
@@ -305,26 +304,6 @@ class LoadProductDemoData extends AbstractFixture implements
                 }
             }
         }
-    }
-
-    /**
-     * @param ProductImage $productImage
-     * @return ThemeImageTypeDimension[]
-     */
-    private function getDimensionsForProductImage(ProductImage $productImage)
-    {
-        $imageTypeProvider = $this->container->get('oro_layout.provider.image_type');
-
-        $dimensions = [];
-        $allImageTypes = $imageTypeProvider->getImageTypes();
-
-        foreach ($productImage->getTypes() as $imageType) {
-            if (isset($allImageTypes[$imageType])) {
-                $dimensions = array_merge($dimensions, $allImageTypes[$imageType]->getDimensions());
-            }
-        }
-
-        return $dimensions;
     }
 
     /**

@@ -1,0 +1,18 @@
+data:
+    -
+        type: productimages
+        id: '<toString(@product-1->images->first->id)>'
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            types:
+                data:
+                    -
+                        type: productimagetypes
+                        id: '<toString(@product-1->images->first->types->first->id)>'
+            image:
+                data:
+                    type: files
+                    id: '<toString(@product-1->images->first->image->id)>'

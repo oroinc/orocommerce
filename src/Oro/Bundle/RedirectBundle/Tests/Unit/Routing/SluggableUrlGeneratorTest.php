@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
+use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 
@@ -14,6 +17,8 @@ use Symfony\Component\Routing\RequestContext;
  */
 class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -30,6 +35,11 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     private $contextUrlProvider;
 
     /**
+     * @var UserLocalizationManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $userLocalizationManager;
+
+    /**
      * @var SluggableUrlGenerator
      */
     private $generator;
@@ -37,14 +47,15 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->baseGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->cache = $this->getMockBuilder(UrlStorageCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->contextUrlProvider = $this->getMockBuilder(ContextUrlProviderRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->cache = $this->createMock(UrlStorageCache::class);
+        $this->contextUrlProvider = $this->createMock(ContextUrlProviderRegistry::class);
+        $this->userLocalizationManager = $this->createMock(UserLocalizationManager::class);
 
-        $this->generator = new SluggableUrlGenerator($this->cache, $this->contextUrlProvider);
+        $this->generator = new SluggableUrlGenerator(
+            $this->cache,
+            $this->contextUrlProvider,
+            $this->userLocalizationManager
+        );
         $this->generator->setBaseGenerator($this->baseGenerator);
     }
 
@@ -147,13 +158,19 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         $slug = 'slug';
 
+        $localizationId = 1;
+        $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
         $storage->expects($this->once())
             ->method('getSlug')
-            ->with($cleanParameters)
+            ->with($cleanParameters, $localizationId)
             ->willReturn($slug);
         $storage->expects($this->never())
             ->method('getUrl');
@@ -194,6 +211,12 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         $slug = 'slug';
 
+        $localizationId = 1;
+        $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
@@ -202,6 +225,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getSlug');
         $storage->expects($this->once())
             ->method('getUrl')
+            ->with($cleanParameters, $localizationId)
             ->willReturn($slug);
         $this->baseGenerator->expects($this->never())
             ->method('generate');
@@ -244,6 +268,12 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         $url = '/test/1';
 
+        $localizationId = 1;
+        $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
@@ -252,7 +282,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getSlug');
         $storage->expects($this->once())
             ->method('getUrl')
-            ->with($routeParameters)
+            ->with($routeParameters, $localizationId)
             ->willReturn($url);
 
         $baseUrl = '/base';
@@ -285,6 +315,10 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $cleanParameters = ['id' => 1];
         $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         $url = '/test/1';
+
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn(null);
 
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
@@ -332,17 +366,23 @@ class SluggableUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         $url = '/base/test/1';
 
+        $localizationId = 1;
+        $localization = $this->getEntity(Localization::class, ['id' => $localizationId]);
+        $this->userLocalizationManager->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
             ->disableOriginalConstructor()
             ->getMock();
         $storage->expects($this->once())
             ->method('getSlug')
-            ->with($cleanParameters)
+            ->with($cleanParameters, $localizationId)
             ->willReturn(null);
         $storage->expects($this->once())
             ->method('getUrl')
-            ->with($cleanParameters)
+            ->with($cleanParameters, $localizationId)
             ->willReturn(null);
 
         $baseUrl = '/base';
