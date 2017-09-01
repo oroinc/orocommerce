@@ -97,6 +97,8 @@ operations:
         label: oro.promotion.ui.add_coupon_code.label
         frontend_options:
             template: OroPromotionBundle:Coupon:addCouponDialog.html.twig
+            options:
+                okText: oro.promotion.ui.apply_button.label
         attributes:
             addedCoupons:
                 label: ' '
