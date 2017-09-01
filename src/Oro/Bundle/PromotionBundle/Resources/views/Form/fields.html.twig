@@ -135,7 +135,10 @@
 {% endblock %}
 
 {% block oro_promotion_applied_coupon_widget %}
-    <div data-role="applied-coupon-element" data-source-coupon-id="{{ form.sourceCouponId.vars.value }}">
+    <div
+        data-role="applied-coupon-element"
+        data-source-coupon-id="{{ form.vars.value ? form.vars.value.sourceCouponId : null }}"
+    >
         {{ form_widget(form.couponCode, {attr: {'data-role': 'applied-coupon-code'}}) }}
         {{ form_widget(form.sourcePromotionId, {attr: {'data-role': 'applied-coupon-source-promotion-id'}}) }}
         {{ form_widget(form.sourceCouponId, {attr: {'data-role': 'applied-coupon-source-coupon-id'}}) }}

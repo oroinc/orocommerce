@@ -53,4 +53,17 @@ class AppliedPromotionRepository extends EntityRepository
 
         return $queryBuilder->getQuery()->getArrayResult();
     }
+
+    /**
+     * @param Order $order
+     */
+    public function removeAppliedPromotionsByOrder(Order $order)
+    {
+        $queryBuilder = $this->createQueryBuilder('appliedPromotion');
+        $queryBuilder->delete()
+            ->where($queryBuilder->expr()->eq('appliedPromotion.order', ':order'))
+            ->setParameter('order', $order)
+            ->getQuery()
+            ->execute();
+    }
 }

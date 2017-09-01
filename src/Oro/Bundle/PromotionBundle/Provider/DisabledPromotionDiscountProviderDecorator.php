@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
 
@@ -27,10 +27,10 @@ class DisabledPromotionDiscountProviderDecorator implements PromotionDiscountsPr
 
     /**
      * @param object $sourceEntity
-     * @param DiscountContext $context
+     * @param DiscountContextInterface $context
      * @return DiscountInterface[]
      */
-    public function getDiscounts($sourceEntity, DiscountContext $context): array
+    public function getDiscounts($sourceEntity, DiscountContextInterface $context): array
     {
         $discounts = $this->promotionDiscountProvider->getDiscounts($sourceEntity, $context);
 

@@ -2,12 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Model;
 
-use Oro\Bundle\OrderBundle\Entity\Order;
-
-/**
- * @method Order getOrder()
- * @method setOrder(Order $order)
- */
 class ExtendAppliedDiscount
 {
     /**

@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\PromotionBundle\Mapper;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion as AppliedPromotionEntity;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -38,57 +42,79 @@ class AppliedPromotionMapper
     }
 
     /**
+     * @param AppliedPromotion $appliedPromotion
      * @param PromotionDataInterface $promotion
-     * @return AppliedPromotionEntity
+     * @param Order|AppliedCouponsAwareInterface $order
      */
-    public function mapPromotionDataToAppliedPromotion(PromotionDataInterface $promotion): AppliedPromotionEntity
-    {
-        $appliedPromotion = new AppliedPromotionEntity();
-        $appliedPromotion->setPromotion($this->getManagedPromotion($promotion));
+    public function mapPromotionDataToAppliedPromotion(
+        AppliedPromotion $appliedPromotion,
+        PromotionDataInterface $promotion,
+        Order $order
+    ) {
+        $appliedPromotion->setOrder($order);
         $appliedPromotion->setPromotionName($promotion->getRule()->getName());
         $appliedPromotion->setSourcePromotionId($promotion->getId());
         $appliedPromotion->setConfigOptions($promotion->getDiscountConfiguration()->getOptions());
         $appliedPromotion->setType($promotion->getDiscountConfiguration()->getType());
         $appliedPromotion->setPromotionData($this->promotionNormalizer->normalize($promotion));
-
-        return $appliedPromotion;
+        $appliedPromotion->setAppliedCoupon($this->getAppliedCoupon($order->getAppliedCoupons(), $promotion));
     }
 
     /**
-     * @param AppliedPromotionEntity $appliedPromotionEntity
+     * @param AppliedPromotion $appliedPromotion
      * @return PromotionDataInterface
      */
-    public function mapAppliedPromotionToPromotionData(
-        AppliedPromotionEntity $appliedPromotionEntity
-    ): PromotionDataInterface {
-        /** @var AppliedPromotionData $appliedPromotion */
-        $appliedPromotion = $this->promotionNormalizer->denormalize($appliedPromotionEntity->getPromotionData());
+    public function mapAppliedPromotionToPromotionData(AppliedPromotion $appliedPromotion): PromotionDataInterface
+    {
+        /** @var AppliedPromotionData $appliedPromotionData */
+        $appliedPromotionData = $this->promotionNormalizer->denormalize($appliedPromotion->getPromotionData());
 
         $discountConfiguration = new DiscountConfiguration();
-        $discountConfiguration->setType($appliedPromotionEntity->getType());
-        $discountConfiguration->setOptions($appliedPromotionEntity->getConfigOptions());
+        $discountConfiguration->setType($appliedPromotion->getType());
+        $discountConfiguration->setOptions($appliedPromotion->getConfigOptions());
 
-        $appliedPromotion->setDiscountConfiguration($discountConfiguration);
+        $appliedPromotionData->setDiscountConfiguration($discountConfiguration);
 
-        if ($appliedPromotionEntity->getAppliedCoupon()) {
-            $appliedCoupon = $appliedPromotionEntity->getAppliedCoupon();
-            $appliedPromotion->addCoupon($this->getCouponByAppliedCoupon($appliedCoupon));
+        if ($appliedPromotion->getAppliedCoupon()) {
+            $appliedCoupon = $appliedPromotion->getAppliedCoupon();
+            $appliedPromotionData->addCoupon($this->getCouponByAppliedCoupon($appliedCoupon));
         }
 
-        return $appliedPromotion;
+        return $appliedPromotionData;
     }
 
     /**
+     * @param Collection $appliedCoupons
      * @param PromotionDataInterface $promotion
-     * @return object|PromotionDataInterface
+     * @return AppliedCoupon|null
      */
-    private function getManagedPromotion(PromotionDataInterface $promotion)
+    private function getAppliedCoupon(Collection $appliedCoupons, PromotionDataInterface $promotion)
     {
-        if ($promotion instanceof Promotion) {
-            return $promotion;
+        if ($appliedCoupons->isEmpty()) {
+            return null;
         }
 
-        return $this->findById(Promotion::class, $promotion->getId());
+        $appliedCouponCodes = $appliedCoupons->map(
+            function (AppliedCoupon $coupon) {
+                return $coupon->getCouponCode();
+            }
+        )->toArray();
+
+        $criteria = Criteria::create();
+        $criteria->where(Criteria::expr()->in('code', $appliedCouponCodes));
+
+        $coupon = $promotion->getCoupons()->matching($criteria)->first();
+        if ($coupon instanceof Coupon) {
+            $filteredCoupons = $appliedCoupons->filter(
+                function (AppliedCoupon $appliedCoupon) use ($coupon) {
+                    return $appliedCoupon->getCouponCode() === $coupon->getCode();
+                }
+            );
+
+            return $filteredCoupons->first();
+        }
+
+        return null;
     }
 
     /**
@@ -100,14 +126,17 @@ class AppliedPromotionMapper
         /** @var Coupon $coupon */
         $coupon = $this->findById(Coupon::class, $appliedCoupon->getSourceCouponId());
 
-        if (!$coupon || $coupon->getCode() !== $appliedCoupon->getCouponCode()
-            || !$coupon->getPromotion() || $coupon->getPromotion()->getId() !== $appliedCoupon->getSourcePromotionId()
+        if (!$coupon
+            || !$coupon->getPromotion()
+            || $coupon->getCode() !== $appliedCoupon->getCouponCode()
+            || $coupon->getPromotion()->getId() !== $appliedCoupon->getSourcePromotionId()
         ) {
             $coupon = new Coupon();
             $coupon->setCode($appliedCoupon->getCouponCode());
 
             /** @var Promotion $promotion */
             $promotion = $this->getPromotion($appliedCoupon->getSourcePromotionId());
+            $promotion->addCoupon($coupon);
             $coupon->setPromotion($promotion);
         }
 

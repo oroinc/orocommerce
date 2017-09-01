@@ -7,7 +7,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener;
-use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
+use Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider;
 use Oro\Bundle\TaxBundle\Manager\TaxManager;
 use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
@@ -32,9 +32,9 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestC
     protected $lineItemSubtotalProvider;
 
     /**
-     * @var DiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var AppliedDiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $discountsProvider;
+    protected $appliedDiscountsProvider;
 
     /**
      * @var OrderLineItemAppliedDiscountsListener
@@ -46,13 +46,13 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestC
         $this->taxManager = $this->createMock(TaxManager::class);
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);
         $this->lineItemSubtotalProvider = $this->createMock(LineItemSubtotalProvider::class);
-        $this->discountsProvider = $this->createMock(DiscountsProvider::class);
+        $this->appliedDiscountsProvider = $this->createMock(AppliedDiscountsProvider::class);
 
         $this->discountsListener = new OrderLineItemAppliedDiscountsListener(
             $this->taxManager,
             $this->taxationSettingsProvider,
             $this->lineItemSubtotalProvider,
-            $this->discountsProvider
+            $this->appliedDiscountsProvider
         );
     }
 
@@ -133,7 +133,7 @@ class OrderLineItemAppliedDiscountsListenerTest extends \PHPUnit_Framework_TestC
         $order->addLineItem($lineItem2);
         $order->addLineItem($lineItem3);
 
-        $this->discountsProvider->expects($this->atLeastOnce())
+        $this->appliedDiscountsProvider->expects($this->atLeastOnce())
             ->method('getDiscountsAmountByLineItem')
             ->will($this->returnValueMap([
                 [$lineItem1, 11],

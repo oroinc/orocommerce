@@ -89,7 +89,6 @@ class ModifyTableStructure implements
         $table = $schema->createTable('oro_promotion_applied');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('applied_coupon_id', 'integer', ['notnull' => false]);
-        $table->addColumn('promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_promotion_id', 'integer');
         $table->addColumn('active', 'boolean', ['default' => '1']);
         $table->addColumn('type', 'string', ['length' => 255]);
@@ -226,12 +225,6 @@ class ModifyTableStructure implements
             ['applied_coupon_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_promotion'),
-            ['promotion_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

@@ -149,9 +149,8 @@ operations:
                                 method_parameters:
                                     - $.coupon
                     - '@call_service_method':
-                        service: oro_promotion.applied_discount_manager
-                        method: saveAppliedDiscounts
-                        attribute: $.addedCoupons
+                        service: oro_promotion.applied_promotion_manager
+                        method: createAppliedPromotions
                         method_parameters: [$.data]
                     - '@flush_entity': $.data
                     - '@flash_message':

@@ -27,7 +27,7 @@ class Order extends BaseOrder implements AppliedPromotionsAwareInterface, Applie
         parent::__construct();
 
         $this->appliedCoupons = new ArrayCollection();
-        $this->appliedDiscounts = new ArrayCollection();
+        $this->appliedPromotions = new ArrayCollection();
     }
 
     /**

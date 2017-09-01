@@ -87,7 +87,7 @@ class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterfa
      */
     public function setSourcePromotionId($sourcePromotionId)
     {
-        $this->sourcePromotionId = $sourcePromotionId;
+        $this->sourcePromotionId = (int)$sourcePromotionId;
 
         return $this;
     }
@@ -106,7 +106,7 @@ class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterfa
      */
     public function setSourceCouponId($sourceCouponId)
     {
-        $this->sourceCouponId = $sourceCouponId;
+        $this->sourceCouponId = (int)$sourceCouponId;
 
         return $this;
     }

@@ -52,14 +52,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
     protected $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\Promotion")
-     * @ORM\JoinColumn(name="promotion_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     *
-     * @var Promotion|null
-     */
-    protected $promotion;
-
-    /**
      * @ORM\Column(name="source_promotion_id", type="integer"))
      * @var int
      */
@@ -152,14 +144,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
     }
 
     /**
-     * @return Promotion|null
-     */
-    public function getPromotion()
-    {
-        return $this->promotion;
-    }
-
-    /**
      * @param AppliedCoupon|null $appliedCoupon
      * @return $this
      */
@@ -176,21 +160,6 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
     public function getAppliedCoupon()
     {
         return $this->appliedCoupon;
-    }
-
-    /**
-     * @param Promotion|null $promotion
-     * @return $this
-     */
-    public function setPromotion(Promotion $promotion = null)
-    {
-        $this->promotion = $promotion;
-        if ($promotion) {
-            $this->setSourcePromotionId($promotion->getId());
-            $this->setPromotionName($promotion->getRule()->getName());
-        }
-
-        return $this;
     }
 
     /**

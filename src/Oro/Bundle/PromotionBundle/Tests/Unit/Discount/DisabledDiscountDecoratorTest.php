@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountContextDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -102,7 +103,7 @@ class DisabledDiscountDecoratorTest extends \PHPUnit_Framework_TestCase
         $this->discount
             ->expects($this->once())
             ->method('apply')
-            ->with($discountContext);
+            ->with(new DisabledDiscountContextDecorator($discountContext));
 
         $this->disabledDiscountDecorator->apply($discountContext);
     }

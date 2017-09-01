@@ -73,9 +73,9 @@ class DisabledDiscountDecorator implements DiscountInterface
     /**
      * {@inheritdoc}
      */
-    public function apply(DiscountContext $discountContext)
+    public function apply(DiscountContextInterface $discountContext)
     {
-        $this->discount->apply($discountContext);
+        $this->discount->apply(new DisabledDiscountContextDecorator($discountContext));
     }
 
     /**

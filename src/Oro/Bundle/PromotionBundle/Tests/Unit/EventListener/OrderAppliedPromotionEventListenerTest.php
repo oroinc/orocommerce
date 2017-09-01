@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener;
+use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
+use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -14,6 +16,8 @@ use Symfony\Component\Templating\EngineInterface;
 
 class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -25,6 +29,11 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
     private $formFactory;
 
     /**
+     * @var AppliedPromotionManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $appliedPromotionManager;
+
+    /**
      * @var OrderAppliedPromotionEventListener
      */
     private $listener;
@@ -33,7 +42,12 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->engine = $this->createMock(EngineInterface::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->listener = new OrderAppliedPromotionEventListener($this->engine, $this->formFactory);
+        $this->appliedPromotionManager = $this->createMock(AppliedPromotionManager::class);
+        $this->listener = new OrderAppliedPromotionEventListener(
+            $this->engine,
+            $this->formFactory,
+            $this->appliedPromotionManager
+        );
     }
 
     public function testOnOrderEventWhenNoAppliedDiscounts()
@@ -82,6 +96,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('has')
             ->with('appliedPromotions')
             ->willReturn(true);
+
         $order = new Order();
         $formView = new FormView();
 
@@ -111,6 +126,10 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('render')
             ->with('OroPromotionBundle:Order:applied_promotions.html.twig', ['form' => $formView])
             ->willReturn($view);
+
+        $this->appliedPromotionManager->expects($this->once())
+            ->method('createAppliedPromotions')
+            ->with($order);
 
         $event = new OrderEvent($form, $order, ['some submitted data']);
         $this->listener->onOrderEvent($event);

@@ -14,9 +14,9 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
     private $context;
 
     /**
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      */
-    public function __construct(DiscountContext $discountContext)
+    public function __construct(DiscountContextInterface $discountContext)
     {
         $this->context = $discountContext;
     }

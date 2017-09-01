@@ -3,14 +3,14 @@
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub;
 
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 
 class DiscountStub extends AbstractDiscount
 {
     /**
      * {@inheritdoc}
      */
-    public function apply(DiscountContext $discountContext)
+    public function apply(DiscountContextInterface $discountContext)
     {
     }
 

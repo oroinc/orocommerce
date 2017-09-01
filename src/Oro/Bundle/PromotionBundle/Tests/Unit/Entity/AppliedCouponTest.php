@@ -15,6 +15,7 @@ class AppliedCouponTest extends \PHPUnit_Framework_TestCase
             ['id', 42],
             ['couponCode', 'some string'],
             ['sourcePromotionId', 42],
+            ['sourceCouponId', 42],
             ['createdAt', new \DateTime()]
         ]);
     }

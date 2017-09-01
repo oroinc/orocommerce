@@ -2,15 +2,16 @@
 
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 
-class OrderEntityListener
+class OrderFormListener
 {
     /**
      * @var AppliedPromotionManager
      */
-    protected $appliedPromotionManager;
+    private $appliedPromotionManager;
 
     /**
      * @param AppliedPromotionManager $appliedPromotionManager
@@ -21,10 +22,15 @@ class OrderEntityListener
     }
 
     /**
-     * @param Order $order
+     * @param AfterFormProcessEvent $event
      */
-    public function prePersist(Order $order)
+    public function onBeforeFlush(AfterFormProcessEvent $event)
     {
-        $this->appliedPromotionManager->createAppliedPromotions($order);
+        /** @var Order $order */
+        $order = $event->getData();
+
+        if ($order->getId()) {
+            $this->appliedPromotionManager->createAppliedPromotions($order, true);
+        }
     }
 }

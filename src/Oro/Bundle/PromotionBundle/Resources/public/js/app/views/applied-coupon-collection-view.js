@@ -53,7 +53,7 @@ define(function(require) {
             couponId = parseInt(couponId);
             this.$(this.options.selectors.appliedCouponElement).each(function(key, element) {
                 var $element = $(element);
-                if (parseInt($element.data(self.options.selectors.sourceCouponIdDataAttribute)) === couponId) {
+                if (parseInt($element.data(self.options.sourceCouponIdDataAttribute)) === couponId) {
                     $element.remove();
                 }
             });
@@ -113,6 +113,7 @@ define(function(require) {
             $element.find(this.options.selectors.couponCodeField).val(appliedCouponData.couponCode);
             $element.find(this.options.selectors.sourcePromotionIdField).val(appliedCouponData.sourcePromotionId);
             $element.find(this.options.selectors.sourceCouponIdField).val(appliedCouponData.sourceCouponId);
+            $element.data(this.options.sourceCouponIdDataAttribute, appliedCouponData.sourceCouponId);
 
             return $element;
         },

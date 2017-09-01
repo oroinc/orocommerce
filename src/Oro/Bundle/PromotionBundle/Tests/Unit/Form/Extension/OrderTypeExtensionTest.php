@@ -7,8 +7,6 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedCouponCollectionType;
 use Oro\Bundle\PromotionBundle\Form\Type\AppliedPromotionCollectionTableType;
 use Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension;
-use Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager;
-use Oro\Bundle\PromotionBundle\Provider\DiscountsProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -20,26 +18,13 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var AppliedDiscountManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $appliedDiscountManager;
-
-    /**
-     * @var DiscountsProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $discountsProvider;
-
-    /**
      * @var OrderTypeExtension
      */
     protected $orderTypeExtension;
 
     protected function setUp()
     {
-        $this->appliedDiscountManager = $this->createMock(AppliedDiscountManager::class);
-        $this->discountsProvider = $this->createMock(DiscountsProvider::class);
-
-        $this->orderTypeExtension = new OrderTypeExtension($this->appliedDiscountManager, $this->discountsProvider);
+        $this->orderTypeExtension = new OrderTypeExtension();
     }
 
     public function testBuildForm()
@@ -51,30 +36,11 @@ class OrderTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with('appliedPromotions', AppliedPromotionCollectionTableType::class);
 
-        $builder->expects($this->exactly(2))
+        $builder->expects($this->once())
             ->method('addEventListener')
-            ->withConsecutive(
-                [FormEvents::SUBMIT, $this->isType('callable'), 10],
-                [FormEvents::POST_SET_DATA, $this->isType('callable')]
-            );
+            ->with(FormEvents::POST_SET_DATA, $this->isType('callable'));
 
         $this->orderTypeExtension->buildForm($builder, []);
-    }
-
-    public function testOnSubmit()
-    {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->createMock(FormInterface::class);
-        $order = $this->getEntity(Order::class, ['id' => 777]);
-        $event = new FormEvent($form, $order);
-
-        $this->appliedDiscountManager->expects($this->once())
-            ->method('saveAppliedDiscounts')
-            ->with($order);
-
-        $this->discountsProvider->expects($this->once())->method('enableRecalculation');
-
-        $this->orderTypeExtension->onSubmit($event);
     }
 
     public function testPostSetData()

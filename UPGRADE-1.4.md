@@ -102,3 +102,33 @@ In order to see image changes, for example, immediate reindexation is required.
     - signature of `__construct` changed. Added dependencies: `RegistryInterface`, `AttachmentManager`    
 - Class `Oro\Bundle\ProductBundle\Provider\ContentVariantContextUrlProvider`
     - changed signature of `__construct` method. Dependency on `UserLocalizationManager` added.
+
+PromotionBundle
+------------
+- Class `Oro\Bundle\PromotionBundle\Discount\DiscountInterface`
+    - changed signature of `apply` method. Changed type hinting to `DiscountContextInterface`.
+- Class `Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyInterface`
+    - changed signature of `process` method. Changed type hinting to `DiscountContextInterface`.
+- Class `Oro\Bundle\PromotionBundle\Manager\AppliedDiscountManager`
+    - renamed to `AppliedPromotionManager`
+    - service of this manager renamed to `oro_promotion.applied_promotion_manager`
+    - changed signature of `__construct` method
+        - changed dependency from `ContainerInterface` to `ServiceLink`
+        - added third argument of `AppliedPromotionMapper`.
+    - renamed public method from `saveAppliedDiscounts` to `createAppliedPromotions`
+    - removed public methods `removeAppliedDiscountByOrderLineItem` and `removeAppliedDiscountByOrder`
+- Class `Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener`
+    - changed signature of `__construct` method
+        - changed dependency from `DiscountsProvider` to `AppliedDiscountsProvider`.
+- Class `Oro\Bundle\PromotionBundle\Form\Extension\OrderLineItemTypeExtension`
+    - changed signature of `__construct` method
+        - changed dependency from `DiscountsProvider` to `AppliedDiscountsProvider`.
+- Class `Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension`
+    - changed signature of `__construct` method
+        - removed all dependencies
+    - removed public method `onSubmit`.
+- Class `Oro\Bundle\PromotionBundle\Provider\AppliedDiscountsProvider`
+    - changed signature of `__construct` method
+        - removed all dependencies
+- Class `Oro\Bundle\PromotionBundle\Provider\DiscountsProvider`
+    - removed with service definition.

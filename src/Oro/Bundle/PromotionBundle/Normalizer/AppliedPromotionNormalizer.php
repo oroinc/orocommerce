@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PromotionBundle\Normalizer;
 
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\PromotionDataInterface;
 use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -53,7 +52,7 @@ class AppliedPromotionNormalizer implements NormalizerInterface
     }
 
     /**
-     * @param object|Promotion $promotion
+     * @param object|PromotionDataInterface $promotion
      * @return array
      */
     public function normalize($promotion)
@@ -94,8 +93,8 @@ class AppliedPromotionNormalizer implements NormalizerInterface
         /** @var Rule $rule */
         $rule = $this->ruleNormalizer->denormalize($promotionData['rule']);
 
-        $appliedPromotion = new AppliedPromotionData();
-        $appliedPromotion->setId($promotionData['id'])
+        $appliedPromotionData = new AppliedPromotionData();
+        $appliedPromotionData->setId($promotionData['id'])
             ->setUseCoupons($promotionData['useCoupons'])
             ->setRule($rule);
 
@@ -103,7 +102,7 @@ class AppliedPromotionNormalizer implements NormalizerInterface
             /** @var Segment $productsSegment */
             $productsSegment = $this->segmentNormalizer->denormalize($promotionData['productsSegment']);
 
-            $appliedPromotion->setProductsSegment($productsSegment);
+            $appliedPromotionData->setProductsSegment($productsSegment);
         }
 
         foreach ($promotionData['scopes'] as $scopeData) {
@@ -111,11 +110,11 @@ class AppliedPromotionNormalizer implements NormalizerInterface
             $scope = $this->scopeNormalizer->denormalize($scopeData);
 
             if ($scope) {
-                $appliedPromotion->addScope($scope);
+                $appliedPromotionData->addScope($scope);
             }
         }
 
-        return $appliedPromotion;
+        return $appliedPromotionData;
     }
 
     /**

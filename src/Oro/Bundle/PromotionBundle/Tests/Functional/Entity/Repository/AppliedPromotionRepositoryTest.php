@@ -77,4 +77,14 @@ class AppliedPromotionRepositoryTest extends WebTestCase
 
         $this->assertEquals($info, $this->repository->getAppliedPromotionsInfo($order));
     }
+
+    public function testRemoveAppliedPromotionsByOrder()
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $this->assertNotEmpty($this->repository->findByOrder($order));
+        $this->repository->removeAppliedPromotionsByOrder($order);
+
+        $this->assertEmpty($this->repository->findByOrder($order));
+    }
 }

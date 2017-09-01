@@ -52,9 +52,9 @@ interface DiscountInterface
     /**
      * Add information about discount to context
      *
-     * @param DiscountContext $discountContext
+     * @param DiscountContextInterface $discountContext
      */
-    public function apply(DiscountContext $discountContext);
+    public function apply(DiscountContextInterface $discountContext);
 
     /**
      * Calculate discount value for given entity

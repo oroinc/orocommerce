@@ -63,8 +63,8 @@ class PromotionProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPromotions()
     {
-        $appliedPromotionEntity1 = $this->getEntity(AppliedPromotion::class, ['id' => 333]);
-        $appliedPromotionEntity2 = $this->getEntity(AppliedPromotion::class, ['id' => 777]);
+        $appliedPromotionEntity1 = $this->getEntity(AppliedPromotion::class, ['promotionData' => ['some data']]);
+        $appliedPromotionEntity2 = $this->getEntity(AppliedPromotion::class, ['promotionData' => ['some data']]);
         $appliedPromotionEntity3 = new AppliedPromotion();
 
         $appliedPromotion1 = $this->createMock(AppliedPromotionData::class);

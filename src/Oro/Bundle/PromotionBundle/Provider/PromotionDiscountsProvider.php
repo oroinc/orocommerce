@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Provider;
 
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountFactory;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 
@@ -43,10 +44,10 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
 
     /**
      * @param object $sourceEntity
-     * @param DiscountContext $context
+     * @param DiscountContextInterface $context
      * @return DiscountInterface[]
      */
-    public function getDiscounts($sourceEntity, DiscountContext $context): array
+    public function getDiscounts($sourceEntity, DiscountContextInterface $context): array
     {
         $discounts = [];
 
