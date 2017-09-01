@@ -5,6 +5,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadCouponData;
+use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CouponRepositoryTest extends WebTestCase
@@ -42,5 +43,27 @@ class CouponRepositoryTest extends WebTestCase
             ],
             $result
         );
+    }
+
+    public function testGetPromotionsWithMatchedCoupons()
+    {
+        /** @var CouponRepository $repository */
+        $repository = self::getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(Coupon::class)
+            ->getRepository(Coupon::class);
+
+        $promotionsIds = [
+            $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId(),
+            $this->getReference(LoadPromotionData::ORDER_AMOUNT_PROMOTION)->getId(),
+        ];
+        $couponCodes = [
+            LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED,
+            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL
+        ];
+
+        $result = $repository->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
+
+        $this->assertEquals([$this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()], $result);
     }
 }

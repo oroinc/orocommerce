@@ -81,6 +81,7 @@ services:
         public: false
         arguments:
             - '@oro_promotion.rule_filtration.coupon_decorator.inner'
+            - '@doctrine'
 
     oro_promotion.rule_filtration.matching_items:
         class: Oro\Bundle\PromotionBundle\RuleFiltration\MatchingItemsFiltrationService
