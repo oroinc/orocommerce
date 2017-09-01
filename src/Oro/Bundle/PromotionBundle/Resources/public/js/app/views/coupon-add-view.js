@@ -28,7 +28,8 @@ define(function(require) {
                 addedIdsSelector: null,
                 addedCouponsContainerSelector: null,
                 removeCouponButtonSelector: '[data-remove-coupon-id]',
-                selectCouponValidationContainerSelector: null
+                selectCouponValidationContainerSelector: null,
+                formSelector: null
             }
         },
 
@@ -77,11 +78,8 @@ define(function(require) {
                 return;
             }
 
-            /*
-             TODO: change logic for getting form data in scope of BB-11292
-             var data = $form.find(':input[data-ftid]').serializeArray();
-             */
-            var data = [];
+            var $form = $(this.options.selectors.formSelector);
+            var data = $form.find(':input[data-ftid]').serializeArray();
             _.each({
                 couponId: couponId,
                 addedCouponIds: $addedIdsField.val(),
