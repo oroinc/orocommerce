@@ -25,7 +25,7 @@ class RelatedItemConfigHelper
      * @param string $providerName
      *
      * @return AbstractRelatedItemConfigProvider
-     * @throws \UnexpectedValueException
+     * @throws ConfigProviderNotFoundException
      */
     public function getConfigProvider($providerName)
     {

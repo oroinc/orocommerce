@@ -42,6 +42,15 @@ class RelatedItemsProductEditListener
     }
 
     /**
+     * @param $name
+     * @return \Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider
+     */
+    protected function getConfigProvider($name)
+    {
+        return $this->relatedItemConfigHelper->getConfigProvider($name);
+    }
+
+    /**
      * @param BeforeListRenderEvent $event
      */
     public function onProductEdit(BeforeListRenderEvent $event)
@@ -50,7 +59,7 @@ class RelatedItemsProductEditListener
         $tabs = [];
         $grids = [];
 
-        if ($this->relatedItemConfigHelper->getConfigProvider('related_products')->isEnabled()
+        if ($this->getConfigProvider('related_products')->isEnabled()
             && $this->authorizationChecker->isGranted('oro_related_products_edit')
         ) {
             $tabs[] = [
@@ -60,7 +69,7 @@ class RelatedItemsProductEditListener
             $grids[] = $this->getRelatedProductsEditBlock($event, $twigEnv);
         }
 
-        if ($this->relatedItemConfigHelper->getConfigProvider('upsell_products')->isEnabled()
+        if ($this->getConfigProvider('upsell_products')->isEnabled()
             && $this->authorizationChecker->isGranted('oro_upsell_products_edit')
         ) {
             $tabs[] = [
@@ -170,9 +179,7 @@ class RelatedItemsProductEditListener
             [
                 'form' => $event->getFormView(),
                 'entity' => $event->getEntity(),
-                'relatedProductsLimit' => $this->relatedItemConfigHelper
-                    ->getConfigProvider('related_products')
-                    ->getLimit()
+                'relatedProductsLimit' => $this->getConfigProvider('related_products')->getLimit()
             ]
         );
     }
@@ -189,9 +196,7 @@ class RelatedItemsProductEditListener
             [
                 'form' => $event->getFormView(),
                 'entity' => $event->getEntity(),
-                'upsellProductsLimit' => $this->relatedItemConfigHelper
-                    ->getConfigProvider('upsell_products')
-                    ->getLimit(),
+                'upsellProductsLimit' => $this->getConfigProvider('upsell_products')->getLimit(),
             ]
         );
     }
