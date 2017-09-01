@@ -9,6 +9,9 @@ oro_behat_extension:
                 - OroApplicationBundle::CommerceMainContext
                 - OroShoppingListBundle::ShoppingListContext
                 - OroRFPBundle::FeatureContext
+                - OroConfigBundle::FeatureContext
+                - OroNavigationBundle::FeatureContext
+                - OroUIBundle::TypeaheadContext
             paths:
                 - '@OroRFPBundle/Tests/Behat/Features'
 
@@ -36,6 +39,12 @@ oro_behat_extension:
         RequestNotesBlock:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: .page-content div.notes
+        TargetPriceField:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: 'input[name="oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]"]'
+        LineItemDropdown:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: '.line-item-form .dropdown-toggle'
 
     pages:
         RequestViewBackendPage:

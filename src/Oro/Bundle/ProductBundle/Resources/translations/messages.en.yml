@@ -220,6 +220,7 @@ oro:
                 edit.label: '[Related Products] Edit related products'
             upsell_products:
                 edit.label: '[Up-sell Products] Edit up-sell products'
+            quick_add.label: Quick order form
 
         rounding:
             type:
@@ -510,8 +511,8 @@ oro:
                 label:    Meta description
                 description: The meta description for the brand
             meta_keywords:
-                label:    Meta keyword
-                description: The meta kewords for the brand
+                label:    Meta keywords
+                description: The meta keywords for the brand, separated by commas.
             names:
                 label:    Name
                 description: The name of the brand

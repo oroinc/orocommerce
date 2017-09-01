@@ -190,6 +190,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_validator }
 
+    oro_product.validator.product_image_type:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageTypeValidator'
+        arguments:
+            - "@oro_layout.provider.image_type"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_image_type_validator }
+
     oro_product.validator.product_image_collection:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollectionValidator'
         public: true
@@ -612,6 +619,8 @@ services:
         arguments:
             - '@oro_website.provider.website_localization'
             - '@oro_website_search.manager.website_context_manager'
+            - '@doctrine'
+            - '@oro_attachment.manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 
@@ -692,7 +701,7 @@ services:
         arguments:
             - '@oro_product.repository.product_image'
             - '@oro_layout.loader.image_filter'
-            - '@oro_layout.provider.image_type'
+            - '@oro_product.provider.product_images_dimensions'
             - '@oro_attachment.image_resizer'
             - '@oro_attachment.media_cache_manager'
             - '@oro_attachment.manager'
@@ -1054,6 +1063,7 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_redirect.url_storage_cache'
+            - '@oro_frontend_localization.manager.user_localization'
         tags:
             - { name: oro_redirect.context_url_provider, alias: 'content_variant' }
 
@@ -1155,3 +1165,9 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_attachment.manager'
+
+    oro_product.provider.product_images_dimensions:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider'
+        arguments:
+            - '@oro_layout.provider.image_type'
+

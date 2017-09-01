@@ -15,6 +15,15 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @var int
      *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @var int
+     *
      * @ORM\Column(name="sort_order", type="integer")
      */
     protected $sortOrder;
@@ -22,27 +31,33 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @var PriceList
      *
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $priceList;
 
     /**
      * @var Website
      *
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $website;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false, options={"default": true})
+     * @ORM\Column(name="merge_allowed", type="boolean", nullable=false, options={"default":true})
      */
     protected $mergeAllowed = true;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * @return int

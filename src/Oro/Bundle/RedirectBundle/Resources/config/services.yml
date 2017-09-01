@@ -241,13 +241,14 @@ services:
         arguments:
             - '@oro_redirect.url_storage_cache'
             - '@oro_redirect.provider.context_url_provider_registry'
+            - '@oro_frontend_localization.manager.user_localization'
 
     oro_redirect.routing.router:
         class: Oro\Bundle\RedirectBundle\Routing\Router
         parent: router.default
         decorates: router
         calls:
-            - [ 'setFrontendHelper', ['@oro_frontend.request.frontend_helper'] ]
+            - [ 'setMatchedUrlDecisionMaker', ['@oro_redirect.routing.matched_url_decision_maker'] ]
             - [ 'setContainer', ['@service_container'] ]
         tags:
             - { name: 'monolog.logger', channel: 'router' }

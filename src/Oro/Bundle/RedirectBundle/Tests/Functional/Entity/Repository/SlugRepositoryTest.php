@@ -245,7 +245,8 @@ class SlugRepositoryTest extends WebTestCase
             [
                 'routeParameters' => $slug1->getRouteParameters(),
                 'url' => $slug1->getUrl(),
-                'slugPrototype' => $slug1->getSlugPrototype()
+                'slugPrototype' => $slug1->getSlugPrototype(),
+                'localization_id' => $slug1->getLocalization() ? $slug1->getLocalization()->getId(): null
             ]
         ];
         $this->assertEquals($expected, $actual);

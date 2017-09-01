@@ -8,10 +8,9 @@ use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
 use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
 use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
-use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
-use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
+use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -32,9 +31,9 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
     protected $filterLoader;
 
     /**
-     * @var ImageTypeProvider
+     * @var ProductImagesDimensionsProvider
      */
-    protected $imageTypeProvider;
+    protected $imageDimensionsProvider;
 
     /**
      * @var ImageResizer
@@ -54,7 +53,7 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
     /**
      * @param EntityRepository $imageRepository
      * @param ImageFilterLoader $filterLoader
-     * @param ImageTypeProvider $imageTypeProvider
+     * @param ProductImagesDimensionsProvider $imageDimensionsProvider
      * @param ImageResizer $imageResizer
      * @param MediaCacheManager $mediaCacheManager
      * @param AttachmentManager $attachmentManager
@@ -62,14 +61,14 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
     public function __construct(
         EntityRepository $imageRepository,
         ImageFilterLoader $filterLoader,
-        ImageTypeProvider $imageTypeProvider,
+        ProductImagesDimensionsProvider $imageDimensionsProvider,
         ImageResizer $imageResizer,
         MediaCacheManager $mediaCacheManager,
         AttachmentManager $attachmentManager
     ) {
         $this->imageRepository = $imageRepository;
         $this->filterLoader = $filterLoader;
-        $this->imageTypeProvider = $imageTypeProvider;
+        $this->imageDimensionsProvider = $imageDimensionsProvider;
         $this->imageResizer = $imageResizer;
         $this->mediaCacheManager = $mediaCacheManager;
         $this->attachmentManager = $attachmentManager;
@@ -100,7 +99,7 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
 
         $this->filterLoader->load();
 
-        foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
+        foreach ($this->imageDimensionsProvider->getDimensionsForProductImage($productImage) as $dimension) {
             $image = $productImage->getImage();
             $filterName = $dimension->getName();
             $imagePath = $this->attachmentManager->getFilteredImageUrl($image, $filterName);
@@ -123,23 +122,5 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
     public static function getSubscribedTopics()
     {
         return [ProductImageResizeListener::IMAGE_RESIZE_TOPIC];
-    }
-
-    /**
-     * @param ProductImage $productImage
-     * @return ThemeImageTypeDimension[]
-     */
-    protected function getDimensionsForProductImage(ProductImage $productImage)
-    {
-        $dimensions = [];
-        $allImageTypes = $this->imageTypeProvider->getImageTypes();
-
-        foreach ($productImage->getTypes() as $imageType) {
-            if (isset($allImageTypes[$imageType])) {
-                $dimensions = array_merge($dimensions, $allImageTypes[$imageType]->getDimensions());
-            }
-        }
-
-        return $dimensions;
     }
 }
