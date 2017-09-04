@@ -188,6 +188,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function assertInsertedByCategory(array $actual)
     {
+        $categoryRepository = $this->getCategoryRepository();
         $pv = $this->getProductVisibilities();
         $products = $this->getProducts();
         $scope = $this->getScope();
@@ -198,13 +199,18 @@ class ProductRepositoryTest extends WebTestCase
                 continue;
             }
 
+            $category = $categoryRepository->findOneByProduct($product);
+            if (!$category){
+                continue;
+            }
+
             $expected = [
                 'scope' => $scope->getId(),
                 'product' => $product->getId(),
                 'sourceProductVisibility' => null,
                 'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
-                'category' => $this->getCategoryRepository()->findOneByProduct($product)->getId()
+                'category' => $category->getId()
             ];
             $this->assertContains($expected, $actual);
         }
