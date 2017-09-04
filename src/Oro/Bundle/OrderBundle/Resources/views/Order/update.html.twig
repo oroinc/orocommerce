@@ -223,23 +223,25 @@
         }] ) %}
     {% endif %}
 
-    {% set discounts %}
-        <div class="oro-discount-collection-container">
-            {{ form_widget(form.discounts) }}
-            <div class="discounts-sum-error">{{ form_errors(form.discounts) }}</div>
-            <div class="discounts-sum-error">{{ form_row(form.discountsSum) }}</div>
-        </div>
-    {% endset %}
+    {% if entity.id %}
+        {% set discounts %}
+            <div class="oro-discount-collection-container">
+                {{ form_widget(form.discounts) }}
+                <div class="discounts-sum-error">{{ form_errors(form.discounts) }}</div>
+                <div class="discounts-sum-error">{{ form_row(form.discountsSum) }}</div>
+            </div>
+        {% endset %}
 
-    {% set dataBlocks = dataBlocks|merge({
-        'discounts': {
-            'title': 'oro.order.sections.discounts'|trans,
-            'class': 'active',
-            'subblocks': [{
-                'data': [discounts],
-            }]
-        }
-    }) %}
+        {% set dataBlocks = dataBlocks|merge({
+            'discounts': {
+                'title': 'oro.order.sections.discounts'|trans,
+                'class': 'active',
+                'subblocks': [{
+                    'data': [discounts],
+                }]
+            }
+        }) %}
+    {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.subtotals'|trans,

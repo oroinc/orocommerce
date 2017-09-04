@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PromotionBundle\Executor;
 
 use Oro\Bundle\PromotionBundle\Discount\Converter\DiscountContextConverterInterface;
-use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\Strategy\StrategyProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 
@@ -44,9 +44,9 @@ class PromotionExecutor
 
     /**
      * @param object $sourceEntity
-     * @return DiscountContext
+     * @return DiscountContextInterface
      */
-    public function execute($sourceEntity): DiscountContext
+    public function execute($sourceEntity): DiscountContextInterface
     {
         $discountContext = $this->discountContextConverter->convert($sourceEntity);
         $discounts = $this->promotionDiscountsProvider->getDiscounts($sourceEntity, $discountContext);
