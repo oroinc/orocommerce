@@ -18,6 +18,8 @@ product1:
     shortDescriptions:
         - { reference: product-1.shortDescriptions.default, text: product-1.shortDescriptions.default }
         - { reference: product-1.shortDescriptions.en_US, text: product-1.shortDescriptions.en_US, fallback: system, localization: en_US }
+    images:
+        - { reference: img, type: listing }
     featured: true
     manageInventory:
         reference: product-1.manageInventory
@@ -40,6 +42,8 @@ product2:
         - { reference: product-2.descriptions.default, text: product-2.descriptions.default }
     shortDescriptions:
         - { reference: product-2.shortDescriptions.default, text: product-2.shortDescriptions.default }
+    images:
+        - { reference: img, type: main }
     featured: true
     manageInventory:
         reference: product-2.manageInventory

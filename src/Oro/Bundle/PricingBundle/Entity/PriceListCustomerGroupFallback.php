@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroupAwareInterface;
 
 /**
  * @ORM\Table(
@@ -18,7 +18,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository")
  */
-class PriceListCustomerGroupFallback extends PriceListFallback
+class PriceListCustomerGroupFallback extends PriceListFallback implements CustomerGroupAwareInterface
 {
     const WEBSITE = 0;
     const CURRENT_ACCOUNT_GROUP_ONLY = 1;
@@ -43,7 +43,7 @@ class PriceListCustomerGroupFallback extends PriceListFallback
      *
      * @return $this
      */
-    public function setCustomerGroup($customerGroup)
+    public function setCustomerGroup(CustomerGroup $customerGroup)
     {
         $this->customerGroup = $customerGroup;
 

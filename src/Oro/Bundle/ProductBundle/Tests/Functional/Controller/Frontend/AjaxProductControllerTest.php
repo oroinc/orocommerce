@@ -6,7 +6,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxProductControllerTest extends WebTestCase
@@ -20,7 +19,6 @@ class AjaxProductControllerTest extends WebTestCase
 
         $this->loadFixtures([
             LoadFrontendProductData::class,
-            LoadProductImageData::class,
         ]);
     }
 

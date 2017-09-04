@@ -66,6 +66,19 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $this->storageCache->deleteAll();
     }
 
+    public function testDeleteAllNonClearableLocalWithNonFsPersistent()
+    {
+        $this->localCache->expects($this->never())
+            ->method($this->anything());
+
+        /** @var Cache|\PHPUnit_Framework_MockObject_MockObject $persistentCache */
+        $persistentCache = $this->createMock(ArrayCache::class);
+        $this->persistentCache->expects($this->once())
+            ->method('deleteAll');
+        $storageCache = new UrlStorageCache($persistentCache, $this->persistentCache, $this->filesystem);
+        $storageCache->deleteAll();
+    }
+
     public function testDeleteAllLocal()
     {
         /** @var ArrayCache|\PHPUnit_Framework_MockObject_MockObject $localCache */
@@ -156,6 +169,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $routeParameters = ['id' => 1];
         $key = 'test_2';
         $url = '/test';
+        $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
@@ -165,10 +179,10 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
 
         $storage->expects($this->once())
             ->method('getUrl')
-            ->with($routeParameters)
+            ->with($routeParameters, $localizationId)
             ->willReturn($url);
 
-        $this->assertEquals($url, $this->storageCache->getUrl($routeName, $routeParameters));
+        $this->assertEquals($url, $this->storageCache->getUrl($routeName, $routeParameters, $localizationId));
     }
 
     public function testRemoveUrl()
@@ -176,6 +190,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $routeName = 'test';
         $routeParameters = ['id' => 1];
         $key = 'test_2';
+        $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
@@ -185,9 +200,9 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
 
         $storage->expects($this->once())
             ->method('removeUrl')
-            ->with($routeParameters);
+            ->with($routeParameters, $localizationId);
 
-        $this->storageCache->removeUrl($routeName, $routeParameters);
+        $this->storageCache->removeUrl($routeName, $routeParameters, $localizationId);
     }
 
     public function testGetSlug()
@@ -196,6 +211,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $routeParameters = ['id' => 1];
         $key = 'test_2';
         $slug = 'test';
+        $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
@@ -205,10 +221,10 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
 
         $storage->expects($this->once())
             ->method('getSlug')
-            ->with($routeParameters)
+            ->with($routeParameters, $localizationId)
             ->willReturn($slug);
 
-        $this->assertEquals($slug, $this->storageCache->getSlug($routeName, $routeParameters));
+        $this->assertEquals($slug, $this->storageCache->getSlug($routeName, $routeParameters, $localizationId));
     }
 
     public function testSetUrl()
@@ -217,6 +233,7 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
         $routeParameters = ['id' => 1];
         $key = 'test_2';
         $url = '/test';
+        $localizationId = 1;
 
         /** @var UrlDataStorage|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->getMockBuilder(UrlDataStorage::class)
@@ -226,9 +243,9 @@ class UrlStorageCacheTest extends \PHPUnit_Framework_TestCase
 
         $storage->expects($this->once())
             ->method('setUrl')
-            ->with($routeParameters, $url);
+            ->with($routeParameters, $url, $localizationId);
 
-        $this->storageCache->setUrl($routeName, $routeParameters, $url);
+        $this->storageCache->setUrl($routeName, $routeParameters, $url, $localizationId);
     }
 
     public function testFlushExistsInPersistentCache()

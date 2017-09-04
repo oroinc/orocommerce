@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Routing;
 
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\RedirectBundle\Routing\Router;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher;
@@ -15,9 +15,9 @@ use Symfony\Component\Routing\RouteCollection;
 class RouterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $frontendHelper;
+    private $urlDecisionMaker;
 
     /**
      * @var ContainerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -32,20 +32,18 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->container = $this->createMock(ContainerInterface::class);
-        $this->frontendHelper = $this->getMockBuilder(FrontendHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->urlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);
 
         $this->router = new Router($this->container, 'some_resource');
-        $this->router->setFrontendHelper($this->frontendHelper);
+        $this->router->setMatchedUrlDecisionMaker($this->urlDecisionMaker);
         $this->router->setContainer($this->container);
     }
 
     public function testGetMatcherWhenNotFrontendRequest()
     {
-        $this->frontendHelper
+        $this->urlDecisionMaker
             ->expects($this->once())
-            ->method('isFrontendRequest')
+            ->method('matches')
             ->willReturn(false);
 
         $this->container->expects($this->once())
@@ -60,9 +58,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testGetMatcherWhenFrontendRequestAndMatcherIsNotInstanceOfSlugUrlMatcher()
     {
-        $this->frontendHelper
+        $this->urlDecisionMaker
             ->expects($this->once())
-            ->method('isFrontendRequest')
+            ->method('matches')
             ->willReturn(true);
 
         $slugUrlMatcher = $this->getMockBuilder(SlugUrlMatcher::class)
@@ -90,9 +88,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testGetGeneratorWhenNotFrontendRequest()
     {
-        $this->frontendHelper
+        $this->urlDecisionMaker
             ->expects($this->once())
-            ->method('isFrontendRequest')
+            ->method('matches')
             ->willReturn(false);
 
         $this->container->expects($this->once())
@@ -108,9 +106,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
     public function testGetGeneratorWhenFrontendRequestAndGeneratorNotInstanceOfSluggableUrlGenerator()
     {
-        $this->frontendHelper
+        $this->urlDecisionMaker
             ->expects($this->once())
-            ->method('isFrontendRequest')
+            ->method('matches')
             ->willReturn(true);
 
         $sluggableUrlGenerator = $this->getMockBuilder(SluggableUrlGenerator::class)

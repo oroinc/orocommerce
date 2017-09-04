@@ -69,7 +69,7 @@ class ProductImageListener
      */
     protected function dispatchEvent(ProductImage $productImage)
     {
-        if (!$productImage->getTypes()) {
+        if ($productImage->getTypes()->isEmpty()) {
             return;
         }
 

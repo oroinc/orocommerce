@@ -11,10 +11,10 @@ use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
 use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
 use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
-use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
-use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
+use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
+use Oro\Bundle\ProductBundle\Provider\ProductImagesDimensionsProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
 use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
@@ -48,9 +48,9 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit_Framewor
     protected $filterLoader;
 
     /**
-     * @var ImageTypeProvider
+     * @var ProductImagesDimensionsProvider
      */
-    protected $imageTypeProvider;
+    protected $imageDimensionsProvider;
 
     /**
      * @var ImageResizer
@@ -71,7 +71,7 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit_Framewor
     {
         $this->imageRepository = $this->prophesize(EntityRepository::class);
         $this->filterLoader = $this->prophesize(ImageFilterLoader::class);
-        $this->imageTypeProvider = $this->prophesize(ImageTypeProvider::class);
+        $this->imageDimensionsProvider = $this->prophesize(ProductImagesDimensionsProvider::class);
         $this->imageResizer = $this->prophesize(ImageResizer::class);
         $this->attachmentManager = $this->prophesize(AttachmentManager::class);
         $this->mediaCacheManager = $this->prophesize(MediaCacheManager::class);
@@ -79,7 +79,7 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit_Framewor
         $this->processor = new ImageResizeMessageProcessor(
             $this->imageRepository->reveal(),
             $this->filterLoader->reveal(),
-            $this->imageTypeProvider->reveal(),
+            $this->imageDimensionsProvider->reveal(),
             $this->imageResizer->reveal(),
             $this->mediaCacheManager->reveal(),
             $this->attachmentManager->reveal()
@@ -131,23 +131,24 @@ abstract class AbstractImageResizeMessageProcessorTest extends \PHPUnit_Framewor
     {
         $image = $this->prophesize(File::class);
         $image->getId()->willReturn(self::PRODUCT_IMAGE_ID);
+        $image->getId()->willReturn(null);
 
         $productImage = $this->prophesize(StubProductImage::class);
         $productImage->getImage()->willReturn($image->reveal());
-        $productImage->getTypes()->willReturn(['main', 'listing']);
+        $productImage->getTypes()->willReturn([
+            'main' => new ProductImageType('main'),
+            'listing' => new ProductImageType('listing'),
+        ]);
         $productImage->getId()->willReturn(self::PRODUCT_IMAGE_ID);
 
-        $this->imageTypeProvider->getImageTypes()->willReturn([
-            'main' => new ThemeImageType('name1', 'label1', [
-                new ThemeImageTypeDimension(self::ORIGINAL, null, null),
-                new ThemeImageTypeDimension(self::LARGE, 1000, 1000)
-            ]),
-            'listing' => new ThemeImageType('name2', 'label2', [
-                new ThemeImageTypeDimension(self::SMALL, 100, 100),
-                new ThemeImageTypeDimension(self::LARGE, 1000, 1000)
-            ]),
-            'additional' => new ThemeImageType('name3', 'label3', [])
-        ]);
+        $this->imageDimensionsProvider->getDimensionsForProductImage($productImage)
+            ->willReturn(
+                [
+                    'main' => new ThemeImageTypeDimension(self::ORIGINAL, null, null),
+                    'listing' => new ThemeImageTypeDimension(self::LARGE, 100, 100),
+                    'additional' => new ThemeImageTypeDimension(self::ORIGINAL, null, null)
+                ]
+            );
 
         $this->filterLoader->load()->shouldBeCalled();
         $this->imageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn($productImage->reveal());
