@@ -4,7 +4,9 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use Oro\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
 
@@ -18,6 +20,19 @@ class ProductImageValidator extends ConstraintValidator
     protected $context;
 
     /**
+     * @var ValidatorInterface
+     */
+    protected $validator;
+
+    /**
+     * @param ValidatorInterface $validator
+     */
+    public function __construct(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
+    /**
      * @param ProductImageEntity $value
      * @param Constraint|ProductImageCollection $constraint
      *
@@ -29,6 +44,21 @@ class ProductImageValidator extends ConstraintValidator
             $this->context
                 ->buildViolation($constraint->message)
                 ->addViolation();
+        }
+
+        // add product image to existing collection and validate
+        $productImages = $value->getProduct()->getImages();
+        $productImages->add($value);
+        $violations = $this->validator->validate($productImages, new ProductImageCollection());
+
+        if ($violations->count()) {
+            foreach ($violations as $violation) {
+                /** @var ConstraintViolation $violation */
+                $this->context->addViolation(
+                    $violation->getMessage(),
+                    $violation->getParameters()
+                );
+            }
         }
     }
 }
