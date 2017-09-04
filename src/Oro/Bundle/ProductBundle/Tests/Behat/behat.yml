@@ -634,6 +634,9 @@ oro_behat_extension:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Product navbar:
+      selector: '#product-edit.navbar'
+
     Additional Units Form Section:
       selector:
         type: xpath
