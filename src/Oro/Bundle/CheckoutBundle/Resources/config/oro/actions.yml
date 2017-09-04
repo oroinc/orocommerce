@@ -178,6 +178,9 @@ action_groups:
             showErrors:
                 type: bool
                 default: false
+            startTransition:
+                type: string
+                default: ''
         actions:
             - '@run_action_group':
                 action_group: find_checkout
@@ -198,6 +201,8 @@ action_groups:
                         parameters_mapping:
                             entity: $.checkout
                             data: $.settings
+            - '@get_start_checkout_transition':
+                attribute: $.startTransition
             - '@redirect':
                 conditions:
                     '@extendable':
@@ -207,6 +212,7 @@ action_groups:
                     route: oro_checkout_frontend_checkout
                     route_parameters:
                         id: $.checkout.id
+                        transition: $.startTransition
 
     find_checkout:
         parameters:

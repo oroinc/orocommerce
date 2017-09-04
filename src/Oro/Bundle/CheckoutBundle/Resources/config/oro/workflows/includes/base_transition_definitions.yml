@@ -20,7 +20,7 @@ workflows:
                     - '@call_service_method':
                         attribute: $.result.isAllowed
                         service: oro_shopping_list.processor.quick_add_to_checkout
-                        method: isAllowedForLogged
+                        method: isAllowed
                     - '@call_service_method':
                        attribute: $.result.isReachedLimit
                        service: oro_shopping_list.manager.shopping_list_limit
@@ -31,7 +31,7 @@ workflows:
                        method: getShoppingListLimitForUser
                     - '@call_service_method':
                         service: oro_checkout.condition.is_workflow_start_from_shopping_list_allowed
-                        method: isAllowed
+                        method: isAllowedForAny
                         attribute: $.result.isCheckoutAllowed
                 preconditions:
                     '@and':
