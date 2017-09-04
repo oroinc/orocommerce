@@ -126,7 +126,6 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroShoppingListBundle::FeatureContext
-        - OroSalesBundle::FeatureContext
         - OroNavigationBundle::FeatureContext
         - OroCustomerBundle::ACLContext
         - OroShoppingListBundle::ShoppingListContext

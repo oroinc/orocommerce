@@ -61,9 +61,7 @@ Feature: Sales Representative Info
     Given I proceed as the Admin
     And I login as administrator
     And go to System/ Configuration
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "Contacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     And fill "Customer Visible Contact Info Form" with:
       |Display Default                 |true |
       |Allow User Configuration Default|false|
@@ -112,23 +110,17 @@ Feature: Sales Representative Info
     Given I proceed as the Admin
     And go to System/ User Management/ Users
     When click configuration "Charlie1@example.com" in grid
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "UserContacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     Then I should see "Enter Manually" for "Customer Visible Contact Info Form" select
     And go to System/ Configuration
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "Contacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     When fill "Customer Visible Contact Info Form" with:
       |Display                         |Customer User Owner|
       |Allow User Configuration Default|true               |
     And click "Save settings"
     And go to System/ User Management/ Users
     And click configuration "Charlie1@example.com" in grid
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "UserContacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     Then the "Use Organization" checkbox should be checked
     And I should see "Don't Display Contact Info" for "Customer Visible Contact Info Form" select
     And I should see "Use My Profile Data" for "Customer Visible Contact Info Form" select
@@ -166,18 +158,14 @@ Feature: Sales Representative Info
       |Email: new@test.com |
     And I proceed as the Admin
     And go to System/ Configuration
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "Contacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     When fill "Customer Visible Contact Info Form" with:
       |Available User Options Default|false         |
       |Available User Options        |Enter Manually|
     And click "Save settings"
     And go to System/ User Management/ Users
     When click configuration "Charlie1@example.com" in grid
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "UserContacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     Then I should not see "Don't Display Contact Info" for "Customer Visible Contact Info Form" select
     And I should not see "Use My Profile Data" for "Customer Visible Contact Info Form" select
     And I should see "Enter Manually" for "Customer Visible Contact Info Form" select
@@ -185,9 +173,7 @@ Feature: Sales Representative Info
   Scenario: System level - Guest Contact
     Given I proceed as the Admin
     And go to System/ Configuration
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "Contacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     When fill "Customer Visible Contact Info Form" with:
       |Guest Contact Default|false             |
       |Guest Contact        |Test guest contact|
@@ -201,9 +187,7 @@ Feature: Sales Representative Info
     Given I proceed as the Admin
     And go to System/ Websites
     And click configuration "Default" in grid
-    And click "Commerce"
-    And click Sales in sidebar menu
-    And click on "SiteContacts"
+    And I follow "Commerce/Sales/Contacts" on configuration sidebar
     When fill "Customer Visible Contact Info Form" with:
       |Display Default|false         |
       |Display        |Customer Owner|

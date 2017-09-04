@@ -33,8 +33,9 @@ class RequestUpdateHandler extends UpdateHandler
         $saveMessage,
         $resultCallback = null
     ) {
+        $result = parent::processSave($form, $entity, $saveAndStayRoute, $saveAndCloseRoute, $saveMessage);
         $this->representativesNotifier->notifyRepresentatives($entity);
 
-        return parent::processSave($form, $entity, $saveAndStayRoute, $saveAndCloseRoute, $saveMessage);
+        return $result;
     }
 }
