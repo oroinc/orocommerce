@@ -82,6 +82,7 @@ class ProductRepositoryTest extends WebTestCase
                     'product-6',
                     'product-7',
                     'product-8',
+                    'product-9',
                 ],
             ],
             'product, 1, 1' => [
@@ -133,6 +134,7 @@ class ProductRepositoryTest extends WebTestCase
             ProductFixture::PRODUCT_6,
             ProductFixture::PRODUCT_7,
             ProductFixture::PRODUCT_8,
+            ProductFixture::PRODUCT_9,
         ];
 
         return [
