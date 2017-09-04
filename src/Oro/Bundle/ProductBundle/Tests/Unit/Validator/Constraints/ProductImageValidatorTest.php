@@ -2,21 +2,26 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator;
+
 
 class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductImageValidator
      */
-    protected $validator;
+    protected $productImageValidator;
 
     /**
      * @var ExecutionContextInterface
@@ -28,14 +33,19 @@ class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $constraint;
 
+    /**
+     * @var ValidatorInterface
+     */
+    protected $validator;
+
     public function setUp()
     {
         $this->constraint = new ProductImage();
 
         $this->context = $this->prophesize('Symfony\Component\Validator\Context\ExecutionContextInterface');
-
-        $this->validator = new ProductImageValidator();
-        $this->validator->initialize($this->context->reveal());
+        $this->validator = $this->prophesize('Symfony\Component\Validator\Validator\ValidatorInterface');
+        $this->productImageValidator = new ProductImageValidator($this->validator->reveal());
+        $this->productImageValidator->initialize($this->context->reveal());
     }
 
     public function testValidateValidImage()
@@ -46,9 +56,14 @@ class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
         $productImage = new StubProductImage();
         $productImage->setImage($file);
 
+        $product = new Product();
+        $productImage->setProduct($product);
+
+        $this->validator->validate($product->getImages(), new ProductImageCollection())->willReturn(new ArrayCollection());
+
         $this->context->buildViolation(Argument::cetera())->shouldNotBeCalled();
 
-        $this->validator->validate($productImage, $this->constraint);
+        $this->productImageValidator->validate($productImage, $this->constraint);
     }
 
     public function testValidateInvalidImage()

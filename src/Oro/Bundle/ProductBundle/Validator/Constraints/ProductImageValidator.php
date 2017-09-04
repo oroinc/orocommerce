@@ -34,7 +34,7 @@ class ProductImageValidator extends ConstraintValidator
 
     /**
      * @param ProductImageEntity $value
-     * @param Constraint|ProductImageCollection $constraint
+     * @param Constraint|roductImageCollection $constraint
      *
      * {@inheritdoc}
      */
@@ -46,18 +46,20 @@ class ProductImageValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        // add product image to existing collection and validate
-        $productImages = $value->getProduct()->getImages();
-        $productImages->add($value);
-        $violations = $this->validator->validate($productImages, new ProductImageCollection());
+        if ($value->getProduct()) {
+            // add product image to existing collection and validate
+            $productImages = $value->getProduct()->getImages();
+            $productImages->add($value);
+            $violations = $this->validator->validate($productImages, new ProductImageCollection());
 
-        if ($violations->count()) {
-            foreach ($violations as $violation) {
-                /** @var ConstraintViolation $violation */
-                $this->context->addViolation(
-                    $violation->getMessage(),
-                    $violation->getParameters()
-                );
+            if ($violations->count()) {
+                foreach ($violations as $violation) {
+                    /** @var ConstraintViolation $violation */
+                    $this->context->addViolation(
+                        $violation->getMessage(),
+                        $violation->getParameters()
+                    );
+                }
             }
         }
     }
