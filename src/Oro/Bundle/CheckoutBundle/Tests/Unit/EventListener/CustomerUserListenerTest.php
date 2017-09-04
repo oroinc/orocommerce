@@ -11,6 +11,9 @@ use Oro\Bundle\CheckoutBundle\Manager\CheckoutManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Manager\LoginManager;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\CustomerBundle\Mailer\Processor;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Event\CustomerUserEmailSendEvent;
 
 class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,10 +50,12 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->request);
         $this->loginManager = $this->createMock(LoginManager::class);
         $this->checkoutManager = $this->createMock(CheckoutManager::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
         $this->listener = new CustomerUserListener(
             $requestStack,
             $this->loginManager,
-            $this->checkoutManager
+            $this->checkoutManager,
+            $this->configManager
         );
     }
 
@@ -102,5 +107,60 @@ class CustomerUserListenerTest extends \PHPUnit_Framework_TestCase
             ->with($customerUser, 777);
 
         $this->listener->afterFlush($event);
+    }
+
+    public function testOnCustomerUserEmailSendNoRequestParams()
+    {
+        $event = new CustomerUserEmailSendEvent(new CustomerUser(), 'some_template', []);
+        $this->configManager->expects($this->never())->method('get');
+        $this->listener->onCustomerUserEmailSend($event);
+        $this->assertSame('some_template', $event->getEmailTemplate());
+    }
+
+    public function testOnCustomerUserEmailSendConfigDisabled()
+    {
+        $event = new CustomerUserEmailSendEvent(new CustomerUser(), 'some_template', []);
+        $this->request->request->add(['_checkout_registration' => 1]);
+        $this->request->request->add(['_checkout_id' => 777]);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_checkout.allow_checkout_without_email_confirmation')
+            ->willReturn(true);
+        $this->listener->onCustomerUserEmailSend($event);
+        $this->assertSame('some_template', $event->getEmailTemplate());
+    }
+
+    public function testOnCustomerUserEmailSendWrongTemplate()
+    {
+        $event = new CustomerUserEmailSendEvent(new CustomerUser(), 'some_template', []);
+        $this->request->request->add(['_checkout_registration' => 1]);
+        $this->request->request->add(['_checkout_id' => 777]);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_checkout.allow_checkout_without_email_confirmation')
+            ->willReturn(false);
+        $this->listener->onCustomerUserEmailSend($event);
+        $this->assertSame('some_template', $event->getEmailTemplate());
+    }
+
+    public function testOnCustomerUserEmailSend()
+    {
+        $event = new CustomerUserEmailSendEvent(new CustomerUser(), Processor::CONFIRMATION_EMAIL_TEMPLATE_NAME, []);
+        $this->request->request->add(['_checkout_registration' => 1]);
+        $this->request->request->add(['_checkout_id' => 777]);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_checkout.allow_checkout_without_email_confirmation')
+            ->willReturn(false);
+        $this->listener->onCustomerUserEmailSend($event);
+        $this->assertSame('checkout_registration_confirmation', $event->getEmailTemplate());
+        $params['redirectParams'] =  json_encode([
+            'route' => 'oro_checkout_frontend_checkout',
+            'params' => [
+                'id' => 777,
+                'transition' => 'back_to_billing_address'
+            ]
+        ]);
+        $this->assertSame($params, $event->getEmailTemplateParams());
     }
 }
