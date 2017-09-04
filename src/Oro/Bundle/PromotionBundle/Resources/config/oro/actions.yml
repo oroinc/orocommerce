@@ -143,11 +143,16 @@ operations:
                         array: $.addedCoupons
                         value: $.coupon
                         actions:
+                            - '@call_service_method':
+                                service: oro_promotion.provider.entity_coupons_provider
+                                method: createAppliedCouponByCoupon
+                                attribute: $.appliedCoupon
+                                method_parameters: [$.coupon]
                             - '@call_method':
                                 object: $.data
                                 method: addAppliedCoupon
                                 method_parameters:
-                                    - $.coupon
+                                    - $.appliedCoupon
                     - '@call_service_method':
                         service: oro_promotion.applied_promotion_manager
                         method: createAppliedPromotions

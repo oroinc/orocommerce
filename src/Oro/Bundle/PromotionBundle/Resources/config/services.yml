@@ -348,7 +348,7 @@ services:
 
     oro_promotion.provider.entity_coupons_provider:
         class: Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider
-        public: false
+        public: true
         arguments:
             - '@oro_entity.doctrine_helper'
 
@@ -590,6 +590,7 @@ services:
         arguments:
             - '@oro_promotion.validation_service.coupon_validation'
             - '@oro_promotion.promotion_provider'
+            - '@oro_promotion.provider.entity_coupons_provider'
 
     oro_promotion.rule_normalizer:
         public: false
@@ -625,6 +626,7 @@ services:
         class: Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener
         arguments:
             - '@doctrine'
+            - '@oro_promotion.provider.entity_coupons_provider'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 

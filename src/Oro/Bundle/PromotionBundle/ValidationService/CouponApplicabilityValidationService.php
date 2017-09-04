@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\ValidationService;
 
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
 
 /**
@@ -26,16 +27,25 @@ class CouponApplicabilityValidationService
      */
     private $promotionProvider;
 
+
+    /**
+     * @var EntityCouponsProvider
+     */
+    private $entityCouponsProvider;
+
     /**
      * @param CouponValidationService $couponValidationService
      * @param PromotionProvider $promotionProvider
+     * @param EntityCouponsProvider $entityCouponsProvider
      */
     public function __construct(
         CouponValidationService $couponValidationService,
-        PromotionProvider $promotionProvider
+        PromotionProvider $promotionProvider,
+        EntityCouponsProvider $entityCouponsProvider
     ) {
         $this->couponValidationService = $couponValidationService;
         $this->promotionProvider = $promotionProvider;
+        $this->entityCouponsProvider = $entityCouponsProvider;
     }
 
     /**
@@ -62,11 +72,7 @@ class CouponApplicabilityValidationService
             return [self::MESSAGE_PROMOTION_ALREADY_APPLIED];
         }
 
-        $appliedCoupon = (new AppliedCoupon())
-            ->setSourceCouponId($coupon->getId())
-            ->setCouponCode($coupon->getCode())
-            ->setSourcePromotionId($coupon->getPromotion()->getId());
-
+        $appliedCoupon = $this->entityCouponsProvider->createAppliedCouponByCoupon($coupon);
         $entity->addAppliedCoupon($appliedCoupon);
         if (!$this->promotionProvider->isPromotionApplicable($entity, $coupon->getPromotion())) {
             return [self::MESSAGE_PROMOTION_NOT_APPLICABLE];

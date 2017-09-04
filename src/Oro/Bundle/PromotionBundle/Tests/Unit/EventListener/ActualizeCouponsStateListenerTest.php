@@ -4,24 +4,29 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
 use Oro\Bundle\PromotionBundle\EventListener\ActualizeCouponsStateListener;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
+use Oro\Bundle\PromotionBundle\Tests\Unit\CouponsTrait;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class ActualizeCouponsStateListenerTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
+    use CouponsTrait;
 
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $registry;
+
+    /**
+     * @var EntityCouponsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $entityCouponsProvider;
 
     /**
      * @var ActualizeCouponsStateListener
@@ -31,7 +36,8 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock(RegistryInterface::class);
-        $this->listener = new ActualizeCouponsStateListener($this->registry);
+        $this->entityCouponsProvider = $this->createMock(EntityCouponsProvider::class);
+        $this->listener = new ActualizeCouponsStateListener($this->registry, $this->entityCouponsProvider);
     }
 
     public function testOnBeforeTotalCalculateWhenEntityNotOrder()
@@ -92,57 +98,41 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getCouponsWithPromotionByIds')
             ->with(explode(',', $couponIds))
             ->willReturn([
-                $this->getCoupon($couponId1, $couponCode1, $promotion),
-                $this->getCoupon($couponId2, $couponCode2, $promotion),
+                $this->createCoupon($couponId1, $couponCode1, $promotion),
+                $this->createCoupon($couponId2, $couponCode2, $promotion),
             ]);
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects($this->once())
             ->method('getRepository')
             ->with(Coupon::class)
             ->willReturn($repository);
+
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with(Coupon::class)
             ->willReturn($objectManager);
+
+        $this->entityCouponsProvider->expects($this->any())
+            ->method('createAppliedCouponByCoupon')
+            ->withConsecutive(
+                [$this->createCoupon($couponId1, $couponCode1, $promotion)],
+                [$this->createCoupon($couponId2, $couponCode2, $promotion)]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $this->createAppliedCoupon($couponId1, $couponCode1, $promotionId),
+                $this->createAppliedCoupon($couponId2, $couponCode2, $promotionId)
+            );
+
         $entity = $this->createMock(AppliedCouponsAwareInterface::class);
         $entity->expects($this->exactly(2))
             ->method('addAppliedCoupon')
             ->withConsecutive(
-                [$this->getAppliedCoupon($couponId1, $couponCode1, $promotionId)],
-                [$this->getAppliedCoupon($couponId2, $couponCode2, $promotionId)]
+                [$this->createAppliedCoupon($couponId1, $couponCode1, $promotionId)],
+                [$this->createAppliedCoupon($couponId2, $couponCode2, $promotionId)]
             );
+
         $event = new TotalCalculateBeforeEvent($entity, $request);
         $this->listener->onBeforeTotalCalculate($event);
-    }
-
-    /**
-     * @param integer $id
-     * @param string $code
-     * @param Promotion $promotion
-     * @return Coupon|object
-     */
-    private function getCoupon(int $id, string $code, Promotion $promotion)
-    {
-        return $this->getEntity(
-            Coupon::class,
-            ['id' => $id, 'code' => $code, 'promotion' => $promotion]
-        );
-    }
-
-    /**
-     * @param integer $id
-     * @param string $code
-     * @param integer $promotionId
-     * @return AppliedCoupon
-     */
-    private function getAppliedCoupon(int $id, string $code, int $promotionId)
-    {
-        $appliedCoupon = new AppliedCoupon();
-
-        return $appliedCoupon
-            ->setSourceCouponId($id)
-            ->setCouponCode($code)
-            ->setSourcePromotionId($promotionId);
     }
 
     /**

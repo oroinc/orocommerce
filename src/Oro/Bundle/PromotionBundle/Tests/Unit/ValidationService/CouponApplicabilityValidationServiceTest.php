@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Tests\Unit\ValidationService;
 
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order as OrderStub;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponValidationService;
 use Oro\Bundle\PromotionBundle\Provider\PromotionProvider;
@@ -26,6 +27,11 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
     private $promotionProvider;
 
     /**
+     * @var EntityCouponsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $entityCouponsProvider;
+
+    /**
      * @var CouponApplicabilityValidationService
      */
     private $couponApplicabilityValidationService;
@@ -34,10 +40,12 @@ class CouponApplicabilityValidationServiceTest extends \PHPUnit_Framework_TestCa
     {
         $this->couponValidationService = $this->createMock(CouponValidationService::class);
         $this->promotionProvider = $this->createMock(PromotionProvider::class);
+        $this->entityCouponsProvider = $this->createMock(EntityCouponsProvider::class);
 
         $this->couponApplicabilityValidationService = new CouponApplicabilityValidationService(
             $this->couponValidationService,
-            $this->promotionProvider
+            $this->promotionProvider,
+            $this->entityCouponsProvider
         );
     }
 

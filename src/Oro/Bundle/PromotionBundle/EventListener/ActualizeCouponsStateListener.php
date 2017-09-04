@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PromotionBundle\EventListener;
 
 use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedCouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
+use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProvider;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ActualizeCouponsStateListener
@@ -17,11 +17,18 @@ class ActualizeCouponsStateListener
     private $registry;
 
     /**
-     * @param RegistryInterface $registry
+     * @var EntityCouponsProvider
      */
-    public function __construct(RegistryInterface $registry)
+    private $entityCouponsProvider;
+
+    /**
+     * @param RegistryInterface $registry
+     * @param EntityCouponsProvider $entityCouponsProvider
+     */
+    public function __construct(RegistryInterface $registry, EntityCouponsProvider $entityCouponsProvider)
     {
         $this->registry = $registry;
+        $this->entityCouponsProvider = $entityCouponsProvider;
     }
 
     /**
@@ -35,7 +42,7 @@ class ActualizeCouponsStateListener
         if ($entity instanceof AppliedCouponsAwareInterface && $request->request->has('addedCouponIds')) {
             $coupons = $this->getAddedCoupons($request->request->get('addedCouponIds'));
             foreach ($coupons as $coupon) {
-                $entity->addAppliedCoupon($this->createAppliedCoupon($coupon));
+                $entity->addAppliedCoupon($this->entityCouponsProvider->createAppliedCouponByCoupon($coupon));
             }
         }
     }
@@ -52,20 +59,5 @@ class ActualizeCouponsStateListener
             ->getRepository(Coupon::class);
 
         return $ids ? $couponRepository->getCouponsWithPromotionByIds(explode(',', $ids)) : [];
-    }
-
-    /**
-     * @param Coupon $coupon
-     * @return AppliedCoupon
-     */
-    private function createAppliedCoupon(Coupon $coupon)
-    {
-        $appliedCoupon = new AppliedCoupon();
-        $appliedCoupon
-            ->setCouponCode($coupon->getCode())
-            ->setSourceCouponId($coupon->getId())
-            ->setSourcePromotionId($coupon->getPromotion()->getId());
-
-        return $appliedCoupon;
     }
 }

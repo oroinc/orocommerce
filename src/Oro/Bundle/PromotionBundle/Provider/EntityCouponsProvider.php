@@ -13,7 +13,7 @@ use Oro\Bundle\PromotionBundle\Entity\CouponsAwareInterface;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 /**
- * This service allows to get applied coupons from entities to which coupons were applied
+ * This service help with getting coupons or applied coupons
  */
 class EntityCouponsProvider implements EntityCouponsProviderInterface
 {
@@ -46,6 +46,21 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
             CouponsAwareInterface::class,
             AppliedCouponsAwareInterface::class
         ));
+    }
+
+    /**
+     * @param Coupon $coupon
+     * @return AppliedCoupon
+     */
+    public function createAppliedCouponByCoupon(Coupon $coupon)
+    {
+        $appliedCoupon = new AppliedCoupon();
+        $appliedCoupon
+            ->setCouponCode($coupon->getCode())
+            ->setSourceCouponId($coupon->getId())
+            ->setSourcePromotionId($coupon->getPromotion()->getId());
+
+        return $appliedCoupon;
     }
 
     /**
