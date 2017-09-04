@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class CouponRepository extends EntityRepository
 {
@@ -23,19 +24,19 @@ class CouponRepository extends EntityRepository
     }
 
     /**
-     * @param array $promotionsIds
+     * @param array|int[]|Promotion[] $promotions
      * @param array $couponCodes
      *
      * @return array
      */
-    public function getPromotionsWithMatchedCoupons(array $promotionsIds, array $couponCodes)
+    public function getPromotionsWithMatchedCoupons(array $promotions, array $couponCodes): array
     {
         $queryBuilder = $this->createQueryBuilder('coupon');
 
         $result = $queryBuilder->select('DISTINCT IDENTITY(coupon.promotion) AS id')
-            ->where($queryBuilder->expr()->in('IDENTITY(coupon.promotion)', ':promotionIds'))
+            ->where($queryBuilder->expr()->in('IDENTITY(coupon.promotion)', ':promotions'))
             ->andWhere($queryBuilder->expr()->in('coupon.code', ':couponCodes'))
-            ->setParameter('promotionIds', $promotionsIds)
+            ->setParameter('promotions', $promotions)
             ->setParameter('couponCodes', $couponCodes)
             ->getQuery()->getArrayResult();
 

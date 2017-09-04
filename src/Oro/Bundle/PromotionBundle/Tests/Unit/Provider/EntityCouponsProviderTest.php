@@ -67,8 +67,8 @@ class EntityCouponsProviderTest extends \PHPUnit_Framework_TestCase
         $promotion = $this->getEntity(Promotion::class, ['id' => $promotionId]);
 
         $coupons = new ArrayCollection([
-            $this->createCoupon($couponId1, $couponCode1, $promotion),
-            $this->createCoupon($couponId2, $couponCode2, $promotion)
+            $this->createCoupon($couponId1, $couponCode1, $promotion)->setUsesPerPerson(null)->setUsesPerCoupon(null),
+            $this->createCoupon($couponId2, $couponCode2, $promotion)->setUsesPerPerson(null)->setUsesPerCoupon(null)
         ]);
         $appliedCoupons = [
             $this->createAppliedCoupon($couponId1, $couponCode1, $promotionId),

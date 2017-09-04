@@ -9,6 +9,7 @@ use Oro\Bundle\PromotionBundle\Context\ContextDataConverterInterface;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Entity\Repository\CouponRepository;
+use Oro\Bundle\PromotionBundle\Model\AppliedPromotionData;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -104,7 +105,7 @@ class CouponFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetFilteredRuleOwnersWithAppliedCoupons()
+    public function testGetFilteredPromotionsWithAppliedCoupons()
     {
         $appliedPromotionWithCoupon = $this->getEntity(Promotion::class, ['useCoupons' => true, 'id' => 5]);
         $appliedPromotionWithoutCoupon = $this->getEntity(Promotion::class, ['useCoupons' => true, 'id' => 7]);
@@ -126,7 +127,7 @@ class CouponFiltrationServiceTest extends \PHPUnit_Framework_TestCase
         $repository
             ->expects($this->once())
             ->method('getPromotionsWithMatchedCoupons')
-            ->with([5, 7], ['XYZ'])
+            ->with([$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon], ['XYZ'])
             ->willReturn([5]);
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $entityManager */
@@ -146,6 +147,35 @@ class CouponFiltrationServiceTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(
             [$appliedPromotionWithCoupon],
+            $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
+        );
+    }
+
+    public function testGetFilteredPromotionsDataWithAppliedCoupons()
+    {
+        $appliedCoupon = (new Coupon())->setCode('XYZ');
+        $removedCoupon = (new Coupon())->setCode('Removed');
+
+        $promotionWithCoupon = (new AppliedPromotionData())->setUseCoupons(true)->addCoupon($appliedCoupon);
+        $promotionWithRemovedCoupon = (new AppliedPromotionData())->setUseCoupons(true)->addCoupon($removedCoupon);
+        $ruleOwners = [$promotionWithCoupon, $promotionWithRemovedCoupon];
+
+        $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$appliedCoupon])];
+
+        $this->filtrationService
+            ->expects($this->once())
+            ->method('getFilteredRuleOwners')
+            ->with([$promotionWithCoupon], $context)
+            ->willReturnCallback(function ($ruleOwners) {
+                return $ruleOwners;
+            });
+
+        $this->registry
+            ->expects($this->never())
+            ->method('getManagerForClass');
+
+        static::assertEquals(
+            [$promotionWithCoupon],
             $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
     }

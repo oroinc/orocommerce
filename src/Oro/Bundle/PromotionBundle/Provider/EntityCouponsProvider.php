@@ -76,8 +76,11 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
 
             /** @var Coupon $coupon */
             $coupon = $this->createEntity(Coupon::class, $appliedCoupon->getSourceCouponId());
-            $coupon->setCode($appliedCoupon->getCouponCode());
-            $coupon->setPromotion($promotion);
+            $coupon
+                ->setCode($appliedCoupon->getCouponCode())
+                ->setPromotion($promotion)
+                ->setUsesPerCoupon(null)
+                ->setUsesPerPerson(null);
 
             $coupons->add($coupon);
         }
