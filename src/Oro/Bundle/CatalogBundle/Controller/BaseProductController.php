@@ -25,6 +25,9 @@ class BaseProductController extends Controller
         );
     }
 
+    /**
+     * @return Form
+     */
     protected function createIncludeNotCategorizedProductForm()
     {
         return $this->createForm(

@@ -35,6 +35,7 @@ class ProductControllerTest extends WebTestCase
      * @dataProvider viewDataProvider
      *
      * @param bool $includeSubcategories
+     * @param bool $includeNotCategorized
      * @param array $expected
      */
     public function testView($includeSubcategories, $includeNotCategorized, $expected)
@@ -74,7 +75,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertCount(1, $result['data']);
 
         foreach ($result['data'] as $data) {
-            $this->assertContains($data['sku'], LoadProductData::PRODUCT_8);
+            $this->assertContains($data['sku'], LoadProductData::PRODUCT_9);
         }
     }
 
@@ -107,7 +108,7 @@ class ProductControllerTest extends WebTestCase
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_6,
-                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_9,
                 ],
             ],
             'exclude subcategories and include not categorized products' => [
@@ -115,9 +116,9 @@ class ProductControllerTest extends WebTestCase
                 'includeNotCategorized' => true,
                 'expected' => [
                     LoadProductData::PRODUCT_2,
-                    LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_9,
                 ],
-            ]
+            ],
         ];
     }
 

@@ -140,3 +140,20 @@ product8:
     shortDescriptions:
         - { reference: product-8.shortDescriptions.default, text: product-8.shortDescriptions.default }
     featured: false
+product9:
+    productCode: product-9
+    inventoryStatus: in_stock
+    status: enabled
+    type: configurable
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-9.names.default, string: product-9.names.default }
+    slugPrototypes:
+        - { reference: product-9.slugPrototypes.default, string: product-9.slugPrototypes.default }
+    descriptions:
+        - { reference: product-9.descriptions.default, text: product-9.descriptions.default }
+    shortDescriptions:
+        - { reference: product-9.shortDescriptions.default, text: product-9.shortDescriptions.default }
+    featured: false
