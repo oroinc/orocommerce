@@ -7,9 +7,9 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper;
 
 class RelatedItemsProductEditListener
 {
@@ -21,33 +21,34 @@ class RelatedItemsProductEditListener
     /** @var TranslatorInterface */
     private $translator;
 
-    /** @var AbstractRelatedItemConfigProvider */
-    private $relatedProductsConfigProvider;
+    /** @var RelatedItemConfigHelper */
+    private $relatedItemConfigHelper;
 
     /** @var AuthorizationCheckerInterface */
     private $authorizationChecker;
-
-    /** @var AbstractRelatedItemConfigProvider */
-    private $upsellProductsConfigProvider;
-
     /**
      * @param TranslatorInterface               $translator
-     * @param AbstractRelatedItemConfigProvider $relatedProductsConfigProvider
-     * @param AbstractRelatedItemConfigProvider $upsellProductsConfigProvider
+     * @param RelatedItemConfigHelper           $relatedItemConfigHelper
      * @param AuthorizationCheckerInterface     $authorizationChecker
      */
     public function __construct(
         TranslatorInterface $translator,
-        AbstractRelatedItemConfigProvider $relatedProductsConfigProvider,
-        AbstractRelatedItemConfigProvider $upsellProductsConfigProvider,
+        RelatedItemConfigHelper $relatedItemConfigHelper,
         AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->translator = $translator;
-        $this->relatedProductsConfigProvider = $relatedProductsConfigProvider;
+        $this->relatedItemConfigHelper = $relatedItemConfigHelper;
         $this->authorizationChecker = $authorizationChecker;
-        $this->upsellProductsConfigProvider = $upsellProductsConfigProvider;
     }
 
+    /**
+     * @param string $name
+     * @return \Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider
+     */
+    protected function getConfigProvider($name)
+    {
+        return $this->relatedItemConfigHelper->getConfigProvider($name);
+    }
 
     /**
      * @param BeforeListRenderEvent $event
@@ -58,7 +59,7 @@ class RelatedItemsProductEditListener
         $tabs = [];
         $grids = [];
 
-        if ($this->relatedProductsConfigProvider->isEnabled()
+        if ($this->getConfigProvider('related_products')->isEnabled()
             && $this->authorizationChecker->isGranted('oro_related_products_edit')
         ) {
             $tabs[] = [
@@ -68,7 +69,7 @@ class RelatedItemsProductEditListener
             $grids[] = $this->getRelatedProductsEditBlock($event, $twigEnv);
         }
 
-        if ($this->upsellProductsConfigProvider->isEnabled()
+        if ($this->getConfigProvider('upsell_products')->isEnabled()
             && $this->authorizationChecker->isGranted('oro_upsell_products_edit')
         ) {
             $tabs[] = [
@@ -153,7 +154,7 @@ class RelatedItemsProductEditListener
     {
         $scrollData->addNamedBlock(
             self::RELATED_ITEMS_ID,
-            $this->translator->trans('oro.product.sections.relatedItems'),
+            $this->translator->trans($this->relatedItemConfigHelper->getRelatedItemsTranslationKey()),
             self::BLOCK_PRIORITY
         );
 
@@ -178,7 +179,7 @@ class RelatedItemsProductEditListener
             [
                 'form' => $event->getFormView(),
                 'entity' => $event->getEntity(),
-                'relatedProductsLimit' => $this->relatedProductsConfigProvider->getLimit()
+                'relatedProductsLimit' => $this->getConfigProvider('related_products')->getLimit()
             ]
         );
     }
@@ -195,7 +196,7 @@ class RelatedItemsProductEditListener
             [
                 'form' => $event->getFormView(),
                 'entity' => $event->getEntity(),
-                'upsellProductsLimit' => $this->upsellProductsConfigProvider->getLimit(),
+                'upsellProductsLimit' => $this->getConfigProvider('upsell_products')->getLimit(),
             ]
         );
     }

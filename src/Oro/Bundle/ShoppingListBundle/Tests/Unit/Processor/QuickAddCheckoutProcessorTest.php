@@ -268,21 +268,12 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->expects($this->never())
             ->method('flush');
 
-        $this->dateFormatter->expects($this->once())
-            ->method('format')
-            ->willReturn('Mar 28, 2016, 2:50 PM');
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
 
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
-
-        $redirectUrl = '/customer/shoppingList/123';
         $actionData = new ActionData([
             'shoppingList' => $shoppingList,
-            'redirectUrl' => $redirectUrl
+            'redirectUrl' => 'some/url'
         ]);
-
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
 
         $this->actionGroupRegistry->expects($this->once())
             ->method('findByName')
@@ -302,12 +293,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             )
             ->willReturn(count($data));
 
-        $this->em
-            ->expects($this->once())
-            ->method('commit');
-
-        $expectedResponse = new RedirectResponse($redirectUrl);
-        $this->assertEquals($expectedResponse, $this->processor->process($data, new Request()));
+        $this->processor->process($data, new Request());
     }
 
     public function testProcessWhenActionGroupFailedWithErrors()

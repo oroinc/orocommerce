@@ -13,7 +13,7 @@
                 blockId : block.vars.id,
                 reloadEvents: ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure', 'frontend:item:delete']
             }|json_encode }}"
-            data-layout="separate">
+       >
         {{ block_widget(block) }}
     </div>
 {% endblock %}

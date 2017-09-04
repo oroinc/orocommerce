@@ -335,4 +335,34 @@ class ShoppingListLimitManagerTest extends \PHPUnit_Framework_TestCase
             ->with(ShoppingList::class)
             ->willReturn($repository);
     }
+
+    public function testGetShoppingListLimitForUser()
+    {
+        $website = new Website();
+        $user = $this->getEntity(
+            CustomerUser::class,
+            [
+                'id' => self::USER_ID,
+                'organization' => $this->getEntity(Organization::class, ['id' => self::ORGANIZATION_ID]),
+                'website' => $website,
+            ]
+        );
+
+        $this->tokenAccessor
+            ->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(true);
+
+        $this->configManager
+            ->expects($this->once())
+            ->method('get')
+            ->with('oro_shopping_list.shopping_list_limit')
+            ->willReturn(2);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
+            ->willReturn($user);
+
+        $this->assertEquals(2, $this->shoppingListLimitManager->getShoppingListLimitForUser());
+    }
 }

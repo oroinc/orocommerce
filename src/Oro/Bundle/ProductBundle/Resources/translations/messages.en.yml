@@ -239,7 +239,9 @@ oro:
             inventory: Inventory
             images: Images
             design: Design
-            relatedItems: Related Items
+            related_items: Related Items
+            upsell_products: Up-sell Products
+            related_products: Related Products
             upsellItems: Up-sell items
 
         tabs:
@@ -328,7 +330,10 @@ oro:
                     tooltip: 'When slider is enabled, the "Up-sell Products" block will occupy less screen space, while showing larger product images.'
                 enable_quick_order_form.title: Enable Quick Order Form
                 guest_quick_order_form.title: Enable Guest Quick Order Form
-                guest_quick_order_form.tooltip: Enable Quick Order Form for guests
+                guest_quick_order_form.tooltip: >
+                  Allows guests to use the quick order form. By default, this option is disabled.
+                  For the quick order form to be displayed, at least one of the following options should be enabled:
+                  guest RFQ, guest shopping list or guest checkout.
                 unit_rounding_type.label: 'Unit Rounding Type'
                 single_unit_mode.label: 'Single Unit'
                 single_unit_mode_show_code.label: 'Show Unit Code'
@@ -512,8 +517,8 @@ oro:
                 label:    Meta description
                 description: The meta description for the brand
             meta_keywords:
-                label:    Meta keyword
-                description: The meta kewords for the brand
+                label:    Meta keywords
+                description: The meta keywords for the brand, separated by commas.
             names:
                 label:    Name
                 description: The name of the brand

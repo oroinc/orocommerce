@@ -4,9 +4,3 @@ assetic:
             inputs:
                 - %kernel.root_dir%/../vendor/tinymce/tinymce/plugins/fullscreen/plugin.min.js
             output: bundles/tinymce/plugins/fullscreen/plugin.min.js
-security:
-    firewalls:
-        guest_quick_order_form:
-            pattern:                 ^/customer/product/quick-add
-            context:                 customer_identity
-            anonymous_customer_user: true
