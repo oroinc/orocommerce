@@ -452,6 +452,11 @@ oro_behat_extension:
     Create Product Plus Button:
       selector: '.content-variant-item-default .entity-create-btn'
 
+    Brand humburger button:
+      selector:
+        type: xpath
+        locator: '//label[text()="Brand"]/../..//button[@class="add-on btn entity-select-btn"]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
