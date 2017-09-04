@@ -634,6 +634,14 @@ oro_behat_extension:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Product navbar:
+      selector: '#product-edit.navbar'
+
+    Additional Units Form Section:
+      selector:
+        type: xpath
+        locator: '//label[contains(., "Additional Units")]/ancestor::div[contains(@class, "control-group")]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
