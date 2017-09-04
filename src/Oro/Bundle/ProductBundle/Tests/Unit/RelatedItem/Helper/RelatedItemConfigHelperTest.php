@@ -70,7 +70,8 @@ class RelatedItemConfigHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
     }
 
-    public function testGetRelatedItemsTranslationKeyReturnsSpecificKeyIfOneConfigProviderIsEnabled() {
+    public function testGetRelatedItemsTranslationKeyReturnsSpecificKeyIfOneConfigProviderIsEnabled()
+    {
         $providerName = 'related_product';
         $providerEnabled = $this->getProviderMock(true);
 
@@ -81,7 +82,8 @@ class RelatedItemConfigHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->helper->getRelatedItemsTranslationKey(), $expected);
     }
 
-    public function testGetRelatedItemsTranslationKeyReturnsReturnsDefaultIfMoreConfigProvidersAreEnabled() {
+    public function testGetRelatedItemsTranslationKeyReturnsReturnsDefaultIfMoreConfigProvidersAreEnabled()
+    {
         $providerEnabled = $this->getProviderMock(true);
         $providerEnabledTwo = $this->getProviderMock(true);
 

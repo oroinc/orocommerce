@@ -7,8 +7,8 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractRelatedItemConfigProvider;
 
 class RelatedItemConfigHelper
 {
-    CONST RELATED_ITEMS_TRANSLATION_NAMESPACE = 'oro.product.sections';
-    CONST RELATED_ITEMS_TRANSLATION_DEFAULT = 'related_items';
+    const RELATED_ITEMS_TRANSLATION_NAMESPACE = 'oro.product.sections';
+    const RELATED_ITEMS_TRANSLATION_DEFAULT = 'related_items';
 
     /** @var AbstractRelatedItemConfigProvider[] */
     private $configProviders = [];
