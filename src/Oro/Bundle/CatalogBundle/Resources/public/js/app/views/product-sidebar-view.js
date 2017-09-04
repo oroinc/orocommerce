@@ -106,7 +106,7 @@ define(function(require) {
             }
         },
 
-        onIncludeNonCategorizedProductChange: function () {
+        onIncludeNonCategorizedProductChange: function() {
             this.triggerSidebarChanged();
         },
 

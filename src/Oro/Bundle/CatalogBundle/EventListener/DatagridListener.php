@@ -97,13 +97,13 @@ class DatagridListener
         }
     }
 
+    /**
+     * @param PreBuild $event
+     */
     protected function addFilterForNonCategorizedProduct(PreBuild $event)
     {
-        $isIncludeNonCategorizedProducts = $event->getParameters()->get('includeNotCategorizedProducts');
-
-        if (!$isIncludeNonCategorizedProducts) {
-            $isIncludeNonCategorizedProducts = $this->requestProductHandler->getIncludeNotCategorizedProductsChoice();
-        }
+        $isIncludeNonCategorizedProducts = $event->getParameters()->get('includeNotCategorizedProducts')
+            || $this->requestProductHandler->getIncludeNotCategorizedProductsChoice();
 
         if (!$isIncludeNonCategorizedProducts) {
             return;
@@ -112,7 +112,7 @@ class DatagridListener
         $config = $event->getConfig();
         $config->offsetSetByPath(
             '[options][urlParams][includeNotCategorizedProducts]',
-            $isIncludeNonCategorizedProducts
+            true
         );
         $config->getOrmQuery()->addOrWhere('productCategory.id IS NULL');
 
