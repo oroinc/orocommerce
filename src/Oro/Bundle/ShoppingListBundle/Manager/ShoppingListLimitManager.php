@@ -41,6 +41,16 @@ class ShoppingListLimitManager
     }
 
     /**
+     * Check if shopping list configuration limit is reached for logged customer user
+     *
+     * @return bool
+     */
+    public function isReachedLimit()
+    {
+        return !$this->isCreateEnabled();
+    }
+
+    /**
      * Restricts creating new shopping list if configuration limit is reached / or Customer is not logged in
      * @return bool
      */
@@ -127,5 +137,20 @@ class ShoppingListLimitManager
     private function getShoppingListLimit(Website $website = null)
     {
         return $this->configManager->get('oro_shopping_list.shopping_list_limit', false, false, $website);
+    }
+
+    /**
+     * @return integer
+     */
+    public function getShoppingListLimitForUser()
+    {
+        if (!$this->tokenAccessor->hasUser()) {
+            return 1;
+        }
+        $user = $this->tokenAccessor->getUser();
+
+        return $this->getShoppingListLimit(
+            $user->getWebsite()
+        );
     }
 }

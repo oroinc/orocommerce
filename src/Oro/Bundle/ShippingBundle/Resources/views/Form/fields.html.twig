@@ -112,7 +112,9 @@
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
                 view: 'oroshipping/js/app/views/product-shipping-options-view',
-            }|json_encode }}" {{ block('widget_container_attributes') }}>
+            }|json_encode }}" {{ block('widget_container_attributes') }}
+            data-layout="separate"
+        >
             <table class="grid table table-bordered list-items"{% if not form.children|length %} style="display: none;"{% endif %}>
                 <thead>
                 <tr>
