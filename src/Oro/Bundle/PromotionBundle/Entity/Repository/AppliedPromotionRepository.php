@@ -29,7 +29,7 @@ class AppliedPromotionRepository extends EntityRepository
             ->select([
                 'appliedPromotion.id',
                 'appliedPromotion.promotionName',
-                'appliedPromotion.sourcePromotionId AS promotionId',
+                'appliedPromotion.sourcePromotionId',
                 'appliedPromotion.active AS active',
                 'appliedPromotion.type',
                 'appliedCoupon.couponCode',

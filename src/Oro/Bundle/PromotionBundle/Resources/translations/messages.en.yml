@@ -169,7 +169,7 @@ oro:
                 label: General Information
                 subsection:
                     general_info.label: General Information
-                    discount_optins.label: Discount Options
+                    discount_options.label: Discount Options
             conditions.label: Conditions
             matching_items.label: Matching Items
             promotion_and_discounts.label: Promotions and Discounts

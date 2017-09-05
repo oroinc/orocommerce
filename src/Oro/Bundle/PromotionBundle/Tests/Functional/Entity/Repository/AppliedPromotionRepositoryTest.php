@@ -57,21 +57,21 @@ class AppliedPromotionRepositoryTest extends WebTestCase
                 'id' => $orderDiscount->getId(),
                 'couponCode' => 'summer2000',
                 'promotionName' => 'Some name',
-                'promotionId' => 0,
                 'active' => true,
                 'currency' => 'USD',
                 'type' => 'order',
-                'amount' => '10.0000'
+                'amount' => '10.0000',
+                'sourcePromotionId' => 0
             ],
             [
                 'id' => $lineItemDiscount->getId(),
                 'couponCode' => null,
                 'promotionName' => 'Some line item discount name',
-                'promotionId' => 0,
                 'active' => true,
                 'currency' => 'USD',
                 'type' => 'lineItem',
-                'amount' => '10.0000'
+                'amount' => '10.0000',
+                'sourcePromotionId' => 0
             ],
         ];
 

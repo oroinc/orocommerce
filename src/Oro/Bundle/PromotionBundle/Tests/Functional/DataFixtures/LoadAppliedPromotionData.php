@@ -15,8 +15,8 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 
 class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtureInterface
 {
-    const SIMPLE_APPLIED_PROMOTION = 'simple_applied_discount';
-    const SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM = 'simple_applied_discount_with_line_item';
+    const SIMPLE_APPLIED_PROMOTION = 'simple_applied_promotion';
+    const SIMPLE_APPLIED_PROMOTION_WITH_LINE_ITEM = 'simple_applied_promotion_with_line_item';
 
     /** @var array */
     protected static $appliedDiscounts = [
@@ -84,7 +84,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
 
             $manager->persist($appliedPromotion);
 
-            $this->setReference($reference, $appliedDiscount);
+            $this->setReference($reference, $appliedPromotion);
         }
         $manager->flush();
     }

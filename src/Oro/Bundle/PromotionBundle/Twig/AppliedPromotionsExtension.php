@@ -56,9 +56,9 @@ class AppliedPromotionsExtension extends \Twig_Extension
             }
 
             $item = [
+                'id' => $appliedPromotion->getId(),
                 'couponCode' => $couponCode,
                 'promotionName' => $appliedPromotion->getPromotionName(),
-                'promotionId' => $appliedPromotion->getSourcePromotionId(),
                 'active' => $appliedPromotion->isActive(),
                 'amount' => 0,
                 'type' => $appliedPromotion->getType(),

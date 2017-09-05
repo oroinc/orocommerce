@@ -1,3 +1,8 @@
+oro_promotion_ajax:
+    resource:     "@OroPromotionBundle/Controller/AjaxPromotionController.php"
+    type:         annotation
+    prefix:       /promotion/ajax
+
 oro_promotion:
     resource:     "@OroPromotionBundle/Controller/PromotionController.php"
     type:         annotation

@@ -1,3 +1,5 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
 {% if collection|length %}
     <table class="grid table-hover table table-bordered table-condensed">
         <thead>
@@ -17,9 +19,7 @@
                 <th class="discount">
                     <span>{{ 'oro.promotion.appliedpromotion.table_columns.discount'|trans }}</span>
                 </th>
-                {% if editable is defined and editable %}
-                    <th colspan="2"></th>
-                {% endif %}
+                <th {% if editable is defined and editable %} colspan="3" {% endif %}></th>
             </tr>
         </thead>
         <tbody>
@@ -53,6 +53,35 @@
                     <td class="discount">
                         {% set amount =  item.amount > 0 ? -item.amount : item.amount %}
                         {{ amount|oro_format_currency({currency: item.currency}) }}
+                    </td>
+                    <td class="action">
+                        {% if item.id %}
+                            {% set route = path('oro_promotion_get_promotion_by_applied_promotion', {id: item.id}) %}
+                        {% else %}
+                            {% set route = path('oro_promotion_get_promotion_by_promotion', {id: item.sourcePromotionId}) %}
+                        {% endif %}
+
+                        {{ UI.clientLink({
+                            'dataUrl': route,
+                            'label': 'oro.product.content_variant.ui.add'|trans,
+                            'class': 'fa-eye hide-text',
+                            'title': item.promotionName,
+                            'widget': {
+                                'type': 'dialog',
+                                'multiple': false,
+                                'options': {
+                                    'alias': 'promotion-details-dialog',
+                                    'dialogOptions' : {
+                                        'title' : item.promotionName,
+                                        'resizable': true,
+                                        'allowMaximize': false,
+                                        'allowMinimize': false,
+                                        'width': 1400,
+                                        'modal': true
+                                    }
+                                }
+                            }
+                        }) }}
                     </td>
                     {% if editable is defined and editable %}
                         <td class="action">

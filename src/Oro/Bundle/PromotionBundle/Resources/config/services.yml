@@ -341,7 +341,7 @@ services:
 
     oro_promotion.mapper.applied_promotion:
         class: Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper
-        public: false
+        public: true
         arguments:
             - '@doctrine'
             - '@oro_promotion.applied_promotion_normalizer'

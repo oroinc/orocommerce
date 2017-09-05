@@ -87,20 +87,20 @@ class AppliedPromotionsExtensionTest extends \PHPUnit_Framework_TestCase
 
         $expectedItems = [
             [
+                'id' => 5,
                 'couponCode' => null,
                 'promotionName' => self::FIRST_NAME,
-                'promotionId' => 5,
                 'active' => true,
                 'amount' => 17.0,
                 'currency' => self::CURRENCY_CODE,
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 5,
-                'sourceCouponId' => null
+                'sourceCouponId' => null,
             ],
             [
+                'id' => 6,
                 'couponCode' => 'summer',
                 'promotionName' => self::SECOND_NAME,
-                'promotionId' => 6,
                 'active' => true,
                 'amount' => 35.0,
                 'currency' => self::CURRENCY_CODE,
@@ -135,15 +135,15 @@ class AppliedPromotionsExtensionTest extends \PHPUnit_Framework_TestCase
 
         $expectedItems = [
             [
+                'id' => 5,
                 'couponCode' => null,
                 'promotionName' => self::FIRST_NAME,
-                'promotionId' => 5,
                 'active' => true,
                 'amount' => 52.0,
                 'currency' => self::CURRENCY_CODE,
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 5,
-                'sourceCouponId' => null
+                'sourceCouponId' => null,
             ],
         ];
 
