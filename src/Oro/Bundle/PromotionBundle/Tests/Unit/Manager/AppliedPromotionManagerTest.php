@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
@@ -11,6 +14,7 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountLineItem;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -65,7 +69,19 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateAppliedPromotionsWhenRemoveParameterIsTrue()
     {
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        $metadata = $this->createMock(ClassMetadata::class);
+
         $order = new Order();
+        $appliedCoupon = new AppliedCoupon();
+        $appliedPromotion = new AppliedPromotion();
+        $appliedPromotion->setAppliedCoupon($appliedCoupon);
+        $appliedPromotions = new PersistentCollection($em, $metadata, new ArrayCollection([$appliedPromotion]));
+        $appliedPromotions->takeSnapshot();
+        $order->setAppliedPromotions($appliedPromotions);
+
         $executor = $this->getExecutor();
         $executor->expects($this->once())
             ->method('execute')
@@ -80,6 +96,14 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepositoryForClass')
             ->with(AppliedPromotion::class)
             ->willReturn($repository);
+        $this->doctrineHelper->expects($this->exactly(2))
+            ->method('getEntityManagerForClass')
+            ->withConsecutive([AppliedPromotion::class], [AppliedCoupon::class])
+            ->willReturnOnConsecutiveCalls(null, $em);
+        $em->expects($this->once())
+            ->method('remove')
+            ->with($appliedCoupon);
+
         $this->manager->createAppliedPromotions($order, true);
     }
 

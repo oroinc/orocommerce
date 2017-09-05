@@ -52,7 +52,7 @@ class ModifyTableStructure implements
         $this->createOroPromotionCouponUsageTable($schema);
         $this->modifyAppliedDiscountTable($schema);
 
-        $this->addOroPromotionAppliedForeignKeys($schema);
+        $this->addOroPromotionAppliedCouponForeignKeys($schema);
         $this->addOroPromotionCouponForeignKeys($schema);
         $this->addOroPromotionCouponUsageForeignKeys($schema);
 
@@ -72,10 +72,12 @@ class ModifyTableStructure implements
     {
         $table = $schema->createTable('oro_promotion_applied_coupon');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('applied_promotion_id', 'integer', ['notnull' => false]);
         $table->addColumn('coupon_code', 'string', ['length' => 255]);
         $table->addColumn('source_promotion_id', 'integer');
         $table->addColumn('source_coupon_id', 'integer');
         $table->addColumn('created_at', 'datetime', []);
+        $table->addUniqueIndex(['applied_promotion_id']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -88,7 +90,6 @@ class ModifyTableStructure implements
     {
         $table = $schema->createTable('oro_promotion_applied');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('applied_coupon_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_promotion_id', 'integer');
         $table->addColumn('active', 'boolean', ['default' => '1']);
         $table->addColumn('type', 'string', ['length' => 255]);
@@ -97,7 +98,6 @@ class ModifyTableStructure implements
         $table->addColumn('promotion_data', 'json_array', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addUniqueIndex(['applied_coupon_id']);
         $table->setPrimaryKey(['id']);
     }
 
@@ -217,14 +217,14 @@ class ModifyTableStructure implements
      *
      * @param Schema $schema
      */
-    protected function addOroPromotionAppliedForeignKeys(Schema $schema)
+    protected function addOroPromotionAppliedCouponForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_promotion_applied');
+        $table = $schema->getTable('oro_promotion_applied_coupon');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_promotion_applied_coupon'),
-            ['applied_coupon_id'],
+            $schema->getTable('oro_promotion_applied'),
+            ['applied_promotion_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

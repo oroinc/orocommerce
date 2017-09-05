@@ -271,6 +271,7 @@ oro:
             entity_label: Applied Coupon
             entity_plural_label: Applied Coupons
             id.label: ID
+            applied_promotion.label: Applied Promotion
             coupon_code.label: Coupon Code
             source_promotion_id.label: Source Promotion ID
             source_coupon_id.label: Source Coupon ID

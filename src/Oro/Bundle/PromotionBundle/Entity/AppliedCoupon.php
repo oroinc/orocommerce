@@ -47,6 +47,14 @@ class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterfa
     protected $sourceCouponId;
 
     /**
+     * @var AppliedPromotion|null
+     *
+     * @ORM\OneToOne(targetEntity="Oro\Bundle\PromotionBundle\Entity\AppliedPromotion", inversedBy="appliedCoupon")
+     * @ORM\JoinColumn(name="applied_promotion_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
+     */
+    protected $appliedPromotion;
+
+    /**
      * @return int
      */
     public function getId()
@@ -107,6 +115,25 @@ class AppliedCoupon extends ExtendAppliedCoupon implements CreatedAtAwareInterfa
     public function setSourceCouponId($sourceCouponId)
     {
         $this->sourceCouponId = (int)$sourceCouponId;
+
+        return $this;
+    }
+
+    /**
+     * @return AppliedPromotion
+     */
+    public function getAppliedPromotion()
+    {
+        return $this->appliedPromotion;
+    }
+
+    /**
+     * @param AppliedPromotion $appliedPromotion
+     * @return $this
+     */
+    public function setAppliedPromotion(AppliedPromotion $appliedPromotion)
+    {
+        $this->appliedPromotion = $appliedPromotion;
 
         return $this;
     }

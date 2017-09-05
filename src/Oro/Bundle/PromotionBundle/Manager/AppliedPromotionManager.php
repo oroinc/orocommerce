@@ -4,12 +4,14 @@ namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Discount\DiscountInformation;
+use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
 use Oro\Bundle\PromotionBundle\Entity\AppliedDiscount;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotionsAwareInterface;
@@ -57,9 +59,9 @@ class AppliedPromotionManager
 
     /**
      * @param Order|AppliedPromotionsAwareInterface $order
-     * @param bool $removeOldPromotions
+     * @param bool $removeOld
      */
-    public function createAppliedPromotions(Order $order, $removeOldPromotions = false)
+    public function createAppliedPromotions(Order $order, $removeOld = false)
     {
         $discountContext = $this->getPromotionExecutor()->execute($order);
         $appliedPromotions = $this->prepareAppliedPromotions($discountContext, $order);
@@ -70,7 +72,8 @@ class AppliedPromotionManager
             $order->addAppliedPromotion($appliedPromotion);
         }
 
-        if ($removeOldPromotions) {
+        if ($removeOld) {
+            $this->removeUnusedAppliedCoupons($order->getAppliedPromotions());
             $this->getAppliedPromotionsRepository()->removeAppliedPromotionsByOrder($order);
         }
     }
@@ -132,6 +135,33 @@ class AppliedPromotionManager
     }
 
     /**
+     * @param PersistentCollection $appliedPromotionsCollection
+     */
+    private function removeUnusedAppliedCoupons(PersistentCollection $appliedPromotionsCollection)
+    {
+        $appliedCouponsManager = $this->getAppliedCouponsManager();
+        /** @var AppliedPromotion $appliedPromotionSnapshot */
+        foreach ($appliedPromotionsCollection->getSnapshot() as $appliedPromotionSnapshot) {
+            $isCouponUsed = false;
+            $appliedCoupon = $appliedPromotionSnapshot->getAppliedCoupon();
+
+            if ($appliedCoupon) {
+                $appliedPromotionsCollection->forAll(
+                    function ($key, AppliedPromotion $appliedPromotion) use ($appliedCoupon, &$isCouponUsed) {
+                        if ($appliedPromotion->getAppliedCoupon() === $appliedCoupon) {
+                            $isCouponUsed = true;
+                        }
+                    }
+                );
+
+                if (!$isCouponUsed) {
+                    $appliedCouponsManager->remove($appliedCoupon);
+                }
+            }
+        }
+    }
+
+    /**
      * @param DiscountInformation $discountInformation
      * @return AppliedDiscount
      */
@@ -162,6 +192,14 @@ class AppliedPromotionManager
     protected function getAppliedPromotionsManager()
     {
         return $this->doctrineHelper->getEntityManagerForClass(AppliedPromotion::class);
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getAppliedCouponsManager()
+    {
+        return $this->doctrineHelper->getEntityManagerForClass(AppliedCoupon::class);
     }
 
     /**
