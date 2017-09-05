@@ -200,7 +200,7 @@ class ProductRepositoryTest extends WebTestCase
             }
 
             $category = $categoryRepository->findOneByProduct($product);
-            if (!$category){
+            if (!$category) {
                 continue;
             }
 
