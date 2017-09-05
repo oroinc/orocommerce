@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
@@ -18,11 +20,11 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Component\Checkout\LineItem\CheckoutLineItemsHolderInterface;
 
 /**
  * @ORM\Table(name="oro_checkout")
@@ -54,6 +56,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  */
 class Checkout implements
     CheckoutInterface,
+    CheckoutLineItemsHolderInterface,
     OrganizationAwareInterface,
     CustomerOwnerAwareInterface,
     CustomerVisitorOwnerAwareInterface,
@@ -182,9 +185,23 @@ class Checkout implements
      */
     protected $completedData;
 
+    /**
+     * @var Collection|CheckoutLineItem[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem",
+     *      mappedBy="checkout",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"id" = "ASC"})
+     **/
+    protected $lineItems;
+
     public function __construct()
     {
         $this->completedData = new CompletedCheckoutData();
+        $this->lineItems = new ArrayCollection();
     }
 
     /**
@@ -474,14 +491,50 @@ class Checkout implements
     }
 
     /**
-     * {@inheritdoc}
+     * @param CheckoutLineItem $item
+     *
+     * @return $this
+     */
+    public function addLineItem(CheckoutLineItem $item)
+    {
+        if (!$this->lineItems->contains($item)) {
+            $item->setCheckout($this);
+            $this->lineItems->add($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param CheckoutLineItem $item
+     *
+     * @return $this
+     */
+    public function removeLineItem(CheckoutLineItem $item)
+    {
+        $this->lineItems->removeElement($item);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|CheckoutLineItem[]
      */
     public function getLineItems()
     {
-        /** @var LineItemsNotPricedAwareInterface|LineItemsAwareInterface $sourceEntity */
-        $sourceEntity = $this->getSourceEntity();
-        return $sourceEntity && ($sourceEntity instanceof LineItemsNotPricedAwareInterface
-            || $sourceEntity instanceof LineItemsAwareInterface) ? $sourceEntity->getLineItems() : [];
+        return $this->lineItems;
+    }
+
+    /**
+     * @param Collection $lineItems
+     *
+     * @return $this
+     */
+    public function setLineItems(Collection $lineItems)
+    {
+        $this->lineItems = $lineItems;
+
+        return $this;
     }
 
     /**

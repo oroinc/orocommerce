@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -49,7 +50,8 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['shippingMethodType', 'shipping_method_type'],
             ['deleted', true],
             ['completed', true],
-            ['completedData', new CompletedCheckoutData(['test' => 'value']), false]
+            ['completedData', new CompletedCheckoutData(['test' => 'value']), false],
+            ['lineItems', new ArrayCollection([new CheckoutLineItem()]), false],
         ];
 
         $entity = new Checkout();
@@ -64,59 +66,6 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $entity = new Checkout();
         $entity->setCustomerUser($customerUser);
         $this->assertSame($customer, $entity->getCustomer());
-    }
-
-    /**
-     * @dataProvider getLineItemsDataProvider
-     * @param array $expected
-     * @param string $sourceInterface
-     */
-    public function testGetLineItems(array $expected, $sourceInterface)
-    {
-        $entity = new Checkout();
-        if ($sourceInterface) {
-            $source = $this->getMockBuilder($sourceInterface)
-                ->disableOriginalConstructor()
-                ->getMock();
-            $source
-                ->expects($this->once())
-                ->method('getLineItems')
-                ->willReturn($expected);
-
-            /** @var CheckoutSource|\PHPUnit_Framework_MockObject_MockObject $checkoutSource */
-            $checkoutSource = $this->getMockBuilder('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $checkoutSource
-                ->expects($this->once())
-                ->method('getEntity')
-                ->willReturn($source);
-            $entity->setSource($checkoutSource);
-        }
-
-        $this->assertSame($expected, $entity->getLineItems());
-    }
-
-    /**
-     * @return array
-     */
-    public function getLineItemsDataProvider()
-    {
-        return [
-            'without source' => [
-                'expected' => [],
-                'source' => null,
-            ],
-            'lineItemsAware' => [
-                'expected' => [new \stdClass()],
-                'source' => '\Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface',
-            ],
-            'LineItemsNotPricedAwareInterface' => [
-                'expected' => [new \stdClass()],
-                'source' => '\Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface',
-            ]
-        ];
     }
 
     public function testPostLoad()
