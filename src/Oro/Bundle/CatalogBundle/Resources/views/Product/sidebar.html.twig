@@ -7,16 +7,14 @@
     'view' : 'orocatalog/js/app/views/product-sidebar-view'
 } %}
 
-{% embed "OroUIBundle::js_tree.html.twig" with {
-    data: {
+{{ UI.renderJsTree(
+    {
         'label': 'oro.catalog.category.entity_plural_label'|trans,
         'treeOptions': treeOptions
     }
-} %}
-    {% block content %}
-        {{ block('search') }}
-        <div class="include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>
-        <div class="include-not-categorized-product-choice">{{ form_row(includeNotCategorizedProductForm) }}</div>
-        {{ block('tree') }}
-    {% endblock content %}
-{% endembed %}
+) }}
+
+<div class="sidebar-items">
+    <div class="include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>
+    <div class="include-not-categorized-product-choice">{{ form_row(includeNotCategorizedProductForm) }}</div>
+</div>
