@@ -8,6 +8,10 @@ system_configuration:
         order_creation:
             title: oro.order.system_configuration.groups.order_creation.title
             icon: fa-first-order
+        purchase_history:
+            title: oro.order.system_configuration.groups.purchase_history.title
+            icon: fa-shopping-basket
+
     fields:
         oro_order.backend_product_visibility:
             data_type: array
@@ -62,6 +66,12 @@ system_configuration:
                 enum_code: order_internal_status
                 multiple: false
                 empty_value: false
+        oro_order.order_previously_purchased_period:
+            data_type: integer
+            type: integer
+            options:
+                label: oro.order.system_configuration.fields.order_previously_purchased_period.title
+                tooltip: oro.order.system_configuration.fields.order_previously_purchased_period.tooltip
 
     tree:
         system_configuration:
@@ -91,4 +101,9 @@ system_configuration:
                                     order_creation:
                                         children:
                                             - oro_order.order_creation_new_internal_order_status
+                            purchase_history:
+                                children:
+                                    purchase_history:
+                                        children:
+                                            - oro_order.order_previously_purchased_period
 

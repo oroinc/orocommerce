@@ -18,6 +18,7 @@ class Configuration implements ConfigurationInterface
     const CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES = 'order_automation_applicable_statuses';
     const CONFIG_KEY_TARGET_INTERNAL_STATUS = 'order_automation_target_status';
     const CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS = 'order_creation_new_internal_order_status';
+    const CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD = 'order_previously_purchased_period';
 
     /**
      * {@inheritDoc}
@@ -54,6 +55,9 @@ class Configuration implements ConfigurationInterface
                 ],
                 static::CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS => [
                     'value' => Order::INTERNAL_STATUS_OPEN,
+                ],
+                static::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD => [
+                    'value' => 90,
                 ],
             ]
         );
