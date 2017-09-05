@@ -80,6 +80,11 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected $securityToken;
 
     /**
+     * @var ShoppingListTotalManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $totalManager;
+
+    /**
      * @var Cache
      */
     protected $cache;
@@ -100,6 +105,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getManagerRegistry();
         $this->cache = $this->createMock(Cache::class);
+        $this->totalManager = $this->getShoppingListTotalManager();
+
         $this->manager = new ShoppingListManager(
             $this->registry,
             $tokenStorage,
@@ -107,7 +114,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $this->getUserCurrencyManager(),
             $this->getWebsiteManager(),
-            $this->getShoppingListTotalManager(),
+            $this->totalManager,
             $this->aclHelper,
             $this->cache
         );
@@ -580,5 +587,29 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         return $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    public function testEdit()
+    {
+        $shoppingList = new ShoppingList();
+
+        $this->assertSame($shoppingList, $this->manager->edit($shoppingList));
+    }
+
+    public function testRemoveLineItems()
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem1 = new LineItem();
+        $this->manager->addLineItem($lineItem1, $shoppingList);
+        $lineItem2 = new LineItem();
+        $this->manager->addLineItem($lineItem2, $shoppingList);
+        $this->assertEquals(2, $shoppingList->getLineItems()->count());
+
+        $this->totalManager->expects($this->once())
+            ->method('recalculateTotals')
+            ->with($shoppingList, false);
+
+        $this->manager->removeLineItems($shoppingList);
+        $this->assertEquals(0, $shoppingList->getLineItems()->count());
     }
 }
