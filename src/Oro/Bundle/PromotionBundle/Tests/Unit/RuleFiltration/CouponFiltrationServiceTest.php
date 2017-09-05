@@ -179,4 +179,29 @@ class CouponFiltrationServiceTest extends \PHPUnit_Framework_TestCase
             $this->couponFiltrationService->getFilteredRuleOwners($ruleOwners, $context)
         );
     }
+
+    public function testGetFilteredPromotionsDataAndCheckThatCouponIsUsedOnce()
+    {
+        $appliedCoupon = (new Coupon())->setCode('XYZ');
+        $appliedPromotion = (new AppliedPromotionData())->setUseCoupons(true)->addCoupon($appliedCoupon);
+
+        $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection([$appliedCoupon])];
+
+        $this->filtrationService
+            ->expects($this->once())
+            ->method('getFilteredRuleOwners')
+            ->with([$appliedPromotion], $context)
+            ->willReturnCallback(function ($ruleOwners) {
+                return $ruleOwners;
+            });
+
+        $this->registry
+            ->expects($this->never())
+            ->method('getManagerForClass');
+
+        static::assertEquals(
+            [$appliedPromotion],
+            $this->couponFiltrationService->getFilteredRuleOwners([$appliedPromotion], $context)
+        );
+    }
 }

@@ -91,9 +91,11 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
             $couponCodes[$appliedCoupon->getCode()] = true;
         }
 
+        $promotionsData = $this->filterPromotionsDataWithCoupons($ruleOwners, $couponCodes);
+
         return array_merge(
-            $this->filterPromotionsWithCoupons($promotions, $couponCodes),
-            $this->filterPromotionsDataWithCoupons($ruleOwners, $couponCodes)
+            $promotionsData,
+            $this->filterPromotionsWithCoupons($promotions, $couponCodes)
         );
     }
 
@@ -126,12 +128,13 @@ class CouponFiltrationService implements RuleFiltrationServiceInterface
      * @param array $couponCodes
      * @return array
      */
-    private function filterPromotionsDataWithCoupons(array $promotionsData, array $couponCodes): array
+    private function filterPromotionsDataWithCoupons(array $promotionsData, array &$couponCodes): array
     {
-        return array_filter($promotionsData, function ($promotionData) use ($couponCodes) {
+        return array_filter($promotionsData, function ($promotionData) use (&$couponCodes) {
             /** @var PromotionDataInterface $promotionData */
             foreach ($promotionData->getCoupons() as $coupon) {
                 if (isset($couponCodes[$coupon->getCode()])) {
+                    unset($couponCodes[$coupon->getCode()]);
                     return true;
                 }
             }
