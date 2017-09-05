@@ -62,6 +62,7 @@ define(function(require) {
         events: function() {
             var events = {};
             events['change ' + this.options.selectors.addedIdsSelector] = 'refreshAddedCouponsTable';
+            events['change ' + this.options.selectors.couponAutocompleteSelector] = 'clearErrors';
             events['click ' + this.options.selectors.couponAddButtonSelector] = 'addCoupon';
             events['click ' + this.options.selectors.removeCouponButtonSelector] = 'removeCoupon';
 
@@ -97,8 +98,7 @@ define(function(require) {
                 data: data,
                 dataType: 'json',
                 success: function(response) {
-                    var $validationContainer = self.$(self.options.selectors.selectCouponValidationContainerSelector);
-                    $validationContainer.html('');
+                    self.clearErrors();
                     if (response.success) {
                         var currentState = $addedIdsField.val().split(self.options.delimiter).concat([couponId]);
                         currentState = _.filter(currentState, function(value) {
@@ -110,7 +110,8 @@ define(function(require) {
                     } else {
                         self._hideLoadingMask();
                         var errors = _.map(response.errors, __);
-                        $validationContainer.html(errorsTemplate({messages: errors}));
+                        self.$(self.options.selectors.selectCouponValidationContainerSelector)
+                            .html(errorsTemplate({messages: errors}));
                     }
                 }
             });
@@ -140,6 +141,10 @@ define(function(require) {
                 dataType: 'json',
                 success: _.bind($addedCouponsContainer.html, $addedCouponsContainer)
             }).always(_.bind(this._hideLoadingMask, this));
+        },
+
+        clearErrors: function() {
+            this.$(this.options.selectors.selectCouponValidationContainerSelector).html('');
         },
 
         /**

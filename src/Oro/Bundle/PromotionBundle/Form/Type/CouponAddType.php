@@ -40,7 +40,6 @@ class CouponAddType extends AbstractType implements DataMapperInterface
                 'coupon',
                 CouponAutocompleteType::NAME,
                 [
-                    'tooltip' => 'oro.promotion.coupon.form.add_type.code.tooltip',
                     'label' => 'oro.promotion.coupon.code.label',
                     'mapped' => false
                 ]

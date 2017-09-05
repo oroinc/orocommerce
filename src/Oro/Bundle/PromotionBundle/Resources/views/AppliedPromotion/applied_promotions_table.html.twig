@@ -51,7 +51,8 @@
                         {% endif %}
                     </td>
                     <td class="discount">
-                        {{ (-item.amount)|oro_format_currency({currency: item.currency}) }}
+                        {% set amount =  item.amount > 0 ? -item.amount : item.amount %}
+                        {{ amount|oro_format_currency({currency: item.currency}) }}
                     </td>
                     {% if editable is defined and editable %}
                         <td class="action">
