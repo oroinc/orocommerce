@@ -15,7 +15,6 @@ use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator;
 
-
 class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -59,7 +58,10 @@ class ProductImageValidatorTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
         $productImage->setProduct($product);
 
-        $this->validator->validate($product->getImages(), new ProductImageCollection())->willReturn(new ArrayCollection());
+        $this->validator->validate(
+            $product->getImages(),
+            new ProductImageCollection()
+        )->willReturn(new ArrayCollection());
 
         $this->context->buildViolation(Argument::cetera())->shouldNotBeCalled();
 

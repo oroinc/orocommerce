@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 
 use Oro\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
 
@@ -34,7 +37,7 @@ class ProductImageValidator extends ConstraintValidator
 
     /**
      * @param ProductImageEntity $value
-     * @param Constraint|roductImageCollection $constraint
+     * @param Constraint $constraint
      *
      * {@inheritdoc}
      */
@@ -46,20 +49,21 @@ class ProductImageValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if ($value->getProduct()) {
-            // add product image to existing collection and validate
-            $productImages = $value->getProduct()->getImages();
-            $productImages->add($value);
-            $violations = $this->validator->validate($productImages, new ProductImageCollection());
+        if (!$value->getProduct() || ($productImages = $value->getProduct()->getImages())->contains($value)) {
+            return;
+        }
 
-            if ($violations->count()) {
-                foreach ($violations as $violation) {
-                    /** @var ConstraintViolation $violation */
-                    $this->context->addViolation(
-                        $violation->getMessage(),
-                        $violation->getParameters()
-                    );
-                }
+        // add new product image to existing collection and validate
+        $productImages->add($value);
+        $violations = $this->validator->validate($productImages, new ProductImageCollection());
+
+        if ($violations->count()) {
+            foreach ($violations as $violation) {
+                /** @var ConstraintViolation $violation */
+                $this->context->addViolation(
+                    $violation->getMessage(),
+                    $violation->getParameters()
+                );
             }
         }
     }
