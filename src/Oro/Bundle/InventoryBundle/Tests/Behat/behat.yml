@@ -2,7 +2,7 @@ oro_behat_extension:
   suites:
     OroInventoryBundle:
       contexts:
-        - TestFrameworkBundle::OroMainContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
       paths:
