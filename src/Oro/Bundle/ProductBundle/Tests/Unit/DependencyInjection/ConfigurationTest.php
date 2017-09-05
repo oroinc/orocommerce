@@ -180,6 +180,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => true,
                     'scope' => 'app',
                 ],
+                'guest_quick_order_form' => [
+                    'value' => false,
+                    'scope' => 'app',
+                ],
             ]
         ];
 

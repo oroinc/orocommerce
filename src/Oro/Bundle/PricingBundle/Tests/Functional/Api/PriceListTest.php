@@ -258,9 +258,9 @@ class PriceListTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    ['type' => 'pricelistschedule', 'id' => (string)$this->getReference('schedule.1')->getId()],
-                    ['type' => 'pricelistschedule', 'id' => (string)$this->getReference('schedule.2')->getId()],
-                    ['type' => 'pricelistschedule', 'id' => (string)$this->getReference('schedule.3')->getId()],
+                    ['type' => 'pricelistschedules', 'id' => (string)$this->getReference('schedule.1')->getId()],
+                    ['type' => 'pricelistschedules', 'id' => (string)$this->getReference('schedule.2')->getId()],
+                    ['type' => 'pricelistschedules', 'id' => (string)$this->getReference('schedule.3')->getId()],
                 ]
             ],
             $response
