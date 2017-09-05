@@ -51,14 +51,8 @@ class TotalCalculateListener
                 return;
             }
 
-            $entity->resetLineItems();
-
-            if ($currentApplication === ActionCurrentApplicationProvider::DEFAULT_APPLICATION) {
-                $entity->resetDiscounts();
-            }
-
             $form = $this->formFactory->create($this->forms[$currentApplication], $entity);
-            $form->submit($request, false);
+            $form->submit($request);
         }
     }
 
