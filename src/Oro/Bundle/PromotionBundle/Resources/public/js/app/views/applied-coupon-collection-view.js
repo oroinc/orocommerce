@@ -27,6 +27,18 @@ define(function(require) {
             }
         },
 
+        /**
+         * @property {Object}
+         */
+        newCollectionElementData: {
+            prototypeString: null,
+            prototypeName: null,
+            lastIndex: null
+        },
+
+        /**
+         * @property {Array}
+         */
         requiredOptions: [
             'dialogWidgetAlias'
         ],
@@ -41,6 +53,11 @@ define(function(require) {
             var handlers = {};
             handlers['applied-coupon:remove'] = this.removeAppliedCoupon;
             handlers.widget_initialize = this.attachDialogListeners;
+
+            var $hiddenCollection = this.$(this.options.selectors.hiddenCollection);
+            this.newCollectionElementData.prototypeString = $hiddenCollection.data('prototype');
+            this.newCollectionElementData.prototypeName = $hiddenCollection.data('prototype-name');
+            this.newCollectionElementData.lastIndex = $hiddenCollection.data('last-index');
 
             this.listenTo(mediator, handlers);
         },
@@ -103,17 +120,17 @@ define(function(require) {
          * @private
          */
         _createNewCollectionElement: function(appliedCouponData) {
-            var $hiddenCollection = this.$(this.options.selectors.hiddenCollection);
-            var prototypeString = $hiddenCollection.data('prototype');
-            var prototypeName = $hiddenCollection.data('prototype-name');
-            var lastIndex = $hiddenCollection.data('last-index');
-            var html = prototypeString.replace(tools.safeRegExp(prototypeName, 'ig'), lastIndex);
+            var html = this.newCollectionElementData.prototypeString.replace(
+                tools.safeRegExp(this.newCollectionElementData.prototypeName, 'ig'),
+                this.newCollectionElementData.lastIndex
+            );
             var $element = $(html);
 
             $element.find(this.options.selectors.couponCodeField).val(appliedCouponData.couponCode);
             $element.find(this.options.selectors.sourcePromotionIdField).val(appliedCouponData.sourcePromotionId);
             $element.find(this.options.selectors.sourceCouponIdField).val(appliedCouponData.sourceCouponId);
             $element.data(this.options.sourceCouponIdDataAttribute, appliedCouponData.sourceCouponId);
+            this.newCollectionElementData.lastIndex++;
 
             return $element;
         },
