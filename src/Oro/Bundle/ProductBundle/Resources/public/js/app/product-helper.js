@@ -4,6 +4,7 @@ define(function(require) {
     var ProductHelper;
     var localeSettings = require('orolocale/js/locale-settings');
     var _ = require('underscore');
+    var $ = require('jquery');
 
     var decimalSeparator = localeSettings.getNumberFormats('decimal').decimal_separator_symbol;
     var namespace = '.product-helper-' + _.uniqueId();
@@ -66,6 +67,7 @@ define(function(require) {
 
         _addFraction: function(event) {
             var field = event.target;
+            var originalValue = field.value;
             var precision = event.data.precision;
 
             //set fixed length start
@@ -83,6 +85,8 @@ define(function(require) {
                     field.selectionStart = field.value.length - precision;
                 }
 
+                this._triggerEventOnValueChange(event, originalValue);
+
                 event.stopPropagation();
                 event.preventDefault();
                 return false;
@@ -92,6 +96,7 @@ define(function(require) {
 
         _normalizeNumberFieldValue: function(event) {
             var field = event.target;
+            var originalValue = field.value;
             var precision = event.data.precision;
             if (_.isUndefined(field.value)) {
                 return;
@@ -120,10 +125,22 @@ define(function(require) {
 
             if (!regExp.test(field.value) || substitution.length > 0) {
                 field.value = field.value.match(regExp).join('');
+
+                this._triggerEventOnValueChange(event, originalValue);
                 event.preventDefault();
                 return false;
+            } else {
+                this._triggerEventOnValueChange(event, originalValue);
             }
             //validate value end
+        },
+
+        _triggerEventOnValueChange: function(event, value) {
+            var field = event.target;
+            if (field.value !== value) {
+                $(field).trigger(event);
+                return;
+            }
         }
     };
 
