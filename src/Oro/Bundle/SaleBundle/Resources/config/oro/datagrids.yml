@@ -325,12 +325,8 @@ datagrids:
                     type:      string
                     data_name: quote.qid
                 customerUserName:
-                    type:      entity
-                    data_name: quote.customerUser
-                    options:
-                        field_options:
-                            class:      %oro_customer.entity.customer_user.class%
-                            multiple:   false
+                     type:      string
+                     data_name: customerUserName
                 customerStatusName:
                     type:      enum
                     data_name: customerStatusId
