@@ -59,7 +59,10 @@ navigation:
 
             oro_customer_menu:
                 children:
-                    oro_rfp_frontend_request_index: ~
+                    oro_rfp_frontend_request_index:
+                        children:
+                            oro_rfp_frontend_request_create: ~
+                            oro_rfp_frontend_request_view: ~
 
     titles:
         oro_rfp_request_index:           ~
