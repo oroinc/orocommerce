@@ -4,6 +4,8 @@ define(function(require) {
     var QuickAddItemView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
+    var ProductHelper = require('oroproduct/js/app/product-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
@@ -38,14 +40,16 @@ define(function(require) {
             sku: '',
             skuHiddenField: '',
             quantity: 0,
-            unit: null
+            unit: null,
+            product_units: {},
+            unit_placeholder: __('oro.product.frontend.quick_add.form.unit.default')
         },
 
         modelEvents: {
             'sku': ['change', 'onSkuChange'],
             'quantity': ['change', 'publishModelChanges'],
             'unit': ['change', 'publishModelChanges'],
-            'units': ['change', 'setUnits']
+            'product_units': ['change', 'setUnits']
         },
 
         listen: {
@@ -71,6 +75,8 @@ define(function(require) {
             this.clearModel();
             this.clearSku();
             this.setUnits();
+
+            ProductHelper.normalizeNumberField(this.model, this.getElement('quantity'));
         },
 
         initModel: function(options) {
@@ -150,9 +156,9 @@ define(function(require) {
             }
 
             this.model.set({
+                'units_loaded': !_.isUndefined(data.item.units),
                 'quantity': data.item.quantity || this.model.get('quantity') || this.options.defaultQuantity,
-                'units': data.item.units,
-                'product_units': data.item.units
+                'product_units': data.item.units || {}
             });
         },
 
@@ -178,9 +184,10 @@ define(function(require) {
 
         clearModel: function() {
             this.model.set({
+                units_loaded: false,
                 sku_changed_manually: false,
                 quantity: null,
-                units: null,
+                product_units: {},
                 unit: null,
                 unit_deferred: null
             });
@@ -197,28 +204,10 @@ define(function(require) {
         },
 
         setUnits: function() {
-            var $unitEl = this.getElement('unit');
-
-            $unitEl
-                .prop('disabled', true)
-                .empty();
-
-            var units = this.model.get('units');
-            if (units) {
-                _.each(units, function(unit) {
-                    $unitEl.append(this.renderUnitOption(unit));
-                }, this);
-                $unitEl.prop('disabled', false);
-            } else {
-                $unitEl.prepend(this.renderUnitOption(
-                    __('oro.product.frontend.quick_add.form.unit.default'))
-                );
-                this.model.set('unit_placeholder', $unitEl.val());
+            UnitsUtil.updateSelect(this.model, this.getElement('unit'));
+            if (this.model.get('unit_deferred')) {
+                this.model.set('unit', this.model.get('unit_deferred'));
             }
-
-            var unit = this.model.get('unit_deferred') || $unitEl.val();
-
-            this.model.set('unit', unit);
             this.updateUI();
         },
 
@@ -245,23 +234,9 @@ define(function(require) {
             return error;
         },
 
-        renderUnitOption: function(unit) {
-            if (!unit) {
-                return;
-            }
-
-            if (!this.templates.unitOption) {
-                this.templates.unitOption = _.template(
-                    '<option value="<%= unit %>"><%= unit %></option>'
-                );
-            }
-
-            return this.templates.unitOption({unit: unit});
-        },
-
         unitInvalid: function() {
-            return this.model.has('units') &&
-                !_.has(this.model.get('units'), this.model.get('unit'));
+            return this.model.get('units_loaded') &&
+                !_.has(this.model.get('product_units'), this.model.get('unit'));
         },
 
         updateUI: function() {
@@ -273,7 +248,7 @@ define(function(require) {
                 _.defer(_.bind(function() {
                     mediator.trigger('quick-add-form-item:unit-invalid', {$el: this.$el});
                 }, this));
-            } else if (this.model.get('sku') && this.model.get('units')) {
+            } else if (this.model.get('sku') && this.model.get('units_loaded')) {
                 mediator.trigger('quick-add-form-item:item-valid', {item: this.model.attributes});
             }
 

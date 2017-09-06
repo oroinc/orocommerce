@@ -19,16 +19,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
         unit: '@each'
-        precision: '1'
+        precision: '4'
     precision2:
-        unit: '@each'
-        precision: '1'
-    precision3:
         unit: '@item'
-        precision: '1'
-    precision4:
-        unit: '@each'
-        precision: '1'
+        precision: '6'
 
 Oro\Bundle\CatalogBundle\Entity\Category:
     categoryLightingProducts:
@@ -43,29 +37,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         organization: '@organization'
         owner: '@businessUnit'
         primaryUnitPrecision: '@precision1'
-        unitPrecisions: []
+        unitPrecisions: ['@precision2']
         attributeFamily: '@defaultProductFamily'
         addName: ['@locvalue1']
-        inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
-    product2:
-        sku: 'CONTROL1'
-        type: 'simple'
-        organization: '@organization'
-        owner: '@businessUnit'
-        primaryUnitPrecision: '@precision2'
-        attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue2']
-        inventoryStatus: '@enumInventoryStatuses'
-        status: 'enabled'
-    product3:
-        sku: 'SKU003'
-        type: 'simple'
-        organization: '@organization'
-        owner: '@businessUnit'
-        primaryUnitPrecision: '@precision4'
-        addUnitPrecision: ['@precision3']
-        attributeFamily: '@defaultProductFamily'
-        addName: ['@locvalue3']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'

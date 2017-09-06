@@ -2,24 +2,20 @@
 
 namespace Oro\Bundle\InvoiceBundle\Form\Type;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
+use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -29,34 +25,9 @@ class InvoiceLineItemType extends AbstractType
     const NAME = 'oro_invoice_line_item';
 
     /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $labelFormatter;
-
-    /**
-     * @var QuoteProductFormatter
-     */
-    protected $formatter;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
      * @var string
      */
     protected $dataClass;
-
-    /**
-     * @var string
-     */
-    protected $productUnitClass;
 
     /**
      * @var PriceRoundingService
@@ -64,18 +35,20 @@ class InvoiceLineItemType extends AbstractType
     protected $priceRounding;
 
     /**
-     * @param Registry $registry
-     * @param ProductUnitLabelFormatter $labelFormatter
+     * @var ProductUnitsProvider
+     */
+    protected $productUnitsProvider;
+
+    /**
      * @param PriceRoundingService $priceRoundingService
+     * @param ProductUnitsProvider $productUnitsProvider
      */
     public function __construct(
-        Registry $registry,
-        ProductUnitLabelFormatter $labelFormatter,
-        PriceRoundingService $priceRoundingService
+        PriceRoundingService $priceRoundingService,
+        ProductUnitsProvider $productUnitsProvider
     ) {
-        $this->registry = $registry;
-        $this->labelFormatter = $labelFormatter;
         $this->priceRounding = $priceRoundingService;
+        $this->productUnitsProvider = $productUnitsProvider;
     }
 
     /**
@@ -84,14 +57,6 @@ class InvoiceLineItemType extends AbstractType
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
     }
 
     /**
@@ -198,6 +163,27 @@ class InvoiceLineItemType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $product = null;
+        if ($view->vars['value']) {
+            /* @var $lineItem InvoiceLineItem */
+            $lineItem = $view->vars['value'];
+
+            if ($lineItem->getProduct()) {
+                $product = $lineItem->getProduct();
+            }
+        }
+
+        if ($product) {
+            $modelAttr['product_units'] = $product->getAvailableUnitsPrecision();
+            $view->vars['page_component_options']['modelAttr'] = $modelAttr;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return $this->getBlockPrefix();
@@ -216,8 +202,6 @@ class InvoiceLineItemType extends AbstractType
      */
     protected function getFreeFormUnits()
     {
-        $units = $this->registry->getRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
-
-        return $this->labelFormatter->formatChoices($units);
+        return $this->productUnitsProvider->getAvailableProductUnitsWithPrecision();
     }
 }

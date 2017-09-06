@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,43 +10,23 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
 
 class OrderLineItemType extends AbstractOrderLineItemType
 {
     const NAME = 'oro_order_line_item';
 
     /**
-     * @var ManagerRegistry
+     * @var ProductUnitsProvider
      */
-    protected $registry;
+    protected $productUnitsProvider;
 
     /**
-     * @var string
+     * @param ProductUnitsProvider $productUnitsProvider
      */
-    protected $productUnitClass;
-
-    /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $productUnitFormatter;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param ProductUnitLabelFormatter $productUnitFormatter
-     */
-    public function __construct(ManagerRegistry $registry, ProductUnitLabelFormatter $productUnitFormatter)
+    public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
-        $this->registry = $registry;
-        $this->productUnitFormatter = $productUnitFormatter;
-    }
-
-    /**
-     * @param string $productUnitClass
-     */
-    public function setProductUnitClass($productUnitClass)
-    {
-        $this->productUnitClass = $productUnitClass;
+        $this->productUnitsProvider = $productUnitsProvider;
     }
 
     /**
@@ -163,9 +141,6 @@ class OrderLineItemType extends AbstractOrderLineItemType
      */
     protected function getFreeFormUnits()
     {
-        $units = $this->registry->getRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
-        $units = $this->productUnitFormatter->formatChoices($units);
-
-        return $units;
+        return $this->productUnitsProvider->getAvailableProductUnitsWithPrecision();
     }
 }
