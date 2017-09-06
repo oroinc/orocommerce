@@ -68,9 +68,10 @@ class RestrictSitemapProductByWebCatalogListenerTest extends WebTestCase
             LoadProductData::PRODUCT_6,
             LoadProductData::PRODUCT_7,
             LoadProductData::PRODUCT_8,
+            LoadProductData::PRODUCT_9,
         ];
 
-        $this->assertCount(8, $actual);
+        $this->assertCount(9, $actual);
         foreach ($expected as $product) {
             /** @var Product $product */
             $product = $this->getReference($product);

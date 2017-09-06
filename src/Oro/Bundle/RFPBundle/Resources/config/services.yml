@@ -24,7 +24,9 @@ services:
     oro_rfp.processor.quick_add:
         class: 'Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor'
         parent: oro_product.component_processor.data_storage_aware.processor
-        arguments: ['@oro_rfp.form.type.extension.frontend_request_data_storage']
+        arguments:
+            - '@oro_rfp.form.type.extension.frontend_request_data_storage'
+            - '@oro_featuretoggle.checker.feature_checker'
         calls:
             - [setName, ['oro_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['oro_rfp_frontend_request_create']]
@@ -154,6 +156,13 @@ services:
 
     oro_rfp.voter.customer_user_rfp:
         parent: oro_customer.voter.customer_user
+        calls:
+            - [ setFeatureName, ['guest_rfp'] ]
+        tags:
+            - { name: oro_featuretogle.voter }
+
+    oro_rfp.voter.guest_quick_order_form:
+        parent: oro_product.voter.guest_quick_order_form
         calls:
             - [ setFeatureName, ['guest_rfp'] ]
         tags:
