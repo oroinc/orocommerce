@@ -510,3 +510,14 @@ services:
            - '@oro_featuretoggle.checker.feature_checker'
            - '@security.token_storage'
         lazy: true
+
+    #Checkout Line Items Services
+    oro_checkout.line_item.converter_registry:
+        class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry'
+        arguments:
+            - '@logger'
+
+    oro_checkout.line_item.factory:
+        class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemFactory'
+        arguments:
+            - '@oro_checkout.line_item.converter_registry'
