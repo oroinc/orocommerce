@@ -521,3 +521,9 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemFactory'
         arguments:
             - '@oro_checkout.line_item.converter_registry'
+
+    oro_checkout.line_item.converter.shopping_list:
+        class: 'Oro\Bundle\CheckoutBundle\Converter\ShoppingListLineItemConverter'
+        public: false
+        tags:
+            - { name: oro.checkout.line_item.converter, alias: shopping_list }

@@ -3,7 +3,7 @@ The Dependency Injection Tags
 
 | Type name | Usage |
 |-----------|-------|
-| [oro.checkout.line_item.converter](#oro.checkoutline_itemconverter) | Converts given object to array of CheckoutLineItem |
+| [oro.checkout.line_item.converter](#oro.checkoutline_itemconverter) | Converts given object to collection of CheckoutLineItem |
 
 oro.checkout.line_item.converter
 --------------------------------
