@@ -9,6 +9,8 @@ class RequestProductHandler
     const CATEGORY_ID_KEY = 'categoryId';
     const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
     const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
+    const INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE = false;
+    const INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY = 'includeNotCategorizedProducts';
 
     /** @var RequestStack */
     protected $requestStack;
@@ -50,19 +52,43 @@ class RequestProductHandler
      */
     public function getIncludeSubcategoriesChoice()
     {
+        return $this->getChoice(
+            self::INCLUDE_SUBCATEGORIES_KEY,
+            self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE
+        );
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIncludeNotCategorizedProductsChoice()
+    {
+        return $this->getChoice(
+            self::INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY,
+            self::INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE
+        );
+    }
+
+    /**
+     * @param string $key
+     * @param bool $defaultValue
+     * @return bool
+     */
+    protected function getChoice($key, $defaultValue)
+    {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
-            return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
+            return $defaultValue;
         }
 
         $value = filter_var(
-            $request->get(self::INCLUDE_SUBCATEGORIES_KEY, self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE),
+            $request->get($key, $defaultValue),
             FILTER_VALIDATE_BOOLEAN,
             FILTER_NULL_ON_FAILURE
         );
 
         if (null === $value) {
-            return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
+            return $defaultValue;
         }
 
         return $value;

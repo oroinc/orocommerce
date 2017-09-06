@@ -91,6 +91,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-5',
                     'product-6',
                     'product-7',
+                    'product-9',
                 ]
             ],
             'config hidden' => [
@@ -112,6 +113,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-6',
                     'product-7',
                     'product-8',
+                    'product-9',
                 ]
             ],
             'anonymous config hidden' => [
@@ -131,6 +133,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-6',
                     'product-7',
                     'product-8',
+                    'product-9',
                 ]
             ],
             'customer without group and config visible' => [
@@ -145,6 +148,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product-6',
                     'product-7',
                     'product-8',
+                    'product-9',
                 ]
             ],
             'customer without group and config hidden' => [
@@ -201,7 +205,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $actualProductSkus = array_map(function ($item) {
             return $item['sku'];
         }, $actual);
-        $this->assertCount(6, $actualProductSkus);
+        $this->assertCount(7, $actualProductSkus);
 
         $expected = [
             LoadProductData::PRODUCT_1,
@@ -210,6 +214,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             LoadProductData::PRODUCT_6,
             LoadProductData::PRODUCT_7,
             LoadProductData::PRODUCT_8,
+            LoadProductData::PRODUCT_9,
         ];
         foreach ($expected as $productReference) {
             $product = $this->getReference($productReference);
@@ -232,12 +237,13 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $actualProductSkus = array_map(function ($item) {
             return $item['sku'];
         }, $actual);
-        $this->assertCount(3, $actualProductSkus);
+        $this->assertCount(4, $actualProductSkus);
 
         $expected = [
             LoadProductData::PRODUCT_1,
             LoadProductData::PRODUCT_2,
             LoadProductData::PRODUCT_5,
+            LoadProductData::PRODUCT_9,
         ];
         foreach ($expected as $productReference) {
             $product = $this->getReference($productReference);
