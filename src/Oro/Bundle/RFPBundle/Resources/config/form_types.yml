@@ -16,8 +16,6 @@ services:
 
     oro_rfp.form.type.request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductType'
-        arguments:
-            - "@oro_product.formatter.product_unit_label"
         calls:
             - [setDataClass, ['%oro_rfp.entity.request_product.class%']]
         tags:

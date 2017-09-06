@@ -176,12 +176,94 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider getIncludeNotCategorizedProductsChoiceDataProvider
+     *
+     * @param $value
+     * @param $expected
+     */
+    public function testGetIncludeNotCategorizedProductsChoice($value, $expected)
+    {
+        $this->request->expects($this->once())
+            ->method('get')
+            ->with(RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_KEY)
+            ->willReturn($value);
+        $actual = $this->requestProductHandler->getIncludeNotCategorizedProductsChoice();
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getIncludeNotCategorizedProductsChoiceDataProvider()
+    {
+        return [
+            [
+                'value' => true,
+                'expected' => true,
+            ],
+            [
+                'value' => false,
+                'expected' => false,
+            ],
+            [
+                'value' => 'true',
+                'expected' => true,
+            ],
+            [
+                'value' => 'false',
+                'expected' => false,
+            ],
+            [
+                'value' => 1,
+                'expected' => true,
+            ],
+            [
+                'value' => 0,
+                'expected' => false,
+            ],
+            [
+                'value' => -1,
+                'expected' => RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE,
+            ],
+            [
+                'value' => '1',
+                'expected' => true,
+            ],
+            [
+                'value' => '0',
+                'expected' => false,
+            ],
+            [
+                'value' => '-1',
+                'expected' => RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE,
+            ],
+            [
+                'value' => null,
+                'expected' => false,
+            ],
+            [
+                'value' => 'test',
+                'expected' => RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE,
+            ],
+        ];
+    }
+
     public function testGetIncludeSubcategoriesChoiceWithEmptyRequest()
     {
         $requestProductHandler = new RequestProductHandler(new RequestStack());
         $this->assertEquals(
             RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE,
             $requestProductHandler->getIncludeSubcategoriesChoice()
+        );
+    }
+
+    public function testGetIncludeNotCategorizedProductsChoiceWithEmptyRequest()
+    {
+        $requestProductHandler = new RequestProductHandler(new RequestStack());
+        $this->assertEquals(
+            RequestProductHandler::INCLUDE_NOT_CATEGORIZED_PRODUCTS_DEFAULT_VALUE,
+            $requestProductHandler->getIncludeNotCategorizedProductsChoice()
         );
     }
 }
