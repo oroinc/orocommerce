@@ -13,11 +13,6 @@
         padding: 0 0 $product-item-gallery-view-offset-bottom;
 
         font-size: $base-font-size;
-
-        .validation-failed {
-            position: absolute;
-            z-index: 1;
-        }
     }
 
     &--list-view {
@@ -376,6 +371,11 @@
                 height: 40px;
 
                 text-align: center;
+            }
+
+            .validation-failed {
+                position: absolute;
+                z-index: 1;
             }
         }
 

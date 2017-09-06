@@ -205,7 +205,7 @@ class FrontendProductDatagridListener
             $productUnits = $record->getValue('product_units');
             $units = [];
             if ($productUnits) {
-                $units = explode('|', $productUnits);
+                $units = unserialize($productUnits);
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
         }

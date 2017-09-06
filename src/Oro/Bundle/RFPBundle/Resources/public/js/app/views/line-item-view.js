@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var UnitsUtil = require('oroproduct/js/app/units-util');
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
@@ -72,7 +73,7 @@ define(function(require) {
 
         modelAttr: {
             productId: 0,
-            productUnits: []
+            product_units: {}
         },
 
         modelEvents: {
@@ -99,7 +100,7 @@ define(function(require) {
 
             this.initModel(options);
             this.initializeElements(options);
-            this.model.set('productUnits', this.options.units[this.model.get('productId')] || []);
+            this.model.set('product_units', this.options.units[this.model.get('productId')] || []);
 
             this.$el.on('options:set:lineItemModel', _.bind(function(e, options) {
                 options.lineItemModel = this.model;
@@ -207,37 +208,18 @@ define(function(require) {
         updateProductUnits: function(units, force) {
             var self = this;
 
-            units = units || {};
-            this.model.set('productUnits', units);
+            this.model.set('product_units', units);
 
             var widgets = self.$el.find(self.options.itemWidget);
             $.each(widgets, function(index, widget) {
-                var select = $(widget).find(self.options.selectors.unitSelector);
+                var $select = $(widget).find(self.options.selectors.unitSelector);
 
-                if (!force && $(select).hasClass(self.options.syncClass)) {
+                if (!force && $select.hasClass(self.options.syncClass)) {
                     return;
                 }
 
-                var currentValue = $(select).val();
-                $(select).empty();
-                $.each(units, function(key, value) {
-                    $(select)
-                        .append($('<option/>').val(key).text(value))
-                    ;
-                });
-                var firstValue = $(select).find('option:first-child').val();
-                if (!currentValue && firstValue) {
-                    currentValue = firstValue;
-                }
-                $(select).val(currentValue);
-                if (null === $(select).val() && firstValue) {
-                    $(select).val(firstValue);
-                }
-                $(select).addClass(self.options.syncClass);
-
-                if (!force) {
-                    $(widget).find('select').inputWidget('refresh');
-                }
+                UnitsUtil.updateSelect(self.model, $select);
+                $select.addClass(self.options.syncClass);
             });
 
             if (force) {

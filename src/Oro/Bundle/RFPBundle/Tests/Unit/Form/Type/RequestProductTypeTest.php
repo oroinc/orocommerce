@@ -12,7 +12,6 @@ use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
@@ -34,22 +33,7 @@ class RequestProductTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
-        $productUnitLabelFormatter = $this->getMockBuilder(
-            'Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productUnitLabelFormatter->expects($this->any())
-            ->method('format')
-            ->will($this->returnCallback(function ($unitCode, $short) {
-                return $unitCode . '-formatted-' . ($short ? 'short' : 'full');
-            }))
-        ;
-
-
-        $this->formType     = new RequestProductType($productUnitLabelFormatter);
+        $this->formType = new RequestProductType();
         $this->formType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
         parent::setUp();
@@ -188,7 +172,7 @@ class RequestProductTypeTest extends AbstractTest
                 'input'     => [
                     'vars' => [
                         'value' => (new RequestProduct())
-                        ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
+                        ->setProduct($this->createProduct(1, ['unit1' => 0, 'unit2' => 2]))
                     ],
                     'options' => [
                         'compact_units' => false,
@@ -196,12 +180,12 @@ class RequestProductTypeTest extends AbstractTest
                 ],
                 'expected'  => [
                     'value' => (new RequestProduct())
-                        ->setProduct($this->createProduct(1, ['unit1', 'unit2'])),
+                        ->setProduct($this->createProduct(1, ['unit1' => 0, 'unit2' => 2])),
                     'componentOptions' => [
                         'units' => [
                             1 => [
-                                'unit1' => 'unit1-formatted-full',
-                                'unit2' => 'unit2-formatted-full',
+                                'unit1' => 0,
+                                'unit2' => 2,
                             ],
                         ],
                         'compactUnits' => false,
@@ -212,7 +196,7 @@ class RequestProductTypeTest extends AbstractTest
                 'input'     => [
                     'vars' => [
                         'value' => (new RequestProduct())
-                        ->setProduct($this->createProduct(2, ['unit3', 'unit4']))
+                        ->setProduct($this->createProduct(2, ['unit3' => 3, 'unit4' => 0]))
                     ],
                     'options' => [
                         'compact_units' => true,
@@ -220,12 +204,12 @@ class RequestProductTypeTest extends AbstractTest
                 ],
                 'expected'  => [
                     'value' => (new RequestProduct())
-                        ->setProduct($this->createProduct(2, ['unit3', 'unit4'])),
+                        ->setProduct($this->createProduct(2, ['unit3' => 3, 'unit4' => 0])),
                     'componentOptions' => [
                         'units' => [
                             2 => [
-                                'unit3' => 'unit3-formatted-short',
-                                'unit4' => 'unit4-formatted-short',
+                                'unit3' => 3,
+                                'unit4' => 0,
                             ],
                         ],
                         'compactUnits' => true,
@@ -246,7 +230,7 @@ class RequestProductTypeTest extends AbstractTest
             'Oro\Bundle\ProductBundle\Entity\Product',
             [
                 'getId' => $id,
-                'getAvailableUnitCodes' => $units,
+                'getAvailableUnitsPrecision' => $units,
             ]
         );
 
