@@ -1,0 +1,9 @@
+oro_behat_extension:
+  suites:
+    OroInventoryBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroDataGridBundle::GridContext
+        - OroFormBundle::FormContext
+      paths:
+        - '@OroInventoryBundle/Tests/Behat/Features'

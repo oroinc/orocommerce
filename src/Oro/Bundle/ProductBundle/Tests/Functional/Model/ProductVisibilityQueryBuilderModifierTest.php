@@ -64,6 +64,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
                     LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_9,
                 ],
             ],
             'disabled products' => [
@@ -88,6 +89,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
                     LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_9,
                 ],
             ],
         ];
@@ -122,6 +124,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
                     LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_9,
                 ],
             ],
             'products out_of_stock' => [
@@ -155,6 +158,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
                     LoadProductData::PRODUCT_8,
+                    LoadProductData::PRODUCT_9,
                 ],
             ],
         ];
