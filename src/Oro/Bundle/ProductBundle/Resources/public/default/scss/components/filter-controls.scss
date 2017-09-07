@@ -3,7 +3,6 @@
 .catalog__filter-controls {
   &__item {
     flex-grow: 1;
-    margin-right: $offset-y-s;
 
     &.sorting {
       flex-grow: 0;
@@ -18,7 +17,6 @@
       flex-grow: 0;
       flex-shrink: 0;
       order: 4;
-      margin: 0;
 
       text-align: right;
     }
@@ -74,8 +72,6 @@
     }
 
     &__item {
-      margin-right: $offset-y;
-
       &.sorting {
         flex-basis: auto;
       }
@@ -97,8 +93,6 @@
     &__item {
       flex-grow: inherit;
 
-      margin-right: $offset-y-s;
-
       &.oro-pagination {
         text-align: left;
       }
@@ -108,10 +102,6 @@
 
 @include breakpoint('mobile') {
   .catalog__filter-controls {
-    &__item {
-      margin-right: 0;
-    }
-
     .action-selectbox_custom_in-pager {
       display: inline-block;
 
