@@ -8,8 +8,22 @@ services:
     oro_product.related_item.helper.config_helper:
         class: Oro\Bundle\ProductBundle\RelatedItem\Helper\RelatedItemConfigHelper
         calls:
-            - [addConfigProvider, ['related_product', '@oro_product.related_item.related_product.config_provider']]
-            - [addConfigProvider, ['upsell_product', '@oro_product.related_item.upsell_product.config_provider']]
+            - [addConfigProvider, ['related_products', '@oro_product.related_item.related_product.config_provider']]
+            - [addConfigProvider, ['upsell_products', '@oro_product.related_item.upsell_product.config_provider']]
+
+    oro_product.twig.related_item_extension:
+        class: Oro\Bundle\ProductBundle\Twig\RelatedItemExtension
+        public: false
+        arguments: ['@oro_product.related_item.helper.config_helper']
+        tags:
+            - { name: twig.extension }
+
+    oro_product.twig.related_item_extension:
+        class: Oro\Bundle\ProductBundle\Twig\RelatedItemExtension
+        public: false
+        arguments: ['@oro_product.related_item.helper.config_helper']
+        tags:
+            - { name: twig.extension }
 
     oro_product.related_item.data_provider.abstract_cache_decorator:
         class: Oro\Bundle\ProductBundle\Layout\DataProvider\RelatedItem\RelatedItemDataProviderCacheDecorator

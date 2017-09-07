@@ -42,6 +42,7 @@ class RestrictSitemapProductByStatusListenerTest extends WebTestCase
             LoadProductData::PRODUCT_6,
             LoadProductData::PRODUCT_7,
             LoadProductData::PRODUCT_8,
+            LoadProductData::PRODUCT_9,
         ];
 
         $this->assertCount(count($expected), $actual);

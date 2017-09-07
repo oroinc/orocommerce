@@ -11,8 +11,10 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -39,6 +41,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $managerRegistry;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FeatureChecker */
+    protected $featureChecker;
+
     protected function setUp()
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
@@ -50,11 +55,16 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->managerRegistry = $this->getManagerRegistry();
 
+        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->handler = new ShoppingListLineItemHandler(
             $this->managerRegistry,
             $this->shoppingListManager,
             $this->authorizationChecker,
-            $this->tokenAccessor
+            $this->tokenAccessor,
+            $this->featureChecker
         );
         $this->handler->setProductClass(Product::class);
         $this->handler->setShoppingListClass(ShoppingList::class);
@@ -109,6 +119,28 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted');
 
         $this->handler->createForShoppingList(new ShoppingList());
+    }
+
+    public function testCreateForShoppingListForGuestNotAllowed()
+    {
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getToken')
+            ->will($this->returnValue($token));
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('guest_shopping_list')
+            ->will($this->returnValue(false));
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('hasUser')
+            ->willReturn(false);
+
+        $shoppingList = new ShoppingList();
+
+        $this->assertEquals(false, $this->handler->isAllowed($shoppingList));
     }
 
     /**

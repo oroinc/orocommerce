@@ -22,8 +22,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
-use Oro\Bundle\ProductBundle\Entity\RelatedItem\UpsellProduct;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
@@ -38,6 +36,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_6 = 'product-6';
     const PRODUCT_7 = 'product-7';
     const PRODUCT_8 = 'product-8';
+    const PRODUCT_9 = 'product-9';
 
     const PRODUCT_1_DEFAULT_NAME = 'product-1.names.default';
     const PRODUCT_2_DEFAULT_NAME = 'product-2.names.default';
@@ -47,6 +46,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_6_DEFAULT_NAME = 'product-6.names.default';
     const PRODUCT_7_DEFAULT_NAME = 'product-7.names.default';
     const PRODUCT_8_DEFAULT_NAME = 'product-8.names.default';
+    const PRODUCT_9_DEFAULT_NAME = 'product-9.names.default';
 
     const PRODUCT_1_DEFAULT_SLUG_PROTOTYPE = 'product-1.slugPrototypes.default';
     const PRODUCT_2_DEFAULT_SLUG_PROTOTYPE = 'product-2.slugPrototypes.default';
@@ -56,6 +56,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_6_DEFAULT_SLUG_PROTOTYPE = 'product-6.slugPrototypes.default';
     const PRODUCT_7_DEFAULT_SLUG_PROTOTYPE = 'product-7.slugPrototypes.default';
     const PRODUCT_8_DEFAULT_SLUG_PROTOTYPE = 'product-8.slugPrototypes.default';
+    const PRODUCT_9_DEFAULT_SLUG_PROTOTYPE = 'product-9.slugPrototypes.default';
 
     /**
      * {@inheritdoc}

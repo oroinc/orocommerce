@@ -59,38 +59,38 @@ class AjaxProductUnitControllerTest extends WebTestCase
             'product-1 full' => [
                 'product-1',
                 [
-                    'bottle' => 'bottle',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 2,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 false
             ],
             'product-2 full' => [
                 'product-2',
                 [
-                    'bottle' => 'bottle',
-                    'box' => 'box',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 1,
+                    'box' => 1,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 false
             ],
             'product-1 short' => [
                 'product-1',
                 [
-                    'bottle' => 'bottle',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 2,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 true
             ],
             'product-2 short' => [
                 'product-2',
                 [
-                    'bottle' => 'bottle',
-                    'box' => 'box',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 1,
+                    'box' => 1,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 true
             ]

@@ -29,7 +29,6 @@ class AjaxLineItemController extends AbstractLineItemController
      *      name="oro_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
-     * @AclAncestor("oro_shopping_list_frontend_update")
      * @ParamConverter("product", class="OroProductBundle:Product", options={"id" = "productId"})
      *
      * @param Request $request
@@ -43,10 +42,6 @@ class AjaxLineItemController extends AbstractLineItemController
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         if (!$this->get('security.authorization_checker')->isGranted('EDIT', $shoppingList)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        if (!$this->get('security.authorization_checker')->isGranted('VIEW', $product)) {
             throw $this->createAccessDeniedException();
         }
 

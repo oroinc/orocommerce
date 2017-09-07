@@ -15,7 +15,8 @@
             },
             template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>')
         },
-        'data-product-shopping-lists': ''
+        'data-product-shopping-lists': '',
+        'data-layout': 'separate',
     }) %}
     <div {{ block('block_attributes') }}></div>
 {% endblock %}
@@ -89,6 +90,7 @@
             </tr>
             </thead>
             <tbody class="shopping-lists-popup__content">
+            <% var applySingleUnitMode = isProductApplySingleUnitMode(_.keys(productUnits)) %>
             <% _.each(shoppingLists, function(list) { %>
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
@@ -179,7 +181,7 @@
                                                disabled="disabled" required>
                                     </li>
                                     <li class="shopping-lists-modify__select">
-                                        <% if (isProductApplySingleUnitMode(productUnits) && isProductApplySingleUnitMode([lineItem.unit])) { %>
+                                        <% if (applySingleUnitMode && isProductApplySingleUnitMode([lineItem.unit])) { %>
                                             <input type="hidden" name="unit" value="<%= lineItem.unit %>" data-role="field__unit" required />
 
                                             <% if (singleUnitModeCodeVisible) { %>
@@ -188,11 +190,11 @@
                                         <% } else { %>
                                             <select class="oro-select2 oro-select2--size-s" name="unit"
                                                     data-role="field__unit" required>
-                                                <% _.each(productUnits, function(unit) { %>
+                                                <% _.each(productUnits, function(label, unit) { %>
                                                     <% if (unit === lineItem.unit) { %>
-                                                        <option value="<%= unit %>" selected="selected"><%= unit %></option>
+                                                        <option value="<%= unit %>" selected="selected"><%= label %></option>
                                                     <% } else { %>
-                                                        <option value="<%= unit %>"><%= unit %></option>
+                                                        <option value="<%= unit %>"><%= label %></option>
                                                     <% } %>
                                                 <% }); %>
                                             </select>
@@ -252,7 +254,7 @@
                                        data-role="add-form-qty">
                             </li>
                             <li class="shopping-lists-modify__select">
-                                <% if (singleUnitMode && isProductApplySingleUnitMode(productUnits)) { %>
+                                <% if (singleUnitMode && applySingleUnitMode) { %>
                                     <input type="hidden" name="oro_product_frontend_line_item[unit]" value="<%= unit %>" data-role="add-form-unit"/>
 
                                     <% if (singleUnitModeCodeVisible) { %>
@@ -260,8 +262,8 @@
                                     <% } %>
                                 <% } else { %>
                                     <select class="oro-select2 oro-select2--size-s" name="oro_product_frontend_line_item[unit]" data-role="add-form-unit">
-                                        <% _.each(productUnits, function(unit) { %>
-                                        <option value="<%= unit %>"><%= unit %></option>
+                                        <% _.each(productUnits, function(label, unit) { %>
+                                        <option value="<%= unit %>"><%= label %></option>
                                         <% }); %>
                                     </select>
                                 <% } %>

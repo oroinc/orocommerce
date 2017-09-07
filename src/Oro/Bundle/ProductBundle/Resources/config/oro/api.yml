@@ -39,7 +39,16 @@ api:
             actions:
                 update:
                     exclude: true
+                get:
+                    description: 'Get Related Product Relationship'
+                delete:
+                    description: 'Delete Related Product Relationship'
+                get_list:
+                    description: 'Get Related Product Relationships'
+                delete_list:
+                    description: 'Delete Related Product Relationships'
                 create:
+                    description: 'Create Related Product Relationships'
                     fields:
                         product:
                             form_options:

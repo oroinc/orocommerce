@@ -32,11 +32,9 @@ services:
     oro_order.form.type.order_line_item:
         class: '%oro_order.form.type.order_line_item.class%'
         arguments:
-            - '@doctrine'
-            - '@oro_product.formatter.product_unit_label'
+            - '@oro_product.provider.product_units_provider'
         calls:
             - [setDataClass, ['%oro_order.entity.order_line_item.class%']]
-            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
             - [setSectionProvider, ['@oro_order.form.section.provider']]
         tags:
             - { name: form.type, alias: "oro_order_line_item" }
