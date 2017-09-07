@@ -83,3 +83,10 @@
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}
+
+{% block _payment_additional_data_widget %}
+    {% if options.views[options.payment_method] is defined %}
+        {% set view = options.views[options.payment_method] %}
+        {{ parent_block_widget(block) }}
+    {% endif %}
+{% endblock %}
