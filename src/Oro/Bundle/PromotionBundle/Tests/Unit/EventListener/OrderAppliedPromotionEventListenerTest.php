@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\PromotionBundle\EventListener\OrderAppliedPromotionEventListener;
 use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
@@ -10,7 +11,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -98,7 +98,6 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $order = new Order();
-        $formView = new FormView();
 
         $formTypeName = 'some name';
         $formType = $this->createMock(ResolvedFormTypeInterface::class);
@@ -113,10 +112,18 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getConfig')
             ->willReturn($formConfig);
 
+        $collection = new ArrayCollection([]);
+
+        $appliedPromotionsForm = $this->createMock(FormInterface::class);
+        $appliedPromotionsForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($collection);
+
         $newForm = $this->createMock(FormInterface::class);
         $newForm->expects($this->once())
-            ->method('createView')
-            ->willReturn($formView);
+            ->method('get')
+            ->with('appliedPromotions')
+            ->willReturn($appliedPromotionsForm);
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with($formTypeName, $order)
@@ -124,7 +131,7 @@ class OrderAppliedPromotionEventListenerTest extends \PHPUnit_Framework_TestCase
         $view = 'Some html view';
         $this->engine->expects($this->once())
             ->method('render')
-            ->with('OroPromotionBundle:Order:applied_promotions.html.twig', ['form' => $formView])
+            ->with('OroPromotionBundle:Order:applied_promotions.html.twig', ['collection' => $collection])
             ->willReturn($view);
 
         $this->appliedPromotionManager->expects($this->once())
