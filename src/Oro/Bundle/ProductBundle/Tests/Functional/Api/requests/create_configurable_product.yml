@@ -339,7 +339,7 @@ included:
             test_variant_field:
                 data:
                     type: variantfieldcodes
-                    id: 'Good'
+                    id: 'good'
             owner:
                 data:
                     type: businessunits
