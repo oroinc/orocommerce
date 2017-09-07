@@ -2,8 +2,13 @@ features:
     checkout_customer_users_registration:
         label: oro.checkout.system_configuration.fields.registration_allowed.label
         description: oro.checkout.system_configuration.fields.registration_allowed.tooltip
-        toggle: oro_customer.registration_allowed
+        toggle: oro_checkout.registration_allowed
+        dependencies:
+            - oro_customer_registration_allowed
+
+    oro_customer_registration_allowed:
         configuration:
+            - oro_checkout.registration_allowed
             - checkout_customer_users_registration
 
     allow_checkout_without_email_confirmation_feature:

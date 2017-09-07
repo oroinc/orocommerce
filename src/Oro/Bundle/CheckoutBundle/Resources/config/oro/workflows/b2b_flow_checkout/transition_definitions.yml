@@ -616,7 +616,15 @@ workflows:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
+
                 actions:
+                    - '@run_action_group':
+                        action_group: handle_late_registration
+                        parameters_mapping:
+                            checkout: $checkout
+                            order: $order
+                            late_registration_data: $late_registration
+
                     - '@run_action_group':
                         action_group: b2b_flow_checkout_finish_checkout
                         parameters_mapping:

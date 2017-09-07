@@ -63,3 +63,5 @@ workflows:
                     class: Oro\Bundle\CustomerBundle\Entity\CustomerVisitor
             visitor_email:
                 type: string
+            late_registration:
+                type: array

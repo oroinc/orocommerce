@@ -42,6 +42,7 @@ oro:
         completed.label: Completed
         completed_data.label: Completed Data
         confirm_email_flash_message: Please confirm your email before continue checkout
+        late_registration.label: Save my data and create an account
 
         basecheckout:
             entity_label: Base Checkout

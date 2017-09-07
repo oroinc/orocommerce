@@ -231,10 +231,16 @@ workflows:
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
+                        - '@assign_value': [$late_registration.email, $visitor_email]
+
                     attribute_fields:
                         remove_source: ~
                         po_number: ~
                         ship_until: ~
+                        late_registration:
+                          form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                          options:
+                              required: true
                         customer_notes:
                             form_type: textarea
                         state_token:
