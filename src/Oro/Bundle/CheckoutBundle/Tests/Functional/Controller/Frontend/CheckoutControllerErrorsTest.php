@@ -213,7 +213,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 
         $this->disableAllPaymentRules();
 
-        //Order Review step with error for no shipping rules
+        //Order Review step with error for no payment rules
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
         static::assertContains('The selected payment method is not available.', $crawler->html());
