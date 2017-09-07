@@ -185,3 +185,25 @@ product8:
         fallback: "systemConfig"
         scalarValue: null
         arrayValue: null
+product9:
+    productCode: product-9
+    inventoryStatus: in_stock
+    status: enabled
+    type: configurable
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-9.names.default, string: product-9.names.default }
+    slugPrototypes:
+        - { reference: product-9.slugPrototypes.default, string: product-9.slugPrototypes.default }
+    descriptions:
+        - { reference: product-9.descriptions.default, text: product-9.descriptions.default }
+    shortDescriptions:
+        - { reference: product-9.shortDescriptions.default, text: product-9.shortDescriptions.default }
+    featured: false
+    manageInventory:
+        reference: product-9.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null

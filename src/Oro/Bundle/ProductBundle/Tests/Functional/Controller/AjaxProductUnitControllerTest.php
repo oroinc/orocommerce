@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AjaxProductUnitControllerTest extends WebTestCase
 {
@@ -13,7 +14,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
+        $this->loadFixtures([LoadProductUnitPrecisions::class]);
     }
 
     public function testGetAllProductUnitsAction()
@@ -65,38 +66,38 @@ class AjaxProductUnitControllerTest extends WebTestCase
             'product-1' => [
                 'product-1',
                 [
-                    'bottle' => 'bottle',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 2,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 false
             ],
             'product-2' => [
                 'product-2',
                 [
-                    'bottle' => 'bottle',
-                    'box' => 'box',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 1,
+                    'box' => 1,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 false
             ],
             'product-1 short label' => [
                 'product-1',
                 [
-                    'bottle' => 'bottle',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 2,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 true
             ],
             'product-2 short label' => [
                 'product-2',
                 [
-                    'bottle' => 'bottle',
-                    'box' => 'box',
-                    'liter' => 'liter',
-                    'milliliter' => 'milliliter',
+                    'bottle' => 1,
+                    'box' => 1,
+                    'liter' => 3,
+                    'milliliter' => 0,
                 ],
                 true
             ]
