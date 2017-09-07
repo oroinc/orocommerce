@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection;
 
 use Oro\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
 

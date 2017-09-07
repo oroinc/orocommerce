@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
 use Prophecy\Argument;
 
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
