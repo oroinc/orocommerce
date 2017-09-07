@@ -915,6 +915,20 @@ class Product extends ExtendProduct implements
     }
 
     /**
+     * @return array
+     */
+    public function getAvailableUnitsPrecision()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getPrecision();
+        }
+
+        return $result;
+    }
+
+    /**
      * @param array|LocalizedFallbackValue[] $names
      *
      * @return $this
@@ -1231,7 +1245,7 @@ class Product extends ExtendProduct implements
     {
         return [
             'id' => $this->getId(),
-            'product_units' => $this->getAvailableUnitCodes(),
+            'product_units' => $this->getAvailableUnitsPrecision(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
         ];
     }

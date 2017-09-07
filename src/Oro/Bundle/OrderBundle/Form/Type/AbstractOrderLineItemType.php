@@ -174,6 +174,21 @@ abstract class AbstractOrderLineItemType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['sections'] = $this->getSectionProvider()->getSections($this->getName());
+
+        $product = null;
+        if ($view->vars['value']) {
+            /* @var $lineItem OrderLineItem */
+            $lineItem = $view->vars['value'];
+
+            if ($lineItem->getProduct()) {
+                $product = $lineItem->getProduct();
+            }
+        }
+
+        if ($product) {
+            $modelAttr['product_units'] = $product->getAvailableUnitsPrecision();
+            $view->vars['page_component_options']['modelAttr'] = $modelAttr;
+        }
     }
 
     /**

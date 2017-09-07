@@ -50,7 +50,11 @@ define(function(require) {
 
             this.updateProduct();
 
-            this.$el.on('blur', _.bind(this.onBlur, this));
+            this.$el.on('blur' + this.eventNamespace(), _.bind(this.onBlur, this));
+        },
+
+        eventNamespace: function() {
+            return '.product-autocomplete-component';
         },
 
         onBlur: function(e) {
@@ -144,7 +148,7 @@ define(function(require) {
             delete this.product;
             delete this.previousValue;
 
-            this.$el.off('blur', this.onBlur);
+            this.$el.off(this.eventNamespace());
 
             ProductAutocompleteComponent.__super__.dispose.call(this);
         }

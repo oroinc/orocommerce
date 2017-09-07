@@ -444,4 +444,41 @@ class ShoppingListManager
             throw new \InvalidArgumentException('Can not save not simple product');
         }
     }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param string $label
+     *
+     * @return ShoppingList
+     */
+    public function edit($shoppingList, $label = '')
+    {
+        if ($this->tokenStorage->getToken()->getUser() instanceof CustomerUser) {
+            $shoppingList
+                ->setOrganization($this->getCustomerUser()->getOrganization())
+                ->setCustomer($this->getCustomerUser()->getCustomer())
+                ->setCustomerUser($this->getCustomerUser())
+                ->setWebsite($this->websiteManager->getCurrentWebsite())
+                ->setLabel($label !== '' ? $label : $shoppingList->getLabel());
+        }
+
+        return $shoppingList;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     */
+    public function removeLineItems($shoppingList)
+    {
+        /** @var EntityManager $lineItemManager */
+        $lineItemManager = $this->managerRegistry->getManagerForClass(LineItem::class);
+        $lineItems = $shoppingList->getLineItems();
+
+        foreach ($lineItems as $lineItem) {
+            $shoppingList->removeLineItem($lineItem);
+            $lineItemManager->remove($lineItem);
+        }
+        $this->totalManager->recalculateTotals($shoppingList, false);
+        $lineItemManager->flush();
+    }
 }

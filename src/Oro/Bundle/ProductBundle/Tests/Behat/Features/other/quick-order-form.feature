@@ -28,12 +28,12 @@ Feature: Quick order form
     And I fill "QuickAddForm" with:
       | SKU1 | psku1 |
     And I wait for products to load
-    When I fill "QuickAddForm" with:
-      | QTY1 | 1     |
+    And I type "1" in "Quick Order Form > QTY1"
+    And I click on empty space
     And "PSKU1" product should has "$45.00" value in price field
     And I wait for products to load
-    When I fill "QuickAddForm" with:
-      | QTY1  | 2   |
+    And I type "2" in "Quick Order Form > QTY1"
+    And I click on empty space
     Then "PSKU1" product should has "$90.00" value in price field
 
   Scenario: Get A Quote from quick order page
@@ -109,26 +109,26 @@ Feature: Quick order form
   Scenario: Get A Quote from quick order page with product without price
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
-      | SKU1 | PSKU4 |
+      | SKU1 | PSKUwithlowercase |
     When I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"
     And Request a Quote contains products
-      | Product4 | 1 | item |
+      | Product4 | 1 | item | 
     And I click "Submit Request"
     And I should see "Request has been saved" flash message
 
   Scenario: Create an order from quick order page with product without price
     Given I click "Quick Order Form"
     And I fill "QuickAddForm" with:
-      | SKU1 | PSKU4 |
+      | SKU1 | PSKUwithlowercase |
     And I wait for products to load
     And I fill "QuickAddForm" with:
       | QTY1 | 1     |
     When I click "Create Order"
     Then I should see "Cannot create order because Shopping List has no items with price" flash message
     When I fill "QuickAddForm" with:
-      | SKU1 | PSKU4 |
-      | SKU2 | PSKU1 |
+      | SKU1 | PSKUwithlowercase |
+      | SKU2 | PSKU1             |
     And I wait for products to load
     And I fill "QuickAddForm" with:
       | QTY1 | 1     |
@@ -142,7 +142,7 @@ Feature: Quick order form
   Scenario: Verify disabled products are cannot be added via quick order form
     Given I click "Quick Order Form"
     When I fill "QuickAddForm" with:
-      | SKU1 | PSKU5 |
+      | SKU1 | pskulowercaseonly |
     And I wait for products to load
     And I fill "QuickAddForm" with:
       | QTY1 | 1     |
@@ -150,7 +150,7 @@ Feature: Quick order form
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
-      | SKU1 | PSKU5 |
+      | SKU1 | pskulowercaseonly |
     And I wait for products to load
     And I fill "QuickAddForm" with:
       | QTY1 | 1     |
@@ -158,7 +158,7 @@ Feature: Quick order form
     Then I should see text matching "Item Number Cannot Be Found"
     And I click "Quick Order Form"
     When I fill "QuickAddForm" with:
-      | SKU1 | PSKU5 |
+      | SKU1 | pskulowercaseonly |
     And I wait for products to load
     And I fill "QuickAddForm" with:
       | QTY1 | 1     |
@@ -193,7 +193,7 @@ Feature: Quick order form
   Scenario: User is able to use Quick Order Form (copy paste) and create RFQ with product without price
     Given I click "Quick Order Form"
     When I fill "Quick Add Copy Paste Form" with:
-      | Paste your order | PSKU4 2 |
+      | Paste your order | PSKUwithlowercase 2 |
     And I click "Verify Order"
     And I click "Get Quote"
     Then Page title equals to "Request A Quote - Requests For Quote - My Account"

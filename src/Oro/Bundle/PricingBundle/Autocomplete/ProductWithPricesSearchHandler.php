@@ -117,12 +117,7 @@ class ProductWithPricesSearchHandler implements SearchHandlerInterface
             $result['sku'] = $product->getSku();
             $result['defaultName.string'] = $product->getName()->getString();
             $result['prices'] = [];
-            $result['units'] = [];
-
-            /** @var ProductPrice $unit */
-            foreach ($product->getAvailableUnitCodes() as $unit) {
-                $result['units'][$unit] = $unit;
-            }
+            $result['units'] = $product->getAvailableUnitsPrecision();
 
             /** @var ProductPrice $price */
             foreach ($item['prices'] as $price) {
