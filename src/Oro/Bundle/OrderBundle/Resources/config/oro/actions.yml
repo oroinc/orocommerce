@@ -273,8 +273,8 @@ operations:
         extends: oro_order_discount_form
         button_options:
             data:
-                submit_label: 'oro.order.orderdiscount.action.save'
-                class: 'btn-success'
+                submit_label: 'oro.order.orderdiscount.action.apply'
+                class: 'btn-primary'
 
     oro_order_add_order_discount:
         extends: oro_order_discount_add_form
@@ -284,14 +284,10 @@ operations:
         acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
         button_options:
             icon: fa-dollar
-            data:
-                submit_label: 'oro.order.orderdiscount.action.save'
-                class: 'btn-success'
         frontend_options:
             title: oro.order.orderdiscount.add_discount.label
             options:
                 width: 550
-                modal: false
                 stateEnabled: false
                 incrementalPosition: false
                 allowMaximize: false

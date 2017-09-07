@@ -62,7 +62,6 @@ define(function(require) {
 
             this._initValueValidation();
 
-            this.$valueInputElement.on('focusout', _.bind(this.onValueInputChange, this));
             this.$el.on('change', this.options.valueInput, _.bind(this.onValueInputChange, this));
             this.$el.on('change', this.options.typeInput, _.bind(this.onValueInputChange, this));
         },
