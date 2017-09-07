@@ -144,6 +144,32 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         );
     }
 
+    public function testFindCheckoutBySourceCriteriaByQuoteDemand()
+    {
+        $criteria = ['quoteDemand' => $this->getReference(LoadQuoteProductDemandData::QUOTE_DEMAND_1)];
+
+        $this->assertSame(
+            $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
+            $this->getRepository()->findCheckoutBySourceCriteria(
+                $criteria,
+                'b2b_flow_checkout'
+            )
+        );
+    }
+
+    public function testFindCheckoutBySourceCriteriaByShoppingList()
+    {
+        $criteria = ['shoppingList' => $this->getReference(LoadShoppingLists::SHOPPING_LIST_7)];
+
+        $this->assertSame(
+            $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7),
+            $this->getRepository()->findCheckoutBySourceCriteria(
+                $criteria,
+                'b2b_flow_checkout'
+            )
+        );
+    }
+
     public function testDeleteWithoutWorkflowItem()
     {
         $repository = $this->getRepository();

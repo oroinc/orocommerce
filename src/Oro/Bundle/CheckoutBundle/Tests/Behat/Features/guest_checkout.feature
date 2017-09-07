@@ -27,7 +27,6 @@ Feature: Guest Checkout
 
   Scenario: Set payment term for Non-Authenticated Visitors group
     Given I proceed as the Admin
-    And I login as administrator
     And I enable the existing warehouses
     And go to Customers/ Customer Groups
     And I click Edit Non-Authenticated Visitors in grid
@@ -76,6 +75,9 @@ Feature: Guest Checkout
     And I should see following buttons:
       | Create Order |
     And I press "Create Order"
+    And I keep in mind current path
+    When Buyer is on view shopping list "Shopping list" page and clicks create order button
+    Then path remained the same
     And I fill form with:
       | First Name      | Tester          |
       | Last Name       | Testerson       |

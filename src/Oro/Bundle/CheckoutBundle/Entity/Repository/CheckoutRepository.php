@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -136,25 +137,12 @@ class CheckoutRepository extends EntityRepository
         array $sourceCriteria,
         $workflowName
     ) {
-        $qb = $this->createQueryBuilder('c');
-        $this->joinWorkflowItem($qb)
-            ->innerJoin('c.source', 's')
-            ->where(
-                $qb->expr()->eq('c.customerUser', ':customerUser'),
-                $qb->expr()->eq('c.deleted', ':deleted'),
-                $qb->expr()->eq('s.deleted', ':deleted'),
-                $qb->expr()->eq('c.completed', ':completed'),
-                $qb->expr()->eq('workflowItem.workflowName', ':workflowName')
+        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName);
+        $qb
+            ->andWhere(
+                $qb->expr()->eq('c.customerUser', ':customerUser')
             )
-            ->setParameter('customerUser', $customerUser)
-            ->setParameter('deleted', false, Type::BOOLEAN)
-            ->setParameter('completed', false, Type::BOOLEAN)
-            ->setParameter('workflowName', $workflowName);
-
-        foreach ($sourceCriteria as $field => $value) {
-            $qb->andWhere($qb->expr()->eq('s.' . $field, ':' . $field))
-                ->setParameter($field, $value);
-        }
+            ->setParameter('customerUser', $customerUser);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
@@ -202,5 +190,51 @@ class CheckoutRepository extends EntityRepository
         return $this->findBy([
             'paymentMethod' => $paymentMethod
         ]);
+    }
+
+    /**
+     * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
+     * @param string $workflowName
+     *
+     * @return array
+     */
+    public function findCheckoutBySourceCriteria(
+        array $sourceCriteria,
+        $workflowName
+    ) {
+        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
+     * @param string $workflowName
+     *
+     * @return QueryBuilder
+     */
+    private function getCheckoutBySourceCriteriaQueryBuilder(
+        array $sourceCriteria,
+        $workflowName
+    ) {
+        $qb = $this->createQueryBuilder('c');
+        $this->joinWorkflowItem($qb)
+            ->innerJoin('c.source', 's')
+            ->where(
+                $qb->expr()->eq('c.deleted', ':deleted'),
+                $qb->expr()->eq('s.deleted', ':deleted'),
+                $qb->expr()->eq('c.completed', ':completed'),
+                $qb->expr()->eq('workflowItem.workflowName', ':workflowName')
+            )
+            ->setParameter('deleted', false, Type::BOOLEAN)
+            ->setParameter('completed', false, Type::BOOLEAN)
+            ->setParameter('workflowName', $workflowName);
+
+        foreach ($sourceCriteria as $field => $value) {
+            $qb->andWhere($qb->expr()->eq('s.' . $field, ':' . $field))
+                ->setParameter($field, $value);
+        }
+
+        return $qb;
     }
 }
