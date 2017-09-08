@@ -4,6 +4,7 @@ namespace Oro\Bundle\FedexShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\FedexShippingBundle\ShippingMethod\FedexShippingMethod;
 use Oro\Bundle\FedexShippingBundle\Tests\Functional\Helper\FedexIntegrationTrait;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -109,6 +110,17 @@ class FedexShippingRuleTest extends WebTestCase
         $this->assertMethodConfigCorrect($config, $configData);
     }
 
+    public function testIndex()
+    {
+        $this->createShippingMethodConfig();
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_methods_configs_rule_index'));
+
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertContains('shipping-methods-configs-rule-grid', $crawler->html());
+        static::assertContains('fedex', $crawler->html());
+    }
+
     public function testUpdate()
     {
         $this->createShippingMethodConfig();
@@ -178,6 +190,49 @@ class FedexShippingRuleTest extends WebTestCase
         $config = $this->getMethodConfig();
 
         $this->assertMethodConfigCorrect($config, $configData);
+    }
+
+    public function testDeactivateIntegration()
+    {
+        $this->createShippingMethodConfig();
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_action_operation_execute', [
+                'operationName' => 'oro_fedex_integration_deactivate'
+            ]),
+            [
+                'entityClass' => Channel::class,
+                'entityId' => $this->getFedexIntegrationSettings()->getId(),
+            ]
+        );
+
+        $response = $this->client->getResponse();
+        static::assertJsonResponseStatusCodeEquals($response, 200);
+        static::assertContains('"success":true', $response->getContent());
+
+        static::assertFalse($this->getMethodConfig()->getMethodConfigsRule()->getRule()->isEnabled());
+    }
+
+    public function testDeleteIntegration()
+    {
+        $this->createShippingMethodConfig();
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_action_operation_execute', [
+                'operationName' => 'oro_fedex_integration_delete'
+            ]),
+            [
+                'entityClass' => Channel::class,
+                'entityId' => $this->getFedexIntegrationSettings()->getId(),
+            ]
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, 302);
+
+        static::assertNull($this->getMethodConfig());
     }
 
     /**
