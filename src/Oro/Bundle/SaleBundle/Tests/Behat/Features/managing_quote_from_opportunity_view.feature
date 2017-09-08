@@ -9,7 +9,8 @@ Feature: In order send the customer detailed proposal while negotiating a deal
   I want to be able to create Quotes from Opportunity View
 
   Scenario: "Quote flow" activation
-    Given I login as administrator
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     When I go to System/Workflows
     And I check "Opportunity" in Related Entity filter
     Then I should see "Quote flow" in grid with following data:
@@ -102,7 +103,7 @@ Feature: In order send the customer detailed proposal while negotiating a deal
     Then I should not see "Quotes"
 
   Scenario: Check quote appearing in buyer account
-    Given I login as AmandaRCole@example.org buyer
+    Given I operate as the Buyer
     When open Customer Quotes List page
     Then records in "Customer Quotes Grid" should be 1
     When I click "View"
@@ -111,7 +112,7 @@ Feature: In order send the customer detailed proposal while negotiating a deal
       | Unit Price | $10.00         |
 
   Scenario: Edit Quote from Quote Section on Opportunity view
-    Given I login as administrator
+    Given I operate as the Admin
     And go to Sales/Opportunities
     And I click View Testing opportunity1 in grid
     When I click Edit Sent to Customer in grid
@@ -142,7 +143,7 @@ Feature: In order send the customer detailed proposal while negotiating a deal
       | Declined by Customer |
 
   Scenario: Check edited quote from buyer account
-    Given I login as AmandaRCole@example.org buyer
+    Given I operate as the Buyer
     When I open Customer Quotes List page
     Then records in "Customer Quotes Grid" should be 1
     And I should see 1 in Customer Quotes Grid with following data:
@@ -155,7 +156,7 @@ Feature: In order send the customer detailed proposal while negotiating a deal
     Then I should see "This quote has expired. You may submit a new request for quote."
 
   Scenario: Delete Quote from Quote Section on Opportunity view
-    Given I login as administrator
+    Given I operate as the Admin
     When I go to Sales/Opportunities
     And I click View Testing opportunity1 in grid
     And click Delete John Doe in grid
@@ -163,6 +164,6 @@ Feature: In order send the customer detailed proposal while negotiating a deal
     Then I should see "Quote deleted" flash message
 
   Scenario: Check deleted quote from buyer account
-    Given I login as AmandaRCole@example.org buyer
+    Given I operate as the Buyer
     When open Customer Quotes List page
     Then there is no records in "Customer Quotes Grid"

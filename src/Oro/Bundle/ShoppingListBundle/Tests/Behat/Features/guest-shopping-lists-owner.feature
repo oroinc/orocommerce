@@ -2,7 +2,7 @@
 @fixture-OroShoppingListBundle:ProductFixture.yml
 @fixture-OroShoppingListBundle:UserFixture.yml
 Feature: Guest shopping lists owner
- As administrator I should have a possibility to change default guest shopping list owner in configuration
+  As administrator I should have a possibility to change default guest shopping list owner in configuration
 
   Scenario: Change default owner to new user
     Given I login as administrator
