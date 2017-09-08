@@ -5,6 +5,8 @@
 @fixture-OroCheckoutBundle:Checkout.yml
 @automatically-ticket-tagged
 @regression
+@skip
+# @todo remove skip tag after BB-11891 or BB-11896
 Feature: Quick order form
   In order to provide customers with ability to quickly start an order
   As customer
