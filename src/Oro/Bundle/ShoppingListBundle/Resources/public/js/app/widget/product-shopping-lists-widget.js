@@ -136,6 +136,7 @@ define(function(require) {
                 if (!model) {
                     return false;
                 }
+                model.set('url', routing.generate('oro_shopping_list_frontend_view', {id: item.id}));
                 return _.extend({}, {line_items: item.line_items}, model.toJSON());
             }).bind(this)).filter(function(item) {
                 return !!item;
