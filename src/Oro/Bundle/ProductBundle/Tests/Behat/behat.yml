@@ -455,6 +455,26 @@ oro_behat_extension:
     ProductItem:
       selector: 'div.product-item'
 
+    Product Shopping List Form:
+      class: 'Oro\Bundle\TestFrameworkBundle\Behat\Element\Form'
+      selector:
+        locator: '//form[@name="oro_product_frontend_line_item"]'
+        type: xpath
+      options:
+        mapping:
+          Quantity: 'oro_product_frontend_line_item[quantity]'
+          Unit: 'oro_product_frontend_line_item[unit]'
+
+    Product Shopping List Dropdown:
+      selector:
+        locator: '//form[@name="oro_product_frontend_line_item"]//ul[@class="dropdown-menu"]'
+        type: 'xpath'
+
+    Request A Quote Button:
+      selector:
+        locator: '//a[@data-url="oro_rfp_frontend_request_create"]'
+        type: 'xpath'
+
     Product Collection Variant Label:
       selector:
         type: 'xpath'
@@ -614,6 +634,19 @@ oro_behat_extension:
       selector: '.product-view-media-container [data-trigger-gallery-open]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
+    Product navbar:
+      selector: '#product-edit.navbar'
+
+    Additional Units Form Section:
+      selector:
+        type: xpath
+        locator: '//label[contains(., "Additional Units")]/ancestor::div[contains(@class, "control-group")]'
+
+    Brand humburger button:
+      selector:
+        type: xpath
+        locator: '//label[text()="Brand"]/../..//button[@class="add-on btn entity-select-btn"]'
+
   suites:
     # Revert by OPI-52
     OroProductBundle:
@@ -622,6 +655,7 @@ oro_behat_extension:
         - OroDataGridBundle::GridContext
         - OroFormBundle::FormContext
         - OroProductBundle::FeatureContext
+        - OroProductBundle::ProductImportExportContext
         - OroRedirectBundle::SlugPrototypesContext
         - OroSecurityBundle::ACLContext
         - OroSEOBundle::FeatureContext
@@ -629,6 +663,9 @@ oro_behat_extension:
         - OroWebCatalogBundle::FeatureContext
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
+        - OroImportExportBundle::ImportExportContext:
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_importexport.processor.registry'
       paths:
         - '@OroProductBundle/Tests/Behat/Features/product-collection'
         - '@OroProductBundle/Tests/Behat/Features/product'
@@ -660,9 +697,9 @@ oro_behat_extension:
         - OroConfigBundle::FeatureContext
         - OroUserBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
-        - OroAuthorizeNetBundle::FeatureContext
         - OroShoppingListBundle::ShoppingListContext
         - OroShoppingListBundle::FeatureContext
         - OroShippingBundle::FeatureContext
+        - OroWarehouseBundle::FeatureContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'

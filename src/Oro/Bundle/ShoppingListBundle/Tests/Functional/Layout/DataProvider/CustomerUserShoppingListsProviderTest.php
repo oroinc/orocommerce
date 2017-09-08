@@ -51,7 +51,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
     {
         return [
             'VIEW (anonymous user)' => [
-                'shoppingLists' => [],
+                'shoppingLists' => ['Shopping list'],
                 'user' => '',
             ],
             'VIEW (user from parent customer : DEEP_VIEW_ONLY)' => [

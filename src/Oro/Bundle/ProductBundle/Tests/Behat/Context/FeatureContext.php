@@ -13,7 +13,10 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext as ConfigContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductTemplate;
@@ -22,6 +25,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -31,6 +36,9 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
+
+    const PRODUCT_SKU = 'SKU123';
+    const PRODUCT_INVENTORY_QUANTITY = 100;
 
     /**
      * @var OroMainContext
@@ -70,6 +78,61 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Given There are products in the system available for order
+     */
+    public function thereAreProductsAvailableForOrder()
+    {
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+
+        /** @var Product $product */
+        $product = $doctrineHelper->getEntityRepositoryForClass(Product::class)
+            ->findOneBy(['sku' => self::PRODUCT_SKU]);
+
+        $inventoryLevelEntityManager = $doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
+        $inventoryLevelRepository = $inventoryLevelEntityManager->getRepository(InventoryLevel::class);
+
+        /** @var InventoryLevel $inventoryLevel */
+        $inventoryLevel = $inventoryLevelRepository->findOneBy(['product' => $product]);
+        if (!$inventoryLevel) {
+            /** @var InventoryManager $inventoryManager */
+            $inventoryManager = $this->getContainer()->get('oro_inventory.manager.inventory_manager');
+            $inventoryLevel = $inventoryManager->createInventoryLevel($product->getPrimaryUnitPrecision());
+        }
+        $inventoryLevel->setQuantity(self::PRODUCT_INVENTORY_QUANTITY);
+
+        // package commerce-ee available
+        if (method_exists($inventoryLevel, 'setWarehouse')) {
+            $warehouseEntityManager = $doctrineHelper->getEntityManagerForClass(Warehouse::class);
+            $warehouseRepository = $warehouseEntityManager->getRepository(Warehouse::class);
+
+            $warehouse = $warehouseRepository->findOneBy([]);
+
+            if (!$warehouse) {
+                $warehouse = new Warehouse();
+                $warehouse
+                    ->setName('Test Warehouse 222')
+                    ->setOwner($product->getOwner())
+                    ->setOrganization($product->getOrganization());
+                $warehouseEntityManager->persist($warehouse);
+                $warehouseEntityManager->flush();
+            }
+
+            $inventoryLevel->setWarehouse($warehouse);
+            $inventoryLevelEntityManager->persist($inventoryLevel);
+            $inventoryLevelEntityManager->flush();
+
+            $warehouseConfig = new WarehouseConfig($warehouse, 1);
+            $configManager = $this->getContainer()->get('oro_config.global');
+            $configManager->set('oro_warehouse.enabled_warehouses', [$warehouseConfig]);
+            $configManager->flush();
+        } else {
+            $inventoryLevelEntityManager->persist($inventoryLevel);
+            $inventoryLevelEntityManager->flush();
+        }
+    }
+
+    /**
      * @When I fill product name field with :productName value
      *
      * @param string $productName
@@ -81,14 +144,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $productNameField->setValue($productName);
         $productNameField->blur();
         $this->waitForAjax();
-    }
-
-    /**
-     * @When I am on quick order form page
-     */
-    public function amOnQuickOrderFormPage()
-    {
-        $this->visitPath('customer/product/quick-add/');
     }
 
     /**
@@ -118,15 +173,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
 
         return null;
-    }
-
-    /**
-     * @When click create order button
-     */
-    public function clickCreateOrderButton()
-    {
-        $createOrderButton = $this->createElement('CreateOrderButton');
-        $createOrderButton->click();
     }
 
     /**
@@ -501,7 +547,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $this->oroMainContext->iOpenTheMenuAndClick('System/Configuration');
         $this->waitForAjax();
-        $this->configContext->clickLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
+        $this->configContext->followLinkOnConfigurationSidebar('Commerce/Product/Product Collections');
         $this->waitForAjax();
     }
 

@@ -22,6 +22,47 @@ oro_behat_extension:
 
     VisibilityToAll:
       selector: 'select[name="oro_catalog_category[visibility][all]"]'
+
+    Language Form:
+      selector: 'form[name="oro_action_operation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price List:
+            type: 'xpath'
+            locator: '//div[contains(@id,"s2id_oro_action_operation_language_code-uid")]//input'
+
+    URL Slug Fallback Status:
+      selector:
+        type: xpath
+        locator: '//label[text()="URL Slug"]/../..//span[@class="fallback-status"]'
+
+    URL Slug Form:
+      selector: 'form[name="oro_product"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Default Value: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
+          French Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][use_fallback]'
+          French: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][2][value]'
+
+    Product1:
+      selector:
+        type: xpath
+        locator: '//a[@class="view-product" and contains (text(),"Product1")]'
+
+    Localization dropdown:
+      selector:
+        type: xpath
+        locator: '//div[@class="oro-toolbar__content"]'
+
+
+    Include SubCategories:
+      selector: '.include-sub-categories-choice input[type="checkbox"]'
+
+    Include Not Categorized Products:
+      selector: '.include-not-categorized-product-choice input[type="checkbox"]'
+
   suites:
     OroCatalogBundle:
       contexts:

@@ -3,7 +3,7 @@ api:
         Oro\Bundle\OrderBundle\Entity\Order:
             form_event_subscriber:
                 - oro_order.form.type.event_listener.subtotals_subscriber
-                - oro_order.api.form_listener.default_website
+                - oro_website.form_subscriber.default_website
             actions:
                 create:
                     fields:
@@ -13,6 +13,9 @@ api:
                             exclude: true
                         totalDiscountsAmount:
                             exclude: true
+                        internalStatus:
+                            exclude: true
+
                 update:
                     fields:
                         subtotalValue:
@@ -23,6 +26,11 @@ api:
                             exclude: true
                         currency:
                             exclude: true
+                        internalStatus:
+                            exclude: true
+
+        Extend\Entity\EV_Order_Internal_Status:
+            actions: false
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             fields:

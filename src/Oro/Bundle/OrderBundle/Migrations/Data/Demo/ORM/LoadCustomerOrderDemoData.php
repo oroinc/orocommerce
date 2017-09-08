@@ -1,0 +1,195 @@
+<?php
+
+namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
+use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
+use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
+
+class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+{
+    use ContainerAwareTrait;
+
+    const REFERENCE_NAME = 'customer_orders';
+
+    /** @var array */
+    private $countries = [];
+
+    /** @var array */
+    private $regions = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            LoadCustomerDemoData::class,
+            LoadCustomerUserDemoData::class,
+            LoadPaymentTermDemoData::class,
+            LoadPriceListDemoData::class,
+            LoadShoppingListDemoData::class,
+            LoadTaxConfigurationDemoData::class,
+            LoadOrderLineItemDemoData::class,
+        ];
+    }
+
+    /**
+     * @param EntityManagerInterface $manager
+     * {@inheritdoc}
+     */
+    public function load(ObjectManager $manager)
+    {
+        /** @var CustomerUser[] $customerUsers */
+        $customerUsers = $manager->getRepository(CustomerUser::class)->findAll();
+
+        /** @var User $user */
+        $defaultUser = $manager->getRepository(User::class)->findOneBy([]);
+
+        /** @var AbstractEnumValue[] $internalStatuses */
+        $internalStatuses = $manager
+            ->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
+            ->findAll();
+
+        $paymentTerm = $manager->getRepository(PaymentTerm::class)->findOneBy([]);
+        $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
+        $website = $this->getWebsite($manager);
+
+        $index = 0;
+
+        $timeZone = new \DateTimeZone('UTC');
+        foreach ($customerUsers as $customerUser) {
+            /** @var User $user */
+            $user = $customerUser->getOwner() ?: $defaultUser;
+
+            foreach ($internalStatuses as $internalStatus) {
+                $order = new Order();
+                $orderAddress = $this->getOrderAddressByCustomer($customerUser, $manager);
+
+                $order
+                    ->setInternalStatus($internalStatus)
+                    ->setOwner($user)
+                    ->setPoNumber(sprintf('POSD%03d%03d', $customerUser->getId(), $index))
+                    ->setIdentifier(sprintf('COI%03d%03d', $customerUser->getId(), $index))
+                    ->setCustomer($customerUser->getCustomer())
+                    ->setCustomerUser($customerUser)
+                    ->setOrganization($user->getOrganization())
+                    ->setBillingAddress($orderAddress)
+                    ->setShippingAddress($orderAddress)
+                    ->setWebsite($website)
+                    ->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY)
+                    ->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone));
+
+                $paymentTermAccessor->setPaymentTerm($order, $paymentTerm);
+
+                $manager->persist($order);
+                $index++;
+            }
+        }
+
+        $manager->flush();
+    }
+
+    /**
+     * @param CustomerUser $customerUser
+     * @param EntityManagerInterface $manager
+     *
+     * @return OrderAddress
+     */
+    private function getOrderAddressByCustomer(CustomerUser $customerUser, EntityManagerInterface $manager)
+    {
+        $customerAddresses = $customerUser->getAddresses();
+        $customerAddress = $customerAddresses->first();
+
+        $orderAddress = new OrderAddress();
+
+        if (!$customerAddress) {
+            $orderAddress
+                ->setLabel(uniqid('Label ', true))
+                ->setCountry($this->getCountryByIso2Code($manager, 'US'))
+                ->setCity('Aurora')
+                ->setRegion($this->getRegionByIso2Code($manager, 'US-IL'))
+                ->setStreet('Address')
+                ->setPostalCode(sprintf('%d', random_int(60000, 65000)));
+        } else {
+            $orderAddress
+                ->setLabel($customerAddress->getLabel())
+                ->setCountry($customerAddress->getCountry())
+                ->setCity($customerAddress->getCity())
+                ->setRegion($customerAddress->getRegion())
+                ->setStreet($customerAddress->getStreet())
+                ->setPostalCode($customerAddress->getPostalCode());
+        }
+        $orderAddress->setFirstName($customerUser->getFirstName())
+            ->setLastName($customerUser->getLastName())
+            ->setPhone('1234567890');
+
+        $manager->persist($orderAddress);
+
+        return $orderAddress;
+    }
+
+    /**
+     * @param EntityManagerInterface $manager
+     * @param string $name
+     *
+     * @return Website
+     */
+    private function getWebsite(EntityManagerInterface $manager, $name = LoadWebsiteData::DEFAULT_WEBSITE_NAME)
+    {
+        return $manager->getRepository(Website::class)->findOneBy(['name' => $name]);
+    }
+
+    /**
+     * @param EntityManagerInterface $manager
+     * @param string $iso2Code
+     *
+     * @return Country|null
+     */
+    private function getCountryByIso2Code(EntityManagerInterface $manager, $iso2Code)
+    {
+        if (!array_key_exists($iso2Code, $this->countries)) {
+            $this->countries[$iso2Code] = $manager->getReference(Country::class, $iso2Code);
+        }
+
+        return $this->countries[$iso2Code];
+    }
+
+    /**
+     * @param EntityManagerInterface $manager
+     * @param string $code
+     *
+     * @return Region|null
+     */
+    private function getRegionByIso2Code(EntityManagerInterface $manager, $code)
+    {
+        if (!array_key_exists($code, $this->regions)) {
+            $this->regions[$code] = $manager->getReference(Region::class, $code);
+        }
+
+        return $this->regions[$code];
+    }
+}

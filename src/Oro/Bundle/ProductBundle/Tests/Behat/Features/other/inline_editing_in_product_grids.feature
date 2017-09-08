@@ -1,7 +1,5 @@
 @fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
 @regression
-@skip
-#todo: Unskip after resolve OPI-139
 Feature: Inline Editing in Products Grids
   In order to quickly edit product information
   As an Administrator
@@ -168,8 +166,7 @@ Feature: Inline Editing in Products Grids
   Scenario: Check that slug redirect is created with system option Always
     Given I login as administrator
     When I go to System / Configuration
-    And I click Websites in sidebar menu
-    And I click Routing in sidebar menu
+    And I follow "System configuration/Websites/Routing" on configuration sidebar
     And check "Use default" for "URL" field
     And check "Use default" for "Secure URL" field
     And uncheck "Use default" for "Create Redirects" field
@@ -193,8 +190,7 @@ Feature: Inline Editing in Products Grids
   Scenario: Check that slug redirect isn't created with system option Never
     Given I login as administrator
     When I go to System / Configuration
-    And I click Websites in sidebar menu
-    And I click Routing in sidebar menu
+    And I follow "System configuration/Websites/Routing" on configuration sidebar
     Then I fill in "Create Redirects" with "Never"
     And I save form
     Then I should see "Configuration saved" flash message
@@ -214,8 +210,7 @@ Feature: Inline Editing in Products Grids
 
     Given I login as administrator
     When I go to System / Configuration
-    And I click Websites in sidebar menu
-    And I click Routing in sidebar menu
+    And I follow "System configuration/Websites/Routing" on configuration sidebar
     Then I fill in "Create Redirects" with "Ask"
     And I save form
     Then I should see "Configuration saved" flash message

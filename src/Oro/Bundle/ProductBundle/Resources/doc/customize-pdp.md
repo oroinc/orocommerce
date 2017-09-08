@@ -1,20 +1,22 @@
 Customize Product View Page
-=============================
+===========================
 
-In this example we consider how to customize product with different product types:
+In this example we look at how to customize product with different product types:
 
 - [Simple Product](#simple-product)
 - [Configurable Product](#configurable-product)
 - [Change Product Page by Category](#change-product-page-by-category)
 - [Product Page Templates](#product-page-templates)
 
-### Getting started
+### Getting Started
 
-Every product view page contains current **product_type** in layout context.
-So you can use it in the your layout update **conditions**. When you customize any page don't forget to use **Symfony Profiler** and look into **Layout** section.
-You can find there current layout **context** data and actual layout **tree**. Please see [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) for more details.
+Every product view page contains the current **product_type** in the layout context. You can use it in your layout update **conditions**. When you customize any page, remember to use **Symfony Profiler** and look into the **Layout** section, where the current layout **context** data and actual layout **tree** can be found. 
 
-First of all we need to create **import** that will be used in **Simple Product** and **Configurable Product**.
+Please see the [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) section for more details.
+
+First, create an **import** and a **template** that will be used in a **Simple Product** and a **Configurable Product**.
+
+Import:
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/imports/oro_product_view/layout.yml
@@ -88,7 +90,7 @@ layout:
             parentId: product_title_container
 ```
 
-and template:
+Template:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/imports/oro_product_view/layout.html.twig #}
@@ -197,10 +199,13 @@ and template:
 {% endblock %}
 ```
 
-### Simple product
+### Simple Product
 
-In our case simple product inherit all import properties. Create layout update that include **oro_product_view** import and has **conditions** to check if the current product has **simple** product type.
-Our simple product looks like this:
+In our case a simple product inherits all import properties. 
+
+Create a layout update that includes the **oro_product_view** import and has the **conditions** to check if the current product has a **simple** product type.
+
+Our simple product has the following look:
 ![Simple Product example](./images/simple_product.png "Simple Product example")
 
 
@@ -216,12 +221,16 @@ layout:
     conditions: 'context["product_type"] == "simple"'
 ```
 
-### Configurable product
+### Configurable Product
 
-Create layout update that include **oro_product_view** import and has **conditions** to check if the current product has **configurable** product type.
-Add **product variants** block.
-Our configurable product looks like this:
+Create a layout update that includes the **oro_product_view** import and has the **conditions** to check if the current product has a **configurable** product type.
+
+Add the **product variants** block and the template.
+
+Our configurable product has the following look:
 ![Configurable Product example](./images/configurable_product.png "Configurable Product example")
+
+Product Variants Block:
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/configurable_product.yml
@@ -245,7 +254,7 @@ layout:
     conditions: 'context["product_type"] == "configurable"'
 ```
 
-template:
+Template:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/configurable_product.html.twig #}
@@ -274,9 +283,9 @@ template:
 {% endblock %}
 ```
 
-#### Block types
+#### Block Types
 
-For this example we need to create **product_variants** block type that used in **configurable product** layout update.
+For this example we need to create a **product_variants** block type used in the **configurable product** layout update.
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/config/block_types.yml
@@ -293,9 +302,9 @@ services:
 ...
 ```
 
-#### Data providers
+#### Data Providers
 
-Also we need to create **product_variants** data provider that used in **configurable product** layout update.
+Also, we need to create a **product_variants** data provider used in the **configurable product** layout update.
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/config/services.yml
@@ -309,7 +318,7 @@ services:
 ...
 ```
 
-example of data provider:
+The following is an example of the data provider:
 
 ```php
 <?php
@@ -356,16 +365,17 @@ class ProductVariantsProvider
 
 ### Change Product Page by Category
 
-Every product view page contains current **category_id** and **category_ids** in layout context.
-So you can use it in the your layout update **conditions**. When you customize any page don't forget to use **Symfony Profiler** and look into **Layout** section.
-You can find there current layout **context** data and actual layout **tree**. Please see [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) for more details.
+Every product view page contains the current **category_id** and the **category_ids** in the layout context. You can use these values to evaluate the layout **conditions**. When you customize any page, remember to use **Symfony Profiler** and look into the **Layout** section, where the current layout **context** data and actual layout **tree** can be found.
+ 
+ Please see the [Debug Information](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/debug_information.md) section for more details.
 
 #### Example 1 (by category ID)
 
 We have a "Headlamps" category and we want to add some static html to all products in this category.
+
 The condition is: **conditions: 'context["category_id"] == 4'**.
 
-and the result is:
+The result is:
 ![Change Product Page by Category example 1](./images/change_product_by_category_example_1.png "Change Product Page by Category example 1")
 
 ```yml
@@ -386,7 +396,7 @@ layout:
     conditions: 'context["category_id"] == 4'
 ```
 
-template:
+Template:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/headlamps.html.twig #}
@@ -401,10 +411,11 @@ template:
 
 #### Example 2 (by parent category ID)
 
-Imagine that we want to add sale banner to all product in first level category and their children. For example we have category "Furniture" with **id = 6**.
+As an example, we want to add a sale banner to all products in first level category and their children. We have a category called "Furniture" with **id = 6**.
+
 The condition is: **conditions: '6 in context["category_ids"]'**.
 
-and the result is:
+The result is:
 ![Change Product Page by Category example 2](./images/change_product_by_category_example_2.png "Change Product Page by Category example 2")
 
 ```yml
@@ -425,7 +436,7 @@ layout:
     conditions: '6 in context["category_ids"]'
 ```
 
-template:
+Template:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/furniture.html.twig #}
@@ -454,10 +465,11 @@ template:
 
 ### Product Page Templates
 
-Please see [Page Templates](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/config_definition.md#page-templates) for more details.
+Please see the [Page Templates](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/config_definition.md#page-templates) section for more details.
 
-You can modify visual presentation of product view page for every product or choose some page template for all by default.
-First of all we need to create **config** for **page_templates** in our **theme**.
+You can modify the visual presentation of the product view page for every product, or choose a page template for all of them by default.
+
+First, create a **config** for the **page_templates** in our **theme**.
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/config/page_templates.yml
@@ -477,7 +489,7 @@ titles:
     oro_product_frontend_product_view: Product Page
 ```
 
-Next lets add some **layout updates**:
+Next, add some **layout updates**:
 
 ```yml
 # src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/page_template/custom/layout.yml
@@ -506,7 +518,7 @@ layout:
 
 ```
 
-and **templates**:
+Add some **templates**:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/page_template/additional/layout.html.twig #}
@@ -522,12 +534,17 @@ and **templates**:
 
 #### Global level
 
-To apply **custom page template** to all products, go to **System > Configuration > Commerce > Design > Theme**.
-In section **Page Templates** choose **Custom page template** in **Product Page** select. Result  of product view page:
+To apply a **custom page template** to all products, go to **System > Configuration > Commerce > Design > Theme**.
+
+In the **Page Templates** section, choose **Custom page template** in the **Product Page** select. 
+
+In the front store, here is what it will look like:
 ![Global Product View Page with Custom Page Template](./images/global_product_view_page_with_custom_page_template.png "Global Product View Page with Custom Page Template")
 
 #### Entity level
 
-To apply **custom page template** to selected products, go to **Products > Products** find your product and click **edit**.
-In section **Design** choose **Additional page template** in **Page Template** select. Result of product view page:
+To apply a **custom page template** to the selected products, go to **Products > Products**, find your product and click **edit**.
+
+In the **Design** section, choose **Additional page template** in the **Page Template** select. 
+In the front store, here is what it will look like:
 ![Entity Product View Page with Custom Page Template](./images/entity_product_view_page_with_custom_page_template.png "Entity Product View Page with Custom Page Template")

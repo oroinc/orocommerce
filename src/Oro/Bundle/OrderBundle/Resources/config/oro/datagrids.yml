@@ -107,13 +107,6 @@ datagrids:
                 frontend_type: html
                 template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
                 renderable:    false
-            poNumber:
-                label:         oro.order.po_number.label
-                renderable:    false
-            shipUntil:
-                label:         oro.order.ship_until.label
-                frontend_type: date
-                renderable:    false
             updatedAt:
                 label:         oro.ui.updated_at
                 frontend_type: datetime
@@ -130,10 +123,6 @@ datagrids:
                     data_name: order1.updatedAt
                 identifier:
                     data_name: order1.identifier
-                poNumber:
-                    data_name: order1.poNumber
-                shipUntil:
-                    data_name: order1.shipUntil
                 currency:
                     data_name: order1.currency
                 subtotal:
@@ -165,12 +154,6 @@ datagrids:
                 identifier:
                     type:      string
                     data_name: order1.identifier
-                poNumber:
-                    type:      string
-                    data_name: order1.poNumber
-                shipUntil:
-                    type:      date
-                    data_name: order1.shipUntil
                 currency:
                     type:      choice
                     data_name: order1.currency
@@ -205,11 +188,14 @@ datagrids:
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
+                    - internalStatus.name as internalStatusName
+                    - internalStatus.id as internalStatusId
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
+                        - { join: order1.internal_status, alias: internalStatus }
         columns:
             identifier:
                 label:         oro.order.identifier.label
@@ -239,6 +225,8 @@ datagrids:
                 label:         oro.order.customer.label
             customerUserName:
                 label:         oro.order.customer_user.label
+            internalStatusName:
+                label: oro.order.internal_status.label
             owner:
                 label:         oro.order.owner.label
             paymentStatus:
@@ -257,11 +245,6 @@ datagrids:
                 type:          twig
                 frontend_type: html
                 template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
-            poNumber:
-                label:         oro.order.po_number.label
-            shipUntil:
-                label:         oro.order.ship_until.label
-                frontend_type: date
             sourceEntityClass:
                 label:         oro.order.source_document.label
                 type:          twig
@@ -297,12 +280,10 @@ datagrids:
                     data_name: customerName
                 customerUserName:
                     data_name: customerUserName
+                internalStatusName:
+                    data_name: internalStatusName
                 owner:
                     data_name: owner
-                poNumber:
-                    data_name: order1.poNumber
-                shipUntil:
-                    data_name: order1.shipUntil
                 totalDiscountsAmount:
                     data_name: order1.totalDiscountsAmount
                 createdAt:
@@ -341,6 +322,10 @@ datagrids:
                 customerUserName:
                     type:      string
                     data_name: customerUserName
+                internalStatusName:
+                    type:      enum
+                    data_name: internalStatusId
+                    enum_code: order_internal_status
                 owner:
                     type:      string
                     data_name: owner
@@ -350,13 +335,6 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
-
-                poNumber:
-                    type:      string
-                    data_name: order1.poNumber
-                shipUntil:
-                    type:      date
-                    data_name: order1.shipUntil
                 totalDiscountsAmount:
                     type:      number
                     data_name: order1.totalDiscountsAmount
@@ -373,6 +351,8 @@ datagrids:
         actions:
             view:
                 acl_resource:  oro_order_view
+
+        views_list: '@oro_order.datagrid.orders_view_list'
 
     embed-orders-grid:
         acl_resource: oro_order_view

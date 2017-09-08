@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\ComponentProcessor;
 
+use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
@@ -51,6 +53,11 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
     protected $requestDataStorageExtension;
 
     /**
+     * @var FeatureChecker|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $featureChecker;
+
+    /**
      * @var DataStorageComponentProcessor
      */
     protected $processor;
@@ -76,6 +83,10 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->featureChecker = $this->getMockBuilder(FeatureChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->processor = new DataStorageComponentProcessor(
             $this->router,
             $this->storage,
@@ -83,7 +94,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
             $this->tokenAccessor,
             $this->session,
             $this->translator,
-            $this->requestDataStorageExtension
+            $this->requestDataStorageExtension,
+            $this->featureChecker
         );
     }
 
@@ -97,7 +109,8 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
             $this->session,
             $this->translator,
             $this->requestDataStorageExtension,
-            $this->processor
+            $this->processor,
+            $this->featureChecker
         );
     }
 
@@ -135,5 +148,30 @@ class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $this->requestDataStorageExtension->expects($this->once())->method('isAllowedRFP')->willReturn(true);
 
         $this->assertNull($this->processor->process($data, $request));
+    }
+
+    public function testNotAllowedForGuest()
+    {
+        $this->featureChecker->expects($this->never())
+            ->method('isFeatureEnabled')
+            ->with('guest_rfp');
+
+        $this->assertEquals(false, $this->processor->isAllowedForGuest());
+    }
+
+    public function testAllowedForGuest()
+    {
+        $token = $this->createMock(AnonymousCustomerUserToken::class);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getToken')
+            ->will($this->returnValue($token));
+
+        $this->featureChecker->expects($this->once())
+            ->method('isFeatureEnabled')
+            ->with('guest_rfp')
+            ->will($this->returnValue(true));
+
+        $this->assertEquals(true, $this->processor->isAllowedForGuest());
     }
 }
