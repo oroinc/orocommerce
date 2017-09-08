@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
@@ -42,7 +43,7 @@ class BaseQuoteProductItem implements ProductUnitHolderInterface, ProductHolderI
     /**
      * @var QuoteProduct
      *
-     * @ORM\ManyToOne(targetEntity="QuoteProduct")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\QuoteProduct")
      * @ORM\JoinColumn(name="quote_product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteProduct;
@@ -270,6 +271,18 @@ class BaseQuoteProductItem implements ProductUnitHolderInterface, ProductHolderI
         $product = $this->getProduct();
         if ($product) {
             return $product->getSku();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return null|Product
+     */
+    public function getParentProduct()
+    {
+        if ($this->quoteProduct) {
+            return $this->quoteProduct->getParentProduct();
         }
 
         return null;

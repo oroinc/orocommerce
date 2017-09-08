@@ -55,6 +55,7 @@ class ShoppingListLineItemConverterTest extends \PHPUnit_Framework_TestCase
 
     public function testConvert()
     {
+        /** @var ShoppingList|\PHPUnit_Framework_MockObject_MockObject $shoppingList */
         $shoppingList = $this->createMock(ShoppingList::class);
         $lineItemMock = $this->createMock(LineItem::class);
 

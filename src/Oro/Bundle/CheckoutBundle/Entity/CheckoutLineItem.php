@@ -221,7 +221,7 @@ class CheckoutLineItem implements SettablePriceAwareInterface, PriceTypeAwareInt
      *
      * @return $this
      */
-    public function setParentProduct(Product $parentProduct)
+    public function setParentProduct(Product $parentProduct = null)
     {
         $this->parentProduct = $parentProduct;
 

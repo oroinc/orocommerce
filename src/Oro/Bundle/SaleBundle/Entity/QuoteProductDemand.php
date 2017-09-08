@@ -179,7 +179,6 @@ class QuoteProductDemand implements
      */
     public function getParentProduct()
     {
-        // QuoteProductOffer doesn't support configurable products
-        return null;
+        return $this->getQuoteProductOffer()->getParentProduct();
     }
 }

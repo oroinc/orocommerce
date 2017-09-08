@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Factory;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry;
 
-class CheckoutLineItemFactory
+class CheckoutLineItemsFactory
 {
     /** @var CheckoutLineItemConverterRegistry */
     protected $lineItemConverterRegistry;
@@ -21,7 +22,7 @@ class CheckoutLineItemFactory
     /**
      * @param mixed $source
      *
-     * @return array|CheckoutLineItem[]
+     * @return Collection|CheckoutLineItem[]
      */
     public function create($source)
     {

@@ -3,16 +3,16 @@
 namespace Oro\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemFactory;
+use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterInterface;
 use Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry;
 
-class CheckoutLineItemFactoryTest extends \PHPUnit_Framework_TestCase
+class CheckoutLineItemsFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CheckoutLineItemConverterRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
-    /** @var CheckoutLineItemFactory */
+    /** @var CheckoutLineItemsFactory */
     protected $factory;
 
     /**
@@ -21,7 +21,7 @@ class CheckoutLineItemFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock(CheckoutLineItemConverterRegistry::class);
-        $this->factory = new CheckoutLineItemFactory($this->registry);
+        $this->factory = new CheckoutLineItemsFactory($this->registry);
     }
 
     /**
