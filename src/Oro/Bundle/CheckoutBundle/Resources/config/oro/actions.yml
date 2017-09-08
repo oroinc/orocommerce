@@ -260,6 +260,12 @@ action_groups:
                             source: $.source
                             customerUser: $.currentUser
                             website: $.currentWebsite
+                    # add line items
+                    - '@call_service_method':
+                        attribute: $.checkout.lineItems
+                        service: oro_checkout.line_items.factory
+                        method: create
+                        method_parameters: [$.source.entity]
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
