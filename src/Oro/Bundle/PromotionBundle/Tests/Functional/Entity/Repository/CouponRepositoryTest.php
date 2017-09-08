@@ -20,19 +20,13 @@ class CouponRepositoryTest extends WebTestCase
 
     public function testGetCouponsWithPromotionByIds()
     {
-        /** @var CouponRepository $repository */
-        $repository = self::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Coupon::class)
-            ->getRepository(Coupon::class);
-
         $ids = [
             $this->getReference(LoadCouponData::COUPON_WITHOUT_PROMO_AND_VALID_UNTIL)->getId(),
             $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_WITHOUT_VALID_UNTIL)->getId(),
             $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL)->getId(),
             -1
         ];
-        $result = $repository->getCouponsWithPromotionByIds($ids);
+        $result = $this->getCouponRepository()->getCouponsWithPromotionByIds($ids);
         usort($result, function (Coupon $a, Coupon $b) {
             return $a->getUsesPerCoupon() >= $b->getUsesPerCoupon();
         });
@@ -47,12 +41,6 @@ class CouponRepositoryTest extends WebTestCase
 
     public function testGetPromotionsWithMatchedCoupons()
     {
-        /** @var CouponRepository $repository */
-        $repository = self::getContainer()
-            ->get('doctrine')
-            ->getManagerForClass(Coupon::class)
-            ->getRepository(Coupon::class);
-
         $promotionsIds = [
             $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId(),
             $this->getReference(LoadPromotionData::ORDER_AMOUNT_PROMOTION)->getId(),
@@ -62,8 +50,26 @@ class CouponRepositoryTest extends WebTestCase
             LoadCouponData::COUPON_WITH_PROMO_AND_VALID_UNTIL
         ];
 
-        $result = $repository->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
+        $result = $this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
 
         $this->assertEquals([$this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()], $result);
+    }
+
+    public function testGetPromotionsWithMatchedCouponsWithNumericCouponCode()
+    {
+        $promotionsIds = [$this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()];
+
+        $this->assertEmpty($this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, [1234567]));
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository|CouponRepository
+     */
+    private function getCouponRepository()
+    {
+        return self::getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(Coupon::class)
+            ->getRepository(Coupon::class);
     }
 }

@@ -25,7 +25,7 @@ class CouponRepository extends EntityRepository
 
     /**
      * @param array|int[]|Promotion[] $promotions
-     * @param array $couponCodes
+     * @param array $couponCodes|string[]
      *
      * @return array
      */
@@ -37,7 +37,7 @@ class CouponRepository extends EntityRepository
             ->where($queryBuilder->expr()->in('IDENTITY(coupon.promotion)', ':promotions'))
             ->andWhere($queryBuilder->expr()->in('coupon.code', ':couponCodes'))
             ->setParameter('promotions', $promotions)
-            ->setParameter('couponCodes', $couponCodes)
+            ->setParameter('couponCodes', array_map('strval', $couponCodes)) //Ensure coupon codes are passed as strings
             ->getQuery()->getArrayResult();
 
         return array_column($result, 'id');
