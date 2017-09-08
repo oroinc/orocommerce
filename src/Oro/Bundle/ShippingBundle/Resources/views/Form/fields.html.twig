@@ -169,14 +169,12 @@
     {% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
 
     {% set collapseView = {
-        widgetModule: 'oroui/js/widget/collapse-widget',
         group: 'shipping-method',
         open: true
     } %}
 
     <div class="shipping-method-config shipping-method-config-{{ form.typeConfigs.vars.is_grouped ? 'grouped' : 'simple' }} collapse-view"
-         data-page-component-module="oroui/js/app/components/jquery-widget-component"
-         data-page-component-options="{{ collapseView|json_encode }}"
+         data-page-component-collapse="{{ collapseView|json_encode }}"
          data-role="method-view">
         {% if form.method.vars.value %}
             <div class="shipping-method-config__header"
@@ -290,8 +288,7 @@
                     group: 'shipping-method'
                 } %}
                 <div class="shipping-methods-grid__header-method"
-                     data-page-component-module="oroui/js/app/components/jquery-widget-component"
-                     data-page-component-options="{{ collapseView|json_encode }}">
+                     data-page-component-jquery="{{ collapseView|json_encode }}">
                     <i class="fa-plus-square-o"></i>
                     {{ 'oro.shipping.shipping_methods_table.method.label'|trans }}
                 </div>

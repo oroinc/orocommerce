@@ -10,10 +10,8 @@ Feature: Checkout from Shopping List with different Inventory configuration
   Scenario: Changing Inventory AllowedStatuses for Order
     Given I login as administrator
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Inventory" on configuration sidebar
-    And I click "Allowed Statuses" on configuration sidebar
-    And uncheck Use Default for "Can Be Added to Orders" field
+    And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
+    And uncheck "Use default" for "Can Be Added to Orders" field
     And I fill form with:
       | Can Be Added to Orders | Out of Stock |
     And I click "Save settings"
@@ -30,10 +28,8 @@ Feature: Checkout from Shopping List with different Inventory configuration
   Scenario: Changing Inventory AllowedStatuses for RFQ
     Given I login as administrator
     And I go to System/Configuration
-    And I click "Commerce" on configuration sidebar
-    And I click "Inventory" on configuration sidebar
-    And I click "Allowed Statuses" on configuration sidebar
-    And uncheck Use Default for "Can Be Added to RFQs" field
+    And I follow "Commerce/Inventory/Allowed Statuses" on configuration sidebar
+    And uncheck "Use default" for "Can Be Added to RFQs" field
     And I fill form with:
       | Can Be Added to RFQs | Out of Stock |
     And I click "Save settings"
