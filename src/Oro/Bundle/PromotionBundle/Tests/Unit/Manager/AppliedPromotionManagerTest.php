@@ -25,7 +25,6 @@ use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 use Oro\Bundle\PromotionBundle\Mapper\AppliedPromotionMapper;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
-use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\LineItemInterface;
 use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -109,7 +108,7 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateAppliedPromotions()
     {
-        $order = new Order();
+        $order = (new Order())->setCurrency(self::CURRENCY);
         $discountContext = new DiscountContext();
 
         /** @var Promotion $lineItemPromotion */

@@ -105,7 +105,7 @@ class AppliedPromotionManager
                 $appliedPromotions[$promotion->getId()] = $appliedPromotion;
             }
 
-            $appliedDiscount = $this->createAppliedDiscount($discountInformation);
+            $appliedDiscount = $this->createAppliedDiscount($discountInformation, $order);
             $appliedDiscount->setLineItem($orderLineItem);
             $appliedPromotions[$promotion->getId()]->addAppliedDiscount($appliedDiscount);
         }
@@ -163,13 +163,14 @@ class AppliedPromotionManager
 
     /**
      * @param DiscountInformation $discountInformation
+     * @param Order $order
      * @return AppliedDiscount
      */
-    private function createAppliedDiscount(DiscountInformation $discountInformation): AppliedDiscount
+    private function createAppliedDiscount(DiscountInformation $discountInformation, Order $order): AppliedDiscount
     {
         $appliedDiscount = new AppliedDiscount();
         $appliedDiscount->setAmount($discountInformation->getDiscountAmount());
-        $appliedDiscount->setCurrency($discountInformation->getDiscount()->getDiscountCurrency());
+        $appliedDiscount->setCurrency($order->getCurrency());
 
         return $appliedDiscount;
     }
