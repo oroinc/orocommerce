@@ -27,6 +27,21 @@ layout:
 
         - '@setOption':
             id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.addResetAction
+            optionValue: false
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.addRefreshAction
+            optionValue: false
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.toolbarOptions.addColumnManager
+            optionValue: false
+
+        - '@setOption':
+            id: product_datagrid
             optionName: current_row_view
             optionValue: '=data["oro_product_frontend_datagrid_row_view"].getDataGridTheme()'
 
@@ -56,9 +71,6 @@ layout:
             id: product_datagrid_toolbar_sorting
             optionName: visible
             optionValue: true
-
-        - '@remove':
-            id: product_datagrid_toolbar_actions
 
         - '@remove':
             id: product_datagrid_toolbar_filter_container

@@ -26,7 +26,7 @@
 
 {% block __oro_product_grid__datagrid_toolbar_pagination_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' catalog__filter-controls__item oro-pagination',
+        '~class': ' datagrid-tool oro-pagination',
         'data-grid-pagination': ''
     }) %}
 
@@ -35,7 +35,7 @@
 
 {% block __oro_product_grid__datagrid_toolbar_page_size_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' catalog__filter-controls__item page-size form-horizontal',
+        '~class': ' datagrid-tool page-size',
         'data-grid-pagesize': ''
     }) %}
 
@@ -58,7 +58,7 @@
             'parameterName': 'frontend-product-search-grid'
         },
         'data-server-render': '',
-        class: attr.class|default('') ~ " catalog__filter-controls__item display-options pull-right"
+        class: attr.class|default('') ~ " datagrid-tool display-options"
     }) %}
     {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
