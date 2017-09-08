@@ -88,7 +88,7 @@ class ProductWithPricesSearchHandlerTest extends WebTestCase
 
         $this->assertArrayHasKey('units', $product1);
         $this->assertCount(1, $product1['units']);
-        $this->assertEquals('milliliter', $product1['units']['milliliter']);
+        $this->assertEquals(0, $product1['units']['milliliter']);
     }
 
     /**

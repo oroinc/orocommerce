@@ -187,6 +187,8 @@ services:
     oro_product.validator.product_image:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageValidator'
         public: true
+        arguments:
+            - "@validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_image_validator }
 
