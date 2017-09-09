@@ -29,3 +29,4 @@ navigation:
         oro_catalog_category_index:  ~
         oro_catalog_category_update: '%title% - Edit'
         oro_catalog_category_create: 'Create Category'
+        oro_catalog_frontend_product_allproducts: 'oro.catalog.frontend.all_products.title'
