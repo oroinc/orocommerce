@@ -4,6 +4,7 @@ namespace Oro\Bundle\PromotionBundle\Manager;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -68,18 +69,18 @@ class AppliedPromotionManager
         $this->removeUnusedAppliedCoupons($order, $appliedPromotions);
 
         if ($removeOrphans) {
-            $this->removeAppliedPromotionOrphans();
+            $this->removeAppliedPromotionOrphans($order->getAppliedPromotions());
         }
     }
 
-    private function removeAppliedPromotionOrphans()
+    /**
+     * @param Collection|PersistentCollection $appliedPromotionsCollection
+     */
+    private function removeAppliedPromotionOrphans(Collection $appliedPromotionsCollection)
     {
         $manager = $this->getAppliedPromotionsManager();
-        $repository = $manager->getRepository(AppliedPromotion::class);
 
-        $orphanAppliedPromotions = $repository->findBy(['order' => null]);
-
-        foreach ($orphanAppliedPromotions as $appliedPromotion) {
+        foreach ($appliedPromotionsCollection->getDeleteDiff() as $appliedPromotion) {
             $manager->remove($appliedPromotion);
         }
     }

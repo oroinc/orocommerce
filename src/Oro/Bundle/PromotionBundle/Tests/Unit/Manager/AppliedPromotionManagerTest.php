@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PromotionBundle\Discount\AbstractDiscount;
@@ -217,9 +219,23 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
     public function testCreateAppliedPromotionsWhenRemoveParameterIsTrue()
     {
         /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        $metadata = $this->createMock(ClassMetadata::class);
 
         $order = new Order();
+        $firstAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 1]);
+        $secondAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 2]);
+        $thirdAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 3]);
+
+        $appliedPromotions = new PersistentCollection($em, $metadata, new ArrayCollection(
+            [$firstAppliedPromotion, $secondAppliedPromotion, $thirdAppliedPromotion]
+        ));
+        $appliedPromotions->takeSnapshot();
+        $order->setAppliedPromotions($appliedPromotions);
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $entityManager = $this->createMock(EntityManagerInterface::class);
 
         $executor = $this->getExecutor();
         $executor->expects($this->once())
@@ -233,27 +249,12 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
                 [AppliedPromotion::class, true, $entityManager]
             ]);
 
-        $firstAppliedPromotion = new AppliedPromotion();
-        $secondAppliedPromotion = new AppliedPromotion();
-
-        $entityRepository = $this->createMock(EntityRepository::class);
-        $entityRepository
-            ->expects($this->once())
-            ->method('findBy')
-            ->with(['order' => null])
-            ->willReturn([$firstAppliedPromotion, $secondAppliedPromotion]);
-
-        $entityManager
-            ->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AppliedPromotion::class, $entityRepository]
-            ]);
-
+        $appliedPromotions->removeElement($firstAppliedPromotion);
+        $appliedPromotions->removeElement($thirdAppliedPromotion);
         $entityManager
             ->expects($this->exactly(2))
             ->method('remove')
-            ->withConsecutive($firstAppliedPromotion, $secondAppliedPromotion);
+            ->withConsecutive($firstAppliedPromotion, $thirdAppliedPromotion);
 
         $this->manager->createAppliedPromotions($order, true);
     }
