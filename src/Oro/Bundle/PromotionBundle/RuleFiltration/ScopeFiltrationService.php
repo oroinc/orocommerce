@@ -61,6 +61,10 @@ class ScopeFiltrationService implements RuleFiltrationServiceInterface
             return false;
         }
 
+        if ($ruleOwner->getScopes()->isEmpty()) {
+            return true;
+        }
+
         foreach ($ruleOwner->getScopes() as $scope) {
             if ($this->scopeManager->isScopeMatchCriteria($scope, $criteria, PromotionType::SCOPE_TYPE)) {
                 return true;

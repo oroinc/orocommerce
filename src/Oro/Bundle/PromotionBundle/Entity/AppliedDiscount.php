@@ -8,14 +8,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required b
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\PromotionBundle\Model\ExtendAppliedDiscount;
 
 /**
- * @Config()
  * @ORM\Table(name="oro_promotion_applied_discount")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PromotionBundle\Entity\Repository\AppliedDiscountRepository")
  */
-class AppliedDiscount extends ExtendAppliedDiscount implements DatesAwareInterface
+class AppliedDiscount implements DatesAwareInterface
 {
     use DatesAwareTrait;
 

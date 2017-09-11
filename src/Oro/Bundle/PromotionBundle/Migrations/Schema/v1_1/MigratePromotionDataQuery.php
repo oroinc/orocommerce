@@ -10,13 +10,26 @@ use Psr\Log\LoggerInterface;
 
 class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
 {
+    const DB_MIN_INT = -2147483648;
+    const ORDERS_LIMIT = 10000;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var bool
+     */
+    private $dryRun;
+
     /**
      * {@inheritdoc}
      */
     public function getDescription()
     {
         $logger = new ArrayLogger();
-        $this->doExecute($logger, true);
+        $this->execute($logger, true);
 
         return $logger->getMessages();
     }
@@ -24,32 +37,33 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
     /**
      * {@inheritdoc}
      */
-    public function execute(LoggerInterface $logger)
+    public function execute(LoggerInterface $logger, $dryRun = false)
     {
-        $this->doExecute($logger);
+        $this->logger = $logger;
+        $this->dryRun = $dryRun;
+
+        $this->doExecute();
+
+        parent::execute($logger);
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
-    private function doExecute(LoggerInterface $logger, $dryRun = false)
+    private function doExecute()
     {
-        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
-            $this->moveDataFromAppliedDiscountToAppliedPromotionMySQL($logger);
-        } else {
-            $this->moveDataFromAppliedDiscountToAppliedPromotionPostgreSQL($logger);
-        }
-        $this->migrateSourcePromotionId($logger, $dryRun);
-        $this->migratePromotionData($logger, $dryRun);
+        $this->moveDataFromAppliedDiscountToAppliedPromotion();
 
+        $this->migratePromotionData();
+        $this->updateDateTimes();
+    }
+
+    private function updateDateTimes()
+    {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->connection->executeUpdate(
+        $this->executeQuery(
             'UPDATE oro_promotion_applied_discount SET updated_at = :updatedAt',
             ['updatedAt' => $now],
             ['updatedAt' => Type::DATETIME]
         );
-        $this->connection->executeUpdate(
+        $this->executeQuery(
             'UPDATE oro_promotion_applied SET updated_at = :updatedAt, created_at = :createdAt',
             [
                 'updatedAt' => $now,
@@ -62,271 +76,241 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
         );
     }
 
-    /**
-     * @param LoggerInterface $logger
-     */
-    private function moveDataFromAppliedDiscountToAppliedPromotionMySQL(LoggerInterface $logger)
+    private function moveDataFromAppliedDiscountToAppliedPromotion()
     {
+        // Convert not removed promotions
         $insert = 'INSERT 
           INTO oro_promotion_applied(
+            id,
             order_id,
-            promotion_id,
             source_promotion_id,
-            promotion_name, type,
+            promotion_name, 
+            type,
             config_options,
             created_at,
             updated_at
           )
           SELECT 
+            MIN(ad.id),
             ad.order_id,
             ad.promotion_id,
-            ad.promotion_id,
             ad.promotion_name,
-            ad.type,
-            to_json(CAST(ad.config_options AS TEXT)),
-            ad.created_at,
-            ad.updated_at
+            ad.type,' .
+            $this->jsonParameterToText('ad.config_options', true) . ',
+            MAX(ad.created_at),
+            MAX(ad.updated_at)
           FROM oro_promotion_applied_discount ad
+          WHERE promotion_id IS NOT NULL
           GROUP BY 
             ad.order_id,
             ad.promotion_id,
             ad.promotion_name,
-            ad.type,
-            CAST(ad.config_options AS TEXT),
-            ad.created_at,
-            ad.updated_at
-        ';
-        $this->logQuery($logger, $insert);
-        $this->connection->executeQuery($insert);
+            ad.type,' . $this->jsonParameterToText('ad.config_options');
 
-        $update = 'UPDATE 
-          oro_promotion_applied AS ap,
-          oro_promotion_applied_discount AS ad
-        SET ad.applied_promotion_id = ap.id
-        WHERE
-          ad.order_id = ap.order_id
-          AND ad.promotion_id = ap.promotion_id
-          AND ad.promotion_name = ap.promotion_name
-          AND ad.type = ap.type';
+        $this->executeQuery($insert);
 
-        $this->logQuery($logger, $update);
-        $this->connection->executeQuery($update);
+        $updateNotRemovedPromotions = '
+        UPDATE oro_promotion_applied_discount
+        SET applied_promotion_id =
+        (
+          SELECT id
+          FROM oro_promotion_applied
+          WHERE
+            order_id = oro_promotion_applied_discount.order_id
+            AND source_promotion_id = oro_promotion_applied_discount.promotion_id
+        ) WHERE promotion_id IS NOT NULL';
+
+        $this->executeQuery($updateNotRemovedPromotions);
+
+        $this->migrateDeletedOrderPromotions();
+        $this->migrateDeletedLineItemPromotions();
     }
 
     /**
-     * @param LoggerInterface $logger
-     */
-    private function moveDataFromAppliedDiscountToAppliedPromotionPostgreSQL(LoggerInterface $logger)
-    {
-        $insert = 'INSERT 
-          INTO oro_promotion_applied(
-            order_id,
-            promotion_id,
-            source_promotion_id,
-            promotion_name, type,
-            config_options,
-            created_at,
-            updated_at
-          )
-          SELECT 
-            ad.order_id,
-            ad.promotion_id,
-            ad.promotion_id,
-            ad.promotion_name,
-            ad.type,
-            to_json(CAST(ad.config_options as TEXT)),
-            ad.created_at,
-            ad.updated_at
-          FROM oro_promotion_applied_discount ad
-          GROUP BY 
-            ad.order_id,
-            ad.promotion_id,
-            ad.promotion_name,
-            ad.type,
-            CAST(ad.config_options as TEXT),
-            ad.created_at,
-            ad.updated_at
-        ';
-        $this->logQuery($logger, $insert);
-        $this->connection->executeQuery($insert);
-
-        $updateForExistingPromotions = 'UPDATE
-          oro_promotion_applied_discount
-        SET (applied_promotion_id) =
-        (SELECT id
-        FROM oro_promotion_applied
-        WHERE
-          order_id = oro_promotion_applied_discount.order_id
-          AND promotion_id = oro_promotion_applied_discount.promotion_id)';
-        $this->logQuery($logger, $updateForExistingPromotions);
-        $this->connection->executeQuery($updateForExistingPromotions);
-
-        $updateForRemovedPromotions = 'UPDATE
-          oro_promotion_applied_discount
-        SET (applied_promotion_id) =
-        (SELECT id
-         FROM oro_promotion_applied
-         WHERE
-           order_id = oro_promotion_applied_discount.order_id
-           AND promotion_name = oro_promotion_applied_discount.promotion_name
-            AND type = oro_promotion_applied_discount.type
-          AND promotion_id IS NULL)
-        WHERE promotion_id IS NULL';
-        $this->logQuery($logger, $updateForRemovedPromotions);
-        $this->connection->executeQuery($updateForRemovedPromotions);
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function migratePromotionData(LoggerInterface $logger, $dryRun = false)
+    private function migratePromotionData()
     {
-        $minSortOrder = $this->getMinimumSortOrder($logger);
+        $steps = $this->getOrdersSteps();
 
-        $ordersWithDiscountsSelect = 'SELECT 
-          o.id,
-          o.customer_id,
-          o.customer_user_id
-          FROM oro_order o
-          WHERE EXISTS(SELECT 1 FROM oro_promotion_applied ap WHERE ap.order_id = o.id)';
-        $this->logQuery($logger, $ordersWithDiscountsSelect);
-        $stmt = $this->connection->executeQuery($ordersWithDiscountsSelect);
+        for ($step = 0; $step < $steps; ++$step) {
+            $qb = $this->getOrdersWithPromotionsQb()
+                ->select('o.id', 'o.customer_id', 'o.customer_user_id')
+                ->setMaxResults(self::ORDERS_LIMIT)
+                ->setFirstResult($step * self::ORDERS_LIMIT);
 
-        while ($orderRow = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $discountsSelect = 'SELECT
+            $this->logQuery($this->logger, $qb->getSQL());
+            $statement = $qb->execute();
+
+            while ($orderRow = $statement->fetch(\PDO::FETCH_ASSOC)) {
+                $this->migrateDiscountsForOrder($orderRow);
+            }
+        }
+    }
+
+    /**
+     * @param array $orderRow
+     */
+    private function migrateDiscountsForOrder(array $orderRow)
+    {
+        $params = ['orderId' => $orderRow['id']];
+        $types = ['orderId' => Type::INTEGER];
+
+        $this->logQuery($this->logger, $this->getDiscountsSelectStatement(), $params, $types);
+        $discountStmt = $this->connection->executeQuery($this->getDiscountsSelectStatement(), $params, $types);
+
+        $expression = $this->getCustomerRestrictionExpression($orderRow);
+        $promotionRows = [];
+
+        while ($promotionRow = $discountStmt->fetch(\PDO::FETCH_ASSOC)) {
+            // We need to guarantee that for migrated applied promotions sort order is always less than for any
+            // existing promotion. Also applying order between migrated discounts should be persisted.
+            $sortOrder = 2 * self::DB_MIN_INT + $promotionRow['id'];
+
+            if (empty($promotionRow['line_items'])) {
+                $segmentDefinition = $this->getSegmentDefinitionForOrder($orderRow['id']);
+            } else {
+                $segmentDefinition = $this->getSegmentDefinitionForLineItems($promotionRow['line_items']);
+            }
+
+            $promotionRow['promotion_data'] = [
+                'id' => (int)$promotionRow['source_promotion_id'],
+                'useCoupons' => false,
+                'rule' => [
+                    'name' => $promotionRow['promotion_name'],
+                    'expression' => $expression,
+                    'sortOrder' => $sortOrder,
+                    'isStopProcessing' => false
+                ],
+                'scopes' => [],
+                'productsSegment' => [
+                    'definition' => json_encode($segmentDefinition)
+                ]
+            ];
+
+            $promotionRows[] = $promotionRow;
+        }
+
+        if (!empty($promotionRows)) {
+            $total = count($promotionRows);
+            foreach ($promotionRows as $key => $row) {
+                if ($key + 1 === $total) {
+                    $row['promotion_data']['rule']['isStopProcessing'] = true;
+                }
+
+                $updateQuery = 'UPDATE oro_promotion_applied SET promotion_data = :promotionData WHERE id = :id';
+                $params = ['id' => $row['id'], 'promotionData' => $row['promotion_data']];
+                $types = ['id' => TYPE::INTEGER, 'promotionData' => Type::JSON_ARRAY];
+
+                $this->executeQuery($updateQuery, $params, $types);
+            }
+        }
+    }
+
+    /**
+     * @return int
+     */
+    private function getOrdersSteps(): int
+    {
+        $qb = $this->getOrdersWithPromotionsQb()
+            ->select('COUNT(1)');
+
+        $this->logQuery($this->logger, $qb->getSQL());
+
+        return (int)ceil($qb->execute()->fetchColumn() / self::ORDERS_LIMIT);
+    }
+
+    /**
+     * @return \Doctrine\DBAL\Query\QueryBuilder
+     */
+    private function getOrdersWithPromotionsQb()
+    {
+        return $this->connection->createQueryBuilder()
+            ->from('oro_order', 'o')
+            ->where('EXISTS (SELECT 1 FROM oro_promotion_applied ap WHERE ap.order_id = o.id)');
+    }
+
+    /**
+     * @return string
+     */
+    private function getDiscountsSelectStatement(): string
+    {
+        $concatExpression = $this->getFieldConcatExpression('ad.line_item_id', 'line_items');
+
+        return "SELECT
                 ap.id,
-                ap.promotion_name,
                 ap.source_promotion_id,
-                ad.line_item_id
+                ap.promotion_name,
+                $concatExpression
             FROM oro_promotion_applied ap
             INNER JOIN oro_promotion_applied_discount ad ON ad.applied_promotion_id = ap.id
             WHERE ap.order_id = :orderId
-            ORDER BY ap.id DESC';
-            $params = ['orderId' => $orderRow['id']];
-            $types = ['orderId' => Type::INTEGER];
-            $this->logQuery($logger, $discountsSelect, $params, $types);
-
-            $discountStmt = $this->connection->executeQuery($discountsSelect, $params, $types);
-
-            $sortOrder = $minSortOrder;
-            $expression = $this->getCustomerRestrictionExpression($orderRow);
-            $promotionsInfo = [];
-            $lastKey = null;
-            while ($discountRow = $discountStmt->fetch(\PDO::FETCH_ASSOC)) {
-                $key = $discountRow['promotion_name'] . ':' . (int)$discountRow['source_promotion_id'];
-                $lastKey = $key;
-                if (!array_key_exists($key, $promotionsInfo)) {
-                    $sortOrder -= 10;
-
-                    $promotionsInfo[$key]['sort_order'] = $sortOrder;
-                    $promotionsInfo[$key]['name'] = $discountRow['promotion_name'];
-                    $promotionsInfo[$key]['id'] = $discountRow['source_promotion_id'];
-                    $promotionsInfo[$key]['line_items'] = [];
-                }
-
-                $promotionsInfo[$key]['applied_to'][] = $discountRow['id'];
-                if (!empty($discountRow['line_item_id'])) {
-                    $promotionsInfo[$key]['line_items'][] = $discountRow['line_item_id'];
-                }
-            }
-            $promotionsInfo[$lastKey]['last'] = true;
-
-            foreach ($promotionsInfo as $info) {
-                if (empty($info['line_items'])) {
-                    $segmentDefinition = $this->getSegmentDefinitionForOrder($logger, $orderRow['id']);
-                } else {
-                    $segmentDefinition = $this->getSegmentDefinitionForLineItems($logger, $info['line_items']);
-                }
-
-                $promotionData = [
-                    'id' => $info['id'],
-                    'useCoupons' => false,
-                    'rule' => [
-                        'name' => $info['name'],
-                        'expression' => $expression,
-                        'sortOrder' => $info['sort_order'],
-                        'isStopProcessing' => !empty($info['last'])
-                    ],
-                    'scopes' => [],
-                    'productsSegment' => [
-                        'definition' => json_encode($segmentDefinition)
-                    ]
-                ];
-
-                $updateQuery = 'UPDATE oro_promotion_applied 
-                  SET promotion_data = :promotionData 
-                  WHERE id IN(' . implode(',', $info['applied_to']) . ')';
-                $params = ['promotionData' => $promotionData];
-                $types = ['promotionData' => Type::JSON_ARRAY];
-                $this->logQuery($logger, $updateQuery, $params, $types);
-
-                if (!$dryRun) {
-                    $this->connection->executeUpdate($updateQuery, $params, $types);
-                }
-            }
-        }
+            GROUP BY 
+                ap.id,
+                ap.source_promotion_id,
+                ap.promotion_name
+            ORDER BY ap.id";
     }
 
     /**
-     * @param LoggerInterface $logger
      * @param int $orderId
      * @return array
      */
-    private function getSegmentDefinitionForOrder(LoggerInterface $logger, $orderId): array
+    private function getSegmentDefinitionForOrder($orderId): array
     {
-        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
-            $selectQuery = 'SELECT
-                GROUP_CONCAT(li.product_id) as product_ids
-              FROM oro_order_line_item li
-              WHERE 
-                li.order_id = :orderId
-              GROUP BY li.order_id';
-        } else {
-            $selectQuery = "SELECT
-                array_to_string(array_agg(li.product_id), ',') as product_ids
-              FROM oro_order_line_item li
-              WHERE 
-                li.order_id = :orderId
-              GROUP BY li.order_id";
-        }
+        $concatExpression = $this->getFieldConcatExpression('li.product_id', 'product_ids');
+        $selectQuery = <<<SQL
+SELECT $concatExpression
+FROM oro_order_line_item li
+WHERE li.order_id = :orderId
+GROUP BY li.order_id
+SQL;
 
         $params = ['orderId' => $orderId];
         $types = ['orderId' => Type::INTEGER];
 
-        $this->logQuery($logger, $selectQuery, $params, $types);
+        $this->logQuery($this->logger, $selectQuery, $params, $types);
         $productIds = $this->connection->fetchColumn($selectQuery, $params, 0, $types);
 
         return $this->getProductsInSegmentDefinition($productIds);
     }
 
     /**
-     * @param array $lineItems
+     * @param string $lineItems
      * @return array
      */
-    private function getSegmentDefinitionForLineItems(LoggerInterface $logger, array $lineItems): array
+    private function getSegmentDefinitionForLineItems($lineItems): array
     {
-        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
-            $selectQuery = 'SELECT
-                GROUP_CONCAT(li.product_id) as product_ids
-              FROM oro_order_line_item li
-              WHERE 
-                li.id IN(' . implode(',', $lineItems) . ')
-              GROUP BY li.order_id';
-        } else {
-            $selectQuery = "SELECT
-                array_to_string(array_agg(li.product_id), ',') as product_ids
-              FROM oro_order_line_item li
-              WHERE 
-                li.id IN(" . implode(',', $lineItems) . ")
-              GROUP BY li.order_id";
-        }
+        $concatExpression = $this->getFieldConcatExpression('t.product_id', 'product_ids');
 
-        $this->logQuery($logger, $selectQuery);
+        $selectQuery = <<<SQL
+SELECT $concatExpression
+FROM
+(
+    SELECT DISTINCT li.product_id
+    FROM oro_order_line_item li
+    WHERE li.id IN($lineItems)
+) t
+SQL;
+
+        $this->logQuery($this->logger, $selectQuery);
         $productIds = $this->connection->fetchColumn($selectQuery);
 
         return $this->getProductsInSegmentDefinition($productIds);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string $fieldAlias
+     * @return string
+     */
+    private function getFieldConcatExpression($fieldName, $fieldAlias): string
+    {
+        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+            return sprintf('GROUP_CONCAT(%s) as %s', $fieldName, $fieldAlias);
+        }
+
+        return sprintf('array_to_string(array_agg(%s), \',\') as %s', $fieldName, $fieldAlias);
     }
 
     /**
@@ -355,23 +339,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
             ]
         ];
 
-
         return $definition;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     * @return int
-     */
-    private function getMinimumSortOrder(LoggerInterface $logger): int
-    {
-        $selectMinimumPromotionOrder = 'SELECT 
-          MIN(r.sort_order) 
-          FROM oro_promotion p 
-          INNER JOIN oro_rule r ON p.rule_id = r.id';
-        $this->logQuery($logger, $selectMinimumPromotionOrder);
-
-        return (int)$this->connection->fetchColumn($selectMinimumPromotionOrder);
     }
 
     /**
@@ -382,27 +350,170 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
     {
         $expression = 'customer.id = ' . $orderRow['customer_id'];
         if (!empty($orderRow['customer_user_id'])) {
-            $expression .= ' AND customerUser.id = ' . $orderRow['customer_user_id'];
+            $expression .= ' and customerUser.id = ' . $orderRow['customer_user_id'];
         }
 
         return $expression;
     }
 
-    /**
-     * @param LoggerInterface $logger
-     * @param bool $dryRun
-     */
-    private function migrateSourcePromotionId(LoggerInterface $logger, $dryRun)
+    private function migrateDeletedOrderPromotions()
     {
-        $updateExisting = 'UPDATE oro_promotion_applied 
-          SET source_promotion_id = promotion_id 
-          WHERE promotion_id IS NOT NULL';
-        $updateRemoved = 'UPDATE oro_promotion_applied SET source_promotion_id = -id WHERE promotion_id IS NULL';
-        $this->logQuery($logger, $updateExisting);
-        $this->logQuery($logger, $updateRemoved);
-        if (!$dryRun) {
-            $this->connection->executeUpdate($updateExisting);
-            $this->connection->executeUpdate($updateRemoved);
+        // Migrate deleted order promotions
+        $insert = 'INSERT 
+          INTO oro_promotion_applied(
+            id,
+            order_id,
+            source_promotion_id,
+            promotion_name, 
+            type,
+            config_options,
+            created_at,
+            updated_at
+          )
+          SELECT 
+            ad.id,
+            ad.order_id,
+            -ad.id,
+            ad.promotion_name,
+            ad.type,' .
+            $this->jsonParameterToText('ad.config_options', true) . ', 
+            ad.created_at,
+            ad.updated_at
+          FROM oro_promotion_applied_discount ad
+          WHERE promotion_id IS NULL AND line_item_id IS NULL
+        ';
+        $this->executeQuery($insert);
+
+        // Update deleted order promotions
+        $update = 'UPDATE oro_promotion_applied_discount 
+        SET applied_promotion_id =
+        (
+          SELECT ap.id
+          FROM oro_promotion_applied ap
+          WHERE ap.source_promotion_id = -oro_promotion_applied_discount.id
+        ) WHERE line_item_id IS NULL AND promotion_id IS NULL';
+        $this->executeQuery($update);
+    }
+
+    private function migrateDeletedLineItemPromotions()
+    {
+        $duplicatedPromotionsQty = $this->getLineItemDuplicatedQueriesQty();
+
+        //Migrate all duplicated removed line item promotions
+        while ($duplicatedPromotionsQty--) {
+            $insert = 'INSERT 
+              INTO oro_promotion_applied(
+                id,
+                order_id,
+                source_promotion_id,
+                promotion_name, 
+                type,
+                config_options,
+                created_at,
+                updated_at
+              )
+              SELECT 
+                MIN(ad.id),
+                ad.order_id,
+                0, -- mark newly added line item applied promotions
+                ad.promotion_name,
+                ad.type,' .
+                $this->jsonParameterToText('ad.config_options', true) . ',
+                MAX(ad.created_at),
+                MAX(ad.updated_at)
+              FROM oro_promotion_applied_discount ad
+              WHERE promotion_id IS NULL AND line_item_id IS NOT NULL AND applied_promotion_id IS NULL
+              GROUP BY
+                ad.order_id,
+                ad.promotion_name,
+                ad.type,' . $this->jsonParameterToText('ad.config_options');
+            $this->executeQuery($insert);
+
+            $updateRemovedLineItemPromotions = '
+            UPDATE oro_promotion_applied_discount discount
+            SET applied_promotion_id =
+            (
+              SELECT id
+              FROM oro_promotion_applied ap
+              WHERE ap.order_id = discount.order_id AND ap.source_promotion_id = 0 AND discount.type = ap.type 
+              AND discount.promotion_name = ap.promotion_name AND '
+              . $this->jsonParameterToText('discount.config_options') . ' = '
+              . $this->jsonParameterToText('ap.config_options') . '
+            )
+            WHERE id IN (
+              SELECT t.id FROM (
+                  SELECT MIN(ad.id) as id FROM oro_promotion_applied ap INNER JOIN oro_promotion_applied_discount ad
+                  ON ap.order_id = ad.order_id AND ad.promotion_id IS NULL AND line_item_id IS NOT NULL 
+                  AND applied_promotion_id IS NULL
+                  WHERE ap.source_promotion_id = 0
+                  GROUP BY ad.order_id, ad.line_item_id, ad.promotion_name, ad.type, ' . $this->jsonParameterToText('ad.config_options') . '
+              ) t
+            )';
+
+            $this->executeQuery($updateRemovedLineItemPromotions);
+
+            $updateAddedAppliedPromotions = '
+            UPDATE oro_promotion_applied
+            SET source_promotion_id = -id
+            WHERE source_promotion_id = 0';
+
+            $this->executeQuery($updateAddedAppliedPromotions);
+        }
+    }
+
+    /**
+     * @param string $fieldName
+     * @param bool $select
+     * @return string
+     */
+    private function jsonParameterToText(string $fieldName, $select = false): string
+    {
+        if ($this->connection->getDatabasePlatform() instanceof MySqlPlatform) {
+            return $fieldName;
+        }
+
+        return sprintf('CAST(%s AS TEXT)%s', $fieldName, $select ? '::json' : '');
+    }
+
+    /**
+     * @return int
+     */
+    private function getLineItemDuplicatedQueriesQty(): int
+    {
+        $maxDuplicatedDeletedLineItemsPromotions = <<<SQL
+SELECT 
+    MAX(qty) as qty 
+FROM (
+    SELECT COUNT(*) as qty
+    FROM oro_promotion_applied_discount ad
+    WHERE promotion_id IS NULL AND line_item_id IS NOT NULL
+    GROUP BY 
+        ad.order_id,
+        ad.promotion_name,
+        ad.type,
+        {$this->jsonParameterToText('ad.config_options')},
+        line_item_id
+) t
+SQL;
+
+        $this->logQuery($this->logger, $maxDuplicatedDeletedLineItemsPromotions);
+        $stmt = $this->connection->executeQuery($maxDuplicatedDeletedLineItemsPromotions);
+        $info = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return (int)$info['qty'];
+    }
+
+    /**
+     * @param string $query
+     * @param array $params
+     * @param array $types
+     */
+    private function executeQuery($query, array $params = [], array $types = [])
+    {
+        $this->logQuery($this->logger, $query);
+
+        if (!$this->dryRun) {
+            $this->connection->executeQuery($query, $params, $types);
         }
     }
 }
