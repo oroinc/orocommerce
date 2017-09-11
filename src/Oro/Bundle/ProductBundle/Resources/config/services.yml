@@ -452,7 +452,7 @@ services:
             - '@oro_product.entity.event_listener.product_collection_variant_reindex_message_send_listener'
             - "@?oro_web_catalog.provider.web_catalog_usage_provider"
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: onFlush, connection: default }
 
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
