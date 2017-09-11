@@ -133,11 +133,9 @@ class ProductControllerTest extends WebTestCase
             ),
             ['_widgetContainer' => 'widget']
         );
-        $json = $crawler->filterXPath(sprintf(
-            '//*%s/*%s',
-            '[@data-role="jstree-wrapper"]',
-            '[@data-page-component-module="oroui/js/app/components/view-component"][@data-page-component-options]'
-        ))->attr('data-page-component-options');
+        $json = $crawler->filterXPath('//*[@data-role="jstree-wrapper"]/*[@data-page-component-view]')
+            ->attr('data-page-component-view');
+
         $this->assertJson($json);
         $arr = json_decode($json, true);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);

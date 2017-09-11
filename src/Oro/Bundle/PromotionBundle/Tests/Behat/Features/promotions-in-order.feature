@@ -9,17 +9,9 @@ Feature: Promotions in Order page
   As a site user
   I need to have ability to see applied discounts on order view page
 
-  Scenario: Logged in as buyer and manager on different window sessions
-    Given sessions active:
-      | Admin  | first_session  |
-      | Buyer  | second_session |
-    And I switch to the "Admin" session
-    And I login as administrator
-    And I switch to the "Buyer" session
-    And I signed in as AmandaRCole@example.org on the store frontend
-
   Scenario: Check that applied discounts are shown on order edit page in promotion section
-    Given I operate as the Admin
+    Given I login as AmandaRCole@example.org the "Buyer" at "first_session" session
+    And I login as administrator and use in "second_session" as "Admin"
     And I disable inventory management
     And I proceed as the Buyer
     And I do the order through completion, and should be on order view page

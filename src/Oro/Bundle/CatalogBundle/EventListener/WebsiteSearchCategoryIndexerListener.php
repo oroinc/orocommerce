@@ -5,7 +5,6 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
@@ -16,6 +15,8 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchCategoryIndexerListener
 {
+    const CATEGORY_TITLE_L10N_FIELD = 'category_title_LOCALIZATION_ID';
+
     /**
      * @var DoctrineHelper
      */
@@ -84,7 +85,7 @@ class WebsiteSearchCategoryIndexerListener
 
                     $event->addPlaceholderField(
                         $product->getId(),
-                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        static::CATEGORY_TITLE_L10N_FIELD,
                         (string)$category->getTitle($localization),
                         $placeholders,
                         true

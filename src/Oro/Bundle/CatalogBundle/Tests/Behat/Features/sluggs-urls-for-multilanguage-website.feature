@@ -28,7 +28,7 @@ Feature: Sluggable URLs for multilanguage websites
     And click "Save"
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
-    And follow "System configuration/General setup/Localization" on configuration sidebar
+    And follow "System Configuration/General Setup/Localization" on configuration sidebar
     And fill form with:
       |Enabled Localizations|[French, English]|
       |Default Localization |English|

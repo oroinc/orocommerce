@@ -1,15 +1,23 @@
 // @theme: default;
 
 .product-item {
+    &--category-title {
+        width: 100%;
+        margin: 10px 0;
+        border-bottom: 1px solid #eceeef;
+        padding: 10px 0;
+        text-align: center;
+    }
+
     &--gallery-view {
         position: relative;
 
         display: inline-block;
         vertical-align: top;
 
-        width: calc(20% - 16px);
+        width: calc(20% - (#{$product-item-gallery-view-offset-x} * 2));
 
-        margin-right: 20px;
+        margin: 0 $product-item-gallery-view-offset-x;
         padding: 0 0 $product-item-gallery-view-offset-bottom;
 
         font-size: $base-font-size;
@@ -590,25 +598,11 @@
     }
 }
 
-@include breakpoint('strict-desktop') {
-    .product-item {
-        &--gallery-view {
-            &:nth-child(5n+5) {
-                margin: 0;
-            }
-        }
-    }
-}
 
 @include breakpoint('strict-tablet') {
     .product-item {
         &--gallery-view {
-            width: calc(25% - 15px);
-            margin-right: 20px;
-
-            &:nth-child(4n+4) {
-                margin: 0;
-            }
+            width: calc(25% - (#{$product-item-gallery-view-offset-x} * 2));
         }
     }
 }
@@ -616,12 +610,8 @@
 @include breakpoint('strict-tablet-small') {
     .product-item {
         &--gallery-view {
-            width: calc(33.3333% - 16px);
-            margin-right: 24px;
-
-            &:nth-child(3n+3) {
-                margin: 0;
-            }
+            width: calc(33.3333% - (#{$product-item-gallery-view-offset-x-tablet-small} * 2));
+            margin: 0 $product-item-gallery-view-offset-x-tablet-small;
         }
     }
 }
@@ -629,16 +619,8 @@
 @include breakpoint('strict-mobile-landscape') {
     .product-item {
         &--gallery-view {
-            width: calc(50% - 5px);
-
-            &:nth-child(2n+1) {
-                margin-right: 5px;
-            }
-
-            &:nth-child(2n+2) {
-                margin-right: 0;
-                margin-left: 5px;
-            }
+            width: calc(50% - (#{$product-item-gallery-view-offset-x-mobile-landscape} * 2));
+            margin: 0 $product-item-gallery-view-offset-x-mobile-landscape;
         }
     }
 }

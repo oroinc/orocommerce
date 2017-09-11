@@ -16,7 +16,6 @@ oro_behat_extension:
         - OroSaleBundle::FeatureContext
         - OroCheckoutBundle::FeatureContext
         - OroConfigBundle::FeatureContext
-        - OroWarehouseBundle::FeatureContext
         - OroShippingBundle::FeatureContext
         - OroProductBundle::FeatureContext
         - OroRFPBundle::FeatureContext
