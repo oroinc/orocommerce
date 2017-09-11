@@ -104,7 +104,7 @@ class AppliedPromotionManager
         $appliedPromotionsCollection = $order->getAppliedPromotions();
         /** @var AppliedPromotion $appliedPromotion */
         foreach ($appliedPromotionsCollection->toArray() as $appliedPromotion) {
-            if (!$appliedPromotion->getId() && !isset($promotionIds[$appliedPromotion->getSourcePromotionId()])) {
+            if (!isset($promotionIds[$appliedPromotion->getSourcePromotionId()])) {
                 $appliedPromotionsCollection->removeElement($appliedPromotion);
             }
         }

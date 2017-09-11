@@ -226,10 +226,9 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $firstAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 1]);
         $secondAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 2]);
-        $thirdAppliedPromotion = $this->getEntity(AppliedPromotion::class, ['id' => 3]);
 
         $appliedPromotions = new PersistentCollection($em, $metadata, new ArrayCollection(
-            [$firstAppliedPromotion, $secondAppliedPromotion, $thirdAppliedPromotion]
+            [$firstAppliedPromotion, $secondAppliedPromotion]
         ));
         $appliedPromotions->takeSnapshot();
         $order->setAppliedPromotions($appliedPromotions);
@@ -249,12 +248,10 @@ class AppliedPromotionManagerTest extends \PHPUnit_Framework_TestCase
                 [AppliedPromotion::class, true, $entityManager]
             ]);
 
-        $appliedPromotions->removeElement($firstAppliedPromotion);
-        $appliedPromotions->removeElement($thirdAppliedPromotion);
         $entityManager
             ->expects($this->exactly(2))
             ->method('remove')
-            ->withConsecutive($firstAppliedPromotion, $thirdAppliedPromotion);
+            ->withConsecutive($firstAppliedPromotion, $secondAppliedPromotion);
 
         $this->manager->createAppliedPromotions($order, true);
     }
