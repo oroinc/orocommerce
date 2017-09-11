@@ -71,7 +71,7 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
-                        visitor_email:
+                        email:
                             form_type: oro_customer_visitor_email_address
 
             create_order:
@@ -151,5 +151,5 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
-                        visitor_email:
+                        email:
                             form_type: oro_customer_visitor_email_address

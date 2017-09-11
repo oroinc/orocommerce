@@ -86,7 +86,7 @@ oro:
                     label: 'Payment validation required'
                 payment_save_for_later:
                     label: 'Save payment data for later use'
-                visitor_email:
+                email:
                     label: 'Email'
             transition:
                 __start__:

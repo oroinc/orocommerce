@@ -83,7 +83,7 @@ oro:
                     label: 'Shipping address'
                 visitor:
                     label: 'Visitor'
-                visitor_email:
+                email:
                     label: 'Email'
             transition:
                 __start__:
@@ -262,7 +262,7 @@ oro:
                     label: 'Instance of Order entity'
                 visitor:
                     label: 'Visitor'
-                visitor_email:
+                email:
                     label: 'Email'
             transition:
                 __start__:

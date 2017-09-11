@@ -1,5 +1,13 @@
-{% macro address_form(address_form, save_address_checkbox, hasCustomAddress, compact) %}
+{% macro address_form(address_form, save_address_checkbox, hasCustomAddress, email_form, compact) %}
     <div id="checkout-address-fields-container" class="grid {% if not hasCustomAddress %}hidden{% endif %}">
+        {% if email_form %}
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column {% if compact %}grid__column--12 grid__column--no-gutters{% else %}grid__column--6{% endif %}">
+                    {{ form_row(email_form, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.email'|trans}}) }}
+                </div>
+            </div>
+        {% endif %}
+
         <div class="grid__row grid__row--offset-none">
             <div class="grid__column {% if compact %}grid__column--12 grid__column--no-gutters{% else %}grid__column--6{% endif %}">
                 {{ form_row(address_form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}

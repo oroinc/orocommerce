@@ -167,8 +167,7 @@ oro:
                             middle_name: ""
                             last_name: ""
                             sufix: ""
-                        visitor:
-                            email: ""
+                        email: ""
         form:
             address.manual: New address
             address.group_label:

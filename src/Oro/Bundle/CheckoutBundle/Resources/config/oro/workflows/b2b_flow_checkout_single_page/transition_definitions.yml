@@ -296,7 +296,7 @@ workflows:
                         action_group: b2b_flow_checkout_update_guest_customer_user
                         parameters_mapping:
                             checkout: $checkout
-                            visitor_email: $visitor_email
+                            email: $email
                             billing_address: $billing_address
 
                     - '@redirect':
@@ -349,3 +349,4 @@ workflows:
                             auto_remove_source: $auto_remove_source
                             allow_manual_source_remove: $allow_manual_source_remove
                             remove_source: $remove_source
+                            email: $email
